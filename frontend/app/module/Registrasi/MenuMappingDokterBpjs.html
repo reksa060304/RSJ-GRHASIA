@@ -1,0 +1,82 @@
+<style type="text/css">
+    .json-viewer {
+        margin-top: 26px;
+        padding: 2em 0 2em 5em;
+        background: lightgrey;
+    }
+
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="panel panel-default panel-white">
+        <div class="panel-body">
+            <div class="grid_12">
+                <div class="grid_12">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading " style="font-size: 18px; "><span c-translate>Mapping Dokter
+                                Bpjs</span>
+                            <span class="icon fa fa-chevron-circle-down " ng-show="!isShowPotensi " style="right:10px
+                                                                                " ng-click="showPotensi() "></span>
+                            <span class="icon fa fa-chevron-circle-up " ng-show="isShowPotensi " style="right:10px
+                                                                                " ng-click="showPotensi() "></span>
+                        </div>
+                        <div class="panel-body " ng-show="isShowPotensi ">
+                            <div class="grid_12 animated no-padding ">
+                                <div class="grid_12">
+                                    <div class="grid_4">
+                                        <label c-label>Dokter Bpjs</label>
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.dokterDPJP"
+                                            k-data-text-field="'nama'" k-data-value-field="'kode'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listDPJP" />
+                                    </div>
+                                    <div class="grid_4">
+                                        <label c-label>Dokter RS</label>
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.dokterRs"
+                                            k-data-text-field="'namalengkap'" k-data-value-field="'id'"
+                                            k-filter="'contains'" k-auto-bind="false" k-data-source="listDokterRs" />
+                                    </div>
+                                    <div class="grid_1">
+                                        <div class="grid_12">
+                                            <button class="btnTemplate1" style="margin-top: 22px;"
+                                                ng-click="tambahMapping()"> <i
+                                                    class="fa fa-plus-square"></i>Tambah</button>
+                                        </div>
+                                    </div>
+                                    <div class="grid_1">
+                                        <div class="grid_12">
+                                            <button class="btnTemplate1 error" style="margin-top: 22px;"
+                                                ng-click="Cancel()"> <i class="fa fa-ban"></i>Batal</button>
+                                        </div>
+                                    </div>
+                                    <div class="grid_1">
+                                        <div class="grid_12">
+                                            <button class="btnTemplate1" style="margin-top: 22px;"
+                                                ng-click="SearchData()"> <i class="fa fa-search"></i>Cari</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid_12">
+                                    <kendo-grid id="kGrid" k-data-source="dataSource" k-selectable="'row'"
+                                        k-groupable="'true'" k-options="columnGrid">
+                                    </kendo-grid>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-include=' "../app/template/Shared/TemplateLoading" '></div>

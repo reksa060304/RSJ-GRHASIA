@@ -1,0 +1,121 @@
+<div class="p-col-12 p-fluid p-formgrid ">
+    <div class="p-grid">
+        <div class="p-col-12 p-md-1">
+            <a id="link-kios" (click)="goBack()" pTooltip="Kembali Ke Menu Sebelumnya">
+                <span style="font-size:35px;" class="fa fa-arrow-left"></span>
+            </a>
+        </div>
+        <div class="p-col-12 p-md-10" *ngIf="!isInfoPasien">
+            <h4 style="text-align: center"> Self Registration - Pilih Poli & Dokter</h4>
+        </div>
+        <div class="p-col-12 p-md-10" *ngIf="isInfoPasien">
+            <h4 style="text-align: center"> Self Registration - Resume</h4>
+        </div>
+    </div>
+    <form [formGroup]="formGroup">
+        <div class="centers" *ngIf="!isInfoPasien">
+            <div class="row">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-4 p-md-offset-4">
+
+                        <div class="p-col-12">
+
+                            <p-checkbox label=" EKSEKUTIF" binary="true" formControlName="ceklisEkse"
+                                (onChange)="changeClick()">
+                            </p-checkbox>
+                        </div>
+                        <div class="p-col-12">
+                            <div class="p-col-12">
+                                <h5 style="text-align:center">Pilih Ruangan</h5>
+                                <p-dropdown formControlName="idRuangan" class="btnUing" [options]="listRuangan"
+                                    [filter]="true"  >
+                                </p-dropdown>
+
+                            </div>
+                            <div class="p-col-12" *ngIf="showDokter">
+                                <h5 style="text-align:center">Pilih Dokter</h5>
+                                <p-dropdown formControlName="idDokter" [options]="listDokter" [filter]="true"
+                                  >
+                                </p-dropdown>
+                            </div>
+                            <div class="p-col-12">
+                                <button (click)="viewResume()" pButton pRipple type="button" label="Selanjutnya"
+                                    icon="pi pi-arrow-circle-right" class="p-button p-mr-2 p-mb-2"></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        
+        </div>
+        <div class="centers" *ngIf="isInfoPasien">
+            <div class="row">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-4">
+                        <div class="detail-pasien">
+                            <p class="text-regular">No RM</p>
+                            <p class="text-bold"> {{item.nocm }}</p>
+                        </div>
+                        <div class="detail-pasien">
+                            <p class="text-regular">Nama Pasien</p>
+                            <p class="text-bold">{{item.namapasien}}</p>
+                        </div>
+                        <div class="detail-pasien">
+                            <p class="text-regular">No. Identitas</p>
+                            <p class="text-bold">{{item.noidentitas}}</p>
+                        </div>
+                    </div>
+                    <div class="p-col-12 p-md-4">
+                        <div class="detail-pasien">
+                            <p class="text-regular">Tempat / Tanggal Lahir</p>
+                            <p class="text-bold">{{item.tempatTglLahir}}</p>
+                        </div>
+                        <div class="detail-pasien">
+                            <p class="text-regular">Alamat</p>
+                            <p class="text-bold">{{item.alamatlengkap}}</p>
+                        </div>
+                        <div class="detail-pasien">
+                            <p class="text-regular">No. Telpon</p>
+                            <p class="text-bold">{{item.notelepon}}</p>
+                        </div>
+                    </div>
+                    <div class="p-col-12 p-md-4">
+                        <div class="detail-pasien">
+                            <p class="text-regular">Tanggal Pendaftaran</p>
+                            <p class="text-bold"> {{item.tglregistrasi}}</p>
+                        </div>
+                        <div class="detail-pasien">
+                            <p class="text-regular">Poli Tujuan</p>
+                            <p class="text-bold">{{item.namaruangan}}</p>
+                        </div>
+                        <div class="detail-pasien">
+                            <p class="text-regular">Dokter</p>
+                            <p class="text-bold">{{item.dokter == null? '-': item.dokter}}</p>
+                            <!-- <p class="text-bold">-</p> -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="p-col-12 p-md-4 p-md-offset-4">
+                <div style="text-align:center" *ngIf="!showNoAntrian">
+                    <!-- <button mat-raised-button color="accent" class="btnTemplate" style="color:white" (click)="save()">Simpan
+        </button> -->
+                    <button (click)="save()" pButton pRipple type="button" label="Simpan"
+                        icon="pi pi-arrow-circle-right" class="p-button p-mr-2 p-mb-2"></button>
+
+                </div>
+                <img *ngIf="loading" style="margin-top:10px"
+                    src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+
+                <div style="text-align:center" *ngIf="showNoAntrian">
+                    <button (click)="nomorAntrian()" pButton pRipple type="button" label="Cetak
+        Nomor Antrian" icon="pi pi-arrow-circle-right" class="p-button p-button-success p-mr-2 p-mb-2"></button>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

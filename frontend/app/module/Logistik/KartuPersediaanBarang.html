@@ -1,0 +1,99 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;"><b>Kartu Persediaan Barang</b></h1>
+    </div>
+    <div class="grid_12">
+        <div class="grid_2"></div>
+        <div class="grid_3" style="margin-top: 5px;">
+            <div class="grid_12">
+                <label c-label item="item">Ruangan</label>
+            </div>
+            <div class="grid_12">                  
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.namaRuangan"
+                k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                k-data-source="listDataRuangan" />
+            </div>
+        </div>
+        <div class="grid_3" style="margin-top: 5px;">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Produk"></label>
+            </div>
+            <div class="grid_12">                  
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nmProduk" />
+            </div>
+        </div>
+        <div class="grid_4" style="margin-top: 5px;">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Periode Tanggal"></label>
+            </div>
+            <div class="grid_12">
+                <!-- AwalPeriode -->
+                <div class="grid_5 padDatePicker">
+                    <div class="grid_12">
+                        <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datetimepicker k-max="now"
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                </div>
+                <!-- AkhirPeriode -->
+                <div class="grid_5 padDatePicker">
+                    <div class="grid_12">
+                        <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                </div>
+                <div class="grid_2">
+                    <button class="c-button" ng-click="cariFilter()">Cari</button>
+                </div>
+            </div>
+        </div>
+        <div class="grid_12">
+            <kendo-grid k-data-source="dataGrid" k-selectable="'row'" k-options="columnGrid" k-ng-model="dataSelected"
+                class="max-height" ng-click="kl(dataSelected)">
+            </kendo-grid>
+        </div>
+        <div class="grid_4"></div>
+        <!-- <div class="grid_2">
+            <div class="grid_12">
+                <label c-label item="item">Saldo Awal : {{item.ttlsaldoawal}}</label>
+            </div>
+        </div>
+        <div class="grid_2">
+            <div class="grid_12">
+                <label c-label item="item">Penerimaan : {{item.ttlpenerimaan}}</label>
+            </div>
+        </div>
+        <div class="grid_2">
+            <div class="grid_12">
+                <label c-label item="item">Pengeluaran : {{item.ttlpengeluaran}}</label>
+            </div>
+        </div>
+        <div class="grid_2">
+            <div class="grid_12">
+                <label c-label item="item">Saldo Akhir : {{item.ttlsaldoakhir}}</label>
+            </div>
+        </div> -->
+    </div>    
+</div>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>

@@ -1,0 +1,39 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+        <div class="row match-height">
+            <!-- <div class="row"> -->
+                <!-- <div class="col-12 col-md-4"> -->
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i data-feather="search"></i></span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Cari..." [(ngModel)]="bookmarkText" />
+                    </div>
+                <!-- </div>
+
+            </div> -->
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2 col-12"
+                    *ngFor="let items of listRuangan | filter: bookmarkText:'namaruangan'"
+                    (click)="pilihRuangan(items)">
+                    <div class="card" style="cursor: pointer;">
+                        <div class="card-header" style="padding:0.5rem">
+                            <span class="badge badge-pill mr-50 {{items.badge}}">{{items.sisa}} </span>
+                        </div>
+                        <div class="card-body" style="padding-bottom:0.5rem">
+                            <h4 class="card-title"
+                                style="white-space: nowrap; overflow: hidden;  text-overflow: ellipsis;  text-align: center;">
+                                {{items.namaruangan}}
+                            </h4>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

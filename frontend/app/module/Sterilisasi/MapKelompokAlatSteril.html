@@ -1,0 +1,234 @@
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="grid_12">
+            <c-panel item="item" header="'Set Alat Steril'" disabled> </c-panel>
+        </div>
+    </div>
+    <div class="grid_12">
+        <div class="grid_12">
+            <div class="grid_12" style="margin-top: 10px">
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Nama Set"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaKelompok"
+                            ng-keypress="($event.which == 13)? SearchEnter():item.namaKelompok" />
+                    </div>
+                </div>
+                <div class="grid_2">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Set"></label>
+                    </div>
+
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.dataKelompokAlat"
+                            k-data-text-field="'namakelompokalat'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listKelompokAlat" />
+                    </div>
+                </div>
+                <div class="grid_1">
+                    <label c-label c-label-text=""></label>
+                    <em style="margin-top:6px;" ng-click='Search()' id="iconButton" data-role="button"
+                        class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
+                            class="k-sprite k-icon k-i-search">Refresh</span></em>
+                    <em style="margin-top:6px;" ng-click='Clear()' id="iconButton" data-role="button"
+                        class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
+                            class="k-sprite k-icon k-i-cancel">Refresh</span></em>
+                </div>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top: 10px">
+            <div class="grid_12">
+                <div id="kGrid" kendo-grid k-data-source="dataSource" k-selectable="'row'" k-columns="columnGridSsS"
+                    k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                    <div k-detail-template>
+                        <kendo-tabstrip>
+                            <div>
+                                <div id="kGridDetail" kendo-grid k-options="data2(dataItem)" k-sortable="'true'"
+                                    k-selectable="'row'" k-ng-model="dataSelected2"
+                                    ng-click="klikDetail(dataSelected2)">
+                                </div>
+                            </div>
+                        </kendo-tabstrip>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_12">
+            <div class="grid_5"></div>
+            <div class="grid_2" style="margin-top: 22px">
+                <button class="c-button" ng-click="MapPaketBaru()">Set Alat Baru</button>
+            </div>
+            <div class="grid_2" style="margin-top: 22px">
+                <button class="c-button" ng-click="UbahPaket()">Ubah Set Alat</button>
+            </div>
+
+            <div class="grid_2" style="margin-top: 22px">
+                <button class="c-button" ng-click="HapusPaket()" style="background-color: red;">Hapus Set Alat</button>
+            </div>
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Jml Row"></label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jmlRow" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
+</div>
+<!-- show pop up Permohonan -->
+<div kendo-window="popupKelompokAlat" k-title="'Set Alat Steril'" k-width="780" k-height="550" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12">
+        <div class="grid_12" style="margin-top: 10px;">
+            <div class="panel panel-default panel-white">
+                <div class="panel-heading-white"><span class="title" c-translate>Nama Set Alat</span></div>
+                <div class="panel-body">
+                    <div class="grid_12">
+                        <div class="grid_8">
+                            <div class="grid_12">
+                                <label c-label item="item">Nama Set Alat</label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox"
+                                    ng-model="item.NamaKelompok" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top: 10px;">
+            <div class="panel panel-default panel-white">
+                <div class="panel-heading-white"><span class="title" c-translate>Detail Set Alat</span></div>
+                <div class="panel-body">
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Alat"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input kendo-combo-box k-ng-model="item.produk" k-data-text-field="'namaproduk'"
+                                    k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                                    k-data-source="listProduk" k-on-change='getSatuan()' />
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Qty Alat"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox"
+                                    ng-model="item.jumlah" />
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Satuan"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input kendo-combo-box k-ng-model="item.satuan" k-data-text-field="'satuanstandar'"
+                                    k-data-value-field="'ssid'" k-filter="'contains'" k-auto-bind="false"
+                                    k-data-source="listSatuan" />
+                            </div>
+                        </div>                        
+                    </div>
+                    <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:50px">
+                        <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="tambah()">
+                            <span class="k-icon k-update"></span>Tambah</button>
+                        <button class="k-button  k-button-icontext" ng-click="hapus()"
+                            style="background-color: red;"><span class="k-icon k-delete"></span>Hapus</button>
+                        <button class="k-button  k-button-icontext" ng-click="batalR()"><span
+                                class="k-icon k-cancel"></span>Batal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top: 10px">
+            <div class="grid_12">
+                <div class="grid_12 borderBox">
+                    <div id="kGrid" kendo-grid k-data-source="dataGridR" k-selectable="'row'" k-columns="columnGridR"
+                        k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelectedR"
+                        ng-click="klikGridR(dataSelectedR)">                        </div>
+                </div>
+            </div>
+            <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:50px">
+                <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="Simpan()" style="background-color: green;">
+                    <span class="k-icon k-change"></span>Simpan</button>               
+                <button class="k-button  k-button-icontext" ng-click="batalKelompok()"><span
+                        class="k-icon k-cancel"></span>Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* .k-window-titlebar {
+            background-color: #10c4b2;
+            font-weight: 800;
+        } */
+
+    .k-i-close {
+        display: none;
+    }
+
+    button:disabled {
+        background: #B5B2B1;
+    }
+
+    .btnAdd {
+        margin-right: 10px;
+        padding: 5px 10px;
+        border: none;
+        color: white;
+        font-size: 12px;
+        background-color: #41abf2;
+        border-radius: 3px;
+        cursor: pointer;
+        min-width: 50px;
+    }
+
+    .custom-button {
+        margin: 0 0 10px;
+        background: none;
+        color: black;
+        border-radius: 0.8em;
+        border: 1px solid;
+        background-color: white;
+    }
+
+    .k-edit,
+    .k-i-download {
+        background-position: -313px -221px;
+    }
+
+    /* a.k-button.k-button-icontext {
+        min-width: 84px;
+        background-color: #e0360b;
+        border: none;
+        margin: .1em;
+    } */
+
+    .duplicateDate {
+        background-color: red;
+        border: 2px solid red !important;
+    }
+
+    span.errorCuti {
+        text-align: center;
+        width: 100%;
+        padding: 10px 20px;
+        color: red;
+        font: italic 14px/30px arial, sans-serif;
+    }
+
+    .bold-produk {
+        font-weight: bold;
+        background-color: #ffffffee;
+    }
+</style>

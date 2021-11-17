@@ -1,0 +1,34 @@
+[
+  {
+    "name": "home",
+    "url": "/home",
+    "templateurl": "Welcome.html",
+    "controller": "WelcomeCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      }
+    ]
+  },
+  {
+    "name": "ErrorPage",
+    "url": "/ErrorPage",
+    "templateurl": "module/SysAdmin/ErrorPage.html",
+    "controller": "ErrorPageCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      }
+    ]
+  }
+]

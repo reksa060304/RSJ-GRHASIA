@@ -1,0 +1,69 @@
+<div class="p-col-12 p-fluid p-formgrid ">
+        <div class="p-grid">
+          <div class="p-col-12 p-md-8">
+            <p-panel header="Playlist" [toggleable]="true">
+              <div class="p-grid">
+                <div class="video-player-wrapper">
+
+        <vg-player (onPlayerReady)="videoPlayerInit($event)" vgLoop="true">
+          <vg-overlay-play></vg-overlay-play>
+          <vg-buffering></vg-buffering>
+
+          <vg-scrub-bar>
+            <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+            <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+          </vg-scrub-bar>
+
+          <vg-controls>
+            <vg-play-pause></vg-play-pause>
+            <vg-playback-button></vg-playback-button>
+
+            <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+
+            <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+
+            <vg-mute></vg-mute>
+            <vg-volume></vg-volume>
+
+            <vg-fullscreen></vg-fullscreen>
+          </vg-controls>
+
+          <video #media [vgMedia]="media" [src]="currentVideo.src" id="singleVideo" preload="auto" crossorigin>
+          </video>
+        </vg-player>
+
+
+
+               </div>
+              </div>
+            </p-panel>
+          </div>
+          <div class="p-col-12 p-md-4">
+             <div class="card">
+              <div class="invoice">
+                <div class="invoice-header">
+                  <div class="invoice-company">
+                    <img id="invoice-logo" class="logo-image" src="assets/layout/images/logo-small.png" class="morpheus-logo"/>
+                    <div class="company-name">P-CURE NEO</div>
+                    <div>Selalu siap melayani dengan senang hati</div>
+                  </div>
+                </div>
+                </div>
+               </div>
+               <div class="card">
+                 <div class="p-grid">
+                  <button (click)="print('A')" pButton pRipple type="button" label="Umum" pTooltip="Cetak Antrian Pasien Umum" icon="fa fa-wheelchair" class="p-button-outlined p-button-success p-mr-2 p-mb-2"></button>
+                  <button (click)="print('B')" pButton pRipple type="button" label="BPJS"  pTooltip="Cetak Antrian Pasien BPJS" icon="fa fa-briefcase"  class="p-button-outlined p-button-info p-mr-2 p-mb-2"></button>
+                  <button  (click)="goTo('self-regis')" pButton pRipple type="button" label="Self Registration"  pTooltip="Registrasi Mandiri" icon="fa fa-user-md" class="p-button-outlined p-button-help p-mr-2 p-mb-2"></button>
+                  <button (click)="goTo('checkin')" pButton pRipple type="button" label="Check-In"  pTooltip="Konfirmasi Reservasi Online" icon="fa fa-check-circle"  class="p-button-outlined p-button-danger p-mr-2 p-mb-2"></button>
+                   </div>
+                 </div>
+          </div>
+        </div>
+</div>
+<div style="margin-top: -2000px;">
+  <mat-form-field class="example-full-width">
+    <input #scanBarcode type="text" matInput placeholder="Reservasi " (input)="onChangeNoreservasi($event.target.value)"
+      [(ngModel)]="model">
+  </mat-form-field>
+</div>

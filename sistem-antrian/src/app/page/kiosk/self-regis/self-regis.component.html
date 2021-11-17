@@ -1,0 +1,50 @@
+<div class="p-col-12 p-fluid p-formgrid ">
+    <div class="p-grid">
+        <div class="p-col-12 p-md-1">
+            <a id="link-kios" (click)="goBack()" pTooltip="Kembali Ke Menu Sebelumnya">
+                <span style="font-size:35px;" class="fa fa-arrow-left"></span>
+            </a>
+        </div>
+        <div class="p-col-12 p-md-10">
+            <h4 style="text-align: center">Self Registration </h4>
+        </div>
+    </div>
+    <div class="p-grid dashboard">
+        <div class="p-col-12 p-md-6 p-lg-4"  (click)="changePage('Umum')"> 
+            <div class="p-grid p-nogutter overview-box overview-box-1 card" style="cursor: pointer;">
+                <div class="p-col-4 overview-box-icon">
+                   <i class="pi pi-user-plus"></i>
+                </div>
+                <div class="p-col-8">
+                    <!-- <span class="overview-box-count">253</span>
+                    <span class="overview-box-name">FILES RECEIVED</span> -->
+                    <span class="overview-box-rate">Umum</span>
+                </div>
+            </div>
+        </div>
+        <div class="p-col-12 p-md-6 p-lg-4"  (click)="changePage('BPJS')">
+            <div class="p-grid p-nogutter overview-box overview-box-1 card" style="cursor: pointer;">
+                <div class="p-col-4 overview-box-icon">
+                   <i class="fa fa-heartbeat"></i>
+                </div>
+                <div class="p-col-8">
+                    <!-- <span class="overview-box-count">253</span>
+                    <span class="overview-box-name">FILES RECEIVED</span> -->
+                    <span class="overview-box-rate">BPJS</span>
+                </div>
+            </div>
+        </div>
+        <div class="p-col-12 p-md-6 p-lg-4"  (click)="changePage('false')">
+            <div class="p-grid p-nogutter overview-box overview-box-1 card" style="cursor: pointer;">
+                <div class="p-col-4 overview-box-icon">
+                   <i class="fa fa-stethoscope"></i>
+                </div>
+                <div class="p-col-8">
+                    <!-- <span class="overview-box-count">253</span>
+                    <span class="overview-box-name">FILES RECEIVED</span> -->
+                    <span class="overview-box-rate">Asuransi</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

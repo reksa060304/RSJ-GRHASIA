@@ -1,0 +1,130 @@
+<div class="exception-body accessdenied">
+    <div class="exception-panel">
+        <h1>ACCESS</h1>
+        <h3>denied</h3>
+        <p>You are not allowed to view this page.</p>
+       <div class="grid_4">
+             <button class="btnTemplate1" ng-click="back()"> <i class="fa fa-arrow-left"></i>Back To Home</button>
+       </div> 
+    </div>
+    <div class="exception-footer">
+        <!-- <img class="exception-logo" src="../app/images/logo.png"> -->
+        <img class="exception-appname" src="../app/images/Transmedic HIS.png"></div>
+</div>
+
+<style>
+    body {
+   font-size: 14px;
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: 0;
+    margin: 0;
+    min-height: 100%;
+    background: linear-gradient(
+180deg
+, #2E323F 0%, #0A061A 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+    .exception-body {
+        background-image: url(../app/images/accessdenied/exception-ondark.png);
+        background-repeat: no-repeat;
+        background-size: contain;
+        box-sizing: border-box;
+        min-height: 90vh;
+        /* top:50%; */
+    
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .exception-body .exception-panel {
+        text-align: center;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        margin-top: -200px;
+    }
+
+    .exception-body.accessdenied .exception-panel h1 {
+        color: #0F8BFD;
+        text-shadow: 0px 0px 50px rgb(15 139 253 / 20%);
+    }
+
+    .exception-body .exception-panel h1 {
+        font-size: 110px;
+        font-weight: 900;
+        margin-bottom: 0;
+    }
+
+    h1:first-child,
+    h2:first-child,
+    h3:first-child,
+    h4:first-child,
+    h5:first-child,
+    h6:first-child {
+        margin-top: 0;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 1.5rem 0 1rem 0;
+        font-family: inherit;
+        font-weight: 600;
+        line-height: 1.2;
+        color: inherit;
+    }
+
+
+    .exception-body.accessdenied .exception-panel h3 {
+        color: #013c72;
+        /* color:#10c4b2; */
+    }
+
+    .exception-body .exception-panel h3 {
+        font-size: 60px;
+        font-weight: 900;
+        margin-top: -60px;
+        margin-bottom: 50px;
+    }
+
+    .exception-body .exception-panel p {
+        font-size: 15px;
+        font-weight: 400;
+        max-width: 320px;
+    }
+
+    p {
+        margin: 0 0 1rem 0;
+        line-height: 1.5;
+    }
+
+    .exception-body .exception-footer {
+        position: absolute;
+        bottom: 60px;
+        align-items: center;
+        display: flex;
+    }
+
+    .exception-body .exception-footer .exception-logo {
+        width: 70px;
+    }
+
+    .exception-body .exception-footer .exception-appname {
+        width: 200px;
+        margin-left: 1rem;
+    }
+</style>

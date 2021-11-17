@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+require("amd-loader");
+var express = require('express');
+
+var debug = require('debug')('my-application');
+//var amqp = require('amqplib');
+//var HashMap = require('hashmap');
+//var config = require('../app/javascripts/SettingRabbit');
+
+var app = require('../app');
+//var RabbitHole = require('../rabbitHole');
+//var Storage = require('node-storage');
+
+//console.log('RabbitMQ Server Host : %s', config.rabbitMQHost);
+
+// START Alter Syamsu, biar difix-kan portnya
+
+// app.set('port', process.env.PORT || 5555);
+
+// var server = app.listen(app.get('port'), function() {
+//     console.log('Express server listening on port ' + server.address().port);
+// });
+// var io = require('socket.io').listen(server);
+
+app.set('port', 5555);
+
+var server = app.listen(app.get('port'), function() {
+    console.log('Express Server for HTPP Server & Notification Server, listening on port ' + server.address().port);
+});

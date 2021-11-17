@@ -1,0 +1,95 @@
+define([], function () {
+    'use strict';
+    if (window.location.hostname.indexOf('transmedic') > -1) {
+        return { 
+
+            // BaseUrl: 'http://transmedic.co.id:5555/app/data/GetRouting',
+            // RouteUrl: 'http://transmedic.co.id:5555/app/data/GetRouting',
+            UrlDataConfig: 'http://transmedic.co.id:5555/app/data/GetRequireConfig',         
+            urlSocket: 'https://transmedic.co.id:9998',
+            baseUrlData: "http://transmedic.co.id:5555/app/data/",         
+            urlRoute: 'http://transmedic.co.id:5555/app/data/GetRouting',
+            urlRoutePelayanan: 'http://transmedic.co.id:5555/app/data/GetRoutingPelayanan',
+            urlRouteSarpras: 'http://transmedic.co.id:5555/app/data/GetRoutingSarpras',
+            urlRouteKeuangan: 'http://transmedic.co.id:5555/app/data/GetRoutingKeuangan',
+            urlRouteManagemen: 'http://transmedic.co.id:5555/app/data/GetRoutingManagemen',
+            urlRouteSDM: 'http://transmedic.co.id:5555/app/data/GetRoutingSDM',
+
+            baseUrlLogin: "https://transmedic.co.id:8700/service/medifirst2000/auth/sign-in",
+            baseUrlLogout: "https://transmedic.co.id:8700/service/medifirst2000/auth/sign-out",
+            baseApiBackend: 'https://transmedic.co.id:8700/service/medifirst2000/',
+            baseProfileMenu: 1, 
+
+            rabbitMQHost: 'amqp://rsab:rsab@192.168.12.2'
+
+        };
+    } 
+     else  if(window.location.hostname.indexOf('202.138') > -1) {
+        return {
+           // BaseUrl: 'http://transmedic.co.id:5555/app/data/GetRouting',
+            // RouteUrl: 'http://transmedic.co.id:5555/app/data/GetRouting',
+            UrlDataConfig: 'http://transmedic.co.id:5555/app/data/GetRequireConfig',         
+            urlSocket: 'http://transmedic.co.id:5555',
+            baseUrlData: "http://transmedic.co.id:5555/app/data/",         
+            urlRoute: 'http://transmedic.co.id:5555/app/data/GetRouting',
+            urlRoutePelayanan: 'http://transmedic.co.id:5555/app/data/GetRoutingPelayanan',
+            urlRouteSarpras: 'http://transmedic.co.id:5555/app/data/GetRoutingSarpras',
+            urlRouteKeuangan: 'http://transmedic.co.id:5555/app/data/GetRoutingKeuangan',
+            urlRouteManagemen: 'http://transmedic.co.id:5555/app/data/GetRoutingManagemen',
+            urlRouteSDM: 'http://transmedic.co.id:5555/app/data/GetRoutingSDM',
+
+            baseUrlLogin: "http://transmedic.co.id:8700/service/medifirst2000/auth/sign-in",
+            baseUrlLogout: "http://transmedic.co.id:8700/service/medifirst2000/auth/sign-out",
+            baseApiBackend: 'http://transmedic.co.id:8700/service/medifirst2000/',
+            baseProfileMenu: 1, 
+
+            rabbitMQHost: 'amqp://rsab:rsab@192.168.12.2'
+
+        };
+    }
+	 else  if(window.location.hostname.indexOf('localhost') > -1) {
+        return {
+           // BaseUrl: 'http://transmedic.co.id:5555/app/data/GetRouting',
+            // RouteUrl: 'http://transmedic.co.id:5555/app/data/GetRouting',
+            UrlDataConfig: 'http://localhost:5555/app/data/GetRequireConfig',         
+            urlSocket: 'http://localhost:9998',
+            baseUrlData: "http://localhost:5555/app/data/",         
+            urlRoute: 'http://localhost:5555/app/data/GetRouting',
+            urlRoutePelayanan: 'http://localhost:5555/app/data/GetRoutingPelayanan',
+            urlRouteSarpras: 'http://localhost:5555/app/data/GetRoutingSarpras',
+            urlRouteKeuangan: 'http://localhost:5555/app/data/GetRoutingKeuangan',
+            urlRouteManagemen: 'http://localhost:5555/app/data/GetRoutingManagemen',
+            urlRouteSDM: 'http://localhost:5555/app/data/GetRoutingSDM',
+
+            baseUrlLogin: "http://localhost:8700/service/medifirst2000/auth/sign-in",
+            baseUrlLogout: "http://localhost:8700/service/medifirst2000/auth/sign-out",
+            baseApiBackend: 'http://localhost:8700/service/medifirst2000/',
+            baseProfileMenu: 1, 
+
+            rabbitMQHost: 'amqp://rsab:rsab@192.168.12.2'
+
+        };
+    }else {
+        return {
+           // BaseUrl: 'http://transmedic.co.id:5555/app/data/GetRouting',
+            // RouteUrl: 'http://transmedic.co.id:5555/app/data/GetRouting',
+            UrlDataConfig: 'http://172.20.1.13:5555/app/data/GetRequireConfig',         
+            urlSocket: 'http://172.20.1.13:9998',
+            baseUrlData: "http://172.20.1.13:5555/app/data/",         
+            urlRoute: 'http://172.20.1.13:5555/app/data/GetRouting',
+            urlRoutePelayanan: 'http://172.20.1.13:5555/app/data/GetRoutingPelayanan',
+            urlRouteSarpras: 'http://172.20.1.13:5555/app/data/GetRoutingSarpras',
+            urlRouteKeuangan: 'http://172.20.1.13:5555/app/data/GetRoutingKeuangan',
+            urlRouteManagemen: 'http://172.20.1.13:5555/app/data/GetRoutingManagemen',
+            urlRouteSDM: 'http://172.20.1.13:5555/app/data/GetRoutingSDM',
+
+            baseUrlLogin: "https://172.20.1.13:8700/service/medifirst2000/auth/sign-in",
+            baseUrlLogout: "https://172.20.1.13:8700/service/medifirst2000/auth/sign-out",
+            baseApiBackend: 'https://172.20.1.13:8700/service/medifirst2000/',
+            baseProfileMenu: 1, 
+
+            rabbitMQHost: 'amqp://rsab:rsab@192.168.12.2'
+
+        };
+    }
+});

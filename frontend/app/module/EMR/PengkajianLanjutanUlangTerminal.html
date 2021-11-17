@@ -1,0 +1,191 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12"  disable-contents="allDisabled" >
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Pengkajian Lanjutan / Ulang Pasien Terminal</div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+	          <div class="grid_3">
+	            <div class="grid_12">
+	                <label c-label item="item">Tx dr Terakhir </label>
+	            </div>
+
+	            <div class="grid_12">
+	                <input c-text-box type="input" filter="" class="k-textbox"
+	                    ng-model="item.obj[21023353]"  />
+	            </div>
+	        </div>
+	        <div class="grid_3">
+	            <div class="grid_12">
+	                <label c-label item="item">Nama Keluarga </label>
+	            </div>
+
+	            <div class="grid_12">
+	                <input c-text-box type="input" filter="" class="k-textbox"
+	                    ng-model="item.obj[21023354]"  />
+	            </div>
+	        </div>
+	        <div class="grid_3">
+	            <div class="grid_12">
+	                <label c-label item="item">Dx Medis </label>
+	            </div>
+
+	            <div class="grid_12">
+	                <input c-text-box type="input" filter="" class="k-textbox"
+	                    ng-model="item.obj[21023355]"  />
+	            </div>
+	        </div>
+	        <div class="grid_3">
+	            <div class="grid_12">
+	                <label c-label item="item">Tgl Hubungi Rohaniawan </label>
+	            </div>
+
+	            <div class="grid_12">
+	                <input style="width: 100%" k-ng-model="item.obj[21023356]" kendo-datepicker 
+                                    placeholer="yyyy-MM-dd"  />
+	            </div>
+	        </div>
+        <div>
+                <!-- <div ng-show="item.obj[15000020]"> -->
+            <fieldset>     
+                <div class="grid_12">
+                        <table style="border: 0px">
+
+                        <tr>
+                            <th style="width: 3%">OBSERVASI </th>
+                            <th style="width: 25%">MULAI</th>
+                            <th style="width: 18%">1/2 JAM</th>
+                            <th style="width: 18%">1 JAM</th>
+                            <th style="width: 18%">2 JAM</th>
+                            <th style="width: 18%">3 JAM</th>
+                            <th style="width: 18%">4 JAM</th>
+                            <th style="width: 18%">5 JAM</th>
+                            <th style="width: 18%">Keterangan</th>
+                            
+                        </tr>
+                           <tr style="border: 0px" ng-repeat="list in listData1 | orderBy:'nourut'" ng-init="jawabIndex = $index">
+                            <td >{{list.namaexternal}}</td>
+                            <td ng-repeat="jawab in list.details">
+                                <div class="grid_12">
+                                    <div ng-switch on="jawabIndex">
+
+                                        
+                                    </div>
+
+                                <div ng-switch on="jawab.type">
+
+                                        <div ng-switch-when="checkbox">
+                                            <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                ng-model="item.obj[jawab.id]" ng-click="getSkoralegi(jawab)">
+                                            <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                &nbsp;{{jawab.reportdisplay}}</label>
+
+                                        </div>
+                                        <div ng-switch-when="textarea">
+                                            <textarea style="width: 100px;height: 30px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[jawab.id]" />
+                                        </div>
+                                        <div ng-switch-when="combobox">
+                                            <div class="grid_12">
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                    k-auto-bind="false" k-data-source="listPegawai" />
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+                           </tr> 
+                        </table>
+                        
+                    </div>
+                
+            </fieldset>
+        </div>
+        
+          <div class="grid_12">
+            <div class="grid_8"></div>
+            <div class="grid_4">
+                <fieldset style="margin-top:10px;border-radius: 10px;height: 200px;">
+                    <div style="padding: 20px;">
+                        <div class="grid_12" style="margin-top:10px">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Petugas / Perawat"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023357]"
+                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listPegawai" />
+
+                            </div>
+                        </div>
+                        <!-- <div class="grid_12" style="margin-top:10px">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Dokter Penanggung Jawab"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023358]"
+                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listDokter" />
+
+                            </div>
+                        </div> -->
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        
+  </div>
+
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

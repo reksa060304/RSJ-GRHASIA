@@ -1,0 +1,522 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    legend b {
+        color: #41abf2;
+    }
+
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+    hr {
+    border: 1px dashed #cccccc;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    display: inline-block;
+    width: 100%;
+}
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Formulir Poli Umum </div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <DIV><b>Gejala</b></DIV>
+                    <div class="grid_12" style="margin-top: 5px;">
+                        <div class="grid_12" ng-repeat="list in listGejala | orderBy:'id'">
+                            <b>{{list.nama}}</b>
+                            <div class="grid_12" style="padding: 5pt">
+                                <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                    <div ng-switch on="jawab.type">
+                                         <div ng-switch-when="checkbox">
+                                            <div class="grid_3">
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                    ng-model="item.obj[jawab.id]" >
+                                                <label class="k-checkbox-label"
+                                                    for="item.obj{{jawab.id}}">&nbsp;{{jawab.nama}}</label>
+                                            </div>
+                                        </div>          
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div><b>Gejala Lain</b></div>
+                        <div class="grid_12"  style="width: 40%"> 
+                            <input class="k-textbox" ng-model="item.obj[18000057]" type="text" placeholder="{{data2.satuan}}" ng-value="{{data2.value}}">
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                         <div class="grid_12" style="width: 30%">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Onset"></label>
+                            </div>
+                            <!-- <div class="grid_12">
+                                <input style="width: 100%" k-ng-model="item.obj[10728]" kendo-combo-box type="month" k-format="'yyyy-MM'" />
+                            </div> -->
+                            <select kendo-combo-box k-ng-model="item.obj[18000058]">
+                              <option value="1" text="<1jam">< 1 jam</option>
+                              <option value="2" text="<24jam">< 24 jam</option>
+                              <option value="3" text="1hari">1 Hari</option>
+                              <option value="4" text="2hari">2 Hari</option>
+                              <option value="5" text="3hari">3 Hari</option>
+                              <option value="6" text="4hari">4 Hari</option>
+                              <option value="7" text="5hari">5 Hari</option>
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Tanda Vital</b></legend>
+                    <div class="grid_12" style="margin-top: 10px;">
+                            <div class="grid_12">
+                                <label><b>Tekanan Darah</b></label>
+                                <div ng-repeat="stat in listTK  | orderBy:'id'">
+                                    <div class="grid_3">
+                                        <md-radio-group ng-model="item.obj[18000059]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <label><b>Nadi</b></label>
+                                <div ng-repeat="stat in listNadi  | orderBy:'id'">
+                                    <div class="grid_3">
+                                        <md-radio-group ng-model="item.obj[18000060]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <label><b>Suhu</b></label>
+                                <div ng-repeat="stat in listSuhu  | orderBy:'id'">
+                                    <div class="grid_3">
+                                        <md-radio-group ng-model="item.obj[18000061]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <label><b>SpO2</b></label>
+                                <div ng-repeat="stat in listSpo  | orderBy:'id'">
+                                    <div class="grid_3">
+                                        <md-radio-group ng-model="item.obj[18000062]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Pemeriksaan Fisik</b></legend>
+                    <div class="grid_12">
+                        <div><label>Kepala</label></div>
+                        <input style="margin-bottom: 10px;width: 50%" class="k-textbox" ng-model="item.obj[18000063]" type="text" placeholder="{{data2.satuan}}">
+                        <br>
+                        <div><label>Leher</label></div>
+                        <input style="margin-bottom: 10px;width: 50%" class="k-textbox" ng-model="item.obj[18000064]" type="text" placeholder="{{data2.satuan}}">
+                        <div><label>Faring</label></div>
+                        <input style="margin-bottom: 10px;width: 50%" class="k-textbox" ng-model="item.obj[18000065]" type="text" placeholder="{{data2.satuan}}">
+                        <div><label>Thorax</label></div>
+                        <div style="margin-left: 20px">
+                            <div><label>Inspeksi</label></div>
+                            <input style="margin-bottom: 10px;width: 50%" class="k-textbox" ng-model="item.obj[18000066]" type="text" placeholder="{{data2.satuan}}">
+                        </div>
+                        <div style="margin-left: 20px">
+                            <div><label>Palpasi</label></div>
+                            <input style="margin-bottom: 10px;width: 50%" class="k-textbox" ng-model="item.obj[18000067]" type="text" placeholder="{{data2.satuan}}">
+                        </div>
+                        <div style="margin-left: 20px">
+                            <div><label>Perkusi</label></div>
+                            <input style="margin-bottom: 10px;width: 50%" class="k-textbox" ng-model="item.obj[18000068]" type="text" placeholder="{{data2.satuan}}">
+                        </div>
+                        <div style="margin-left: 20px">
+                            <div><label>Auskultasi</label></div>
+                            <div class="grid_6">
+                                <div><label>RH :</label></div>
+                                <div class="grid_4" style="margin-top: 10px;">
+                                    <table>
+                                        <tr>
+                                            <td style="border-left-color: #FFFFFF;border-top-color: #FFFFFF"> 
+                                                <input class="k-textbox" ng-model="item.obj[18000069]" type="text" placeholder="{{data2.satuan}}">
+                                            </td>
+                                            <td style="border-right-color: #FFFFFF;border-top-color: #FFFFFF"> 
+                                                <input class="k-textbox" ng-model="item.obj[18000070]" type="text" placeholder="{{data2.satuan}}">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-left-color: #FFFFFF">
+                                                <input class="k-textbox" ng-model="item.obj[18000071]" type="text" placeholder="{{data2.satuan}}"> 
+                                            </td>
+                                            <td style="border-right-color: #FFFFFF"> 
+                                                <input class="k-textbox" ng-model="item.obj[18000072]" type="text" placeholder="{{data2.satuan}}">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-left-color: #FFFFFF;border-bottom-color: #FFFFFF">
+                                                <input class="k-textbox" ng-model="item.obj[18000073]" type="text" placeholder="{{data2.satuan}}"> 
+                                            </td>
+                                            <td style="border-right-color: #FFFFFF;border-bottom-color: #FFFFFF"> 
+                                                <input class="k-textbox" ng-model="item.obj[18000074]" type="text" placeholder="{{data2.satuan}}">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-left: 20px">
+                            <div class="grid_6">
+                                <div><label>WH :</label></div>
+                                <div class="grid_4" style="margin-top: 10px;">
+                                    <table>
+                                        <tr>
+                                            <th style="border-left-color: #FFFFFF;border-top-color: #FFFFFF;width : 100px"> 
+                                                <input class="k-textbox" ng-model="item.obj[18000075]" type="text" placeholder="{{data2.satuan}}">
+                                            </th>
+                                            <th style="border-right-color: #FFFFFF;border-top-color: #FFFFFF;width : 200px"> 
+                                                <input class="k-textbox" ng-model="item.obj[18000076]" type="text" placeholder="{{data2.satuan}}">
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-left-color: #FFFFFF">
+                                                <input class="k-textbox" ng-model="item.obj[18000077]" type="text" placeholder="{{data2.satuan}}"> 
+                                            </td>
+                                            <td style="border-right-color: #FFFFFF"> 
+                                                <input class="k-textbox" ng-model="item.obj[18000078]" type="text" placeholder="{{data2.satuan}}">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-left-color: #FFFFFF;border-bottom-color: #FFFFFF">
+                                                <input class="k-textbox" ng-model="item.obj[18000079]" type="text" placeholder="{{data2.satuan}}"> 
+                                            </td>
+                                            <td style="border-right-color: #FFFFFF;border-bottom-color: #FFFFFF"> 
+                                                <input class="k-textbox" ng-model="item.obj[18000080]" type="text" placeholder="{{data2.satuan}}">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div><b>Abdomen</b></div>
+                        <div class="grid_12" style="margin-top: 5px;">
+                            <div class="grid_12" ng-repeat="list in listAbdomen | orderBy:'id'">
+                                <b>{{list.nama}}</b>
+                                <div class="grid_12" style="padding: 5pt">
+                                    <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                        <div ng-switch on="jawab.type">
+                                             <div ng-switch-when="textbox">
+                                                <div class="grid_12" style="margin-top: 5px">
+                                                    <div>
+                                                        <label>{{jawab.nama}}</label>
+                                                    </div>
+                                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text" placeholder="{{data2.satuan}}">
+                                                </div>
+                                            </div>          
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 10px"><b>Extremitas</b></div>
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <div><label><b>Akral:</b></label></div>
+                                <div ng-repeat="stat in listAkral  | orderBy:'id'">
+                                    <div class="grid_3">
+                                        <md-radio-group ng-model="item.obj[18000085]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_4" style="margin-top: 10px;">
+                                    <table>
+                                        <tr>
+                                            <th style="border-left-color: #FFFFFF;border-top-color: #FFFFFF;width : 100px"> 
+                                                <input class="k-textbox" ng-model="item.obj[18000086]" type="text" placeholder="{{data2.satuan}}">
+                                            </th>
+                                            <th style="border-right-color: #FFFFFF;border-top-color: #FFFFFF;width : 200px"> 
+                                                <input class="k-textbox" ng-model="item.obj[18000087]" type="text" placeholder="{{data2.satuan}}">
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-left-color: #FFFFFF;border-bottom-color: #FFFFFF">
+                                                <input class="k-textbox" ng-model="item.obj[18000088]" type="text" placeholder="{{data2.satuan}}"> 
+                                            </td>
+                                            <td style="border-right-color: #FFFFFF;border-bottom-color: #FFFFFF"> 
+                                                <input class="k-textbox" ng-model="item.obj[18000089]" type="text" placeholder="{{data2.satuan}}">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                    <div><label><b>Kekuatan Motorik</b></label></div>
+                                    <div class="grid_4" style="margin-top: 10px;">
+                                        <table>
+                                            <tr>
+                                                <th style="border-left-color: #FFFFFF;border-top-color: #FFFFFF;width : 100px"> 
+                                                    <input class="k-textbox" ng-model="item.obj[18000090]" type="text" placeholder="{{data2.satuan}}">
+                                                </th>
+                                                <th style="border-right-color: #FFFFFF;border-top-color: #FFFFFF;width : 200px"> 
+                                                    <input class="k-textbox" ng-model="item.obj[18000091]" type="text" placeholder="{{data2.satuan}}">
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-left-color: #FFFFFF;border-bottom-color: #FFFFFF">
+                                                    <input class="k-textbox" ng-model="item.obj[18000092]" type="text" placeholder="{{data2.satuan}}"> 
+                                                </td>
+                                                <td style="border-right-color: #FFFFFF;border-bottom-color: #FFFFFF"> 
+                                                    <input class="k-textbox" ng-model="item.obj[18000093]" type="text" placeholder="{{data2.satuan}}">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                            </div> 
+                            <div class="grid_12">
+                                    <div><label><b>Pemeriksaan Lainnya</b></label></div>
+                                    <div class="grid_12" style="margin-top: 10px;">
+                                        <input class="k-textbox" ng-model="item.obj[18000110]" type="text" placeholder="{{data2.satuan}}">
+                                    </div>
+                            </div>
+                        </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend>Diagnosis</legend>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12">
+                            <label><b>Diagnosis Covid</b></label>
+                            <div ng-repeat="stat in listDiagnosa2 | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000094]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="grid_12">
+                            <label><b>Diagnosa Non Covid</b></label>
+                            <input class="k-textbox" ng-model="item.obj[18000095]" type="text" placeholder="{{data2.satuan}}">
+                        </div> -->
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Diagnosis Non Covid "></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[18000095]" k-data-text-field="'text'"
+                                    k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false"
+                                    k-data-source="listDiagnosa" />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend>Tata Laksana</legend>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12">
+                            <label><b>Butuh Observasi</b></label>
+                            <div ng-repeat="stat in listYa | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000096]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div><label><b>Farmakologi</b></label></div>
+                            <table>
+                                <tr>
+                                    <th>Nama Obat</th>
+                                    <th>Jumlah</th>
+                                    <th>Frekuensi/hari</th>
+                                    <th>Dosis</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000097]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000098]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000099]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000100]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000101]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000102]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000103]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000104]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000105]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000106]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000107]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                    <td>
+                                        <input class="k-textbox" ng-model="item.obj[18000108]" type="text" placeholder="{{data2.satuan}}">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Pelayanan</b></legend>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12">
+                            <div ng-repeat="stat in listPelayanan | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000109]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                </fieldset>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+       
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

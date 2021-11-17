@@ -1,0 +1,104 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+    
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+</style>
+
+<!-- <div ng-controller="StokRuanganCtrl"> -->
+    <!-- <div class="panel panel-default container_12"> -->
+        <div class="grid_12 headerBox">
+            <h1 style="color: white;"><b>Pengumuman</b></h1>
+        </div>
+        <div class="grid_12" style="margin-top: 10px">
+            <div class="grid_12" >
+              <div class="grid_8" >
+              </div>
+                        
+                <div class="grid_3" style="margin-top: -6px">
+                    <label c-label item="item">Periode :</label>
+                    <div class="grid_6">
+                      <input style="width: 100%" k-ng-model="item.tglAwal"  kendo-datetimepicker k-max="now" placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                    <div class="grid_6">
+                      <input style="width: 100%" k-ng-model="item.tglAkhir"  kendo-datetimepicker  placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                </div>
+                <div class="grid_1" style="margin-top: 22px">
+                    <button class="c-button success" ng-click="cari()">Cari</button>
+                </div>
+            </div>
+        <div class="grid_12" style="margin-top: 10px">
+            <!-- <div class="grid_12 headerBox">
+                <p>Daftar Surat Masuk</p>
+            </div> -->
+            <!-- grid table -->
+             <div class="grid_12 borderBox">
+                <div id="kGrid" 
+                kendo-grid k-data-source="dataGrid" 
+                k-selectable="'row'" 
+                class="max-height"
+                k-options="columnGrid"
+                k-pageable="'true'" 
+                k-sortable="'true'" 
+                k-ng-model="dataSelected"
+                ng-click="klikGrid(dataSelected)">
+                </div>
+            </div>
+            
+            
+            
+        </div>
+        <div class="grid_12">
+            <div class="grid_8"></div>
+            <div class="grid_2">
+              <button class="c-button" ng-click="inputSurat()">Input</button>
+            </div> 
+            <div class="grid_2">
+              <button class="c-button" ng-click="detailSurat()">Detail</button>
+            </div> 
+          </div> 
+      </div>
+
+  <div kendo-window="popUpDisposisi" k-title="' Disposisi'" k-width="400" k-visible="false" >
+    <div class="grid_12">
+          <label c-label item="item">Nama Pegawai</label>
+          <input  kendo-combo-box k-ng-model="item.nmpegawai" k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+      </div>
+</div>
+<div kendo-window="popUpRiwayatDisposisi" k-title="' Riwayat Disposisi'" k-width="400" k-height="400" k-visible="false" >
+    <div class="grid_12" style="margin-top: 10px">
+            <!-- <div class="grid_12 headerBox">
+                <p>Daftar Surat Masuk</p>
+            </div> -->
+            <!-- grid table -->
+             <div class="grid_12 borderBox">
+                <div id="kGrid" 
+                kendo-grid k-data-source="dataGridDis" 
+                k-selectable="'row'" 
+                class="max-height"
+                k-options="columnGridDis"
+                k-pageable="'true'" 
+                k-sortable="'true'" 
+                k-ng-model="dataSelectedDis"
+                ng-click="klikGridDis(dataSelectedDis)">
+                </div>
+            </div>
+            
+            
+            
+        </div>
+</div>

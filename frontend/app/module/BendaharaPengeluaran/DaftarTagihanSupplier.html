@@ -1,0 +1,2176 @@
+<style>
+	.style-center {
+		display: inline-block;
+		text-align: center;
+		width: 100%;
+	}
+
+	.style-right {
+		display: inline-block;
+		text-align: right;
+		width: 100%;
+	}
+
+	.style-left {
+		display: inline-block;
+		text-align: left;
+		width: 100%;
+	}
+
+	fieldset {
+		border: 1px solid #c8c8c8;
+		background-color: #ffffff;
+		color: #333333;
+	}
+
+	fieldset legend a {
+		padding: 0.571em 1em;
+		border: 1px solid #c8c8c8;
+		color: #333333;
+		background-color: #f4f4f4;
+		-moz-border-radius: 3px;
+		-webkit-border-radius: 3px;
+		border-radius: 3px;
+		-moz-transition: background-color 0.2s;
+		-o-transition: background-color 0.2s;
+		-webkit-transition: background-color 0.2s;
+		transition: background-color 0.2s;
+	}
+
+	fieldset legend a .fieldset-toggler {
+		float: none;
+		display: inline-block;
+		vertical-align: middle;
+		margin-right: 0.5em;
+		color: #848484;
+	}
+
+	fieldset .fieldset-toggleable legend a:hover {
+		background-color: #dbdbdb;
+		border: 1px solid #dbdbdb;
+		color: #333333;
+	}
+
+	.warnaa {
+		color: #848484;
+	}
+
+	fieldset .fieldset-toggleable .fieldset-legend a:hover .fieldset-toggler {
+		color: #333333;
+	}
+</style>
+<div>
+	<!-- <c-panel item="item" header="'Daftar Tagihan Rekanan'" disabled> -->
+	<div class="grid_12 headerBox">
+		<h1 style="color: white;"><b>Daftar Tagihan Rekanan</b></h1>
+	</div>
+
+	<div class="grid_12">
+		<div class="grid_2">
+			<label c-label item="item">No Faktur/ No Dokumen</label>
+			<input placeholder="No Faktur" c-text-box type="input" class="k-textbox" ng-model="item.noFaktur" />
+		</div>
+		<div class="grid_3">
+			<label c-label item="item">Nama Supplier</label>
+			<input placeholder="Nama Supplier" c-text-box type="input" class="k-textbox" ng-model="item.NamaSupplier" />
+		</div>
+
+		<div class="grid_2">
+			<label c-label item="item" c-label-text="Periode Awal"></label>
+			<input style="width: 100%" k-ng-model="item.periodeAwal" kendo-date-picker k-max="now"
+				placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" />
+		</div>
+		<div class="grid_2">
+			<label c-label item="item" c-label-text="Periode Akhir"></label>
+			<input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-date-picker placeholer="yyyy-MM-dd"
+				k-format="'yyyy-MM-dd'" />
+		</div>
+		<div class="grid_2">
+			<label c-label item="item" c-label-text="Status"></label>
+			<input style="width: 100%;" kendo-combo-box k-data-source="listStatus" k-ng-model="item.status"
+				k-data-text-field="'namaExternal'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
+				k-data-source="" />
+		</div>
+		<div class="grid_1" style="margin-top:16px;">
+			<button class="btnTemplate1" ng-click="SearchData()"> <i class="fa fa-search"></i>Cari</button>
+		</div>
+	</div>
+	<div class="grid_6">
+		<div class="grid_12">
+		</div>
+	</div>
+	<div class="clear"></div>
+	<br />
+
+	<!-- PenyusunanTRPNBP -->
+	<div class="grid_12">
+		<div class="grid_12 headerBox">
+			<p>Tagihan Rekanan</p>
+		</div>
+		<div class="clear"></div>
+		<div class="grid_12 borderBox">
+			<div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" k-pageable="true"
+				k-sortable="'true'" k-columns="columnGrid" k-ng-model="dataSelected">
+			</div>
+		</div>
+		<div class="clear"></div>
+		<div class="clear"></div>
+		<br />
+	</div>
+	<div class="grid_12">
+		<div class="grid_2">
+			<label c-label item="item">No Terima</label>
+			<input placeholder="No Terima" c-text-box type="input" class="k-textbox" ng-model="item.noTerima" />
+		</div>
+		<div class="grid_2"></div>
+
+		<div class="grid_2" style="float:right;margin-top:10px;">
+			<button class="btnTemplate1" ng-click="Bayar()"> <i class="fa fa-money"></i>Bayar Tagihan</button>
+		</div>
+		<div class="grid_2" style="float:right;margin-top:10px;">
+			<button class="btnTemplate1" ng-click="Detail()"> <i class="fa fa-th-list"></i>Detail Tagihan</button>
+		</div>
+		<div class="grid_2" style="float:right;margin-top:10px;">
+			<button class="btnTemplate1" ng-click="scfBRI()"> <i class="fa fa-files-o"></i>SCF BRI</button>
+		</div>
+		<!-- 	<div class="grid_2" style="float:right;margin-top:10px;">
+			<button class="btnTemplate1" >Fund Transfer </button>
+		</div> -->
+		<div class="grid_2" style="float:right;margin-top:10px;">
+			<md-menu>
+				<button class="btnTemplate1" ng-click="openMenu($mdOpenMenu,$event)" >
+					<i class="fa fa-dollar"></i> Fund Transfer
+				</button>
+				<md-menu-content>
+					<md-menu-item>
+
+						<md-button class="md-button md-ink-ripple" ng-click="FundBRI()">
+							<i class="fa fa-dollar"></i> BRI
+						</md-button>
+					</md-menu-item>
+					<md-menu-item>
+
+						<md-button class="md-button md-ink-ripple" ng-click="FundOCBC()">
+							<i class="fa fa-dollar"></i> OCBC
+						</md-button>
+					</md-menu-item>
+					<md-menu-item>
+
+						<md-button class="md-button md-ink-ripple">
+							<i class="fa fa-dollar"></i> BNI
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+		</div>
+	</div>
+
+</div>
+<style type="text/css">
+	.md-button {
+		color: #777777;
+		min-height: 30px;
+	}
+
+	md-menu-item>.md-button {
+		font-size: 11px;
+	}
+
+	md-menu-item {
+		min-height: 30px;
+		height: 30px;
+	}
+
+	md-menu-item .fa {
+		color: #777777;
+	}
+</style>
+<!-- <div kendo-window="popUp" k-title="'SCF BRI'" k-width="1200" k-visible="false" k-on-open="win2visible = true"
+	k-on-close="win2visible = false">
+	<div class="panel panel-default container_12">
+		<div ng-cloak>
+			<md-content>
+				<md-tabs md-dynamic-height md-border-bottom md-selected="myVar2">
+					<md-tab label="Detail">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_4">
+									<div class="grid_6">
+										<label c-label item="item">No Terima</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{dataSelected.nostruk}} </label>
+									</div>
+								</div>
+								<div class="grid_4">
+									<div class="grid_6">
+										<label c-label item="item">Rekanan</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ dataSelected.namarekanan}}</label>
+									</div>
+								</div>
+								<div class="grid_4">
+									<div class="grid_6">
+										<label c-label item="item">Total Harus Dibayar</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ formatRupiah(dataSelected.sisautang,' Rp.' )}}</label>
+									</div>
+								</div>
+
+							</div>
+
+
+							<hr>
+
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Reference Number</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="bri.ReferenceNumber"
+											placeholder="Masukan Reference Number BRI" />
+
+									</div>
+
+								</div>
+								<div class="grid_1">
+									<label c-label c-label-text=""></label>
+									<em style="margin-top:6px;" ng-click='inquiryInvoice()' id="iconButton"
+										data-role="button" class="k-button k-button-icon" role="button"
+										aria-disabled="false" tabindex="0"><span
+											class="k-sprite k-icon k-i-search">Cari</span></em>
+								</div>
+								<div class="grid_1">
+									<img ng-show="isRouteLoading" style="
+										margin-top: 26px;
+										margin-left: -51px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+								</div>
+							</div>
+							<hr>
+							<div ng-show="isInquiry">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Invoice Number</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="bri.InvoiceNumber"
+											disabled />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Invoice Date </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox" disabled
+											ng-model="bri.InvoiceDate" disabled />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Invoice From </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox" disabled
+											ng-model="bri.InvoiceFrom" disabled />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Invoice To </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox" disabled
+											ng-model="bri.InvoiceTo" disabled />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Amount </label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+											ng-model="bri.AmountNumber" />
+									</div>
+								</div>
+
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Status Desc </label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox" disabled
+											ng-model="bri.StatusDesc" disabled />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Disbursement Date </label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox" disabled
+											ng-model="bri.DisbursementDate" disabled />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Invoice Type </label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox" disabled
+											ng-model="bri.InvoiceType" disabled />
+									</div>
+								</div>
+								<div class="grid_12">
+									<div class="grid_2" style="float: right;margin-left: 10px;">
+										<button class="btnTemplate1 cancel" ng-click="batal()"><i
+												class="fa fa-close"></i>
+											Cancel
+										</button>
+									</div>
+
+									<div class="grid_2" style="float: right;">
+										<button class="btnTemplate1 success" ng-hide="isSave" ng-click="paymenBRI()"><i
+												class="fa fa-dollar"></i>
+											Payment
+										</button>
+									</div>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+				</md-tabs>
+			</md-content>
+		</div>
+	</div>
+</div> -->
+
+<div kendo-window="popUp2" k-title="'SCF BRI'" k-width="1200" k-visible="false" k-on-open="win2visible = true"
+	k-on-close="win2visible = false">
+	<div class="panel panel-default container_12">
+		<div ng-cloak>
+			<md-content>
+				<md-tabs md-dynamic-height md-border-bottom md-selected="myVar2">
+					<md-tab label="Create Invoice" md-on-select="onTabChanges(1)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">BRI Reference Number</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="bri.ReferenceNumber"
+											disabled />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Partner</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="bri.partner"
+											k-data-text-field="'PartnerName'" k-data-value-field="'InitialCode'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listPartner" />
+										<!-- <input c-text-box type="input" class="k-textbox" ng-model="bri.partner"
+											disabled /> -->
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Invoice Type</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="bri.InvoiceTypeName"
+											k-data-text-field="'facilityCodeDesc'" k-data-value-field="'facilityCode'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listFacilities" />
+										<!-- <input c-text-box type="input" filter="'varchar'" class="k-textbox" disabled
+											ng-model="bri.InvoiceTypeName" disabled /> -->
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Invoice Number</label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox" disabled
+											ng-model="bri.InvoiceNumber" disabled />
+									</div>
+								</div>
+
+							</div>
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Currency </label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox" disabled
+											ng-model="bri.Currency" disabled />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Amount </label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+											ng-model="bri.Amount" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Invoice Date</label>
+									</div>
+									<div class="grid_12 ">
+										<input style="width: 100%" k-ng-model="bri.InvoiceDate" kendo-datepicker
+											placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Disbursement Date </label>
+									</div>
+
+									<div class="grid_12">
+										<input style="width: 100%" k-ng-model="bri.DisbursementDate" kendo-datepicker
+											placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" />
+
+									</div>
+								</div>
+							</div>
+							<div class="grid_12">
+
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Settlement Date </label>
+									</div>
+
+									<div class="grid_12">
+										<input style="width: 100%" k-ng-model="bri.SettlementDate" kendo-datepicker
+											placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" />
+
+									</div>
+								</div>
+								<div class="grid_9">
+									<div class="grid_12">
+										<label c-label item="item">Description </label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+											ng-model="bri.Description" />
+									</div>
+								</div>
+							</div>
+							<div class="grid_12">
+								<div class="grid_2" style="float: right;margin-left: 10px;">
+									<button class="btnTemplate1 cancel" ng-click="batal()"><i class="fa fa-close"></i>
+										Cancel
+									</button>
+								</div>
+
+								<div class="grid_2" style="float: right;">
+									<button class="btnTemplate1 success" ng-hide="isSave" ng-click="saveBRI()"><i
+											class="fa fa-save"></i>
+										Save
+									</button>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Inquiry Invoice" md-on-select="onTabChanges(2)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_6">
+									<div class="grid_6">
+										<label c-label item="item">Reference Number</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ RefrenceNumber}} </label>
+									</div>
+								</div>
+								<div class="grid_6">
+									<div class="grid_6">
+										<label c-label item="item">Invoice Type</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ InvoiceType}}</label>
+									</div>
+								</div>
+
+							</div>
+							<hr>
+
+							<div class="grid_12">
+								<div class="grid_6">
+									<div class="grid_6">
+										<label c-label item="item">Invoice Number</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ InvoiceNumber}}</label>
+									</div>
+								</div>
+
+								<div class="grid_6">
+									<div class="grid_6">
+										<label c-label item="item">Amount</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ Amount}}</label>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="grid_12">
+								<div class="grid_6">
+									<div class="grid_6">
+										<label c-label item="item">Disbursement Complete Date</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ DisbursementCompleteDate}}</label>
+									</div>
+								</div>
+								<div class="grid_6">
+									<div class="grid_6">
+										<label c-label item="item">Settlement Complete Date </label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ SettlementCompleteDate}}</label>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="grid_12">
+								<div class="grid_6">
+									<div class="grid_6">
+										<label c-label item="item">Create Date </label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ CreateDate}}</label>
+									</div>
+								</div>
+								<div class="grid_6">
+									<div class="grid_6">
+										<label c-label item="item">Status </label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ StatusDesc}}</label>
+									</div>
+								</div>
+
+								<hr>
+							</div>
+							<div class="grid_12">
+								<div class="grid_2" style="float: right;margin-left: 10px;">
+									<button class="btnTemplate1 cancel" ng-click="cancelInvoiceBRI()"><i
+											class="fa fa-close"></i>
+										Cancel Invoice
+									</button>
+								</div>
+								<div class="grid_2" style="float: right;">
+									<button class="btnTemplate1 success" ng-click="bayarLokal()" ng-hide="isSave"><i
+											class="fa fa-dollar"></i>
+										Payment
+									</button>
+								</div>
+
+
+							</div>
+
+						</md-content>
+					</md-tab>
+					<md-tab label="Inquiry Corporate Facilites" md-on-select="onTabChanges(3)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div kendo-grid k-data-source="dsCF" k-selectable="'row'" k-columns="columnCF"
+									k-pageable="'true'" k-sortable="'true'" k-groupable="'true'">
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Inquiry Detail Partner " md-on-select="onTabChanges(4)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Partner</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="bri.cekPartner"
+											k-data-text-field="'PartnerName'" k-data-value-field="'InitialCode'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listPartner" />
+									</div>
+								</div>
+
+								<div class="grid_1">
+									<label c-label c-label-text=""></label>
+									<em style="margin-top:6px;" ng-click='findDP()' id="iconButton" data-role="button"
+										class="k-button k-button-icon" role="button" aria-disabled="false"
+										tabindex="0"><span class="k-sprite k-icon k-i-search">Cari</span></em>
+								</div>
+								<div class="grid_1">
+									<img ng-show="isRouteLoading" style="
+										margin-top: 26px;
+										margin-left: -51px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+								</div>
+							</div>
+							<hr>
+							<div class="grid_12">
+								<div kendo-grid k-data-source="dsDP" k-selectable="'row'" k-columns="columnDP"
+									k-pageable="'true'" k-sortable="'true'" k-groupable="'true'">
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Inquiry Facility Balance" md-on-select="onTabChanges(5)">
+						<md-content class="md-padding">
+
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Anchor Code</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="bri.AnchorCode"
+											disabled />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Facility</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="bri.cekFacility"
+											k-data-text-field="'facilityCodeDesc'" k-data-value-field="'facilityCode'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listFacilities" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Partner</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="bri.cekPartner"
+											k-data-text-field="'PartnerName'" k-data-value-field="'InitialCode'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listPartner" />
+									</div>
+								</div>
+
+								<div class="grid_1">
+									<label c-label c-label-text=""></label>
+									<em style="margin-top:6px;" ng-click='facilityBalance()' id="iconButton"
+										data-role="button" class="k-button k-button-icon" role="button"
+										aria-disabled="false" tabindex="0"><span
+											class="k-sprite k-icon k-i-search">Cari</span></em>
+								</div>
+								<div class="grid_1">
+									<img ng-show="isRouteLoading" style="
+										margin-top: 26px;
+										margin-left: -51px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+								</div>
+							</div>
+							<hr>
+							<div ng-show="showBalance">
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Facility Code</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.FacilityCode }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Facility Account</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.FacilityAccount }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Account Name</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.AccountName }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Account Status </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.AccountStatus }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Plafond </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.Plafond }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Outstanding </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.Outstanding }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Hold Amount </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.HoldAmount }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Available Amount </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.AvailableAmount }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Account Maturity Date </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.AccountMaturityDate }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Account Loan Rate </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.AccountLoanRate }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Facility Status </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.FacilityStatus }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Facility Status Desc </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.FacilityStatusDesc }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Inquiry Partner Facility" md-on-select="onTabChanges(6)">
+						<md-content class="md-padding">
+
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Anchor Code</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="bri.AnchorCode"
+											disabled />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Facility</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="bri.cekFacility"
+											k-data-text-field="'facilityCodeDesc'" k-data-value-field="'facilityCode'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listFacilities" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Partner</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="bri.cekPartner"
+											k-data-text-field="'PartnerName'" k-data-value-field="'InitialCode'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listPartner" />
+									</div>
+								</div>
+
+								<div class="grid_1">
+									<label c-label c-label-text=""></label>
+									<em style="margin-top:6px;" ng-click='findFacility()' id="iconButton"
+										data-role="button" class="k-button k-button-icon" role="button"
+										aria-disabled="false" tabindex="0"><span
+											class="k-sprite k-icon k-i-search">Cari</span></em>
+								</div>
+								<div class="grid_1">
+									<img ng-show="isRouteLoading" style="
+										margin-top: 26px;
+										margin-left: -51px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+								</div>
+							</div>
+							<hr>
+							<div ng-show="showBalance2">
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Partner Code</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ partner.PartnerCode }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Partner Name</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ partner.PartnerName }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Account Status </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.AccountStatus }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Account Name </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.AccountName }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Facility Due Date </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.FacilityDueDate }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Plafond </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.Plafond }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item"> Outstanding </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.Outstanding }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Facility Status </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.FacilityStatus }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Facility Status Desc </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ facility.FacilityStatusDesc }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+
+							</div>
+						</md-content>
+					</md-tab>
+				</md-tabs>
+			</md-content>
+		</div>
+	</div>
+</div>
+<div kendo-window="popUp3" k-title="'Fund Transfer BRI'" k-width="1200" k-visible="false" k-on-open="win2visible = true"
+	k-on-close="win2visible = false">
+	<div class="panel panel-default container_12">
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">No Terima</label>
+			</div>
+			<div class="grid_12">
+				<!-- <label>: {{ dataSelected.nostruk}} </label> -->
+				<input c-text-box type="input" class="k-textbox" ng-model="dataSelected.nostruk" disabled />
+
+			</div>
+		</div>
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">No Dokumen</label>
+			</div>
+			<div class="grid_12">
+				<input c-text-box type="input" class="k-textbox" ng-model="dataSelected.nodokumen" disabled />
+				<!-- <label>: {{ dataSelected.nopo}} </label> -->
+			</div>
+		</div>
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">Nama Rekanan</label>
+			</div>
+			<div class="grid_12">
+				<input c-text-box type="input" class="k-textbox" ng-model="dataSelected.namarekanan" disabled />
+
+				<!-- <label>: {{ dataSelected.namarekanan}} </label> -->
+			</div>
+		</div>
+		<hr>
+		<div class="grid_12" ng-cloak>
+
+			<md-content>
+				<md-tabs md-dynamic-height md-border-bottom md-selected="myVarFund">
+					<md-tab label="Transfer" md-on-select="onTabFund(1)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">No Referral </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="fund.NoReferral" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Source Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="fund.sourceAccount" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="fund.beneficiaryAccount" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Amount </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="text" class="k-textbox" ng-model="fund.amount" />
+									</div>
+								</div>
+
+							</div>
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Fee Type </label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+											ng-model="fund.FeeType" />
+									</div>
+								</div>
+
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Transaction Date Time </label>
+									</div>
+									<div class="grid_12 ">
+										<input style="width: 100%" k-ng-model="fund.transactionDateTime"
+											kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm"
+											k-format="'yyyy-MM-dd HH:mm'" />
+									</div>
+								</div>
+								<div class="grid_6">
+									<div class="grid_12">
+										<label c-label item="item">Remark </label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+											ng-model="fund.remark" />
+									</div>
+								</div>
+							</div>
+
+							<div class="grid_12">
+								<div class="grid_2" style="float: right;margin-left: 10px;">
+									<button class="btnTemplate1 cancel" ng-click="batalFund()"><i
+											class="fa fa-close"></i>
+										Cancel
+									</button>
+								</div>
+
+								<div class="grid_2" style="float: right;">
+									<button class="btnTemplate1 success" ng-hide="isSave"
+										ng-click="saveTransferFund()"><i class="fa fa-save"></i>
+										Save
+									</button>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Validasi Account" md-on-select="onTabFund(2)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Source Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="fund.sourceAccount" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Account</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="fund.beneficiaryAccount" />
+									</div>
+								</div>
+
+								<div class="grid_1">
+									<label c-label c-label-text=""></label>
+									<em style="margin-top:6px;" ng-click='validasiAccount()' id="iconButton"
+										data-role="button" class="k-button k-button-icon" role="button"
+										aria-disabled="false" tabindex="0"><span
+											class="k-sprite k-icon k-i-search">Cari</span></em>
+								</div>
+								<div class="grid_1">
+									<img ng-show="isRouteLoading" style="
+										margin-top: 26px;
+										margin-left: -51px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+								</div>
+							</div>
+							<hr>
+							<div ng-show="showValidasi">
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">source Account Name</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.sourceAccountName }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">source Account Status</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.sourceAccountStatus }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">source Account Balace </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.sourceAccountBalance }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">registration Status </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.registrationStatus }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">beneficiary Account Name </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.beneficiaryAccountName }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">beneficiary Account tatus </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.beneficiaryAccountStatus }}</label>
+										</div>
+									</div>
+								</div>
+
+								<hr>
+
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Cek Status Transfer" md-on-select="onTabFund(3)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">No Referral </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="fund.noReferral" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Transaction Date </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%" k-ng-model="fund.transactionDateCari"
+											kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm"
+											k-format="'yyyy-MM-dd HH:mm'" />
+
+									</div>
+								</div>
+
+								<div class="grid_1">
+									<label c-label c-label-text=""></label>
+									<em style="margin-top:6px;" ng-click='transferStatusFund()' id="iconButton"
+										data-role="button" class="k-button k-button-icon" role="button"
+										aria-disabled="false" tabindex="0"><span
+											class="k-sprite k-icon k-i-search">Cari</span></em>
+								</div>
+								<div class="grid_1">
+									<img ng-show="isRouteLoading" style="
+										margin-top: 26px;
+										margin-left: -51px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+								</div>
+							</div>
+							<hr>
+							<div ng-show="showStatusFund">
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">No Referral </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.data.noReferral }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Transaction Date </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.data.transactionDateTime }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Remark </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.data.remark }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Amount </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.data.amount }} </label>
+										</div>
+									</div>
+
+
+
+								</div>
+								<hr>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Transfer Description</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.data.internalTransferDescription }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Journal Seq </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.data.journalSeq }} </label>
+										</div>
+									</div>
+
+
+								</div>
+
+								<hr>
+
+							</div>
+
+						</md-content>
+					</md-tab>
+				</md-tabs>
+			</md-content>
+		</div>
+	</div>
+</div>
+<div kendo-window="popUp4" k-title="'Fund Transfer OCBC NISP'" k-width="1200" k-visible="false"
+	k-on-open="win2visible = true" k-on-close="win2visible = false">
+	<div class="panel panel-default container_12">
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">No Terima</label>
+			</div>
+			<div class="grid_12">
+				<!-- <label>: {{ dataSelected.nostruk}} </label> -->
+				<input c-text-box type="input" class="k-textbox" ng-model="dataSelected.nostruk" disabled />
+
+			</div>
+		</div>
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">No Dokumen</label>
+			</div>
+			<div class="grid_12">
+				<input c-text-box type="input" class="k-textbox" ng-model="dataSelected.nodokumen" disabled />
+				<!-- <label>: {{ dataSelected.nopo}} </label> -->
+			</div>
+		</div>
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">Nama Rekanan</label>
+			</div>
+			<div class="grid_12">
+				<input c-text-box type="input" class="k-textbox" ng-model="dataSelected.namarekanan" disabled />
+
+				<!-- <label>: {{ dataSelected.namarekanan}} </label> -->
+			</div>
+		</div>
+		<hr>
+		<div class="grid_12" ng-cloak>
+			<md-content>
+				<md-tabs md-dynamic-height md-border-bottom >
+					<md-tab label="Transfer" md-on-select="onTabFund2(1)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Product Name </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listProductOCBC"
+											k-ng-model="ocbc.productCode" k-data-text-field="'name'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+							</div>
+							<div class="grid_12"
+								ng-show="ocbc.productCode.id == 'IFT' ||ocbc.productCode.id == ' OAT'|| showIFT == true">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Reference Number </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.clientRefNumber" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Source Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBank"
+											k-ng-model="ocbc.accountNumber" k-data-text-field="'nama'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
+											disabled="true" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Currency Code </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.currencyCode" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Sender Name </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.senderName" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBankRekanan"
+											k-ng-model="ocbc.beneAccountNo" k-data-text-field="'nama'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Name </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneficiaryName" />
+									</div>
+								</div>
+
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Amount </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="text" class="k-textbox"
+											ng-model="ocbc.transferAmount" />
+									</div>
+								</div>
+							</div>
+							<div class="grid_12" ng-show="ocbc.productCode.id == 'LLG'">
+
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Reference Number </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.clientRefNumber" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Source Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBank"
+											k-ng-model="ocbc.accountNumber" k-data-text-field="'nama'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
+											disabled="true" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Currency Code </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.currencyCode" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Sender Name </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.senderName" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBankRekanan"
+											k-ng-model="ocbc.beneAccountNo" k-data-text-field="'nama'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Name </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneficiaryName" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Address 1 </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.beneAddr1" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Address 2 </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.beneAddr2" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Address 3 </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.beneAddr3" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Bank Name </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.beneBankName" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Bank Address </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneBankAddress1" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Bank Branch </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneBankBranch" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Bank Clearing Code </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneBankClearingCode" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Bank City Code </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneBankCityCode" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Transfer Amount </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="text" class="k-textbox"
+											ng-model="ocbc.transferAmount" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Payment Detail </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="text" class="k-textbox" ng-model="ocbc.paymentDetail" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Resident Status </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listResidence"
+											k-ng-model="ocbc.residentStatus" k-data-text-field="'name'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Category </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBene"
+											k-ng-model="ocbc.beneCategory" k-data-text-field="'name'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item"> Remitter Category</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBene"
+											k-ng-model="ocbc.remitterCategory" k-data-text-field="'name'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+							</div>
+							<div class="grid_12" ng-show="ocbc.productCode.id == 'RTGS'">
+
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Reference Number </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.clientRefNumber" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Source Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBank"
+											k-ng-model="ocbc.accountNumber" k-data-text-field="'nama'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
+											disabled="true" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Currency Code </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.currencyCode" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Sender Name </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.senderName" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBankRekanan"
+											k-ng-model="ocbc.beneAccountNo" k-data-text-field="'nama'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Name </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneficiaryName" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Address 1 </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.beneAddr1" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Address 2 </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.beneAddr2" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Address 3 </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.beneAddr3" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Bank Name </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.beneBankName" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Bank Address </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneBankAddress1" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Bank Branch </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneBankBranch" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Bank Clearing Code </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneBankClearingCode" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Bank City Code </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneBankCityCode" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Transfer Amount </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="text" class="k-textbox"
+											ng-model="ocbc.transferAmount" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Payment Detail </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="text" class="k-textbox" ng-model="ocbc.paymentDetail" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Resident Status </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listResidence"
+											k-ng-model="ocbc.residentStatus" k-data-text-field="'name'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Category </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBene"
+											k-ng-model="ocbc.beneCategory" k-data-text-field="'name'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item"> Remitter Category</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBene"
+											k-ng-model="ocbc.remitterCategory" k-data-text-field="'name'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+							</div>
+
+							<div class="grid_12"
+								ng-show="ocbc.productCode.id == 'OLT' || ocbc.productCode.id ==  'BPM'">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Reference Number </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.clientRefNumber" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Source Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBank"
+											k-ng-model="ocbc.accountNumber" k-data-text-field="'nama'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
+											disabled="true" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Currency Code </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.currencyCode" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Sender Name </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="ocbc.senderName" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBankRekanan"
+											k-ng-model="ocbc.beneAccountNo" k-data-text-field="'nama'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Name </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.beneficiaryName" />
+									</div>
+								</div>
+
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Amount </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="text" class="k-textbox"
+											ng-model="ocbc.transferAmount" />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Remarks </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.transferRemarks" />
+									</div>
+								</div>
+
+							</div>
+
+							<div class="grid_12">
+								<div class="grid_1" style="float: right;margin-left: 10px;">
+									<button class="btnTemplate1 error" ng-click="batalOCBC()"><i
+											class="fa fa-close"></i>
+										Cancel
+									</button>
+								</div>
+
+								<div class="grid_1" style="float: right;">
+									<button class="btnTemplate1 success" ng-hide="isSave" ng-click="tranferOCBC()"><i
+											class="fa fa-save"></i>
+										Save
+									</button>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Status Transfer" md-on-select="onTabFund2(2)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Reference No</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox"
+											ng-model="ocbc.bankReferenceNo" />
+									</div>
+								</div>
+
+								<div class="grid_1">
+									<label c-label c-label-text=""></label>
+									<em style="margin-top:6px;" ng-click='transferStatusOCBC()' id="iconButton"
+										data-role="button" class="k-button k-button-icon" role="button"
+										aria-disabled="false" tabindex="0"><span
+											class="k-sprite k-icon k-i-search">Cari</span></em>
+								</div>
+								<div class="grid_1">
+									<img ng-show="isRouteLoading" style="
+										margin-top: 26px;
+										margin-left: -51px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+								</div>
+							</div>
+							<hr>
+							<div ng-show="showSttOCBC">
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Customer Reference</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fundtransfer_data.cust_ref }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Debit Account</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fundtransfer_data.debit_acct_no }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Currency</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fundtransfer_data.debit_acct_ccy }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Sender Name</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fundtransfer_data.sender_name }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Date </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fundtransfer_data.value_date }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Amount </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fundtransfer_data.amount }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Status </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fundtransfer_data.trx_status_desc }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Beneficiary Account </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fundtransfer_data.bene_acct_no }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">Beneficiary Name </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fundtransfer_data.bene_name }} </label>
+										</div>
+									</div>
+
+								</div>
+								<hr>
+
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Account Inquiry Balance" md-on-select="onTabFund2(3)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item"> Account</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-data-source="listBank"
+											k-ng-model="ocbc.accountNumber" k-data-text-field="'nama'"
+											k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+									</div>
+								</div>
+
+								<div class="grid_1">
+									<label c-label c-label-text=""></label>
+									<em style="margin-top:6px;" ng-click='inqBalance()' id="iconButton"
+										data-role="button" class="k-button k-button-icon" role="button"
+										aria-disabled="false" tabindex="0"><span
+											class="k-sprite k-icon k-i-search">Cari</span></em>
+								</div>
+								<div class="grid_1">
+									<img ng-show="isRouteLoading" style="
+										margin-top: 26px;
+										margin-left: -51px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+								</div>
+							</div>
+							<hr>
+
+							<div class="grid_12">
+								<div class="grid_4">
+									<div class="grid_6">
+										<label c-label item="item">Account Name</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ inqBalance.accountName }} </label>
+									</div>
+								</div>
+								<div class="grid_4">
+									<div class="grid_6">
+										<label c-label item="item">Type</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ inqBalance.accountType }} </label>
+									</div>
+								</div>
+								<div class="grid_4">
+									<div class="grid_6">
+										<label c-label item="item">Available Balance</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ formatRupiah(inqBalance.availableBalance,'') }} </label>
+									</div>
+								</div>
+								<div class="grid_4">
+									<div class="grid_6">
+										<label c-label item="item">Current Balance</label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ formatRupiah(inqBalance.currentBalance,'') }}</label>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="grid_12">
+								<div class="grid_4">
+									<div class="grid_6">
+										<label c-label item="item">Over Draft Amount </label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ formatRupiah(inqBalance.overDraftAmount,'') }}</label>
+									</div>
+								</div>
+								<div class="grid_4">
+									<div class="grid_6">
+										<label c-label item="item">Hold Balance </label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ formatRupiah(inqBalance.holdBalance,'') }}</label>
+									</div>
+								</div>
+								<div class="grid_4">
+									<div class="grid_6">
+										<label c-label item="item">Currency </label>
+									</div>
+									<div class="grid_6">
+										<label>: {{ inqBalance.currencyCode }}</label>
+									</div>
+								</div>
+							</div>
+							<hr>
+
+
+						</md-content>
+					</md-tab>
+					<md-tab label="Account Statement" >
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_3">
+									<label c-label item="item"> Account</label>
+									<input style="width: 100%;" kendo-combo-box k-data-source="listBank"
+										k-ng-model="ocbc.accountNumber" k-data-text-field="'nama'" k-filter="'contains'"
+										k-data-value-field="'id'" k-auto-bind="false" />
+
+								</div>
+								<div class="grid_2">
+									<label c-label item="item" c-label-text="From"></label>
+									<input style="width: 100%" k-ng-model="ocbc.from" kendo-datetimepicker
+										placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+								</div>
+								<div class="grid_2">
+									<label c-label item="item" c-label-text="To"></label>
+									<input style="width: 100%" k-ng-model="ocbc.to" kendo-datetimepicker
+										placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+								</div>
+								<div class="grid_1">
+
+									<label c-label item="item">Page </label>
+									<input c-text-box type="input" class="k-textbox" ng-model="ocbc.page" />
+
+								</div>
+
+								<div class="grid_1">
+									<label c-label c-label-text=""></label>
+									<em style="margin-top:6px;" ng-click='findOCState()' id="iconButton"
+										data-role="button" class="k-button k-button-icon" role="button"
+										aria-disabled="false" tabindex="0"><span
+											class="k-sprite k-icon k-i-search">Cari</span></em>
+								</div>
+								<div class="grid_1">
+									<img ng-show="isRouteLoading" style="
+										margin-top: 26px;
+										margin-left: -51px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+								</div>
+							</div>
+							<hr>
+							<div class="grid_12">
+								<div kendo-grid k-data-source="dsStatement" k-selectable="'row'"
+									k-columns="columnStatement" k-pageable="'true'" k-sortable="'true'"
+									k-groupable="'true'">
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+				</md-tabs>
+			</md-content>
+		</div>
+	</div>
+</div>
+<style type="text/css">
+	hr {
+		border: 1px dashed #cccccc;
+		margin-top: 0;
+		margin-bottom: 0;
+		display: inline-block;
+		width: 100%;
+	}
+</style>

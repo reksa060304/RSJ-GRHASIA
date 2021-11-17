@@ -1,0 +1,19 @@
+@import '@core/scss/angular/libs/datatables.component.scss';
+@import '@core/scss/angular/libs/select.component.scss';
+@import '@core/scss/angular/libs/toastr.component.scss';
+.datatable-scroll {
+  width: auto !important;
+}
+
+.transaction-title{
+    margin-top:10px
+}
+.avatar.bg-light-error {
+    color: #f53b3b !important;
+}
+.text-white{
+  color:white;
+}
+.card-transaction .transaction-item .transaction-title {
+    margin-top:10px
+}

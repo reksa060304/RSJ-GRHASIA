@@ -1,0 +1,69 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+        <div class="row">
+            <div class="col-lg-4">
+            </div>
+            <div class="col-12 col-lg-1 col-md-6 col-sm-6 col-xs-12 kb-search-content ">
+                <div class="card cursor" (click)="showPopUp(4,modalSuccess)">
+                    <img alt="knowledge-base-image" class="card-img-top" src="assets/images/tidakpuas.jpg">
+                    <div class="card-body text-center">
+                        <h6>Tidak Puas</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-1 col-md-6 col-sm-6 col-xs-12 kb-search-content">
+                <div class="card cursor" (click)="showPopUp(3,modalSuccess)">
+                    <img alt="knowledge-base-image" class="card-img-top" src="assets/images/sedang.jpg">
+                    <div class="card-body text-center">
+                        <h6>Cukup</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-1 col-md-6 col-sm-6 col-xs-12 kb-search-content">
+                <div class="card cursor" (click)="showPopUp(2,modalSuccess)">
+                    <img alt="knowledge-base-image" class="card-img-top" src="assets/images/puas.jpg">
+                    <div class="card-body text-center">
+                        <h6>Puas</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-1 col-md-6 col-sm-6 col-xs-12 kb-search-content">
+                <div class="card cursor" (click)="showPopUp(1,modalSuccess)">
+                    <img alt="knowledge-base-image" class="card-img-top" src="assets/images/sangatpuas.jpg">
+                    <div class="card-body text-center">
+                        <h6>Sangat Puas</h6>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+<!-- Modal -->
+<ng-template #modalSuccess let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel160">Masukan Nama Anda</h5>
+        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="col-12">
+            <div class="form-group">
+                <input class="form-control form-control-lg" type="text" placeholder="Masukkan Nama / No RM Anda"
+                    [(ngModel)]="item.nama" />
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="simpanSurvey()" rippleEffect>
+            Simpan
+        </button>
+    </div>
+</ng-template>
+<!-- / Modal -->

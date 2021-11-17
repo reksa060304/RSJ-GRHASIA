@@ -1,0 +1,10 @@
+------------
+create component and routing
+ng g c page/module/registrasi/pasienlama --skip-import=true --skip-tests=true ; ng g m page/module/registrasi/pasienlama --routing
+------------
+
+cara nyalain di server pm2 start "ng serve --open --host 0.0.0.0 --port 8202 --disable-host-check" --name antrian
+pm2 start ./server.js --name socket-server --watch --ignore-watch="node_modules" -i 1
+
+
+pm2 start "ng serve --open --host 0.0.0.0 --port 8202 --disable-host-check --ssl true   --ssl-cert "/etc/apache2/ssl/transmedic.co.id.crt"  --ssl-key "/etc/apache2/ssl/transmedic.co.id.key" " --name antrian

@@ -1,0 +1,543 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12"  disable-contents="allDisabled" >
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Asesmen Awal / Ulang Pasien Resiko Jatuh Morse</div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+            <!-- <div>
+                <input type="checkbox" class="k-checkbox" id="item.obj{{15000020}}"
+                    ng-model="item.obj[15000020]">
+                <label class="k-checkbox-label" for="item.obj{{15000020}}">
+                    &nbsp;Informasi Pasien</label>
+
+            </div> -->
+        <div>
+                <!-- <div ng-show="item.obj[15000020]"> -->
+            <fieldset style="margin-top: 10px; ">
+                <div class="grid_12">
+                <fieldset style="margin-top: 20px">
+                    <div class="grid_12">
+                        <div class="grid_12">
+                                <label>Scoring tgl</label>
+                                <input style="width: 40%" k-ng-model="item.obj[21030924]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                        <div class="grid_12" style="border-bottom:1px solid blue;font-weight: bold;">
+                            <div class="grid_1">NO</div>
+                            <div class="grid_9">Faktor risiko</div>
+                            <div class="grid_2">Skala</div>
+                            
+                            <!-- <div class="grid_8" style="float:right">POIN</div> -->
+                     
+                        </div>
+                        <div ng-repeat="tanya in listNutrisi | orderBy:'id'">
+                                <div class="grid_1">
+                                    
+                                        <label>
+                                            <b>{{tanya.id}}</b>
+                                        </label>
+                             
+                                </div>
+                                <div class="grid_6">
+                                    
+                                        <label>
+                                            <b>{{tanya.nama}}</b>
+                                        </label>
+                             
+                                </div>
+                                <div class="grid_5">
+                                    <div class="grid_12" ng-repeat="jawab in tanya.detail | orderBy:'id'" ng-init="jawabIndex = $index">
+                                        <div ng-switch on="jawabIndex">
+                                            <!-- <div ng-switch-when="0"> -->
+                                            <div ng-switch-default>
+                                                <div class="grid_10"> <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                    ng-model="item.obj[jawab.id]" ng-click="getSkorNutrisi(jawab)">
+                                                <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                    &nbsp;{{jawab.nama}}</label></div>
+                                               <div class="grid_2">{{jawab.descNilai}}</div>
+                
+                                            </div>
+                                        </div>
+                
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+               
+                   <div class="grid_12">
+                        <div class="grid_6">
+                        </div>
+                        <div class="grid_3">
+                                <div class="grid_12 ">      
+                                     <label c-label item="item">Kategori Risiko</label></div>
+                                <div class="grid_12 ">
+                                        <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[21030926]" disabled />
+                                 </div>
+                        </div>
+                        <div class="grid_3">
+                                <div class="grid_12 ">      
+                                     <label c-label item="item">TOTAL SCORE</label></div>
+                                <div class="grid_12 ">
+                                        <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[21030925]" disabled />
+                                 </div>
+                        </div>
+                   </div>
+                   <div class="grid_12">
+                       <div class="grid_6">
+                           <div class="grid_12"><label c-label item="item">Kategori risiko jatuh</label></div>
+                           <div class="grid_12">
+                               <div class="grid_3">Score 0 - 24</div>
+                               <div class="grid_3">: Risiko rendah</div>
+                           </div>
+                           <div class="grid_12">
+                               <div class="grid_3">Score 25 - 44</div>
+                               <div class="grid_3">: Risiko sedang</div>
+                            </div>
+                            <div class="grid_12">
+                                <div class="grid_3">Score > 45</div>
+                                <div class="grid_3">: Risiko tinggi</div>
+                             </div>
+                       </div>
+                   </div>
+               </fieldset>
+               </div>
+               <div class="grid_12">
+                <fieldset style="margin-top: 20px">
+                    <div class="grid_12">
+                        <div class="grid_12">
+                                <label>Scoring tgl</label>
+                                <input style="width: 40%" k-ng-model="item.obj[21031109]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                        <div class="grid_12" style="border-bottom:1px solid blue;font-weight: bold;">
+                            <div class="grid_1">NO</div>
+                            <div class="grid_9">Faktor risiko</div>
+                            <div class="grid_2">Skala</div>
+                            
+                            <!-- <div class="grid_8" style="float:right">POIN</div> -->
+                     
+                        </div>
+                        <div ng-repeat="tanya in listNutrisi2 | orderBy:'id'">
+                                <div class="grid_1">
+                                    
+                                        <label>
+                                            <b>{{tanya.id}}</b>
+                                        </label>
+                             
+                                </div>
+                                <div class="grid_6">
+                                    
+                                        <label>
+                                            <b>{{tanya.nama}}</b>
+                                        </label>
+                             
+                                </div>
+                                <div class="grid_5">
+                                    <div class="grid_12" ng-repeat="jawab in tanya.detail | orderBy:'id'" ng-init="jawabIndex = $index">
+                                        <div ng-switch on="jawabIndex">
+                                            <!-- <div ng-switch-when="0"> -->
+                                            <div ng-switch-default>
+                                                <div class="grid_10"> <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                    ng-model="item.obj[jawab.id]" ng-click="getSkorNutrisi2(jawab)">
+                                                <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                    &nbsp;{{jawab.nama}}</label></div>
+                                               <div class="grid_2">{{jawab.descNilai}}</div>
+                
+                                            </div>
+                                        </div>
+                
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+               
+                   <div class="grid_12">
+                        <div class="grid_6">
+                        </div>
+                        <div class="grid_3">
+                                <div class="grid_12 ">      
+                                     <label c-label item="item">Kategori Risiko</label></div>
+                                <div class="grid_12 ">
+                                        <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[21031110]" disabled />
+                                 </div>
+                        </div>
+                        <div class="grid_3">
+                                <div class="grid_12 ">      
+                                     <label c-label item="item">TOTAL SCORE</label></div>
+                                <div class="grid_12 ">
+                                        <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[21031111]" disabled />
+                                 </div>
+                        </div>
+                   </div>
+                   <div class="grid_12">
+                    <div class="grid_6">
+                        <div class="grid_12"><label c-label item="item">Kategori risiko jatuh</label></div>
+                        <div class="grid_12">
+                            <div class="grid_3">Score 0 - 24</div>
+                            <div class="grid_3">: Risiko rendah</div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_3">Score 25 - 44</div>
+                            <div class="grid_3">: Risiko sedang</div>
+                         </div>
+                         <div class="grid_12">
+                             <div class="grid_3">Score > 45</div>
+                             <div class="grid_3">: Risiko tinggi</div>
+                          </div>
+                    </div>
+                </div>
+               </fieldset>
+               </div>
+               <div class="grid_12">
+                <fieldset style="margin-top: 20px">
+                    <div class="grid_12">
+                        <div class="grid_12">
+                                <label>Scoring tgl</label>
+                                <input style="width: 40%" k-ng-model="item.obj[21031126]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                        <div class="grid_12" style="border-bottom:1px solid blue;font-weight: bold;">
+                            <div class="grid_1">NO</div>
+                            <div class="grid_9">Faktor risiko</div>
+                            <div class="grid_2">Skala</div>
+                            
+                            <!-- <div class="grid_8" style="float:right">POIN</div> -->
+                     
+                        </div>
+                        <div ng-repeat="tanya in listNutrisi3 | orderBy:'id'">
+                                <div class="grid_1">
+                                    
+                                        <label>
+                                            <b>{{tanya.id}}</b>
+                                        </label>
+                             
+                                </div>
+                                <div class="grid_6">
+                                    
+                                        <label>
+                                            <b>{{tanya.nama}}</b>
+                                        </label>
+                             
+                                </div>
+                                <div class="grid_5">
+                                    <div class="grid_12" ng-repeat="jawab in tanya.detail | orderBy:'id'" ng-init="jawabIndex = $index">
+                                        <div ng-switch on="jawabIndex">
+                                            <!-- <div ng-switch-when="0"> -->
+                                            <div ng-switch-default>
+                                                <div class="grid_10"> <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                    ng-model="item.obj[jawab.id]" ng-click="getSkorNutrisi3(jawab)">
+                                                <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                    &nbsp;{{jawab.nama}}</label></div>
+                                               <div class="grid_2">{{jawab.descNilai}}</div>
+                
+                                            </div>
+                                        </div>
+                
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+               
+                   <div class="grid_12">
+                        <div class="grid_6">
+                        </div>
+                        <div class="grid_3">
+                                <div class="grid_12 ">      
+                                     <label c-label item="item">Kategori Risiko</label></div>
+                                <div class="grid_12 ">
+                                        <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[21031127]" disabled />
+                                 </div>
+                        </div>
+                        <div class="grid_3">
+                                <div class="grid_12 ">      
+                                     <label c-label item="item">TOTAL SCORE</label></div>
+                                <div class="grid_12 ">
+                                        <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[21031128]" disabled />
+                                 </div>
+                        </div>
+                   </div>
+                   <div class="grid_12">
+                    <div class="grid_6">
+                        <div class="grid_12"><label c-label item="item">Kategori risiko jatuh</label></div>
+                        <div class="grid_12">
+                            <div class="grid_3">Score 0 - 24</div>
+                            <div class="grid_3">: Risiko rendah</div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_3">Score 25 - 44</div>
+                            <div class="grid_3">: Risiko sedang</div>
+                         </div>
+                         <div class="grid_12">
+                             <div class="grid_3">Score > 45</div>
+                             <div class="grid_3">: Risiko tinggi</div>
+                          </div>
+                    </div>
+                </div>
+               </fieldset>
+               </div>
+            </fieldset>
+        </div>
+        <div>
+                <!-- <div ng-show="item.obj[15000020]"> -->
+            <fieldset style="margin-top: 20px">     
+                <div class="grid_12">
+                        <table style="border: 0px">
+
+                        <tr>
+                            <th style="width: 10%">Pengelolaan Pasien Berisiko Jatuh</th>
+                            <th style="width: 16%"><div class="grid_12">
+                                <div>
+                                    <input style="width: 100%" k-ng-model="item.obj[21031089]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                                            <!-- <textarea style="width: 100px;height: 30px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[21031089]"  /> -->
+                                        </div>
+                            </div></th>
+                            <th style="width: 16%"><div class="grid_12">
+                                <div>
+                                    <input style="width: 100%" k-ng-model="item.obj[21031090]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                                            <!-- <textarea style="width: 100px;height: 30px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[21031090]"  />
+                                        </div> -->
+                            </div></th>
+                            <th style="width: 16%"><div class="grid_12">
+                                <div>
+                                    <input style="width: 100%" k-ng-model="item.obj[21031091]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                                            <!-- <textarea style="width: 100px;height: 30px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[21031091]"  /> -->
+                                        </div>
+                            </div></th>
+                            <th style="width: 16%"><div class="grid_12">
+                                <div>
+                                    <input style="width: 100%" k-ng-model="item.obj[21031092]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                                            <!-- <textarea style="width: 100px;height: 30px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[21031092]"  /> -->
+                                        </div>
+                            </div></th>
+                            <th style="width: 16%"><div class="grid_12">
+                                <div>
+                                    <input style="width: 100%" k-ng-model="item.obj[21031093]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                                            <!-- <textarea style="width: 100px;height: 30px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[21031093]"  /> -->
+                                        </div>
+                            </div></th>
+                            <th style="width: 16%"><div class="grid_12">
+                                <div>
+                                    <input style="width: 100%" k-ng-model="item.obj[21031094]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                                            <!-- <textarea style="width: 100px;height: 30px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[21031094]"  /> -->
+                                            <!-- edit by fauzi -->
+                                        </div>
+                            </div></th>
+                            
+                        </tr>
+                <div class="grid_12">
+                    <table style="border: 0px">
+                        <tr>
+                            <th colspan="7"><b>A. Risiko Rendah (RR)</b></th>
+                            
+                        </tr>
+                           <tr style="border: 0px" ng-repeat="list in listData3 | orderBy:'nourut'" ng-init="jawabIndex = $index">
+                            <td >{{list.namaexternal}}</td>
+                            <td style="text-align: center" ng-repeat="jawab in list.details">
+                                <div class="grid_12">
+                                    <div ng-switch on="jawabIndex">
+
+                                        
+                                    </div>
+
+                                <div ng-switch on="jawab.type">
+
+                                        <div ng-switch-when="checkbox">
+                                            <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                ng-model="item.obj[jawab.id]" ng-click="getSkoralegi(jawab)">
+                                            <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                &nbsp;{{jawab.reportdisplay}}</label>
+
+                                        </div>
+                                        <div ng-switch-when="textarea">
+                                            <textarea style="width: 150px;height: 50px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[jawab.id]"  />
+                                        </div>
+                                        <div ng-switch-when="combobox">
+                                            <div class="grid_12">
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                    k-auto-bind="false" k-data-source="listPegawai" />
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+                           </tr> 
+                        </table>
+                        
+                    </div>    
+                <div class="grid_12">
+                        <table style="border: 0px">
+
+                        
+                        <tr>
+                            <th colspan="7"><b>B. Risiko Sedang (RS)</b></th>
+                            
+                        </tr>
+                           <tr style="border: 0px" ng-repeat="list in listData4 | orderBy:'nourut'" ng-init="jawabIndex = $index">
+                            <td >{{list.namaexternal}}</td>
+                            <td style="text-align: center" ng-repeat="jawab in list.details">
+                                <div class="grid_12">
+                                    <div ng-switch on="jawabIndex">
+
+                                        
+                                    </div>
+
+                                <div ng-switch on="jawab.type">
+
+                                        <div ng-switch-when="checkbox">
+                                            <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                ng-model="item.obj[jawab.id]" ng-click="getSkoralegi(jawab)">
+                                            <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                &nbsp;{{jawab.reportdisplay}}</label>
+
+                                        </div>
+                                        <div ng-switch-when="textarea">
+                                            <textarea style="width: 100px;height: 30px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[jawab.id]"  />
+                                        </div>
+                                        <div ng-switch-when="combobox">
+                                            <div class="grid_12">
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                    k-auto-bind="false" k-data-source="listPegawai" />
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+                           </tr> 
+                        </table>
+                        
+                    </div>
+                
+            
+                <div class="grid_12">
+                        <table style="border: 0px">
+
+                        
+                            <th colspan="7"><b>C. Risiko Tinggi (RT)</b></th>
+                            
+                        </tr>
+                           <tr style="border: 0px" ng-repeat="list in listData5 | orderBy:'nourut'" ng-init="jawabIndex = $index">
+                            <td >{{list.namaexternal}}</td>
+                            <td style="text-align: center" ng-repeat="jawab in list.details">
+                                <div class="grid_12">
+                                    <div ng-switch on="jawabIndex">
+
+                                        
+                                    </div>
+
+                                <div ng-switch on="jawab.type">
+
+                                        <div ng-switch-when="checkbox">
+                                            <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                ng-model="item.obj[jawab.id]" ng-click="getSkoralegi(jawab)">
+                                            <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                &nbsp;{{jawab.reportdisplay}}</label>
+
+                                        </div>
+                                        <div ng-switch-when="textarea">
+                                            <textarea style="width: 100px;height: 30px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[jawab.id]"  />
+                                        </div>
+                                        <div ng-switch-when="combobox">
+                                            <div class="grid_12">
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                    k-auto-bind="false" k-data-source="listPegawai" />
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+                           </tr> 
+                        </table>
+                        
+                    </div>
+                
+            </fieldset>
+        </div>
+        
+  </div>
+
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

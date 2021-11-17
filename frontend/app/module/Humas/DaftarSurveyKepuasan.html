@@ -1,0 +1,122 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+    .k-grid-content{
+        max-height:450px;
+    }
+</style>
+<c-panel item="item" header="'Daftar Survey Kepuasan '" disabled>
+    <div class="grid_12">
+        <div class="grid_12">
+            <div class="grid_3">
+            </div>
+           <!-- <span style='font-size:100px;'>&#128512;</span> -->
+        <div class="grid_2">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Nama Lengkap"></label>
+            </div>
+            <div class="grid_12">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nama" />
+            </div>
+        </div>
+
+            <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Status"></label>
+                </div>
+                <div class="clear"></div>
+
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.status"
+                        k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listParam" />
+                </div>
+            </div>
+        <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Periode Survey"></label>
+                </div>
+                <div class="clear"></div>
+
+                <div class="grid_12">
+                    <!-- AwalPeriode -->
+                    <div class="grid_6 padDatePicker">
+                        <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datetimepicker k-max="now"
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                    </div>
+
+                    <!-- AkhirPeriode -->
+                    <div class="grid_6 padDatePicker">
+                        <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+
+
+
+            <!-- Button Search -->
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label>&nbsp;</label>
+                </div>
+                <div class="clear"></div>
+
+                <div class="grid_12">
+                    <button class="btnTemplate1" style="margin-left: 0;" ng-click="cariFilter()"> <i
+                            class="fa fa-search"></i>Cari</button>
+                </div>
+            </div>
+
+            <div class="grid_12">              
+                <div class="grid_12 borderBox">
+                    <div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" options="columnGrid"
+                        k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected">                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="grid_12">
+       
+      
+    
+        <div class="grid_4" style="margin-top: 22px">
+        </div>
+     <!--    <div class="grid_2" style="margin-top: 22px">
+            <button class="c-button" ng-click="cetak()">Cetak</button>
+        </div> -->
+    </div>
+</c-panel>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>

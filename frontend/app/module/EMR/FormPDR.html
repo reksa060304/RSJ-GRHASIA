@@ -1,0 +1,282 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    legend b {
+        color: #41abf2;
+    }
+
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+    hr {
+    border: 1px dashed #cccccc;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    display: inline-block;
+    width: 100%;
+}
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <!-- <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Personal Daily Record</div>
+        </div> -->
+
+        <div class="grid_12" style="margin-top: 10px;">
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>AKTIFITAS HARIAN</b></legend>
+                    <div  class="grid_12" style="margin-top: 10px;">
+                         <div class="grid_12" style="width: 60%">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Warna Feses"></label>
+                            </div>
+                            <select kendo-combo-box k-ng-model="item.obj[18000127]">
+                              <option value="1" text="hijau">Hijau</option>
+                              <option value="2" text="kuning">Kuning</option>
+                              <option value="3" text="putih">Putih</option>
+                              <option value="4" text="merah">Merah</option>
+                              <option value="5" text="hitam">Hitam</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                         <div class="grid_12" style="width: 60%">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Tekstur Feses"></label>
+                            </div>
+                            <select kendo-combo-box k-ng-model="item.obj[18000128]">
+                              <option value="1" text="bentuk1">Berbentuk bongkahan kecil padat dan terpisah seperti kacang</option>
+                              <option value="2" text="bentuk2">Bentuk Feses tampak seperti sosis yang lebih panjang dan padat</option>
+                              <option value="3" text="bentuk3">Bentuk Feses tampak seperti sosis dan terdapat retakan dipermukaan</option>
+                              <option value="4" text="bentuk4">Bentuk Feses seperti sosis tetapi lebih lembut dan mengular</option>
+                              <option value="5" text="bentuk5">Bentuk Feses seperti gumpalan lunak dengan tepi jernih</option>
+                              <option value="6" text="bentuk6">Bentuk Feses lembek dan tidak beraturan</option>
+                              <option value="7" text="bentuk5">Bentuk Feses cenderung cair tanpa potongan padat</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                         <div class="grid_12" style="width: 60%">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Perasaan Segar Bangun Pagi"></label>
+                            </div>
+                            <select kendo-combo-box k-ng-model="item.obj[18000129]">
+                              <option value="1" text="Sangat Mengantuk">Sangat Mengantuk</option>
+                              <option value="2" text="Mengantuk">Mengantuk</option>
+                              <option value="3" text="Sedikit Mengantuk">Sedikit Mengantuk</option>
+                              <option value="4" text="Segar, Bersemangat">Segar, Bersemangat</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                         <div class="grid_12" style="width: 60%">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Kedalaman Tidur"></label>
+                            </div>
+                            <select kendo-combo-box k-ng-model="item.obj[18000130]">
+                              <option value="1" text="Sebentar terbangun">Sebentar terbangun</option>
+                              <option value="2" text="Tidur dan terbangun">Tidur dan terbangun</option>
+                              <option value="3" text="Tidur tapi tidak nyenyak">Tidur tapi tidak nyenyak</option>
+                              <option value="4" text="Tidur sangant nyenyak">Tidur sangant nyenyak</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                         <div class="grid_12" style="width: 60%">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Kepuasan Tidur"></label>
+                            </div>
+                            <select kendo-combo-box k-ng-model="item.obj[18000131]">
+                              <option value="1" text="Tidak Puas">Tidak Puas</option>
+                              <option value="2" text="Sedikit Puas">Sedikit Puas</option>
+                              <option value="3" text="Sedang">Sedang</option>
+                              <option value="4" text="Sangat puas">Sangat puas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <label><b>Warna Urine</b></label>
+                        <div ng-repeat="stat in listWarnaUrine  | orderBy:'id'">
+                            <div class="grid_3">
+                                <md-radio-group ng-model="item.obj[18000132]">
+                                    <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                    </md-radio-button>
+                                </md-radio-group>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>ASUPAN</b></legend>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Tanggal / Jam"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%" k-ng-model="item.obj[18000133]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Asupan"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="margin-bottom: 10px;width: 50%" class="k-textbox" ng-model="item.obj[18000134]" type="text" placeholder="{{data2.satuan}}">
+                            </div>    
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>CATATAN KLINIS</b></legend>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Tanggal / Jam"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%" k-ng-model="item.obj[18000135]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Tekanan darah"></label>
+                            </div>
+                            <div class="grid_12">
+                                <div class="grid_3">
+                                    <input style="width: 100%" c-text-box type="text" filter="" class="k-textbox"
+                                        ng-model="item.obj[18000136]" />
+                                    <label class="keteranganFieldTambahan"
+                                        style="margin-top: 5px;margin-right: 30px">mm/Hg</label>
+                                </div>
+                                <div style="margin-top: 10px;margin-left: 40px" class="grid_1">/</div>
+                                <div class="grid_3 parentKeteranganFieldTambahan">
+                                    <input style="width: 100%" c-text-box type="text" filter="" class="k-textbox"
+                                        ng-model="item.obj[18000137]" />
+                                    <label class="keteranganFieldTambahan"
+                                        style="margin-top: 5px;margin-right: 30px">mm/Hg</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Kadar Oksigen"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="margin-bottom: 10px;width: 50%" class="k-textbox" ng-model="item.obj[18000138]" type="text" placeholder="{{data2.satuan}}">
+                            </div>    
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Suhu tubuh"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="margin-bottom: 10px;width: 50%" class="k-textbox" ng-model="item.obj[18000139]" type="text" placeholder="{{data2.satuan}}">
+                            </div>    
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+       
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

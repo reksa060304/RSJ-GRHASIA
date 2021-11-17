@@ -1,0 +1,97 @@
+<div class="content-wrapper">
+    <div class="content-body">
+      <!-- content-header component -->
+      <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+
+      <!-- Carousel Options start -->
+      <section id="carousel-options">
+        <div class="row match-height">
+          <div class="col-md-6 col-sm-12">
+            <core-card-snippet [snippetCode]="_snippetCodeIntervalOption">
+              <h4 class="card-title">Gallery</h4>
+              <div class="card-body">
+                <ngb-carousel [interval]="3000" *ngIf="carouselImages">
+                  <ng-template ngbSlide>
+                    <div class="carousel-img-wrapper">
+                      <img [src]="carouselImages.one" class="img-fluid" alt="Random first slide" />
+                    </div>
+                    <div class="carousel-caption"></div>
+                  </ng-template>
+                  <ng-template ngbSlide>
+                    <div class="carousel-img-wrapper">
+                      <img [src]="carouselImages.two" class="img-fluid" alt="Random second slide" />
+                    </div>
+                    <div class="carousel-caption"></div>
+                  </ng-template>
+                  <ng-template ngbSlide>
+                    <div class="carousel-img-wrapper">
+                      <img [src]="carouselImages.three" class="img-fluid" alt="Random third slide" />
+                    </div>
+                    <div class="carousel-caption"></div>
+                  </ng-template>
+                  <ng-template ngbSlide>
+                    <div class="carousel-img-wrapper">
+                      <img [src]="carouselImages.four" class="img-fluid" alt="Random third slide" />
+                    </div>
+                    <div class="carousel-caption"></div>
+                  </ng-template>
+                  <ng-template ngbSlide>
+                    <div class="carousel-img-wrapper">
+                      <img [src]="carouselImages.five" class="img-fluid" alt="Random third slide" />
+                    </div>
+                    <div class="carousel-caption"></div>
+                  </ng-template>
+                </ngb-carousel>
+                <!-- ngb-carousel component -->
+              </div>
+            </core-card-snippet>
+          </div>
+          <div class="col-md-6 col-sm-12">
+            <core-card-snippet [snippetCode]="_snippetCodeIntervalOption">
+                <h4 class="card-title">Gallery</h4>
+                <div class="card-body">
+                  <ngb-carousel [interval]="3000" *ngIf="carouselImages2">
+                    <ng-template ngbSlide>
+                      <div class="carousel-img-wrapper">
+                        <img [src]="carouselImages2.one" class="img-fluid" alt="Random first slide" />
+                      </div>
+                      <div class="carousel-caption"></div>
+                    </ng-template>
+                    <ng-template ngbSlide>
+                      <div class="carousel-img-wrapper">
+                        <img [src]="carouselImages2.two" class="img-fluid" alt="Random second slide" />
+                      </div>
+                      <div class="carousel-caption"></div>
+                    </ng-template>
+                    <ng-template ngbSlide>
+                      <div class="carousel-img-wrapper">
+                        <img [src]="carouselImages2.three" class="img-fluid" alt="Random third slide" />
+                      </div>
+                      <div class="carousel-caption"></div>
+                    </ng-template>
+                    <ng-template ngbSlide>
+                      <div class="carousel-img-wrapper">
+                        <img [src]="carouselImages2.four" class="img-fluid" alt="Random third slide" />
+                      </div>
+                      <div class="carousel-caption"></div>
+                    </ng-template>
+                    <ng-template ngbSlide>
+                      <div class="carousel-img-wrapper">
+                        <img [src]="carouselImages2.five" class="img-fluid" alt="Random third slide" />
+                      </div>
+                      <div class="carousel-caption"></div>
+                    </ng-template>
+                  </ngb-carousel>
+                  <!-- ngb-carousel component -->
+                </div>
+              </core-card-snippet>
+          </div>
+          <!-- Pause Options end -->
+        </div>
+       
+      </section>
+ 
+    </div>
+  </div>
+  

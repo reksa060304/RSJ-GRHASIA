@@ -1,0 +1,109 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+        <section id="input-sizing">
+            <form [formGroup]="formGroup">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="centers" *ngIf="!isInfoPasien">
+                            <div>
+                                <div class="form-group">
+                                    <label for="largeInput">
+                                        <h3>Masukkan No Reservasi</h3>
+                                    </label>
+                                    <input class="form-control form-control-lg" type="text"
+                                        placeholder="Masukkan No Reservasi" formControlName="noReservasi" />
+                                </div>
+
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-12  col-md-4">
+                                </div>
+                                <div class="col-12  col-md-4">
+                                    <button type="button" class="btn btn-outline-primary mb-1" rippleEffect
+                                        style="width:100%" (click)="getInfoByNoReservasi()">Selanjutnya</button>
+                                </div>
+                            </div>
+
+                            <!-- <div style="text-align:center">
+                                <button mat-raised-button color="accent" class="btnTemplate" style="color:white"
+                                    (click)="getPasienByNoCM()">Selanjutnya
+                                </button>
+
+                            </div> -->
+                            <img *ngIf="isloading" style="margin-top:10px"
+                                src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+
+                        </div>
+
+                        <div class="centers" *ngIf="isInfoPasien">
+                            <div class="row">
+                                <div class="col-12 col-md-2">
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    <div class="card">
+                                        <div class="card-header " style="display: inline;">
+                                            <h3>No. Reservasi : {{item.noreservasi}}</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-12 col-md-4">
+
+                                                    <p class="card-text" *ngIf="item.nocm==null"> Tipe Pasien </p>
+                                                    <h4 class="card-title" *ngIf="item.nocm==null">{{item.type}}</h4>
+
+                                                    <p class="card-text" *ngIf="item.nocm!=null">No. RM </p>
+                                                    <h4 class="card-title" *ngIf="item.nocm!=null">{{item.nocm}}</h4>
+
+                                                    <p class="card-text">Nama Pasien </p>
+                                                    <h4 class="card-title"> {{item.namapasien}}</h4>
+
+                                                    <p class="card-text"> Jenis Kelamin </p>
+                                                    <h4 class="card-title"> {{item.jeniskelamin}}</h4>
+                                                </div>
+                                                <div class="col-12 col-md-4">
+                                                    <p class="card-text"> Tanggal Lahir</p>
+                                                    <h4 class="card-title"> {{item.tgllahir}}</h4>
+
+                                                    <p class="card-text">Alamat </p>
+                                                    <h4 class="card-title"> {{item.alamatlengkap}}</h4>
+
+                                                    <p class="card-text"> No. Telpon </p>
+                                                    <h4 class="card-title"> {{item.notelepon}}</h4>
+                                                </div>
+
+                                                <div class="col-12 col-md-4">
+                                                    <p class="card-text"> Tgl Reservasi</p>
+                                                    <h4 class="card-title"> {{item.tanggalreservasi}}</h4>
+
+                                                    <p class="card-text">Poliklinik </p>
+                                                    <h4 class="card-title"> {{item.namaruangan}}</h4>
+
+                                                    <p class="card-text"> Dokter </p>
+                                                    <h4 class="card-title"> - </h4>
+                                                </div>
+
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col-12  col-md-4"></div>
+                                                <div class="col-12  col-md-4">
+                                                    <button type="button" class="btn btn-outline-primary mb-1"
+                                                        rippleEffect style="width:100%"
+                                                        (click)="checkIn()">Check-In</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

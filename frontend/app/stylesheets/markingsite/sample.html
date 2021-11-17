@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Sample of Using annocanvas.js</title>  
+
+ 
+  <link rel="stylesheet" type="text/css" href="annocan.css"/><!-- notice: css is compiled from less -->
+</head>
+<body onload="initDrawstuff()">
+	
+	<div id="annocanvas01" style="float:left;">
+		<canvas id="annocanvas01_canvas" width="960" height="854" class="canvas_canvas">
+			Sorry. Canvas is not supported by your browser...
+		</canvas>
+	</div>
+	
+<div style="float:left">
+<textarea id="txt" style="width:400px;height:400px;"></textarea>
+</div>
+
+  <script src="annocan.js" type="text/javascript"></script>
+  <script src="dummy_image.js" type="text/javascript"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+  <script>     
+   var r2;
+  	
+  	function initDrawstuff() {
+  		var bkg = new Image();
+  		//bkg.src = "xyz.jpg"; //temporary changed to load base64 directly to avoid security errors when running locally
+		  bkg.src = getDummy(); //base64 content loaded from dummy_image.js
+		  bkg.addEventListener('load', function(){
+
+			r2=new RoCanvas;
+			r2.RO("annocanvas01_canvas", {
+				"toolbar": {
+				  colors: ["#FFF","#000","#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF"],
+				  custom_color: false,
+					//tools: ['ellipse', 'path', 'circle', 'rectangle', 'arrow', 'textbox'],
+					sizes: [3,6,10],		
+					clearButton : {"text":"Nulstil"},	
+					saveButton: null
+				},
+				"settings": {
+					color: 'blue',
+					lineWidth : "6",
+          tool: 'arrow'
+				}, 
+				"backgroundImage" : bkg,
+        "cssScale" : 2.0
+			});
+		});
+	   	
+	}
+
+	function testSave(instance)
+	{		
+    
+    document.getElementById("txt").value = document.getElementById("annocanvas01_canvas").toDataURL("image/jpeg");
+	  // send ajax request to some URL using the data
+	  // to do...
+
+	}
+
+
+  </script>
+</body>
+</html>

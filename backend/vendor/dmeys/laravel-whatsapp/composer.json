@@ -1,0 +1,23 @@
+{
+    "name": "dmeys/laravel-whatsapp",
+    "description": "A laravel wrapper",
+	"require": {
+		"php": ">=5.3.0",
+		"laravel/framework": "5.*"
+	},
+    "authors": [
+        {
+            "name": "Dmytro Zadyraka",
+            "email": "dzadyraka@gmail.com"
+        }
+    ],
+	"autoload": {
+		"psr-4": {
+			"Lucasvdh\\LaravelWhatsapp\\": "src/"
+		},
+		"classmap": [
+			"src/Abstracts",
+			"src/Interfaces"
+		]
+	}
+}

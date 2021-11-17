@@ -1,0 +1,17 @@
+@import '@core/scss/base/pages/page-knowledge-base';
+@import '@core/scss/angular/libs/toastr.component.scss';
+
+// Dark Layout
+.dark-layout {
+  .kb-search-content-info {
+    .kb-search-content {
+      .card-img-top {
+        background-color: #3f4860 !important;
+      }
+    }
+  }
+}
+
+.cursor{
+  cursor: pointer;
+}

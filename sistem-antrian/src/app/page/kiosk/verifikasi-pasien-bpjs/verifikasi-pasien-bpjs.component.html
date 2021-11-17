@@ -1,0 +1,162 @@
+<div class="p-col-12 p-fluid p-formgrid ">
+    <div class="p-grid">
+        <div class="p-col-12 p-md-1">
+            <a id="link-kios" (click)="goBack()" pTooltip="Kembali Ke Menu Sebelumnya">
+                <span style="font-size:35px;" class="fa fa-arrow-left"></span>
+            </a>
+        </div>
+        <div class="p-col-12 p-md-10">
+            <h4 style="text-align: center"> Registration - Pasien {{url}} </h4>
+        </div>
+    </div>
+    <form [formGroup]="formGroup">
+        <div class="p-grid">
+
+            <div class="p-col-12 p-md-4 p-md-offset-4" *ngIf="!isInfoPasien">
+                <div class="p-grid">
+                    <div class="p-col-12">
+                        <h5 style="text-align:center">Masukkan No Rujukan / No Kartu</h5>
+                        <input type="text" formControlName="noRujukan" pInputText
+                            placeholder="No RM / No Rujukan / No Kartu" />
+                    </div>
+
+                    <!-- <div class="p-col-12">
+                    <div class="p-col-4"></div>
+                    <div class="p-col-2">
+                        <p-radioButton name="group1" value="pcare" label=" PCare" formControlName="pCare"
+                            inputId="opt1">
+                        </p-radioButton>
+                    </div>
+                    <div class="p-col-2">
+                        <p-radioButton name="group1" value="rs" label=" Rumah Sakit" formControlName="pCare"
+                            inputId="opt2">
+                        </p-radioButton>
+                    </div>
+                </div> -->
+                    <div class="p-col-12 p-md-6 p-field-checkbox" *ngFor="let items of listRadio">
+                        <p-radioButton [inputId]="items.id" [value]="items.id" formControlName="pCare">
+                        </p-radioButton>
+                        <label [for]="items.id">{{items.name}}</label>
+                    </div>
+                    <!-- <input class="input-no-cm jQKeyboard" type="text" placeholder="Nomor KTP" [matKeyboard]="'Azərbaycanca'" >  -->
+                </div>
+                <div style="text-align:center">
+                    <!-- <button mat-raised-button color="accent" class="btnTemplate" style="color:white"
+                    (click)="getNoRujukan()">Selanjutnya
+                </button> -->
+                    <button (click)="getNoRujukan()" pButton pRipple type="button" label="Selanjutnya"
+                        icon="pi pi-arrow-circle-right" class="p-button p-mr-2 p-mb-2"></button>
+                </div>
+
+            </div>
+
+            <div class="centers" *ngIf="isInfoPasien">
+                <div class="p-col-12">
+                    <h4 class="no-cm" *ngIf="!isSuksesSEP">No. Rujukan : {{item.noKunjungan}}</h4>
+                    <h4 class="no-cm" *ngIf="isSuksesSEP">No. SEP : {{dataSEP.nosep}}</h4>
+                </div>
+
+
+                <div class="row">
+                    <div class="p-grid">
+                        <div class="p-col-12 p-md-4">
+                            <div class="detail-pasien">
+                                <p class="text-regular">No RM</p>
+                                <p class="text-bold"> {{item.peserta.mr.noMR}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">Nama Pasien</p>
+                                <p class="text-bold"> {{item.peserta.nama}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">Jenis Kelamin</p>
+                                <p class="text-bold"> {{item.peserta.sex}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">No. Identitas</p>
+                                <p class="text-bold"> {{item.peserta.nik}}</p>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <div class="detail-pasien">
+                                <p class="text-regular">Tanggal Lahir</p>
+                                <p class="text-bold"> {{item.peserta.tglLahir}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">Umur</p>
+                                <p class="text-bold"> {{item.peserta.umur.umurSekarang}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">Jenis Peserta</p>
+                                <p class="text-bold">{{item.peserta.jenisPeserta.keterangan}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">No. Telpon</p>
+                                <p class="text-bold"> {{item.peserta.mr.noTelepon}}</p>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <div class="detail-pasien">
+                                <p class="text-regular">Tanggal Kunjungan</p>
+                                <p class="text-bold"> {{item.tglKunjungan}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">No Kartu</p>
+                                <p class="text-bold">{{item.peserta.noKartu}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">Asal Rujukan</p>
+                                <p class="text-bold"> {{item.provPerujuk.nama}}</p>
+                            </div>
+
+                            <div class="detail-pasien">
+                                <p class="text-regular">Diagnosa</p>
+                                <p class="text-bold"> {{item.diagnosa.kode}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-grid">
+                        <div class="p-col-12 p-md-4 p-md-offset-2">
+                            <p-dropdown formControlName="poliTujuan" [options]="listPoli" [filter]="true"
+                                 (onChange)="changePoli($event)">
+                            </p-dropdown>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <p-dropdown formControlName="dokterDPJP" [options]="listDokter" [filter]="true"
+                                >
+                            </p-dropdown>
+                            <p-checkbox label=" Semua DPJP" binary="true" style="margin-top: 10px;" formControlName="allDPJP"
+                                (onChange)="changeClick()"></p-checkbox>
+                        </div>
+                    </div>
+                    <div class="p-col-12 p-md-4 p-md-offset-4">
+                        <div style="text-align:center" *ngIf="!showCetak">
+                            <button (click)="insertSep()" pButton pRipple type="button" label="Simpan"
+                            icon="pi pi-arrow-circle-right" class="p-button p-mr-2 p-mb-2"  pTooltip="Pilih Simpan untuk generate No.SEP "></button>
+                            <!-- <button mat-raised-button color="accent" class="btnTemplate" style="color:white"
+                                (click)="insertSep()" pTooltip="Pilih Simpan untuk generate No.SEP "> Simpan
+                            </button> -->
+                        </div>
+
+                        <div class="p-col-12 p-md-12 p-lg-12" *ngIf="showCetak">
+                            <div class="p-col-12 p-md-12 p-lg-12">
+                                <button (click)="cetakSep()" pButton pRipple type="button" label=" Cetak SEP"
+                                icon="pi pi-print" class="p-button p-button-success p-mr-2 p-mb-2"  ></button>
+                                <!-- <button mat-raised-button color="primary" class="btnTemplate" style="color:white"
+                                    (click)="cetakSep()" pTooltip="Pilih Simpan untuk generate No.SEP "> Cetak SEP
+                                </button> -->
+                            </div>
+                            <div class="p-col-12 p-md-12 p-lg-12">
+                                <button (click)="cetakAntrian()" pButton pRipple type="button" label="Cetak Nomor
+                                Antrian"
+                                icon="pi pi-print" class="p-button p-button-warning p-mr-2 p-mb-2"  ></button>
+                              
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

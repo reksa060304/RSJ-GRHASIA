@@ -1,0 +1,119 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+
+    .k-treeview .k-item {
+        background-color: #f9f9f9 !important;
+    }
+
+    .k-checkbox-label:before {
+        margin: 1px 0px 0px 6px;
+    }
+</style>
+<div class="grid_12">
+    <div class="grid_11">
+        <div class="grid_2" style="margin-top:5px">
+            <label c-label real>No RM </label>
+            <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.noMr" disabled />
+        </div>
+        <div class="grid_3" style="margin-top:5px">
+            <label c-label real>Nama Pasien </label>
+            <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.namaPasien" disabled />
+        </div>
+        <div class="grid_2" style="margin-top:5px">
+            <label c-label real>No Registrasi </label>
+            <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.noregistrasi" disabled />
+        </div>
+        <div class="grid_3" style="margin-top:5px">
+            <label c-label real>Jumlah Rawat Inap</label>
+            <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="itemD.JumlahRawat" disabled />
+        </div>
+    </div>
+    <div class="grid_12">
+        <div class="grid_12 headerBox">
+            <p>Riwayat Registrasi</p>
+        </div>
+        <div class="clear"></div>
+        <!-- grid table -->
+        <div class="grid_12 borderBox">
+            <kendo-grid id="kGrid" data-source="dataRiwayatRegistrasi" options="columnRiwayatRegistrasi"
+                k-pageable="'true'" k-sortable="'true'" k-resizable="'true'" k-selectable="'row'"
+                k-ng-model="dataPasienSelected" ng-click="klikGrid(dataPasienSelected)">
+            </kendo-grid>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<div class="grid_12">
+    <div class="grid_10"></div>
+    <div class="grid_2">
+        <button class="btnTemplate1" style="margin-left: 0;" ng-click="DetailRegistrasi()"><i
+                class="fa fa-list-alt"></i>Detail Registrasi</button>
+    </div>
+</div>
+<div kendo-window="popUpDetailRegistrasi" k-title="'Data Detail Registrasi'" k-width="1000" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div class="grid_11">
+            <div class="grid_2" style="margin-top:5px">
+                <label c-label real>No RM </label>
+                <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="itemDd.noRM"
+                    ng-keypress="($event.which == 13)? SearchEnterDetails():itemDd.noRM" disabled />
+            </div>
+            <div class="grid_4" style="margin-top:5px">
+                <label c-label real>Nama Pasien </label>
+                <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="itemDd.namaPasien"
+                    ng-keypress="($event.which == 13)? SearchEnterDetails():itemDd.namaPasien" disabled />
+            </div>
+            <div class="grid_3" style="margin-top:5px">
+                <label c-label real>Tgl Lahir </label>
+                <input style="width: 100%" kendo-date-picker placeholer="dd-mm-yyyy" k-ng-model="itemDd.tglLahir"
+                    k-format="'dd-MM-yyyy'" ng-keypress="($event.which == 13)? SearchEnterDetails():itemDd.tglLahir"
+                    disabled />
+            </div>
+            <div class="grid_3" style="margin-top:5px">
+                <label c-label real>No Registrasi </label>
+                <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="itemDd.noRegistrasi"
+                    ng-keypress="($event.which == 13)? SearchEnterDetails():itemD.noRegistrasi" disabled />
+            </div>
+        </div>
+        <div class="grid_12">
+            <div class="grid_12 headerBox">
+                <p>Detail Registrasi</p>
+            </div>
+            <div class="clear"></div>
+            <!-- grid table -->
+            <div class="grid_12 borderBox">
+                <kendo-grid id="kGrid" data-source="dataDetailRegistrasi" options="columnDetailRegistrasi"
+                    k-pageable="'true'" k-sortable="'true'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataPasienSelectedDetail" ng-click="klikGridDetail(dataPasienSelectedDetail)">
+                </kendo-grid>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="grid_12">
+            <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                <button class="k-button  k-button-icontext" ng-click="TutupPopUps()"><span
+                        class="k-icon k-cancel"></span>Tutup</button>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top:60px">
+            <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+        </div>
+    </div>
+</div>

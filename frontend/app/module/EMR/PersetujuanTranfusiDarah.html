@@ -1,0 +1,409 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        padding: 1px 0px
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top;
+    }
+
+    .tg .nilai {
+        vertical-align: middle;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .tg .jawaban {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .secondLine {
+        font-family: Arial, sans-serif;
+        padding-left: 1.5em;
+        text-indent: -1.5em;
+        margin-left: 10px;
+        text-align: left
+    }
+
+    .hr .har {
+        border: 1px dashed #cccccc;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+</style>
+<div class="container_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Persetujuan Tindakan Tranfusi Darah</div>
+        </div>
+        <!-- <div style="background-color: #10C4B2; height: 25px; margin-top: 5p; text-align: left; border: 1px solid; border-color: #10C4B2; padding: 10px 0 10px 10px;"
+            class="grid_12">
+            <span style="font-size: 18px; color: white; padding: 5px;">Persetujuan Tindakan Anestesi</span>
+        </div> -->
+        <div class="grid_6">
+            <div class="grid_12">
+                <div class="grid_4">
+                    <label c-label item="item" c-label-text="Dokter Pelaksana Tindakan"></label>
+                </div>
+                <div class="grid_6">
+                    <input class="k-textbox" ng-model="item.obj[21005046]" type="text">
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_4">
+                    <label c-label item="item" c-label-text="Pemberi Informasi"></label>
+                </div>
+                <div class="grid_6">
+                    <input class="k-textbox" ng-model="item.obj[21005047]" type="text">
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_4">
+                    <label c-label item="item" c-label-text="Penerima Informasi / Pemberi Informasi"></label>
+                </div>
+                <div class="grid_6">
+                    <input class="k-textbox" ng-model="item.obj[21005048]" type="text">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid_12">
+        <div style="background-color: #10C4B2; height: 12px; margin-top: 3p; text-align: left; border: 1px solid; border-color: #10C4B2; padding: 10px 0 10px 10px;"
+            class="grid_12">
+            <span style="font-size: 14px; color: white; padding: 5px;">Informasi Anestesi</span>
+        </div>
+    </div>
+    <table class="tg">
+        <tr>
+            <td style="width: 3%;"></td>
+            <td style="width: 30%;">JENIS INFORMASI </td>
+            <td>ISI INFORMASI</td>
+            <td style="width: 3%">TANDA (v)</td>
+        </tr>
+        <tr>
+            <td>1.</td>
+            <td>Pengertian Tranfusi Darah</td>
+            <td>Suatu proses memasukan komponen darah dari orang sehat (donor) kedalam
+                tubuh orang sakit (pasien) secara inravena</td>
+            <td>
+                <div class="grid_1">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{21005049}}"
+                        ng-model="item.obj[21005049]">
+                    <label class="k-checkbox-label" for="item.obj{{21005049}}">
+                        &nbsp;</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>2.</td>
+            <td>Jenis darah / Komponen darah</td>
+            <td>Komponen darah yang tersedia sebagai berikut
+                <br>
+                - Darah Penuh (Whole Blood)     - Fresh Frozen Plasma (FPP)
+                <br>
+                - Packed Red Cell (PRC)         - Cryoprecipitate
+                <br>
+                - Thrombocyte Concentrate (TC)  - Darah Merah Cuci (Washed Red Cell)
+                <br>
+                Komponen darah tersebut diberikan kepada pasien sesuai indikasi
+            </td>
+            <td>
+                <div class="grid_1">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{21005050}}"
+                        ng-model="item.obj[21005050]">
+                    <label class="k-checkbox-label" for="item.obj{{21005050}}">
+                        &nbsp;</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>3.</td>
+            <td>Tujuan/Indikasi Transfusi Darah</td>
+            <td>Anemia karena perdarahan akut
+                <br>
+                Anemia Kronik
+                <br>
+                Perdarahan karena kekurangan komponen darah (trombosit, faktor pembekuan)
+                <br>
+                Plasma loss atau hipoalbuminemia jika tidak dapat diberikan plasma subtitute atau larutan albumin
+            </td>
+            <td>
+                <div class="grid_1">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{21005051}}"
+                        ng-model="item.obj[21005051]">
+                    <label class="k-checkbox-label" for="item.obj{{21005051}}">
+                        &nbsp;</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>4.</td>
+            <td>Manfaat</td>
+            <td>
+                1. Terapi pengganti atau supportif
+                <br>
+                2. Mengganti darah atau mempertahankan kadar oksigen normal yang diedarkan ke organ dan jaringan
+                <br>
+                3. Untuk profilaksis sebelum adanya perdarahan
+            </td>
+            <td>
+                <div class="grid_1">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{21005052}}"
+                        ng-model="item.obj[21005052]">
+                    <label class="k-checkbox-label" for="item.obj{{21005052}}">
+                        &nbsp;</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>5.</td>
+            <td>
+                Memahami Risiko
+            </td>
+            <td>Resiko penularan penyakit infeksi melalui transfusi darah bergantung pada berbagai hal antara lain:
+                angka kejadian penyakit di masyarakat, keefektifan skrining yang dilakukan, kekebalan tubuh resipen dan jumlah donor tiap unit darha.
+                Beberapa infeksi yang biasa terjadi adalah virus hepatitis, HIV, Citomegalovirus, bakteri stafilokokus, yesteria dan parasit malarian.
+            </td>
+            <td>
+                <div class="grid_1">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{21005053}}"
+                        ng-model="item.obj[21005053]">
+                    <label class="k-checkbox-label" for="item.obj{{21005053}}">
+                        &nbsp;</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>6. </td>
+            <td>Komplikasi</td>
+            <td>Kompikasi transfusi darah dapat dibedakan atas:
+                <br>
+                1. Komplikasi menurut keterlibatan sistem imun tubuh:
+                <br>
+                a. Komplikasi Imunologi (berhubungan dengan reaksi tranfusi)
+                <br>
+                b. Komplikasi non imunologi (disebabkan efek fisik dari komponen darah dan infeksi)
+                <br>
+                2. Komplikasi menurut waktu pemberian tranfusi:
+                <br>
+                a. Komplikasi segera (immediate)
+                <br>
+                b. Komplikasi tertunda (delayed)
+            </td>
+            <td>
+                <div class="grid_1">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{21005054}}"
+                        ng-model="item.obj[21005054]">
+                    <label class="k-checkbox-label" for="item.obj{{21005054}}">
+                        &nbsp;</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>7.</td>
+            <td>Alternatif</td>
+            <td>Tidak ada alternatif selain pemberian komponen darah</td>
+            <td>
+                <div class="grid_1">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{21005055}}"
+                        ng-model="item.obj[21005055]">
+                    <label class="k-checkbox-label" for="item.obj{{21005055}}">
+                        &nbsp;</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>8.</td>
+            <td>Tata Cara</td>
+            <td>1. Pada pasien dilakukan pengambilan contoh darah pada darah vena 5 ml untuk contoh darah, jika jarak antara 2 kali tranfusi lebih dari 24 jam, diperlukan contoh darah baru.
+                <br>
+                2. Contoh darah dan formulir permintaan dikirim ke unit tranfusi darah (PMI)
+                <br>
+                3. Setelah darah tranfusi datang, maka dilakukan prosedur tranfusi darah
+                <br>
+                4. Jenis dan jumlah tranfusi darah yang diberikan sesuai dengan kebutuhan medis dari pasien tersebut
+            </td>
+            <td>
+                <div class="grid_1">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{21005056}}"
+                        ng-model="item.obj[21005056]">
+                    <label class="k-checkbox-label" for="item.obj{{21005056}}">
+                        &nbsp;</label>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div class="grid_12">
+        <fieldset>
+        <div class="grid_10">
+            Dengan ini menyatakan bahwa saya telah menerangkan hal-hal di atas secara benar dan jelas dan memberikan kesempatan untuk bertanya dan/atau berdiskusi
+        </div>
+        <div class="grid_2">
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21005057]"
+                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                    k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+    </fieldset>
+    </div>
+    <div class="grid_12">
+        <fieldset>
+        <div class="grid_10">
+            Dengan ini menyatakan bahwa saya telah menerima informasi sebagaimana di atas yang saya beri tanda/paraf di kolom kanannya, dan telah memahaminya
+        </div>
+        <div class="grid_2">
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21005058]"
+                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                    k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+    </fieldset>
+    </div>
+
+    <div class="grid_12">
+        <div style="background-color: #10C4B2; height: 12px; margin-top: 3p; text-align: left; border: 1px solid; border-color: #10C4B2; padding: 10px 0 10px 10px;"
+            class="grid_12">
+            <span style="font-size: 14px; color: white; padding: 5px;">Persetujuan Tindakan Anestesi</span>
+        </div>
+        <div class="grid_12 borderBox containerBorderBox">
+            <div class="grid_12">
+                <label c-label="" class="ng-isolate-scope c-label">Yang bertanda tangan dibawah ini, saya :</label>
+                <div class="grid_4">
+                    <label c-label="" class="ng-isolate-scope c-label">Nama :</label>
+                </div>
+                <div class="grid_8">
+                    <input class="k-textbox" ng-model="item.obj[21005059]" type="text">
+                </div>
+                <div class="grid_4">
+                    <label c-label="" class="ng-isolate-scope c-label">Umur :</label>
+                </div>
+                <div class="grid_8">
+                    <input class="k-textbox" ng-model="item.obj[21005060]" type="text">
+                </div>
+                <div class="grid_4">
+                    <label c-label="" class="ng-isolate-scope c-label">Jenis Kelamin :</label>
+                </div>
+                <div class="grid_8">
+                    <input class="k-textbox" ng-model="item.obj[21005061]" type="text">
+                </div>
+                <div class="grid_4">
+                    <label c-label="" class="ng-isolate-scope c-label">Alamat :</label>
+                </div>
+                <div class="grid_8">
+                    <input class="k-textbox" ng-model="item.obj[21005062]" type="text">
+                </div>
+                <div class="grid_6">
+                    <label c-label="" class="ng-isolate-scope c-label">dengan ini menyatakan persetujuan untuk dilakukan
+                        tindakan</label>
+                </div>
+                <div class="grid_2">
+                    <input class="k-textbox" ng-model="item.obj[21005063]" type="text">
+                </div>
+                <div class="grid_1">
+                    <label c-label="" class="ng-isolate-scope c-label">terhadap saya / </label>
+                </div>
+                <div class="grid_2">
+                    <input class="k-textbox" ng-model="item.obj[21005064]" type="text">
+                </div>
+                <div class="grid_2">
+                    <label c-label="" class="ng-isolate-scope c-label">saya, Yang bernama</label>
+                </div>
+                <div class="grid_8">
+                    <input class="k-textbox" ng-model="item.obj[21005065]" type="text">
+                </div>
+                <div class="grid_4">
+                    <label c-label="" class="ng-isolate-scope c-label">Umur :</label>
+                </div>
+                <div class="grid_8">
+                    <input class="k-textbox" ng-model="item.obj[21005066]" type="text">
+                </div>
+                <div class="grid_4">
+                    <label c-label="" class="ng-isolate-scope c-label">Jenis Kelamin :</label>
+                </div>
+                <div class="grid_8">
+                    <input class="k-textbox" ng-model="item.obj[21005067]" type="text">
+                </div>
+                <div class="grid_4">
+                    <label c-label="" class="ng-isolate-scope c-label">Alamat: </label>
+                </div>
+                <div class="grid_8">
+                    <input class="k-textbox" ng-model="item.obj[21005068]" type="text">
+                </div>
+            </div>
+            <div class="grid_12">
+
+                <label c-label="" class="ng-isolate-scope c-label">Saya memahami perlunya dan manfaat tindakan tersebut sebagaimana telah dijelaskan seperti di atas jeoada saya,
+                    termasuk risiko dan komplikasi yang mungkin timbul.
+                </label>
+                <label c-label="" class="ng-isolate-scope c-label">Saya Juga menyadari bahwa ilmu kedokteran bukanlah
+                    ilmu pasti, maka keberhasilan tindakan kedokteran (anestesi) bukanlah keniscayaan melainkan sangat
+                    bergantung kepada izin Tuhan Yang Maha Esa.</label>
+            </div>
+        </div>
+    </div>
+    <div class="grid_6">
+        <div class="grid_4">
+            <label c-label item="item">Saksi 1 :</label>
+        </div>
+        <div class="grid_8">
+            <input class="k-textbox" ng-model="item.obj[21005069]" type="text">
+        </div>
+        <div class="grid_4">
+            <label c-label item="item">Saksi 2 :</label>
+        </div>
+        <div class="grid_8">
+            <input class="k-textbox" ng-model="item.obj[21005070]" type="text">
+        </div>
+
+    </div>
+    <div class="grid_6">
+        <div class="grid_4">
+            <label c-label item="item">Yang menyatakan :</label>
+        </div>
+        <div class="grid_8">
+            <input class="k-textbox" ng-model="item.obj[21005071]" type="text">
+        </div>
+        <div class="grid_4">
+            <label c-label item="item">Dokter :</label>
+        </div>
+        <div class="grid_8">
+            <input class="k-textbox" ng-model="item.obj[21005072]" type="text">
+        </div>
+
+    </div>
+
+</div>
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>
+</div>

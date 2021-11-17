@@ -1,0 +1,16 @@
+<div ng-show="dataVOloaded">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;"><b>Laporan Sensus Harian Rawat Inap</b></h1>
+    </div>
+
+    <div class="grid_12">
+        <div class="grid_4">
+            <label c-label item="item" c-label-text="Periode"></label>
+            <input style="width: 100%" k-ng-model="item.tglawal" kendo-datetimepicker placeholer="yyyy-mm-dd"
+                k-format="'yyyy-MM-dd HH:mm'" />
+        </div>
+        <div class="grid_2" style="margin-top: 28px;">
+            <button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="cetakLap()"><i
+                    class="fa fa-print"></i>Cetak</button>
+        </div>
+    </div>

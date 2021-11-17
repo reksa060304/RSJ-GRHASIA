@@ -1,0 +1,131 @@
+<style>
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+</style>
+
+<!-- <div ng-controller="DaftarPasienPulangKasirCtrl"> -->
+<div ng-show="dataVOloaded">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;"><b>Detail Pagu Remunerasi</b></h1>
+    </div>
+    <div class="clear"></div>
+
+    <br />    <div class="grid_12">
+        <div class="grid_12 borderBox containerBorderBox">
+
+
+            <div class="grid_1">
+            </div>
+            <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="item">No Closing</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noclosing" />
+                </div>
+            </div>
+             <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="item">Detail Jenis Pagu</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.detailjenis" />
+                </div>
+        </div>
+         <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="item"> Jenis Pagu</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jenispagu" />
+                </div>
+        </div>
+            <!-- Periode Pulang -->
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Periode Closing"></label>
+                </div>
+                <div class="clear"></div>
+
+                <div class="grid_12">
+                    <!-- AwalPeriode -->
+                    <div class="grid_6 padDatePicker">
+                        <input style="width: 100%" k-ng-model="item.periodeAwal" kendo-datetimepicker k-max="now"
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                    </div>
+
+                    <!-- AkhirPeriode -->
+                    <div class="grid_6 padDatePicker">
+                        <input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+
+
+
+            <!-- Button Search -->
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label>&nbsp;</label>
+                </div>
+                <div class="clear"></div>
+
+                <div class="grid_12">
+                    <button class="btnTemplate1" style="margin-left: 0;" ng-click="SearchData()">Cari</button>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="grid_12">
+        <div class="grid_12 headerBox">
+            <p>Pagu Remunerasi</p>
+        </div>
+        <div class="grid_12 borderBox">
+            <kendo-grid id="kGrid" data-source="data1" options="columnData1" k-selectable="'row'" k-sortable="'true'"
+                k-resizable="'true'" k-ng-model="data1Selected" ng-click="klikGrid1(data1Selected)">
+
+            </kendo-grid>
+
+        </div>
+    </div>
+
+
+    <div class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading.html"'></div>
+    </div>
+
+</div>
+

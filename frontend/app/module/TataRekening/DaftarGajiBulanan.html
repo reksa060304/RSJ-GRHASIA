@@ -1,0 +1,988 @@
+<style>
+	.style-center {
+		display: inline-block;
+		text-align: center;
+		width: 100%;
+	}
+
+	.style-right {
+		display: inline-block;
+		text-align: right;
+		width: 100%;
+	}
+
+	.style-left {
+		display: inline-block;
+		text-align: left;
+		width: 100%;
+	}
+
+	.k-grid .k-grid-header .k-header .k-link {
+		height: auto;
+	}
+
+	.k-grid .k-grid-header .k-header {
+		white-space: normal;
+	}
+
+	.k-grid .k-grid-header .k-header {
+		text-align: center;
+	}
+</style>
+<c-panel disabled>
+	<div class="grid_12 headerBox">
+		<h1 style="color: white;"><b>Daftar Gaji Bulanan</b></h1>
+	</div>
+	<div class="clear"></div>
+
+	<br />
+
+	<div class="grid_12">
+		<div class="grid_12 borderBox containerBorderBox">
+			<!-- <div class="grid_2">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Bulan"></label>
+				</div>
+				<div class="grid_12">
+					<div class="grid_12">
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.bulan"
+							k-data-text-field="'namabulan'" k-data-value-field="'id'" k-filter="'contains'"
+							k-auto-bind="false" k-data-source="listBulan" />
+					</div>
+				</div>
+			</div> -->
+			<!-- <div class="grid_2">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Instalasi"></label>
+				</div>
+				<div class="clear"></div>
+
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.instalasi"
+						k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'"
+						k-auto-bind="false" k-data-source="listDepartemen" k-on-change='getIsiComboRuangan()' />
+				</div>
+			</div>
+
+			<div class="grid_2">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Ruangan"></label>
+				</div>
+				<div class="clear"></div>
+
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'ruangan'"
+						k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+						k-data-source="listRuangan" />
+				</div>
+			</div>
+			<div class="grid_1">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Kelompok"></label>
+				</div>
+				<div class="clear"></div>
+
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.kelompokpasien"
+						k-data-text-field="'kelompokpasien'" k-data-value-field="'id'" k-filter="'contains'"
+						k-auto-bind="false" k-data-source="listKelompokPasien" />
+				</div>
+			</div> -->
+
+			<div class="grid_1">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Tahun"></label>
+				</div>
+				<div class="clear"></div>
+
+				<div class="grid_12">
+					<div class="grid_12 padDatePicker">
+						<input style="width: 100%" k-ng-model="item.tahun" kendo-date-picker k-options="yearHungkul"
+							k-max="now" placeholer="yyyy" k-format="'yyyy'" parsedate="yyyy" />
+					</div>
+				</div>
+			</div>
+			<!-- <div class="grid_2">
+			<label c-label item="item" c-label-text="Status"></label>
+			<input style="width: 100%;" kendo-combo-box k-data-source="listStatus" k-ng-model="item.status"
+				k-data-text-field="'namaExternal'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
+				k-data-source="" />
+		</div> -->
+			<div class="grid_1">
+				<div class="grid_12">
+					<label>&nbsp;</label>
+				</div>
+				<div class="clear"></div>
+
+				<div class="grid_12">
+					<button class="c-button" style="margin-top: 7px;" ng-click="SearchData()">Cari</button>
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+
+	<!-- DaftarPasienPulang -->
+	<div class="grid_12">
+		<div class="grid_12 headerBox">
+			<p>Daftar Pegawai</p>
+		</div>
+		<div class="clear"></div>
+
+		<!-- grid table -->
+		<div class="grid_12 borderBox">
+			<div id="kGrid" kendo-grid k-data-source="dataDaftarPasienPulang" k-selectable="'row'"
+				k-columns="columnDaftarPasienPulang" k-pageable="'true'" k-sortable="'true'"
+				k-ng-model="dataPasienSelected" ng-click="klikGrid(dataPasienSelected)">
+			</div>
+		</div>
+
+
+	</div>
+	<div class="clear"></div>
+
+
+
+	<div class="grid_12">
+		<!-- <div class="grid_1">
+			<div class="grid_12">
+				<label>&nbsp;</label>
+			</div>
+			<div class="clear"></div>
+
+			<div class="grid_12">
+				<button class="c-button" style="margin-top: 7px;" ng-click="FundBRI()">Fund Transfer BRI</button>
+			</div>
+		</div> -->
+		<!-- <div class="grid_1">
+			<div class="grid_12">
+				<label>&nbsp;</label>
+			</div>
+			<div class="clear"></div>
+
+			<div class="grid_12">
+				<button class="c-button" style="margin-top: 7px;" ng-click="bayarGaji()">Pembayaran Gaji</button>
+			</div>
+		</div> -->
+		<div class="grid_1">
+
+			<button class="btnTemplate1" ng-click="PenggajianBaru()">Penggajian Baru</button>
+
+		</div>
+		<div class="grid_1">
+
+			<button class="btnTemplate1" ng-click="DetailPenggajian()">Detail Penggajian</button>
+
+		</div>
+		<div class="grid_1">
+			<md-menu>
+				<button class="btnTemplate1"  ng-click="openMenu($mdOpenMenu,$event)" >
+					<i class="fa fa-dollar"></i> Pembayaran Gaji
+				</button>
+				<md-menu-content>
+					<md-menu-item>
+
+						<md-button class="md-button md-ink-ripple" ng-click="bayarGaji()">
+							<i class="fa fa-dollar"></i> Manual
+						</md-button>
+					</md-menu-item>
+					<md-menu-item>
+
+						<md-button class="md-button md-ink-ripple" ng-click="FundBRI()">
+							<i class="fa fa-dollar"></i> Fund Transfer BRI
+						</md-button>
+					</md-menu-item>
+					<md-menu-item>
+
+						<md-button class="md-button md-ink-ripple" ng-click="bniDirect()">
+							<i class="fa fa-dollar"></i> BNI Direct
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+		</div>
+	</div>
+
+	<div class="grid_12" style="margin-top:60px">
+		<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+	</div>
+
+	</div>
+</c-panel>
+
+<div kendo-window="popUpGaji" k-title="'Data Komponen Gaji'" k-width="850" k-height="350" k-visible="false"
+	k-on-open="win2visible = true" k-on-close="win2visible = false">
+	<div class="panel panel-default container_12" style="padding: 0px 10px;">
+		<div class="grid_12">
+			<!-- <div class="grid_4">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Komponen"></label>
+				</div>
+				<div class="grid_12">
+					<input kendo-combo-box k-ng-model="itemKomponenAdd.komponen"
+						k-data-text-field="'komponengaji'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="ListKomponenAdd" />
+				</div>
+			</div> -->
+			<div class="grid_4">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Komponen Gaji"></label>
+				</div>
+				<div class="grid_12">
+					<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="itemGaji.komponengaji"
+						disabled />
+				</div>
+			</div>
+			<div class="grid_4">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Nilai"></label>
+				</div>
+				<div class="grid_12">
+					<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="itemGaji.nilai" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+					<button class="k-button k-button-icontext k-primary k-grid-update"
+						ng-click="tambahNilaiGaji()"><span class="k-icon k-update"></span>Simpan</button>
+					<button class="k-button  k-button-icontext" ng-click="batalKomponenAdd()"><span
+							class="k-icon k-cancel"></span>Batal</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div kendo-window="popUp3" k-title="'Pemabayaran Gaji'" k-width="1200" k-visible="false" k-on-open="win2visible = true"
+	k-on-close="win2visible = false">
+	<div class="panel panel-default container_12">
+		<div class="grid_12" ng-cloak>
+			<md-content class="md-padding">
+				<div class="grid_12">
+					<div class="grid_12 borderBox containerBorderBox">
+						<div class="grid_12">
+							<div class="grid_12">
+								<div class="grid_3">
+									<label c-label item="item" c-label-text="Tanggal Pembayaran"></label>
+									<input style="width: 100%" k-ng-model="item.tglBayar" kendo-date-picker k-max="now"
+										placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" />
+								</div>
+								<div class="grid_3">
+									<label c-label item="item" c-label-text="Cara Bayar"></label>
+									<input style="width: 100%;" kendo-combo-box k-ng-model="item.caraBayar"
+										k-data-text-field="'caraBayar'" k-data-value-field="'id'" k-filter="'contains'"
+										k-auto-bind="false" k-data-source="listDataCaraBayar"
+										k-on-change="caraBayarChange()" />
+								</div>
+							</div>
+
+						</div>
+						<div class="grid_12">
+							<div class="grid_12">
+								<div class="grid_12">
+									<label c-label item="item" c-label-text="Deskripsi Transaksi"></label>
+								</div>
+								<div class="grid_12">
+									<input c-text-box type="input" filter="" class="k-textbox"
+										ng-model="item.deskripsiTransaksi" />
+								</div>
+							</div>
+							<div class="grid_12">
+								<div class="grid_12">
+									<label c-label item="item" c-label-text="Uraian Transaksi"></label>
+								</div>
+								<div class="grid_12">
+									<input style="width: 100%;" kendo-combo-box k-ng-model="item.uraianTransaksi"
+										k-data-text-field="'kelompokTransaksi'" k-data-value-field="'id'"
+										k-filter="'contains'" k-auto-bind="false" k-data-source="listUraianTransaksi"
+										ng-disabled="pororo" />
+								</div>
+							</div>
+						</div>
+						<div class="grid_12 borderBox containerBorderBox" style="margin-top: 10px">
+							<div class="grid_6">
+								<div class="grid_12">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="Total Tagihan"></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" style="text-align: right;" filter=""
+											class="k-textbox" ng-model="item.subTotal" disabled="true" />
+									</div>
+								</div>
+								<div class="grid_12">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="Terbilang"></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" filter="" class="k-textbox"
+											ng-model="item.terbilang" disabled="true" />
+									</div>
+								</div>
+							</div>
+							<div class="grid_6">
+								<div class="grid_12">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="Total Bayar"></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" style="text-align: right;" filter=""
+											class="k-textbox" ng-model="item.totalBayar" />
+									</div>
+								</div>
+								<div class="grid_12">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="Terbilang"></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" filter="" class="k-textbox"
+											ng-model="item.tebilangBayar" disabled="true" />
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+						<div class="grid_12 borderBox containerBorderBox" ng-show="show1">
+							<div class="grid_12 headerBox">
+								<p>Detail Bank Rekanan</p>
+							</div>
+							<div class="grid_4">
+								<div class="grid_12">
+									<label c-label item="item" c-label-text="Nama Bank"></label>
+								</div>
+								<div class="grid_12">
+									<input c-text-box type="input" filter="" class="k-textbox"
+										ng-model="item.namaBankRkn" />
+								</div>
+							</div>
+							<div class="grid_4">
+								<div class="grid_12">
+									<label c-label item="item" c-label-text="No Rekening"></label>
+								</div>
+								<div class="grid_12">
+									<input c-text-box type="input" filter="" class="k-textbox"
+										ng-model="item.noRekeningRkn" />
+								</div>
+							</div>
+							<div class="grid_4">
+								<div class="grid_12">
+									<label c-label item="item" c-label-text="Nama Pemilik Rekening"></label>
+								</div>
+								<div class="grid_12">
+									<input c-text-box type="input" filter="" class="k-textbox"
+										ng-model="item.namaPemilikRekeningRkn" />
+								</div>
+							</div>
+						</div>
+						<div class="grid_12 borderBox containerBorderBox" ng-show="show2">
+							<div class="grid_12 headerBox">
+								<p>Detail Bank Pengeluaran</p>
+							</div>
+							<div class="grid_4">
+								<div class="grid_12">
+									<label c-label item="item" c-label-text="Nama Bank"></label>
+								</div>
+								<div class="grid_12">
+									<input c-text-box type="input" filter="" class="k-textbox"
+										ng-model="item.namaBank" />
+								</div>
+							</div>
+							<div class="grid_4">
+								<div class="grid_12">
+									<label c-label item="item" c-label-text="No Rekening"></label>
+								</div>
+								<div class="grid_12">
+									<input c-text-box type="input" filter="" class="k-textbox"
+										ng-model="item.noRekening" />
+								</div>
+							</div>
+							<div class="grid_4">
+								<div class="grid_12">
+									<label c-label item="item" c-label-text="Nama Pemilik Rekening"></label>
+								</div>
+								<div class="grid_12">
+									<input c-text-box type="input" filter="" class="k-textbox"
+										ng-model="item.namaPemilikRekening" />
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="grid_12">
+						<div class="grid_2" style="float: right;margin-left: 10px;">
+							<button class="btnTemplate1 cancel" ng-click="Back()"><i class="fa fa-close"></i>
+								Batal
+							</button>
+						</div>
+
+						<div class="grid_2" style="float: right;">
+							<button class="btnTemplate1 success" ng-hide="isSave" ng-click="Bayar()"><i
+									class="fa fa-save"></i>
+								Simpan
+							</button>
+						</div>
+					</div>
+			</md-content>
+		</div>
+	</div>
+</div>
+<div kendo-window="popUpKomponenGajiAdd2" k-title="'Data Komponen Gaji'" k-width="850" k-visible="false"
+	k-on-open="win2visible = true" k-on-close="win2visible = false">
+	<div class="panel panel-default container_12" style="padding: 0px 10px;">
+		<div class="grid_12">
+			<!-- <div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item">No Referral </label>
+				</div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="itemKomponenAdd.NoReferral" />
+				</div>
+			</div> -->
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item">Sumber Akun </label>
+				</div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="itemKomponenAdd2.sourceAccount" />
+				</div>
+			</div>
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item">Akun Penerima </label>
+				</div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="itemKomponenAdd2.beneficiaryAccount" />
+				</div>
+			</div>
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item">Amount </label>
+				</div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="text" class="k-textbox" ng-model="itemKomponenAdd2.amount" />
+				</div>
+			</div>
+
+
+
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item">Transaction Date Time </label>
+				</div>
+				<div class="grid_12 ">
+					<input style="width: 100%" k-ng-model="itemKomponenAdd2.transactionDateTime" kendo-datetimepicker
+						placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+				</div>
+			</div>
+			<div class="grid_6">
+				<div class="grid_12">
+					<label c-label item="item">Remark </label>
+				</div>
+
+				<div class="grid_12">
+					<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+						ng-model="itemKomponenAdd2.remark" />
+				</div>
+			</div>
+		</div>
+		<div class="grid_12">
+			<div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+				<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="tambahKomponenAdd2()"><span
+						class="k-icon k-update"></span>Simpan</button>
+				<button class="k-button  k-button-icontext" ng-click="batalKomponenAdd2()"><span
+						class="k-icon k-cancel"></span>Batal</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div kendo-window="popUpKomponenGajiAdd" k-title="'Data Komponen Gaji'" k-width="850" k-height="350" k-visible="false"
+	k-on-open="win2visible = true" k-on-close="win2visible = false">
+	<div class="panel panel-default container_12" style="padding: 0px 10px;">
+		<div class="grid_12">
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item">No Referral </label>
+				</div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="itemKomponenAdd.NoReferral" />
+				</div>
+			</div>
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item">Sumber Akun </label>
+				</div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="itemKomponenAdd.sourceAccount" />
+				</div>
+			</div>
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item">Akun Penerima </label>
+				</div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="itemKomponenAdd.beneficiaryAccount" />
+				</div>
+			</div>
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item">Amount </label>
+				</div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="text" class="k-textbox" ng-model="itemKomponenAdd.amount" />
+				</div>
+			</div>
+
+		</div>
+		<div class="grid_12">
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item">Fee Type </label>
+				</div>
+
+				<div class="grid_12">
+					<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+						ng-model="itemKomponenAdd.FeeType" />
+				</div>
+			</div>
+
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item">Transaction Date Time </label>
+				</div>
+				<div class="grid_12 ">
+					<input style="width: 100%" k-ng-model="itemKomponenAdd.transactionDateTime" kendo-datetimepicker
+						placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+				</div>
+			</div>
+			<div class="grid_6">
+				<div class="grid_12">
+					<label c-label item="item">Remark </label>
+				</div>
+
+				<div class="grid_12">
+					<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+						ng-model="itemKomponenAdd.remark" />
+				</div>
+			</div>
+		</div>
+		<div class="grid_12">
+			<div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+				<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="tambahKomponenAdd()"><span
+						class="k-icon k-update"></span>Simpan</button>
+				<button class="k-button  k-button-icontext" ng-click="batalKomponenAdd()"><span
+						class="k-icon k-cancel"></span>Batal</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div kendo-window="popUPDirect" k-title="'BNI Direct'" k-width="1200" k-visible="false"
+	k-on-open="win2visible = true" k-on-close="win2visible = false">
+	<div class="panel panel-default container_12">
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">No Histori</label>
+			</div>
+			<div class="grid_12">
+				<!-- <label>: {{ dataSelected.nostruk}} </label> -->
+				<input c-text-box type="input" class="k-textbox" ng-model="dataPasienSelected.nonhistori" disabled />
+
+			</div>
+		</div>
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">Periode</label>
+			</div>
+			<div class="grid_12">
+				<input c-text-box type="input" class="k-textbox" ng-model="dataPasienSelected.periode" disabled />
+				<!-- <label>: {{ dataSelected.nopo}} </label> -->
+			</div>
+		</div>
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">Tahun</label>
+			</div>
+			<div class="grid_12">
+				<input c-text-box type="input" class="k-textbox" ng-model="dataPasienSelected.tahun" disabled />
+
+				<!-- <label>: {{ dataSelected.namarekanan}} </label> -->
+			</div>
+		</div>
+		<hr>
+		<div class="grid_12" ng-cloak>
+			<div class="grid_12 headerBox">
+				<p>Detail Pegawai</p>
+			</div>
+			<div class="grid_12">
+				<kendo-grid k-data-source="gridKomponenGajiAdd2" k-pageable="true" k-ng-model="gridKomponenGajiAdd2"
+					k-selectable="'row'" options="opsiGridKomponenGajiAdd2" ng-click="klAdd2(gridKomponenGajiAdd2)"
+					style="font-size: small;">
+				</kendo-grid>
+			</div>
+			<div class="grid_12">
+				<div class="grid_2" style="float: right;margin-left: 10px;">
+					<button class="btnTemplate1 cancel" ng-click="batalDirect()"><i class="fa fa-close"></i>
+						Cancel
+					</button>
+				</div>
+
+				<div class="grid_2" style="float: right;">
+					<button class="btnTemplate1 success" ng-hide="isSave" ng-click="saveBNIDirectArr()"><i
+							class="fa fa-save"></i>
+						Save
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div kendo-window="popUpFund" k-title="'Fund Transfer BRI'" k-width="1200" k-visible="false"
+	k-on-open="win2visible = true" k-on-close="win2visible = false">
+	<div class="panel panel-default container_12">
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">No Histori</label>
+			</div>
+			<div class="grid_12">
+				<!-- <label>: {{ dataSelected.nostruk}} </label> -->
+				<input c-text-box type="input" class="k-textbox" ng-model="dataPasienSelected.nonhistori" disabled />
+
+			</div>
+		</div>
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">Periode</label>
+			</div>
+			<div class="grid_12">
+				<input c-text-box type="input" class="k-textbox" ng-model="dataPasienSelected.periode" disabled />
+				<!-- <label>: {{ dataSelected.nopo}} </label> -->
+			</div>
+		</div>
+		<div class="grid_4">
+			<div class="grid_12">
+				<label c-label item="item">Tahun</label>
+			</div>
+			<div class="grid_12">
+				<input c-text-box type="input" class="k-textbox" ng-model="dataPasienSelected.tahun" disabled />
+
+				<!-- <label>: {{ dataSelected.namarekanan}} </label> -->
+			</div>
+		</div>
+		<hr>
+		<div class="grid_12" ng-cloak>
+			<div class="grid_12 headerBox">
+				<p>Detail Pegawai</p>
+			</div>
+			<div class="grid_12">
+				<kendo-grid k-data-source="gridKomponenGajiAdd" k-pageable="true" k-ng-model="dataKomponenGajiAdd"
+					k-selectable="'row'" options="opsiGridKomponenGajiAdd" ng-click="klAdd(dataKomponenGajiAdd)"
+					style="font-size: small;">
+				</kendo-grid>
+			</div>
+			<div class="grid_12">
+				<div class="grid_2" style="float: right;margin-left: 10px;">
+					<button class="btnTemplate1 cancel" ng-click="batalFund()"><i class="fa fa-close"></i>
+						Cancel
+					</button>
+				</div>
+
+				<div class="grid_2" style="float: right;">
+					<button class="btnTemplate1 success" ng-hide="isSave" ng-click="saveTransferFundArr()"><i
+							class="fa fa-save"></i>
+						Save
+					</button>
+				</div>
+			</div>
+			<!-- <md-content>
+				<md-tabs md-dynamic-height md-border-bottom md-selected="myVarFund">
+					<md-tab label="Transfer" md-on-select="onTabFund(1)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">No Referral </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="fund.NoReferral"
+											 />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Source Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="fund.sourceAccount"
+											 />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="fund.beneficiaryAccount"
+											 />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Amount  </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="text" class="k-textbox" ng-model="fund.amount"
+											 />
+									</div>
+								</div>
+								
+							</div>
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Fee Type </label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox" 
+											ng-model="fund.FeeType"  />
+									</div>
+								</div>
+								
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Transaction Date Time </label>
+									</div>
+									<div class="grid_12 ">
+										<input style="width: 100%" k-ng-model="fund.transactionDateTime" kendo-datetimepicker
+											placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+									</div>
+								</div>
+								<div class="grid_6">
+									<div class="grid_12">
+										<label c-label item="item">Remark </label>
+									</div>
+
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+											ng-model="fund.remark" />
+									</div>
+								</div>
+							</div>
+							
+							<div class="grid_12">
+								<div class="grid_2" style="float: right;margin-left: 10px;">
+									<button class="btnTemplate1 cancel" ng-click="batalFund()"><i class="fa fa-close"></i>
+										Cancel
+									</button>
+								</div>
+
+								<div class="grid_2" style="float: right;">
+									<button class="btnTemplate1 success" ng-hide="isSave" ng-click="saveTransferFund()"><i
+											class="fa fa-save"></i>
+										Save
+									</button>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Validasi Account" md-on-select="onTabFund(2)">
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Source Account </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="fund.sourceAccount"
+											 />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Beneficiary Account</label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+											<input c-text-box type="input" class="k-textbox" ng-model="fund.beneficiaryAccount"
+											 />
+									</div>
+								</div>
+								
+								<div class="grid_1">
+									<label c-label c-label-text=""></label>
+									<em style="margin-top:6px;" ng-click='validasiAccount()' id="iconButton"
+										data-role="button" class="k-button k-button-icon" role="button"
+										aria-disabled="false" tabindex="0"><span
+											class="k-sprite k-icon k-i-search">Cari</span></em>
+								</div>
+								<div class="grid_1">
+									<img ng-show="isRouteLoading" style="
+										margin-top: 26px;
+										margin-left: -51px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+								</div>
+							</div>
+							<hr>
+							<div ng-show="showValidasi">
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">source Account Name</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.sourceAccountName }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">source Account Status</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.sourceAccountStatus }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">source Account Balace  </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.sourceAccountBalace }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">registration Status </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.registrationStatus }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">beneficiary Account Name </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.beneficiaryAccountName }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">beneficiary Account tatus </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.Data.beneficiaryAccountStatus }}</label>
+										</div>
+									</div>
+								</div>
+								
+								<hr>
+
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Cek Status Transfer" md-on-select="onTabFund(3)">
+						<md-content class="md-padding">
+						<div class="grid_12">
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">No Referral </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox" ng-model="fund.noReferral"
+											 />
+									</div>
+								</div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Transaction ate </label>
+									</div>
+									<div class="clear"></div>
+									<div class="grid_12">
+										<input style="width: 100%" k-ng-model="fund.transactionDateCari" kendo-datetimepicker
+											placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+											
+									</div>
+								</div>
+								
+								<div class="grid_1">
+									<label c-label c-label-text=""></label>
+									<em style="margin-top:6px;" ng-click='transferStatusFund()' id="iconButton"
+										data-role="button" class="k-button k-button-icon" role="button"
+										aria-disabled="false" tabindex="0"><span
+											class="k-sprite k-icon k-i-search">Cari</span></em>
+								</div>
+								<div class="grid_1">
+									<img ng-show="isRouteLoading" style="
+										margin-top: 26px;
+										margin-left: -51px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+								</div>
+							</div>
+							<hr>
+							<div ng-show="showStatusFund">
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">noReferral  </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.data.noReferral }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">journal Seq</label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.data.journalSeq }} </label>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">internal Transfer Status  </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.data.internalTransferStatus }}</label>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_6">
+											<label c-label item="item">internal Transfer Error Message  </label>
+										</div>
+										<div class="grid_6">
+											<label>: {{ fund.data.internalTransferErrorMessage }} </label>
+										</div>
+									</div>
+									
+								</div>
+								
+								<hr>
+
+							</div>
+							
+						</md-content>
+					</md-tab>
+				</md-tabs>
+			</md-content> -->
+		</div>
+	</div>
+</div>

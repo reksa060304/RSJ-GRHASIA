@@ -1,0 +1,34 @@
+<div class="login-body2">
+    <p-toast [style]="{marginTop: '2%'}" position="top-center" key="t-login"></p-toast>
+    
+  
+    <div class="login-wrapper">
+      <div class="login-panel2 ui-fluid">
+  
+        <p-progressBar *ngIf="loading" mode="indeterminate" [style]="{'height': '3px','padding':'unset','width':'399px','position':'relative'}"></p-progressBar>
+        <a class="logo" >
+          <img src="assets/layout/images/splash-trans.png" alt="freya-layout"></a>
+       
+  
+        <input pinputtext="" id="user" placeholder="Nama User" class="p-inputtext p-component"
+          [(ngModel)]="item.namaUser">
+        <input ppassword="" id="password" type="password" placeholder="Kata Sandi" class="p-inputtext p-component"
+          [(ngModel)]="item.kataSandi" (keyup.enter)="loginKeun()">
+        <!-- <p-button label="Click" (onClick)="handleClick($event)"></p-button> -->
+        <button [disabled]="loading" label="LOGIN" class="p-ripple p-button p-component" (click)="loginKeun()">
+          <span class="p-button-label">MASUK</span><span class="p-ink"></span>
+        </button>
+  
+  
+        <!-- <a href="#">forget password?</a>
+        <p>Don’t you have an account,
+          <a href="#">sign up</a>
+        </p> -->
+  
+      </div>
+      <div class="login-footer">
+        <h4>Transmedic</h4>
+        <h6>Copyright Ⓒ Epic Team</h6>
+      </div>
+    </div>
+  </div>

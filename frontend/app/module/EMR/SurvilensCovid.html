@@ -1,0 +1,506 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    legend b {
+        color: #41abf2;
+    }
+
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+    hr {
+    border: 1px dashed #cccccc;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    display: inline-block;
+    width: 100%;
+}
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Formulir Surveilans Corona Virus Disease (Covid-19) </div>
+        </div>
+
+         <div class="grid_12">
+            <fieldset style="margin-top: 10px;">
+                <label><b>1. IDENTITAS PASIEN</b></label>
+                <div class="grid_12" style="margin-top: 5px;">
+                    <div class="grid_12" ng-repeat="list in listCaraMasuk | orderBy:'id'">
+                        <b>{{list.nama}}</b>
+                        <div class="grid_12" style="padding: 5pt">
+                            <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                <div ng-switch on="jawab.type">
+                                    <div class="grid_4" ng-switch-when="textbox">
+                                        <label>{{jawab.nama}}</label>
+                                        <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                    </div>
+                                    <div class="grid_12" ng-switch-when="textbox2">
+                                        <label>{{jawab.nama}}</label>
+                                        <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text" style="height: 80px">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item"><b>2.Tanggal Onset</b></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 30%" k-ng-model="item.obj[17000170]" kendo-datetimepicker
+                            placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                            parsedate="yyyy-MM-dd HH:mm" />
+                    </div>
+                </div>
+                <div class="grid_12" style="margin-top: 10px">
+                    <label><b>3.Keluhan Utama</b></label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000171]" style="height: 80px; width: 98%; " />
+                </div>
+                <div class="grid_12" style="margin-top: 10px">
+                    <label><b>4.Kriteria</b></label>
+                    <div style="margin-left: 10px;margin-top: 10px" ng-repeat="stat in listKriteria  | orderBy:'id'">
+                        <div class="grid_12">
+                            <md-radio-group ng-model="item.obj[17000172]">
+                                <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <TABLE>
+                        <tr>
+                            <th style="width: 100px;text-align: center;">Pemeriksaan</th>
+                            <th style="width: 100px;text-align: center;">Tanggal</th>
+                            <th style="width: 100px;text-align: center;">Hasil</th>
+                            <th style="width: 200px;text-align: center;">Tempat Pemeriksaan</th>
+                        </tr>
+                        <tr>
+                            <td rowspan="2" style="text-align: center;">Rapid Test</td>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000173]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listReaktif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000174]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000175]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000176]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listReaktif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000177]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000178]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;" rowspan="10">RT-PCR</td>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000179]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listNegatif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000180]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000181]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000182]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listNegatif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000183]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000184]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000185]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listNegatif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000186]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000187]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000188]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listNegatif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000189]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000190]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000191]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listNegatif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000192]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000193]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000194]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listNegatif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000195]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000196]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000197]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listNegatif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000198]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000199]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000200]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listNegatif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000201]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000202]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000203]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listNegatif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000204]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000205]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                            <div class="grid_12">
+                                <input style="width: 80%" k-ng-model="item.obj[17000206]" kendo-datetimepicker
+                                    placeholer="tgl Rapid" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div ng-repeat="stat in listNegatif  | orderBy:'id'">
+                                    <div class="grid_12">
+                                        <md-radio-group ng-model="item.obj[17000207]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grid_12">
+                                    <label>{{jawab.nama}}</label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[17000208]" style="height: 40px; width: 98%; " />
+                                </div>
+                            </td>
+                        </tr>
+                    </TABLE>
+                </div>
+            </fieldset>
+        </div>
+
+       
+        <div class="grid_4">
+                <fieldset style="margin-top: 10px;">
+                        <div class="grid_12" style="margin-top: 10px;text-align: center;">
+                            <span style="font-weight: bold;">Dokter,Penanggung Jawab Pelayanan </span>
+                        </div>
+                        <hr>
+                        <div class="grid_12" >
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[17000209]" 
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                 k-auto-bind="false" k-data-source="listPegawai" />
+    
+                        </div>
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="Tanggal dan Jam"></label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 100%" k-ng-model="item.obj[17000210]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                parsedate="yyyy-MM-dd HH:mm" />
+                        </div>
+                </fieldset>
+        </div>
+    </div>
+</div>
+</div>
+       
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

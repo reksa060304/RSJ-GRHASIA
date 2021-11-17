@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="4d59f988-9749-4aa1-a0af-e7cb29ef3e52" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="PackageJsonUpdateNotifier">
+    <dismissed value="$PROJECT_DIR$/package.json" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/league/flysystem" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/vendor/jeremeamia/superclosure" />
+      <path value="$PROJECT_DIR$/vendor/myclabs/php-enum" />
+      <path value="$PROJECT_DIR$/vendor/fzaninotto/faker" />
+      <path value="$PROJECT_DIR$/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/vendor/laracasts/generators" />
+      <path value="$PROJECT_DIR$/vendor/namshi/jose" />
+      <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-cors" />
+      <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-dompdf" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/vendor/dasprid/enum" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/vendor/bacon/bacon-qr-code" />
+      <path value="$PROJECT_DIR$/vendor/mtdowling/cron-expression" />
+      <path value="$PROJECT_DIR$/vendor/dnoegel/php-xdg-base-dir" />
+      <path value="$PROJECT_DIR$/vendor/dompdf/dompdf" />
+      <path value="$PROJECT_DIR$/vendor/classpreloader/classpreloader" />
+      <path value="$PROJECT_DIR$/vendor/endroid/qr-code" />
+      <path value="$PROJECT_DIR$/vendor/endroid/installer" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-token-stream" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/vendor/phpoffice/phpexcel" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/phpunit-mock-objects" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/vendor/khanamiryan/qrcode-detector-decoder" />
+      <path value="$PROJECT_DIR$/vendor/dmeys/laravel-whatsapp" />
+      <path value="$PROJECT_DIR$/vendor/jimmyjs/laravel-report-generator" />
+      <path value="$PROJECT_DIR$/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/vendor/jenssegers/date" />
+      <path value="$PROJECT_DIR$/vendor/kylekatarnls/update-helper" />
+      <path value="$PROJECT_DIR$/vendor/laravel/framework" />
+      <path value="$PROJECT_DIR$/vendor/laravel/homestead" />
+      <path value="$PROJECT_DIR$/vendor/codedge/laravel-fpdf" />
+      <path value="$PROJECT_DIR$/vendor/jakub-onderka/php-console-color" />
+      <path value="$PROJECT_DIR$/vendor/jakub-onderka/php-console-highlighter" />
+      <path value="$PROJECT_DIR$/vendor/phenx/php-svg-lib" />
+      <path value="$PROJECT_DIR$/vendor/phenx/php-font-lib" />
+      <path value="$PROJECT_DIR$/vendor/lcobucci/jwt" />
+      <path value="$PROJECT_DIR$/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/vendor/maatwebsite/excel" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/vendor/sabberworm/php-css-parser" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/swiftmailer/swiftmailer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/vendor/symfony/debug" />
+      <path value="$PROJECT_DIR$/vendor/symfony/dom-crawler" />
+      <path value="$PROJECT_DIR$/vendor/symfony/options-resolver" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/vendor/webpatser/laravel-uuid" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/vendor/psy/psysh" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/vendor/tijsverkoyen/css-to-inline-styles" />
+      <path value="$PROJECT_DIR$/vendor/riskihajar/terbilang" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/inflector" />
+      <path value="$PROJECT_DIR$/vendor/symfony/property-access" />
+      <path value="$PROJECT_DIR$/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/deprecations" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/vendor/league/mime-type-detection" />
+      <path value="$PROJECT_DIR$/vendor/league/flysystem-sftp" />
+      <path value="$PROJECT_DIR$/vendor/neoxia/laravel-sftp" />
+      <path value="$PROJECT_DIR$/vendor/twilio/sdk" />
+      <path value="$PROJECT_DIR$/vendor/phpseclib/phpseclib" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="1qmJRAyaLsD8oNUfjWXCtUDcuer" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\user\Documents\EFAN\transmedic_standar\backend\app\Transaksi" />
+      <recent name="C:\Users\user\Documents\EFAN\transmedic_standar\backend\resources\views\report" />
+      <recent name="C:\Users\user\Documents\EFAN\transmedic_standar\backend\app\Master" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="phpunit.xml" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner scope="XML" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4d59f988-9749-4aa1-a0af-e7cb29ef3e52" name="Default Changelist" comment="" />
+      <created>1617678820145</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1617678820145</updated>
+      <workItem from="1617678821453" duration="3051000" />
+      <workItem from="1617762081679" duration="1977000" />
+      <workItem from="1618297400258" duration="1548000" />
+      <workItem from="1618739350524" duration="12874000" />
+      <workItem from="1618893157138" duration="4244000" />
+      <workItem from="1619055552751" duration="3010000" />
+      <workItem from="1619068032866" duration="21053000" />
+      <workItem from="1619409622577" duration="2151000" />
+      <workItem from="1619490193593" duration="6166000" />
+      <workItem from="1619661165359" duration="12290000" />
+      <workItem from="1619826378402" duration="2449000" />
+      <workItem from="1620046614400" duration="9112000" />
+      <workItem from="1620190759075" duration="2226000" />
+      <workItem from="1620369003803" duration="12592000" />
+      <workItem from="1620625215428" duration="7166000" />
+      <workItem from="1620699553197" duration="121000" />
+      <workItem from="1620718629092" duration="594000" />
+      <workItem from="1621037925735" duration="588000" />
+      <workItem from="1621061500166" duration="593000" />
+      <workItem from="1621072714230" duration="633000" />
+      <workItem from="1621073759709" duration="1034000" />
+      <workItem from="1621134520795" duration="362000" />
+      <workItem from="1621166095733" duration="2679000" />
+      <workItem from="1621303360390" duration="170000" />
+      <workItem from="1621504565773" duration="2636000" />
+      <workItem from="1621583743811" duration="1261000" />
+      <workItem from="1621824299635" duration="1960000" />
+      <workItem from="1621917980916" duration="6018000" />
+      <workItem from="1621929652948" duration="858000" />
+      <workItem from="1622167312248" duration="1103000" />
+      <workItem from="1622183399521" duration="7440000" />
+      <workItem from="1622364700732" duration="4850000" />
+      <workItem from="1622425821105" duration="915000" />
+      <workItem from="1622616235245" duration="10950000" />
+      <workItem from="1622683137451" duration="11319000" />
+      <workItem from="1622769598022" duration="14738000" />
+      <workItem from="1623028825294" duration="22111000" />
+      <workItem from="1623072490549" duration="112000" />
+      <workItem from="1623123616016" duration="8174000" />
+      <workItem from="1623202541810" duration="7938000" />
+      <workItem from="1623290015559" duration="11332000" />
+      <workItem from="1623393938618" duration="1071000" />
+      <workItem from="1623395517788" duration="880000" />
+      <workItem from="1624852762203" duration="2243000" />
+      <workItem from="1624931618090" duration="3155000" />
+      <workItem from="1625108943573" duration="2069000" />
+      <workItem from="1625189308203" duration="1185000" />
+      <workItem from="1625642593788" duration="1933000" />
+      <workItem from="1625708211794" duration="14111000" />
+      <workItem from="1625795362791" duration="9645000" />
+      <workItem from="1626058386370" duration="1108000" />
+      <workItem from="1626225872357" duration="5036000" />
+      <workItem from="1626232404951" duration="2989000" />
+      <workItem from="1626314331010" duration="2622000" />
+      <workItem from="1626404773034" duration="10297000" />
+      <workItem from="1626832359930" duration="364000" />
+      <workItem from="1626832801895" duration="5193000" />
+      <workItem from="1626841279591" duration="1791000" />
+      <workItem from="1626852627126" duration="34447000" />
+      <workItem from="1627211939291" duration="92000" />
+      <workItem from="1627263263935" duration="2332000" />
+      <workItem from="1627275891047" duration="792000" />
+      <workItem from="1627630249048" duration="1381000" />
+      <workItem from="1627713297722" duration="74000" />
+      <workItem from="1627872319002" duration="3553000" />
+      <workItem from="1628132463470" duration="21012000" />
+      <workItem from="1628326565547" duration="53490000" />
+      <workItem from="1628559193074" duration="2320000" />
+      <workItem from="1629767995874" duration="1321000" />
+      <workItem from="1630403061414" duration="582000" />
+      <workItem from="1630414065180" duration="614000" />
+      <workItem from="1630450136393" duration="1485000" />
+      <workItem from="1630459766640" duration="3271000" />
+      <workItem from="1631265366939" duration="2477000" />
+      <workItem from="1631328187348" duration="12122000" />
+      <workItem from="1631498731112" duration="14428000" />
+      <workItem from="1634363427772" duration="3742000" />
+      <workItem from="1634519912821" duration="3615000" />
+      <workItem from="1634568341749" duration="5249000" />
+      <workItem from="1634710051974" duration="1500000" />
+      <workItem from="1634720219653" duration="1068000" />
+      <workItem from="1634779968454" duration="12775000" />
+      <workItem from="1634953221883" duration="1279000" />
+      <workItem from="1634977548191" duration="43000" />
+      <workItem from="1635128205435" duration="2725000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Farmasi/PelayananResepController.php</url>
+          <line>1617</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Farmasi\PelayananResepController" />
+            <option name="methodName" value="SimpanPelayananObat" />
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Logistik/LogistikController.php</url>
+          <line>8233</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Logistik\LogistikController" />
+            <option name="methodName" value="BatalKirimTerimaPerItem" />
+          </properties>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Logistik/LogistikController.php</url>
+          <line>4022</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Logistik\LogistikController" />
+            <option name="methodName" value="saveTerimaBarangSuplier" />
+          </properties>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Logistik/LogistikController.php</url>
+          <line>6901</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Logistik\LogistikController" />
+            <option name="methodName" value="saveKirimBarangRuangan" />
+          </properties>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Farmasi/PelayananObatBebasController.php</url>
+          <line>241</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Farmasi\PelayananObatBebasController" />
+            <option name="methodName" value="getDetailPasien" />
+          </properties>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Farmasi/PelayananResepController.php</url>
+          <line>363</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Farmasi\PelayananResepController" />
+            <option name="methodName" value="DeletePelayananObat" />
+          </properties>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Farmasi/PelayananObatBebasController.php</url>
+          <line>709</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Farmasi\PelayananObatBebasController" />
+            <option name="methodName" value="DeleteResepOB" />
+          </properties>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Farmasi/PelayananObatBebasController.php</url>
+          <line>809</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Farmasi\PelayananObatBebasController" />
+            <option name="methodName" value="saveReturTagihanObat" />
+          </properties>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Farmasi/PelayananObatBebasController.php</url>
+          <line>259</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Farmasi\PelayananObatBebasController" />
+            <option name="methodName" value="SaveInputTagihanObat" />
+          </properties>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Logistik/LogistikController.php</url>
+          <line>8054</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Logistik\LogistikController" />
+            <option name="methodName" value="BatalKirimTerima" />
+          </properties>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Logistik/LogistikController.php</url>
+          <line>8246</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Logistik\LogistikController" />
+            <option name="methodName" value="BatalKirimTerimaPerItem" />
+          </properties>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Logistik/LogistikController.php</url>
+          <line>5034</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Logistik\LogistikController" />
+            <option name="methodName" value="DeletePenerimaanBarangSupplier" />
+          </properties>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/app/Http/Controllers/Logistik/LogistikController.php</url>
+          <line>6942</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

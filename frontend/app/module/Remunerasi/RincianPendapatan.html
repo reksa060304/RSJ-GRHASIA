@@ -1,0 +1,71 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+</style>
+
+
+<div class="grid_12">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;"><b>Rincian Pendapatan</b></h1>
+    </div>
+    <div class="grid_12">
+        <div class="grid_4">
+        </div>        
+        <div class="grid_4">
+        </div>
+        <div class="grid_2">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Tahun"></label>
+            </div>
+            <div class="grid_12">
+                <!-- AwalPeriode -->
+             <!--    <div class="grid_5 padDatePicker">
+                    <div class="grid_12">
+                        <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datetimepicker k-max="now"
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                </div>
+                <div class="grid_5 padDatePicker">
+                    <div class="grid_12">
+                        <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                </div> -->
+                 <input style="width: 100%" k-ng-model="item.tahun"
+                            kendo-date-picker 
+                            k-options="monthSelectorOptions()" />
+                
+            </div>
+        </div>
+        <div class="grid_2" style="margin-top: 20px">
+                    <button class="c-button" ng-click="cariFilter()">Cari</button>
+                </div>
+        <div class="grid_12">           
+            <div class="grid_12 borderBox">
+                <div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" k-options="columnGrid"
+                    k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected">                   
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- NamaKegiatan -->
+    <div class="grid_12">        
+    </div>
+    <div class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>

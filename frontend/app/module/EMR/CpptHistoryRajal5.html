@@ -1,0 +1,796 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+ 
+
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    .clicks{
+        cursor: pointer;
+    }
+</style>
+<!-- disable-contents="allDisabled" -->
+<div class="grid_12"  id="form">
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Catatan Perkembangan Pasien Terintegrasi Tab 5</div>
+    </div>
+    <div class="grid_12" style="margin-top: 20px">
+    <fieldset>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Tanggal dan Jam Datang"></label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%" k-ng-model="item.rcppt[112445]" ng-disabled="true" kendo-datetimepicker
+                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                </div>
+            </div>
+
+
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Dpjp"></label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112446]" ng-disabled="true" class="k-textbox" />
+                </div>
+            </div> 
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Bangsal"></label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112447]" ng-disabled="true" class="k-textbox" />
+                </div>
+            </div> 
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Kelas"></label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112448]" ng-disabled="true" class="k-textbox" />
+                </div>
+            </div> 
+
+    </fieldset>
+    </div>
+    <div class="grid_12">
+                <fieldset style="margin-top: 10px; ">
+                    
+                    <div class="grid_12" style="margin-top: 20px">
+                        <div><i><b>Kolom Riview dan verifikasi dpjp hanya di isi oleh dokter verifikator</b></i></div>
+                        <div><i><b>Kolom Notis Hanya di isi ketika DPJP/Perawat menotis hasil Asesmen PPA lain</b></i></div>
+                        <table style="width:100%;color: #4c5356;">
+    
+                            <tr>
+                                <th style="text-align: center;width: 200px" rowspan="2">Tanggal/Jam</th>
+                                <th style="text-align: center;width: 120px" rowspan="2">Profesional Pemberi Asuhan</th>
+                                <th style="text-align: center;width: 400px"  >Hasil Asesmen Pasien Dan Pemberian Pelayanan</th>
+                                <th style="text-align: center;width: 150px" rowspan="2">Intruksi PPA</th>
+                                <th style="text-align: center;width: 200px" rowspan="2">Riview & Verifikasi DPJP</th>                         
+                               
+                            </tr>
+                            <tr>
+                                <th style="text-align: center;width: 200px">SOAP</th>
+                                <!-- <th style="text-align: center;width: 200px">NOTIS</th> -->
+                            </tr>
+                            <!-- 1 -->
+                            <tr ng-show="item.rcppt[112327]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112325]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112326]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112327]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112328]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112331]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112332]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112333]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112334]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 1 -->
+                            <!-- 2 -->
+                            <tr ng-show="item.rcppt[112337]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112335]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112336]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112337]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112338]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112341]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112342]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112343]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112344]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 2 -->
+                            <!-- 3 -->
+                            <tr ng-show="item.rcppt[112347]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112345]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112346]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112347]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112348]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112351]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112352]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112353]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112354]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 3 -->
+                            <!-- 4 -->
+                            <tr ng-show="item.rcppt[112357]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112355]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112356]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112357]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112358]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112361]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112362]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112363]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112364]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 4 -->
+                            <!-- 5 -->
+                            <tr ng-show="item.rcppt[112367]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112365]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112366]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112367]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112368]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112371]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112372]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112373]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112374]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 5 -->
+                            <!-- 6 -->
+                            <tr ng-show="item.rcppt[112377]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112375]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112376]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112377]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112378]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112381]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112382]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112383]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112384]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 6 -->
+                            <!-- 7 -->
+                            <tr ng-show="item.rcppt[112387]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112385]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112386]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112387]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112388]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112391]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112392]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112393]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112394]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 7 -->
+                            <!-- 8 -->
+                            <tr ng-show="item.rcppt[112397]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112395]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112396]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112397]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112398]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112401]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112402]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112403]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112404]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 8 -->
+                            <!-- 9 -->
+                            <tr ng-show="item.rcppt[112407]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112405]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112406]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112407]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112408]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112411]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112412]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112413]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112414]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 9 -->
+                            <!-- 10 -->
+                            <tr ng-show="item.rcppt[112417]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112415]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112416]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112417]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112418]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112421]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112422]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112423]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112424]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 10 -->
+                            <!-- 11 -->
+                            <tr ng-show="item.rcppt[112427]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112425]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112426]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112427]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112428]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112431]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112432]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112433]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112434]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 11 -->
+                            <!-- 12 -->
+                            <tr ng-show="item.rcppt[112437]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112435]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112436]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112437]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112438]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112441]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112442]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112443]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112444]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 12 -->
+                            <!-- 13 -->
+                            <tr ng-show="item.rcppt[112451]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112449]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112450]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112451]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112452]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112455]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112456]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112457]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112458]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 13 -->
+                            <!-- 14 -->
+                            <tr ng-show="item.rcppt[112461]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112459]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112460]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112461]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112462]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112465]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112466]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112467]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112468]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 14 -->
+                            <!-- 15 -->
+                            <tr ng-show="item.rcppt[112471]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112469]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112470]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112471]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112472]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112475]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112476]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112477]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112478]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 15 -->
+                            <!-- 16 -->
+                            <tr ng-show="item.rcppt[112481]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112479]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112480]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112481]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112482]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112485]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112486]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112487]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112488]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 16 -->
+                            <!-- 17 -->
+                            <tr ng-show="item.rcppt[112491]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112489]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112490]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112491]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112492]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112495]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112496]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112497]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112498]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 17 -->
+                            <!-- 18 -->
+                            <tr ng-show="item.rcppt[112501]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112499]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112500]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112501]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112502]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112505]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112506]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112507]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112508]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 18 -->
+                            <!-- 19 -->
+                            <tr ng-show="item.rcppt[112511]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112509]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112510]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112511]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112512]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112515]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112516]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112517]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112518]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 19 -->
+                            <!-- 20 -->
+                            <tr ng-show="item.rcppt[112521]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112519]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112520]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112521]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112522]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112525]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112526]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112527]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112528]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 20 -->
+                            <!-- 21 -->
+                            <tr ng-show="item.rcppt[112531]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112529]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112530]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112531]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112532]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112535]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112536]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112537]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112538]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 21 -->
+                            <!-- 22 -->
+                            <tr ng-show="item.rcppt[112541]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112539]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112540]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112541]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112542]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112545]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112546]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112547]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112548]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 22 -->
+                            <!-- 23 -->
+                            <tr ng-show="item.rcppt[112551]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112549]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112550]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112551]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112552]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112555]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112556]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112557]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112558]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 23 -->
+                            <!-- 24 -->
+                            <tr ng-show="item.rcppt[112561]!=undefined">
+                                <td>
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112559]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                                </td>
+                                <td>
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112560]" ng-disabled="true" class="k-textbox" />
+                                    
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112561]" ng-disabled="true" />
+                                     <input style="width: 100%;" type="text" ng-model="item.rcppt[112562]" ng-disabled="true" class="k-textbox" />  
+                                    
+                                </td>>
+                                <td>
+                                    <textarea style="width: 100%;" cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112565]" ng-disabled="true" />
+                                </td>
+                                <td>
+                                     <textarea style="width: 100%;" cols="6"  rows="8" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.rcppt[112566]" ng-disabled="true" />
+                                    <input style="width: 100%" k-ng-model="item.rcppt[112567]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    <input style="width: 100%;" type="text" ng-model="item.rcppt[112568]" ng-disabled="true" class="k-textbox" /> 
+                                </td>
+                            </tr>
+                            <!-- 24 -->
+
+
+
+                        </table>
+
+                    </div>
+                </fieldset>
+            </div>
+</div>
+    </div>
+</div>

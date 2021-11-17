@@ -1,0 +1,2266 @@
+
+> transmedic@2.0.0 start C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend
+> concurrently "npm run run-app" "npm run watch-css" 
+
+[1] 
+[1] > transmedic@2.0.0 watch-css C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend
+[1] > gulp watch
+[1] 
+[0] 
+[0] > transmedic@2.0.0 run-app C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend
+[0] > nodemon ./bin/www
+[0] 
+[0] [33m[nodemon] 1.12.5[39m
+[0] [33m[nodemon] to restart at any time, enter `rs`[39m
+[0] [33m[nodemon] watching: *.*[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[1] gulp[1848]: c:\ws\src\nod
+[1] e_contextify.cc:649: Assertion `args[1]->IsString()' failed.
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[1]  1: 00007FF6F8
+[1] FE246F napi_wrap+124559
+[1]  2: 00007FF6F8F837D6 v8::base::CPU::has_sse+34502
+[1]  3: 00007FF6F8F83AF3 v8::base::CPU::has_sse+35299
+[1]  4: 00
+[1] 0
+[1] 07FF6F8F8E5A3 v8::base::CPU::has_sse+78995
+[1]  5: 00007FF6F973CFA0 v8::internal::Buil
+[1] tins::builtin_handle+325536
+[1]  6: 00007FF6F973C176 v8::internal::Builtins::builtin_handle+321910
+[1]  7: 00007FF6F973C7F2 v8::internal::Builtins::builtin_handle+323570
+[1]  8: 00007FF6F973C62E v8::internal::Builtins::builtin_handle+323118
+[1]  9: 00007FF6F9BB4E3D v8::internal::SetupIsolateDelegate::SetupHeap+568205
+[1] 10: 
+[1] 00007FF6F9B2FFDA 
+[1] v8::internal:
+[1] :
+[1] S
+[1] e
+[1] tupIsolateDelegate::SetupHeap+23850
+[1] 11: 00007FF6F9C15B60 
+[1] v8::inte
+[1] r
+[1] nal::SetupIsolateDelegate::SetupHeap+964784
+[1] 1
+[1] 2
+[1] : 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 
+[1] 13: 00007FF6F9B348CC v
+[1] 8
+[1] ::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 14: 00007FF6F9B348CC v8::interna
+[1] l
+[1] ::SetupIsolateDelegate::SetupHeap+42
+[1] 524
+[1] 15: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 16: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42
+[1] 5
+[1] 2
+[1] 4
+[1] 
+[1] 17: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 18: 00007FF6F9B348CC v8::internal::SetupIsolat
+[1] eDelegate::Setu
+[1] pHeap+42524
+[1] 19: 00007FF6F9B
+[1] 3
+[1] 4
+[1] 8
+[1] CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 20: 00007FF6F9
+[1] B348CC
+[1]  
+[1] v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 21
+[1] :
+[1]  00
+[1] 007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 22: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 2
+[1] 3
+[1] : 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 2
+[1] 4: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 25: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+
+[1] 42524
+[1] 2
+[1] 6: 00007FF6F9B34
+[1] 8
+[1] CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 
+[1] 27: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 28: 0
+[1] 0007FF
+[1] 6F9B348CC
+[1]  v8::
+[1] i
+[1] nt
+[1] ernal::SetupIsolateDelegate::SetupHeap+42524
+[1] 29: 00007FF6F9B348CC v8::internal::SetupIsolateDeleg
+[1] a
+[1] te
+[1] :
+[1] :SetupHeap+42524
+[1] 30: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 31: 00007FF6F9B348CC v8::in
+[1] t
+[1] ernal::SetupIsolateDele
+[1] gate::Setu
+[1] p
+[1] H
+[1] e
+[1] ap+42524
+[1] 32: 00007FF6F9B348CC v8::int
+[1] ernal::SetupIsolateDelegat
+[1] e::SetupHeap
+[1] +42524
+[1] 33: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 34: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 35: 00007FF6F9B348CC v8::i
+[1] nternal::SetupIsolateDelegate::SetupHeap+42524
+[1] 36: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 37: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 38: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 3
+[1] 9
+[1] : 00007FF6F9B348CC v8::in
+[1] terna
+[1] l::Setup
+[1] IsolateDelegate::Setup
+[1] Heap+42524
+[1] 
+[1] 40: 00007FF6F9B348CC
+[1]  v8::in
+[1] tern
+[1] al:
+[1] :
+[1] S
+[1] e
+[1] tupI
+[1] s
+[1] o
+[1] lat
+[1] eDelegate::SetupHeap+42524
+[1] 41
+[1] :
+[1]  
+[1] 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 42: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 43: 00007FF6F9B348CC v8::internal::SetupI
+[1] solateDelegat
+[1] e::SetupH
+[1] e
+[1] ap+42524
+[1] 44: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 45: 00007
+[1] FF6F9B348CC 
+[1] v8::interna
+[1] l
+[1] :
+[1] :SetupIsolateDelegate::SetupHeap+42524
+[1] 46: 00007FF6F9B348CC v8::
+[1] internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 4
+[1] 7
+[1] : 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap
+[1] +42524
+[1] 
+[1] 48: 00007FF6F9B348CC v8::internal:
+[1] :
+[1] SetupIsolateDelegate::SetupHeap+42524
+[1] 4
+[1] 9
+[1] :
+[1]  
+[1] 00007FF6F9B348CC v8::internal::SetupIso
+[1] lateDelegate::SetupHeap+42524
+[1] 50: 00007FF6F9B348CC v8::internal::SetupIsolateDel
+[1] egate::S
+[1] etupHeap+42524
+[1] 5
+[1] 1: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 5
+[1] 2: 00007FF6F9B348CC v8::
+[1] internal::Se
+[1] tu
+[1] pIsolateDelegate::SetupHeap+4252
+[1] 4
+[1] 5
+[1] 3
+[1] :
+[1]  00007FF6
+[1] F9B348
+[1] C
+[1] C
+[1]  v8::internal::SetupI
+[1] solateDelegate::SetupHeap+42524
+[1] 54: 00007FF6F9B
+[1] 348CC
+[1]  
+[1] v8::internal::SetupIsolateDelegate::SetupHeap+
+[1] 4
+[1] 2524
+[1] 55: 00007FF6F9B34
+[1] 8CC v8::internal
+[1] ::SetupIsolateDelegate::SetupHeap+42524
+[1] 56: 00007FF6F9B348CC v8::internal::S
+[1] e
+[1] tupIsolateDelegat
+[1] e::SetupHeap+42524
+[1] 57: 00007FF6F9B348CC v8::internal::S
+[1] et
+[1] upIsolateDelegate::SetupHea
+[1] p
+[1] +42524
+[1] 58: 00007FF6
+[1] F9B348CC v8
+[1] ::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 59: 00007FF6F9B348CC v8
+[1] ::internal::SetupIsolateD
+[1] elegate::Setu
+[1] p
+[1] Heap+42524
+[1] 60: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 61: 00007FF6F9B348CC v8::in
+[1] terna
+[1] l::SetupIsolateDelegate::SetupHeap+42524
+[1] 62: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::Se
+[1] tupHeap
+[1] +
+[1] 4
+[1] 2524
+[1] 63: 
+[1] 00007FF6F9B348CC v8::i
+[1] nternal::SetupIs
+[1] olateDelegat
+[1] e::Setu
+[1] pHeap+42524
+[1] 64: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 65: 00007FF6F9B348CC v8::inter
+[1] n
+[1] a
+[1] l:
+[1] :SetupIs
+[1] o
+[1] l
+[1] a
+[1] t
+[1] e
+[1] D
+[1] e
+[1] l
+[1] egate::SetupHeap+42524
+[1] 66: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 67: 
+[1] 0
+[1] 0007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 68
+[1] :
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[1]  00007FF6F9B348CC 
+[1] v8::int
+[1] e
+[1] rnal::SetupIso
+[1] lateDel
+[1] egate::SetupHeap+
+[1] 42524
+[1] 69: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 70: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 71: 00007FF6F9B348CC v8::internal::Se
+[1] tupIsolateDelegate::SetupHeap+42524
+[1] 72: 00007FF6F9B348CC v8::internal::SetupIso
+[1] lateDelegate::SetupHeap+42524
+[1] 73: 00007FF6F9B348CC v8::interna
+[1] l::SetupIsolateDe
+[1] lega
+[1] te::Se
+[1] tupHeap+42524
+[1] 74: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 75: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHe
+[1] a
+[1] p
+[1] +42524
+[1] 76: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 77: 00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 78: 00007FF6F9B348CC v8::internal::SetupIsolate
+[1] Dele
+[1] gate::SetupHeap+425
+[1] 2
+[1] 4
+[1] 
+[1] 7
+[1] 9
+[1] :
+[1]  00007FF6F9B348CC v8::internal::SetupIsolateDelegate::SetupHeap+42524
+[1] 8
+[1] 0
+[1] :
+[1]  
+[1] 0
+[1] 0
+[1] 007FF6F9B31E81 v8::i
+[1] ntern
+[1] a
+[1] l
+[1] :
+[1] :
+[1] S
+[1] e
+[1] t
+[1] u
+[1] p
+[1] IsolateDelegate::SetupHeap+31697
+[1] 81: 00007FF6F9B31A6C v8::internal::SetupIsolateDelegate::
+[1] Setup
+[1] H
+[1] e
+[1] a
+[1] p
+[1] +
+[1] 3
+[1] 0
+[1] 652
+[1] 82: 00007FF6F9696
+[1] D93 v8::internal::Execution::CallWasm+1395
+[1] 83: 00007FF6F9696716 v8::internal::Execution::Call+182
+[1] 84: 00007FF6F976798B v8::Functio
+[1] n
+[1] :
+[1] :Call+603
+[1] 85: 00007FF6F8F25377 v8::internal::interpreter::By
+[1] tecodeLabe
+[1] l
+[1] :
+[1] :
+[1] b
+[1] i
+[1] nd+78055
+[1] 8
+[1] 6: 00007FF6F8FAAD
+[1] A1 node
+[1] ::Start+1233
+[1] 87: 00007FF6F8FAAFF7 node::Start+1831
+[1] 88: 00007FF6F8FA9ECA node::LoadEnvironment+26
+[1] 89: 00007FF6F8F4C775 v8::i
+[1] nternal::
+[1] Sco
+[1] p
+[1] e
+[1] :
+[1] :
+[1] l
+[1] ocals+30597
+[1] 9
+[1] 0
+[1] :
+[1]  0
+[1] 0007FF6F8FAA9E3 node::Start+275
+[1] 91: 00007FF6F8E6674C RC4_options+339
+[1] 5
+[1] 32
+[1] 92: 00007FF
+[1] 6F9C67E28 v8::internal:
+[1] :
+[1] S
+[1] etupIsolateD
+[1] elegat
+[1] e::SetupHeap+1301368
+[1] 93: 00007FF9B6E97BD4 BaseThreadInitThunk+20
+[1] 94: 00007FF9B716CE51 RtlUserThreadStart+33
+[1] npm
+[1]  
+[1] ERR!
+[1]  
+[1] code ELIFECYCLE
+[1] npm ERR! errno
+[1]  134
+[1] npm 
+[1] ERR! transmedic@2.0.0 watch-css: `gulp watch`
+[1] npm ERR! Exit status 134
+[1] npm ERR! 
+[1] npm 
+[1] ERR! Failed at the transmedic@2.0.0 watch-css script.
+[1] npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+[1] 
+[1] npm ERR! A complete log of this run can be found in:
+[1] npm 
+[1] ERR!
+[1]      C:\Users\adam1\AppData\Roaming\npm-cache\_logs\2020-05-05T04_11_53_986Z-debug.log
+[1] npm run watch-css exited with code 134
+[0] (node:5296) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::1 connected
+[0] /app/Login
+[0] /app/Login
+[0] /app/
+[0] /app/main
+[0] (node:5296) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+[0] /app/
+[0] /app/main
+[0] /app/bootstrap-grid.css.map
+[0] /app/bootstrap-grid.css.map
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/operator
+[0] /app/data/GetHeaderMenu/operator
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\operator.json
+[0] /app/template/Shared/HeaderDataPasien
+[0] /app/template/Shared/HeaderDataPasien
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateButtonRegistrasiNew
+[0] /app/template/Shared/TemplateButtonRegistrasiNew
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] socket dan ruangan dibersihkan
+[0] /app/
+[0] /app/main
+[0] send redirect to login 
+[0] /app/Login
+[0] /app/Login
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] /app/
+[0] /app/main
+[0] /app/
+[0] /app/main
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/operator
+[0] /app/data/GetHeaderMenu/operator
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\operator.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/headerRegistrasi
+[0] /app/template/Shared/headerRegistrasi
+[0] /app/template/Shared/TemplateButtonRegistrasiNew
+[0] /app/template/Shared/TemplateButtonRegistrasiNew
+[0] /app/%7B%7Bitem.pasien.foto%7D%7D
+[0] /app/%7B%7Bitem.pasien.foto%7D%7D
+[0] /app/bootstrap-grid.css.map
+[0] /app/bootstrap-grid.css.map
+[0] send redirect to login 
+[0] /app/bootstrap-grid.css.map
+[0] /app/bootstrap-grid.css.map
+[0] /app/template/Shared/HeaderDataPasien
+[0] /app/template/Shared/HeaderDataPasien
+[0] /app/%7B%7Bitem.pasien.foto%7D%7D
+[0] /app/%7B%7Bitem.pasien.foto%7D%7D
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] socket dan ruangan dibersihkan
+[0] /
+[0] /
+[0] send redirect to login 
+[0] /app/Login
+[0] /app/Login
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] /app/
+[0] /app/main
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /app/
+[0] /app/main
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /app/data/GetHeaderMenu/operator
+[0] /app/data/GetHeaderMenu/operator
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\operator.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateButtonSimpanNotFixed
+[0] /app/template/Shared/TemplateButtonSimpanNotFixed
+[0] User - telah logout
+[0] socket dan ruangan dibersihkan
+[0] /app/Logout
+[0] /app/Logout
+[0] /app/Login
+[0] /app/Login
+[0] /app/bootstrap-grid.css.map
+[0] /app/bootstrap-grid.css.map
+[0] >>>/app/bootstrap-grid.css.map
+[0] send redirect to login 
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] socket dan ruangan dibersihkan
+[0] ::1 connected
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[0] (node:3064) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::1 connected
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[0] (node:21216) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::1 connected
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] (node:21216) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[0] (node:13480) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::1 connected
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[0] (node:6324) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::1 connected
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] (node:6324) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/sdm
+[0] /app/data/GetHeaderMenu/sdm
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\sdm.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/Keuangan/TemplateButtonKasir
+[0] /app/template/Shared/Keuangan/TemplateButtonKasir
+[0] User - telah logout
+[0] socket dan ruangan dibersihkan
+[0] /app/Logout
+[0] /app/Logout
+[0] /app/Login
+[0] /app/Login
+[0] /app/bootstrap-grid.css.map
+[0] /app/bootstrap-grid.css.map
+[0] >>>/app/bootstrap-grid.css.map
+[0] send redirect to login 
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/admin
+[0] /app/data/GetHeaderMenu/admin
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\admin.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/admin
+[0] /app/data/GetHeaderMenu/admin
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\admin.json
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] /app/data/GetHeaderMenu/admin
+[0] /app/data/GetHeaderMenu/admin
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\admin.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[0] (node:20276) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::1 connected
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[0] (node:18972) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::1 connected
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[0] (node:7668) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::ffff:127.0.0.1 connected
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[0] (node:17432) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::1 connected
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[0] (node:13956) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::1 connected
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[0] (node:7280) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::1 connected
+[0] socket dan ruangan dibersihkan
+[0] /bower_components/freewall/freewall.css
+[0] /bower_components/freewall/freewall.css
+[0] >>>/bower_components/freewall/freewall.css
+[0] send redirect to login 
+[0] /bower_components/jspdf/dist/jspdf.min.js
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRequireConfig
+[0] /app/data/GetRequireConfig
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfig.json
+[0] /app/data/GetRequireConfigPelayanan
+[0] /app/data/GetRequireConfigPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigPelayanan.json
+[0] /app/data/GetRequireConfigSDM
+[0] /app/data/GetRequireConfigSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSDM.json
+[0] /app/data/GetRequireConfigSarpras
+[0] /app/data/GetRequireConfigSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigSarpras.json
+[0] /app/data/GetRequireConfigManagemen
+[0] /app/data/GetRequireConfigManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigManagemen.json
+[0] /app/data/GetRequireConfigKeuangan
+[0] /app/data/GetRequireConfigKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRequireConfigKeuangan.json
+[0] /app/data/GetRouting
+[0] /app/data/GetRouting
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRouting.json
+[0] /app/data/GetRoutingPelayanan
+[0] /app/data/GetRoutingPelayanan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingPelayanan.json
+[0] /app/data/GetRoutingSDM
+[0] /app/data/GetRoutingSDM
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSDM.json
+[0] /app/data/GetRoutingSarpras
+[0] /app/data/GetRoutingSarpras
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingSarpras.json
+[0] /app/data/GetRoutingManagemen
+[0] /app/data/GetRoutingManagemen
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingManagemen.json
+[0] /app/data/GetRoutingKeuangan
+[0] /app/data/GetRoutingKeuangan
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetRoutingKeuangan.json
+[0] ::1 connected
+[0] /app/template/header/header
+[0] /app/template/header/header
+[0] (node:7280) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+[0] /app/data/GetHeaderMenu/admin
+[0] /app/data/GetHeaderMenu/admin
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\app\data\GetHeaderMenu\admin.json
+[0] /app/template/Shared/TemplateLoading
+[0] /app/template/Shared/TemplateLoading
+[0] [32m[nodemon] restarting due to changes...[39m
+[0] [32m[nodemon] starting `node ./bin/www`[39m
+[0] C:\Program Files\nodejs\node.exe
+[0] C:\Users\adam1\Documents\EGIERAMDAN\rsud_banten\frontend\bin\www
+[0] ----undefined
+[0] RabbitMQ Server Host : amqp://rsab:rsab@localhost
+[0] Express Server for HTPP Server & Notification Server, listening on port 4444
+[0] (node:16116) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[0] ::1 connected
+[0] socket dan ruangan dibersihkan
+[0] ::1 connected
+[0] socket dan ruangan dibersihkan

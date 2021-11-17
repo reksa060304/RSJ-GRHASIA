@@ -1,0 +1,129 @@
+<div class="auth-wrapper auth-v2">
+  <div class="auth-inner row m-0">
+    <!-- Brand logo--><a class="brand-logo" href="javascript:void(0);">
+      <img src="{{ coreConfig.app.appLogoImage }}" alt="brand-logo" height="28" />
+      <h2 class="labels brand-text  ml-1">{{ coreConfig.app.appRumahSakit }}</h2>
+    </a>
+    <!-- /Brand logo-->
+    <!-- Left Text-->
+    <div class="d-none d-lg-flex col-lg-8 align-items-center p-5">
+      <div class="w-100 d-lg-flex align-items-center justify-content-center px-5">
+        <img class="img-fluid" [src]="
+            coreConfig.layout.skin === 'dark'
+              ? 'assets/images/pages/register-v2-dark.svg'
+              : 'assets/images/pages/register-v2.svg'
+          " alt="Register V2" />
+      </div>
+    </div>
+    <!-- /Left Text-->
+    <!-- Register-->
+    <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
+      <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
+        <h2 class="card-title font-weight-bold mb-1">Daftar Reservasi </h2>
+        <p class="card-text mb-2">Silahkan, lengkapi data diri anda!</p>
+
+        <ngb-alert [type]="'danger'" [dismissible]="false" *ngIf="error">
+          <div class="alert-body">
+            <p>{{ error }}</p>
+          </div>
+        </ngb-alert>
+
+        <form class="auth-register-form mt-2" (ngSubmit)="onSubmit(authForm.form.valid)" #authForm="ngForm">
+          <div class="form-group">
+            <label class="form-label" for="register-username">NIK</label>
+            <input class="form-control" id="register-nik" type="text" name="register-nik" placeholder="NIK"
+              aria-describedby="register-nik" autofocus="" tabindex="1"
+              [class.error]="authForm.submitted && nikRef.invalid" [(ngModel)]="nikVar" #nikRef="ngModel" required />
+            <span *ngIf="authForm.submitted && nikRef.invalid" class="invalid-form">
+              <small class="form-text text-danger" *ngIf="nikRef.errors.required">This field is required!</small>
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="register-username">Nama Lengkap</label>
+            <input class="form-control" id="register-username" type="text" name="register-username"
+              placeholder="Nama Lengkap" aria-describedby="register-username" autofocus="" tabindex="2"
+              [class.error]="authForm.submitted && userNameRef.invalid" [(ngModel)]="userNameVar" #userNameRef="ngModel"
+              required />
+            <span *ngIf="authForm.submitted && userNameRef.invalid" class="invalid-form">
+              <small class="form-text text-danger" *ngIf="userNameRef.errors.required">This field is required!</small>
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="register-tgl">Tgl Lahir</label>
+            <div class="input-group">
+              <input class="form-control" placeholder="yyyy-mm-dd" name="register-tgl" id="register-tgl" [(ngModel)]="tglLahirVar"
+                [class.error]="authForm.submitted && tglRef.invalid" tabindex="3"
+                aria-describedby="register-tgl"
+                #tglRef="ngModel"
+                required ngbDatepicker #basicDP2="ngbDatepicker">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary feather icon-calendar" (click)="basicDP2.toggle()"
+                  type="button" rippleEffect></button>
+              </div>
+            </div>
+            <span *ngIf="authForm.submitted && tglRef.invalid" class="invalid-form">
+              <small class="form-text text-danger" *ngIf="tglRef.errors.required">This field is required!</small>
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="register-email">Email</label>
+            <input class="form-control" id="register-email" type="text" name="register-email"
+              placeholder="email@example.com" aria-describedby="register-email" tabindex="4"
+              [class.error]="authForm.submitted && emailRef.invalid" [(ngModel)]="emailVar" #emailRef="ngModel" required
+              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" />
+            <span *ngIf="authForm.submitted && emailRef.invalid" class="invalid-form">
+              <small class="form-text text-danger" *ngIf="emailRef.errors.required">This field is required!</small>
+            </span>
+
+            <span *ngIf="emailRef.errors && (emailRef.touched || emailRef.dirty)" class="invalid-form">
+              <small class="form-text text-danger" [hidden]="!emailRef.errors?.pattern"> Invalid email </small>
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="register-password">Password</label>
+            <div class="input-group input-group-merge form-password-toggle">
+              <input class="form-control form-control-merge" id="register-password"
+                [type]="passwordTextType ? 'text' : 'password'" name="register-password" placeholder="············"
+                aria-describedby="register-password" tabindex="5" [(ngModel)]="passwordVar" #passwordRef="ngModel"
+                [class.error]="authForm.submitted && passwordRef.invalid" required />
+              <div class="input-group-append">
+                <span class="input-group-text cursor-pointer"><i class="feather font-small-4" [ngClass]="{
+                      'icon-eye-off': passwordTextType,
+                      'icon-eye': !passwordTextType
+                    }" (click)="togglePasswordTextType()"></i></span>
+              </div>
+            </div>
+            <span *ngIf="authForm.submitted && passwordRef.invalid" class="invalid-form">
+              <small class="form-text text-danger" *ngIf="passwordRef.errors.required">This field is required!</small>
+            </span>
+          </div>
+          <div class="form-group">
+            <div class="custom-control custom-checkbox">
+              <input class="custom-control-input" id="register-privacy-policy" type="checkbox" tabindex="6" />
+              <label class="custom-control-label" for="register-privacy-policy">I agree to<a
+                  href="javascript:void(0);">&nbsp;privacy policy & terms</a></label>
+            </div>
+          </div>
+          <button [disabled]="loading" class="btn btn-primary btn-block" tabindex="7" rippleEffect>
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            <i data-feather="log-in" class="mr-25"></i>
+            Daftar</button>
+        </form>
+        <p class="text-center mt-2">
+          <span>Sudah punya akun?</span><a routerLink="/pages/authentication/login-v2"><span>&nbsp;Masuk
+              Disini</span></a>
+        </p>
+        <div class="divider my-2">
+          <div class="divider-text">or</div>
+        </div>
+        <div class="auth-footer-btn d-flex justify-content-center">
+          <a class="btn btn-facebook" href="javascript:void(0)"><i data-feather="facebook"></i></a><a
+            class="btn btn-twitter white" href="javascript:void(0)"><i data-feather="twitter"></i></a><a
+            class="btn btn-google" href="javascript:void(0)"><i data-feather="mail"></i></a><a class="btn btn-github"
+            href="javascript:void(0)"><i data-feather="github"></i></a>
+        </div>
+      </div>
+    </div>
+    <!-- /Register-->
+  </div>
+</div>

@@ -1,0 +1,145 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+        <div class="row match-height">
+            <div class="row"  *ngIf="!showTarif">
+                <div class="col-lg-1">
+                </div>
+                <div class="col-12 col-lg-2 col-md-6 col-sm-6 col-xs-12 kb-search-content ">
+                    <div class="card cursor" (click)="showPopUp('Informasi Layanan',modalSuccess)">
+                        <img alt="knowledge-base-image" class="card-img-top"
+                            src="assets/images/pelayanan-fasilitas.png">
+                        <div class="card-body text-center">
+                            <h4>Layanan</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-2 col-md-6 col-sm-6 col-xs-12 kb-search-content">
+                    <div class="card cursor" (click)="showPopUp('Informasi Penunjang',modalSuccess)">
+                        <img alt="knowledge-base-image" class="card-img-top" src="assets/images/pelayanan-prosedur.png">
+                        <div class="card-body text-center">
+                            <h4>Penunjang</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-2 col-md-6 col-sm-6 col-xs-12 kb-search-content">
+                    <div class="card cursor" (click)="getTarif()">
+                        <img alt="knowledge-base-image" class="card-img-top" src="assets/images/pelayanan-tarif.png">
+                        <div class="card-body text-center">
+                            <h4>Tarif Pelayanan</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-2 col-md-6 col-sm-6 col-xs-12 kb-search-content">
+                    <div class="card cursor" (click)="showPopUp('Informasi Poliklinik',modalSuccess)">
+                        <img alt="knowledge-base-image" class="card-img-top"
+                            src="assets/images/pelayanan-jadwal-pelayanan.png">
+                        <div class="card-body text-center">
+                            <h4>Poliklinik</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-2 col-md-6 col-sm-6 col-xs-12 kb-search-content">
+                    <div class="card cursor" (click)="showPopUp('Informasi Dokter Spesialis',modalSuccess)">
+                        <img alt="knowledge-base-image" class="card-img-top"
+                            src="assets/images/pelayanan-jadwal-dokter.png">
+                        <div class="card-body text-center">
+                            <h4>Dokter Spesialis </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="showTarif">
+            <div class="col-12">
+                <div class="card">
+                    <h4 class="card-header">Tarif Layanan</h4>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-2">
+                                <label>Pelayanan</label>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" placeholder=""
+                                        [(ngModel)]="item.namaProduk" />
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-2">
+                                <label>Kelas</label>
+                                <div class="form-group">
+                                    <ng-select class="ng-select-size-lg" [items]="listKelas" [(ngModel)]="item.kelas">
+                                    </ng-select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-2">
+                                <label>Jenis Pelayanan</label>
+                                <div class="form-group">
+                                    <ng-select class="ng-select-size-lg" [items]="listRuangan"
+                                        [(ngModel)]="item.jenisPelayanan">
+                                    </ng-select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-2">
+                                <label>Ruangan</label>
+                                <div class="form-group">
+                                    <ng-select class="ng-select-size-lg" [items]="listJenisPel"
+                                        [(ngModel)]="item.ruangan">
+                                    </ng-select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-1" style="margin-top: 20px;">
+                                <button type="button" class="btn btn-success" (click)="cariTarif()" rippleEffect style="width:100%">
+                                    Cari
+                                </button>
+                            </div>
+                        </div>
+                        <ngx-datatable #table class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force"
+                            [headerHeight]="40" [rowHeight]="58" [footerHeight]="50" rowHeight="auto" [limit]="10"
+                            [rows]="rows" [scrollbarH]="true">
+                            <ngx-datatable-column name="No" prop="no" [width]="40">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Pelayanan" prop="namaproduk" [width]="250">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Kelas" prop="namakelas" [width]="70"></ngx-datatable-column>
+                            <ngx-datatable-column name="Jenis Pelayanan" prop="jenispelayanan" [width]="70">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Ruangan" prop="namaruangan" [width]="200">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Tarif" prop="hargalayanan" [width]="150"></ngx-datatable-column>
+                        </ngx-datatable>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-1">
+                                <button type="button" class="btn btn-info" (click)="showTarif = false" rippleEffect style="width:100%">
+                                    Tutup
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<ng-template #modalSuccess let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel160">{{title}}</h5>
+        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="col-12" style="font-size:17px" *ngIf="isLoad">
+            <div innerHTML="{{item.deskripsi}}"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="modal.close('Accept click')" rippleEffect>
+            Tutup
+        </button>
+    </div>
+</ng-template>
+<!-- / Modal -->

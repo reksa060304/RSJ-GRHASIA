@@ -1,0 +1,324 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    legend b {
+        color: #41abf2;
+    }
+
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    hr {
+        border: 1px dashed #cccccc;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Formulir Mini Triase </div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Gejala</b></legend>
+                    <div class="grid_12" style="margin-top: 5px;">
+                        <div class="grid_12" ng-repeat="list in listGejala | orderBy:'id'">
+                            <b>{{list.nama}}</b>
+                            <div class="grid_12" style="padding: 5pt">
+                                <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                    <div ng-switch on="jawab.type">
+                                        <div ng-switch-when="checkbox">
+                                            <div class="grid_3">
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                    ng-model="item.obj[jawab.id]">
+                                                <label class="k-checkbox-label"
+                                                    for="item.obj{{jawab.id}}">&nbsp;{{jawab.nama}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Komorbid</b></legend>
+                    <div class="grid_12" style="margin-top: 5px;">
+                        <div class="grid_12" ng-repeat="list in listKomorbid | orderBy:'id'">
+                            <b>{{list.nama}}</b>
+                            <div class="grid_12" style="padding: 5pt">
+                                <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                    <div ng-switch on="jawab.type">
+                                        <div ng-switch-when="checkbox">
+                                            <div class="grid_3">
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                    ng-model="item.obj[jawab.id]">
+                                                <label class="k-checkbox-label"
+                                                    for="item.obj{{jawab.id}}">&nbsp;{{jawab.nama}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Tanda Vital</b></legend>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12">
+                            <label><b>Tekanan Darah</b></label>
+                            <div ng-repeat="stat in listTK  | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000029]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <label><b>Nadi</b></label>
+                            <div ng-repeat="stat in listNadi  | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000030]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <label><b>Suhu</b></label>
+                            <div ng-repeat="stat in listSuhu  | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000031]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <label><b>SpO2</b></label>
+                            <div ng-repeat="stat in listSpo  | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000032]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12">
+                            <label><b>Psikologi</b></label>
+                            <div ng-repeat="stat in listPsikologi  | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000033]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <label><b>Sosiologi</b></label>
+                            <div ng-repeat="stat in listSosiologi | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000034]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <label><b>Hamil</b></label>
+                            <div ng-repeat="stat in listYa | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000035]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_3">
+                                <div>
+                                    <label><b>Tgl Pengambilan Sampel</b></label>
+                                </div>
+                                <div class="grid_12 padDatePicker" style="width: 40%">
+                                    <input k-ng-model="item.obj[1901300084]" kendo-datetimepicker k-max="now"
+                                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                        parsedate="yyyy-MM-dd HH:mm" ng-value="{{data.datevalue}}" />
+                                </div>
+                            </div>
+                            <div class="grid_1"></div>
+                            <div class="grid_8" style="margin-top: 1px;">
+                                <div>
+                                    <label><b>Hasil PCR Positif</b></label>
+                                </div>
+                                <div class="grid_12 padDatePicker" style="width: 40%">
+                                    <input k-ng-model="item.obj[18000036]" kendo-datetimepicker k-max="now"
+                                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                        parsedate="yyyy-MM-dd HH:mm" ng-value="{{data.datevalue}}" />
+                                </div>
+                                <div class="grid_12" style="width: 40%">
+                                    <input class="k-textbox" ng-model="item.obj[18000037]" type="text"
+                                        placeholder="Tempat Di Periksa" ng-value="{{data2.value}}">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="grid_12">
+                            
+                        </div> -->
+                        <div class="grid_12">
+                            <label><b>Diagnosis</b></label>
+                            <div ng-repeat="stat in listDiagnosa | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000038]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <label><b>Alergi</b></label>
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                                style="{{data.style}}" ng-model="item.obj[1901300075]" />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Pelayanan</b></legend>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12">
+                            <div ng-repeat="stat in listPelayanan | orderBy:'id'">
+                                <div class="grid_3">
+                                    <md-radio-group ng-model="item.obj[18000111]">
+                                        <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                        </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+       
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

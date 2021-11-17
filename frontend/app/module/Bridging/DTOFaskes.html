@@ -1,0 +1,279 @@
+<div class="grid_12">
+    <div class="panel panel-default panel-white">
+        <div class="panel-body">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading " style="font-size: 18px; "><span c-translate>Faskes   </span>
+                            <span class="icon fa fa-chevron-circle-down " ng-show="!isShowPotensi " style="right:10px
+                                                                                                    " ng-click="showPotensi() "></span>
+                            <span class="icon fa fa-chevron-circle-up " ng-show="isShowPotensi " style="right:10px
+                                                                                                    " ng-click="showPotensi() "></span>
+                        </div>
+                        <div class="panel-body " ng-show="isShowPotensi ">
+                            <div class="grid_12 animated no-padding ">
+                                <div ng-cloak>
+                                    <md-content>
+                                        <md-tabs md-dynamic-height md-border-bottom>
+                                            <md-tab label="Daftar Faskes Terdaftar">
+                                                <md-content class="md-padding">
+                                                    <div class="panel panel-default container_12">
+                                                        <div class="panel-body">
+                                                            <div class="grid_12">
+
+                                                                <div class="grid_1" style="margin-top:5px">
+                                                                    <div class="grid_12">
+                                                                        <label c-label>Start</label>
+                                                                    </div>
+                                                                    <div class="grid_12">
+                                                                        <input c-text-box type="input" filter=""
+                                                                            class="k-textbox" ng-model="item.start" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="grid_1" style="margin-top:5px">
+                                                                    <div class="grid_12">
+                                                                        <label c-label>Limit</label>
+                                                                    </div>
+                                                                    <div class="grid_12">
+                                                                        <input c-text-box type="input" filter=""
+                                                                            class="k-textbox" ng-model="item.limit" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="grid_1" style="margin-top:20px">
+                                                                    <button class="primary c-button"
+                                                                        ng-click="cari()">Cari</button>
+                                                                </div>
+                                                                <div class="grid_12">
+                                                                    <div id="kGrid" kendo-grid
+                                                                        k-data-source="dataSourceBrid"
+                                                                        k-selectable="'row'" k-columns="columnGridBrid"
+                                                                        k-pageable="'true'" k-groupable="'true'"
+                                                                        k-sortable="'true'" k-ng-model="dataSelected"
+                                                                        ng-click="klikGrid(dataSelected)">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="grid_12">
+
+                                                                    <div class="grid_1">
+                                                                        <button class="primary c-button"
+                                                                            ng-click="tambah()">Tambah</button>
+                                                                    </div>
+                                                                    <div class="grid_1">
+                                                                        <button class="primary c-button"
+                                                                            ng-click="ubah()">Ubah</button>
+                                                                    </div>
+                                                                    <div class="grid_1">
+                                                                        <button class="primary c-button cancel"
+                                                                            ng-click="hapus()">Hapus</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </md-content>
+                                            </md-tab>
+                                        </md-tabs>
+                                    </md-content>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div kendo-window="popUpTambah" k-title="'Form Faskes'" k-width="887" k-height="465" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <fieldset>
+            <legend><label c-label item="item">Tambah / Ubah Faskes</label></legend>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Kode Faskes *</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" class="k-textbox" ng-model="itemsave.kodefaskes" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Nama Faskes *</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" class="k-textbox" ng-model="itemsave.namafaskes" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Kabupaten / Kota *</label>
+                </div>
+                <div class="grid_9">
+                    <input kendo-combo-box k-ng-model="itemsave.kabkot" 
+                            k-data-text-field="'nama'" k-data-value-field="'kode'" k-filter="'contains'" 
+                            k-auto-bind="false" k-data-source="listkabkot" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Nama Penanggung Jawab</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" class="k-textbox" ng-model="itemsave.namapj" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Telepon</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="number" class="k-textbox" ng-model="itemsave.telepon" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Email</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" class="k-textbox" ng-model="itemsave.email" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Lat</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="number" class="k-textbox" ng-model="itemsave.lat" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Long</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="number" class="k-textbox" ng-model="itemsave.long" />
+                </div>
+            </div>
+        </fieldset>
+        <div class="grid_12">
+            <div class="grid_2" style="margin-right:5px;" ng-show="isSave">
+                <button class="btnTemplate1 " style="margin:0px;" ng-click="save()">
+                    <i class="fa fa-save"></i>Simpan</button>
+            </div>
+            <div class="grid_2" style="margin-right:5px;" ng-show="!isSave">
+                <button class="btnTemplate1 " style="margin:0px;" ng-click="update()">
+                    <i class="fa fa-pencil-square-o"></i>Ubah</button>
+            </div>
+
+            <div class="grid_2" style="margin-right:5px;">
+                <button class="btnTemplate1 cancel" style="margin:0px;" ng-click="batal()">
+                    <i class="fa fa-refresh"></i>Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div kendo-window="popupDetail" k-title="'Detail'" k-visible="false" k-width="600" k-height="300">
+    <div class="panel panel-default container_12">
+        <div class="grid_12">
+            <div class="grid_12" ng-repeat="(key,val) in listDataDetails">
+                <div ng-switch on="key">
+                    <div ng-switch-when="kode">
+                        <div class="grid_5">
+                            <label c-label item="item">Kode Faskes</label>
+                        </div>
+                        <div class="grid_7">
+                            <label>: {{ val }}</label>
+                        </div>
+                    </div>
+                    <div ng-switch-when="nama">
+                        <div class="grid_5">
+                            <label c-label item="item">Nama Faskes</label>
+                        </div>
+                        <div class="grid_7">
+                            <label>: {{ val }}</label>
+                        </div>
+                    </div>
+                    <div ng-switch-when="kabkot_nama">
+                        <div class="grid_5">
+                            <label c-label item="item">Kabupaten / Kota</label>
+                        </div>
+                        <div class="grid_7">
+                            <label>: {{ val }}</label>
+                        </div>
+                    </div>
+                    <div ng-switch-when="provinsi_nama">
+                        <div class="grid_5">
+                            <label c-label item="item">Provinsi</label>
+                        </div>
+                        <div class="grid_7">
+                            <label>: {{ val }}</label>
+                        </div>
+                    </div>
+                    <div ng-switch-when="nama_pj">
+                        <div class="grid_5">
+                            <label c-label item="item">Nama Penanggung Jawab</label>
+                        </div>
+                        <div class="grid_7">
+                            <label>: {{ val }}</label>
+                        </div>
+                    </div>
+                    <div ng-switch-when="telepon">
+                        <div class="grid_5">
+                            <label c-label item="item">Telepon</label>
+                        </div>
+                        <div class="grid_7">
+                            <label>: {{ val }}</label>
+                        </div>
+                    </div>
+                    <div ng-switch-when="email">
+                        <div class="grid_5">
+                            <label c-label item="item">Email</label>
+                        </div>
+                        <div class="grid_7">
+                            <label>: {{ val }}</label>
+                        </div>
+                    </div>
+                    <div ng-switch-when="lat">
+                        <div class="grid_5">
+                            <label c-label item="item">Latitude</label>
+                        </div>
+                        <div class="grid_7">
+                            <label>: {{ val }}</label>
+                        </div>
+                    </div>
+                    <div ng-switch-when="lon">
+                        <div class="grid_5">
+                            <label c-label item="item">Longitude</label>
+                        </div>
+                        <div class="grid_7">
+                            <label>: {{ val }}</label>
+                        </div>
+                    </div>
+                    <div ng-switch-when="recorded_at">
+                        <div class="grid_5">
+                            <label c-label item="item">Recorded At</label>
+                        </div>
+                        <div class="grid_7">
+                            <label>: {{ val }}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>	
+    </div>
+    
+    <div class="grid_12">
+        <div class="grid_2" style="margin-top: 5px;">
+            <button class="k-button" ng-click="tutup()">Tutup</button>
+        </div>
+    </div>
+            
+</div>
+<div ng-include=' "../app/template/Shared/TemplateLoading" '></div>
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+</style>

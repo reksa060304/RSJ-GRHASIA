@@ -1,0 +1,314 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Formulir Screening Covid-19</div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+            
+            <fieldset style="margin-top: 10px">
+                <legend>INFORMASI PERUJUK</legend>
+                <div class="grid_6" ng-repeat="list in listNamaEdukasi | orderBy:'id'" style="padding: 5pt 10pt">
+                    <b>{{list.nama}}</b>
+                    <div class="grid_12" style="padding: 5pt">
+                        <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                            <div ng-switch on="jawab.type">
+                                <div class="grid_3" ng-switch-when="checkbox" style="margin-right: -150px">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                        &nbsp;{{jawab.nama}}</label>
+
+                                </div>
+                                <div class="grid_12" ng-switch-when="textbox"
+                                    style="margin-top: -10px">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </fieldset>
+            <fieldset style="margin-top:20px">
+                <legend><b>IDENTITAS PASIEN</b></legend>
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <div class="grid_12" ng-repeat="list in listKebutuhanEdukasi | orderBy:'id'" style="padding: 5pt 10pt">
+                        <b>{{list.nama}}</b>
+                        <div class="grid_12" style="padding: 5pt">
+                            <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                <div ng-switch on="jawab.type">
+                                    <div class="grid_3" ng-switch-when="checkbox" style="margin-right: -50px">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                    </div>
+                                    <div class="grid_12" ng-switch-when="checkbox3" style="margin-right: -50px;margin-left: 20px">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                    </div>
+                                    <div class="grid_12" ng-switch-when="textbox">
+                                        <label  class="k-textbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                        <input style="width: 20%" class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                    </div>
+                                            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 5pt 10pt"><b>2.Gejala</b></div>
+                    <div class="grid_12">
+                        <div class="grid_12" ng-repeat="list in listKebutuhanEdukasi2 | orderBy:'id'" style="padding: 5pt 10pt">
+                        {{list.nama}}
+                        <div class="grid_12" style="padding: 5pt">
+                            <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                <div ng-switch on="jawab.type">
+                                    <div class="grid_3" ng-switch-when="checkbox" style="margin-right: -50px">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                    </div>
+                                    <div class="grid_12" ng-switch-when="checkbox3" style="margin-right: -50px;margin-left: 20px">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                    </div>
+                                    <div class="grid_12" ng-switch-when="textbox">
+                                        <label  class="k-textbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                        <input style="width: 20%" class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                    </div>
+                                            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 5pt 10pt"><p><b>3. ISPA Berat/Pnemonia berat < 14 hari</b></p>
+                        <p>Berat Apabila</p>
+                        <p>a.Pasien remaja atau dewasa : RR>30x/menit, distress pernapasan berat atau saturasi oksigen <90% 
+                        </p>
+                        <p>b.Pasien anak batuk dan sesak nafas diserai salah satu </p>
+                        <p>1. Sianosis sentral , saturasi <90%;</p>
+                        <p>2. Distres pernapasan berat (tarikan dinding dada yang berat atau mendengkur) </p>
+                        <p>3. Tanda pneumonia berat (ketidakmampuan menyusui atau minum, letargi, penurunan kesadaran atau kejang) </p>
+                        <p>4. Tanda lain dari pneumonia = tarikan dining dada, takipnea :<2 bulan,≥60x/menit; 2–11 bulan, ≥50x/menit; 1–5 tahun, ≥40x/menit;>5 tahun, ≥30x/menit. </p></div>
+                    
+                </div>
+                
+
+            </fieldset>
+            <fieldset style="margin-top:20px">
+                <legend><b>B.FAKTOR RISIKO</b> (14 HARI SEBELUM GEJALA TIMBUL)</legend>
+                <div class="grid_12">
+                    <P><b>Bepergian dari : Tanggal Kedatangan</b></P>
+                    <input style="width: 30%" k-ng-model="item.obj[15027]" kendo-datepicker
+                        placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" /></div>
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <div class="grid_12" ng-repeat="list in listKedatangan | orderBy:'id'" style="padding: 5pt 10pt">
+                        <b>{{list.nama}}</b>
+                        <div class="grid_12" style="padding: 5pt">
+                            <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                <div ng-switch on="jawab.type">
+                                    <div class="grid_3" ng-switch-when="checkbox" style="margin-right: -50px">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                    </div>
+                                    <div class="grid_12" ng-switch-when="checkbox3" style="margin-right: -50px;margin-left: 20px">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                    </div>
+                                    <div class="grid_12" ng-switch-when="textbox">
+                                        <label  class="k-textbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                        <input style="width: 20%" class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                    </div>
+                                            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                
+
+            </fieldset>
+            <fieldset style="margin-top:20px">
+                <legend><b>Kesimpulan</b></legend>
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <div class="grid_12" ng-repeat="list in listKesimpulan | orderBy:'id'" style="padding: 5pt 10pt">
+                        <b>{{list.nama}}</b>
+                        <div class="grid_12" style="padding: 5pt">
+                            <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                <div ng-switch on="jawab.type">
+                                    <div class="grid_4" ng-switch-when="checkbox" style="margin-right: -50px">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                    </div>
+                                    
+                                    <div class="grid_12" ng-switch-when="textbox">
+                                        <label  class="k-textbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                        <input style="width: 80%" class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                    </div>
+                                            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                
+
+            </fieldset>
+
+
+ 
+            <fieldset style="margin-top: 10px ">
+                <legend>CARA PENILAIAN</legend>
+                
+                <div class="grid_12" style="margin-top: 20px">
+                    <table style="width:100%;color: #4c5356;">
+
+                        <tr>
+                            <th style="width: 20px">PDP</th>
+                            <th style="width: 20px;text-align: top">ODP</th>
+                            <th style="width: 20px">OTG</th>
+                            <th style="">Tindak Lanjut</th>
+                        </tr>
+                        <tr>
+                            <td><p>A1+A2+B1</p>
+                                <p>ATAU</p>
+                                <p>A1+A2+B2</p>
+                                <p>ATAU</p>
+                                <p>A1+B3</p>
+                                <p>ATAU</p>
+                                <p>A2+B3</p>
+                                <p>ATAU</p>
+                                <p>A3 dengan tidak ada penyebab lain berdasarkan gambaan klinis yang meyakinkan</p></td>
+                            <td><p>A1+B1</p>
+                                <p>ATAU</p>
+                                <p>A2+B1</p>
+                                <p>ATAU</p>
+                                <p>A1+B2</p>
+                                <p>ATAU</p>
+                                <p>A2+B2</p>
+
+                            </td>
+                            <td>B3</td>
+                            <td><p>OTG = Rapid test sesuai algoritma. Karantina rumah dan edukasi jarak jauh call center di BNPB (117), kementrian kesehatan (119 ext 9), dan kanal informasi lainnya</p>
+                                <p>ODP = Ruang isolasi diantar petugas, tatalaksana kondisi pasien, Lapor Satgas Faskes dan DPJP dengan kriteria yang dimaksut.</p>
+                                <p>Jika diperlukan atas instrukasi DPJP = Rapid Test Sesuai Algoritma, Tata laksana resiko, komunikasi sesuai, pulang, karantina di RS Darurat (Khusus) jika ODP > 60 tahun dengan komorbid, notifikasi dinas kesehatan, diberikan lembar karantina</p>
+                                <p>PDP = Ruang isolasi diantar petugas, tata laksana kondisi pasien, cek rontgen thorax dan darah rutin, lapor satgas faskes dan DPJP dengan kriteria yang dimaksud dan hasil rontgent thorak dan darah rutin, komunikasi resiko, identifikasi dan pemantauan kontak erat, notifikasi dinas kesehatan
+                                Jika diperlukan, atas instruksi DPJP = rapid test sesuai algoritma</p>
+                                <p>Gejala ringan  : Karantina Rumah</p>
+                                <p>Gejala sedang : Karantina RS Khusus / RS Darurat</p>
+                                <p>Gejala berat  Karantina RS Rujukan</p></td>
+                        </tr>
+
+                       
+
+
+                    </table>
+
+                </div>
+            </fieldset>
+            
+<!--     
+    <div style="margin-top: 20px" class="grid_12">
+        <fieldset>
+                         
+                            <div class="grid_12">
+                            <div class="grid_6">
+                                <div class="grid_12">
+                                    <p >Yang Menyerahkan</p>
+                                </div>
+                                <div class="grid_8"  style="margin-top: -10px;margin-bottom: 5px;margin-left: 25px"> 
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[14926]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                                </div>
+                            </div>
+                            <div class="grid_6">
+                                    <div class="grid_12">
+                                        <p> Yang Menerima</p>
+                                    </div>
+                                    <div class="grid_8"  style="margin-top: -10px;margin-bottom: 5px;margin-left: 25px"> 
+                                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[14927]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                                    </div>
+                                </div>
+
+
+                                <div style="margin-left: 270px" class="grid_6" >
+                                     <div class="grid_12">
+                                        <p >Dokter DPJP</p>
+                                    </div>
+                                    <div class="grid_8"  style="margin-top: -10px;margin-bottom: 5px;margin-left: 25px"> 
+                                          <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[14928]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                                    </div>
+                                    
+
+                                </div>
+                            </div>
+                                </fieldset>
+    </div> -->
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,395 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+        <section class="horizontal-wizard">
+            <div id="stepper1" class="bs-stepper horizontal-wizard-example">
+                <div class="bs-stepper-header">
+                    <div class="step" data-target="#account-details">
+                        <button class="step-trigger">
+                            <span class="bs-stepper-box">1</span>
+                            <span class="bs-stepper-label">
+                                <span class="bs-stepper-title">Jenis Pasien</span>
+                                <span class="bs-stepper-subtitle">Pilih Jenis Pasien</span>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="line"><i data-feather="chevron-right" class="font-medium-2"></i></div>
+                    <div class="step" data-target="#personal-info">
+                        <button class="step-trigger">
+                            <span class="bs-stepper-box">2</span>
+                            <span class="bs-stepper-label">
+                                <span class="bs-stepper-title">Poliklinik</span>
+                                <span class="bs-stepper-subtitle">Pilih Jadwal Reservasi & Poli Tujuan</span>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="line"><i data-feather="chevron-right" class="font-medium-2"></i></div>
+                    <div class="step" data-target="#address">
+                        <button class="step-trigger">
+                            <span class="bs-stepper-box">3</span>
+                            <span class="bs-stepper-label">
+                                <span class="bs-stepper-title">Resume</span>
+                                <span class="bs-stepper-subtitle">Lihat Resume & Bukti Reservasi</span>
+                            </span>
+                        </button>
+                    </div>
+
+                </div>
+                <div class="bs-stepper-content">
+                    <form (ngSubmit)="(HWForm.form.valid)" #HWForm="ngForm">
+                        <div id="account-details" class="content">
+                            <form #accountDetailsForm="ngForm">
+                                <div class="content-header">
+                                    <h5 class="mb-0">Jenis Pasien</h5>
+                                    <small class="text-muted">Pilih Jenis Pasien.</small>
+                                </div>
+                                <div class="mt-2 mb-2 row">
+                                    <button type="button" class="btn mb-1 mr-1 ml-1 col-sm btn-secondary btn-next"
+                                        (click)="selectedJenis2(1)" [class.selectedBtn]="isBaru==true">
+                                        Pasien
+                                        <p class="border-top mb-0 pb-0">
+                                            <span>
+                                                Baru
+                                            </span>
+                                        </p>
+                                    </button>
+                                    <button type="button" class="btn mb-1 mr-1 ml-1 col-sm btn-secondary btn-next"
+                                        (click)="selectedJenis2(2)" [class.selectedBtn]="isBaru==false">
+                                        Pasien
+                                        <p class="border-top mb-0 pb-0">
+                                            <span>
+                                                Lama
+                                            </span>
+                                        </p>
+                                    </button>
+
+                                </div>
+                                <div class="row" *ngIf="isBaru">
+                                    <div class="form-group col-md-6">
+                                        <label class="form-label" for="nik">NIK</label>
+                                        <input [(ngModel)]="item.nik" #itemNik="ngModel" required type="text" name="nik"
+                                            id="nik" class="form-control"
+                                            [class.error]="!itemNik.valid && accountDetailsForm.submitted"
+                                            placeholder="NIK" />
+                                        <span *ngIf="accountDetailsForm.submitted && itemNik.invalid"
+                                            class="invalid-form">
+                                            <small class="form-text text-danger" *ngIf="itemNik.errors.required">This
+                                                field is required!</small>
+                                        </span>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="form-label" for="namapasien">Nama Pasien</label>
+                                        <input [(ngModel)]="item.namapasien" #namaPasien="ngModel" required type="text"
+                                            name="namapasien" id="namapasien" class="form-control"
+                                            [class.error]="!namaPasien.valid && accountDetailsForm.submitted"
+                                            placeholder="Nama Pasien" />
+                                        <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
+                                            <small class="form-text text-danger" *ngIf="!namaPasien.valid">This
+                                                field is required!</small>
+                                        </span>
+                                    </div>
+
+
+                                    <div class="form-group col-md-6">
+                                        <label class="form-label" for="tglLahir">Tgl Lahir</label>
+                                        <div class="input-group">
+                                            <input class="form-control" placeholder="yyyy-mm-dd" name="register-tgl"
+                                                id="register-tgl" [(ngModel)]="item.tgllahir"
+                                                [class.error]="accountDetailsForm.submitted && tglRef.invalid"
+                                                tabindex="3" aria-describedby="register-tgl" #tglRef="ngModel" required
+                                                ngbDatepicker #basicDP3="ngbDatepicker">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary feather icon-calendar"
+                                                    (click)="basicDP3.toggle()" type="button" rippleEffect></button>
+                                            </div>
+                                        </div>
+                                        <span *ngIf="accountDetailsForm.submitted && tglRef.invalid"
+                                            class="invalid-form">
+                                            <small class="form-text text-danger" *ngIf="tglRef.errors.required">This
+                                                field is required!</small>
+                                        </span>
+
+
+                                    </div>
+                                    <!-- <div class="form-group col-md-6">
+                                        <label class="form-label" for="tglLahir">Tgl Lahir</label>
+                                        <div class="input-group">
+                                            <input class="form-control" placeholder="yyyy-mm-dd"
+                                                name="Disabled Date Picker" ngbDatepicker #disabledDP="ngbDatepicker"
+                                                #tglLahir="ngModel"
+                                                [(ngModel)]="item.tgllahir"
+                                                [disabled]="true">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary feather icon-calendar"
+                                                    (click)="disabledDP.toggle()" type="button" rippleEffect></button>
+                                            </div>
+                                        </div>
+                                        <span *ngIf="accountDetailsForm.submitted && tglLahir.invalid"
+                                            class="invalid-form">
+                                            <small class="form-text text-danger" *ngIf="tglLahir.errors.required">This
+                                                field is required!</small>
+                                        </span>
+                                    </div> -->
+                                    <div class="form-group col-md-6">
+                                        <label class="form-label" for="jenisKel">Jenis Kelamin</label>
+                                        <!-- <ng-select class="ng-select" [items]="listJK" [(ngModel)]="item.jenisKelamin"
+                                            #jenisKel="ngModel" bindLabel="jeniskelamin" name="jk"
+                                            [class.error]="!jenisKel.valid && accountDetailsForm.submitted">
+                                        </ng-select> -->
+                                        <select class="form-control" id="jenisKel" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="item.jenisKelamin" placeholder="Please select an options"
+                                            name="jenisKel" #jenisKel="ngModel" required
+                                            [class.is-invalid]="jenisKel.invalid  && accountDetailsForm.submitted">
+                                            <option selected disabled>Please select an options</option>
+                                            <option [ngValue]="items" *ngFor="let items of listJK">
+                                                {{items.jeniskelamin}}</option>
+                                        </select>
+                                        <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
+                                            <small class="form-text text-danger" *ngIf="!jenisKel.valid">This
+                                                field is required!</small>
+                                        </span>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="form-label" for="nohp">No HP</label>
+                                        <input [(ngModel)]="item.nohp" #npHP="ngModel" required type="text" name="nohp"
+                                            id="nohp" class="form-control"
+                                            [class.error]="!npHP.valid && accountDetailsForm.submitted"
+                                            placeholder="No HP" />
+                                        <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
+                                            <small class="form-text text-danger" *ngIf="!npHP.valid">This
+                                                field is required!</small>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="isLama">
+                                    <div class="form-group col-md-6">
+                                        <label class="form-label" for="norm">No RM</label>
+                                        <input [(ngModel)]="item.nocmLama" type="text" name="nik" class="form-control"
+                                            placeholder="No RM" disabled/>
+
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="form-label" for="nama">Nama Pasien</label>
+                                        <input [(ngModel)]="item.namaLama" type="text" name="nama" class="form-control"
+                                            placeholder="Nama Pasien" disabled/>
+
+                                    </div>
+
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <button (click)="horizontalWizardStepperPrevious()"
+                                        class="btn btn-outline-secondary btn-prev" disabled rippleEffect>
+                                        <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
+                                        <span class="align-middle d-sm-inline-block d-none">Kembali</span>
+                                    </button>
+                                    <button (click)="horizontalWizardStepperNext(accountDetailsForm,'')" type="submit"
+                                        class="btn btn-outline-primary btn-next" rippleEffect>
+                                        <span class="align-middle d-sm-inline-block d-none">Lanjut</span>
+                                        <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="personal-info" class="content">
+                            <form #personalInfoForm="ngForm">
+                                <div class="content-header">
+                                    <h5 class="mb-0">Poliklnik</h5>
+                                    <small>Pilih Jadwal Reservasi anda.</small>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="form-label" for="tglReservasi">Tgl Reservasi</label>
+                                        <div class="input-group">
+                                            <input class="form-control" placeholder="yyyy-mm-dd" name="tglReservasi"
+                                                [(ngModel)]="item.tglReservasi" [ngModelOptions]="{standalone: true}"
+                                                ngbDatepicker #basicDP="ngbDatepicker" #tglReservasi="ngModel"
+                                                (ngModelChange)="changeDate($event)" [minDate]="minDate"
+                                                [maxDate]="maxDate"
+                                                [readonly]="true"
+                                                [markDisabled]="markDisabled"
+                                                [class.error]="personalInfoForm.submitted && tglReservasi.invalid">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary feather icon-calendar"
+                                                    (click)="basicDP.toggle()" type="button" rippleEffect></button>
+                                            </div>
+                                        </div>
+                                        <span *ngIf="personalInfoForm.submitted && tglReservasi.invalid"
+                                            class="invalid-form">
+                                            <small class="form-text text-danger"
+                                                *ngIf="tglReservasi.errors.required">This
+                                                field is required!</small>
+                                        </span>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="form-label" for="ruangan">Poliklnik </label>
+                                        <select class="form-control mb-1" id="ruangan"
+                                            [ngModelOptions]="{standalone: true}" [(ngModel)]="item.poli"
+                                            (change)="changeDate($event)" placeholder="Please select an options"
+                                            name="ruangan" #ruangan="ngModel" required
+                                            [class.is-invalid]="ruangan.invalid  && personalInfoForm.submitted">
+                                            <option selected disabled>Please select an options</option>
+                                            <option [ngValue]="items" *ngFor="let items of listRuangan">
+                                                {{items.namaruangan}}</option>
+                                        </select>
+                                        <span *ngIf="personalInfoForm.submitted" class="invalid-form">
+                                            <small class="form-text text-danger" *ngIf="!ruangan.valid">This
+                                                field is required!</small>
+                                        </span>
+
+
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="form-label" for="jam">Jam Reservasi </label>
+                                        <select class="form-control mb-1" id="jam" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="item.jam" placeholder="Please select an options" name="jam">
+                                            <option selected disabled>Please select an options</option>
+                                            <option [ngValue]="items" *ngFor="let items of listJam">
+                                                {{items.jam}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="form-label" for="tipBayar">Tipe Pembayaran </label>
+                                        <select class="form-control mb-1" id="jam" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="item.kelompokPasien" placeholder="Please select an options"
+                                            name="jam" (change)="changeTipe($event)">
+                                            <option selected disabled>Please select an options</option>
+                                            <option [ngValue]="items" *ngFor="let items of listTipePembayaran">
+                                                {{items.kelompokpasien}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-6" *ngIf="isBPJS">
+                                        <label class="form-label" for="nobpjs">No Kartu Peserta</label>
+                                        <input [(ngModel)]="item.noKartuPeserta" type="text" class="form-control" name="nobpjs"
+                                            placeholder="No Kartu Peserta" />
+
+                                    </div>
+                                    <div class="form-group col-md-6" *ngIf="isBPJS">
+                                        <label class="form-label" for="noRujukan">No Rujukan</label>
+                                        <input [(ngModel)]="item.noRujukan" type="text" class="form-control" name="noRujukan"
+                                            placeholder="No Rujukan" />
+
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <button (click)="horizontalWizardStepperPrevious()"
+                                        class="btn btn-outline-secondary btn-prev" rippleEffect>
+                                        <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
+                                        <span class="align-middle d-sm-inline-block d-none">Kembali</span>
+                                    </button>
+                                    <button (click)="horizontalWizardStepperNext('',modalSuccess)"
+                                        class="btn btn-outline-primary btn-next" rippleEffect>
+                                        <span class="align-middle d-sm-inline-block d-none">Lanjut</span>
+                                        <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="address" class="content">
+                            <form #addressForm="ngForm">
+                                <div class="content-header">
+                                    <h5 class="mb-0">Resume</h5>
+                                    <small>Bukti Reservasi bisa dilihat di menu history.</small>
+                                </div>
+
+                                <section id="card-demo-example">
+                                    <div class="row match-height">
+                                        <div class="col-md-12 col-lg-4">
+                                        </div>
+                                        <div class="col-md-12 col-lg-4">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4 class="card-title">No Reservasi :
+                                                        <b> <span
+                                                                class="badge badge-light-success">{{resultR.noreservasi}}</span></b>
+                                                    </h4>
+                                                    <h6 class="card-subtitle text-muted">Tgl Reservasi :
+                                                        <b>{{resultR.tgl}}</b>
+                                                    </h6>
+                                                </div>
+                                                <!-- <div style="text-align: center" class="img-fluid"
+                                                        id="qrNoreservasi"></div> -->
+                                                <div class="img-responsive text-center">
+                                                    <img class="img-fluid" style="-webkit-user-select: none;cursor:pointer;
+                                                            text-align: center;width:300px" (click)="popUpQR()"
+                                                        src="{{ resultR.qrCode}}">
+                                                </div>
+                                                <div class="card-body">
+                                                    <p class="card-text">
+                                                        Nama Pasien: <b>{{resume.namapasien}}</b><br>
+                                                        Tanggal Lahir: <b>{{resume.tgllahir}} </b><br>
+                                                        Poli: <b>{{resultR.namaruangan}}</b><br>
+                                                        Tipe Pembayaran: <b>{{resume.jenispasien}}</b><br>
+                                                    </p>
+                                                    <!-- <a href="javascript:void(0)" class="btn btn-outline-success"
+                                                        style="float: right">Cetak</a> -->
+                                                    <div class="divider">
+                                                        <div class="divider-text" style="color:#ff9f43;"><i>Harap
+                                                                Check-In sebelum jam Reservasi</i></div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </section>
+
+
+                                <!-- <div class="d-flex justify-content-between">
+                                    <button (click)="horizontalWizardStepperPrevious()"
+                                        class="btn btn-outline-secondary btn-prev" rippleEffect>
+                                        <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
+                                        <span class="align-middle d-sm-inline-block d-none">Kembali</span>
+                                    </button>
+                                    <button (click)="horizontalWizardStepperNext(addressForm,'')"
+                                        class="btn btn-outline-primary btn-next" rippleEffect>
+                                        <span class="align-middle d-sm-inline-block d-none">Lanjut</span>
+                                        <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
+                                    </button>
+                                </div> -->
+                            </form>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<ng-template #modalSuccess let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel160">Resume</h5>
+        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+
+        <div class="modal-body">
+            <div class="card-text">
+                <p> Nama Pasien: <b id="txt_Nama">{{resume.namapasien}}</b></p>
+                <p> Tanggal Lahir: <b><span id="txt_TglLahir">{{resume.tgllahir}} </span></b></p><br>
+                <p> Poli: <b id="tgl_Poli">{{resume.poli}}</b></p>
+                <!-- <p> Nama Dokter: <b id="txt_Dokter">{{resume.namapasien}}</b></p> -->
+                <p> Tanggal Reservasi: <b><span id="txt_Tgl">{{resume.tglreservasi}}</span></b></p>
+                <p> Jenis Penjamin: <b id="txt_JenisPenjamin">{{resume.jenispasien}}</b></p><br>
+                <p>Apakah data tersebut sudah benar?</p>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal"
+            (click)="modal.close('Cross click')">Salah</button>
+        <button class="btn btn-success" type="button" (click)="save()">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="isSave"></span>
+            <span class="ml-25 align-middle">Benar</span>
+        </button>
+    </div>
+
+</ng-template>

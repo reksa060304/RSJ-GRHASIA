@@ -1,0 +1,132 @@
+<div class="content-wrapper">
+  <div class="content-body">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <div class="row">
+      <div class="col-lg-3 col-sm-6 col-12">
+        <div class="card" style="background-color: #7367f0 !important;">
+          <div class="card-header d-flex flex-column align-items-start pb-0">
+            <h2 class="font-weight-bolder mt-0 text-white">{{totalKamar}}</h2>
+            <p class="mb-2 text-white">TOTAL KAMAR</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6 col-12">
+        <div class="card" style="background-color: #28c76f !important;">
+          <div class="card-header d-flex flex-column align-items-start pb-0">
+            <h2 class="font-weight-bolder mt-0 text-white">{{jumlahTempatTidur}}</h2>
+            <p class="mb-2 text-white">TOTAL BED</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6 col-12">
+        <div class="card" style="background-color: #ea5455 !important;">
+          <div class="card-header d-flex flex-column align-items-start pb-0">
+            <h2 class="font-weight-bolder mt-0 text-white">{{JumlahIsi}}</h2>
+            <p class="mb-2 text-white">TERPAKAI</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6 col-12">
+        <div class="card" style="background-color: #ff9f43 !important;">
+          <div class="card-header d-flex flex-column align-items-start pb-0">
+            <h2 class="font-weight-bolder mt-0 text-white">{{JumlahKosong}}</h2>
+            <p class="mb-2 text-white">KOSONG</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3 col-sm-6 col-12" *ngFor="let item of dataKamar">
+        <div class="card card-transaction" style="cursor: pointer;"
+          (click)="lookDetail(item.idruangan,item.namaruangan,modalSuccess)">
+          <div class="card-header">
+            <h5 class="card-title"
+              style="white-space: nowrap; overflow: hidden;  text-overflow: ellipsis;  text-align: center;">
+              {{item.namaruangan}}</h5>
+            <!-- <i data-feather="more-vertical" class="font-medium-3 cursor-pointer"></i> -->
+
+          </div>
+          <div class="card-body">
+            <div class="transaction-item">
+              <div class="media">
+                <div class="avatar bg-light-success rounded">
+                  <div class="avatar-content">
+                    <i data-feather="check-square" class="avatar-icon font-medium-3"></i>
+                  </div>
+                </div>
+                <div class="media-body">
+                  <h6 class="transaction-title">Bed</h6>
+                  <!-- <small>Bed</small> -->
+                </div>
+              </div>
+              <div class="font-weight-bolder text-success">{{item.qtyBed}}</div>
+            </div>
+            <div class="transaction-item">
+              <div class="media">
+                <div class="avatar bg-light-danger rounded">
+                  <div class="avatar-content">
+                    <i data-feather="database" class="avatar-icon font-medium-3"></i>
+                  </div>
+                </div>
+                <div class="media-body">
+                  <h6 class="transaction-title">Terisi</h6>
+                  <!-- <small>Add Money</small> -->
+                </div>
+              </div>
+              <div class="font-weight-bolder text-danger">{{item.isi}}</div>
+            </div>
+            <div class="transaction-item">
+              <div class="media">
+                <div class="avatar bg-light-warning rounded">
+                  <div class="avatar-content">
+                    <i data-feather="alert-triangle" class="avatar-icon font-medium-3"></i>
+                  </div>
+                </div>
+                <div class="media-body">
+                  <h6 class="transaction-title">Tersedia</h6>
+                  <!-- <small>Add Money</small> -->
+                </div>
+              </div>
+              <div class="font-weight-bolder text-warning">{{item.kosong}}</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal -->
+<ng-template #modalSuccess let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">{{ruangans}}</h5>
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ngx-datatable #table class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
+      [rowHeight]="58" [footerHeight]="50" rowHeight="auto" [limit]="10" [rows]="rows" [scrollbarH]="true">
+      <ngx-datatable-column name="Tgl Registrasi" prop="tglregistrasi" [width]="150">
+      </ngx-datatable-column>
+      <ngx-datatable-column name="No Registrasi" prop="noregistrasi" [width]="150"></ngx-datatable-column>
+      <ngx-datatable-column name="No RM " prop="nocm" [width]="100">
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Nama Pasien" prop="namapasien" [width]="250">
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Ruangan" prop="namaruangan" [width]="200"></ngx-datatable-column>
+      <ngx-datatable-column name="Kelas" prop="namakelas" [width]="100"></ngx-datatable-column>
+      <ngx-datatable-column name="Kamar" prop="namakamar" [width]="200"></ngx-datatable-column>
+      <ngx-datatable-column name="Bed" prop="namabed" [width]="100"></ngx-datatable-column>
+    </ngx-datatable>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="modal.close('Accept click')" rippleEffect>
+      Tutup
+    </button>
+  </div>
+</ng-template>
+<!-- / Modal -->

@@ -1,0 +1,24 @@
+define([], function() {
+    'use strict';
+		return {
+			rabbitMQHost : 'amqp://rsab:rsab@127.0.0.1',
+			mode : 'https',
+			mssql:{
+				user: 'sa',
+				password: 'j4s4medik4',
+				//server: '172.16.0.92', 
+				server: '103.93.160.56',
+				port:1435,
+				database: 'HR3000Negara' 
+			},
+			pgsql:{
+				user: 'postgres',
+				password: 'Tr4snm3dic',
+				//server: '172.16.0.92', 
+				server: 'transmedic.co.id',
+				port:5432,
+				database: 'transmedic_standar' 
+			}
+		};
+ 
+});

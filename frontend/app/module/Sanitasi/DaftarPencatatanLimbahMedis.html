@@ -1,0 +1,355 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+</style>
+<div class="grid_12 headerBox">
+    <h1 style="color: white;"><b>Daftar Pencatatan Limbah Medis</b></h1>
+</div>
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-body">
+            <md-content>
+                <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">
+                    <md-tab label="Pengankutan Limbah Medis">
+                        <md-content class="md-padding">
+                            <div class="grid_12">
+                                <!-- Periode Pulang -->
+                                <div class="grid_4">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Periode Registrasi"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <!-- AwalPeriode -->
+                                        <div class="grid_6 padDatePicker">
+                                            <input style="width: 100%" k-ng-model="item.periodeAwal"
+                                                kendo-datetimepicker k-max="now" placeholer="yyyy-MM-dd HH:mm"
+                                                k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                        </div>
+
+                                        <!-- AkhirPeriode -->
+                                        <div class="grid_6 padDatePicker">
+                                            <input style="width: 100%" k-ng-model="item.periodeAkhir"
+                                                kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm"
+                                                k-format="'yyyy-MM-dd HH:mm'" />
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                </div>
+
+                                <div class="grid_4">
+                                    <div class="grid_12">
+                                        <label c-label item="item">Pt Pengangkut</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.dataRekanan"
+                                            k-data-text-field="'namarekanan'" k-filter="'contains'"
+                                            k-data-value-field="'id'" k-auto-bind="false"
+                                            k-data-source="listdataRekanan" />
+                                    </div>
+                                </div>
+
+                                <!-- Button Search -->
+                                <div class="grid_1">
+                                    <div class="grid_12">
+                                        <label>&nbsp;</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <button class="btnTemplate1" style="margin-left: 0;" ng-click="SearchDataPL()">
+                                            <i class="fa fa-search"></i>Cari</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <kendo-grid id="kNewUser1" k-data-source="dataPengankutanLimbah" k-selectable="'row'"
+                                    k-groupable="'true'" k-options="optionPengankutanLimbah" k-ng-model="selectPL"
+                                    ng-click="klPL(selectPL)">
+                                </kendo-grid>
+                            </div>
+                            <div class="grid_12" style="margin-top: 15px;">
+                                <div class="grid_10"></div>
+                                <div class="grid_2">
+                                    <button class="btnTemplate1 " style="margin-top:-20px;margin-left: 0;"
+                                        ng-click="editPl()"><i class="fa fa-edit"></i>Ubah Data</button>
+                                </div>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="Pencatatan Pengelolaan Air Limbah">
+                        <md-content class="md-padding">
+                            <div class="grid_12">
+                                <!-- Periode Pulang -->
+                                <div class="grid_4">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Periode Registrasi"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <!-- AwalPeriode -->
+                                        <div class="grid_6 padDatePicker">
+                                            <input style="width: 100%" k-ng-model="item.periodeAwal"
+                                                kendo-datetimepicker k-max="now" placeholer="yyyy-MM-dd HH:mm"
+                                                k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                        </div>
+
+                                        <!-- AkhirPeriode -->
+                                        <div class="grid_6 padDatePicker">
+                                            <input style="width: 100%" k-ng-model="item.periodeAkhir"
+                                                kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm"
+                                                k-format="'yyyy-MM-dd HH:mm'" />
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                </div>
+                                <!-- Button Search -->
+                                <div class="grid_1">
+                                    <div class="grid_12">
+                                        <label>&nbsp;</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <button class="btnTemplate1" style="margin-left: 0;"
+                                            ng-click="SearchDataPPAL()">
+                                            <i class="fa fa-search"></i>Cari</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <kendo-grid id="kNewUser2" k-data-source="dataPPAL" k-selectable="'row'"
+                                    k-groupable="'true'" k-options="optionPPAL" k-ng-model="selectPPAL"
+                                    ng-click="klPPAL(selectPPAL)">
+                                </kendo-grid>
+                            </div>
+                            <div class="grid_12" style="margin-top: 15px;">
+                                <div class="grid_10"></div>
+                                <div class="grid_2">
+                                    <button class="btnTemplate1 " style="margin-top:-20px;margin-left: 0;"
+                                        ng-click="editPPAL()"><i class="fa fa-edit"></i>Ubah Data</button>
+                                </div>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="Pencatatan Debit Air Bersih">
+                        <md-content class="md-padding">
+                            <div class="grid_12">
+                                <!-- Periode Pulang -->
+                                <div class="grid_4">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Periode Registrasi"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <!-- AwalPeriode -->
+                                        <div class="grid_6 padDatePicker">
+                                            <input style="width: 100%" k-ng-model="item.periodeAwal"
+                                                kendo-datetimepicker k-max="now" placeholer="yyyy-MM-dd HH:mm"
+                                                k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                        </div>
+
+                                        <!-- AkhirPeriode -->
+                                        <div class="grid_6 padDatePicker">
+                                            <input style="width: 100%" k-ng-model="item.periodeAkhir"
+                                                kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm"
+                                                k-format="'yyyy-MM-dd HH:mm'" />
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                </div>
+
+                                <div class="grid_4">
+                                    <div class="grid_12">
+                                        <label c-label item="item">Ground</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.dataRuangan"
+                                            k-data-text-field="'namaruangan'" k-filter="'contains'"
+                                            k-data-value-field="'id'" k-auto-bind="false"
+                                            k-data-source="listdataRuangan" />
+                                    </div>
+                                </div>
+
+                                <!-- Button Search -->
+                                <div class="grid_1">
+                                    <div class="grid_12">
+                                        <label>&nbsp;</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <button class="btnTemplate1" style="margin-left: 0;" ng-click="SearchDataPDAB()">
+                                            <i class="fa fa-search"></i>Cari</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <kendo-grid id="kNewUser2" k-data-source="dataPDAB" k-selectable="'row'"
+                                    k-groupable="'true'" k-options="optionPDAB" k-ng-model="selectPDAB"
+                                    ng-click="klPDAB(selectPDAB)">
+                                </kendo-grid>
+                            </div>
+                            <div class="grid_12" style="margin-top: 15px;">
+                                <div class="grid_10"></div>
+                                <div class="grid_2">
+                                    <button class="btnTemplate1 " style="margin-top:-20px;margin-left: 0;"
+                                        ng-click="editPDAB()"><i class="fa fa-edit"></i>Ubah Data</button>
+                                </div>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                </md-tabs>
+            </md-content>
+        </div>
+    </div>
+</div>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+<div kendo-window="dialogPopup" k-title="'Tambah'" k-width="750" k-height="285" k-visible="false">
+    <div class="panel panel-default panel-white container_12">
+        <div class="grid_12" style="margin-top: 5px;">
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label item="item">Tanggal</label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%" k-ng-model="item.tglPelayanan" kendo-datetimepicker
+                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                </div>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top: 5px;" ng-show="PengkangkutLimbah">
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label item="item">Pt Pengangkut</label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="itemInput.dataRekanan"
+                        k-data-text-field="'namarekanan'" k-filter="'contains'" k-data-value-field="'id'"
+                        k-auto-bind="false" k-data-source="listdataRekanan" />
+                </div>
+            </div>
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label item="item">Jumlah Limbah Padat (KG)</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="numberic" class="k-textbox"
+                        ng-model="itemInput.jmlLimbahPadat" />
+                </div>
+            </div>
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label item="item">Jumlah Limbah Tajam (KG)</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="numberic" class="k-textbox"
+                        ng-model="itemInput.jmlLimbahTajam" />
+                </div>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top: 5px;" ng-show="PengelolaanAirLimbah">
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Flow Meter Inlet</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="itemInput" filter="numberic" class="k-textbox"
+                        ng-model="itemInput.flowMeterInlet" />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Flow Meter Outlet</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="numberic" class="k-textbox"
+                        ng-model="itemInput.flowMeterOutlet" />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Debet Harian Inlet</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="numberic" class="k-textbox"
+                        ng-model="itemInput.DebetHarianInlet" />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Debet Harian Outlet</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="numberic" class="k-textbox"
+                        ng-model="itemInput.DebetHarianOutlet" />
+                </div>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top: 5px;" ng-show="PengelolaanAirLimbah">
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Ph(Baku Mutu 6-9)</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="numberic" class="k-textbox" ng-model="itemInput.jmlPh" />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Temperature(Baku Mutu 30)</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="numberic" class="k-textbox"
+                        ng-model="itemInput.JmlTemperature" />
+                </div>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top: 5px;" ng-show="PengelolaanAirBersih">
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label item="item">Ground</label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="itemInput.dataRuangan"
+                        k-data-text-field="'namaruangan'" k-filter="'contains'" k-data-value-field="'id'"
+                        k-auto-bind="false" k-data-source="listdataRuangan" />
+                </div>
+            </div>
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label item="item">Jumlah Yang Tertera Pada Flow Meter</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="numberic" class="k-textbox"
+                        ng-model="itemInput.JumlahYangTerteraPadaFlowMeter" />
+                </div>
+            </div>
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label item="item">Jumlah Pemakaian Per Hari</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="numberic" class="k-textbox"
+                        ng-model="itemInput.JumlahPemakaianPerHari" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+        <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="savePermohonan()">
+            <span class="k-icon k-update"></span>Simpan</button>
+        <button class="k-button  k-button-icontext" ng-click="hapusPermohonan()"><span
+                class="k-icon k-cancel"></span>Hapus</button>
+        <button class="k-button  k-button-icontext" ng-click="batalPermohonan()"><span
+                class="k-icon k-cancel"></span>Batal</button>
+    </div>
+</div>

@@ -1,0 +1,93 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+</style>
+<div class="panel panel-default container_12">
+    <div class="panel-heading" c-translate>Data Pelayanan Pegawai</div>
+    <fieldset style="min-height:50px !important" align="left">
+        <legend>
+            <h2>Pencarian</h2>
+        </legend>
+        <div class="grid_10">
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Periode Tanggal"></label>
+                </div>
+                <div class="grid_12">
+                    <!-- AwalPeriode -->
+                    <div class="grid_6 padDatePicker">
+                        <div class="grid_12">
+                            <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datetimepicker k-max="now"
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                        </div>
+                    </div>
+                    <!-- AkhirPeriode -->
+                    <div class="grid_6 padDatePicker">
+                        <div class="grid_12">
+                            <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item" c-label-text="Jenis Petugas Pelaksana"></label>
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.JenisPetPelaksana"
+                    k-data-text-field="'jenispetugaspe'" k-data-value-field="'id'" k-filter="'contains'"
+                    k-auto-bind="false" k-data-source="listJenisPetPelaksana" />
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Petugas Pelaksana</label>
+                </div>
+                <div class="grid_12">
+                    <select kendo-multi-select k-options="selectOptionsDokter"
+                        k-filter="'contains'" k-data-source="listDokters" k-ng-model="listDokterMulti"></select>
+                </div>
+            </div>
+            <!-- <div class="grid_2">
+                <label c-label item="item" c-label-text="Departemen"></label>
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.Departemen"
+                    k-data-text-field="'namadepartemen'" k-data-value-field="'id'" k-filter="'contains'"
+                    k-auto-bind="false" k-data-source="listDataDepartemen" />
+            </div> -->
+        </div>
+        <div class="grid_2 k-edit-buttons  k-state-default " style="margin-top:25px">
+            <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="Search()"
+                style="width:100px"><span class="k-sprite k-icon k-i-search"></span>Cari </button>
+            <button class="k-button  k-button-icontext" ng-click="ClearSearch()" style="width:100px"><span
+                    class="k-sprite k-icon k-delete"></span>Clear</button>
+        </div>
+    </fieldset>
+</div>
+<div class="grid_12" style="margin-top:10px">
+    <div class="grid_12 headerBox">
+        <p>Detail</p>
+    </div>
+    <div class="grid_12 borderBox">
+        <div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" options="columnGrid"
+            k-pageable="'true'" k-sortable="'true'" ng-click="klikGrid(dataSelected)" k-ng-model="dataSelected">
+            <div k-detail-template>
+                <kendo-tabstrip>
+                    <div>
+                        <div id="kGridDetail" kendo-grid k-options="data2(dataItem)" k-sortable="'true'"
+                            k-selectable="'row'" k-ng-model="dataSelected2" ng-click="klikDetail(dataSelected2)">
+                        </div>
+                    </div>
+                </kendo-tabstrip>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="grid_12" style="margin-top:60px" ng-show="isLoadingData">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>

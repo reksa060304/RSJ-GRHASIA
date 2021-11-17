@@ -1,0 +1,53 @@
+<div class="login-body2">
+
+  <p-toast [style]="{marginTop: '2%'}" position="top-center" key="t-notif"></p-toast>
+  <div class="login-wrapper2">
+    <p-progressBar *ngIf="loading" mode="indeterminate"
+      [style]="{'height': '3px','padding':'unset','width':'30%','position':'fixed'}"></p-progressBar>
+
+    <div class="login-panel2">
+      <img alt="diamond-layout" class="logo" src="assets/layout/images/logo-freya-single.svg">
+      <div class="login-form">
+
+        <p>Silahkan masukan username dan password anda</p>
+        <!-- <p>Already have an account? 
+          <a href="#">Login</a></p> -->
+        <div class="p-grid p-fluid p-p-18" >
+          <div class="p-col-12 p-md-12">
+            <div class="p-inputgroup">
+              <span class="p-inputgroup-addon"><i class="mdi mdi-account-check"></i></span>
+              <input type="text" pInputText placeholder="Username" [(ngModel)]="item.namaUser"> 
+            </div>
+          </div>
+          <div class="p-col-12 p-md-12">
+            <div class="p-inputgroup">
+              <span class="p-inputgroup-addon"><i class="mdi mdi-key"></i></span>
+              <input type="text" pInputText [(ngModel)]="item.kataSandi" (keyup.enter)="loginKeun()"  placeholder="Password" >
+            </div>
+          </div>
+          <!-- <input pinputtext="" id="user" placeholder="Username" class="p-inputtext p-component"
+          [(ngModel)]="item.namaUser"> -->
+          <!-- <input ppassword="" id="password" type="password" placeholder="Password" class="p-inputtext p-component"
+          [(ngModel)]="item.kataSandi" (keyup.enter)="loginKeun()"> -->
+          <div class="p-col-12 p-md-12">
+            <p-button [disabled]="loading" label="MASUK"  (click)="loginKeun()" ><i  *ngIf="loading" class="pi pi-spin pi-spinner" style="color: white;"></i></p-button>
+            <!-- <button [disabled]="loading" label="LOGIN" class="p-ripple p-button p-component" (click)="loginKeun()">
+              <span class="p-button-label">Login</span><span class="p-ink"></span>
+            </button> -->
+          </div>
+        </div>
+      </div>
+      <p>Copyright © 2021. EPIC TEAM. All Rights Reserved.</p>
+    </div>
+    <div class="login-image">
+      <div class="image-footer">
+        <p style="color: rgb(7, 71, 166);">Hospital Information System By Transmedic</p>
+        <div class="icons">
+          <i class="pi pi-github"></i>
+          <i class="pi pi-facebook"></i>
+          <i class="pi pi-twitter"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,404 @@
+<style type="text/css">
+    .json-viewer {
+        margin-top: 26px;
+        padding: 2em 0 2em 5em;
+        background: lightgrey;
+    }
+
+    .k-autocomplete {
+        border: 1px solid #228be6;
+        border-radius: 5%;
+    }
+    .k-toolbar .k-split-button, 
+    span.k-colorpicker, 
+    span.k-combobox, 
+    span.k-datepicker, 
+    span.k-datetimepicker, 
+    span.k-dropdown, 
+    span.k-numerictextbox, 
+    span.k-timepicker{
+        background-image: none;
+        margin-top: -5px !important;
+    }
+    .btnSimpan {
+        margin-right: 10px;
+        padding: 5px 10px;
+        border: none;
+        color: white;
+        font-size: 12px;
+        background-color: #41abf2;
+        border-radius: 3px;
+        cursor: pointer;
+        min-width: 50px;
+    }
+</style>
+<div class="grid_12">
+    <div class="panel panel-default panel-white">
+
+        <div class="panel-body">
+            <div class="grid_12">
+
+                <div class="grid_12">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="font-size: 18px;"><span c-translate>Pembuatan Rujuk Balik</span>
+                            <span class="icon fa fa-chevron-circle-down" ng-show="!isShowPembuatanPRB"
+                                style="right:10px" ng-click="showPembuatanPRB()"></span>
+                            <span class="icon fa fa-chevron-circle-up" ng-show="isShowPembuatanPRB" style="right:10px"
+                                ng-click="showPembuatanPRB()"></span>
+                        </div>
+                        <div class="panel-body" ng-show="isShowPembuatanPRB">
+                            <div class="grid_12 animated no-padding">
+
+                                <div ng-cloak>
+                                    <md-content>
+                                        <md-tabs md-dynamic-height md-border-bottom>
+                                            <md-tab label="Cari Data PRB">
+                                                <md-content class="md-padding ">
+
+                                                    <div class="panel panel-default container_12 ">
+                                                        <div class="panel-body ">
+                                                            <div class="grid_12 ">
+                                                                <div class="grid_4 ">
+                                                                    <div class="grid_12">
+                                                                        <label c-label>Pencarian berdasarkan :</label>
+                                                                        <div class="grid_4" ng-repeat="list in jenisPencarian">
+                                                                            <input type="radio" name="jenisPencarian" id="{{list.nama}}" class="k-radio" ng-model="search.prb" value="{{list.id}}" ng-click="chageSearch()">
+                                                                            <label class="k-radio-label" for="{{list.nama}}">{{list.nama}}</label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="grid_12">
+                                                                        <div class="grid_12" ng-show="isPencarian">
+                                                                            <div class="grid_6">
+                                                                                <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="search.nosrb" placeholder="Nomor SRB" />
+                                                                            </div>
+                                                                            <div class="grid_6">
+                                                                                <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="search.nosep" placeholder="Nomor SEP" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid_12" ng-show="!isPencarian">
+                                                                            <div class="grid_6">
+                                                                                <input style="width: 100% " kendo-date-picker k-ng-model="search.tglawal"  k-format="'yyyy-MM-dd'"/>
+                                                                            </div>
+                                                                            <div class="grid_6">
+                                                                                <input style="width: 100% " kendo-date-picker k-ng-model="search.tglakhir" k-format="'yyyy-MM-dd'"/>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid_2">
+                                                                            <button class="k-button k-primary k-button-icon " ng-click="findDataPRB() ">
+                                                                                <span class="k-sprite k-icon k-i-search ">Find</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="grid_2">
+                                                                            <em ng-click='clear()' id="iconButton " data-role="button " class="k-button k-button-icon " role="button " aria-disabled="false " tabindex="0 ">
+                                                                                <span class="k-sprite k-icon k-i-cancel ">Clear</span>
+                                                                            </em>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="grid_8 ">
+                                                                    <div class="grid_12 ">
+                                                                        <label c-label>Results :</label>
+                                                                    </div>
+                                                                    <pre id="jsonCekSRB" class="json-viewer "></pre>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </md-content>
+                                            </md-tab>
+                                            <md-tab label="INSERT & UPDATE PRB ">
+                                                <md-content class="md-padding">
+                                                    <div class="panel panel-default container_12 ">
+                                                        <div class="panel-body">
+                                                            <fieldset>
+                                                                <legend>Pilih Tipe Post</legend>
+                                                                <div class="grid_2" ng-repeat="tipe in listPost">
+                                                                    <input type="radio" name="tipepost"
+                                                                        id="{{tipe.id}}" class="k-radio"
+                                                                        ng-model="item.tipe" ng-value="{{tipe.id}}" ng-click="changeMetode(tipe.id)">
+                                                                    <label class="k-radio-label" for="{{tipe.id}}"
+                                                                        style="margin:5px">{{tipe.name}}</label>
+                                                                </div>
+                                                                <div class="grid_6"></div>
+                                                            </fieldset>
+                                                            <div class="grid_12">
+                                                                <div class="grid_6">
+                                                                    <div class="grid_12">
+                                                                        <div class="grid_4">
+                                                                            <div class="grid_12" style="margin-top:5px">
+                                                                                <label class="c-label"
+                                                                                    for="cekPesertaNoSep">No SEP</label>
+                                                                            </div>
+                                                                            <div class="grid_12"
+                                                                                style="margin-top:10px">
+                                                                                <input ng-blur="checkKepesertaanByNoSrb(item.noSrb, item.noSep)" class="k-textbox" ng-model="item.noSep">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid_4" ng-show="!isInsert">
+                                                                            <div class="grid_12" style="margin-top:5px">
+                                                                                <input type="checkbox"
+                                                                                    class="k-checkbox"
+                                                                                    ng-model="item.cekNomorSrb"
+                                                                                    id="cekPesertaNoSrb">
+                                                                                <label class="c-label k-checkbox-label"
+                                                                                    for="cekPesertaNoSrb">No SRB</label>
+                                                                            </div>
+                                                                            <div class="grid_12"
+                                                                                style="margin-top:10px">
+                                                                                <input
+                                                                                    ng-blur="checkKepesertaanByNoSrb(item.noSrb, item.noSep)"
+                                                                                    class="k-textbox"
+                                                                                    ng-model="item.noSrb">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid_4" ng-show="isInsert">
+                                                                            <div class="grid_12" style="margin-top:5px">
+                                                                                <label class="c-label"
+                                                                                    for="cekPesertaNoKartu">No Kartu</label>
+                                                                            </div>
+                                                                            <div class="grid_12"
+                                                                                style="margin-top:10px">
+                                                                                <input class="k-textbox" ng-model="item.noKartu">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="grid_12">
+                                                                        <div class="grid_8">
+                                                                            <div class="grid_12" style="margin-top:5px">
+                                                                                <label class="c-label">Alamat</label>
+                                                                            </div>
+                                                                            <div class="grid_12" 
+                                                                                style="margin-top:10px">
+                                                                                <textarea type="input" class="k-textbox"
+                                                                                    rows="2" ng-model="item.alamat">
+                                                                                </textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid_4">
+                                                                            <div class="grid_12" style="margin-top:5px">
+                                                                                <label class="c-label">Email</label>
+                                                                            </div>
+                                                                            <div class="grid_12"
+                                                                                style="margin-top:10px">
+                                                                                <input
+                                                                                    class="k-textbox"
+                                                                                    ng-model="item.email">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="grid_12">
+                                                                        <div class="grid_4" ng-show="isInsert">
+                                                                            <div class="grid_12" style="margin-top:5px">
+                                                                                <label class="c-label">Program PRB</label>
+                                                                            </div>
+                                                                            <div class="grid_12"
+                                                                                style="margin-top:15px">
+                                                                                <input kendo-combo-box tyle="width:100%"
+                                                                                k-ng-model="item.programprb"
+                                                                                k-data-text-field="'nama'"
+                                                                                k-data-value-field="'kode'"
+                                                                                k-filter="'contains'"
+                                                                                k-auto-bind="false"
+                                                                                k-data-source="listProgramPRB" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid_4">
+                                                                            <div class="grid_12" style="margin-top:5px">
+                                                                                <label class="c-label">DPJP</label>
+                                                                            </div>
+                                                                            <div class="grid_12"
+                                                                                style="margin-top:15px">
+                                                                                <input kendo-combo-box tyle="width:100%"
+                                                                                k-ng-model="item.kodeDPJP"
+                                                                                k-data-text-field="'nama'"
+                                                                                k-data-value-field="'kode'"
+                                                                                k-filter="'contains'"
+                                                                                k-auto-bind="false"
+                                                                                k-data-source="listDPJP" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid_4">
+                                                                            <div class="grid_12" style="margin-top:5px">
+                                                                                <label class="c-label">Keterangan</label>
+                                                                            </div>
+                                                                            <div class="grid_12"
+                                                                                style="margin-top:10px">
+                                                                                <input class="k-textbox" ng-model="item.keterangan">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="grid_12">
+                                                                        <div class="grid_8">
+                                                                            <div class="grid_12" style="margin-top:5px">
+                                                                                <label class="c-label">Saran</label>
+                                                                            </div>
+                                                                            <div class="grid_12" 
+                                                                                style="margin-top:10px">
+                                                                                <textarea type="input" class="k-textbox"
+                                                                                    rows="2" ng-model="item.saran">
+                                                                                </textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid_4">
+                                                                            <div class="grid_12" 
+                                                                                style="margin-top:20px">
+                                                                                <button class="btnTemplate1" style="margin-left: 0;" ng-click="addObat()"><i
+                                                                                    class="fa fa-plus-circle"></i> Tambah Obat</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="grid_12">
+                                                                        <div class="grid_12 borderBox">
+                                                                            <div id="kGrid" kendo-grid k-data-source="listGridObat" k-selectable="'row'" k-columns="gridObat" k-pageable="'true'"
+                                                                                k-sortable="'true'" k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="grid_12">
+                                                                        <div class="grid_8">
+                                                                        </div>
+                                                                        <div class="grid_2">
+                                                                            <button style="margin-top:6px;"
+                                                                                class="k-button k-primary k-button-icon"
+                                                                                ng-click="Save(item)"><span
+                                                                                    class="k-sprite k-icon k-insert">Save</span></button>
+                                                                        </div>
+                                                                        <div class="grid_2">
+                                                                            <em style="margin-top:6px;"
+                                                                                ng-click='ClearForm()' id="iconButton"
+                                                                                data-role="button"
+                                                                                class="k-button k-button-icon" role="button"
+                                                                                aria-disabled="false" tabindex="0"><span
+                                                                                    class="k-sprite k-icon k-i-cancel">Clear</span></em>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="grid_6">
+                                                                    <div class="grid_12">
+                                                                        <label c-label>Results :</label>
+                                                                    </div>
+                                                                    <pre id="jsonCreatePRB" class="json-viewer"></pre>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </md-content>
+                                            </md-tab>
+                                            <md-tab label="Hapus PRB ">
+                                                <md-content class="md-padding">
+                                                    <div class="panel panel-default container_12 ">
+                                                        <div class="panel-body ">
+                                                            <div class="grid_12 ">
+                                                                <div class="grid_4 ">
+                                                                    <div class="grid_12">
+                                                                        <div class="grid_12">
+                                                                            <div class="grid_8">
+                                                                                <label c-label>Hapus Pembuatan Rujukan Balik :</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid_12">
+                                                                            <div class="grid_6">
+                                                                                <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="delete.nosrb" placeholder="Nomor SRB" />
+                                                                            </div>
+                                                                            <div class="grid_6">
+                                                                                <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="delete.nosep" placeholder="Nomor SEP" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid_2">
+                                                                            <button class="k-button k-primary k-button-icon " ng-click="deleteDataPRB() ">
+                                                                                <span class="k-sprite k-icon k-i-close">Delete</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="grid_2">
+                                                                            <em ng-click='clearDelete()' id="iconButton " data-role="button " class="k-button k-button-icon " role="button " aria-disabled="false " tabindex="0 ">
+                                                                                <span class="k-sprite k-icon k-i-cancel ">Clear</span>
+                                                                            </em>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="grid_8 ">
+                                                                    <div class="grid_12 ">
+                                                                        <label c-label>Results :</label>
+                                                                    </div>
+                                                                    <pre id="jsonDeleteSRB" class="json-viewer "></pre>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </md-content>
+                                            </md-tab>
+                                        </md-tabs>
+                                    </md-content>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div ng-include=' "../app/template/Shared/TemplateLoading" '></div>
+    <div kendo-window="popUpObat" k-title="'Form Obat '" k-width="750" k-visible="false" k-on-open="win2visible = true"
+        k-on-close="win2visible = false">
+        <div class="panel panel-default container_12" style="padding: 10px 10px;">
+            <div class="panel-body">
+                <div class="grid_12">
+                    <div class="grid_3" style="margin-top: 5px;">
+                        <label class="c-label">Obat</label>
+                    </div>
+                    <div class="grid_9">
+                        <input kendo-combo-box="combobox" tyle="width:100%"
+                            k-ng-model="obat.obat"
+                            k-data-text-field="'nama'"
+                            k-data-value-field="'kode'"
+                            k-filter="'contains'"
+                            k-auto-bind="false"
+                            k-data-source="listObat"
+                            k-options="comboBoxOptions" />
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_3" style="margin-top: 10px;">
+                        <label class="c-label">Signa 1</label>
+                    </div>
+                    <div class="grid_9">
+                        <input class="k-textbox" type="text" name="signa1" ng-model="obat.signa1">
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_3" style="margin-top: 10px;">
+                        <label class="c-label">Signa 2</label>
+                    </div>
+                    <div class="grid_9">
+                        <input class="k-textbox" type="text" name="signa2" ng-model="obat.signa2">
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_3" style="margin-top: 10px;">
+                        <label class="c-label">Jumlah Obat</label>
+                    </div>
+                    <div class="grid_9">
+                        <input class="k-textbox" type="number" name="jmlobat" ng-model="obat.jmlobat">
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                    <div class="grid_6">
+                        <button class="k-button btnSimpan k-button-icontext" ng-click="saveObat()"><span
+                            class="k-icon k-update"></span>Simpan</button>
+                    </div>
+                    <div class="grid_6">
+                        <button class="k-button btnHapus k-button-icontext" ng-click="tutupObat()"><span
+                            class="k-icon k-cancel"></span>Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

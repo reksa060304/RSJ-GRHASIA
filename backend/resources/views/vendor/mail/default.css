@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+body {
+	letter-spacing: 5px;
+font-family: 'Open Sans', sans-serif;
+	font-size:13px;
+}
+table {
+font-family: 'Open Sans', sans-serif;
+	font-size:13px;
+	border-collapse:collapse;
+}

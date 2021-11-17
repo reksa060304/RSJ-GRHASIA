@@ -1,0 +1,594 @@
+<div class="grid_12">
+
+    <c-form item='item'>
+
+        <div ng-include='"../app/template/Shared/headerRegistrasi"'></div>
+        <c-panel item="item" header="'Pendaftaran'" disabled>
+            <div class=" grid_12" ng-hide="showTindakan">
+                <div class="grid_6 ">
+                    <div class="grid_12 ">
+                        <!-- Tanggal Pendaftaran -->
+                        <div class="grid_4 " style="margin-top: 13px">
+                            <label c-label item="item " >Tanggal Pendaftaran</label>
+                        </div>
+                        <div class="grid_8 ">
+                            <input style="width: 100%" k-ng-model="item.tglRegistrasi" k-max="now" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm"
+                                ng-disabled='disableTgl' />
+                        </div>
+
+                        <div class="grid_12" ng-hide="pasienBayis">
+                            <div class="grid_10" ng-hide="model.rawatInap">&nbsp;</div>
+                            <div class="grid_8" ng-show="model.rawatInap">&nbsp;</div>
+                            <div class="grid_2" ng-show="model.rawatInap">
+                                <input type="checkbox" class="k-checkbox" id="rawatGabung" ng-model="model.rawatGabung"
+                                    ng-click="cekRawatGabung(model.rawatGabung)">
+                                <label class="k-checkbox-label" for="rawatGabung"><b>Rawat Gabung</b></label>
+                            </div>
+                            <div class="grid_2" ng-hide="isPenunjang">
+                                <input type="checkbox" class="k-checkbox" id="isRawatInap" ng-model="model.rawatInap"
+                                    value="true" ng-click="cekRawatInap(model.rawatInap)">
+                                <label class="k-checkbox-label" for="isRawatInap"><b>Rawat Inap</b></label>
+                            </div>
+                        </div>
+
+                        <div class="grid_4" style="margin-top: 13px">
+                            <label c-label item="item " c-label-text="ruangan/Poliklinik " real></label>
+                        </div>
+                        <div class="grid_8">
+                            <input style="width: 100%; " kendo-combo-box k-ng-model="item.ruangan "
+                                k-data-text-field=" 'namaruangan' " k-filter=" 'contains' "
+                                k-data-value-field=" 'value' " k-auto-bind="false " k-data-source="listRuangan "
+                                k-on-change="pilihRuangan(item.ruangan.id)" />
+
+                        </div>
+
+                        <div class="grid_12" ng-show="model.rawatInap">
+                            <div class="grid_4" style="margin-top: 13px">
+                                <label c-label item="item " c-label-text="kelas" real></label>
+                            </div>
+                            <div class="grid_8">
+                                <input style="width: 100%; " kendo-combo-box k-ng-model="item.kelas "
+                                    k-data-text-field=" 'namakelas'" k-filter=" 'contains' "
+                                    k-data-value-field=" 'value' " k-auto-bind="false " k-data-source="listKelas" />
+                            </div>
+                            <div class="grid_4" style="margin-top: 13px">
+                                <label c-label>No Kamar</label>
+                            </div>
+                            <div class="grid_8" style="margin-top:5px">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.kamar"
+                                    k-data-text-field="'namakamar'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listKamar" />
+                            </div>
+                            <div class="grid_4" style="margin-top: 13px">
+                                <label c-label item="item" >Nomor Tempat Tidur</label>
+                            </div>
+                            <div class="grid_8" style="margin-top:5px">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.nomorTempatTidur"
+                                    k-data-text-field="'reportdisplay'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listNoBed"
+                                    k-on-change="reformatModel(item.nomorTempatTidur)" />
+                            </div>
+                        </div>
+
+                        <div class="grid_4 " style="margin-top: 13px">
+                            <label c-label item="item ">Asal Rujukan</label>
+                        </div>
+                        <div class="grid_8 ">
+                            <input style="width: 100%; " kendo-combo-box k-ng-model="item.asalRujukan "
+                                k-data-text-field=" 'asalrujukan' " k-filter=" 'contains' "
+                                k-data-value-field=" 'value' " k-auto-bind="false " k-data-source="listAsalRujukan"
+                                k-on-change="getRujukan()" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="grid_6 ">
+                    <div class="grid_12 ">
+
+                        <div class="grid_4 " style="margin-top: 13px">
+                            <label c-label item="item " >Jenis Pembiayaan</label>
+                        </div>
+
+
+                        <div class="grid_8 ">
+                            <input style="width: 100%; " kendo-combo-box k-ng-model="item.kelompokPasien"
+                                k-data-text-field=" 'kelompokpasien' " k-filter=" 'contains' "
+                                k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listKelompokPasien "
+                                k-on-change="cekAsuransi()" />
+                        </div>
+                        <div class="grid_4 " style="margin-top: 13px" ng-show="nonUmum">
+                            <label c-label item="item " >Penjamin</label>
+                        </div>
+                        <div class="grid_8 " ng-show="nonUmum">
+                            <input style="width: 100%; " kendo-combo-box k-ng-model="item.rekanan "
+                                k-data-text-field=" 'namarekanan' " k-filter=" 'contains' " k-data-value-field=" 'id' "
+                                k-auto-bind="false " k-data-source="listRekanan " />
+                        </div>
+                        <div class="grid_4 " style="margin-top: 13px">
+                            <label c-label item="item " >Tipe Layanan</label>
+                        </div>
+                        <div class="grid_8 ">
+                            <input style="width: 100%; " ng-disabled="disableTipePelayanan" kendo-combo-box
+                                k-ng-model="item.jenisPasien" k-data-text-field="'jenispelayanan'"
+                                k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false "
+                                k-data-source="listJenisPelayanan " />
+                        </div>
+
+                        <div class="grid_4 " style="margin-top: 13px">
+                            <label c-label item="item " >Dokter Penanggung Jawab</label>
+                        </div>
+
+
+                        <div class="grid_8 ">
+                            <input style="width: 100%; " kendo-combo-box k-ng-model="item.dokter "
+                                k-data-text-field=" 'namalengkap' " k-filter=" 'contains' " k-data-value-field=" 'id' "
+                                k-auto-bind="false " k-data-source="listDokter " />
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+
+        </c-panel>
+
+    </c-form>
+    <div ng-include='"../app/template/Shared/TemplateButtonRegistrasiNew " ' style="margin-top:30px"
+        ng-hide="showTindakan"></div>
+    <!--</div>-->
+    <div ng-include=' "../app/template/Shared/TemplateLoading" '></div>
+
+    <div kendo-window="winDialog" k-title="'Masukkan kuantiti cetak'" k-width="400" k-height="120" k-visible="false"
+        k-on-open="win2visible = true" k-on-close="win2visible = false">
+        <label c-label item="item " c-label-text="kuantiti "></label>
+        <input id="jumlahTerima" name="jumlahTerima" kendo-numeric-text-box k-options="formatNum" k-ng-model="dats.qty"
+            style="width:100%;" />
+        <div class="clear"></div>
+        <button class="k-button" ng-click="pilihQty(dats)" style="float:right;margin-top:4%">Simpan</button>
+    </div>
+    <div kendo-window="icd10" k-title="'Diagnosa Awal'" k-visible="false">
+        <div class="grid_12">
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label c-label-text="jenisDiagnosis" statment>
+                </div>
+                <div class="grid_12">
+                    <input kendo-combo-box style="width:100%" k-ng-model="item.jenisDiagnosis"
+                        k-data-text-field="'jenisDiagnosa'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="sourceJenisDiagnosisPrimer" disabled />
+                </div>
+            </div>
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label c-label-text="kodeDiagnosa" statment>
+                </div>
+                <div class="grid_12">
+                    <input kendo-combo-box tyle="width:100%" k-ng-model="item.diagnosisPrimer"
+                        k-data-text-field="'kdDiagnosa'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="sourceDiagnosisPrimer" />
+                </div>
+            </div>
+            <div class="grid_4">
+                <div class="grid_12">
+                    <label c-label c-label-text="namaDiagnosis" statment>
+                </div>
+                <div class="grid_12">
+                    <input kendo-combo-box tyle="width:100%" k-ng-model="item.diagnosisPrimer"
+                        k-data-text-field="'namaDiagnosa'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="sourceDiagnosisPrimer" />
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="grid_12" style="padding:5px !important">
+            <label c-label c-label-text="keterangan"></label>
+            <textarea class="k-textbox" row="3" ng-model="item.keteranganDiagnosis" style="width: 100%;" />
+            </div>
+                <br/>
+                <div class="grid_12">
+                    <div class="grid_6 pull-right">
+                        <button class="c-button" ng-click="cetakRMK()" style="float:left;width:120px">Cetak</button>
+                    </div>
+                    <div class="grid_6 pull-right">
+                        <button class="c-button error" ng-click="icd10.close()" style="float:left;width:120px">Batal</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="grid_12">
+                <div kendo-window="popUp" k-title="'Identitas Penanggung Jawab'" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+                    <div class="panel panel-default container_12" style="padding: 0px 10px;"> 
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <!-- <div class="grid_4" style="margin-top:5px"> -->
+                                    <label c-label real>Petugas</label>
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="dataItem.pegawai"
+                                    k-data-text-field="'namalengkap'" k-filter="'contains'" k-minLength="'3'"
+                                    k-data-value-field="'id'" k-data-source="listDataPegawai"/>
+                                <!-- </div> -->
+                            </div>                           
+                            <div class="dialog_buttons pull-right" style="margin-top:5%">
+                                <input type="button" class="confirm_no k-button" value="Batal" style="width: 70px" ng-click="BatalCetak()"/>
+                                &nbsp;
+                                <input type="button" class="confirm_yes k-button" value="Cetak" style="width: 70px" ng-click="CetakAh()"/>
+                            </div>         
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid_12">
+                <div kendo-window="popUpDua" k-title="'Penanggung Jawab'" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+                    <div class="panel panel-default container_12" style="padding: 0px 10px;"> 
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <!-- <div class="grid_4" style="margin-top:5px"> -->
+                                    <label c-label real>Petugas</label>
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="dataItem.pegawaiDua"
+                                    k-data-text-field="'namalengkap'" k-filter="'contains'" k-minLength="'3'"
+                                    k-data-value-field="'id'" k-data-source="listDataPegawai"/>
+                                <!-- </div> -->
+                            </div>                           
+                            <div class="dialog_buttons pull-right" style="margin-top:5%">
+                                <input type="button" class="confirm_no k-button" value="Batal" style="width: 70px" ng-click="BatalCetakDua()"/>
+                                &nbsp;
+                                <input type="button" class="confirm_yes k-button" value="Cetak" style="width: 70px" ng-click="CetakLembarRanap()"/>
+                            </div>         
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid_12">
+                    <div kendo-window="popUpBlanko" k-title="'Penanggung Jawab'" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+                        <div class="panel panel-default container_12" style="padding: 0px 10px;"> 
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <!-- <div class="grid_4" style="margin-top:5px"> -->
+                                        <label c-label real>Pegawai</label>
+                                        <input required style="width: 100%;" kendo-combo-box k-ng-model="dataItem.pegawaiBlanko"
+                                        k-data-text-field="'namalengkap'" k-filter="'contains'" k-minLength="'3'"
+                                        k-data-value-field="'id'" k-data-source="listDataPegawai"/>
+                                    <!-- </div> -->
+                                </div>                           
+                                <div class="dialog_buttons pull-right" style="margin-top:5%">
+                                    <input type="button" class="confirm_no k-button" value="Batal" style="width: 70px" ng-click="batalBlanko()"/>
+                                    &nbsp;
+                                    <input type="button" class="confirm_yes k-button" value="Cetak" style="width: 70px" ng-click="cetakBlanko()"/>
+                                </div>         
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <!-- POP UP CETAK IDENTITAS PASIEN -->
+            <div id="diaglog" kendo-window="winCetakRujukan" k-title="''" k-width="500" k-height="245"
+                k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+                <table width="100%">
+                    <tr>
+                        <td width="25" align="center"><img class="normalTidakNormal" src="images/logo_rs/logokotamataram_small.png"></td>
+                        <td width="50" align="center"><label c-label real><h1 style="color: black;text-align: center;font-size: 12px;font-family: tahoma;">PEMERINTAH KOTA MATARAM</h1><label c-label real><h1 style="color: black;text-align: center;font-size: 12px;font-family: tahoma;">RUMAH SAKIT UMUM DAERAH KOTA MATARAM</h1></label></label><label c-label real style="color: black;text-align: center;font-size: 10px;font-family: tahoma;">Jl. Bung Karno No. 3 Pagutan - Mataram Telp. (0370) 640774 Fax. (0370) 646928</label><label c-label real style="color: black;text-align: center;font-size: 10px;font-family: tahoma;">website: www.rsudmataram.com Email: rsud_mataram@mataramkota.go.id</label></td>                    
+                        <td width="25" align="center"><img class="normalTidakNormal" src="images/logo_rs/logorsudmataram_small.png"></td>
+                    </tr>
+                </table>
+                <hr size="3" style="border: 1px solid black;">
+                <table align="right">
+                    <tr>                                                                       
+                        <td width="15" align="center" style="border: 4px solid black;">
+                            <label c-label real style="color: black;text-align: right;font-size: 18px;font-family: tahoma;"><h1 style="color: black;text-align: right;font-size: 12px;font-family: tahoma;">{{labelNocm}}</h1></label>
+                        </td>
+                        <td width="5" align="center"></td>
+                    </tr>                    
+                </table>
+                <table width="100%">
+                    <tr>
+                        <td width="25" align="center"></td>
+                        <td width="50" align="center"><label c-label real  style="color: black;text-align: center;font-size: 14px;font-family: tahoma;"><h1 style="color: black;text-align: center;font-size: 12px;font-family: tahoma;">IDENTITAS PASIEN</h1></label></td>                    
+                        <td width="25" align="center"></td>
+                    </tr>
+                </table>
+                <br/>
+                <br/>
+                <table align="left" width="40%" style="margin-left: 15px">
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Nama</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelNamaPasien}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Jenis Kelamin</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelJk}}</label>
+                        </td>                        
+                    </tr>                    
+                    <tr>                       
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Tempat/ tgl Lahir</label>
+                        </td>
+                         <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labeltmptTglLahir}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                       
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Umur</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelUmrPasien}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Status Kawin</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelStatusPasien}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Pekerjaan</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelPekerjaanPasien}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                                               
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Alamat</label>
+                        </td>                        
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelAlamatPasien}}</label>
+                        </td>
+                    </tr>
+                </table>
+                <table align="left" width="60%" style="margin-left: 15px">
+                   
+                </table>
+                <!-- <table align="left" width="40%" style="margin-left: 35px"></table>                -->
+                <table align="left" width="40%" style="margin-left: 35px">
+                    <tr>                       
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Kelurahan</label>
+                        </td>                                
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelKelurahan}}</label>
+                        </td>                          
+                    </tr>
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Kecamatan</label>
+                        </td>                                
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelKecamatan}}</label>
+                        </td>                         
+                    </tr> 
+                    <tr>                      
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Kodya/ Dati II</label>
+                        </td>                                
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelKabupaten}}</label>
+                        </td>                       
+                    </tr>
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Propinsi</label>
+                        </td>                                
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelPropinsi}}</label>
+                        </td>                         
+                    </tr>
+                    <tr>                      
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Kode Pos</label>
+                        </td>                                
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelKodePos}}</label>
+                        </td>                         
+                    </tr>                      
+                </table>
+                <table align="left" width="60%" style="margin-left: 35px"></table>
+                <table align="left" width="40%" style="margin-left: 15px">
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Telepon</label>
+                        </td>                       
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelTelp}}</label>
+                        </td>                        
+                    </tr> 
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">No. KTP/SIM</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelKtpSim}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Golongan Darah</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelGolDar}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Tinggi Badan</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelTinggiBadan}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                       
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Pendidikan</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelPendidikan}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                       
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">No. Asuransi</label>
+                        </td>
+                       <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelAsuransi}}</label>
+                        </td>                        
+                    </tr>   
+                </table>
+                <br/>
+                <br/>
+                <table width="100%">
+                    <tr>
+                        <td width="25" align="center"></td>
+                        <td width="50" align="center"><label c-label real  style="color: black;text-align: center;font-size: 14px;font-family: tahoma;"><h1 style="color: black;text-align: center;font-size: 12px;font-family: tahoma;">IDENTITAS PENANGGUNG JAWAB</h1></label></td>                    
+                        <td width="25" align="center"></td>
+                    </tr>
+                </table>
+                <table align="left" width="40%" style="margin-left: 15;">
+                    <tr>                       
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Nama</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelNamaPen}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                       
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Hubungan dg Penderita</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelHubungan}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                       
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Alamat Rumah</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelAlamatRmh}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                       
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Alamat Kantor</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelAlamatKtr}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Pekerjaan</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelPekerjaanPen}}</label>
+                        </td>                        
+                    </tr>
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">No. KTP/SIM</label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelSimKtp}}</label>
+                        </td>                        
+                    </tr> 
+                </table>
+                <table align="left" width="60%" style="margin-left: 15;">
+                    <tr>                        
+                        <td width="50" align="left">
+                           <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;"></label>
+                        </td>
+                        <td width="50" align="left">
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;"></label>
+                        </td>                        
+                    </tr> 
+                </table>
+                <br/>
+                <br/>
+                <table width="100%" style="margin-left: 15px;">
+                    <tr>                       
+                        <td width="50" align="center"> 
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Petugas</label>
+                        </td>
+                         <td width="50" align="center"> 
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">Penanggung Jawab/ Pasien</label>
+                        </td>
+                    </tr>                    
+                </table>
+               <br/>
+               <br/>
+               <br/>
+               <br/>
+                <table width="100%" style="margin-left: 15px;">                                                            
+                    <tr>                       
+                        <td width="50" align="center"> 
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelPetugas}}</label>
+                        </td>
+                        <td width="50" align="center"> 
+                            <label c-label real style="color: black;text-align: left;font-size: 10px;font-family: tahoma;">{{labelPenanggungJawab}}</label>
+                        </td>
+                    </tr>
+                </table>               
+            </div>            
+            <!-- POP UP CETAK IDENTITAS PASIEN -->  
+            <!-- ICD 10 -->
+            <div kendo-window="icd10" k-title="'Diagnosa Awal'" k-visible="false">
+                <div class="grid_12">
+                    <div class="grid_4">
+                        <div class="grid_12">
+                            <label c-label c-label-text="jenisDiagnosis"></label>                         
+                        </div>
+                        <div class="grid_12">
+                            <input kendo-combo-box style="width:100%" k-ng-model="item.jenisDiagnosis" k-data-text-field="'jenisdiagnosa'"
+                             k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisDiagnosa" disabled/>
+                        </div>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                            <label c-label c-label-text="kodeDiagnosa"></label>                             
+                        </div>
+                        <div class="grid_12">
+                            <input kendo-combo-box  tyle="width:100%" k-ng-model="item.diagnosisPrimer" k-data-text-field="'kddiagnosa'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />
+                        </div>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                            <label c-label c-label-text="namaDiagnosis"></label>                            
+                        </div>
+                        <div class="grid_12">
+                            <input kendo-combo-box  tyle="width:100%" k-ng-model="item.diagnosisPrimer" k-data-text-field="'namadiagnosa'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa"/>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <br/>
+                <div class="grid_12">
+                    <div class="grid_12" style="padding:5px !important">
+                        <label c-label c-label-text="keterangan"></label>
+                        <textarea class="k-textbox" row="3" ng-model="item.keteranganDiagnosis" style="width: 100%;"/>                   
+                    </div>
+                </div>
+                <br/>
+                <div class="grid_12">
+                    <div class="grid_6 pull-right">
+                        <button class="c-button" ng-click="cetakRMK()" style="float:left;width:120px">Cetak</button>
+                    </div>
+                    <div class="grid_6 pull-right">
+                        <button class="c-button error" ng-click="icd10.close()" style="float:left;width:120px">Batal</button>
+                    </div>
+                </div>
+            </div>
+            <!-- ICD 10 -->
+        </div>                      

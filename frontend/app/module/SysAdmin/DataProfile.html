@@ -1,0 +1,313 @@
+<style>
+     .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    textarea {
+        font-family: 'Comfortaa', cursive, 'OpenSans-Regular';
+    }
+    carousel-inner>.item>a>img,
+    .carousel-inner>.item>img,
+    .img-responsive,
+    .thumbnail a>img,
+    .thumbnail>img {
+        display: block;
+        max-width: 80%;
+        height: auto;
+    }
+
+    img {
+        vertical-align: middle;
+    }
+
+    img {
+        border: 0;
+    }
+
+    .photo-pasien {
+        /* display: inline-block; */
+        width: 100%;
+        height: auto;
+        border-radius: 50%;
+        /* background-size: 32px 35px; */
+        /* background-position: center center; */
+        vertical-align: middle;
+    }
+</style>
+<div class="grid_12">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;">
+            <b>Data Profile Rumah Sakit</b>
+        </h1>
+    </div>
+</div>
+<div class="grid_12">
+    <div class="grid_2">
+        <div class="grid_12">
+            <label c-label item="item">Kd Profile</label>
+        </div>
+
+        <div class="grid_12">
+            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kdProfile"
+                ng-disabled="isDisable" />
+        </div>
+    </div>
+    <div class="grid_2">
+        <div class="grid_12">
+            <label c-label item="item">Tgl Registrasi</label>
+        </div>
+
+        <div class="grid_12">
+            <input style="width: 100%;" k-ng-model="item.TglRegistrasi" kendo-datetimepicker
+                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm"
+                ng-disabled="isDisable" />
+        </div>
+    </div>
+    <div class="grid_2">
+        <div class="grid_12">
+            <label c-label item="item">Status</label>
+        </div>
+
+        <div class="grid_12">
+            <input style="width: 100%;" kendo-combo-box k-ng-model="item.StatusEnabled"
+                k-data-text-field="'statusenabled'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                k-data-source="listStatusEnabled" ng-disabled="isDisable" />
+        </div>
+    </div>
+    <div class="grid_4">
+        <div class="grid_12">
+            <label c-label item="item">Nama Profile</label>
+        </div>
+
+        <div class="grid_12">
+            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaProfile"
+                ng-disabled="isDisable" />
+        </div>
+    </div>
+    <div class="grid_2">
+        <div class="grid_12">
+            <label c-label item="item">Jenis Profile</label>
+        </div>
+
+        <div class="grid_12">
+            <input style="width: 100%;" kendo-combo-box k-ng-model="item.jenisProfile"
+                k-data-text-field="'jenisprofile'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                k-data-source="listJenisProfile" ng-disabled="isDisable" ng-disabled="isKode"/>
+        </div>
+    </div>
+</div>
+<div class="grid_12">
+    <div ng-cloak>
+        <md-content>
+            <md-tabs md-dynamic-height md-border-bottom>
+                <md-tab label="Alamat">
+                    <md-content class="md-padding">
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label item="item">Alamat Lengkap</label>
+                            </div>
+                            <div class="grid_12">
+                                <textarea required class="k-textbox" style="height: 150px; width: 100%; resize: none;"
+                                    ng-model="item.alamatLengkap" ng-disabled="isDisable"></textarea>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4">
+                                <div class="grid_12">
+                                    <label c-label item="item">Kode Pos</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input required is-busy='isBusy' c-text-box type="input" filter="'numeric'"
+                                        ng-blur="findKodePos(item.kodePos)" class="k-textbox" ng-blur="checkKodePos"
+                                        ng-model="item.kodePos" ng-disabled="isDisable" />
+                                </div>
+                            </div>
+                            <div class="grid_4">
+                                <div class="grid_12">
+                                    <label c-label item="item">Desa/ Kelurahan</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="item.desaKelurahan"
+                                        k-data-text-field="'desa'" k-filter="'contains'" k-data-value-field="'value'"
+                                        k-data-source="listDataKelurahan" k-auto-bind="'false'"
+                                        k-on-change="findAddress(item.desaKelurahan)" ng-disabled="isDisable" />
+                                </div>
+                            </div>
+                            <div class="grid_4">
+                                <div class="grid_12">
+                                    <label c-label item="item">Kecamatan</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="item.kecamatan"
+                                        k-data-text-field="'namakecamatan'" k-filter="'contains'"
+                                        k-data-value-field="'id'" k-data-source="listDataKecamatan"
+                                        k-auto-bind="'false'" ng-disabled="isDisable" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4">
+                                <div class="grid_12">
+                                    <label c-label item="item">Kota Kabupaten</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="item.kotaKabupaten"
+                                        k-data-text-field="'namakotakabupaten'" k-filter="'contains'"
+                                        k-data-value-field="'id'" k-data-source="listDataKotaKabupaten"
+                                        k-auto-bind="'false'" ng-disabled="isDisable" />
+                                </div>
+                            </div>
+                            <div class="grid_4">
+                                <div class="grid_12">
+                                    <label c-label item="item">Provinsi</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="item.propinsi"
+                                        k-data-text-field="'namapropinsi'" k-filter="'contains'"
+                                        k-data-value-field="'id'" k-data-source="listDataPropinsi" k-auto-bind="'false'"
+                                        ng-disabled="isDisable" />
+                                </div>
+                            </div>
+                            <div class="grid_4">
+                                <div class="grid_6" style="margin-top: -5px;">
+                                    <div class="grid_12">
+                                        <label c-label item="item">Faksimile</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input c-text-box type="input" filter="" class="k-textbox"
+                                            ng-model="item.Faksimile" ng-disabled="isDisable" />
+                                    </div>
+                                </div>
+                                <div class="grid_6" style="margin-top: -5px;">
+                                    <div class="grid_12">
+                                        <label c-label item="item">Telepon</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input c-text-box type="input" filter="" class="k-textbox"
+                                            ng-model="item.Telepon" ng-disabled="isDisable" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4">
+                                <div class="grid_12">
+                                    <label c-label item="item">Email</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.Email"
+                                        ng-disabled="isDisable" />
+                                </div>
+                            </div>
+                            <div class="grid_4">
+                                <div class="grid_12">
+                                    <label c-label item="item">Website</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.Website"
+                                        ng-disabled="isDisable" />
+                                </div>
+                            </div>
+                            <div class="grid_4">
+                                <div class="grid_12">
+                                    <label c-label item="item">Dinas Pemerintahan</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.Dinas"
+                                        ng-disabled="isDisable" />
+                                </div>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+                <md-tab label="Logo">
+                    <md-content class="md-padding">
+                        <div class="grid_3" style="margin-top: 10px;">
+                            <div class="grid_12">
+                                <label c-label item="item">Logo Login</label>
+                            </div>
+                            <fieldset class="effect-shadow"
+                                style="border-radius: 10px;margin-top:20px; cursor: pointer;">
+                                <div class="profile_img" ng-click="showPopUp()">
+                                    <div id="crop-avatar" style="padding-right: 15px">
+                                        <img style="margin-left: 40px;margin-top: 5px;   
+                                        width: 350px;
+                                        height: 300px;
+                                        object-fit: contain;" class="img-responsive avatar-view" src="{{item.image}}"
+                                            alt="Avatar" title="Ubah avatar">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </md-content>
+    </div>
+</div>
+<div class="grid_12">
+    <div class="grid_6"></div>
+    <div class="grid_6">
+        <div class="grid_8"></div>
+        <div class="grid_4">
+            <button class="btnTemplate1" ng-click="Edit()" ng-show="ShowEdit"><i class="fa fa-cogs"></i>Edit</button>
+
+        </div>
+        <div class="grid_4" ng-show="ShowSimpan"></div>
+        <div class="grid_4">
+            <button class="btnTemplate1" ng-click="Simpan()" ng-show="ShowSimpan"><i
+                    class="fa fa-floppy-o"></i>Simpan</button>
+
+        </div>
+        <div class="grid_4">
+            <button class="btnTemplate1" ng-click="batal()" ng-show="ShowSimpan"><i
+                    class="fa fa-refresh"></i>Batal</button>
+        </div>
+    </div>
+</div>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+<div kendo-window="popUpUpload" k-title="'Upload '" k-width="500" k-visible="false" k-on-open="win2visible = true"
+    k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div class="grid_12">
+            <input type="file" id="photo">
+        </div>
+        <div class="grid_12">
+            <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                <button class="k-button  k-button-icontext" ng-click="UploadPhoto()"><i class="fa fa-upload"></i> &nbsp;
+                    Upload</button>
+                <button class="k-button  k-button-icontext" ng-click="TutupPopUp()"><i
+                        class="fa fa-times-circle"></i>&nbsp;Tutup</button>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,162 @@
+<style>
+    .btn-disabled {
+        background-color: red;
+        width: 100%;
+    }
+
+    .btn-enabled {
+        background-color: green;
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .btn-edit {
+        background-color: black;
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .green {
+        background-color: #98FB98;
+        color: #000000;
+        /*font-weight: bold;*/
+    }
+
+    .red {
+        background-color: #ff3860;
+        color: #FFFFFF;
+        /*font-weight: bold;*/
+    }
+
+    .blue {
+        background-color: #1E90FF;
+        color: #ffffff;
+        /*font-weight: bold;*/
+    }
+
+    .koneng {
+        background-color: #FFFF00;
+        color: #191970;
+        /*font-weight: bold;*/
+    }
+</style>
+<div class="grid_12">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;">
+            <b>Setting Profile Rumah Sakit</b>
+        </h1>
+    </div>
+    <md-content class="md-padding">
+        <div class="grid_12" ng-show="shwProfile">
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Nama Profile"></label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="filterNama" />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Alamat"></label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="filterAlamat" />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Jenis Profile"></label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="FilterjenisProfile"
+                        k-data-text-field="'jenisprofile'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listJenisProfile" />
+                </div>
+            </div>
+
+            <div class="grid_1">
+                <label c-label c-label-text=""></label>
+                <em style="margin-top:6px;" ng-click='search()' id="iconButton" data-role="button"
+                    class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
+                        class="k-sprite k-icon k-i-search">Refresh</span></em>
+                <em style="margin-top:6px;" ng-click='clear()' id="iconButton" data-role="button"
+                    class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
+                        class="k-sprite k-icon k-i-cancel">Refresh</span></em>
+            </div>
+            <div class="grid_12">
+                <!-- grid MANUAL -->
+                <div class="panel panel-default panel-white">
+                    <div class="grid_12 headerBox">
+                        <p>Daftar Profile</p>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="panel-body">
+                        <div class="grid_12">
+                            <div class="grid_12 borderBox">
+                                <kendo-grid id="kGrid" options="mainGridOptions" k-data-source="dataSource" k-ng-model="current"
+                                    ng-click="klik(current)">
+                                </kendo-grid>
+                            </div>
+                        </div>
+                        <div class="grid_12" style="margin-left: -7px;">
+                            <div class="grid_9"></div>
+                            <div class="grid_3">
+                                <button class="btnTemplate1" ng-click="Tambah()"><i class="fa fa-plus"></i>Tambah</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_12" ng-show="shwLogin">
+            <div class="grid_12">
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label item=" item">Password</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="password" filter="" class="k-textbox" ng-model="item.kataKunciPass" ng-keypress="($event.which == 13)? Lanjut():item.kataKunciPass"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid_12" style="margin-left: -7px;">
+                <div class="grid_4">
+                    <button class="btnTemplate1" ng-click="LanjutMenu()"><i class="fa fa-cogs"
+                            ng-show="ShowEdit"></i>Lanjut</button>
+                </div>
+            </div>
+        </div>
+    </md-content>
+</div>
+
+<style>
+    .k-window-titlebar {
+        background-color: #10c4b2;
+        font-weight: 800;
+    }
+
+    .k-i-close {
+        display: none;
+    }
+
+    .md-switch {
+        margin: 10px 0;
+    }
+
+    .md-switch.md-default-theme.md-checked.md-primary .md-thumb,
+    md-switch.md-checked.md-primary .md-thumb {
+        /* background-color: rgb(63, 81, 181); */
+        background-color: #10c4b2;
+
+    }
+
+    .md-switch.md-default-theme.md-checked.md-primary .md-bar,
+    md-switch.md-checked.md-primary .md-bar {
+        background-color: rgba(63, 181, 152, 0.5);
+    }
+</style>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>

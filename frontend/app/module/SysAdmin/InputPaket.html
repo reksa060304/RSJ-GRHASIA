@@ -1,0 +1,67 @@
+<!-- <div ng-controller="ProdukCtrl"> -->
+	<div ng-show="dataVOloaded">
+		<!-- <c-panel item="item" header="'Produk'" disabled> -->
+		<div class="grid_12">
+			<div class="grid_12 headerBox">
+				<h1 style="color: white;"><b>Detail Paket</b></h1>
+			</div>
+			<!-- kdProduk -->
+			<div class="grid_2">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="kd"></label>
+				</div>
+
+				<div class="grid_12">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kdProduk" />
+				</div>
+			</div>
+			<!-- kdProdukIntern -->
+			<!-- kdBarcode -->
+			<!-- kodeBmn -->
+			<!-- kodeExternal -->
+			<!-- StatusEnabled -->
+			<div class="grid_2">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="StatusEnabled"></label>
+				</div>
+				
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.StatusEnabledT" k-data-text-field="'statusenabled'" k-data-value-field="'id'" 
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listStatusEnabled"/>
+				</div>
+			</div>
+			<!-- namaProduk -->
+			<div class="grid_4">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Nama"></label>
+				</div>
+
+				<div class="grid_12">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaProduk" />
+				</div>
+			</div>
+			<!-- deskripsiProduk -->
+			
+			<!-- keterangan -->
+			
+			<!-- namaExternal -->
+			
+
+			<!-- reportDisplay -->
+		
+		<!-- </c-panel>
+	-->
+	<div class="grid_12">
+		<div class="grid_8"></div>
+		<div class="grid_2" >
+			<button class="c-button" ng-click="simpan()">Simpan</button>
+		</div>
+		<!-- <div class="grid_2" >
+			<button class="c-button" ng-click="edit()">Update</button>
+		</div> -->
+		<div class="grid_2">
+			<button class="c-button" ng-click="kembali()">Kembali</button>
+		</div>
+	</div>
+</div>
+<!-- </div> -->

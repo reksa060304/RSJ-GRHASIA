@@ -1,0 +1,142 @@
+<div class="p-col-12 p-fluid p-formgrid ">
+    <div class="p-grid">
+        <div class="p-col-12 p-md-1">
+            <a id="link-kios" (click)="goBack()" pTooltip="Kembali Ke Menu Sebelumnya">
+                <span style="font-size:35px;" class="fa fa-arrow-left"></span>
+            </a>
+        </div>
+        <div class="p-col-12 p-md-10">
+            <h4 style="text-align: center"> Registration - Pasien {{url}} </h4>
+        </div>
+    </div>
+    <form [formGroup]="formGroup">
+        <div class="p-grid" style="margin-top:20px">
+
+            <div class="p-col-12 p-md-4 p-md-offset-4 " *ngIf="!isInfoPasien  && !isInfoPasienBaru">
+
+                <div class="p-grid">    
+                    <div class="p-col-12">
+                        <h5 style="text-align:center">Masukkan No RM / No Identitas</h5>
+                        <input type="text" formControlName="noCm" pInputText placeholder="Nomor RM / No Identitas " />
+                    </div>
+                        <div class="p-col-12 p-md-6 p-field-checkbox" *ngFor="let items of listRadio">
+                            <p-radioButton [inputId]="items.id" [value]="items.id" formControlName="jenisPasien">
+                            </p-radioButton>
+                            <label [for]="items.id">{{items.name}}</label>
+                        </div>
+
+                </div>
+                <div style="text-align:center">
+                    <button (click)="getPasienByNoCM()" pButton pRipple type="button" label="Selanjutnya"
+                        icon="pi pi-arrow-circle-right" class="p-button p-mr-2 p-mb-2"></button>
+
+                    <!-- <button mat-raised-button color="accent" class="btnTemplate" style="color:white"
+                        (click)="getPasienByNoCM()">Selanjutnya
+                    </button> -->
+
+                </div>
+                <img *ngIf="loading" style="margin-top:10px"
+                    src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+
+            </div>
+
+            <div class="centers" *ngIf="isInfoPasien">
+                <div class="p-col-12" style="margin-top:-50px">
+                    <h1 class="no-cm">No. CM : {{noCm}}</h1>
+                </div>
+
+
+                <div class="row">
+                    <div class="p-grid" style="margin-top:-70px">
+                        <div class="p-col-12 p-md-4 p-md-offset-2">
+                            <div class="detail-pasien">
+                                <p class="text-regular">Nama Pasien</p>
+                                <p class="text-bold"> {{namaPasien}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">Jenis Kelamin</p>
+                                <p class="text-bold">{{jenisKelamin}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">No. Identitas</p>
+                                <p class="text-bold">{{noIdentitas}}</p>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <div class="detail-pasien">
+                                <p class="text-regular">Tempat / Tanggal Lahir</p>
+                                <p class="text-bold">{{tempatTglLahir}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">Alamat</p>
+                                <p class="text-bold">{{alamat}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">No. Telpon</p>
+                                <p class="text-bold">{{noTelpon}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-col-12 p-md-4 p-md-offset-4">
+                        <div style="text-align:center">
+                            <button (click)="pilihPoli()" pButton pRipple type="button" label="Selanjutnya"
+                                icon="pi pi-arrow-circle-right" class="p-button p-mr-2 p-mb-2"></button>
+                            <!-- <button mat-raised-button color="accent" class="btnTemplate" style="color:white"
+                                (click)="pilihPoli()">Selanjutnya
+                            </button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="centers" *ngIf="isInfoPasienBaru">
+                <div class="p-col-12" style="margin-top:-50px">
+                    <h1 class="no-cm">NIK : {{noIdentitas}}</h1>
+                </div>
+
+
+                <div class="row">
+                    <div class="p-grid" style="margin-top:-70px">
+                        <div class="p-col-12 p-md-4 p-md-offset-2">
+                            <div class="detail-pasien">
+                                <p class="text-regular">Nama Pasien</p>
+                                <p class="text-bold"> {{namaPasien}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">Jenis Kelamin</p>
+                                <p class="text-bold">{{jenisKelamin}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">StatusKawin</p>
+                                <p class="text-bold">{{statusKawin}}</p>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-4">
+                            <div class="detail-pasien">
+                                <p class="text-regular">Tempat / Tanggal Lahir</p>
+                                <p class="text-bold">{{tempatTglLahir}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">Alamat</p>
+                                <p class="text-bold">{{alamat}}</p>
+                            </div>
+                            <div class="detail-pasien">
+                                <p class="text-regular">No. Telpon</p>
+                                <p class="text-bold">{{noTelpon}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-col-12 p-md-4 p-md-offset-4">
+                        <div style="text-align:center">
+                            <button (click)="pilihPoli()" pButton pRipple type="button" label="Selanjutnya"
+                                icon="pi pi-arrow-circle-right" class="p-button p-mr-2 p-mb-2"></button>
+                            <!-- <button mat-raised-button color="accent" class="btnTemplate" style="color:white"
+                                (click)="pilihPoli()">Selanjutnya
+                            </button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>

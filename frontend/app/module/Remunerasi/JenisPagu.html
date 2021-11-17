@@ -1,0 +1,296 @@
+<style>
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+
+    .k-treeview .k-item {
+        background-color: #f9f9f9 !important;
+    }
+
+    .k-checkbox-label:before {
+        margin: 1px 0px 0px 6px;
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+
+    fieldset {
+        border: 1px solid #c8c8c8;
+        background-color: #ffffff;
+        color: #333333;
+    }
+
+    fieldset legend a {
+        padding: 0.571em 1em;
+        border: 1px solid #c8c8c8;
+        color: #333333;
+        background-color: #f4f4f4;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+        -moz-transition: background-color 0.2s;
+        -o-transition: background-color 0.2s;
+        -webkit-transition: background-color 0.2s;
+        transition: background-color 0.2s;
+    }
+
+    fieldset legend a .fieldset-toggler {
+        float: none;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 0.5em;
+        color: #848484;
+    }
+
+    fieldset .fieldset-toggleable legend a:hover {
+        background-color: #dbdbdb;
+        border: 1px solid #dbdbdb;
+        color: #333333;
+    }
+
+    .warnaa {
+        color: #848484;
+    }
+
+    fieldset .fieldset-toggleable .fieldset-legend a:hover .fieldset-toggler {
+        color: #333333;
+    }
+
+    .k-checkbox-label {
+        position: relative;
+        padding-left: 2em;
+        vertical-align: middle;
+        line-height: .875em;
+        cursor: pointer;
+    }
+
+    /* a.k-button.k-button-icontext {
+    min-width: 84px;
+	background-color: red;
+	border: none;
+	margin: .1em;
+} */
+
+    k-button.k-button-icontext.k-grid-Cetak {
+        min-width: 84px;
+        background-color: red;
+        border: none;
+        margin: .1em;
+    }
+</style>
+<!-- <div ng-controller="AksespegawaiCtrl"> -->
+<div ng-show="dataVOloaded">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;"><b>Jenis Pagu</b></h1>
+    </div>
+    <div class="grid_12">
+        <div ng-cloak>
+            <md-content>
+                <md-tabs md-dynamic-height md-border-bottom>
+                    <md-tab label="Jenis Pagu">
+                        <md-content class="md-padding">
+                            <div class="grid_12">
+                                <kendo-grid id="kNewUser" k-data-source="sourceNewUser" k-selectable="'row'"
+                                    k-groupable="'true'" k-options="jenisPagu" k-ng-model="current"
+                                    ng-click="kl(current)">
+                                </kendo-grid>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="Detail Jenis Pagu">
+                        <md-content class="md-padding">
+                            <div class="grid_12">
+                                <kendo-grid id="kNewUser" k-data-source="sourceDetailPagu" k-selectable="'row'"
+                                    k-groupable="'true'" k-options="detailPagu" k-ng-model="current"
+                                    ng-click="kl(current)">
+                                </kendo-grid>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                </md-tabs>
+            </md-content>
+        </div>
+    </div>
+</div>
+
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+
+
+<!-- Popup Tambah -->
+<div kendo-window="dialogPopup" k-title="'Tambah Jenis Pagu'" k-width="900" k-height="220" k-visible="false"
+    k-on-close="customClicked()">
+    <div class="panel panel-default panel-white container_12">
+        <div class="grid_12">
+            <div class="grid_6">
+                <div class="grid_12">
+                    <div class="grid_3" style="margin-top:10px">
+                        <label c-label item="item" c-label-text="KodeExternal" real></label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_9">
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="new.KodeExternal" maxlength="15"/>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_3" style="margin-top:10px">
+                        <label c-label item="item" c-label-text="NamaExternal" real></label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_9">
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="new.NamaExternal" />
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_3" style="margin-top:10px">
+                        <label c-label item="item" c-label-text="JenisPagu" real></label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_9">
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="new.JenisPagu" />
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <div class="grid_6">
+                <div class="grid_12">
+                    <div class="grid_3" style="margin-top:10px">
+                        <label c-label item="item" c-label-text="Persen" real></label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_9">
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="new.Persen" />
+                    </div>
+                </div>
+
+                <div class="grid_12">
+                    <div class="grid_3" style="margin-top:10px">
+                        <label c-label item="item" c-label-text="KelompokPaguID" real></label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_9">
+                        <input kendo-combo-box k-ng-model="new.KelompokPaguID" k-data-text-field="'kelompokpagu'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listKelompokPagu" />
+                    </div>
+                </div>
+
+                <div class="grid_12">
+                    <div class="grid_3" style="margin-top:10px">
+                        <label c-label item="item" c-label-text="NomorUrut" real></label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_9">
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="new.NomorUrut" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="k-edit-buttons k-state-default pull-right" style="margin-top:10px">
+        <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="saveJenisPagu()"
+            ng-disabled='disabledSave'>
+            <span class="k-icon k-update"></span>Simpan
+        </button>
+        <button class="k-button k-button-icontext k-grid-cancel" ng-click="batalJenisPagu()">
+            <span class="k-icon k-cancel"></span>Batal
+        </button>
+    </div>
+</div>
+
+<!-- Popup Tambah Detail Jenis Pagu -->
+<div kendo-window="winPasienMeninggal" k-title="'Tambah Detail Jenis Pagu'" k-width="750" k-visible="false"
+k-on-open="win2visible = true" k-on-close="win2visible = false">    
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div class="grid_12">
+            <div class="grid_12">
+                <div class="grid_4">
+                    <label c-label item="item" c-label-text="Kode External"></label>
+                    <input c-text-box type="input" filter="'string'" class="k-textbox" ng-model="item.kodeexternal">
+                </div>
+                <div class="grid_4">
+                    <label c-label item="item" c-label-text="Nama External"></label>
+                    <input c-text-box type="input" filter="'string'" class="k-textbox" ng-model="item.namaexternal">
+                </div>
+                <div class="grid_4">
+                    <label c-label item="item" c-label-text="Detail Jenis Pagu"></label>
+                    <input c-text-box type="input" filter="'string'" class="k-textbox" ng-model="item.detailjenispagu">
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_4">
+                    <label c-label item="item" c-label-text="Persen"></label>
+                    <input c-text-box type="input" filter="'number'" class="k-textbox" ng-model="item.persen">
+                    <!--<input style="width: 100%;" kendo-combo-box k-ng-model="item.statusKeluarJ"
+                        k-data-text-field="'statuskeluar'" k-filter="'contains'" k-data-value-field="'id'"
+                        k-auto-bind="false" k-data-source="listStatusKeluar" k-on-change="loadKelas()"
+                        disabled /> -->
+                </div>
+                <div class="grid_4">
+                    <label c-label item="item" c-label-text="Jenis Pagu"></label>
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.jenispaguid" k-data-text-field="'jenispagu'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisPagu" />
+                </div>
+                <div class="grid_4">
+                    <label c-label item="item" c-label-text="Point"></label>
+                    <input c-text-box type="input" filter="'number'" class="k-textbox" ng-model="item.point">
+                </div>
+            </div>
+        </div>
+        <div class="grid_12">
+            <div class="grid_3">
+                <label c-label item="item" c-label-text="Remun Fix"></label>
+                <input c-text-box type="input" filter="'number'" class="k-textbox" ng-model="item.remunfix">
+            </div>
+            <div class="grid_3">
+                <label c-label item="item" c-label-text="Jumlah Orang"></label>
+                <input c-text-box type="input" filter="'number'" class="k-textbox" ng-model="item.jumlahorg">
+            </div>
+            <div class="grid_3">
+                <label c-label item="item" c-label-text="Nomor Urut"></label>
+                <input c-text-box type="input" filter="'number'" class="k-textbox" ng-model="item.nourut">
+            </div>
+            <div class="grid_3" >
+                <label c-label item="item" c-label-text="Ruangan"></label>
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruanganfk" k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listRuangan" />
+            </div>
+        </div>            
+        <div class="dialog_buttons pull-right" style="margin-top: 15px;">
+            <input type="button" class="confirm_yes k-button" value="Simpan" style="width: 70px" ng-click="saveDetailJenisPagu()"/>
+
+            <input type="button" class="confirm_no k-button" value="Batal" style="width: 70px" ng-click="BatalSimpanDetailPagu()"/>
+        </div> 
+    </div>
+</div>
+
+<style>
+    .k-window-titlebar {
+        /* background-color: #10c4b2; */
+        font-weight: 800;
+    }
+
+    .k-i-close {
+        display: none;
+    }
+</style>

@@ -1,0 +1,512 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+        <div id="user-profile">
+            <section id="profile-info">
+                <div class="row">
+                    <!-- left profile info section -->
+                    <div class="col-lg-3 col-12 order-1 order-lg-1">
+                        <!-- about -->
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="mb-75">NIK</h5>
+                                <!-- <p class="card-text">
+                                    {{va.batasBayarCount}}
+                                </p> -->
+                                <p class="card-text">
+                                    {{ item.noidentitas  }}
+                                </p>
+                                <div class="mt-2">
+                                    <h5 class="mb-75">No RM</h5>
+                                    <p class="card-text">{{ item.nocm }}</p>
+                                </div>
+                                <div class="mt-2">
+                                    <h5 class="mb-75">Nama Pasien</h5>
+                                    <p class="card-text">{{ item.namapasien }}</p>
+                                </div>
+                                <div class="mt-2">
+                                    <h5 class="mb-75">Jenis Kelamin</h5>
+                                    <p class="card-text">{{ item.jeniskelamin }}</p>
+                                </div>
+
+                                <div class="mt-2">
+                                    <h5 class="mb-75">Tanggal Lahir</h5>
+                                    <p class="card-text">{{ item.tgllahir }}</p>
+                                </div>
+                                <div class="mt-2">
+                                    <h5 class="mb-75">No HP</h5>
+                                    <p class="card-text">{{ item.nohp }}</p>
+                                </div>
+                                <div class="mt-2">
+                                    <h5 class="mb-50">Alamat</h5>
+                                    <p class="card-text mb-0">{{ item.alamatlengkap }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--/ about -->
+
+                    </div>
+                    <!--/ left profile info section -->
+
+                    <!-- center profile info section -->
+                    <div class="col-lg-9 col-12 order-2 order-lg-2" *ngIf="!isBayar">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Riwayat</h4>
+
+                                <div class="card-body collapse-icon">
+                                    <div class="collapse-default">
+                                        <div class="card">
+                                            <div (click)="isCollapsed1 = !isCollapsed1"
+                                                [attr.aria-expanded]="!isCollapsed1" aria-controls="collapseExample"
+                                                class="card-header collapse-title" data-toggle="collapse">
+                                                Registrasi
+                                            </div>
+                                            <div [ngbCollapse]="isCollapsed1">
+                                                <div class="card">
+                                                    <div class="card-body">
+
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <div class="mb-2" style="float:right">
+                                                                    <button type="button"
+                                                                        class="btn btn-icon btn-outline-success"
+                                                                        rippleEffect (click)="findRiwayatRegis()">
+                                                                        <span [data-feather]="'rotate-ccw'"></span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-12">
+                                                                <div
+                                                                    class="d-flex justify-content-between align-items-center m-1">
+                                                                    <label class="d-flex align-items-center">Show
+                                                                        <select class="form-control mx-25"
+                                                                            [(ngModel)]="basicSelectedOption">
+                                                                            <option value="10">10</option>
+                                                                            <option value="25">25</option>
+                                                                            <option value="50">50</option>
+                                                                            <option value="100">100</option>
+                                                                        </select>
+                                                                        entries</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-12 d-flex justify-content-md-end">
+                                                                <div
+                                                                    class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+                                                                    <label class="d-flex align-items-center">Filter
+                                                                        Ruangan<input type="search" placeholder="Search"
+                                                                            class="form-control ml-25"
+                                                                            (keyup)="filterUpdate($event)" /></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <ngx-datatable class="bootstrap core-bootstrap"
+                                                            [columnMode]="ColumnMode.force" [headerHeight]="40"
+                                                            [footerHeight]="50" [rowHeight]="58" [limit]="5"
+                                                            [rows]="kitchenSinkRows" [scrollbarH]="true"
+                                                            [selectionType]="SelectionType.cell">
+                                                            <ngx-datatable-column name="Actions" [width]="70"
+                                                                [sortable]="false" prop="noregistrasi">
+                                                                <ng-template ngx-datatable-cell-template let-row="row"
+                                                                    let-value="value">
+                                                                    <div class="d-flex align-items-center">
+                                                                        <button type="button"
+                                                                            class="btn btn-icon btn-outline-warning"
+                                                                            rippleEffect (click)="selectBtn(row)">
+                                                                            <span [data-feather]="'search'"></span>
+                                                                        </button>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </ngx-datatable-column>
+                                                            <ngx-datatable-column name="No" prop="no" [width]="40"
+                                                                [sortable]="false">
+                                                            </ngx-datatable-column>
+                                                            <ngx-datatable-column name="Tgl Masuk" prop="tglregistrasi"
+                                                                [width]="100">
+                                                            </ngx-datatable-column>
+                                                            <ngx-datatable-column name="No Registrasi"
+                                                                prop="noregistrasi" [width]="100">
+                                                            </ngx-datatable-column>
+                                                            <ngx-datatable-column name="Ruangan" prop="namaruangan"
+                                                                [width]="200">
+                                                            </ngx-datatable-column>
+                                                            <!-- <ngx-datatable-column name="Dokter" prop="namadokter" [width]="200"></ngx-datatable-column> -->
+                                                            <ngx-datatable-column name="Tgl Keluar" prop="tglpulang"
+                                                                [width]="100">
+                                                            </ngx-datatable-column>
+                                                            <ngx-datatable-column name="Status" prop="statusinap"
+                                                                [width]="100">
+                                                                <ng-template let-statusinap="value"
+                                                                    ngx-datatable-cell-template>
+                                                                    <div class="badge badge-pill" [ngClass]="{
+                                                                    'badge-light-success': statusinap == '1',
+                                                                    'badge-light-danger': statusinap == '0'
+                                                                  }">
+                                                                        {{
+                                                                    statusinap == 1
+                                                                      ? 'Rawat Inap'
+                                                                      : statusinap == 0
+                                                                      ? 'Rawat Jalan'
+                                                                      :'-'
+                                                                      
+                                                                  }}
+                                                                    </div>
+                                                                </ng-template>
+                                                            </ngx-datatable-column>
+
+                                                        </ngx-datatable>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div (click)="isCollapsed2 = !isCollapsed2"
+                                                [attr.aria-expanded]="!isCollapsed2" aria-controls="collapseExample1"
+                                                class="card-header collapse-title" data-toggle="collapse">
+                                                Rincian Tagihan
+                                            </div>
+                                            <div [ngbCollapse]="isCollapsed2">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75">No Registrasi</h5>
+                                                                <p class="card-text">{{billing.noRegistrasi}}
+                                                                </p>
+                                                            </div>
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75">Ruangan</h5>
+                                                                <p class="card-text">{{billing.ruangan}}</p>
+                                                                <!-- <label class="form-label" for="nik">Ruangan</label>
+                                                                <input [(ngModel)]="billing.ruangan" type="text" class="form-control"  placeholder="Ruangan" /> -->
+                                                            </div>
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75">Kelas</h5>
+                                                                <p class="card-text">{{billing.kelasRawat}}</p>
+                                                            </div>
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75">Tipe</h5>
+                                                                <p class="card-text">{{billing.jenisPasien}}</p>
+                                                            </div>
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75">Tgl Masuk</h5>
+                                                                <p class="card-text">{{billing.tglRegistrasi}}
+                                                                </p>
+                                                            </div>
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75">Tgl Keluar</h5>
+                                                                <p class="card-text">{{billing.tglPulang}}</p>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="divider">
+                                                            <div class="divider-text"><i>Detail Billing
+                                                                </i></div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75"> Total Tagihan</h5>
+                                                                <p class="card-text">{{billing.totalTagihan}}
+                                                                </p>
+                                                            </div>
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75"> Deposit</h5>
+                                                                <p class="card-text">{{billing.deposit}}</p>
+                                                            </div>
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75"> Total Dibayar</h5>
+                                                                <p class="card-text">{{billing.totalBayar}}</p>
+                                                            </div>
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75"> {{titleKlaim}}</h5>
+                                                                <p class="card-text">{{billing.totalKlaim}}</p>
+                                                            </div>
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75"> Sisa Tagihan</h5>
+                                                                <p class="card-text">{{billing.sisaTagihan}}</p>
+                                                            </div>
+                                                            <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <h5 class="mb-75"> Terbilang</h5>
+                                                                <p class="card-text"><i> #
+                                                                        {{billing.totalTerbilang}} #
+                                                                    </i></p>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="row">
+
+                                                            <div class="col-md-6 col-12">
+                                                                <div
+                                                                    class="d-flex justify-content-between align-items-center m-1">
+                                                                    <label class="d-flex align-items-center">Show
+                                                                        <select class="form-control mx-25"
+                                                                            [(ngModel)]="basicSelectedOption2">
+                                                                            <option value="10">10</option>
+                                                                            <option value="25">25</option>
+                                                                            <option value="50">50</option>
+                                                                            <option value="100">100</option>
+                                                                        </select>
+                                                                        entries</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-12 d-flex justify-content-md-end">
+                                                                <div
+                                                                    class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+                                                                    <label class="d-flex align-items-center">Filter
+                                                                        Layanan<input type="search" placeholder="Search"
+                                                                            class="form-control ml-25"
+                                                                            (keyup)="filterUpdate2($event)" /></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <ngx-datatable class="bootstrap core-bootstrap"
+                                                            [columnMode]="ColumnMode.force" [headerHeight]="40"
+                                                            [footerHeight]="50" [rowHeight]="58" [limit]="5"
+                                                            [rows]="dataSourceRincian" [scrollbarH]="true"
+                                                            [selectionType]="SelectionType.checkbox"
+                                                            (activate)="onActivate2($event)"
+                                                            (select)="onSelect2($event)">
+                                                            <ngx-datatable-column [width]="50" [sortable]="false"
+                                                                [canAutoResize]="false" [draggable]="false"
+                                                                [resizeable]="false">
+                                                                <ng-template ngx-datatable-header-template
+                                                                    let-value="value"
+                                                                    let-allRowsSelected="allRowsSelected"
+                                                                    let-selectFn="selectFn">
+                                                                    <div class="custom-control custom-checkbox">
+                                                                        <input type="checkbox"
+                                                                            class="custom-control-input"
+                                                                            [checked]="allRowsSelected"
+                                                                            (change)="selectFn(!allRowsSelected)"
+                                                                            id="headerChkbxRef" />
+                                                                        <label class="custom-control-label"
+                                                                            for="headerChkbxRef"></label>
+                                                                    </div>
+                                                                </ng-template>
+                                                                <ng-template ngx-datatable-cell-template
+                                                                    let-rowIndex="rowIndex" let-value="value"
+                                                                    let-isSelected="isSelected"
+                                                                    let-onCheckboxChangeFn="onCheckboxChangeFn">
+                                                                    <div class="custom-control custom-checkbox">
+                                                                        <input type="checkbox"
+                                                                            class="custom-control-input"
+                                                                            [checked]="isSelected"
+                                                                            (change)="onCheckboxChangeFn($event)"
+                                                                            id="rowChkbxRef{{ rowIndex }}" />
+                                                                        <label class="custom-control-label"
+                                                                            for="rowChkbxRef{{ rowIndex }}"></label>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </ngx-datatable-column>
+                                                            <ngx-datatable-column name="No" prop="no" [width]="40"
+                                                                [sortable]="false">
+                                                            </ngx-datatable-column>
+                                                            <ngx-datatable-column name="Pelayanan" prop="namaPelayanan"
+                                                                [width]="350">
+                                                            </ngx-datatable-column>
+                                                            <ngx-datatable-column name="Ruangan" prop="ruanganTindakan"
+                                                                [width]="200">
+                                                            </ngx-datatable-column>
+                                                            <ngx-datatable-column name="Jml" prop="jumlah" [width]="40">
+                                                            </ngx-datatable-column>
+                                                            <ngx-datatable-column name="Total" prop="totalRp"
+                                                                [width]="100">
+                                                            </ngx-datatable-column>
+                                                            <ngx-datatable-column name="No Tagihan" prop="strukfk"
+                                                                [width]="100">
+                                                            </ngx-datatable-column>
+                                                            <!-- <ngx-datatable-column name="Ruangan" prop="namaruangan" [width]="200"></ngx-datatable-column>
+                                                            <ngx-datatable-column name="Tgl Keluar" prop="tglpulang" [width]="100"></ngx-datatable-column>
+                                                            <ngx-datatable-column name="Status" prop="statusinap" [width]="100">
+                                                              <ng-template let-statusinap="value" ngx-datatable-cell-template>
+                                                                <div
+                                                                  class="badge badge-pill"
+                                                                  [ngClass]="{
+                                                                    'badge-light-success': statusinap == '1',
+                                                                    'badge-light-danger': statusinap == '0'
+                                                                  }"
+                                                                >
+                                                                  {{
+                                                                    statusinap == 1
+                                                                      ? 'Rawat Inap'
+                                                                      : statusinap == 0
+                                                                      ? 'Rawat Jalan'
+                                                                      :'-'
+                                                                      
+                                                                  }}
+                                                                </div>
+                                                              </ng-template>
+                                                            </ngx-datatable-column> -->
+                                                            <!-- <ngx-datatable-footer> Total Tagihan</ngx-datatable-footer> -->
+                                                        </ngx-datatable>
+
+                                                        <div class="divider">
+                                                            <div class="divider-text"><i>Mohon ceklis data yang
+                                                                    mau
+                                                                    dibayar</i></div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-8 col-md-6 col-sm-12 col-12">
+                                                            </div>
+
+                                                            <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+                                                                <button type="button"
+                                                                    class="btn btn-icon btn-outline-success mt-1"
+                                                                    rippleEffect (click)="bayarVA()" style="width:100%">
+                                                                    <span [data-feather]="'skip-forward'"></span>
+                                                                    Bayar
+                                                                </button>
+                                                            </div>
+                                                            <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+                                                                <button type="button"
+                                                                    class="btn btn-icon btn-outline-danger mt-1"
+                                                                    rippleEffect (click)="closeBil()"
+                                                                    style="width:100%">
+                                                                    <span [data-feather]="'x-circle'"></span>
+                                                                    Tutup
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div (click)="isCollapsed3 = !isCollapsed3"
+                                                [attr.aria-expanded]="!isCollapsed3" aria-controls="collapseExample"
+                                                class="card-header collapse-title" data-toggle="collapse">
+                                                Pembayaran
+                                            </div>
+                                            <div [ngbCollapse]="isCollapsed3">
+                                                <div class="card tuku">
+
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <h5 class="mb-75">Virtual Account</h5>
+                                                                <p> Pilih Bank penyedia</p>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <div
+                                                                    class="bl-flex-container bl-logos__container flex-wrap">
+                                                                    <div class="bl-flex-item bl-logos__item"
+                                                                        *ngFor="let items of listVA"
+                                                                        (click)="selectedVA(items)">
+                                                                        <div class="bl-logo-payment pv-4 ph-4 bl-card bl-card--outlined"
+                                                                            [class.selectedVA]="selectVA_BANK == items.name"
+                                                                            style="border-radius: 4px;"><img
+                                                                                src="{{ items.img }}"
+                                                                                alt="{{ items.name }}"
+                                                                                class="bl-logo-payment__image">
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-12">
+
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                        <h4 class="mb-75">Rincian Bayar</h4>
+                                                                        <hr>
+                                                                        <div class="mt-2">
+                                                                            <h5 class="mb-75">Nama </h5>
+                                                                            <p class="card-text">
+                                                                                {{ billing.namaPasien }}
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="mt-2">
+                                                                            <h5 class="mb-75">Keterangan</h5>
+                                                                            <p class="card-text">
+                                                                                {{ billing.keteranganVA }}
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="mt-2">
+                                                                            <h4 class="mb-75">Total Pembayaran
+                                                                            </h4><br>
+                                                                            <h4 class="card-text">
+                                                                                {{ billing.totalVARp }}
+                                                                            </h4>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-8 col-md-8 col-12">
+                                                                </div>
+                                                                <div class="col-lg-4 col-md-4 col-sm-12 col-12 mt-1">
+                                                                    <button type="button" [disabled]="isLoading"
+                                                                        class="btn btn-icon btn-outline-success"
+                                                                        rippleEffect (click)="bayarVAFinal()"
+                                                                        style="width:100%;">
+                                                                        <span *ngIf="isLoading"
+                                                                            class="spinner-border spinner-border-sm mr-1"></span>
+                                                                        <span [data-feather]="'skip-forward'"></span>
+                                                                        Bayar dengan Virtual Account
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-12 order-2 order-lg-2" *ngIf="isBayar">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Pembayaran via Transfer Virtual Account {{selectVA_BANK}}</h4>
+                                <h5 class="mb-75">Batas Pembayaran : <b>{{ va.batasBayarCount  }} </b></h5>
+                                <p class="card-text">
+
+                                </p>
+                                <div class="mt-2">
+                                    <p class="card-text">Total:</p>
+                                    <h5 class="mb-75">{{va.total}}</h5>
+                                </div>
+                                <div class="mt-2">
+                                    <p class="card-text">Nomor Rekening Virtual Account {{selectVA_BANK}}:</p>
+                                    <h4 class="mb-75" style="color: #ea5455 !important">{{va.noVa}}</h4>
+                                </div>
+                                <div class="mt-2">
+                                    <img src="{{selectVA_Img}}" width="60" height="30" data-test-bank-logo="" style="border-radius: 4px;
+                                    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 12%);background:white" alt="Bank">
+                                </div>
+                                <div class="mt-2">
+                                    <p class="card-text">Nomor Tagihan:</p>
+                                    <h4 class="mb-75">{{va.noStruk}}</h4>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+                                        <button type="button" class="btn btn-icon btn-outline-success mt-1" rippleEffect
+                                            (click)="cekStatusPem()" style="width:100%">
+                                            <span [data-feather]="'info'"></span>
+                                            Cek Status Pembayaran
+                                        </button>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+                                        <button type="button" class="btn btn-icon btn-outline-danger mt-1" rippleEffect
+                                            (click)="tutupVA()" style="width:100%">
+                                            <span [data-feather]="'x-circle'"></span>
+                                            Tutup
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

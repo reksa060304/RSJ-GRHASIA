@@ -1,0 +1,140 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+
+    .k-treeview .k-item {
+        background-color: #f9f9f9 !important;
+    }
+
+    .k-checkbox-label:before {
+        margin: 1px 0px 0px 6px;
+    }
+
+    .k-button[disabled] {
+        color: #fff;
+        border-color: #41abf2;
+        background-color: #41abf2;
+    }
+</style>
+
+<div ng-show="dataVOloaded">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading"><span c-translate>Berkas</span>
+            <span class="icon fa fa-chevron-circle-left" ng-show="isShowNavAses" style="right:10px"
+            ng-click="showNav()"></span>
+            <span class="icon fa fa-chevron-circle-right" ng-show="!isShowNavAses" style="right:10px"
+                ng-click="showNav()"></span>
+        </div>
+        <div class="panel-body">
+            <div class="grid_12">
+                <div ng-cloak>
+                    <md-content>
+                        <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">
+                            <md-tab label="Daftar Berkas Pasien">
+                                <md-content class="md-padding">
+                                    <div class="grid_12">
+                                        <div class="grid_12 borderBox">
+                                            <kendo-grid id="Grid" data-source="dataDaftar" options="columnDaftar"
+                                                k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                                k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                                            </kendo-grid>
+        
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_4"></div>
+                                            <div class="grid_2">
+                                                <!-- <button class="btnTemplate1" style="margin-left: 0;" ng-click="Lihat()"><i
+                                                        class="fa fa-search"></i>Lihat</button> -->
+                                                <!-- <button class="c-button" ng-click="Lihat()" style="font-size:20px">Lihat</button> -->
+                                            </div>
+                                            <div class="grid_2">
+                                                <button class="btnTemplate1" style="margin-left: 0;" ng-click="inputBaru()"><i
+                                                        class="fa fa-plus-circle"></i>Buat Baru</button>
+                                                <!-- <button class="c-button" ng-click="create()" style="font-size:20px">Buat Baru</button> -->
+                                            </div>
+                                            <div class="grid_2">
+                                                <button class="btnTemplate1" style="margin-left: 0;"
+                                                    ng-click="edit()"><i class="fa fa-edit"></i>Edit</button>
+                                              
+                                            </div>
+                                            <div class="grid_2">
+                                                <button class="btnTemplate1 error" style="margin-left: 0;"
+                                                    ng-click="hapus()"><i class="fa fa-trash"></i>Hapus
+                                                    </button>
+                                                <!-- <button class="c-button" ng-click="create()" style="font-size:20px">Buat Baru</button> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                        </md-tabs>
+                    </md-content>
+                </div>
+            </div>
+            <div class="grid_12" style="margin-top:60px">
+                <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div kendo-window="popUpFile" k-title="'Upload File'" k-width="800" k-height="300" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <fieldset>
+            <legend><label c-label item="item">Buat Dokumen Pasien</label></legend>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Nama File</label>
+                </div>
+                <div class="grid_9">
+                    <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namafile" /> -->
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.namafile"
+                            k-data-text-field="'nama'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listJenisBerkas" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Keterangan</label>
+                </div>
+                <div class="grid_9">
+                    <textarea class="k-textbox" style="height: 76px; width: 100%; resize: none;"
+                        ng-model="item.keterangan"></textarea>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Unggah File</label>
+                </div>
+                <div class="grid_9">
+                    <form method="post" enctype="multipart/form-data" id="formFile">
+                        <input type="file" id="filePasien" accept="application/pdf" />
+                    </form>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+            <button class="k-button k-button-icontext k-primary k-grid-update" ng-disabled="disabledSimpan" ng-click="Save()" id="btnSimpan"><span
+                    class="k-icon k-update"></span>Simpan</button>
+            <button class="k-button  k-button-icontext"  ng-disabled="disabledBatal" ng-click="batal()" id="btnBatal"><span
+                    class="k-icon k-cancel"></span>Batal</button>
+        </div>
+
+    </div>
+</div>

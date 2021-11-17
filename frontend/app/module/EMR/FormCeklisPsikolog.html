@@ -1,0 +1,390 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    legend b {
+        color: #41abf2;
+    }
+
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+    hr {
+    border: 1px dashed #cccccc;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    display: inline-block;
+    width: 100%;
+}
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Ceklist Kondisi Psikologis Pasien</div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Bagian I</b></legend>
+                    <div><label>Tanyakan kepada pasien, berikan penilaian pada gejala-gejala berikut. Sebarapa buruk menurut Anda gejala-gejala ini pada Anda (berikan penilaian HANYA PADA YANG ANDA ALAMI)</label></div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                            <div class="grid_12">
+                                <label><b>Takut</b></label>
+                                <div ng-repeat="stat in ListPsi  | orderBy:'id'">
+                                    <div class="grid_1">
+                                        <md-radio-group ng-model="item.obj[18000112]" ng-click="wao()">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                    
+                                </div>
+                                <div class="grid_2" ng-show="muncul" style="background-color: red">
+                                        Laporkan DPJP!!
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <label><b>Cemas</b></label>
+                                <div ng-repeat="stat in ListPsi  | orderBy:'id'">
+                                    <div class="grid_1">
+                                        <md-radio-group ng-model="item.obj[18000113]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                                 <div class="grid_2" ng-show="muncul2" style="background-color: red">
+                                        Laporkan DPJP!!
+                                </div>
+                            </div>
+                           
+                            <div class="grid_12">
+                                <label><b>Panik</b></label>
+                                <div ng-repeat="stat in ListPsi  | orderBy:'id'">
+                                    <div class="grid_1">
+                                        <md-radio-group ng-model="item.obj[18000114]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                                <div class="grid_2" ng-show="muncul3" style="background-color: red">
+                                        Laporkan DPJP!!
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <label><b>Bingung</b></label>
+                                <div ng-repeat="stat in ListPsi  | orderBy:'id'">
+                                    <div class="grid_1">
+                                        <md-radio-group ng-model="item.obj[18000115]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                                <div class="grid_2" ng-show="muncul4" style="background-color: red">
+                                        Laporkan DPJP!!
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <label><b>Sulit Bernafas</b></label>
+                                <div ng-repeat="stat in ListPsi  | orderBy:'id'">
+                                    <div class="grid_1">
+                                        <md-radio-group ng-model="item.obj[18000116]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                                <div class="grid_2" ng-show="muncul5" style="background-color: red">
+                                        Laporkan DPJP!!
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <label><b>Keinginan Bunuh Diri</b></label>
+                                <div ng-repeat="stat in ListPsi  | orderBy:'id'">
+                                    <div class="grid_1">
+                                        <md-radio-group ng-model="item.obj[18000117]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                                <div class="grid_2" ng-show="muncul6" style="background-color: red">
+                                        Laporkan DPJP!!
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <label><b>Keinginan menyakiti/Melukai Diri</b></label>
+                                <div ng-repeat="stat in ListPsi  | orderBy:'id'">
+                                    <div class="grid_1">
+                                        <md-radio-group ng-model="item.obj[18000118]">
+                                            <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                                <div class="grid_2" ng-show="muncul7" style="background-color: red">
+                                        Laporkan DPJP!!
+                                </div>
+                            </div>
+                            <br>
+                             <div><label>Apabila salah satu dari gejala di atas memiliki nilai diatas 5 silahkan laporkan pada DPJP/rujuk Rumah sakit</label></div>
+                        
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend>Bagian II</legend>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12">
+                           
+                            <table>
+                                <tr>
+                                    <td>
+                                        1. Halusinasi
+                                    </td>
+                                    <td>
+                                        <div ng-repeat="stat in listYa | orderBy:'id'">
+                                            <div class="grid_3">
+                                                <md-radio-group ng-model="item.obj[18000119]">
+                                                    <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                                    </md-radio-button>
+                                                </md-radio-group>
+                                            </div>
+                                        </div>
+                                        <div class="grid_3" ng-show="muncul8"  style="background-color: red">
+                                        Laporkan DPJP!!
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                       2. Waham
+                                    </td>
+                                    <td>
+                                        <div ng-repeat="stat in listYa | orderBy:'id'">
+                                            <div class="grid_3">
+                                                <md-radio-group ng-model="item.obj[18000120]">
+                                                    <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                                    </md-radio-button>
+                                                </md-radio-group>
+                                            </div>
+                                        </div>
+                                        <div class="grid_3" ng-show="muncul9"  style="background-color: red">
+                                        Laporkan DPJP!!
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        3. Bicara Inkoheren
+                                    </td>
+                                    <td>
+                                        <div ng-repeat="stat in listYa | orderBy:'id'">
+                                            <div class="grid_3">
+                                                <md-radio-group ng-model="item.obj[18000121]">
+                                                    <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                                    </md-radio-button>
+                                                </md-radio-group>
+                                            </div>
+                                        </div>
+                                        <div class="grid_3" ng-show="muncul10"  style="background-color: red">
+                                        Laporkan DPJP!!
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        4. Perilaku Agresi
+                                    </td>
+                                    <td>
+                                        <div ng-repeat="stat in listYa | orderBy:'id'">
+                                            <div class="grid_3">
+                                                <md-radio-group ng-model="item.obj[18000122]">
+                                                    <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                                    </md-radio-button>
+                                                </md-radio-group>
+                                            </div>
+                                        </div>
+                                        <div class="grid_3" ng-show="muncul11"  style="background-color: red">
+                                        Laporkan DPJP!!
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        5. Mutism
+                                    </td>
+                                    <td>
+                                        <div ng-repeat="stat in listYa | orderBy:'id'">
+                                            <div class="grid_3">
+                                                <md-radio-group ng-model="item.obj[18000123]">
+                                                    <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                                    </md-radio-button>
+                                                </md-radio-group>
+                                            </div>
+                                        </div>
+                                        <div class="grid_3" ng-show="muncul12"  style="background-color: red">
+                                        Laporkan DPJP!!
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        6. Gejala Manik
+                                    </td>
+                                    <td>
+                                        <div ng-repeat="stat in listYa | orderBy:'id'">
+                                            <div class="grid_3">
+                                                <md-radio-group ng-model="item.obj[18000124]">
+                                                    <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                                    </md-radio-button>
+                                                </md-radio-group>
+                                            </div>
+                                        </div>
+                                        <div class="grid_3" ng-show="muncul13"  style="background-color: red">
+                                        Laporkan DPJP!!
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        7. Hendaya Perawatan Siri
+                                    </td>
+                                    <td>
+                                        <div ng-repeat="stat in listYa | orderBy:'id'">
+                                            <div class="grid_3">
+                                                <md-radio-group ng-model="item.obj[18000125]">
+                                                    <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                                    </md-radio-button>
+                                                </md-radio-group>
+                                            </div>
+                                        </div>
+                                        <div class="grid_3" ng-show="muncul14"  style="background-color: red">
+                                        Laporkan DPJP!!
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        8. Hendaya Komunikasi
+                                    </td>
+                                    <td>
+                                        <div ng-repeat="stat in listYa | orderBy:'id'">
+                                            <div class="grid_3">
+                                                <md-radio-group ng-model="item.obj[18000126]">
+                                                    <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.name}}
+                                                    </md-radio-button>
+                                                </md-radio-group>
+                                            </div>
+                                        </div>
+                                        <div class="grid_3" ng-show="muncul15"  style="background-color: red">
+                                        Laporkan DPJP!!
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <br>
+                        <div style="margin top: 10px"><label>Apabila terdapat minimal 1 gejala pada bagian II silahkan laporkan pada DPJP/rujuk ke Rumah Sakit</label></div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+       
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

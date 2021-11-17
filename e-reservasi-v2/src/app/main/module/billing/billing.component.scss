@@ -1,0 +1,78 @@
+@import '@core/scss/angular/libs/datatables.component.scss';
+@import '@core/scss/angular/libs/toastr.component.scss';
+.datatable-scroll {
+  width: auto !important;
+}
+.tuku .bl-logos__container {
+  margin-top: -6px;
+  margin-bottom: -6px;
+}
+.quantum-dna .flex-wrap {
+  flex-wrap: wrap;
+}
+.bl-flex-container:last-child {
+  margin-bottom: 0;
+}
+.flex-wrap {
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+.bl-flex-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+.tuku .bl-logos__item {
+  margin-right: 8px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+.tuku .bl-logo-payment {
+  display: inline-block;
+  margin-bottom: -1px;
+  width: 64px;
+  height: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ph-4 {
+  padding-left: 4px!important;
+  padding-right: 4px!important;
+}
+.pv-4 {
+  padding-top: 4px!important;
+  padding-bottom: 4px!important;
+}
+.bl-card--outlined {
+  border: 1px solid #c0c7d1;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+.bl-card {
+  font-family: Hind Madurai,sans-serif;
+  position: relative;
+  display: block;
+  background: #fff;
+  max-width: 100%;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 2px 4px 0 rgb(0 0 0 / 12%);
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 12%);
+}
+.tuku .bl-logo-payment__image {
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 32px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+.selectedVA{
+  outline: 0;
+    box-shadow: 0 0 0 0.2rem rgb(0 255 115 / 25%);
+    background-color: #cccccc;
+    border-radius: 0px;
+}

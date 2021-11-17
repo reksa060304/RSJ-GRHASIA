@@ -1,0 +1,207 @@
+<div class="panel panel-default">
+    <div class="panel-heading " style="font-size: 18px; "><span c-translate>Pasien</span>
+        <span class="icon fa fa-chevron-circle-down " ng-show="!isShowPotensi " style="right:10px
+                                                                                " ng-click="showPotensi() "></span>
+        <span class="icon fa fa-chevron-circle-up " ng-show="isShowPotensi " style="right:10px
+                                                                                " ng-click="showPotensi() "></span>
+    </div>
+    <div class="panel-body " ng-show="isShowPotensi ">
+        <div class="panel panel-default container_12">
+            <div class="panel-body">
+                <div class="grid_12">
+                    <div class="grid_4">
+                        <div class="grid_12">
+                            <label c-label>Masukkan Nomor NIK/Passport :</label>
+                            <input c-text-box type="number" filter="'char'" class="k-textbox" ng-model="item.data" />
+                        </div>
+                        <div class="grid_12" style="margin-top: 5px;" ng-show="isPassport">
+                            <label c-label>Negara :</label>
+                            <input style="width: 100%; "
+                                kendo-combo-box k-ng-model="item.negara"
+                                k-data-text-field="'nama'"
+                                k-filter="'contains'"
+                                k-data-value-field="'id'" k-auto-bind="false"
+                                k-data-source="listNegara" />
+                        </div>
+                        <div class="grid_12" style="margin-top: 5px;">
+                            <div class="grid_8">
+                                <div class="grid_6" ng-repeat="tipe in dataCheckbox">
+                                    <input type="radio" name="{{tipe.name}}" id="{{tipe.id}}" class="k-radio"
+                                        ng-model="item.identitas" ng-value="tipe">
+                                    <label class="k-radio-label" for="{{tipe.id}}"
+                                        style="margin:5px">{{tipe.name}}</label>
+                                </div>
+                            </div>
+                            <div class="grid_2">
+                                <!-- ng-click="findData(item.data)" -->
+                                <button class="k-button k-primary k-button-icon"><span
+                                        class="k-sprite k-icon k-i-search" ng-click="findData(item.data)">Find</span></button>
+                                <!--<em style="margin-top:6px;" ng-click="findDataBySep(item.namaPasien)" id="iconButton" data-role="button" class="k-button k-button-icon" role="button" aria-disabled="false" tabindex="0"><span class="k-sprite k-icon k-i-search">Find</span></em>-->
+                            </div>
+                            <div class="grid_2">
+                                <!-- ng-click="clear()" -->
+                                <button class="k-button k-primary k-button-icon" ><span
+                                        class="k-sprite k-icon k-i-cancel" ng-click="clear()">Clear</span></button>
+                                <!--<em style="margin-top:6px;" ng-click='clear()' id="iconButton" data-role="button" class="k-button k-button-icon" role="button" aria-disabled="false" tabindex="0"><span class="k-sprite k-icon k-i-cancel">Clear</span></em>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid_8">
+                        <div class="grid_12">
+                            <label c-label>Results :</label>
+                        </div>
+                        <pre id="json" class="json-viewer"></pre>
+                        <div class="grid_12" ng-show="isNotFound">
+                            <div class="grid_12">
+                                <label>* Silahkan tambah data pasien karena pasien tidak ditemukan !</label>
+                            </div>
+                            <div class="grid_3" style="padding: 0px;">
+                                <button class="btnTemplate1 " ng-click="tambahpasien()">
+                                    <i class="fa fa-plus-circle"></i>Tambah Data Pasien</button>
+                            </div>
+                        </div>
+                        <div class="grid_12" ng-show="isFound">
+                            <div class="grid_12">
+                                <label>* Pasien sudah terdaftar, update data pasien untuk memperbaharui data</label>
+                            </div>
+                            <div class="grid_3" style="padding: 0px;">
+                                <button class="btnTemplate1 " ng-click="updatepasien()">
+                                    <i class="fa fa-pencil-square-o"></i>Update Data Pasien</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div kendo-window="popUpTambahPasien" k-title="'Data Pasien'" k-width="800" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div class="grid_12" style="margin-top: 5px;">
+            <div class="grid_4">
+                    <label c-label item="item">NIK/Passport </label>
+                    <input c-text-box type="number"
+                        class="k-textbox"
+                        ng-model="formitem.nik" />
+            </div>
+            <div class="grid_8">
+                    <label c-label item="item">Nama </label>
+                    <input c-text-box type="input"
+                        class="k-textbox"
+                        ng-model="formitem.nama" />
+            </div>
+            <div class="grid_4">
+                    <label c-label item="item">Tanggal Lahir </label>
+                    <input style="width: 100%"
+                        k-ng-model='formitem.tgllahir'
+                        kendo-date-picker
+                        k-format="'yyyy-MM-dd'" />
+            </div>
+            <div class="grid_4">
+                    <label c-label item="item">Jenis Kelamin </label>
+                    <input kendo-combo-box 
+                        k-ng-model="formitem.jeniskelamin" 
+                        k-data-text-field="'jeniskelamin'"
+                        k-data-value-field="'id'"
+                        k-filter="'contains'" 
+                        k-auto-bind="false" 
+                        k-data-source="listjeniskelamin" />
+            </div>
+            <div class="grid_4">
+                    <label c-label item="item">Telepon </label>
+                    <input c-text-box type="number"
+                        class="k-textbox"
+                        ng-model="formitem.telepon" />
+            </div>
+            <div ng-show="isNik">
+                <div class="grid_4">
+                    <label c-label item="item">RW KTP </label>
+                    <input c-text-box type="number"
+                        class="k-textbox"
+                        ng-model="formitem.rwktp" />
+                </div>
+                <div class="grid_4">
+                        <label c-label item="item">RT KTP </label>
+                        <input c-text-box type="number"
+                            class="k-textbox"
+                            ng-model="formitem.rtktp" />
+                </div>
+                <div class="grid_4">
+                        <label c-label item="item">Lokasi KTP </label>
+                        <input kendo-combo-box 
+                            k-ng-model="formitem.lokasiktp" 
+                            k-data-text-field="'nama'"
+                            k-data-value-field="'kode'"
+                            k-filter="'contains'" 
+                            k-auto-bind="false" 
+                            k-data-source="listlokasiktp" />
+                </div>
+                <div class="grid_12" style="padding: 5px;">
+                        <label c-label item="item">Alamat KTP </label>
+                        <textarea c-text-area 
+                            type="input" 
+                            filter="'string'" 
+                            class="k-textbox" 
+                            rows="4"
+                            ng-model="formitem.alamatktp">
+                        </textarea>
+                </div>
+            </div>
+            <div class="grid_4">
+                    <label c-label item="item">RW Domisili </label>
+                    <input c-text-box type="number"
+                        class="k-textbox"
+                        ng-model="formitem.rwdomisili" />
+            </div>
+            <div class="grid_4">
+                    <label c-label item="item">RT Domisili </label>
+                    <input c-text-box type="number"
+                        class="k-textbox"
+                        ng-model="formitem.rtdomisili" />
+            </div>
+            <div class="grid_4">
+                    <label c-label item="item">Lokasi Domisili </label>
+                    <input kendo-combo-box 
+                        k-ng-model="formitem.lokasidomisili" 
+                        k-data-text-field="'nama'"
+                        k-data-value-field="'kode'"
+                        k-filter="'contains'" 
+                        k-auto-bind="false" 
+                        k-data-source="listlokasidomisili" />
+            </div>
+            <div class="grid_12" style="padding: 5px;">
+                    <label c-label item="item">Alamat Domisili </label>
+                    <textarea c-text-area 
+                        type="input" 
+                        filter="'string'" 
+                        class="k-textbox" 
+                        rows="4"
+                        ng-model="formitem.alamatdomisili">
+                    </textarea>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3" style="margin-right:5px;" ng-show="isSave">
+                    <button class="btnTemplate1 " style="margin:0px;" ng-click="save()">
+                        <i class="fa fa-save"></i>Simpan</button>
+                </div>
+                <div class="grid_3" style="margin-right:5px;" ng-show="!isSave">
+                    <button class="btnTemplate1 " style="margin:0px;" ng-click="update()">
+                        <i class="fa fa-pencil-square-o"></i>Ubah</button>
+                </div>
+
+                <div class="grid_3" style="margin-right:5px;">
+                    <button class="btnTemplate1 cancel" style="margin:0px;" ng-click="batal()">
+                        <i class="fa fa-refresh"></i>Batal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-include=' "../app/template/Shared/TemplateLoading" '></div>
+<style type="text/css">
+    .json-viewer {
+        margin-top: 26px;
+        padding: 2em 0 4em 5em;
+        background: lightgrey;
+    }
+</style>

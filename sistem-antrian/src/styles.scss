@@ -1,0 +1,490 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeflex/primeflex.scss";
+@import "../node_modules/primeicons/primeicons.css";
+@import "../node_modules/prismjs/themes/prism-coy.css";
+@import "../node_modules/@fullcalendar/core/main.min.css";
+@import "../node_modules/@fullcalendar/daygrid/main.min.css";
+@import "../node_modules/@fullcalendar/timegrid/main.min.css";
+@import "assets/demo/flags/flags.css";
+
+.profile-user-login {
+  width: 45px;
+  float: left;
+  margin-bottom: 10px;
+  height: 45px;
+  line-height: 45px;
+  color: #fff;
+  text-align: center;
+  font-size: 24px;
+  border-radius: 50%;
+  max-width: 48px;
+  background-color: rgb(7, 71, 166);
+}
+.profile-role {
+  display: block;
+  min-width: 45px;
+  text-align: left;
+  font-size: 12px;
+  float: left;
+  margin-left: 7px;
+  color: #dfd2d2;
+  cursor: pointer;
+}
+.profile-css:hover {
+  margin: 10px;
+  fill: #ebecf0;
+}
+
+.profile-css {
+  margin: 10px;
+  cursor: pointer;
+}
+
+.badge {
+  padding: 3px 6px;
+}
+.badge,
+.label {
+  font-weight: bold;
+}
+.pull-right {
+  float: right !important;
+}
+.badge {
+  display: inline-block;
+  min-width: 10px;
+  padding: 3px 7px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+
+  border-radius: 10px;
+}
+.badget .default {
+  background-color: #a7abaf;
+}
+.default {
+  background-color: #a7abaf;
+}
+.badge .red {
+  background-color: rgb(245, 66, 78);
+}
+.red {
+  background-color: rgb(245, 66, 78);
+}
+.badge .green {
+  background-color: rgba(111, 241, 181, 0.993);
+}
+.green {
+  background-color: #5cb85c;
+}
+
+.profile-css:hover {
+  margin: 10px;
+  /* background-color: rgb(26, 31, 53); */
+  fill: rgb(235, 236, 240);
+}
+.profile-css {
+  margin: 10px;
+  cursor: pointer;
+}
+
+.profile-name {
+  display: block;
+  color: #ffffff;
+  vertical-align: middle;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 4px;
+  margin-left: 52px;
+  max-height: 2.6rem;
+  max-width: 20rem;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  display: -webkit-box;
+  margin-bottom: 2px;
+}
+.label-required {
+  font-weight: bold;
+}
+.label-required:after {
+  content: " *";
+  color: red;
+  font-weight: bold;
+}
+
+.order-badge.order-instock {
+  background: #c8e6c9;
+  color: #256029;
+  margin-right: 2px;
+}
+
+.order-badge {
+  border-radius: 2px;
+  padding: 0.25em 0.5rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+
+/*  */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiGyp8kv8JHgFVrLPTucXtAKPY.woff2) format("woff2");
+  unicode-range: U+0900-097F, U+1CD0-1CF6, U+1CF8-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FB;
+}
+/* latin-ext */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiGyp8kv8JHgFVrLPTufntAKPY.woff2) format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiGyp8kv8JHgFVrLPTucHtA.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/*  */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLDz8Z11lFc-K.woff2) format("woff2");
+  unicode-range: U+0900-097F, U+1CD0-1CF6, U+1CF8-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FB;
+}
+/* latin-ext */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLDz8Z1JlFc-K.woff2) format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLDz8Z1xlFQ.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/*  */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiEyp8kv8JHgFVrJJbecmNE.woff2) format("woff2");
+  unicode-range: U+0900-097F, U+1CD0-1CF6, U+1CF8-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FB;
+}
+/* latin-ext */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiEyp8kv8JHgFVrJJnecmNE.woff2) format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiEyp8kv8JHgFVrJJfecg.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/*  */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLGT9Z11lFc-K.woff2) format("woff2");
+  unicode-range: U+0900-097F, U+1CD0-1CF6, U+1CF8-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FB;
+}
+/* latin-ext */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLGT9Z1JlFc-K.woff2) format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLGT9Z1xlFQ.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/*  */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLCz7Z11lFc-K.woff2) format("woff2");
+  unicode-range: U+0900-097F, U+1CD0-1CF6, U+1CF8-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FB;
+}
+/* latin-ext */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLCz7Z1JlFc-K.woff2) format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/*  */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLBT5Z11lFc-K.woff2) format("woff2");
+  unicode-range: U+0900-097F, U+1CD0-1CF6, U+1CF8-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FB;
+}
+/* latin-ext */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLBT5Z1JlFc-K.woff2) format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(assets/layout/fonts/pxiByp8kv8JHgFVrLBT5Z1xlFQ.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.p-inputgroup .p-inputtext,
+.p-fluid .p-inputgroup .p-inputtext {
+  flex: 1 1 auto;
+  width: 1%;
+  border: none;
+}
+body {
+  // font-family: 'Lexend', sans-serif;
+  font-family: "Poppins", sans-serif;
+}
+
+.dashboard .overview-box .overview-box-icon i {
+  font-size: 30px;
+  // height: 60px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.card {
+  background: #ffffff;
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0px 10px 40px rgba(41, 50, 65, 0.06);
+  -moz-border-radius: 24px;
+  -webkit-border-radius: 24px;
+  border-radius: 24px;
+  margin-bottom: 2rem;
+}
+.card:last-child {
+  margin-bottom: 0;
+}
+.card .card-header {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding-bottom: 16px;
+}
+.card .card-header h6 {
+  margin-bottom: 2px;
+}
+.card .card-header .subtitle {
+  font-weight: 600;
+  color: rgba(41, 50, 65, 0.5);
+}
+body {
+  background-color: #f2f4f6;
+}
+
+.card .card-subtitle {
+  color: rgba(41, 50, 65, 0.5);
+  font-weight: 600;
+  margin: -1rem 0 1rem 0;
+}
+.card.no-gutter {
+  margin-bottom: 0;
+}
+.badge-light-primary {
+  color: #7367f0;
+}
+.badge-light-info {
+  color: #00cfe8;
+}
+.badge-light-danger {
+  color: #ea5455;
+}
+.badge-light-success {
+  color: #28c76f;
+}
+.badge-light-warning {
+  color: #ff9f43;
+}
+.badge-light-primary {
+  background-color: rgba(115, 103, 240, 0.12);
+}
+.badge-light-info {
+  background-color: rgba(0, 207, 232, 0.12);
+}
+.badge-light-danger {
+  background-color: rgba(234, 84, 85, 0.12);
+}
+.badge-light-success {
+  background-color: rgba(40, 199, 111, 0.12);
+}
+.badge-light-warning {
+  background-color: rgba(255, 159, 67, 0.12);
+}
+.text-center {
+  text-align: center;
+}
+.badge-light-danger2 {
+  background-color: rgba(234, 84, 85, 0.12);
+  border-radius: 24px;
+}
+
+.badge-light-danger2 {
+  color: #ea5455;
+}
+
+.f-s-25 {
+  display: block;
+  // margin-block-start: 1.33em;
+  // margin-block-end: 1.33em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-size: 2.5rem;
+  // margin: 1.5rem 0 1rem 0;
+  font-family: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  color: inherit;
+}
+.f-s-2 {
+  display: block;
+  // margin-block-start: 1.33em;
+  // margin-block-end: 1.33em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-size: 2rem;
+  // margin: 1.5rem 0 1rem 0;
+  font-family: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  color: inherit;
+}
+.no-margin {
+  margin: 0;
+}
+.card-2 {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  // word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  // border: 1px solid #eeeeee;
+  // border-bottom: 0px;
+  border-radius: 20px;
+  // box-shadow: 0px 10px 40px rgb(41 50 65 / 6%);
+}
+
+// .card-2-header:first-child {
+//     border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
+// }
+.card-2-header {
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 0;
+  border-radius: 20px 20px -0px -0px;
+  background-color: rgba(40, 199, 111, 0.12);
+}
+.card-2-body {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding: 1.25rem;
+  border-radius: 20px 20px 0 0;
+  border-top: 1px solid #eeeeee;
+}
+.card-2-title {
+  margin-bottom: 0.75rem;
+}
+.card-pad {
+  padding: 18px 18px 0 18px;
+  display: flex;
+  justify-content: space-between;
+}
+.no-pad {
+  padding: 0;
+  
+}
+// .card-w-title{
+//   color:white;
+// }

@@ -1,0 +1,546 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+ 
+
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    .gambarAset {
+        max-width: 310px;
+        max-height: 100%;
+        display: block;
+        height: auto;
+    }
+    hr {
+        border: 1px dashed #cccccc;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+</style>
+<div class="grid_12" disable-contents="allDisabled" id="form">
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Pemakaian Implant</div>
+    </div>
+    <<!-- div class="grid_12" style="margin-top: 20px">
+    <fieldset>
+           
+   <div class="grid_12" style="margin-top: 5px;">
+                <div class="grid_12" ng-repeat="list in listDaily | orderBy:'id'" style="padding: 5pt 10pt">
+                    <b>{{list.nama}}</b>
+                    <div class="grid_12" style="padding: 5pt">
+                        <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                            <div ng-switch on="jawab.type">
+                                <div class="grid_2" ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                        &nbsp;{{jawab.nama}}</label>
+
+                                </div>
+                                <div class="grid_3" ng-switch-when="textbox" style="margin-top: 0px;margin-left:-10px">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </fieldset>
+    </div> -->
+    <div class="grid_12">
+        <fieldset style="margin-top: 10px; ">
+            <div class="grid_4" style="margin-top: 20px">
+                <label>Tanggal</label>
+                <input style="width: 100%" k-ng-model="item.obj[21007148]" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" 
+                                    k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+            </div>
+            <div class="grid_4" style="margin-top: 20px">
+                <label>Dokter DPJP</label>
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21007149]" k-data-text-field="'text'" 
+                k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />  
+            </div>
+            <div class="grid_4" style="margin-top: 20px">
+                <label>Tindakan</label>
+                <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007150]" />
+            </div>
+        </fieldset>
+    <div></div>
+    <div class="grid_12">
+                <fieldset style="margin-top: 10px; ">
+                    <legend>Implant</legend>
+                    
+                    <div class="grid_12" style="margin-top: 20px">
+                     <table style="width:100%;color: #4c5356;">
+                            <tr>
+                                <th style="text-align: center;">No.</th>
+                                <th style="text-align: center;width: 200px">Nama</th>
+                                <th style="text-align: center;width: 200px">Nomor Barcode</th>
+                                <th style="text-align: center;width: 200px">Ukuran</th>
+                                <th style="text-align: center;width: 200px">Jumlah</th>
+                                <th style="text-align: center;width: 200px">Satuan</th>
+                            </tr>
+                         <!-- 1 -->
+                            <tr>
+                                <td>
+                                    1.
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007151]" />
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007152]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007153]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007154]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007155]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    2.
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007156]" />
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007157]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007158]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007159]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007160]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    3.
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007161]" />
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007162]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007163]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007164]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007165]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    4.
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007166]" />
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007167]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007168]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007169]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007170]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    5.
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007171]" />
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007172]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007173]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007174]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007175]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    6.
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007176]" />
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007177]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007178]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007179]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007180]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    7.
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007181]" />
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007182]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007183]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007184]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007185]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    8.
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007186]" />
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007187]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007188]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007189]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007190]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    9.
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007191]" />
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007192]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007193]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007194]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007195]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    10.
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007196]" />
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007197]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007198]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007199]" />
+                                </td>
+                                <td>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[21007200]" />
+                                </td>
+                            </tr>
+                            
+
+                            <!-- 1 -->
+
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px; ">
+
+                    <legend>Penempelan Barcode</legend>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                                <label>1.</label>
+                                <input 
+                                       type="file"
+                                       kendo-upload
+                                       k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                                       k-multiple="false"
+                                       k-select="onSelect1"/>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px">
+                            <div id="preview1" >
+                                <img class="gambarAset " src="{{item.objImg[21007773]}}" />
+                            </div>
+                         </div>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                                <label>2.</label>
+                                <input 
+                                       type="file"
+                                       kendo-upload
+                                       k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                                       k-multiple="false"
+                                       k-select="onSelect2"/>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px">
+                            <div id="preview2" >
+                                <img class="gambarAset " src="{{item.objImg[21007774]}}" />
+                            </div>
+                         </div>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                                <label>3.</label>
+                                <input 
+                                       type="file"
+                                       kendo-upload
+                                       k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                                       k-multiple="false"
+                                       k-select="onSelect3"/>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px">
+                            <div id="preview3" >
+                                <img class="gambarAset " src="{{item.objImg[21007775]}}" />
+                            </div>
+                         </div>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                                <label>4.</label>
+                                <input 
+                                       type="file"
+                                       kendo-upload
+                                       k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                                       k-multiple="false"
+                                       k-select="onSelect4"/>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px">
+                            <div id="preview4" >
+                                <img class="gambarAset " src="{{item.objImg[21007776]}}" />
+                            </div>
+                         </div>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                                <label>5.</label>
+                                <input 
+                                       type="file"
+                                       kendo-upload
+                                       k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                                       k-multiple="false"
+                                       k-select="onSelect5"/>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px">
+                            <div id="preview5" >
+                                <img class="gambarAset " src="{{item.objImg[21007777]}}" />
+                            </div>
+                         </div>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                                <label>6.</label>
+                                <input 
+                                       type="file"
+                                       kendo-upload
+                                       k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                                       k-multiple="false"
+                                       k-select="onSelect6"/>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px">
+                            <div id="preview6" >
+                                <img class="gambarAset " src="{{item.objImg[21007778]}}" />
+                            </div>
+                         </div>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                                <label>7.</label>
+                                <input 
+                                       type="file"
+                                       kendo-upload
+                                       k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                                       k-multiple="false"
+                                       k-select="onSelect7"/>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px">
+                            <div id="preview7" >
+                                <img class="gambarAset " src="{{item.objImg[21007779]}}" />
+                            </div>
+                         </div>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                                <label>8.</label>
+                                <input 
+                                       type="file"
+                                       kendo-upload
+                                       k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                                       k-multiple="false"
+                                       k-select="onSelect8"/>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px">
+                            <div id="preview8" >
+                                <img class="gambarAset " src="{{item.objImg[21007780]}}" />
+                            </div>
+                         </div>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                                <label>9.</label>
+                                <input 
+                                       type="file"
+                                       kendo-upload
+                                       k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                                       k-multiple="false"
+                                       k-select="onSelect9"/>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px">
+                            <div id="preview9" >
+                                <img class="gambarAset " src="{{item.objImg[21007781]}}" />
+                            </div>
+                         </div>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_12">
+                                <label>10.</label>
+                                <input 
+                                       type="file"
+                                       kendo-upload
+                                       k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                                       k-multiple="false"
+                                       k-select="onSelect10"/>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px">
+                            <div id="preview10" >
+                                <img class="gambarAset " src="{{item.objImg[21007782]}}" />
+                            </div>
+                         </div>
+                    </div>
+
+                    
+                </fieldset>
+            </div>
+        </div>
+
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

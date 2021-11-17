@@ -1,0 +1,125 @@
+<!-- <div class="panel panel-default container_12">
+    <md-content>
+        <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">
+            <md-tab label="Tab 1">
+                <md-content class="md-padding">
+                    <div ng-include='"../app/module/EMR/CpptHistoryRajal"'></div>
+                </md-content>
+            </md-tab>
+            <md-tab label="Tab 2">
+                <md-content class="md-padding">
+                    <div ng-include='"../app/module/EMR/CpptHistoryRajal2"'></div>
+                </md-content>
+            </md-tab>
+            <md-tab label="Tab 3">
+                <md-content class="md-padding">
+                    <div ng-include='"../app/module/EMR/CpptHistoryRajal3"'></div>
+                </md-content>
+            </md-tab>
+            <md-tab label="Tab 4">
+                <md-content class="md-padding">
+                    <div ng-include='"../app/module/EMR/CpptHistoryRajal4"'></div>
+                </md-content>
+            </md-tab>
+            <md-tab label="Tab 5">
+                <md-content class="md-padding">
+                    <div ng-include='"../app/module/EMR/CpptHistoryRajal5"'></div>
+                </md-content>
+            </md-tab>
+            <md-tab label="Tab 6">
+                <md-content class="md-padding">
+                    <div ng-include='"../app/module/EMR/CpptHistoryRajal6"'></div>
+                </md-content>
+            </md-tab>
+        </md-tabs>
+    </md-content>
+</div> -->
+<c-panel item="item" header="'MenuCPPTRawatInap'" disabled>
+    <input type="hidden" ng-model="hiddennoemr">
+    <div class="panel panel-default container_12">
+        <div class="breadcrum detail" style='margin-top: 0px;'>
+            <div class="grid_2">
+                <a class="n1 default"
+                    ng-class="{'active': HtmlCppt }"
+                    ng-click="Cpptnav(0)">Tab 1
+                </a>
+            </div>
+            <div class="grid_2">
+                <a class="n1 default"
+                    ng-class="{'active': HtmlCppt2 }"
+                    ng-click="Cpptnav(1)">Tab 2
+                </a>
+            </div>
+            <div class="grid_2">
+                <a class="n1 default"
+                    ng-class="{'active': HtmlCppt3 }"
+                    ng-click="Cpptnav(2)">Tab 3
+                </a>
+            </div>
+            <div class="grid_2">
+                <a class="n1 default"
+                    ng-class="{'active': HtmlCppt4 }"
+                    ng-click="Cpptnav(3)">Tab 4
+                </a>
+            </div>
+            <div class="grid_2">
+                <a class="n1 default"
+                    ng-class="{'active': HtmlCppt5 }"
+                    ng-click="Cpptnav(4)">Tab 5
+                </a>
+            </div>
+            <div class="grid_2">
+                <a class="n1 default"
+                    ng-class="{'active': HtmlCppt6 }"
+                    ng-click="Cpptnav(5)">Tab 6
+                </a>
+            </div>
+
+        </div>
+    </div>
+</c-panel>
+<style type="text/css">
+    .active {
+        /* background-color: white !important; */
+        background-color: rgb(255, 64, 129) !important;
+        color: white !important;
+        display: block;
+        padding: 10px 0 20px;
+        font-weight: 600;
+    }
+
+    .breadcrum a.default {
+        background: white;
+    }
+
+    .breadcrum a:hover {
+        background: #41abf2;
+        color: white;
+        border-bottom: solid 5px rgb(255, 64, 129);
+    }
+
+    .breadcrum a {
+        color: rgb(63, 81, 181);
+        border-bottom: solid 5px rgb(255, 64, 129);
+        border-top: solid 1px #cccccc;
+        border-right: solid 1px #cccccc;
+    }
+</style>
+<div ng-if="HtmlCppt">
+    <div ng-include='"../app/module/EMR/CpptHistoryRajal"'></div>
+</div>
+<div ng-if="HtmlCppt2">
+    <div ng-include='"../app/module/EMR/CpptHistoryRajal2"'></div>
+</div>
+<div ng-if="HtmlCppt3">
+    <div ng-include='"../app/module/EMR/CpptHistoryRajal3"'></div>
+</div>
+<div ng-if="HtmlCppt4">
+    <div ng-include='"../app/module/EMR/CpptHistoryRajal4"'></div>
+</div>
+<div ng-if="HtmlCppt5">
+    <div ng-include='"../app/module/EMR/CpptHistoryRajal5"'></div>
+</div>
+<div ng-if="HtmlCppt6">
+    <div ng-include='"../app/module/EMR/CpptHistoryRajal6"'></div>
+</div>

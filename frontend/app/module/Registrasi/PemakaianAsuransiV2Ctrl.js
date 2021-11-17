@@ -1,0 +1,2202 @@
+define(['initialize', 'Configuration'], function (initialize, configuration) {
+    'use strict'
+    initialize.controller('PemakaianAsuransiV2Ctrl', ['$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService', '$mdDialog',
+        function ($scope, modelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
+            $scope.now = new Date();
+
+            $scope.currentNorecPD = $state.params.norecPD;
+            $scope.currentNorecAPD = $state.params.norecAPD;
+            var dataKabupaten = '';
+            var dataKecamatan = '';
+            loadCombo()
+            loadPertama();
+            $scope.item = {};
+            $scope.model = {};
+            $scope.model.tglSEP = $scope.now;
+            var tanggals = dateHelper.getDateTimeFormatted3($scope.now);
+            $scope.model.tglRujukan = tanggals + " 00:00";
+            $scope.model.tglPelayanan = $scope.now;
+            $scope.model.tglLakalantas = $scope.now;
+            $scope.bpjs = true;
+            $scope.isNext = true;
+            $scope.isHapusSep = true;
+            $scope.isBatal = true;
+            $scope.isKembali = true;
+            var cacheNoreg = '';
+            var responData = "";
+            var kdSpesialis = '';
+            var jenisPel = ""
+            var ppkRumahSakit = ""
+            var namappkRumahSakit = ""
+            var namafield = "kodePPKRujukan"
+            var noRegistrasis = ""
+            var statusBridgingTemporary = 'false'
+            var ceknobpjsdouble = false;
+            $scope.listDPJP = []
+            $scope.listDPJP2 = []
+            $scope.listAsalRujuk = [
+                { id: 1, nama: 'Faskes 1', asalrujukan: 'Puskesmas', order: 1 },
+                { id: 2, nama: 'Rumah Sakit', asalrujukan: 'Rumah sakit', order: 2 },
+                { id: 7, nama: 'Pasca RI', asalrujukan: 'Pasca Rawat Inap', order: 3 }
+            ]
+            $scope.model.asalRujukan = $scope.listAsalRujuk[0].id
+
+            $scope.captionRujukan = 'No Rujukan'
+            medifirstService.get('sysadmin/settingdatafixed/get/' + namafield).then(function (dat) {
+                ppkRumahSakit = dat.data
+            })
+            medifirstService.get('sysadmin/settingdatafixed/get/namaPPKRujukan').then(function (dat) {
+                namappkRumahSakit = dat.data
+            })
+            medifirstService.get('sysadmin/settingdatafixed/get/statusBridgingTemporary').then(function (dat) {
+                statusBridgingTemporary = dat.data
+            })
+
+            $scope.isShowLaka = false
+            $scope.showLakaLantas = function () {
+                $scope.isShowLaka = !$scope.isShowLaka;
+            }
+
+            $scope.listPenjaminLaka = [
+                { "id": 12, "name": "Jasa Raharja PT", "value": 1 },
+                { "id": 13, "name": "BPJS Ketenagakerjaan", "value": 2 },
+                { "id": 14, "name": "TASPEN PT", "value": 3 },
+                { "id": 15, "name": "ASABRI PT", "value": 4 }
+            ];
+            $scope.listTujuan = [
+                { id: "0", name: "Normal" },
+                { id: "1", name: "Prosedur" },
+                { id: "2", name: "Konsul Dokter" },
+            ]
+            $scope.listFlag = [
+                { id: "0", name: "Prosedur Tidak Berkelanjutan" },
+                { id: "1", name: "Prosedur dan Terapi Berkelanjutan" },
+                { id: "2", name: "Konsul Dokter" },
+            ]
+            $scope.listPenunjang = [
+                { id: "1", name: "Radioterapi" },
+                { id: "2", name: "Kemoterapi" },
+                { id: "3", name: "Rehabilitasi Medik" },
+                { id: "4", name: "Rehabilitasi Psikososial" },
+                { id: "5", name: "Transfusi Darah" },
+                { id: "6", name: "Pelayanan Gigi" },
+                { id: "7", name: "Laboratorium" },
+                { id: "8", name: "USG" },
+                { id: "9", name: "Farmasi" },
+                { id: "10", name: "Lain-Lain" },
+                { id: "11", name: "MRI" },
+                { id: "12", name: "HEMODIALISA" },
+            ]
+            $scope.listAsesmen = [
+                { id: "1", name: "Poli spesialis tidak tersedia pada hari sebelumnya" },
+                { id: "2", name: "Jam Poli telah berakhir pada hari sebelumnya" },
+                { id: "3", name: "Dokter Spesialis yang dimaksud tidak praktek pada hari sebelumnya" },
+                { id: "4", name: "Atas Instruksi RS" },
+            ]
+
+            $scope.listBiaya = [
+                { "id": "1", "name": "Pribadi", "value": 1 },
+                { "id": "2", "name": "Pemberi Kerja", "value": 2 },
+                { "id": "3", "name": "Asuransi Kesehatan Tambahan", "value": 3 },
+            ]
+            $scope.ListAsuransi = [
+                { "id": "1", "name": "No. SEP Otomatis" }
+            ];
+            $scope.listLakaLantas = [
+                { "id": "0", "name": "Tidak Lakalantas" },
+                { "id": "1", "name": "Ya Lakalantas" }
+            ];
+            var cacheAsalRujuk = ''
+            $scope.model.tujuanKunj = $scope.listTujuan[0]
+            $scope.model.lakalantas = $scope.listLakaLantas[0]
+            $scope.isCheckSEP = true;
+            $scope.model.lakalantas = false;
+            function loadCombo() {
+                medifirstService.get("registrasi/get-combo-pemakaian-asuransi", true)
+                    .then(function (dat) {
+                        $scope.listAsalRujukan = dat.data.asalrujukan;
+                        $scope.listKelompokPasien = dat.data.kelompokpasien;
+                        $scope.sourceHubunganPasien = dat.data.hubunganpeserta;
+                        $scope.sourceKelompokPasien = dat.data.kelompokpasien;
+                        // $scope.sourceRekanan= dat.data.rekanan;
+                        $scope.sourceKelasDitanggung = dat.data.kelas;
+                        $scope.sourceAsalRujukan = dat.data.asalrujukan;
+                        // $scope.item.kelompokPasien={id:dat.data.kelompokpasien[1].id,kelompokpasien:dat.data.kelompokpasien[1].kelompokpasien}
+                        // $scope.model.institusiAsalPasien={id:dat.data.rekanan[689].id,namarekanan:dat.data.rekanan[689].namarekanan}
+                        $scope.model.hubunganPeserta = { id: dat.data.hubunganpeserta[2].id, hubunganpeserta: dat.data.hubunganpeserta[2].hubunganpeserta }
+                        cacheAsalRujuk = cacheHelper.get('cacheAsalRujukan')
+                        if (cacheAsalRujuk != '' && cacheAsalRujuk != undefined) {
+                            $scope.model.asalRujukan = cacheAsalRujuk.id
+
+                        } else {
+
+                            $scope.model.asalRujukan = $scope.listAsalRujuk[0].id// { id: dat.data.asalrujukan[0].id, asalrujukan: dat.data.asalrujukan[0].asalrujukan }
+                        }
+
+                        //$scope.model.kelasDitanggung = { id: dat.data.kelas[2].id, namakelas: dat.data.kelas[2].namakelas }
+                    });
+            }
+
+            function loadPertama() {
+
+                $scope.isRouteLoading = true;
+                medifirstService.get("registrasi/get-pasien-bynorec?norec_pd="
+                    + $scope.currentNorecPD
+                    + "&norec_apd="
+                    + $scope.currentNorecAPD)
+                    .then(function (e) {
+                        $scope.isRouteLoading = false;
+                        $scope.item.pasien = e.data[0];
+                        noRegistrasis = $scope.item.pasien.noregistrasi
+                        $scope.item.pasien.tglregistrasi = moment(new Date($scope.item.pasien.tglregistrasi)).format('YYYY-MM-DD HH:mm')
+                        $scope.item.pasien.tgllahir = moment(new Date($scope.item.pasien.tgllahir)).format('YYYY-MM-DD')
+
+                        $scope.model.noTelpons = e.data[0].notelepon;
+                        $scope.model.noKepesertaan = e.data[0].nobpjs;
+                        $scope.model.noIdentitas = e.data[0].noidentitas;
+                        $scope.listKelompokPasien = ([{ id: e.data[0].objectkelompokpasienlastfk, kelompokpasien: e.data[0].kelompokpasien }]);
+                        $scope.item.kelompokPasien = { id: e.data[0].objectkelompokpasienlastfk, kelompokpasien: e.data[0].kelompokpasien };
+                        $scope.sourceRekanan = ([{ id: e.data[0].objectrekananfk, namarekanan: e.data[0].namarekanan }])
+                        $scope.model.institusiAsalPasien = { id: e.data[0].objectrekananfk, namarekanan: e.data[0].namarekanan }
+                        $scope.item.jenispelayanan = e.data[0].jenispelayanan;
+                        if ($scope.item.jenispelayanan == "EKSEKUTIF") {
+                            $scope.model.poliEksekutif = true;
+                        }
+                        else
+                            $scope.model.poliEksekutif = false;
+                        if (e.data[0].israwatinap == "true") {
+                            $scope.model.rawatInap = true;
+                            $scope.captionRujukan = 'No SPRI'
+                            jenisPel = "1"
+                        } else {
+                            $scope.model.rawatInap = false;
+                            $scope.captionRujukan = 'No Rujukan'
+                            jenisPel = "2"
+                        }
+                        kdSpesialis = $scope.item.pasien.kdinternal
+
+                        // ** rujukan dari transdata eklikik
+                        var cacheTransdata = cacheHelper.get('cacheRujukanTransdataPA');
+                        if (cacheTransdata != undefined) {
+                            $scope.model.noRujukan = cacheTransdata.norujukan
+                            $scope.model.namaAsalRujukan = cacheTransdata.kodeppkasal + " - " + cacheTransdata.asalrujukan
+                            if (cacheTransdata.kddiagnosa) {
+                                medifirstService.get("registrasi/get-diagnosa-saeutik?kddiagnosa=" + cacheTransdata.kddiagnosa, true, true, 10)
+                                    .then(function (data) {
+                                        $scope.sourceDiagnosa.add(data.data[0])
+                                        $scope.model.diagnosa = data.data[0]
+                                    })
+
+                            }
+                            cacheHelper.set('cacheRujukanTransdataPA', undefined);
+                        }
+                        // ** rujukan dari transdata eklikik                   
+                        var cachePasienDaftar = cacheHelper.get('CachePemakaianAsuransi');
+
+                        $scope.cachePasienDaftar = cacheHelper.get('CachePemakaianAsuransi');
+                        if (cachePasienDaftar != undefined) {
+                            var arrPasienDaftar = cachePasienDaftar.split('~');
+                            if (arrPasienDaftar[0] == 'null' && arrPasienDaftar[1] == 'null')
+                                return
+                            $scope.cacheIdAP = arrPasienDaftar[0];
+                            $scope.cacheNorecPA = arrPasienDaftar[1];
+                            cacheNoreg = arrPasienDaftar[2];
+                            if ($scope.item.pasien.noregistrasi != cacheNoreg)
+                                $scope.cacheNorecPA = undefined;
+                            $scope.generateSKDP(true)
+                            getPemakaianAsuransiByNoReg($scope.cacheNorecPA)
+
+                        } else {
+                            $scope.generateSKDP(true)
+                            getPemakaianAsuransiByNoReg($scope.item.pasien.noregistrasi)
+
+                        }
+                    });
+            }
+
+            medifirstService.getPart("registrasi/get-diagnosa-saeutik", true, true, 10).then(function (data) {
+                $scope.sourceDiagnosa = data;
+
+            });
+
+            function getPemakaianAsuransiByNoReg(noreg) {
+                medifirstService.get("registrasi/get-history-pemakaianasuransi-new?noregistrasi="
+                    // +$scope.item.pasien.noregistrasi
+                    + noreg
+                )
+                    .then(function (x) {
+                        if (x.data.data.length > 0) {
+                            $scope.cacheIdAP = x.data.data[0].norec_ap;
+                            $scope.cacheNorecPA = x.data.data[0].norec;
+
+                            $scope.model.noKepesertaan = x.data.data[0].nokepesertaan
+                            $scope.model.namaPeserta = x.data.data[0].namapeserta
+                            $scope.model.noIdentitas = x.data.data[0].noidentitas
+                            // $scope.model.alamatPeserta ={id:x.data.data[0].objectkelompokpasienlastfk,kelompokpasien:x.data.data[0].kelompokpasien}
+                            $scope.model.jenisPeserta = x.data.data[0].jenisPeserta
+                            // $scope.model.noTelpons ={id:x.data.data[0].objectkelompokpasienlastfk,kelompokpasien:x.data.data[0].kelompokpasien}
+                            $scope.model.hubunganPeserta = { id: x.data.data[0].objecthubunganpesertafk, hubunganpeserta: x.data.data[0].hubunganpeserta }
+                            $scope.model.noSep = x.data.data[0].nosep
+                            $scope.model.tglSEP = x.data.data[0].tanggalsep
+                            // $scope.sourceKelasDitanggung = [{ id: x.data.data[0].objectkelasdijaminfk, namakelas: x.data.data[0].namakelas }]
+                            $scope.model.kelasDitanggung = { id: x.data.data[0].objectkelasdijaminfk, namakelas: x.data.data[0].namakelas }
+                            $scope.model.catatan = x.data.data[0].catatan
+                            $scope.model.noRujukan = x.data.data[0].norujukan
+                            if (cacheAsalRujuk == undefined || cacheAsalRujuk == '') {
+                                if (x.data.data[0].asalrujukanfk)
+                                    $scope.model.asalRujukan = x.data.data[0].asalrujukanfk// { id: x.data.data[0].asalrujukanfk, asalrujukan: x.data.data[0].asalrujukan }
+                            }
+
+                            // $scope.model.asalRujukan ={id:x.data.data[0].objectkelompokpasienlastfk,kelompokpasien:x.data.data[0].kelompokpasien}
+                            if ($scope.model.rawatInap == true) {
+                                if (x.data.data[0].norujukan != null && x.data.data[0].norujukan != '') {
+                                    $scope.model.noRujukan = x.data.data[0].norujukan
+                                } else {
+                                    $scope.model.noRujukan = $scope.model.skdp
+                                }
+                                $scope.model.namaAsalRujukan = ppkRumahSakit + " - " + namappkRumahSakit
+                            } else {
+                                $scope.model.namaAsalRujukan = x.data.data[0].kdprovider + " - " + x.data.data[0].nmprovider
+                            }
+                            $scope.model.tglRujukan = x.data.data[0].tglrujukan
+                            if (x.data.data[0].objectdiagnosafk)
+                                $scope.model.diagnosa = { id: x.data.data[0].objectdiagnosafk, kddiagnosa: x.data.data[0].kddiagnosa, nama: x.data.data[0].kddiagnosa + ' - ' + x.data.data[0].namadiagnosa }
+                            $scope.model.tglLahir = x.data.data[0].tgllahir
+                            $scope.item.kelompokPasien = { id: x.data.data[0].objectkelompokpasienlastfk, kelompokpasien: x.data.data[0].kelompokpasien }
+                            // $scope.model.institusiAsalPasien ={id:x.data.data[0].kdpenjaminpasien,namarekanan:x.data.data[0].namarekanan}
+                            $scope.model.institusiAsalPasien = { id: x.data.data[0].objectrekananfk, namarekanan: x.data.data[0].namarekananpd }
+                            $scope.model.lokasiLakaLantas = x.data.data[0].lokasilakalantas
+                            $scope.model.jenisPeserta = x.data.data[0].jenispeserta
+                            if (x.data.data[0].kodedpjp) {
+                                let resDpjp = { kode: x.data.data[0].kodedpjp, nama: x.data.data[0].namadpjp }
+                                $scope.listDPJP.push(resDpjp);
+                                $scope.model.dokterDPJP = { kode: x.data.data[0].kodedpjp, nama: x.data.data[0].namadpjp }
+                            }
+                            if (x.data.data[0].kodedpjpmelayani) {
+                                let resDpjp = { kode: x.data.data[0].kodedpjpmelayani, nama: x.data.data[0].namadjpjpmelayanni }
+                                $scope.listDPJP2.push(resDpjp);
+                                $scope.model.DPJPMelayani = { kode: x.data.data[0].kodedpjpmelayani, nama: x.data.data[0].namadjpjpmelayanni }
+                            }
+
+                            if (x.data.data[0].lakalantas == 1) {
+                                $scope.model.lakalantas = true
+                                $scope.model.tglLakalantas = x.data.data[0].tglkejadian
+                                if (x.data.data[0].kdpropinsi != null) {
+                                    $scope.listPropinsi.add({ kode: x.data.data[0].kdpropinsi, nama: x.data.data[0].namapropinsi });
+                                    $scope.model.propinsi = { kode: x.data.data[0].kdpropinsi, nama: x.data.data[0].namapropinsi }
+                                }
+                                dataKabupaten = { kode: x.data.data[0].kdkabupaten, nama: x.data.data[0].namakabupaten }
+                                dataKecamatan = { kode: x.data.data[0].kdkecamatan, nama: x.data.data[0].namakecamatan }
+                                $scope.model.keteranganLaka = x.data.data[0].keteranganlaka
+                                if (x.data.data[0].suplesi == true) {
+                                    $scope.model.suplesi = true
+                                    $scope.model.nomorSepSuplesi = x.data.data[0].nosepsuplesi
+                                }
+                            }
+
+                            let resultD = x.data.data[0]
+                            if (resultD.klsrawatnaik) {
+                                $scope.model.naikKelas = true
+                                for (let z = 0; z < $scope.sourceKelasDitanggung.length; z++) {
+                                    const element = $scope.sourceKelasDitanggung[z];
+                                    if (element.id == resultD.klsrawatnaik) {
+                                        $scope.model.klsRawatNaik = element
+                                        break
+                                    }
+                                }
+                            }
+                            if (resultD.pembiayaan) {
+                                for (let z = 0; z < $scope.listBiaya.length; z++) {
+                                    const element = $scope.listBiaya[z];
+                                    if (element.id == resultD.pembiayaan) {
+                                        $scope.model.pembiayaan = element
+                                        break
+                                    }
+                                }
+                            }
+                            if (resultD.penanggungjawab) {
+                                $scope.model.penanggungJawab = resultD.penanggungjawab
+                            }
+                            if (resultD.tujuankunj) {
+                                for (let z = 0; z < $scope.listTujuan.length; z++) {
+                                    const element = $scope.listTujuan[z];
+                                    if (element.id == resultD.tujuankunj) {
+                                        $scope.model.tujuanKunj = element
+                                        break
+                                    }
+                                }
+                            }
+                            if (resultD.flagprocedure) {
+                                for (let z = 0; z < $scope.listFlag.length; z++) {
+                                    const element = $scope.listFlag[z];
+                                    if (element.id == resultD.flagprocedure) {
+                                        $scope.model.flagProcedure = element
+                                        break
+                                    }
+                                }
+                            }
+                            if (resultD.kdpenunjang) {
+                                for (let z = 0; z < $scope.listPenunjang.length; z++) {
+                                    const element = $scope.listPenunjang[z];
+                                    if (element.id == resultD.kdpenunjang) {
+                                        $scope.model.kdPenunjang = element
+                                        break
+                                    }
+                                }
+                            }
+                            if (resultD.assesmentpel) {
+                                for (let z = 0; z < $scope.listAsesmen.length; z++) {
+                                    const element = $scope.listAsesmen[z];
+                                    if (element.id == resultD.assesmentpel) {
+                                        $scope.model.assesmentPel = element
+                                        break
+                                    }
+                                }
+                            }
+                            if (x.data.data[0].penjaminlaka != '' && x.data.data[0].penjaminlaka != null) {
+                                var penjaminsLaka = x.data.data[0].penjaminlaka.split(',')
+                                penjaminsLaka.forEach(function (data) {
+                                    $scope.listPenjaminLaka.forEach(function (e) {
+                                        if (e.value == data) {
+                                            e.isChecked = true
+                                            var dataid = {
+                                                "id": e.id,
+                                                "name": e.name,
+                                                "value": data
+                                            }
+                                            $scope.currentListPenjaminLaka.push(dataid)
+                                        }
+                                    })
+                                })
+                            }
+                            $scope.model.skdp = x.data.data[0].nosuratskdp
+                            // $scope.model.dokterDPJP = x.data.data[0].cob
+                            $scope.model.cob = x.data.data[0].cob
+                            $scope.model.katarak = x.data.data[0].katarak
+                        }
+                    });
+            }
+
+            $scope.$watch('item.kelompokPasien', function (e) {
+                if (e === undefined) return;
+                medifirstService.get("registrasi/get-penjaminbykelompokpasien?kdKelompokPasien=" + e.id)
+                    .then(function (z) {
+                        $scope.sourceRekanan = z.data.rekanan;
+                        if (e.kelompokpasien.indexOf('BPJS') >= -1) {
+                            $scope.model.institusiAsalPasien = { id: $scope.sourceRekanan[0].id, namarekanan: $scope.sourceRekanan[0].namarekanan };
+                            $scope.isCheckSEP = true;
+                            $scope.noBPJS = true;
+                            $scope.asuransilain = false;
+                            $scope.bpjs = true;
+                        } else if (e.kelompokpasien == 'Umum/Pribadi') {
+                            $scope.model.institusiAsalPasien = { id: $scope.sourceRekanan[0].id, namarekanan: $scope.sourceRekanan[0].namarekanan };
+                            $scope.asuransilain = true;
+                            $scope.bpjs = false;
+                            $scope.isCheckSEP = false;
+                            kosongkan()
+                        }
+                        else {
+                            // $scope.model.institusiAsalPasien='';
+                            $scope.model.sendiri = true;
+                            $scope.Sendiri($scope.model.sendiri);
+                            $scope.asuransilain = true;
+                            $scope.bpjs = false;
+                            $scope.isCheckSEP = false;
+                            // kosongkan()
+                        }
+
+                    })
+            });
+            function kosongkan() {
+                $scope.model.noKepesertaan = '';
+                $scope.model.namaPeserta = '';
+                $scope.model.noIdentitas = '';
+                $scope.model.alamatPeserta = '';
+                $scope.model.jenisPeserta = '';
+                $scope.model.noTelpons = '';
+                $scope.model.noSep = '';
+                // $scope.model.tglsep='';
+                // $scope.model.kelasDitanggung='';
+                $scope.model.catatan = '';
+                $scope.model.noRujukan = '';
+                $scope.model.namaAsalRujukan = '';
+                // $scope.model.tglRujukan='';
+                // $scope.model.diagnosa='';
+                $scope.model.lokasiLakaLantas = '';
+            }
+
+            $scope.Sendiri = function (data) {
+                if (data === true) {
+                    $scope.model.namaPeserta = $scope.item.pasien.namapasien;
+                    $scope.model.tglLahir = new Date($scope.item.pasien.tgllahir)
+                    $scope.model.noIdentitas = $scope.item.pasien.noidentitas;
+                    $scope.model.alamatPeserta = $scope.item.pasien.alamatlengkap;
+                    $scope.model.noKepesertaan = $scope.item.pasien.nobpjs;
+                    $scope.model.noTelpons = $scope.item.pasien.notelepon;
+                    $scope.model.noIdentitas = $scope.item.pasien.noidentitas;
+
+                    $scope.kelasBpjs = false;
+                    $scope.kelasPenjamin = true;
+                } else {
+                    $scope.model.noKepesertaan = "";
+                    $scope.model.namaPeserta = "";
+                    $scope.model.tglLahir = "";
+                    $scope.model.noIdentitas = "";
+                    $scope.model.alamatPeserta = "";
+                    $scope.model.noTelpons = "";
+                    $scope.model.noKepesertaan = "";
+                    $scope.model.noIdentitas = "";
+
+
+                    $scope.kelasBpjs = true;
+                    $scope.kelasPenjamin = false;
+                }
+                $scope.disableSEP = data;
+            };
+            $scope.tutup = function () {
+                $scope.popupRujukan.close()
+            }
+            $scope.klikNoRujukanMulti = function (data) {
+                if (data != undefined) {
+                    $scope.model.noRujukan = data.noKunjungan
+                    $scope.model.tglRujukan = data.tglKunjungan
+                    $scope.kodeProvider = data.provPerujuk.kode
+                    $scope.namaProvider = data.provPerujuk.nama
+                    $scope.model.faskesRujukan = false;
+                    $scope.model.namaAsalRujukan = $scope.kodeProvider + " - " + $scope.namaProvider;
+                }
+            }
+            $scope.setRujukan = function (data) {
+                if (data != undefined) {
+                    // $scope.model.noRujukan = data.noKunjungan
+                    // $scope.model.tglRujukan = data.tglKunjungan
+                    // $scope.kodeProvider = data.provPerujuk.kode
+                    // $scope.namaProvider = data.provPerujuk.nama
+                    // $scope.model.faskesRujukan = false;
+                    // $scope.model.namaAsalRujukan = $scope.kodeProvider + " - " + $scope.namaProvider;
+
+                    $scope.model.noRujukan = data.noKunjungan;
+                    $scope.model.tglRujukan = new Date(data.tglKunjungan);
+                    var tglLahir = new Date(data.peserta.tglLahir);
+                    $scope.model.namaPeserta = data.peserta.nama;
+                    $scope.model.tglLahir = tglLahir;
+                    $scope.model.noIdentitas = data.peserta.nik;
+                    $scope.model.kelasBridg = {
+                        id: parseInt(data.peserta.hakKelas.kode),
+                        kdKelas: data.peserta.hakKelas.kode,
+                        nmKelas: data.peserta.hakKelas.keterangan,
+                        namakelas: data.peserta.hakKelas.keterangan,
+                    };
+                    if ($scope.model.kelasBridg.id == 1) {
+                        $scope.model.kelasDitanggung = { id: "3", namakelas: 'Kelas I' }
+                    } else if ($scope.model.kelasBridg.id == 2) {
+                        $scope.model.kelasDitanggung = { id: "2", namakelas: 'Kelas II' }
+                    } else if ($scope.model.kelasBridg.id == 3) {
+                        $scope.model.kelasDitanggung = { id: "1", namakelas: 'Kelas III' }
+                    }
+                    $scope.poliRujukanKode = data.poliRujukan.kode
+                    $scope.poliRujukanNama = data.poliRujukan.nama
+                    $scope.kodeProvider = data.provPerujuk.kode;
+                    $scope.namaProvider = data.provPerujuk.nama;
+                    $scope.model.faskesRujukan = false;
+                    $scope.model.namaAsalRujukan = $scope.kodeProvider + " - " + $scope.namaProvider;
+                    $scope.model.jenisPeserta = data.peserta.jenisPeserta.keterangan;
+                    $scope.model.prolanis = data.peserta.informasi.prolanisPRB;
+                    $scope.model.noTelpons = data.peserta.mr.noTelepon;
+                    $scope.model.tglRujukan = new Date(data.tglKunjungan);
+
+                    toastr.info(data.peserta.statusPeserta.keterangan, 'Status Peserta');
+
+                    medifirstService.get("registrasi/get-diagnosa-saeutik?kddiagnosa=" + data.diagnosa.kode, true, true, 10)
+                        .then(function (xx) {
+                            $scope.sourceDiagnosa.add(xx.data[0])
+                            $scope.model.diagnosa = xx.data[0]
+                        })
+                    getDPJP($scope.poliRujukanKode, 1, 'all')
+
+                    // $scope.getHistoriPelayananPesesta($scope.model.noKepesertaan)
+
+                    $scope.popupRujukan.close()
+                }
+            }
+
+            function getDPJP(kdSpesialis, jenisPel, tipe) {
+                let now = new moment($scope.now).format('YYYY-MM-DD')
+                let json = {
+                    "url": "referensi/dokter/pelayanan/" + jenisPel + "/tglPelayanan/" + now + "/Spesialis/" + kdSpesialis,
+                    "method": "GET",
+                    "data": null
+                }
+                medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
+                    if (e.data.metaData.code == 200) {
+                        if (tipe == 'all') {
+                            $scope.listDPJP2 = e.data.response.list;
+                            $scope.listDPJP = e.data.response.list;
+                        }
+                        if (tipe == '1') {
+                            $scope.listDPJP = e.data.response.list;
+                        }
+                        if (tipe == '2') {
+                            $scope.listDPJP2 = e.data.response.list;
+                        }
+
+                    }
+                    else toastr.info('Dokter DPJP tidak ada', 'Info')
+                })
+            }
+            $scope.Sendiria = function (data) {
+                getDPJP(kdSpesialis, 1, '1')
+            }
+            $scope.Sendiriaa = function (data) {
+                getDPJP(kdSpesialis, 1, '2')
+            }
+            $scope.columnNoRujukanMulti = {
+
+                selectable: 'cell',
+                pageable: true,
+                columns: [
+
+                    {
+                        "field": "no",
+                        "title": "No",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "noKunjungan",
+                        "title": "Nomor Rujukan",
+                        "width": "150px",
+                        "template": "<button class=\"k-button custom-button\" ng-click=\"setRujukan(dataItem)\"  style=\"margin:0 0 5px\">#:  noKunjungan #</button> ",
+
+                    },
+                    {
+                        "field": "poliRujukan.nama",
+                        "title": "Nama Poli",
+                        "width": "120px",
+                    },
+                    {
+                        "field": "tglKunjungan",
+                        "title": "Tanggal Dirujuk",
+                        "width": "100px"
+                    },
+                    {
+                        "field": "provPerujuk.kode",
+                        "title": "Kode Asal Rujukan",
+                        "width": "100px"
+                    },
+                    {
+                        "field": "provPerujuk.nama",
+                        "title": "Kode Asal Rujukan",
+                        "width": "200px"
+                    },
+
+                ]
+            };
+            function checkKepesertan() {
+                if ($scope.model.cekNomorPeserta == true) {
+
+                    if ($scope.model.noKepesertaan === '' || $scope.model.noKepesertaan === undefined) return;
+                    if ($scope.model.rawatInap === true || $scope.item.pasien.kdinternal == "IGD") {
+                        $scope.isLoadingNoKartu = true;
+                        medifirstService.get("bridging/bpjs/get-no-peserta?nokartu=" + $scope.model.noKepesertaan + "&tglsep=" + new moment(new Date).format('YYYY-MM-DD')).then(function (e) {
+                            if (e.data.metaData.code === "200") {
+                                var tglLahir = new Date(e.data.response.peserta.tglLahir);
+                                $scope.model.noKepesertaan = $scope.noKartu = e.data.response.peserta.noKartu;
+                                $scope.model.namaPeserta = e.data.response.peserta.nama;
+                                $scope.model.tglLahir = tglLahir;
+                                $scope.model.noIdentitas = e.data.response.peserta.nik;
+                                $scope.model.kelasBridg = {
+                                    id: parseInt(e.data.response.peserta.hakKelas.kode),
+                                    kdKelas: e.data.response.peserta.hakKelas.kode,
+                                    nmKelas: e.data.response.peserta.hakKelas.keterangan,
+                                    namakelas: e.data.response.peserta.hakKelas.keterangan,
+                                };
+                                if ($scope.model.kelasBridg.id == 1) {
+                                    $scope.model.kelasDitanggung = { id: "3", namakelas: 'Kelas I' }
+                                } else if ($scope.model.kelasBridg.id == 2) {
+                                    $scope.model.kelasDitanggung = { id: "2", namakelas: 'Kelas II' }
+                                } else if ($scope.model.kelasBridg.id == 3) {
+                                    $scope.model.kelasDitanggung = { id: "1", namakelas: 'Kelas III' }
+                                }
+                                $scope.kodeProvider = e.data.response.peserta.provUmum.kdProvider;
+                                $scope.namaProvider = e.data.response.peserta.provUmum.nmProvider;
+                                $scope.model.faskesRujukan = false;
+                                $scope.model.namaAsalRujukan = $scope.kodeProvider + " - " + $scope.namaProvider;
+                                $scope.model.jenisPeserta = e.data.response.peserta.jenisPeserta.keterangan;
+                                $scope.model.prolanis = e.data.response.peserta.informasi.prolanisPRB;
+                                toastr.info(e.data.response.peserta.statusPeserta.keterangan, 'Status Peserta');
+                                var jenisFaskes = "rs"
+                                if ($scope.model.asalRujukan != undefined) {
+                                    if ($scope.model.asalRujukan == 1)
+                                        jenisFaskes = "pcare"
+                                    if ($scope.model.asalRujukan == 2)
+                                        jenisFaskes = "rs"
+                                }
+
+                                getDPJP(kdSpesialis, 1, 'all')
+
+                                // $scope.getHistoriPelayananPesesta($scope.model.noKepesertaan)
+                            } else {
+                                window.messageContainer.error(e.data.metaData.message);
+                            }
+                            $scope.isLoadingNoKartu = false;
+                        }, function (err) {
+                            $scope.isLoadingNoKartu = false;
+                        });
+                    } else {
+                        var jenisFaskes = "rs"
+                        if ($scope.model.asalRujukan != undefined) {
+                            if ($scope.model.asalRujukan == 1)
+                                jenisFaskes = "pcare"
+                            if ($scope.model.asalRujukan == 2)
+                                jenisFaskes = "rs"
+                        }
+                        $scope.isLoadingNoKartu = true
+                        medifirstService.get("bridging/bpjs/get-no-peserta?nokartu=" + $scope.model.noKepesertaan + "&tglsep=" + new moment(new Date).format('YYYY-MM-DD')).then(function (e) {
+                            if (e.data.metaData.code === "200") {
+                                var tglLahir = new Date(e.data.response.peserta.tglLahir);
+                                $scope.model.noKepesertaan = $scope.noKartu = e.data.response.peserta.noKartu;
+                                $scope.model.namaPeserta = e.data.response.peserta.nama;
+                                $scope.model.tglLahir = tglLahir;
+                                $scope.model.noIdentitas = e.data.response.peserta.nik;
+                                $scope.model.kelasBridg = {
+                                    id: parseInt(e.data.response.peserta.hakKelas.kode),
+                                    kdKelas: e.data.response.peserta.hakKelas.kode,
+                                    nmKelas: e.data.response.peserta.hakKelas.keterangan,
+                                    namakelas: e.data.response.peserta.hakKelas.keterangan,
+                                };
+                                if ($scope.model.kelasBridg.id == 1) {
+                                    $scope.model.kelasDitanggung = { id: "3", namakelas: 'Kelas I' }
+                                } else if ($scope.model.kelasBridg.id == 2) {
+                                    $scope.model.kelasDitanggung = { id: "2", namakelas: 'Kelas II' }
+                                } else if ($scope.model.kelasBridg.id == 3) {
+                                    $scope.model.kelasDitanggung = { id: "1", namakelas: 'Kelas III' }
+                                }
+                                $scope.kodeProvider = e.data.response.peserta.provUmum.kdProvider;
+                                $scope.namaProvider = e.data.response.peserta.provUmum.nmProvider;
+                                $scope.model.faskesRujukan = false;
+                                $scope.model.namaAsalRujukan = $scope.kodeProvider + " - " + $scope.namaProvider;
+                                $scope.model.jenisPeserta = e.data.response.peserta.jenisPeserta.keterangan;
+                                $scope.model.prolanis = e.data.response.peserta.informasi.prolanisPRB;
+                                toastr.info(e.data.response.peserta.statusPeserta.keterangan, 'Status Peserta');
+                                var jenisFaskes = "rs"
+                                if ($scope.model.asalRujukan != undefined) {
+                                    if ($scope.model.asalRujukan == 1)
+                                        jenisFaskes = "pcare"
+                                    if ($scope.model.asalRujukan == 2)
+                                        jenisFaskes = "rs"
+                                }
+                                getDPJP(kdSpesialis, 1, 'all')
+
+                            } else {
+                                window.messageContainer.error(e.data.metaData.message);
+                            }
+                            $scope.isLoadingNoKartu = false;
+                        }, function (err) {
+                            $scope.isLoadingNoKartu = false;
+                        });
+                        medifirstService.get("bridging/bpjs/get-rujukan-" + jenisFaskes + "-nokartu?nokartu=" + $scope.model.noKepesertaan).then(function (e) {
+                            if (e.data.metaData.code === "200") {
+                                // polirujukanbpjs = e.data.response.rujukan.poliRujukan.kode;
+                                $scope.model.noRujukan = e.data.response.rujukan.noKunjungan;
+                                $scope.model.tglRujukan = new Date(e.data.response.rujukan.tglKunjungan);
+                                var tglLahir = new Date(e.data.response.rujukan.peserta.tglLahir);
+                                $scope.model.namaPeserta = e.data.response.rujukan.peserta.nama;
+                                $scope.model.tglLahir = tglLahir;
+                                $scope.model.noIdentitas = e.data.response.rujukan.peserta.nik;
+                                $scope.model.kelasBridg = {
+                                    id: parseInt(e.data.response.rujukan.peserta.hakKelas.kode),
+                                    kdKelas: e.data.response.rujukan.peserta.hakKelas.kode,
+                                    nmKelas: e.data.response.rujukan.peserta.hakKelas.keterangan,
+                                    namakelas: e.data.response.rujukan.peserta.hakKelas.keterangan,
+                                };
+                                if ($scope.model.kelasBridg.id == 1) {
+                                    $scope.model.kelasDitanggung = { id: "3", namakelas: 'Kelas I' }
+                                } else if ($scope.model.kelasBridg.id == 2) {
+                                    $scope.model.kelasDitanggung = { id: "2", namakelas: 'Kelas II' }
+                                } else if ($scope.model.kelasBridg.id == 3) {
+                                    $scope.model.kelasDitanggung = { id: "1", namakelas: 'Kelas III' }
+                                }
+                                $scope.poliRujukanKode = e.data.response.rujukan.poliRujukan.kode
+                                $scope.poliRujukanNama = e.data.response.rujukan.poliRujukan.nama
+                                $scope.kodeProvider = e.data.response.rujukan.provPerujuk.kode;
+                                $scope.namaProvider = e.data.response.rujukan.provPerujuk.nama;
+                                $scope.model.faskesRujukan = false;
+                                $scope.model.namaAsalRujukan = $scope.kodeProvider + " - " + $scope.namaProvider;
+                                $scope.model.jenisPeserta = e.data.response.rujukan.peserta.jenisPeserta.keterangan;
+                                $scope.model.prolanis = e.data.response.rujukan.peserta.informasi.prolanisPRB;
+                                $scope.model.noTelpons = e.data.response.rujukan.peserta.mr.noTelepon;
+                                $scope.model.tglRujukan = new Date(e.data.response.rujukan.tglKunjungan);
+
+                                medifirstService.get("registrasi/get-diagnosa-saeutik?kddiagnosa=" + e.data.response.rujukan.diagnosa.kode, true, true, 10)
+                                    .then(function (data) {
+                                        $scope.sourceDiagnosa.add(data.data[0])
+                                        $scope.model.diagnosa = data.data[0]
+                                    })
+
+                                // get Dokter DPJP By Histori
+                                $scope.getHistoriPelayananPesesta($scope.model.noKepesertaan)
+
+                                // medifirstService.get("bridging/bpjs/get-ref-dokter-dpjp?jenisPelayanan=" + 1
+                                //     + "&tglPelayanan=" + new moment($scope.now).format('YYYY-MM-DD') + "&kodeSpesialis=" 
+                                //     + kdSpesialis ).then(function (z) {
+                                //         if (z.data.metaData.code == 200)
+                                //             $scope.listDPJP = z.data.response.list;
+                                //         else
+                                //             toastr.info('Dokter DPJP tidak ada', 'Info')
+                                // });
+
+                                toastr.info(e.data.response.rujukan.noKunjungan, 'No Rujukan');
+                            } else {
+                                toastr.error(e.data.metaData.message, 'Info');
+                            }
+                            $scope.isLoadingNoKartu = false;
+                        }, function (err) {
+                            $scope.isLoadingNoKartu = false;
+                        });
+
+                    }
+                } else if ($scope.model.cekNomorRujukanMulti == true) {
+                    if ($scope.model.noKepesertaan === '' || $scope.model.noKepesertaan === undefined) return;
+                    $scope.isLoadingNoKartu = true;
+                    var jenisFaskes = "rs"
+                    if ($scope.model.asalRujukan != undefined) {
+                        if ($scope.model.asalRujukan == 1)
+                            jenisFaskes = "pcare"
+                        if ($scope.model.asalRujukan == 2)
+                            jenisFaskes = "rs"
+                    }
+                    if ($scope.model.asalRujukan == 7) {
+                        medifirstService.get("bridging/bpjs/monitoring/HistoriPelayanan/NoKartu/" + $scope.model.noKepesertaan).then(function (e) {
+                            if (e.data.metaData.code === "200") {
+                                // for (var i = 0; i < e.data.response.histori.length; i++) {
+                                //     e.data.response.histori[i].no = i+1;
+                                // };
+                                // $scope.sourceHistoryPelayanan =  e.data.response.histori;
+                                // $scope.popupHistoryPelayanan.center().open();
+                                // $scope.showPilihNomor=true;
+
+                                $scope.listHistori = e.data.response.histori;
+
+                                for (let i = 0; i < e.data.response.histori.length; i++) {
+                                    const element = e.data.response.histori[i];
+                                    element.no = i + 1
+                                }
+                                $scope.popUpHistoriPelayananPeserta.center().open()
+                                $scope.dataSourceHistoriPeserta = new kendo.data.DataSource({
+                                    data: e.data.response.histori,
+                                    pageSize: 10,
+                                    total: e.data.response.histori.length,
+                                    serverPaging: false,
+                                    schema: {
+                                        model: {
+                                            fields: {
+                                            }
+                                        }
+                                    }
+                                });
+
+
+                            } else {
+                                toastr.error(e.data.metaData.message, 'Info');
+                                // window.messageContainer.error(e.data.metaData.message);
+                            }
+                            $scope.isLoadingNoKartu = false;
+                        }, function (err) {
+                            $scope.isLoadingNoKartu = false;
+                        });
+                    }
+                    else {
+                        medifirstService.get("bridging/bpjs/get-rujukan-" + jenisFaskes + "-nokartu-multi?nokartu=" + $scope.model.noKepesertaan).then(function (e) {
+                            if (e.data.metaData.code === "200") {
+                                for (var i = 0; i < e.data.response.rujukan.length; i++) {
+                                    e.data.response.rujukan[i].no = i + 1;
+                                };
+                                $scope.sourceNoRujukanMulti = new kendo.data.DataSource({
+                                    data: e.data.response.rujukan,
+                                    pageSize: 10,
+                                    total: e.data.response.rujukan.length,
+                                    serverPaging: false,
+                                    schema: {
+                                        model: {
+                                            fields: {
+                                            }
+                                        }
+                                    }
+                                });
+                                // $scope.sourceNoRujukanMulti =  e.data.response.rujukan;
+                                $scope.popupRujukan.center().open();
+                                $scope.showPilihNomor = true;
+
+                            } else {
+                                toastr.error(e.data.metaData.message, 'Info');
+                                // window.messageContainer.error(e.data.metaData.message);
+                            }
+                            $scope.isLoadingNoKartu = false;
+                        }, function (err) {
+                            $scope.isLoadingNoKartu = false;
+                        });
+                    }
+                }
+            }
+
+            $scope.checkKepesertaanByNoBpjs = function () {
+                // if (!$scope.model.cekNomorPeserta) return;
+
+                if ($scope.model.sendiri === true) return;
+                if ($scope.model.noKepesertaan === '' || $scope.model.noKepesertaan === undefined) return;
+                if ($scope.model.cekNomorPeserta == true || $scope.model.cekNomorRujukanMulti == true) {
+
+                    ceknobpjsdouble = false
+                    medifirstService.get("registrasi/cek-nobpjs?nobpjs=" + $scope.model.noKepesertaan + "&idnocm=" + $scope.item.pasien.nocmfk)
+                        .then(function (data) {
+                            $scope.ceks = data.data;
+                            if ($scope.ceks.data.length >= 1) {
+
+                                var nocm = $scope.ceks.data[0].nocm;
+                                var nama = $scope.ceks.data[0].namapasien;
+                                toastr.error("NO BPJS ini sudah di pakai oleh pasien RM : " + nocm + " (" + nama + ") !", "Peringatan")
+                                ceknobpjsdouble = true
+                                return;
+                            } else {
+                                checkKepesertan()
+                            }
+                        })
+                }
+
+
+
+
+                // medifirstService.get("bridging/bpjs/get-no-peserta?nokartu=" + $scope.model.noKepesertaan + "&tglsep=" + new moment(new Date).format('YYYY-MM-DD')).then(function (e) {
+                //     if (e.data.metaData.code === "200") {
+                //         var tglLahir = new Date(e.data.response.peserta.tglLahir);
+                //         $scope.model.noKepesertaan = $scope.noKartu = e.data.response.peserta.noKartu;
+                //         $scope.model.namaPeserta = e.data.response.peserta.nama;
+                //         $scope.model.tglLahir = tglLahir;
+                //         $scope.model.noIdentitas = e.data.response.peserta.nik;
+                //         $scope.model.kelasBridg = {
+                //             id: parseInt(e.data.response.peserta.hakKelas.kode),
+                //             kdKelas: e.data.response.peserta.hakKelas.kode,
+                //             nmKelas: e.data.response.peserta.hakKelas.keterangan,
+                //             namakelas: e.data.response.peserta.hakKelas.keterangan,
+                //         };
+                //         if ($scope.model.kelasBridg.id == 1) {
+                //             $scope.model.kelasDitanggung = { id: "3", namakelas: 'Kelas I' }
+                //         } else if ($scope.model.kelasBridg.id == 2) {
+                //             $scope.model.kelasDitanggung = { id: "2", namakelas: 'Kelas II' }
+                //         } else if ($scope.model.kelasBridg.id == 3) {
+                //             $scope.model.kelasDitanggung = { id: "1", namakelas: 'Kelas III' }
+                //         }
+                //         $scope.kodeProvider = e.data.response.peserta.provUmum.kdProvider;
+                //         $scope.namaProvider = e.data.response.peserta.provUmum.nmProvider;
+                //         $scope.model.faskesRujukan = false;
+                //         $scope.model.namaAsalRujukan = $scope.kodeProvider + " - " + $scope.namaProvider;
+                //         $scope.model.jenisPeserta = e.data.response.peserta.jenisPeserta.keterangan;
+                //         $scope.model.prolanis = e.data.response.peserta.informasi.prolanisPRB;
+                //         toastr.info(e.data.response.peserta.statusPeserta.keterangan, 'Status Peserta');
+                //         var jenisFaskes = "rs"
+                //         if ($scope.model.asalRujukan != undefined) {
+                //             if ($scope.model.asalRujukan.id == 1)
+                //                 jenisFaskes = "pcare"
+                //             if ($scope.model.asalRujukan.id == 2)
+                //                 jenisFaskes = "rs"
+
+                //         }
+                //         if ($scope.model.asalRujukan.id == 7) {
+                //             medifirstService.get("bridging/bpjs/monitoring/HistoriPelayanan/NoKartu/" + e.data.response.peserta.noKartu).then(function (data) {
+                //                 if (data.data.metaData.code == 200) {
+                //                     $scope.listHistori = data.data.response.histori;
+
+                //                     for (let i = 0; i < data.data.response.histori.length; i++) {
+                //                         const element = data.data.response.histori[i];
+                //                         element.no = i + 1
+                //                     }
+                //                     $scope.popUpHistoriPelayananPeserta.center().open()
+                //                     $scope.dataSourceHistoriPeserta = new kendo.data.DataSource({
+                //                         data: data.data.response.histori,
+                //                         pageSize: 10,
+                //                         total: data.data.response.histori.length,
+                //                         serverPaging: false,
+                //                         schema: {
+                //                             model: {
+                //                                 fields: {
+                //                                 }
+                //                             }
+                //                         }
+                //                     });
+                //                 }
+                //             })
+
+                //         }
+
+                //         medifirstService.get("bridging/bpjs/get-rujukan-" + jenisFaskes + "-nokartu?nokartu=" + $scope.model.noKepesertaan).then(function (e) {
+                //             if (e.data.metaData.code === "200") {
+                //                 $scope.model.noRujukan = e.data.response.rujukan.noKunjungan;
+                //                 $scope.model.tglRujukan = new Date(e.data.response.rujukan.tglKunjungan);
+                //                 var tglLahir = new Date(e.data.response.rujukan.peserta.tglLahir);
+                //                 $scope.model.namaPeserta = e.data.response.rujukan.peserta.nama;
+                //                 $scope.model.tglLahir = tglLahir;
+                //                 $scope.model.noIdentitas = e.data.response.rujukan.peserta.nik;
+                //                 $scope.model.kelasBridg = {
+                //                     id: parseInt(e.data.response.rujukan.peserta.hakKelas.kode),
+                //                     kdKelas: e.data.response.rujukan.peserta.hakKelas.kode,
+                //                     nmKelas: e.data.response.rujukan.peserta.hakKelas.keterangan,
+                //                     namakelas: e.data.response.rujukan.peserta.hakKelas.keterangan,
+                //                 };
+                //                 if ($scope.model.kelasBridg.id == 1) {
+                //                     $scope.model.kelasDitanggung = { id: "3", namakelas: 'Kelas I' }
+                //                 } else if ($scope.model.kelasBridg.id == 2) {
+                //                     $scope.model.kelasDitanggung = { id: "2", namakelas: 'Kelas II' }
+                //                 } else if ($scope.model.kelasBridg.id == 3) {
+                //                     $scope.model.kelasDitanggung = { id: "1", namakelas: 'Kelas III' }
+                //                 }
+                //                 // debugger
+                //                 $scope.poliRujukanKode = e.data.response.rujukan.poliRujukan.kode
+                //                 $scope.poliRujukanNama = e.data.response.rujukan.poliRujukan.nama
+                //                 $scope.kodeProvider = e.data.response.rujukan.provPerujuk.kode;
+                //                 $scope.namaProvider = e.data.response.rujukan.provPerujuk.nama;
+                //                 $scope.model.faskesRujukan = false;
+                //                 $scope.model.namaAsalRujukan = $scope.kodeProvider + " - " + $scope.namaProvider;
+                //                 $scope.model.jenisPeserta = e.data.response.rujukan.peserta.jenisPeserta.keterangan;
+                //                 $scope.model.prolanis = e.data.response.rujukan.peserta.informasi.prolanisPRB;
+                //                 $scope.model.noTelpons = e.data.response.rujukan.peserta.mr.noTelepon;
+                //                 $scope.model.tglRujukan = new Date(e.data.response.rujukan.tglKunjungan);
+
+                //                 medifirstService.get("registrasi/get-diagnosa-saeutik?kddiagnosa=" + e.data.response.rujukan.diagnosa.kode, true, true, 10)
+                //                     .then(function (data) {
+                //                         $scope.sourceDiagnosa.add(data.data[0])
+                //                         $scope.model.diagnosa = data.data[0]
+                //                     })
+
+                //                 // get Dokter DPJP By Histori
+                //                 $scope.getHistoriPelayananPesesta($scope.model.noKepesertaan)
+                //                 // end Histori
+
+                //                 // var kodespe = e.data.response.rujukan.poliRujukan.kode
+                //                 // medifirstService.get("bridging/bpjs/get-ref-dokter-dpjp?jenisPelayanan=" + jenisPel
+                //                 //     + "&tglPelayanan=" + new moment($scope.now).format('YYYY-MM-DD') + "&kodeSpesialis=" + kodespe).then(function (data) {
+                //                 //         if (data.data.metaData.code == 200)
+                //                 //             $scope.listDPJP = data.data.response.list;
+                //                 //         else
+                //                 //             toastr.info('Dokter DPJP tidak ada', 'Info')
+                //                 //     });
+
+                //                 toastr.info(e.data.response.rujukan.noKunjungan, 'No Rujukan');
+                //             } else {
+                //                 toastr.error(e.data.metaData.message, 'Info');
+                //             }
+                //         })
+                //     } else {
+                //         window.messageContainer.error(e.data.metaData.message);
+                //     }
+                //     $scope.isLoadingNoKartu = false;
+                // }, function (err) {
+                //     $scope.isLoadingNoKartu = false;
+                // });
+
+
+
+            }
+
+
+            // check kepesertaan berdasarkan NIK
+            $scope.checkKepesertaanByNik = function () {
+                if (!$scope.model.cekNikPeserta) return;
+                if (!$scope.model.noIdentitas) return;
+                if ($scope.model.sendiri) return;
+                if ($scope.model.noIdentitas.length > 16) {
+                    window.messageContainer.error("NIK Lebih Dari 16 Digit");
+                    return;
+                }
+                if ($scope.model.noIdentitas.length < 16) {
+                    window.messageContainer.error("NIK Kurang Dari 16 Digit");
+                    return;
+                }
+
+                $scope.isLoadingNIK = true;
+
+                medifirstService.get("bridging/bpjs/get-nik?nik=" + $scope.model.noIdentitas + "&tglsep=" + new moment(new Date).format('YYYY-MM-DD')).then(function (e) {
+                    if (e.data.metaData.code === "200") {
+                        var tglLahir = new Date(e.data.response.peserta.tglLahir);
+                        $scope.model.noKepesertaan = $scope.noKartu = e.data.response.peserta.noKartu;
+                        $scope.model.namaPeserta = e.data.response.peserta.nama;
+                        $scope.model.tglLahir = tglLahir;
+                        $scope.model.noIdentitas = e.data.response.peserta.nik;
+                        $scope.model.kelasBridg = {
+                            id: parseInt(e.data.response.peserta.hakKelas.kode),
+                            kdKelas: e.data.response.peserta.hakKelas.kode,
+                            nmKelas: e.data.response.peserta.hakKelas.keterangan,
+                            namakelas: e.data.response.peserta.hakKelas.keterangan,
+                        };
+
+                        if ($scope.model.kelasBridg.id == 1) {
+                            $scope.model.kelasDitanggung = { id: "3", namakelas: 'Kelas I' }
+                        } else if ($scope.model.kelasBridg.id == 2) {
+                            $scope.model.kelasDitanggung = { id: "2", namakelas: 'Kelas II' }
+                        } else {
+                            $scope.model.kelasDitanggung = { id: "1", namakelas: 'Kelas III' }
+                        }
+
+                        $scope.kodeProvider = e.data.response.peserta.provUmum.kdProvider;
+                        $scope.namaProvider = e.data.response.peserta.provUmum.nmProvider;
+                        $scope.model.namaAsalRujukan = $scope.kodeProvider + " - " + $scope.namaProvider;
+                        $scope.model.jenisPeserta = e.data.response.peserta.jenisPeserta.nmJenisPeserta;
+                        toastr.info(e.data.response.peserta.statusPeserta.keterangan, 'Status Peserta');
+                    } else {
+                        window.messageContainer.error(e.data.metaData.message);
+                    }
+                    $scope.isLoadingNIK = false;
+                }, function (err) {
+                    $scope.isLoadingNIK = false;
+                });
+            };
+
+            $scope.checkDataRujukan = function () {
+                if (!$scope.model.cekNomorRujukan) return;
+                if (!$scope.model.noRujukan) return;
+                if ($scope.model.sendiri) return;
+
+
+                $scope.isLoadingRujukan = true;
+                var jenisFaskes = "rs"
+                if ($scope.model.asalRujukan != undefined) {
+                    if ($scope.model.asalRujukan == 1)
+                        jenisFaskes = "pcare"
+                    if ($scope.model.asalRujukan == 2)
+                        jenisFaskes = "rs"
+
+                }
+                medifirstService.get("bridging/bpjs/get-rujukan-" + jenisFaskes + "?norujukan=" + $scope.model.noRujukan).then(function (e) {
+                    // debugger;
+                    if (e.data.metaData.code === "200") {
+                        var tglLahir = new Date(e.data.response.rujukan.peserta.tglLahir);
+                        $scope.model.tglRujukan = new Date(e.data.response.rujukan.tglKunjungan)
+                        $scope.model.noKepesertaan = $scope.noKartu = e.data.response.rujukan.peserta.noKartu;
+                        $scope.model.namaPeserta = e.data.response.rujukan.peserta.nama;
+                        $scope.model.tglLahir = tglLahir;
+                        $scope.model.noIdentitas = e.data.response.rujukan.peserta.nik;
+                        $scope.model.kelasBridg = {
+                            id: parseInt(e.data.response.rujukan.peserta.hakKelas.kode),
+                            kdKelas: e.data.response.rujukan.peserta.hakKelas.kode,
+                            nmKelas: e.data.response.rujukan.peserta.hakKelas.keterangan,
+                            namakelas: e.data.response.rujukan.peserta.hakKelas.keterangan,
+                        };
+                        if ($scope.model.kelasBridg.id == 1) {
+                            $scope.model.kelasDitanggung = { id: "3", namakelas: 'Kelas I' }
+                        } else if ($scope.model.kelasBridg.id == 2) {
+                            $scope.model.kelasDitanggung = { id: "2", namakelas: 'Kelas II' }
+                        } else {
+                            $scope.model.kelasDitanggung = { id: "1", namakelas: 'Kelas III' }
+                        }
+                        $scope.poliRujukanKode = e.data.response.rujukan.poliRujukan.kode
+                        $scope.poliRujukanNama = e.data.response.rujukan.poliRujukan.nama
+                        $scope.kodeProvider = e.data.response.rujukan.provPerujuk.kode;
+                        $scope.namaProvider = e.data.response.rujukan.provPerujuk.nama;
+                        $scope.model.namaAsalRujukan = $scope.kodeProvider + " - " + $scope.namaProvider;
+                        $scope.model.jenisPeserta = e.data.response.rujukan.peserta.jenisPeserta.keterangan;
+                        medifirstService.get("registrasi/get-diagnosa-saeutik?kddiagnosa=" + e.data.response.rujukan.diagnosa.kode, true, true, 10)
+                            .then(function (data) {
+                                $scope.sourceDiagnosa.add(data.data[0])
+                                $scope.model.diagnosa = data.data[0]
+                            })
+
+                        // get Dokter DPJP By Histori
+                        $scope.getHistoriPelayananPesesta(e.data.response.rujukan.peserta.noKartu)
+                        // end Histori
+
+                        // var kodespe = e.data.response.rujukan.poliRujukan.kode
+                        // medifirstService.get("bridging/bpjs/get-ref-dokter-dpjp?jenisPelayanan=" + jenisPel
+                        //     + "&tglPelayanan=" + new moment($scope.now).format('YYYY-MM-DD') + "&kodeSpesialis=" + kdSpesialis).then(function (data) {
+                        //         if (data.data.metaData.code == 200)
+                        //             $scope.listDPJP = data.data.response.list;
+                        //         else
+                        //             toastr.info('Dokter DPJP tidak ada', 'Info')
+                        //     });
+
+                        // $scope.sourceDiagnosa.add({ kddiagnosa: e.data.response.rujukan.diagnosa.kode });
+                        // $scope.model.diagnosa = { kddiagnosa: e.data.response.rujukan.diagnosa.kode };
+                        toastr.info(e.data.response.rujukan.peserta.statusPeserta.keterangan, 'Status Peserta');
+                    } else {
+                        window.messageContainer.error(e.data.metaData.message);
+                    }
+                    $scope.isLoadingRujukan = false;
+                }, function (err) {
+                    $scope.isLoadingRujukan = false;
+                });
+            };
+
+            $scope.getHistoriPelayananPesesta = function (noKartu) {
+                medifirstService.get("bridging/bpjs/monitoring/HistoriPelayanan/NoKartu/" + noKartu).then(function (data) {
+                    if (data.data.metaData.code == 200) {
+                        $scope.listHistori = data.data.response.histori;
+
+                        if ($scope.listHistori.length > 0) {
+                            var countKunjungan = 0
+
+                            for (let i = 0; i < $scope.listHistori.length; i++) {
+                                if ($scope.model.noRujukan != undefined && $scope.model.noRujukan.length > 8
+                                    && $scope.listHistori[i].noRujukan == $scope.model.noRujukan) {
+                                    countKunjungan = countKunjungan + 1
+                                }
+                            }
+                            var jml = 0
+                            jml = countKunjungan + 1
+
+                            toastr.info('Kunjungan ke- ' + jml + ' Dengan Rujukan yang sama.', 'Info')
+
+                            jenisPel = $scope.listHistori[0].jnsPelayanan
+                            var kodeNamaPoli = $scope.listHistori[0].poli.split(' ');
+                            if (kodeNamaPoli.length > 0)
+                                medifirstService.get("bridging/bpjs/get-poli?kodeNamaPoli=" + kodeNamaPoli[0]).then(function (e) {
+                                    if (e.data.metaData.code == 200) {
+                                        var resPoli = e.data.response.poli;
+                                        if (resPoli.length > 0) {
+                                            for (let i in resPoli) {
+                                                if ($scope.listHistori[0].poli == resPoli[i].nama) {
+                                                    kdSpesialis = resPoli[i].kode
+                                                    break
+                                                }
+                                            }
+                                            // var kodespe = e.data.response.rujukan.poliRujukan.kode
+                                            if ($scope.item.pasien.kdinternal == "IGD") {
+                                                jenisPel = "1"
+                                            }
+                                            getDPJP(kdSpesialis, jenisPel, 'all')
+
+                                        }
+                                    }
+
+                                });
+                        }
+                    }
+                    else
+                        $scope.listHistori = []
+                });
+            }
+            //delete sep
+            $scope.DeleteSep = function () {
+                hapusSep()
+            }
+            function hapusSep() {
+                let json = {
+                    "url": "SEP/2.0/delete",
+                    "method": "DELETE",
+                    "data": {
+                        "request": {
+                            "t_sep": {
+                                "noSep": $scope.model.noSep,
+                                "user": "Ramdanegie"
+                            }
+                        }
+                    }
+                }
+                medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
+                    if (e.data.metaData.code === "200") {
+                        var msgLogging = 'DELETE No SEP ' + $scope.model.noSep + ' di No Registrasi ' + $scope.item.pasien.noregistrasi
+                        medifirstService.postLogging('Pemakaian Asuransi', 'nosep pemakaianasuransi_t', $scope.model.noSep, msgLogging).then(function (res) { })
+                        var arrStatus = {
+                            noSep: $scope.model.noSep
+                        }
+                        medifirstService.postNonMessage('registrasi/hapus-sep', arrStatus).then(function (e) { })
+                        window.messageContainer.log("Success Delete SEP");
+                        $scope.model.generateNoSEP = false;
+                        $scope.disableSEP = false;
+                        $scope.model.noSep = '';
+                    }
+                    else {
+                        window.messageContainer.error(e.data.metaData.message);
+                    }
+                })
+            }
+
+            // check kepesertaan berdasarkan SEP
+            $scope.checkKepesertaanBySep = function () {
+
+                if ($scope.model.sendiri) return;
+                if ($scope.model.isCheckSEP) return;
+
+                $scope.isLoadingSEP = true;
+                if ($scope.model.noSep === "" || $scope.model.noSep === undefined) {
+                    window.messageContainer.error("No SEP Tidak Ada");
+                    return;
+                }
+                medifirstService.get("bridging/bpjs/cek-sep?nosep=" + $scope.model.noSep).then(function (e) {
+                    if (e.data.metaData.code === "200") {
+                        $scope.disableSEP = true;
+                        var tglLahir = new Date(e.data.response.peserta.tglLahir);
+                        $scope.model.noKepesertaan = $scope.noKartu = e.data.response.peserta.noKartu;
+                        $scope.model.namaPeserta = e.data.response.peserta.nama;
+                        $scope.model.tglLahir = tglLahir;
+                        // $scope.model.noIdentitas = e.data.response.peserta.nik;
+
+                        if (e.data.response.peserta.hakKelas == 'Kelas 1') {
+                            $scope.model.kelasDitanggung = { id: "3", namakelas: 'Kelas I' }
+                        } else if (e.data.response.peserta.hakKelas == 'Kelas 2') {
+                            $scope.model.kelasDitanggung = { id: "2", namakelas: 'Kelas II' }
+                        } else {
+                            $scope.model.kelasDitanggung = { id: "1", namakelas: 'Kelas III' }
+                        }
+                        $scope.model.jenisPeserta = e.data.response.peserta.jnsPeserta;
+                        $scope.model.noRujukan = e.data.response.noRujukan
+                        $scope.model.tglSEP = new Date(e.data.response.tglSep)
+
+                        medifirstService.get("registrasi/get-diagnosa-saeutik?namadiagnosa=" + e.data.response.diagnosa, true, true, 10)
+                            .then(function (data) {
+                                if (data.data.length > 0) {
+                                    for (let i = 0; i < data.data.length; i++) {
+                                        const element = data.data[i];
+                                        if (element.namadiagnosa == e.data.response.diagnosa) {
+                                            $scope.sourceDiagnosa.add(element)
+                                            $scope.model.diagnosa = element
+                                            break
+                                        }
+                                    }
+                                }
+
+
+                            })
+                        // if (e.data.response.lakaLantas.status === "0") {
+                        //     // magics will appear
+                        // } else {
+                        //     $scope.model.lakalantas = true;
+                        //     $scope.model.lokasiLakaLantas = e.data.response.lakaLantasketerangan;
+                        // }
+                    } else {
+                        window.messageContainer.error(e.data.metaData.message);
+                    }
+                    $scope.isLoadingSEP = false;
+                }, function (err) {
+                    $scope.isLoadingSEP = false;
+                });
+            };
+
+            $scope.generateSEP = function () {
+
+                if (!$scope.model.generateNoSEP) return;
+                var listRawRequired = [
+                    "item.pasien.namaruangan|k-ng-model|Ruangan",
+                    // "item.asalRujukan|ng-model|Asal Rujukan",
+                    "item.kelompokPasien|ng-model|Kelompok Pasien",
+                    // "item.pegawai|ng-model|Dokter Tidak ada jadwal hari ini",
+                    // "model.namaPenjamin|k-ng-model|Nama Penjamin",
+                    "model.institusiAsalPasien|ng-model|Institusi Asal Pasien",
+                    "model.noKepesertaan|ng-model|No Kepesertaan",
+                    "model.asalRujukan|k-ng-model|Asal Rujukan",
+                    // "model.noRujukan|ng-model|No Rujukan",
+                    "model.tglRujukan|ng-model|Tgl Rujukan",
+                    "model.diagnosa|k-ng-model|Diagnosa",
+                    "model.kelasDitanggung|k-ng-model|Kelas ditanggung"
+                ];
+
+                var isValid = modelItem.setValidation($scope, listRawRequired);
+                if (isValid.status) {
+                    var kelasJaminan;
+                    // if ($scope.model.rawatInap == false) {
+                    //     kelasJaminan = "3";
+                    // } else {
+                    // if ($scope.model.kelasBridg != undefined) {
+                    //     kelasJaminan = $scope.model.kelasBridg.id.toString();
+                    // } else {
+                    if ($scope.model.kelasDitanggung != undefined) {
+                        if ($scope.model.kelasDitanggung.id == "1")
+                            kelasJaminan = "3"
+                        if ($scope.model.kelasDitanggung.id == "2")
+                            kelasJaminan = "2"
+                        if ($scope.model.kelasDitanggung.id == "3")
+                            kelasJaminan = "1"
+                    }
+                    else
+                        kelasJaminan = "3"
+                    // }
+                    // }
+                    var naikKelasHak = ""
+                    if ($scope.model.klsRawatNaik != undefined) {
+                        if ($scope.model.klsRawatNaik.id == "1")
+                            naikKelasHak = "3"
+                        if ($scope.model.klsRawatNaik.id == "2")
+                            naikKelasHak = "2"
+                        if ($scope.model.klsRawatNaik.id == "3")
+                            naikKelasHak = "1"
+                    }
+                    var noKartu = "";
+                    if ($scope.model.noKepesertaan != undefined) {
+                        var noKartu = $scope.model.noKepesertaan;
+                    } else {
+                        var noKartu = '';
+                    }
+
+                    var kdJenisPelayanan = "";
+                    if ($scope.model.rawatInap === true)
+                        kdJenisPelayanan = "1";
+                    else
+                        kdJenisPelayanan = "2";
+
+                    var kddiagnosaawal = "";
+                    if ($scope.model.diagnosa != undefined)
+                        kddiagnosaawal = $scope.model.diagnosa.kddiagnosa;
+                    else
+                        kddiagnosaawal = "";
+
+                    var catatan = "";
+                    if ($scope.model.catatan != undefined)
+                        catatan = $scope.model.catatan;
+                    else
+                        catatan = "";
+
+                    var polisEksekutif = "";
+                    if ($scope.model.poliEksekutif)
+                        polisEksekutif = "1"
+                    else
+                        polisEksekutif = "0"
+
+                    var lokasiLakaLantas = "";
+                    if ($scope.model.lokasiLakaLantas != undefined)
+                        lokasiLakaLantas = $scope.model.lokasiLakaLantas;
+                    else
+                        lokasiLakaLantas = "";
+
+
+                    var noTelp = "";
+                    if ($scope.model.noTelpons != undefined)
+                        noTelp = $scope.model.noTelpons;
+                    else
+                        noTelp = "";
+
+                    var KdAsalRujukan = $scope.model.asalRujukan;
+                    // if ($scope.model.asalRujukan != undefined) {
+                    //     if ($scope.model.asalRujukan.asalrujukan === "Puskesmas") {
+                    //         KdAsalRujukan = "1"
+                    //     }
+                    //     else {
+                    //         KdAsalRujukan = "2"
+                    //     }
+                    // }
+
+                    var kdPpkRujukan = "";
+                    if ($scope.model.faskesRujukan == true) {
+                        if ($scope.model.namaAsalRujukanBrid != undefined) {
+                            kdPpkRujukan = $scope.model.namaAsalRujukanBrid.kode;
+                        }
+                    } else {
+                        if ($scope.model.namaAsalRujukan != undefined) {
+                            var arrKdPpkRUjukan = $scope.model.namaAsalRujukan.split(' - ');
+                            kdPpkRujukan = arrKdPpkRUjukan[0];
+                        }
+                    }
+
+
+                    // 0904R004
+                    var poliTujuans = "";
+                    if ($scope.item.pasien.kdinternal != null)
+                        poliTujuans = $scope.item.pasien.kdinternal;
+                    else
+                        poliTujuans = "";
+
+                    var listPenjaminLakas = ""
+                    if ($scope.model.lakalantas) {
+                        var a = ""
+                        var b = ""
+                        for (var i = $scope.currentListPenjaminLaka.length - 1; i >= 0; i--) {
+                            var c = $scope.currentListPenjaminLaka[i].value
+                            b = "," + c
+                            a = a + b
+                        }
+                        listPenjaminLakas = a.slice(1, a.length)
+                    }
+                    var kdPropinsi = ""
+                    if ($scope.model.propinsi != undefined)
+                        kdPropinsi = $scope.model.propinsi.kode
+
+                    var kdKabupaten = ""
+                    if ($scope.model.kabupaten != undefined)
+                        kdKabupaten = $scope.model.kabupaten.kode
+
+                    var kdKecamatan = ""
+                    if ($scope.model.kecamatan != undefined)
+                        kdKecamatan = $scope.model.kecamatan.kode
+
+
+
+
+
+                    $scope.isSimpan = true;
+                    //##Generate SEP
+                    if ($scope.model.noSep == '' || $scope.model.noSep == undefined) {
+                        var dataSend = {
+                            "url": "SEP/2.0/insert",
+                            "method": "POST",
+                            "data": {
+                                "request": {
+                                    "t_sep": {
+                                        "noKartu": noKartu,
+                                        "tglSep": new moment($scope.model.tglSEP).format('YYYY-MM-DD'),
+                                        "ppkPelayanan": ppkRumahSakit.trim(),
+                                        "jnsPelayanan": kdJenisPelayanan,
+                                        "klsRawat": {
+                                            "klsRawatHak": kelasJaminan,
+                                            "klsRawatNaik": naikKelasHak,
+                                            "pembiayaan": $scope.model.pembiayaan ? $scope.model.pembiayaan.id : "",
+                                            "penanggungJawab": $scope.model.penanggungJawab ? $scope.model.penanggungJawab : ""
+                                        },
+                                        "noMR": $scope.item.pasien.nocm,
+                                        "rujukan": {
+                                            "asalRujukan": KdAsalRujukan,
+                                            "tglRujukan": new moment($scope.model.tglRujukan).format('YYYY-MM-DD'),
+                                            "noRujukan": $scope.model.noRujukan === undefined ? "0" : $scope.model.noRujukan,
+                                            "ppkRujukan": kdPpkRujukan
+                                        },
+                                        "catatan": catatan,
+                                        "diagAwal": kddiagnosaawal,
+                                        "poli": {
+                                            "tujuan": poliTujuans,
+                                            "eksekutif": polisEksekutif
+                                        },
+                                        "cob": {
+                                            "cob": $scope.model.cob === true ? "1" : "0"
+                                        },
+                                        "katarak": {
+                                            "katarak": $scope.model.katarak === true ? "1" : "0"
+                                        },
+                                        "jaminan": {
+                                            "lakaLantas": $scope.model.lakalantas === true ? "1" : "0",
+                                            "penjamin": {
+                                                "tglKejadian": new moment($scope.model.tglLakalantas).format('YYYY-MM-DD'),
+                                                "keterangan": $scope.model.keteranganLaka != undefined ? $scope.model.keteranganLaka : "",
+                                                "suplesi": {
+                                                    "suplesi": $scope.model.suplesi === true ? "1" : "0",
+                                                    "noSepSuplesi": $scope.model.nomorSepSuplesi != undefined ? $scope.model.nomorSepSuplesi : "",
+                                                    "lokasiLaka": {
+                                                        "kdPropinsi": kdPropinsi,
+                                                        "kdKabupaten": kdKabupaten,
+                                                        "kdKecamatan": kdKecamatan
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "tujuanKunj": $scope.model.tujuanKunj ? $scope.model.tujuanKunj.id : "",
+                                        "flagProcedure": $scope.model.flagProcedure ? $scope.model.flagProcedure.id : "",
+                                        "kdPenunjang": $scope.model.kdPenunjang ? $scope.model.kdPenunjang.id : "",
+                                        "assesmentPel": $scope.model.assesmentPel ? $scope.model.assesmentPel.id : "",
+                                        "skdp": {
+                                            "noSurat": $scope.model.skdp != undefined ? $scope.model.skdp : "",
+                                            "kodeDPJP": $scope.model.dokterDPJP != undefined ? $scope.model.dokterDPJP.kode : ""
+                                        },
+                                        "dpjpLayan": $scope.model.DPJPMelayani ? $scope.model.DPJPMelayani.kode : "",
+                                        "noTelp": noTelp,
+                                        "user": "Ramdanegie"
+                                    }
+                                }
+                            }
+                        }
+
+                        medifirstService.postNonMessage("bridging/bpjs/tools", dataSend).then(function (e) {
+                             if (e.data.metaData.code == "200") {
+                                $scope.successGenerateSep = e.data.metaData.code;
+                                $scope.model.noSep = e.data.response.sep.noSep;
+                                $scope.model.generateNoSEP = false;
+                                $scope.disableSEP = true;
+                                $scope.isHapusSep = true;
+                                toastr.success('Generate SEP Success. No SEP : ' + $scope.model.noSep, 'Status');
+                                $scope.SimpanNonGenerate('bridging');
+                                $scope.isSimpan = false;
+                            } else {
+                                $scope.isSimpan = false;
+                                // $scope.isNext = false;
+                                window.messageContainer.error(e.data.metaData.message)
+                            }
+                            $scope.isLoadingRujukan = false;
+                        }, function (err) {
+                            $scope.isLoadingRujukan = false;
+                        });
+                    }
+                    //## Update SEP
+                    else if ($scope.model.noSep != undefined) {
+                        if ($scope.model.noSep.length > 10) {
+                            var dataUpdate = {
+                                "url": "SEP/2.0/update",
+                                "method": "PUT",
+                                "data": {
+                                    "request": {
+                                        "t_sep": {
+                                            "noSep": $scope.model.noSep == undefined ? "" : $scope.model.noSep,
+                                            "klsRawat": {
+                                                "klsRawatHak": kelasJaminan,
+                                                "klsRawatNaik": naikKelasHak,
+                                                "pembiayaan": $scope.model.pembiayaan ? $scope.model.pembiayaan.id : "",
+                                                "penanggungJawab": $scope.model.penanggungJawab ? $scope.model.penanggungJawab : ""
+                                            },
+                                            "noMR": $scope.item.pasien.nocm,
+                                            "catatan": catatan,
+                                            "diagAwal": kddiagnosaawal,
+                                            "poli": {
+                                                "tujuan": poliTujuans,
+                                                "eksekutif": polisEksekutif
+                                            },
+                                            "cob": {
+                                                "cob": $scope.model.cob === true ? "1" : "0"
+                                            },
+                                            "katarak": {
+                                                "katarak": $scope.model.katarak === true ? "1" : "0"
+                                            },
+                                            "jaminan": {
+                                                "lakaLantas": $scope.model.lakalantas === true ? "1" : "0",
+                                                "penjamin": {
+                                                    "tglKejadian": new moment($scope.model.tglLakalantas).format('YYYY-MM-DD'),
+                                                    "keterangan": $scope.model.keteranganLaka != undefined ? $scope.model.keteranganLaka : "",
+                                                    "suplesi": {
+                                                        "suplesi": $scope.model.suplesi === true ? "1" : "0",
+                                                        "noSepSuplesi": $scope.model.nomorSepSuplesi != undefined ? $scope.model.nomorSepSuplesi : "",
+                                                        "lokasiLaka": {
+                                                            "kdPropinsi": kdPropinsi,
+                                                            "kdKabupaten": kdKabupaten,
+                                                            "kdKecamatan": kdKecamatan
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "dpjpLayan": $scope.model.DPJPMelayani ? $scope.model.DPJPMelayani.kode : "",
+                                            "noTelp": noTelp,
+                                            "user": "Ramdanegie"
+                                        }
+                                    }
+                                }
+                            }
+                            medifirstService.postNonMessage("bridging/bpjs/tools", dataUpdate).then(function (e) {
+                                if (e.data.metaData.code == "200") {
+
+                                    $scope.successGenerateSep = e.data.metaData.code;
+                                    if (e.data.response != null) {
+                                        $scope.model.noSep = e.data.response;
+                                    }
+                                    $scope.model.generateNoSEP = false;
+                                    $scope.disableSEP = true;
+                                    $scope.isHapusSep = true;
+                                    toastr.success('Update SEP Success', 'Status');
+                                    $scope.SimpanNonGenerate('bridging');
+                                    $scope.isSimpan = false;
+                                } else {
+                                    // $scope.isNext = false;
+                                    window.messageContainer.error(e.data.metaData.message)
+                                    $scope.isSimpan = false;
+                                }
+                                $scope.isLoadingRujukan = false;
+                            }, function (err) {
+                                $scope.isLoadingRujukan = false;
+                            });
+                        }
+                        //## End Update SEP
+                    }
+                }
+            };
+
+            $scope.SimpanNonGenerate = function (statusCreateSep) {
+
+                $scope.hideBtnSimpan = true
+                var noasuransi = "";
+                if ($scope.model.noKepesertaan == undefined) {
+                    noasuransi = '';
+                } else
+                    noasuransi = $scope.model.noKepesertaan;
+
+                var noidentitas = "";
+                if ($scope.model.noIdentitas == undefined) {
+                    noidentitas = '';
+                } else
+                    noidentitas = $scope.model.noIdentitas;
+
+                var diagnosisfk = null;
+                if ($scope.model.diagnosa == undefined) {
+                    diagnosisfk = null;
+                } else
+                    diagnosisfk = $scope.model.diagnosa.id;
+
+                var norujukan = "";
+                if ($scope.model.noRujukan == undefined) {
+                    norujukan = '';
+                } else
+                    norujukan = $scope.model.noRujukan;
+
+                var noKepesertaans = "";
+                if ($scope.model.noKepesertaan == undefined) {
+                    noKepesertaans = '';
+                } else
+                    noKepesertaans = $scope.model.noKepesertaan;
+
+                var nosep = "";
+                if ($scope.model.noSep == undefined) {
+                    nosep = '';
+                } else
+                    nosep = $scope.model.noSep;
+
+                var tanggalsep = "";
+                if ($scope.model.tglSEP == undefined) {
+                    tanggalsep = null;
+                } else
+                    tanggalsep = new moment($scope.model.tglSEP).format('YYYY-MM-DD HH:mm:ss');;
+
+                var tglRujukan = "";
+                if ($scope.model.tglRujukan == undefined) {
+                    tglRujukan = '';
+                } else
+                    tglRujukan = new moment($scope.model.tglRujukan).format('YYYY-MM-DD HH:mm:ss');
+
+
+                var noCM = "";
+                if ($scope.item.pasien.nocm == undefined)
+                    noCM = ''
+                else
+                    noCM = $scope.item.pasien.nocm
+
+                var catatans = "";
+                if ($scope.model.catatan == undefined) {
+                    catatans = '';
+                } else
+                    catatans = $scope.model.catatan;
+
+                var kdProviders = "-";
+                var namaProviders = "-";
+                if ($scope.model.faskesRujukan == true) {
+                    if ($scope.model.namaAsalRujukanBrid != undefined) {
+                        kdProviders = $scope.model.namaAsalRujukanBrid.kode
+                        namaProviders = $scope.model.namaAsalRujukanBrid.nama
+                    }
+                } else {
+                    if ($scope.model.namaAsalRujukan != undefined) {
+                        var arrKdPpkRUjukan = $scope.model.namaAsalRujukan.split(' - ');
+                        kdProviders = arrKdPpkRUjukan[0];
+                        namaProviders = arrKdPpkRUjukan[1];
+                    }
+                }
+
+                if (namaProviders == undefined) {
+                    namaProviders = "-";
+                }
+
+                medifirstService.get("registrasi/get-asuransipasienbynocm?nocm="
+                    + $scope.item.pasien.nocm)
+                    .then(function (f) {
+                        $scope.cekTableAsuransiPas = f.data.data[0];
+                    });
+
+                // debugger
+                var id_AsPasien = "";
+                if ($scope.cacheIdAP != undefined) {
+                    id_AsPasien = $scope.cacheIdAP;
+                }
+                if (id_AsPasien == "null") {
+                    id_AsPasien = ""
+                }
+
+                var norec_PA = "";
+
+                if ($scope.cacheNorecPA != undefined) {
+                    norec_PA = $scope.cacheNorecPA;
+                }
+                if (norec_PA == "null") {
+                    norec_PA = ""
+                }
+
+
+                var alamatPesertas = "";
+                if ($scope.model.alamatPeserta != undefined)
+                    alamatPesertas = $scope.model.alamatPeserta;
+
+                var kelasDitanggungs = null;
+                if ($scope.model.kelasDitanggung != undefined)
+                    kelasDitanggungs = $scope.model.kelasDitanggung.id;
+
+
+                if ($scope.model.institusiAsalPasien == undefined) {
+                    window.messageContainer.error("Institusi Asal Pasien harus di isi")
+                    return
+                }
+
+                var namaPesertas = "";
+                if ($scope.model.namaPeserta != undefined)
+                    namaPesertas = $scope.model.namaPeserta;
+
+                var jenisPesertas = "";
+                if ($scope.model.jenisPeserta != undefined)
+                    jenisPesertas = $scope.model.jenisPeserta;
+                var lokasiLakaLantas = "";
+                if ($scope.model.lokasiLakaLantas != undefined)
+                    lokasiLakaLantas = $scope.model.lokasiLakaLantas;
+                else
+                    lokasiLakaLantas = "";
+
+                var listPenjaminLakas = ""
+                if ($scope.model.lakalantas) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.currentListPenjaminLaka.length - 1; i >= 0; i--) {
+                        var c = $scope.currentListPenjaminLaka[i].value
+                        b = "," + c
+                        a = a + b
+                    }
+                    listPenjaminLakas = a.slice(1, a.length)
+                }
+
+                var noTelp = "";
+                if ($scope.model.noTelpons != undefined)
+                    noTelp = $scope.model.noTelpons;
+                var jenisPeserta = ""
+                if ($scope.model.jenisPeserta != undefined)
+                    jenisPeserta = $scope.model.jenisPeserta
+
+                var asuransipasien = {
+                    id_ap: id_AsPasien,
+                    noregistrasi: $scope.item.pasien.noregistrasi,
+                    nocm: noCM,
+                    alamatlengkap: alamatPesertas,
+                    objecthubunganpesertafk: $scope.model.hubunganPeserta.id,
+                    objectjeniskelaminfk: $scope.item.pasien.objectjeniskelaminfk,
+                    kdinstitusiasal: $scope.model.institusiAsalPasien.id,
+                    kdpenjaminpasien: $scope.model.institusiAsalPasien.id,
+                    objectkelasdijaminfk: kelasDitanggungs,
+                    namapeserta: namaPesertas,
+                    nikinstitusiasal: $scope.model.institusiAsalPasien.id,
+                    noasuransi: noasuransi,
+                    alamat: $scope.item.pasien.alamatlengkap,
+                    nocmfkpasien: $scope.item.pasien.nocmfk,
+                    noidentitas: noidentitas,
+                    qasuransi: $scope.item.kelompokPasien.id,
+                    kelompokpasien: $scope.item.kelompokPasien.id,
+                    tgllahir: $scope.model.tglLahir != undefined ? moment($scope.model.tglLahir).format('YYYY-MM-DD') : null,
+                    jenispeserta: jenisPesertas,
+                    kdprovider: kdProviders,
+                    nmprovider: namaProviders,
+                    notelpmobile: noTelp,
+                    jenispeserta: jenisPeserta,
+                }
+
+                var pemakaianasuransi = {
+                    norec_pa: norec_PA,
+                    noregistrasifk: $scope.currentNorecPD,
+                    tglregistrasi: $scope.item.pasien.tglregistrasi,
+                    diagnosisfk: diagnosisfk,
+                    lakalantas: $scope.model.lakalantas === true ? 1 : 0,
+                    nokepesertaan: noKepesertaans,
+                    norujukan: norujukan,
+                    nosep: nosep,
+                    tglrujukan: tglRujukan,
+                    // objectasuransipasienfk: $scope.model.noKepesertaan,
+                    objectdiagnosafk: diagnosisfk,
+                    tanggalsep: tanggalsep,
+                    catatan: catatans,
+                    lokasilaka: lokasiLakaLantas,
+                    penjaminlaka: listPenjaminLakas,
+                    cob: $scope.model.cob != undefined ? $scope.model.cob : false,
+                    katarak: $scope.model.katarak != undefined ? $scope.model.katarak : false,
+                    keteranganlaka: $scope.model.keteranganLaka != undefined ? $scope.model.keteranganLaka : "",
+                    tglkejadian: $scope.model.lakalantas === true && $scope.model.tglLakalantas !== undefined ? moment($scope.model.tglLakalantas).format("YYYY-MM-DD") : null,
+                    suplesi: $scope.model.suplesi != undefined ? $scope.model.suplesi : false,
+                    nosepsuplesi: $scope.model.nomorSepSuplesi !== undefined ? $scope.model.nomorSepSuplesi : "",
+                    kdpropinsi: $scope.model.propinsi !== undefined ? $scope.model.propinsi.kode : null,
+                    namapropinsi: $scope.model.propinsi !== undefined ? $scope.model.propinsi.nama : null,
+                    kdkabupaten: $scope.model.kabupaten !== undefined ? $scope.model.kabupaten.kode : null,
+                    namakabupaten: $scope.model.kabupaten !== undefined ? $scope.model.kabupaten.nama : null,
+                    kdkecamatan: $scope.model.kecamatan !== undefined ? $scope.model.kecamatan.kode : null,
+                    namakecamatan: $scope.model.kecamatan !== undefined ? $scope.model.kecamatan.nama : null,
+                    nosuratskdp: $scope.model.skdp !== undefined ? $scope.model.skdp : "",
+                    kodedpjp: $scope.model.dokterDPJP !== undefined ? $scope.model.dokterDPJP.kode : null,
+                    namadpjp: $scope.model.dokterDPJP !== undefined ? $scope.model.dokterDPJP.nama : null,
+                    prolanisprb: $scope.model.prolanis !== undefined && $scope.model.prolanis !== null ? $scope.model.prolanis : null,
+                    asalrujukanfk: $scope.model.asalRujukan != undefined ? $scope.model.asalRujukan : null,
+                    polirujukankode: $scope.item.pasien.kdinternal,
+                    polirujukannama: $scope.item.pasien.namaruangan,/// $scope.item.pasien.namaexternal
+                    kodedpjpmelayani: $scope.model.DPJPMelayani !== undefined ? $scope.model.DPJPMelayani.kode : null,
+                    namadjpjpmelayanni: $scope.model.DPJPMelayani !== undefined ? $scope.model.DPJPMelayani.nama : null,
+
+                    klsrawatnaik: $scope.model.klsRawatNaik ? $scope.model.klsRawatNaik.id : null,
+                    pembiayaan: $scope.model.pembiayaan ? $scope.model.pembiayaan.id : null,
+                    penanggungjawab: $scope.model.penanggungJawab ? $scope.model.penanggungJawab : null,
+                    tujuankunj: $scope.model.tujuanKunj ? $scope.model.tujuanKunj.id : null,
+                    flagprocedure: $scope.model.flagProcedure ? $scope.model.flagProcedure.id : null,
+                    kdpenunjang: $scope.model.kdPenunjang ? $scope.model.kdPenunjang.id : null,
+                    assesmentpel: $scope.model.assesmentPel ? $scope.model.assesmentPel.id : null,
+                }
+                var objSave = {
+                    asuransipasien: asuransipasien,
+                    pemakaianasuransi: pemakaianasuransi
+                }
+                medifirstService.post("registrasi/save-asuransipasien", objSave).then(function (e) {
+                    var msgLogging = ""
+                    var lognosep = nosep
+                    if (nosep == "") {
+                        statusCreateSep = 'manual'
+                        lognosep = "kosong"
+                    }
+                    if (norec_PA == "") {
+                        msgLogging = "INSERT ";
+                    } else {
+                        msgLogging = "UPDATE ";
+                    }
+                    msgLogging += 'No SEP ' + nosep + ' dibuat ' + statusCreateSep + ' dengan tgl sep ' + tanggalsep + ' di No Registrasi ' + $scope.item.pasien.noregistrasi
+                    medifirstService.postLogging('Pemakaian Asuransi', 'Norec pasiendaftar_t', $scope.currentNorecPD, msgLogging).then(function (res) { })
+
+                    responData = e.data;
+                    $scope.resultPA = e.data.PA;
+                    $scope.isBatal = true;
+                    $scope.isKembali = true;
+
+
+                    var cachePasienDaftars = $scope.resultPA.objectasuransipasienfk
+                        + "~" + $scope.resultPA.norec
+                        + "~" + $scope.item.pasien.noregistrasi;
+                    cacheHelper.set('CachePemakaianAsuransi', cachePasienDaftars);
+
+                    if (e.data.status == 201 && $scope.cachePasienDaftar == undefined) {
+                        $scope.Back();
+                    } else {
+                        $scope.hideBtnSimpan = false
+                    }
+
+                }, function (error) {
+                    $scope.hideBtnSimpan = false
+                })
+            }
+
+            $scope.Save = function () {
+                if (ceknobpjsdouble == true) {
+                    toastr.error('No BPJS Terdeteksi Double, Sesuaikan No BPJS dengan pasiennya', 'Peringatan')
+                    return;
+                }
+                if ($scope.model.generateNoSEP) {
+
+                    if (statusBridgingTemporary == 'false') {
+                        if ($scope.poliRujukanKode != undefined && $scope.item.pasien.kdinternal != $scope.poliRujukanKode) {
+                            var confirm = $mdDialog.confirm()
+                                .title('Informasi')
+                                .textContent('Pasien Kontrol ? Jika ya maka poli yg dikirim ke BPJS = ' + $scope.item.pasien.namaruangan
+                                    + ', jika tidak maka ' + $scope.poliRujukanNama)
+                                .ariaLabel('Lucky day')
+                                .cancel('Tidak')
+                                .ok('Ya')
+                            $mdDialog.show(confirm).then(function (e) {
+                                // alert('COnfirm')
+                                $scope.generateSEP();
+                            }, function () {
+                                // alert('cancel')
+                                $scope.item.pasien.kdinternal = $scope.poliRujukanKode
+                                $scope.item.pasien.namaruangan = $scope.poliRujukanNama
+                                $scope.generateSEP();
+                            });
+
+                        } else {
+                            $scope.generateSEP();
+                        }
+
+                    } else {
+                        /*
+                        * dummy SEP
+                        */
+                        $scope.createDummySEP()
+
+                    }
+                } else {
+                    $scope.SimpanNonGenerate('manual');
+                }
+            }
+            $scope.createDummySEP = function () {
+                if ($scope.model.noSep == '' || $scope.model.noSep == undefined) {
+                    medifirstService.get('bridging/bpjs/generate-sep-dummy?kodeppk=' + ppkRumahSakit).then(function (e) {
+                        // debugger
+                        $scope.successGenerateSep = 200;
+                        $scope.model.noSep = e.data;
+                        $scope.model.generateNoSEP = false;
+                        $scope.disableSEP = true;
+                        $scope.isHapusSep = true;
+                        toastr.success('Generate SEP Success. No SEP : ' + $scope.model.noSep, 'Status');
+                        $scope.SimpanNonGenerate('bridging-dummy');
+                    })
+                } else {
+                    $scope.successGenerateSep = 200;
+                    // $scope.model.noSep = e.data;
+                    $scope.model.generateNoSEP = false;
+                    $scope.disableSEP = true;
+                    $scope.isHapusSep = true;
+                    toastr.success('Update SEP Success. No SEP : ' + $scope.model.noSep, 'Status');
+                    $scope.SimpanNonGenerate('bridging-dummy');
+                }
+
+            }
+            $scope.Back = function () {
+                window.history.back();
+
+                // $state.go('RegistrasiPasienLamaRev');
+            }
+
+            medifirstService.getPart("bridging/bpjs/get-ref-faskes", true, true, 10).then(function (data) {
+                $scope.listFaskesRujukan = data;
+            });
+
+
+
+
+            medifirstService.getPart("bridging/bpjs/get-ref-propinsi", true, true, 10).then(function (data) {
+                $scope.listPropinsi = data;
+            });
+            var kodePropinsi = "";
+            var kodeKab = "";
+            $scope.$watch('model.propinsi', function (e) {
+                if (e === undefined) return;
+                kodePropinsi = e.kode
+                medifirstService.getPart("bridging/bpjs/get-ref-kabupaten?kodePropinsi=" + kodePropinsi, true, true, 10).then(function (data) {
+                    $scope.listKabupaten = data;
+                    if (dataKabupaten != '')
+                        $scope.model.kabupaten = dataKabupaten
+                });
+            })
+
+            $scope.$watch('model.kabupaten', function (e) {
+                if (e === undefined) return;
+                kodeKab = e.kode
+                medifirstService.getPart("bridging/bpjs/get-ref-kecamatan?kodeKabupaten=" + kodeKab, true, true, 10).then(function (data) {
+                    $scope.listKecamatan = data;
+                    if (dataKecamatan != '')
+                        $scope.model.kecamatan = dataKecamatan
+                });
+            })
+            $scope.$watch('model.lakalantas', function (e) {
+                if (e === false) {
+                    delete $scope.model.propinsi
+                    delete $scope.model.kabupaten
+                    delete $scope.model.kecamatan
+                    delete $scope.model.nomorSepSuplesi
+                    delete $scope.model.keteranganLaka
+                    // // remove item
+                    // $scope.currentListPenjaminLaka.forEach(function (item) {
+                    //     for (var i = 0; i < $scope.currentListPenjaminLaka.length; i++) {
+                    //         if ($scope.currentListPenjaminLaka[i].id == item.id) {
+                    //             $scope.currentListPenjaminLaka.splice(i, 1);
+                    //         }
+                    //     }
+                    // })
+                    // $scope.listPenjaminLaka.forEach(function (e) {
+                    //     e.isChecked = false
+                    // })
+
+                }
+            })
+
+            // medifirstService.getDataDummyPHP("bridging/bpjs/get-ref-faskes-part", true, true, 10).then(function (data) {
+            //     $scope.listPpkRujukan = data;
+
+            // });
+            $scope.$watch('model.asalRujukan', function (e) {
+                if (e === undefined) return;
+                var jenis = ""
+                if (e == 1)
+                    jenis = 1
+                else if (e == 2)
+                    jenis = 2
+                else if (e == 3)
+                    jenis = 1
+                else
+                    jenis = 2
+                medifirstService.getPart("bridging/bpjs/get-ref-faskes-part?jenisFaskes="
+                    + jenis, true, 10, 10)
+                    .then(function (x) {
+                        $scope.listPpkRujukan = x;
+                    })
+
+            })
+            $scope.currentListPenjaminLaka = [];
+            $scope.addListPenjamin = function (data) {
+                var index = $scope.currentListPenjaminLaka.indexOf(data);
+                if (_.filter($scope.currentListPenjaminLaka, {
+                    id: data.id
+                }).length === 0)
+                    $scope.currentListPenjaminLaka.push(data);
+                else {
+                    $scope.currentListPenjaminLaka.splice(index, 1);
+                }
+            }
+            $scope.generateSKDP = function (data) {
+                if (data === true) {
+                    $scope.model.cekNoSkdp = true
+                    medifirstService.get("bridging/bpjs/generateskdp", true).then(function (dat) {
+                        var noSKDP = dat.data.noskdp
+                        if (noSKDP != undefined)
+                            $scope.model.skdp = noSKDP
+
+                    })
+                } else {
+                    delete $scope.model.skdp
+                }
+            };
+            $scope.ceklisNoKartu = function (bool) {
+                // body...
+                if (bool) {
+                    $scope.model.generateNoSEP = true
+                    $scope.model.cekNomorRujukanMulti = false
+                }
+                else
+                    $scope.model.generateNoSEP = false
+            }
+            $scope.ceklisNomorRujukanMulti = function (bool) {
+                if (bool) {
+                    $scope.model.generateNoSEP = true
+                    $scope.model.cekNomorPeserta = false
+                }
+                else
+                    $scope.model.generateNoSEP = false
+            }
+
+            $scope.cetakSEP = function () {
+                if (noRegistrasis != "") {
+
+                    // //##save identifikasi sep
+                    // medifirstService.get("operator/identifikasi-sep?norec_pd="
+                    //     + $scope.cacheNorecPD
+                    // ).then(function (data) {
+                    //     var datas = data.data;
+                    // })
+                    // //##end
+
+
+                    if (statusBridgingTemporary == 'false') {
+                        medifirstService.get("bridging/bpjs/cek-sep?nosep=" + $scope.model.noSep).then(function (e) {
+                            if (e.data.metaData.code === "200" || e.data.metaData.code === "404") {
+                                var client = new HttpClient();
+                                client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-sep-new=1&norec=' + noRegistrasis + '&view=false', function (response) {
+                                    // do something with response
+                                });
+                            } else {
+                                window.messageContainer.error('SEP tidak ada atau tidak sesuai dengan Vclaim mohon dicek kembali !');
+                            }
+                        });
+                    } else {
+                        var client = new HttpClient();
+                        client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-sep-new=1&norec=' + noRegistrasis + '&view=false', function (response) {
+                            // do something with response
+                        });
+
+                    }
+
+                }
+            }
+            var HttpClient = function () {
+                this.get = function (aUrl, aCallback) {
+                    var anHttpRequest = new XMLHttpRequest();
+                    anHttpRequest.onreadystatechange = function () {
+                        if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+                            aCallback(anHttpRequest.responseText);
+                    }
+
+                    anHttpRequest.open("GET", aUrl, true);
+                    anHttpRequest.send(null);
+                }
+            }
+            $scope.columnHistoriPeserta = {
+
+                selectable: 'cell',
+                pageable: true,
+                columns: [
+                    {
+                        "field": "no",
+                        "title": "No",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "noSep",
+                        "title": "No SEP",
+                        "width": "130px",
+
+                        "template": "<button class=\"k-button custom-button\" ng-click=\"setSep(dataItem)\"  style=\"margin:0 0 5px\">#:  noSep #</button> ",
+
+                    },
+                    {
+                        "field": "tglSep",
+                        "title": "Tgl SEP",
+                        "width": "100px"
+                    },
+                    {
+                        "field": "noRujukan",
+                        "title": "No Rujukan",
+                        "width": "90px"
+                    },
+                    {
+                        "field": "noKartu",
+                        "title": "No Kartu",
+                        "width": "90px"
+                    },
+                    {
+                        "field": "namaPeserta",
+                        "title": "Nama Pasien",
+                        "width": "90px"
+                    },
+                    {
+                        "field": "kelasRawat",
+                        "title": "Kelas",
+                        "width": "90px"
+                    },
+                    {
+                        "field": "poli",
+                        "title": "Poli",
+                        "width": "90px"
+                    },
+                    {
+                        "field": "diagnosa",
+                        "title": "Diagnosa",
+                        "width": "150px"
+                    },
+
+                ]
+            };
+
+
+            $scope.setSep = function (dataHistorySelect) {
+                $scope.model.noRujukan = dataHistorySelect.noSep
+                $scope.kodeProvider = ppkRumahSakit
+                $scope.namaProvider = namappkRumahSakit
+                $scope.model.faskesRujukan = false;
+                $scope.model.namaAsalRujukan = $scope.kodeProvider + " - " + $scope.namaProvider;
+                $scope.popUpHistoriPelayananPeserta.close()
+                //     // $scope.dataHistorySelect = dataHistorySelect
+            }
+            $scope.historiPelayanan = function (data) {
+                if (data === true) {
+                    if ($scope.model.noKepesertaan == undefined) return
+                    medifirstService.get("bridging/bpjs/monitoring/HistoriPelayanan/NoKartu/" + $scope.model.noKepesertaan).then(function (data) {
+                        if (data.data.metaData.code == 200) {
+                            for (let i = 0; i < data.data.response.histori.length; i++) {
+                                const element = data.data.response.histori[i];
+                                element.no = i + 1
+                            }
+                            $scope.popUpHistoriPelayananPeserta.center().open()
+                            $scope.dataSourceHistoriPeserta = new kendo.data.DataSource({
+                                data: data.data.response.histori,
+                                pageSize: 10,
+                                total: data.data.response.histori.length,
+                                serverPaging: false,
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    })
+                } else {
+                    $scope.popUpHistoriPelayananPeserta.close()
+                    $scope.dataSourceHistoriPeserta = new kendo.data.DataSource({
+                        data: [],
+                        pageSize: 10,
+                        total: 0,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        }
+                    });
+                }
+
+            };
+
+
+        }
+    ]);
+});

@@ -1,0 +1,14 @@
+.centers {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+@media (max-width: 680px) {
+    .gambarna {
+        display: none;
+    }
+}
+
+.gambarna {
+    max-height: 400px;
+}

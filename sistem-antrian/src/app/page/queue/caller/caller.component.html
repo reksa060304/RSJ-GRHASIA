@@ -1,0 +1,180 @@
+<div class="row">
+    <div class="p-grid">
+        <!-- <div class="p-col-12 p-md-2 p-lg-2">
+        </div> -->
+        <div class="p-col-12 p-md-12 p-lg-12">
+            <div class="p-fluid p-formgrid ">
+                <div class="card card-w-title">
+                    <h2 style="color: #777777;">Caller</h2>
+                    <div class="p-col-12 p-md-12">
+                        <div class="p-grid">
+                            <div class="p-col-12 p-md-6">
+                                <div class="card  no-pad" style="background-color: #2582A1;">
+                                    <div class="card-w-title card-pad">
+                                        <h4>Panggil</h4>
+                                    </div>
+                                    <div class="card-2" style="height: 200px;
+                                    overflow: auto;">
+                                        <div class="card-2-body">
+                                            <div class="p-grid">
+                                                <div class="p-col-12 p-md-5">
+                                                    <label class="label" for="input">Loket</label>
+                                                    <input type="text" [(ngModel)]="item.loket" pInputText
+                                                        placeholder="Loket" />
+                                                </div>
+                                                <div class="p-col-12 p-md-5">
+                                                    <label class="label" for="input">Jenis</label>
+                                                    <input type="text" [(ngModel)]="item.jenis" pInputText
+                                                        placeholder="Jenis" />
+                                                </div>
+                                                <div class="p-col-12 p-md-2" style="margin-top: 20px;">
+                                                    <button pButton type="submit" icon="pi pi-phone"
+                                                        class="p-button-success p-btn-green-ngora" pTooltip="Panggil" (click)="panggil()"
+                                                        label="Panggil" [disabled]="!isPanggil"></button>
+                                                </div>
+                                            </div>
+                                            <div class="p-grid">
+                                                <div class="p-col-12 p-md-5">
+                                                    <div class="p-grid">
+                                                        <div class="p-col-12">
+                                                            <label class="label" for="input">Shortcut</label>
+                                                        </div>
+                                                        <div class="p-col-12 p-md-3">
+                                                            <button pButton type="button" class="p-button-success p-btn-green"
+                                                                (click)="shortcutLoket(1)" label="Loket-1"></button>
+                                                        </div>
+                                                        <div class="p-col-12 p-md-3">
+                                                            <button pButton type="button" class="p-button-success p-btn-green"
+                                                                (click)="shortcutLoket(2)" label="Loket-2"></button>
+                                                        </div>
+                                                        <div class="p-col-12 p-md-3">
+                                                            <button pButton type="button" class="p-button-success p-btn-green"
+                                                                (click)="shortcutLoket(3)" label="Loket-3"></button>
+                                                        </div>
+                                                        <div class="p-col-12 p-md-3">
+                                                            <button pButton type="button" class="p-button-success p-btn-green"
+                                                                (click)="shortcutLoket(4)" label="Loket-4"></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="p-col-12 p-md-5">
+                                                    <div class="p-grid">
+                                                        <div class="p-col-12">
+                                                            <label class="label" for="input">Shortcut</label>
+                                                        </div>
+                                                        <div class="p-col-12 p-md-3">
+                                                            <button pButton type="button" class="p-button-success p-btn-green"
+                                                                (click)="shortcutJenis('A')" label="Jenis-A"></button>
+                                                        </div>
+                                                        <div class="p-col-12 p-md-3">
+                                                            <button pButton type="button" class="p-button-success p-btn-green"
+                                                                (click)="shortcutJenis('B')" label="Jenis-B"></button>
+                                                        </div>
+                                                        <div class="p-col-12 p-md-3">
+                                                            <button pButton type="button" class="p-button-success p-btn-green"
+                                                                (click)="shortcutJenis('C')" label="Jenis-C"></button>
+                                                        </div>
+                                                        <div class="p-col-12 p-md-3">
+                                                            <button pButton type="button" class="p-button-success p-btn-green"
+                                                                (click)="shortcutJenis('D')" label="Jenis-D"></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-col-12 p-md-6">
+                                <div class="card  no-pad" style="background-color: #266569;">
+                                    <div class="card-w-title card-pad">
+                                        <h4>Panggil Ulang</h4>
+                                    </div>
+                                    <div class="card-2" style="height: 200px;
+                                    overflow: auto;">
+                                        <div class="card-2-body">
+                                            <div class="p-grid">
+                                                <div class="p-col-12 p-md-4">
+                                                    <label class="label" for="input">No Antrian</label>
+                                                    <input type="text" [(ngModel)]="item.noantri" pInputText
+                                                        placeholder="No Antrian" />
+                                                </div>
+                                                <div class="p-col-12 p-md-3" style="margin-top: 20px;">
+                                                    <button pButton type="submit" icon="pi pi-refresh"
+                                                        label="Panggil Ulang" class="p-button-warning p-btn-green-klot"
+                                                        pTooltip="Panggil Ulang" (click)="panggilUlang()"></button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="p-grid">
+        <!-- <div class="p-col-12 p-md-2 p-lg-2">
+        </div> -->
+        <div class="p-col-12 p-md-12 p-lg-12">
+            <div class="p-fluid p-formgrid ">
+                <div class="card card-w-title">
+                    <h2 style="color: #777777;">List Antrian</h2>
+
+                    <div class="p-col-12">
+                        <div class="card  no-pad" style="background-color: #5DC473;">
+                            <div class="card-w-title card-pad">
+                                <div class="p-col-12 p-md-11">
+                                    <h4>Detail</h4>
+                                </div>
+                                <div class="p-col-12 p-md-1" style="float: right;margin-top:20px">
+                                    <button pButton type="button" class="p-button-danger p-btn-green-sedeng " label="Refresh"
+                                        style="float: right;margin-top: -10px;" (click)="refresh()" icon="fa fa-refresh"
+                                        pTooltip="Refresh Data"></button>
+                                </div>
+                            </div>
+                            <div class="card-2">
+                                <div class="card-2-body">
+                                    <div class="p-grid">
+                                        <div class="p-col-12">
+                                            <p-table #dt [columns]="column" [value]="dataTable"
+                                                styleClass="p-datatable-customers" [rowHover]="true" [rows]="10"
+                                                [showCurrentPageReport]="true" [rowsPerPageOptions]="[5,10,25,50]"
+                                                [paginator]="true" scrollable="true" [pageLinks]="5" sortMode="multiple"
+                                                selectionMode="single">
+                                                <ng-template pTemplate="header" let-columns>
+                                                    <tr>
+                                                        <th *ngFor="let column of columns"
+                                                            pSortableColumn="{{column.field}}"
+                                                            style="width: {{column.width}};text-align:center">
+                                                            {{column.header}} <p-sortIcon field="{{column.field}}">
+                                                            </p-sortIcon>
+                                                        </th>
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-rowData let-columns="columns"
+                                                    let-rowIndex="rowIndex">
+                                                    <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex">
+                                                        <td *ngFor="let column of columns"
+                                                            style="width: {{column.width}};text-align:center;">
+                                                            {{rowData[column.field]}}
+                                                        </td>
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- </p-panel> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

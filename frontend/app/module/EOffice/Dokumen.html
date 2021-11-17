@@ -1,0 +1,267 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+</style>
+
+<!-- <div ng-controller="StokRuanganCtrl"> -->
+<!-- <div class="panel panel-default container_12"> -->
+<div class="grid_12 headerBox">
+    <h1 style="color: white;"><b>{{tittle}}</b></h1>
+</div>
+
+<!-- <div kendo-window="popUpSip" k-title="'Tindakan Tidak Terklaim'" k-visible="false" k-scroll="false"> -->
+<div class="grid_12" style="margin-top: 10px">
+
+    <div class="grid_2">
+        <label c-label item="item">Tanggal</label>
+        <input k-ng-model="item.tanggalAwal" kendo-datetimepicker k-max="now" placeholer="yyyy-MM-dd HH:mm"
+            k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+    </div>
+    <div class="grid_3">
+        <label c-label item="item">Nomor </label>
+        <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.nomorSurat" />
+    </div>
+    <div class="grid_7">
+        <label c-label item="item">Nama Dokumen</label>
+        <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.namaSurat" />
+    </div>
+    <div class="grid_2">
+        <label c-label item="item">Tipe</label>
+        <input kendo-combo-box k-ng-model="item.tipeSurat" k-data-text-field="'name'" k-data-value-field="'id'"
+            k-filter="'contains'" k-auto-bind="false" k-data-source="listTipeSurat" />
+    </div>
+    <!-- <div class="grid_2">
+              <label c-label item="item">Sifat </label>
+              <input  kendo-combo-box k-ng-model="item.sifatSurat" k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listSifatSurat" />
+          </div> -->
+    <div class="grid_2">
+        <label c-label item="item">Jenis </label>
+        <input kendo-combo-box k-ng-model="item.jenisSurat" k-data-text-field="'name'" k-data-value-field="'id'"
+            k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisSurat" k-on-change='getSubJenisSurat()' />
+    </div>
+    <div class="grid_2">
+        <label c-label item="item">Sub Jenis </label>
+        <input kendo-combo-box k-ng-model="item.subjenisSurat" k-data-text-field="'subjenissurat'"
+            k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listSubJenisSurat"
+            k-on-change='getKodeSurat()' />
+    </div>
+    <!--  <div class="grid_2">
+              <label c-label item="item">Jenis Arsip</label>
+              <input  kendo-combo-box k-ng-model="item.jenisArsip" k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisArsip" />
+          </div> -->
+    <!-- <div class="grid_1">
+              <label c-label item="item">Jangka Waktu</label>
+              <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.jangkaWaktu"/>
+          </div>
+          <div class="grid_3">
+              <label c-label item="item">Asal </label>
+              <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.asalSurat"/>
+          </div> -->
+    <!-- <div class="grid_2">
+              <label c-label item="item">Penerima Surat</label>
+              <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.penerimaSurat" />
+          </div> -->
+    <!-- <div class="grid_2">
+              <label c-label item="item">Ruangan Penerima</label>
+              <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.ruanganPenerima"  />
+          </div> -->
+
+    <!-- <div class="grid_2">
+              <label c-label item="item">Status Berkas</label>
+              <input  kendo-combo-box k-ng-model="item.statusBerkas" k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listStatusBerkas" />
+          </div> -->
+    <!--  <div class="grid_3">
+              <label c-label item="item">Unit Pembuat</label>
+              <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.unitPembuat"  />
+          </div> -->
+
+    <div class="grid_3">
+        <label c-label item="item">Instalasi</label>
+        <input kendo-combo-box k-ng-model="item.instalasi" k-data-text-field="'namadepartemen'"
+            k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listInstalasi"
+            k-on-change='getKodeSurat()' />
+    </div>
+    <div class="grid_2">
+        <label c-label item="item">Unit Kerja</label>
+        <input kendo-combo-box k-ng-model="item.unitKerja" k-data-text-field="'namaruangan'" k-data-value-field="'id'"
+            k-filter="'contains'" k-auto-bind="false" k-data-source="listUnitKerja" />
+    </div>
+</div>
+<div class="grid_12" style="margin-top: 10px">
+
+    <div class="grid_4">
+        <label c-label item="item">Perihal</label>
+        <textarea style="width: 99%; height: 100px;" ng-model="item.perihal"></textarea>
+        <!-- <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.perihal"/> -->
+    </div>
+    <div class="grid_4">
+        <label c-label item="item">Lampiran Perihal</label>
+        <textarea style="width: 99%; height: 100px;" ng-model="item.lampiranPerihal"></textarea>
+        <!-- <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.lampiranPerihal"/> -->
+    </div>
+    <div class="grid_4">
+        <label c-label item="item">Keterangan Revisi</label>
+        <textarea style="width: 99%; height: 100px;" ng-model="item.ketrevisi"></textarea>
+        <!-- <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.ketrevisi"/> -->
+    </div>
+
+</div>
+<div class="grid_12">
+    <div ng-cloak>
+        <md-content>
+            <md-tabs md-dynamic-height md-border-bottom>
+                <md-tab label="Unggah File" md-on-select="onTabChanges(1)">
+                    <md-content class="md-padding">
+                        <div class="panel panel-default container_12">
+                            <div class="panel-body">
+                                <div class="grid_12">
+                                    <div class="grid_3">
+                                        <form class="3" method="post" enctype="multipart/form-data" id="coba">
+                                            <label c-label item="item" c-label-text="Unggah File "></label>
+                                            <br>
+                                            <input type="file" name="file" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+                <md-tab label=" Template" md-on-select="onTabChanges(2)">
+                    <md-content class="md-padding">
+                        <div class="panel panel-default container_12">
+                            <div class="panel-body">
+                                <div class="grid_1">
+                                    <button class="c-button" ng-click="generateQR()">QRcode</button>
+                                </div>
+                                <div class="grid_12">
+                                    <textarea kendo-editor k-options="optionEdit" k-ng-model="item.wyswyg"
+                                        style="height: 400px"></textarea>
+                                    <!-- <div id="editor">This is some sample content.</div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </md-content>
+    </div>
+</div>
+
+<div class="grid_12">
+    <div class="grid_2">
+        <label c-label item="item">Status</label>
+        <input kendo-combo-box k-ng-model="item.status" k-data-text-field="'statusediting'" k-data-value-field="'id'"
+            k-filter="'contains'" k-auto-bind="false" k-data-source="listStatus" />
+    </div>
+    <div class="grid_1">
+        <label c-label item="item">Revisi Ke</label>
+        <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.revisike" />
+    </div>
+    <div class="grid_7"></div>
+    <div class="grid_1" style="margin-top: 22px">
+        <button class="c-button" ng-click="batal()">Batal</button>
+    </div>
+    <div class="grid_1" style="margin-top: 22px">
+        <button class="c-button" ng-click="Save()">Simpan</button>
+    </div>
+</div>
+<div class="grid_6" style="margin-top: 10px">
+    <div class="grid_12 headerBox">
+        <p>Riwayat</p>
+    </div>
+    <!-- grid table -->
+    <div class="grid_12 borderBox">
+        <div id="kGrid" kendo-grid k-data-source="dataGridRiwayat" k-selectable="'row'" class="max-height"
+            k-options="columnGridRiwayat" k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelectedRiwayat"
+            ng-click="klikGridRiwayat(dataSelectedRiwayat)">
+        </div>
+    </div>
+</div>
+<div class="grid_6" style="margin-top: 10px">
+    <div class="grid_12 headerBox">
+        <p>Template</p>
+    </div>
+    <!-- grid table -->
+    <div class="grid_12 borderBox">
+        <div id="kGrid" kendo-grid k-data-source="dataGridTmp" k-selectable="'row'" class="max-height"
+            k-options="columnGridTmp" k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelectedTmp"
+            ng-click="klikGridTmp(dataSelectedTmp)">
+        </div>
+    </div>
+</div>
+<div kendo-window="popUpQR" k-title="' Generate QRcode'" k-width="500" k-visible="false">
+    <div class="grid_12" style="margin-top: 10px">
+        <div class="grid_12">
+            <fieldset>
+                <legend>Pilih Pegawai</legend>
+                <div class="grid_12">
+                    <label c-label item="item">Pegawai</label>
+                    <input kendo-combo-box k-ng-model="item.pegawaiQr" k-data-text-field="'namalengkap'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                        k-data-source="listDiteruskan" />
+
+                </div>
+                <div class="grid_12" id="qr-container">
+                    <div id="qrcode" class="qrcode"></div>
+                    <!-- <a href="dataURL" target="_blank" download="image.png"> -->
+                </div>
+            </fieldset>
+        </div>
+        <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+
+            <button class="k-button  k-primary   k-button-icontext" ng-click="generate()"><i class=" fa fa-refresh"
+                    style="padding-right:0.2rem ;"></i>Generate QRcode</button>
+
+            <button class="k-button k-primary  k-button-icontext" ng-click="copyQR()"><i class="fa fa-copy"
+                    style="padding-right:0.2rem ;"></i>Copy QRcode
+            </button>
+
+        </div>
+    </div>
+</div>
+<style>
+    #qrcode-container {
+        display: none;
+    }
+
+    .qrcode {
+        padding: 16px;
+    }
+
+    .qrcode img {
+        margin: 0 auto;
+    }
+</style>
+<!-- <div class="grid_3">
+              <label c-label item="item">Ruangan Tujuan</label>
+              <select kendo-multi-select 
+                              k-data-source="ListRuangan" 
+                              k-data-text-field="'namaRuangan'" 
+                              k-data-value-field="'id'" 
+                              k-placeholder="'-- Pilih Ruangan --'" 
+                              k-ng-model="item.ruanganTujuan">
+               </select>
+          </div> -->
+
+
+
+<!-- </div> -->
+<!-- </div> -->
+<!-- </c-panel> -->
+<!-- </div> -->

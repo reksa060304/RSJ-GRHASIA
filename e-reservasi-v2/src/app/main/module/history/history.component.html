@@ -1,0 +1,202 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+
+        <ng-container>
+            <div class="row">
+
+                <div class="col-12">
+                    <div class="card">
+                        <div class="row" style="padding:10px">
+                            <div class="col-md-6 col-12">
+                                <div class="d-flex justify-content-between align-items-center m-1">
+                                    <label class="d-flex align-items-center">Show
+                                        <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                        entries</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+                                <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                                    <label class="d-flex align-items-center ml-1 ml-md-0">Filter Poli:<input
+                                            type="search" class="form-control ml-25"
+                                            (keyup)="filterUpdate($event)" /></label>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-12" *ngFor="let items of listHistori">
+                            <div class="card">
+
+                                <div class="card-header email-detail-head">
+                                    <div
+                                        class="user-details d-flex justify-content-between align-items-center flex-wrap">
+                                        <div class="avatar mr-75">
+                                            <img src="assets/images/brief.png" alt="avatar img holder" width="48"
+                                                height="48" />
+                                        </div>
+                                        <div class="mail-items">
+                                            <h5 class="mb-0">
+                                                {{items.namaruangan}}</h5>
+                                            <div ngbDropdown class="email-info-dropup">
+                                                <span role="button" class="font-small-3 text-muted" id="card_top01"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                                    ngbDropdownToggle>
+                                                    {{items.tanggalreservasi}}
+                                                </span>
+                                                <div ngbDropdownMenu aria-labelledby="card_top01">
+                                                    <table class="table table-sm table-borderless">
+                                                        <tbody>
+                                                            <!-- <tr>
+                                                            <td class="text-right">Tipe Pembayaran :</td>
+                                                            <td>{{items.kelompokpasien}}</td>
+                                                        </tr> -->
+                                                            <!-- <tr>
+                                                            <td class="text-right">To:</td>
+                                                            <ng-container>
+                                                                <td>ASASAS</td>
+                                                            </ng-container>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-right">Date:</td>
+                                                            <td>---</td>
+                                                        </tr> -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="mail-meta-item d-flex align-items-center">
+                                  
+                                        <div ngbDropdown class="ml-50">
+                                            <div role="button" class="hide-arrow" id="email_more" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+                                                <i data-feather="more-vertical" [size]="18"></i>
+                                            </div>
+                                            <div ngbDropdownMenu class="dropdown-menu-right"
+                                                aria-labelledby="email_more">
+
+                                                <div ngbDropdownItem><i data-feather="trash-2" class="mr-50"></i>Hapus
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                </div>
+                                <div class="card-body mail-message-wrapper pt-2">
+                                    <div class="mail-message">No Reservasi : <span
+                                            class="font-weight-bolder">{{items.noreservasi}}</span></div>
+                                    <div class="mail-message">Dokter : <span
+                                            class="font-weight-bolder">{{items.dokter !=null?items.dokter:'-'}}</span>
+                                    </div>
+                                    <div class="mail-message">Tipe Pembayaran : <span
+                                            class="font-weight-bolder">{{items.kelompokpasien}}</span></div>
+
+                                </div>
+                                <div class="card-footer">
+                                    <div class="mail-attachments">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <!-- <i data-feather="paperclip" [size]="16" class="mr-50"></i> -->
+                                            <h5 class="font-weight-bolder text-body mb-0">Status: <div
+                                                    class="badge badge-{{items.isconfirm == null ? 'danger' : 'success'}}">
+                                                    {{items.isconfirm == null ? 'Belum Checkin' : 'Sudah Checkin'}}
+                                                </div>
+                                            </h5>
+                                        </div>
+                                        <div class="d-flex flex-column">
+                                            <a href="javascript:void(0);" class="mb-50">
+                                                <!-- <div class="mr-1"> -->
+                                                <button type="button" class="btn btn-icon btn-outline-success mr-1"
+                                                    placement="top" [ngbTooltip]="'Cetak Bukti'"
+                                                    (click)="cetak(modalSuccess,items)" rippleEffect>
+                                                    <span [data-feather]="'printer'"></span>
+                                                </button>
+                                                <!-- </div> -->
+                                                <!-- <div class="mr-1"> -->
+                                                <button *ngIf="items.isconfirm == null" type="button" class="btn btn-icon btn-outline-danger"
+                                                    placement="top" [ngbTooltip]="'Hapus'" rippleEffect>
+                                                    <span [data-feather]="'trash-2'"></span>
+                                                </button>
+                                                <!-- </div> -->
+                                                <!-- <img src="" class="mr-25" alt="png" height="18" /> -->
+                                                <!-- <small class="text-muted font-weight-bolder"> Dokter : {{items.dokter !=null?items.dokter:'-'}} </small> -->
+                                                <!-- <span class="text-muted font-small-2 ml-25">(2mb)</span> -->
+                                            </a>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+    </div>
+    <ng-template #modalSuccess let-modal>
+        <div class="modal-header">
+            <h5 class="modal-title" id="myModalLabel160">Bukti Reservasi</h5>
+            <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" tabindex="0" ngbAutofocus>
+
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">No Reservasi :
+                            <b>
+                                <span class="badge badge-light-success">{{resultR.noreservasi}}</span></b>
+                        </h4>
+                        <h6 class="card-subtitle text-muted">Tgl Reservasi :
+                            <b>{{resultR.tgl}}</b>
+                        </h6>
+                    </div>
+                    <div class="custom-control custom-control-success custom-switch mb-1" style="text-align:center">
+                        <p class="mb-50">Show Barcode</p>
+                        <input type="checkbox" class="custom-control-input" id="customSwitch4"
+                        [(ngModel)]="isChecked" (change)="checkValue(isChecked)"/>
+                        <label class="custom-control-label" for="customSwitch4"></label>
+                    </div>
+                    <div class="img-responsive text-center" *ngIf="isBarcode">
+                        <img class="img-fluid" style="-webkit-user-select: none;cursor:pointer;
+                                text-align: center;width:300px" (click)="popUpQR()" src="{{ resultR.barCode}}">
+                    </div>
+                    <div class="img-responsive text-center" *ngIf="!isBarcode">
+                        <img class="img-fluid" style="-webkit-user-select: none;cursor:pointer;
+                                text-align: center;width:300px" (click)="popUpQR()" src="{{ resultR.qrCode}}">
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Nama Pasien: <b>{{resultR.namapasien}}</b><br>
+                            Tanggal Lahir: <b>{{resultR.tgllahir}} </b><br>
+                            Jenis Kelamin: <b>{{resultR.jeniskelamin}} </b><br>
+                            No Telepon: <b>{{resultR.notelepon}} </b><br>
+                            Poli: <b>{{resultR.namaruangan}}</b><br>
+                            Tipe Pembayaran: <b>{{resultR.kelompokpasien}}</b><br>
+                        </p>
+
+                        Status: <span class="badge badge-{{resultR.isconfirm == null ? 'danger' : 'success'}}">
+                            {{resultR.isconfirm == null ? 'Belum Checkin' : 'Sudah Checkin'}}
+                        </span>
+                        <div class="divider" *ngIf="resultR.isconfirm ==null">
+                            <div class="divider-text" style="color:#ff9f43;"><i>Harap
+                                    Check-In sebelum jam Reservasi</i></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </ng-template>
