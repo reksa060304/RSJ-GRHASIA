@@ -262,7 +262,7 @@ class ExternalController extends ApiController
             // return $this->respond( $data);
             foreach ($data as $key => $value) {
                 $tb = $value->table_name;
-                $da = DB::table($tb)->update(['kdprofile' => 21]);
+                $da = DB::table($tb)->update(['kdprofile' => 30]);
             }
         //        DB::commit();
         //      return $this->setStatusCode(200)->respond('Sukses');
@@ -272,4 +272,35 @@ class ExternalController extends ApiController
         // }
       
     }
+
+    public function deleteKdProfile(){
+        // DB::beginTransaction();
+          // try{
+             ini_set('max_execution_time', 1200); 
+             $data = DB::select(DB::raw("
+                    select table_name 
+                     from information_schema.tables 
+                     where table_name ilike '%_m'
+                     and table_name <> 'profile_m'
+                     and table_name in (
+                         SELECT table_name
+                         FROM information_schema.columns 
+                         WHERE  column_name='kdprofile'
+                         and table_name ilike '%_m'
+                         and table_name <> 'profile_m'
+                     )                 
+             "));
+             // return $this->respond( $data);
+             foreach ($data as $key => $value) {
+                 $tb = $value->table_name;
+                 $da = DB::table($tb)->update(['kdprofile' => 30]);
+             }
+         //        DB::commit();
+         //      return $this->setStatusCode(200)->respond('Sukses');
+         // } catch (\Exception $e) {
+         //       DB::rollBack();
+         //       return $this->setStatusCode(400)->respond($e);
+         // }
+       
+     }
 }

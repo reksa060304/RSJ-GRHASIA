@@ -25,21 +25,21 @@ define([], function () {
         };
     } else {
         return {
-           // BaseUrl: 'http://localhost:2222/app/data/GetRouting',
-            // RouteUrl: 'http://localhost:2222/app/data/GetRouting',
-            UrlDataConfig: 'http://localhost:2222/app/data/GetRequireConfig',         
+           // BaseUrl: 'http://localhost:2255/app/data/GetRouting',
+            // RouteUrl: 'http://localhost:2255/app/data/GetRouting',
+            UrlDataConfig: 'http://localhost:2255/app/data/GetRequireConfig',         
             urlSocket: 'http://localhost:9998',
-            baseUrlData: "http://localhost:2222/app/data/",         
-            urlRoute: 'http://localhost:2222/app/data/GetRouting',
-            urlRoutePelayanan: 'http://localhost:2222/app/data/GetRoutingPelayanan',
-            urlRouteSarpras: 'http://localhost:2222/app/data/GetRoutingSarpras',
-            urlRouteKeuangan: 'http://localhost:2222/app/data/GetRoutingKeuangan',
-            urlRouteManagemen: 'http://localhost:2222/app/data/GetRoutingManagemen',
-            urlRouteSDM: 'http://localhost:2222/app/data/GetRoutingSDM',
+            baseUrlData: "http://localhost:2255/app/data/",         
+            urlRoute: 'http://localhost:2255/app/data/GetRouting',
+            urlRoutePelayanan: 'http://localhost:2255/app/data/GetRoutingPelayanan',
+            urlRouteSarpras: 'http://localhost:2255/app/data/GetRoutingSarpras',
+            urlRouteKeuangan: 'http://localhost:2255/app/data/GetRoutingKeuangan',
+            urlRouteManagemen: 'http://localhost:2255/app/data/GetRoutingManagemen',
+            urlRouteSDM: 'http://localhost:2255/app/data/GetRoutingSDM',
 
-            baseUrlLogin: "http://localhost:8888/service/medifirst2000/auth/sign-in",
-            baseUrlLogout: "http://localhost:8888/service/medifirst2000/auth/sign-out",
-            baseApiBackend: 'http://localhost:8888/service/medifirst2000/',
+            baseUrlLogin: "http://localhost:8833/service/medifirst2000/auth/sign-in",
+            baseUrlLogout: "http://localhost:8833/service/medifirst2000/auth/sign-out",
+            baseApiBackend: 'http://localhost:8833/service/medifirst2000/',
             baseProfileMenu: 1, 
 
             rabbitMQHost: 'amqp://rsab:rsab@192.168.12.2'
