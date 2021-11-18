@@ -1761,7 +1761,9 @@ class PelayananResepController extends ApiController
         //## StrukResep
         DB::beginTransaction();
 //        ini_set('max_execution_time', 1000); //6 minutes
+        
         try {
+
             $racikanORnonracikan = 'N';
             //region @SIMPAN PELAYANAN OBAT IEU
             $dataLogin = $request->all();
@@ -2230,13 +2232,12 @@ class PelayananResepController extends ApiController
             $kdRuanganDepoRajal = $this->settingDataFixed('kdRuanganDepoRajal', $idProfile);
             if ($r_SR['noorder'] != 'EditResep') {
                 if ($r_SR['noorder'] == '' || $r_SR['noorder'] != '') {
-                    $historyOrder = StrukOrder::where('noorder', $r_SR['noorder'])->where('kdprofile', $idProfile)->first();
+                    $historyOrder = StrukOrder::where('noorder', $r_SR['noorder'])->where('kdprofile', $idProfile)->first();                    
                     $noAntri = "";
                     if ($historyOrder != null ){
                         $noAntri = $historyOrder->noantri;
                     }
-                    if ($noAntri != "" || $noAntri != null) {
-
+                    if ($noAntri != "" || $noAntri != null) {                        
                         $newAA = new AntrianApotik();
                         $norecAA = $newAA->generateNewId();
                         $newAA->norec = $norecAA;
@@ -2249,7 +2250,7 @@ class PelayananResepController extends ApiController
                         $newAA->noresep = $noResep;
                         $newAA->save();
                     }elseif ($r_SR['noresep'] == '-'
-                        && $r_SR['ruanganfk'] == (int)$kdRuanganDepoRajal) {
+                        && $r_SR['ruanganfk'] == (int)$kdRuanganDepoRajal) {                        
                         $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
                             ->where('kdprofile', $idProfile)
                             ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
@@ -2266,8 +2267,7 @@ class PelayananResepController extends ApiController
                         $newAA->jenis = $racikanORnonracikan;
                         $newAA->tglresep = date('Y-m-d H:i:s');
                         $newAA->noresep = $noResep;
-                        $newAA->save();
-
+                        $newAA->save();                        
                         if ($r_SR['noorder'] != 'EditResep' && $r_SR['noorder'] != '') {
                             $dataOrder = StrukOrder::where('noorder', $r_SR['noorder'])
                                 ->where('kdprofile', $idProfile)

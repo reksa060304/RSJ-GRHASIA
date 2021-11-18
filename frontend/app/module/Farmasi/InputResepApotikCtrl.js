@@ -1813,6 +1813,7 @@ define(['initialize'], function (initialize) {
                     $scope.isRouteLoading = false;
                     window.history.back();
                 }, function (error) {
+                    $scope.isRouteLoading = false;
                     $scope.tombolSimpanVis = true;
                 })
                 var chacePeriode = {
