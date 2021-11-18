@@ -2965,7 +2965,7 @@ class PelayananResepController extends ApiController
         $kdProfile = (int)$this->getDataKdProfile($request);
         $norecresep="";
         if(isset($request['norecresep']) && $request['norecresep']!="" && $request['norecresep']!="undefined"){
-            $norecresep =" WHERE sr.norec = '".$request['norecresep']."' ";
+            $norecresep =" AND sr.norec = '".$request['norecresep']."' ";
         }
         $data = DB::select(DB::raw("SELECT sp.nostruk
             FROM pelayananpasien_t AS pp
