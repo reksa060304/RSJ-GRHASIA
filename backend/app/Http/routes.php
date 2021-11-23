@@ -1225,6 +1225,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-bulanclosing', 'Logistik\LogistikController@cekTanggalClosing');
             Route::get('logistik-stok/get-data-stock-flow', 'Logistik\LogistikController@getDataComboStockFlow');
             Route::get('logistik/get-daftar-penerimaan-harga', 'Logistik\LogistikController@getDaftarPenerimaanSuplierHarga');
+            Route::get('logistik/get-daftar-pemakaian-bhp', 'Logistik\LogistikController@getDaftarPemakaianBarangBHP');
+            Route::get('logistik/get-detail-pemakaian-bhp', 'Logistik\LogistikController@getPemakaianStokRuanganByNorec');
             // GET //
 
             // POST //
@@ -1272,6 +1274,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/cek-transaksi-use', 'Logistik\LogistikController@cekTransaksiUse');
             Route::post('logistik/save-closing-persediaan-2021', 'Logistik\LogistikController@closingPersediaan_Agustus2021');
             Route::post('logistik/save-data-perubahan-harga-penerimaan-supplier', 'Logistik\LogistikController@saveUbahHargaTerimaBarangSuplier');
+            Route::post('logistik/save-pemakaian-bhp', 'Logistik\LogistikController@savePemakaianBarangBHP');
+            Route::post('logistik/hapus-pemakaian-bhp', 'Logistik\LogistikController@hapusPemakaianBarangBHP');
             // POST //
         // });
         // Route::group(['prefix' => 'asset'], function () {

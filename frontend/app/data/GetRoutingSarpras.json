@@ -4795,5 +4795,45 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "PemakaianBHPRuangan",
+    "url": "/UGVtYWthaWFuQkhQUnVhbmdhbg==",
+    "templateurl": "module/Logistik/PemakaianBHPRuangan.html",
+    "controller": "PemakaianBHPRuanganCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarPemakaianBHPRuangan",
+    "url": "/RGFmdGFyUGVtYWthaWFuQkhQUnVhbmdhbg==",
+    "templateurl": "module/Logistik/DaftarPemakaianBHPRuangan.html",
+    "controller": "DaftarPemakaianBHPRuanganCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
