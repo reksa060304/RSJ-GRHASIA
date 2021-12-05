@@ -344,18 +344,18 @@ define(['initialize'], function (initialize) {
             }
 
             function loadDefaultSkrining() {
-                $scope.data.Penulis = 2;
-                $scope.data.Tanggal = 2;
-                $scope.data.DataRM = 2;
-                $scope.data.Pasien = 2;
-                $scope.data.DataLahir = 2;
+                $scope.data.Penulis = 1;
+                $scope.data.Tanggal = 1;
+                $scope.data.DataRM = 1;
+                $scope.data.Pasien = 1;
+                $scope.data.DataLahir = 1;
                 $scope.data.Berat = 2;
                 $scope.data.DataDokter = 2;
-                $scope.data.DataRuang = 2;
-                $scope.data.DataStatus = 2;
-                $scope.data.Obat = 2;
-                $scope.data.DataKekuatan = 2;
-                $scope.data.DataJumlah = 2;
+                $scope.data.DataRuang = 1;
+                $scope.data.DataStatus = 1;
+                $scope.data.Obat = 1;
+                $scope.data.DataKekuatan = 1;
+                $scope.data.DataJumlah = 1;
                 $scope.data.DataStabilitas = 2;
                 $scope.data.DataAturan = 2;
                 $scope.data.DataIndikasi = 2;
@@ -396,6 +396,7 @@ define(['initialize'], function (initialize) {
                     pegawaiUser = dat.data.detaillogin[0];
                     $scope.item.tarifadminresep = dat.data.tarifadminresep.nilaifield
                     $scope.listsbsm = [{ id: 1, name: 'Sebelum Makan' }, { id: 2, name: 'Bersama' }, { id: 3, name: 'Sesudah Makan' }]
+                    $scope.listPenyekriningResep = dat.data.penyekrining;
 
                     // $scope.item.ruangan = {id:$scope.listRuangan[0].id,namaruangan:$scope.listRuangan[0].namaruangan}
                     // $scope.item.penulisResep = {id:data_ih.data.detailresep.pgid,namalengkap:data_ih.data.detailresep.namalengkap}
@@ -604,6 +605,7 @@ define(['initialize'], function (initialize) {
             function LoadSkrining() {
                 medifirstService.get("farmasi/get-histori-skrining?norecResep=" + norecResep, true).then(function (data_ih) {
                     var datas = data_ih.data[0]
+                    norecSkrining = datas.norec;
                     $scope.data.Penulis = datas.rpenulis;
                     $scope.data.Tanggal = datas.rtanggalresep;
                     $scope.data.DataRM = datas.rmr;
@@ -625,9 +627,9 @@ define(['initialize'], function (initialize) {
                     $scope.data.DataInteraksi = datas.rinteraksi;
                     $scope.data.DataAntibiotik = datas.rantibiotik;
                     $scope.data.DataPoli = datas.rpolifarmasi;
-                    $scope.data.PenyekriningResep = datas.namapenyekriningresep;
-                    $scope.data.Peracik = datas.namaperacik;
-                    $scope.data.Pengecek = datas.Pengecek;
+                    $scope.data.PenyekriningResep = { id: datas.idnamapenyekriningresep, namalengkap : datas.namapenyekriningresep };
+                    $scope.data.Peracik = {id: datas.idnamaperacik, namalengkap: datas.namaperacik };
+                    $scope.data.Pengecek = {id: datas.idnamapengecek, namalengkap: datas.namapengecek };
                     $scope.data.Penyerah = datas.namapenyrahobat;
                     $scope.data.Penerima = datas.namapenerimaobat;
 
@@ -2034,16 +2036,16 @@ define(['initialize'], function (initialize) {
                     var KetPoli = $scope.data.KetPoli
                 }
                 var PenyekriningResep = ""
-                if ($scope.data.PenyekriningResep != undefined) {
-                    var PenyekriningResep = $scope.data.PenyekriningResep
+                if ($scope.data.PenyekriningResep.id != undefined) {
+                    var PenyekriningResep = $scope.data.PenyekriningResep.id
                 }
                 var Peracik = ""
-                if ($scope.data.Peracik != undefined) {
-                    var Peracik = $scope.data.Peracik
+                if ($scope.data.Peracik.id != undefined) {
+                    var Peracik = $scope.data.Peracik.id
                 }
                 var Pengecek = ""
-                if ($scope.data.Pengecek != undefined) {
-                    var Pengecek = $scope.data.Pengecek
+                if ($scope.data.Pengecek.id != undefined) {
+                    var Pengecek = $scope.data.Pengecek.id
                 }
                 var Penyerah = ""
                 if ($scope.data.Penyerah != undefined) {
