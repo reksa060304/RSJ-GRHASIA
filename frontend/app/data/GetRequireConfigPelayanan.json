@@ -2985,6 +2985,10 @@
         {
             "nameDep": "MenuPRBCtrl",
             "urlDep": "module/Registrasi/MenuPRBCtrl"
+        },
+        {
+            "nameDep": "AsuhanGiziPasienRawatInapCtrl",
+            "urlDep": "module/EMR/AsuhanGiziPasienRawatInapCtrl"
         }
     ]
 }

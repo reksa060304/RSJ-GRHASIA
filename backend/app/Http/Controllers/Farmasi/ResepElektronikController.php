@@ -575,7 +575,7 @@ class ResepElektronikController extends ApiController
                 $dataPP->norec_apd = $request['norec'];
                 $dataPP->objectruanganfk = $request['objectruanganfk'];
                 $dataPP->rpenulis = $request['rpenulis'];
-                $dataPP->rpenulis = $request['rpenulis'];
+                $dataPP->rtanggalresep = $request['rtanggalresep'];
                 $dataPP->rmr = $request['rmr'];
                 $dataPP->rpasien = $request['rpasien'];
                 $dataPP->rtanggallahir = $request['rtanggallahir'];
@@ -674,15 +674,19 @@ class ResepElektronikController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $data = \DB::table('skriningfarmasi_t as sf')
-            ->select(DB::raw("sf.rpenulis,rtanggalresep,sf.rmr,sf.rpasien,sf.rtanggallahir,sf.rberatbedan,sf.rdokter,sf.rruang,sf.rstatusjamin,sf.robat,sf.rkekuatan,
+            ->join('pegawai_m as pg1', 'pg1.id', '=', 'sf.namapenyekriningresep')
+            ->join('pegawai_m as pg2', 'pg2.id', '=', 'sf.namaperacik')
+            ->join('pegawai_m as pg3', 'pg3.id', '=', 'sf.namapengecek')
+            ->select(DB::raw("sf.norec, sf.rpenulis,rtanggalresep,sf.rmr,sf.rpasien,sf.rtanggallahir,sf.rberatbedan,sf.rdokter,sf.rruang,sf.rstatusjamin,sf.robat,sf.rkekuatan,
                      sf.rjumlahobat,sf.rstabilitas,sf.raturan,sf.rindikasiobat,sf.ralergi,sf.rindikasi,sf.rkonsumsi,sf.rduplikat,sf.rinteraksi,sf.rantibiotik,
-                     sf.rpolifarmasi,sf.namapenyekriningresep,sf.namaperacik,sf.namapengecek,sf.namapenyrahobat,sf.namapenerimaobat,sf.prinsipbesar,sf.strukresepfk,
+                     sf.rpolifarmasi,sf.namapenyekriningresep as idnamapenyekriningresep, pg1.namalengkap as namapenyekriningresep, sf.namaperacik as idnamaperacik, pg2.namalengkap as namaperacik,sf.namapengecek as idnamapengecek, pg3.namalengkap as namapengecek,sf.namapenyrahobat,sf.namapenerimaobat,sf.prinsipbesar,sf.strukresepfk,
                      sf.ketpenulis,sf.kettanggal,sf.ketrm,sf.ketpasien,sf.kettanggallahir,sf.ketberat,sf.ketdokter,sf.ketruang,sf.ketstatus,sf.ketobat,sf.ketkekuatan,sf.ketjumlah,
                      sf.ketstabilitas,sf.ketaturan,sf.ketalergi,sf.ketkonsumsi,sf.ketduplikasi,sf.ketinteraski,sf.ketantibiotik,sf.ketpolifarmasi,sf.tglinput,sf.ketindikasi,sf.rcek"))
             ->where('sf.kdprofile',$idProfile);
         if(isset($request['norecResep']) && $request['norecResep']!="" && $request['norecResep']!="undefined"){
             $data = $data->where('sf.strukresepfk',$request['norecResep']);
         }
+        $data = $data->orderBy('tglinput', 'desc');
         $data = $data->get();
         return $this->respond($data);
     }
