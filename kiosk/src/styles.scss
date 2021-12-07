@@ -1,0 +1,19 @@
+@import '@core/scss/core.scss';
+@import './assets/scss/styles';
+.cursor{
+    cursor: pointer;
+  }
+  .custom-checkbox.custom-control, .custom-radio.custom-control {
+    padding-left: 1.8rem;
+    text-align: left;
+}
+.labels{
+  color: #5e5873;
+}
+.dark-layout .labels{
+  color: #d0d2d6;
+}
+.label-required:after {
+  content: " *";
+  color: red;
+}

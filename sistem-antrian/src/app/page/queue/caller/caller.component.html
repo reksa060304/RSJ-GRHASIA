@@ -4,7 +4,13 @@
         </div> -->
         <div class="p-col-12 p-md-12 p-lg-12">
             <div class="p-fluid p-formgrid ">
+
                 <div class="card card-w-title">
+                    <div class="p-col-3 p-md-1 p-sm-3" style="float: right">
+                        <button pButton type="button" pRipple class="p-button-outlined p-button-secondary" label="Back"
+                            style="float: right;margin-top: -10px;" [routerLink]="['/index']" icon="fa fa-arrow-left"
+                            pTooltip="Kembali"></button>
+                    </div>
                     <h2 style="color: #777777;">Caller</h2>
                     <div class="p-col-12 p-md-12">
                         <div class="p-grid">
@@ -29,8 +35,9 @@
                                                 </div>
                                                 <div class="p-col-12 p-md-2" style="margin-top: 20px;">
                                                     <button pButton type="submit" icon="pi pi-phone"
-                                                        class="p-button-success p-btn-green-ngora" pTooltip="Panggil" (click)="panggil()"
-                                                        label="Panggil" [disabled]="!isPanggil"></button>
+                                                        class="p-button-success p-btn-green-ngora" pTooltip="Panggil"
+                                                        (click)="panggil()" label="Panggil" [disabled]="!isPanggil"
+                                                        pRipple></button>
                                                 </div>
                                             </div>
                                             <div class="p-grid">
@@ -40,20 +47,28 @@
                                                             <label class="label" for="input">Shortcut</label>
                                                         </div>
                                                         <div class="p-col-12 p-md-3">
-                                                            <button pButton type="button" class="p-button-success p-btn-green"
-                                                                (click)="shortcutLoket(1)" label="Loket-1"></button>
+                                                            <button pButton type="button"
+                                                                class="p-button-success p-btn-green"
+                                                                (click)="shortcutLoket(1)" label="Loket-1"
+                                                                pRipple></button>
                                                         </div>
                                                         <div class="p-col-12 p-md-3">
-                                                            <button pButton type="button" class="p-button-success p-btn-green"
-                                                                (click)="shortcutLoket(2)" label="Loket-2"></button>
+                                                            <button pButton type="button"
+                                                                class="p-button-success p-btn-green"
+                                                                (click)="shortcutLoket(2)" label="Loket-2" pRipple>
+                                                            </button>
                                                         </div>
                                                         <div class="p-col-12 p-md-3">
-                                                            <button pButton type="button" class="p-button-success p-btn-green"
-                                                                (click)="shortcutLoket(3)" label="Loket-3"></button>
+                                                            <button pButton type="button"
+                                                                class="p-button-success p-btn-green"
+                                                                (click)="shortcutLoket(3)" label="Loket-3"
+                                                                pRipple></button>
                                                         </div>
                                                         <div class="p-col-12 p-md-3">
-                                                            <button pButton type="button" class="p-button-success p-btn-green"
-                                                                (click)="shortcutLoket(4)" label="Loket-4"></button>
+                                                            <button pButton type="button"
+                                                                class="p-button-success p-btn-green"
+                                                                (click)="shortcutLoket(4)" label="Loket-4"
+                                                                pRipple></button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -63,20 +78,28 @@
                                                             <label class="label" for="input">Shortcut</label>
                                                         </div>
                                                         <div class="p-col-12 p-md-3">
-                                                            <button pButton type="button" class="p-button-success p-btn-green"
-                                                                (click)="shortcutJenis('A')" label="Jenis-A"></button>
+                                                            <button pButton type="button"
+                                                                class="p-button-success p-btn-green"
+                                                                (click)="shortcutJenis('A')" label="Jenis-A"
+                                                                pRipple></button>
                                                         </div>
                                                         <div class="p-col-12 p-md-3">
-                                                            <button pButton type="button" class="p-button-success p-btn-green"
-                                                                (click)="shortcutJenis('B')" label="Jenis-B"></button>
+                                                            <button pButton type="button"
+                                                                class="p-button-success p-btn-green"
+                                                                (click)="shortcutJenis('B')" label="Jenis-B"
+                                                                pRipple></button>
                                                         </div>
                                                         <div class="p-col-12 p-md-3">
-                                                            <button pButton type="button" class="p-button-success p-btn-green"
-                                                                (click)="shortcutJenis('C')" label="Jenis-C"></button>
+                                                            <button pButton type="button"
+                                                                class="p-button-success p-btn-green"
+                                                                (click)="shortcutJenis('C')" label="Jenis-C"
+                                                                pRipple></button>
                                                         </div>
                                                         <div class="p-col-12 p-md-3">
-                                                            <button pButton type="button" class="p-button-success p-btn-green"
-                                                                (click)="shortcutJenis('D')" label="Jenis-D"></button>
+                                                            <button pButton type="button"
+                                                                class="p-button-success p-btn-green"
+                                                                (click)="shortcutJenis('D')" label="Jenis-D"
+                                                                pRipple></button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -101,9 +124,10 @@
                                                         placeholder="No Antrian" />
                                                 </div>
                                                 <div class="p-col-12 p-md-3" style="margin-top: 20px;">
-                                                    <button pButton type="submit" icon="pi pi-refresh"
+                                                    <button pButton type="submit" icon="fa fa-microphone"
                                                         label="Panggil Ulang" class="p-button-warning p-btn-green-klot"
-                                                        pTooltip="Panggil Ulang" (click)="panggilUlang()"></button>
+                                                        pTooltip="Panggil Ulang" (click)="panggilUlang()"
+                                                        pRipple></button>
                                                 </div>
                                             </div>
 
@@ -128,13 +152,13 @@
                     <div class="p-col-12">
                         <div class="card  no-pad" style="background-color: #5DC473;">
                             <div class="card-w-title card-pad">
-                                <div class="p-col-12 p-md-11">
+                                <div class="p-col-9 p-md-11">
                                     <h4>Detail</h4>
                                 </div>
-                                <div class="p-col-12 p-md-1" style="float: right;margin-top:20px">
-                                    <button pButton type="button" class="p-button-danger p-btn-green-sedeng " label="Refresh"
-                                        style="float: right;margin-top: -10px;" (click)="refresh()" icon="fa fa-refresh"
-                                        pTooltip="Refresh Data"></button>
+                                <div class="p-col-3 p-md-1" style="float: right;margin-top:20px">
+                                    <button pButton type="button" class="p-button-danger p-btn-green-sedeng "
+                                        label="Refresh" style="float: right;margin-top: -10px;" (click)="refresh()"
+                                        icon="fa fa-refresh" pTooltip="Refresh Data" pRipple></button>
                                 </div>
                             </div>
                             <div class="card-2">

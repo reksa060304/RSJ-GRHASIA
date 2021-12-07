@@ -2,7 +2,7 @@ define([], function() {
     'use strict';
 		return {
 			rabbitMQHost : 'amqp://rsab:rsab@127.0.0.1',
-			mode : 'https',
+			mode : 'http',
 			mssql:{
 				user: 'sa',
 				password: 'j4s4medik4',
