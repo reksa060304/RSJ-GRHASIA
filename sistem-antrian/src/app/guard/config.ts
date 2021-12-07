@@ -12,9 +12,9 @@ export class Config {
 	}
 }
 var lokal = {
-	apiBackend: "http://localhost:8700/",
-	apiNotif: "http://127.0.0.1:8700/",
-	socketIO: "http://127.0.0.1:8201",
+	apiBackend: "http://localhost:8600/",
+	apiNotif: "http://127.0.0.1:8600/",
+	socketIO: "http://127.0.0.1:8881",
 };
 var publics = {
 	apiBackend: "http://localhost:8000/",
@@ -22,12 +22,12 @@ var publics = {
 	socketIO: "http://127.0.0.1:8201",
 };
 var lokalIP = {
-	apiBackend: "http://172.20.1.6:8700/",
-	apiNotif: "http://172.20.1.6:8700/",
-	socketIO: "http://172.20.1.6:8201",
+	apiBackend: "/",
+	apiNotif: "/",
+	socketIO: "",
 };
 var hostinghttps = {
-	apiBackend: "https://apps.transmedic.co.id:8000/",
-	apiNotif: "https://apps.transmedic.co.id:8000/",
-	socketIO: "https://apps.transmedic.co.id:8201",
+	apiBackend: "https://apps.transmedic.co.id:8880/",
+	apiNotif: "https://apps.transmedic.co.id:8880/",
+	socketIO: "https://apps.transmedic.co.id:4444",
 };

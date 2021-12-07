@@ -1,0 +1,26 @@
+export class Configuration {
+  static get() {
+    if (window.location.hostname.indexOf('192.168.1.6') > -1) {
+      return {
+        apiBackend: 'http://192.168.1.6/service/',
+        headerToken: 'X-AUTH-TOKEN',
+      }
+    }
+    else if (window.location.hostname.indexOf('36.89.243.57') > -1) {
+      return {
+        apiBackend: 'http://36.89.243.57:51480/service/',
+        headerToken: 'X-AUTH-TOKEN',
+      }
+    } else if (window.location.hostname.indexOf('localhost') > -1) {
+      return {
+        apiBackend: 'http://localhost:8600/service/',
+        headerToken: 'X-AUTH-TOKEN',
+      }
+    } else {
+      return {
+        apiBackend: '/service/',
+        headerToken: 'X-AUTH-TOKEN',
+      }
+    }
+  }
+}

@@ -1,0 +1,170 @@
+body .ui-steps .ui-steps-item {
+  width: 33%;
+  ;
+}
+
+body .ui-steps.steps-custom {
+  margin-bottom: 30px;
+}
+
+body .ui-steps.steps-custom .ui-steps-item .ui-menuitem-link {
+  height: 10px;
+  padding: 0 1em;
+}
+
+body .ui-steps.steps-custom .ui-steps-item .ui-steps-number {
+  background-color: #0081c2;
+  color: #FFFFFF;
+  display: inline-block;
+  width: 36px;
+  border-radius: 50%;
+  margin-top: -14px;
+  margin-bottom: 10px;
+}
+
+.ui-steps .ui-steps-item {
+  width: 33%;
+}
+
+.ui-steps.steps-custom {
+  margin-bottom: 30px;
+}
+
+.ui-steps.steps-custom .ui-steps-item .ui-menuitem-link {
+  height: 10px;
+  padding: 0 1em;
+}
+
+.ui-steps.steps-custom .ui-steps-item .ui-steps-number {
+  background-color: #0081c2;
+  color: #FFFFFF;
+  display: inline-block;
+  width: 36px;
+  border-radius: 50%;
+  margin-top: -14px;
+  margin-bottom: 10px;
+}
+
+.ui-steps.steps-custom .ui-steps-item .ui-steps-title {
+  color: #555555;
+}
+
+body .ui-steps.steps-custom .ui-steps-item .ui-steps-title {
+  color: #555555;
+}
+
+.img-responsive {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.example-card {
+  max-width: 300px;
+  max-height: 300px;
+  text-align: center;
+  background: #f5f5f5;
+}
+
+
+
+.ex-image-a{
+  background-image: url('/assets/humastemplate/images/pasien-baru1.png');
+  background-size: cover;
+}
+.ex-image-b{
+  background-image: url('/assets/humastemplate/images/pasien-lama.png');
+  background-size: cover;
+}
+.kanan {
+  float: right;
+}
+
+.example-card:active {
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+  border-radius: 5px;
+  background: #f5f5f5;
+  // background: #ffffff;
+  //    border: #555555 1px solid;
+  -moz-box-shadow: 0 0 4px 0 rgba(10, 27, 102, 0.418);
+  -webkit-box-shadow: 0 0 4px 0 rgba(10, 27, 102, 0.418);
+  box-shadow: 0 0 4px 0 rgba(10, 27, 102, 0.418);
+}
+
+.color2 {
+  background: #fff
+}
+
+.color1 {
+  background: #f5f5f5
+}
+
+//  .example-card:focus {
+//     // border: 1px solid #C9A8FD;
+//     outline: 0;
+//     -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+//     -moz-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+//     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+//     /* outline: 0 none; */
+//     background-color: #985edb; }
+// .example-card:active {
+//     // border: 1px solid #C9A8FD;
+//     outline: 0;
+//     -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+//     -moz-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+//     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+//     /* outline: 0 none; */
+//     background-color: #985edb; }
+
+.poliklinik-card {
+  max-width: 100px;
+  max-height: 100px;
+  text-align: center
+}
+
+body .ui-menuitem-template-icon {
+  font-size: 2em;
+}
+
+.ui-menu-template {
+  position: relative;
+  text-align: center;
+  min-width: 10em;
+}
+
+body .ui-menu-close-item {
+  position: absolute;
+  right: -1em;
+  top: -.5em;
+  padding: 0
+}
+
+.selected {
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 255, 115, 0.25);
+  -moz-box-shadow: 0 0 0 0.2rem rgba(0, 255, 115, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(0, 255, 115, 0.25);
+  background-color: #cccccc;
+  border-radius: 0px;
+}
+.label-popup{
+    font-weight: bold;
+    font-size: 14px;
+}
+.label-popup-gede{
+    font-weight: bold;
+    font-size: 23px;
+}
+.label-bold{
+  font-weight: bold;
+}
+.label-bold-miring{
+  font-weight: bold;
+  font-style: italic
+}
+.zoom:hover {
+  -ms-transform: scale(3); /* IE 9 */
+  -webkit-transform: scale(3); /* Safari 3-8 */
+  transform: scale(3); 
+}

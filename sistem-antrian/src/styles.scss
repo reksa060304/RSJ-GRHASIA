@@ -488,3 +488,14 @@ body {
 // .card-w-title{
 //   color:white;
 // }
+
+body {
+  background-color: white;
+  position: relative;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url(assets/img/background.jpg);
+  height: 100%;
+  overflow-y: scroll;
+}

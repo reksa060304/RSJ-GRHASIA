@@ -35,7 +35,7 @@ app.use(function (req, res, next) {
 }); 
 
 const cors = require('cors');
-const whitelist = ["https://apps.transmedic.co.id:8202"];
+const whitelist = ["https://apps.transmedic.co.id:5555"];
 const corsOptions = {
     credentials: true, // This is important.
     origin: (origin, callback) => {
@@ -48,7 +48,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.set('port', 8201);
+app.set('port', 8881);
 
 var server = null
 
@@ -78,7 +78,7 @@ server.listen(app.get('port'), function () {
 var io = require('socket.io')(server, {
     credentials: true, // This is important.
     cors: {
-        origin: "https://apps.transmedic.co.id:8202",
+        origin: "https://apps.transmedic.co.id:5555",
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     },
