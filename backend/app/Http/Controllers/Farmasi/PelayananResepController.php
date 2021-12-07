@@ -85,7 +85,7 @@ class PelayananResepController extends ApiController
         $idProfile = (int) $kdProfile;
         $detail=$request->all();
         $result=[];
-        $data = \DB::table('pelayananpasien_t as pp')
+        $data = \DB::table('pelayananpasien_t as pps')
             ->JOIN('antrianpasiendiperiksa_t as apd','apd.norec','=','pp.noregistrasifk')
             ->JOIN('pasiendaftar_t as pd','pd.norec','=','apd.noregistrasifk')
             ->JOIN('pasien_m as ps','ps.id','=','pd.nocmfk')
@@ -117,6 +117,8 @@ class PelayananResepController extends ApiController
                                sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk"))
             ->where('pp.kdprofile', $idProfile)
             ->where('jp.id',97)
+            ->where('sr.statusenabled', true)
+            ->where('pd.statusenabled', true)
             ->orderBy('pp.tglpelayanan','pp.rke');
         if(isset($request['nocm']) && $request['nocm']!="" && $request['nocm']!="undefined"){
             $data = $data->where('ps.nocm','=', $request['nocm']);
