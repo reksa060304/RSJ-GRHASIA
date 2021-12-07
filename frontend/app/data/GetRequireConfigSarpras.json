@@ -963,6 +963,14 @@
         {
             "nameDep": "MasterSifatSuratCtrl",
             "urlDep": "module/SysAdmin/MasterSifatSuratCtrl"
+        },
+        {
+            "nameDep": "DaftarPemakaianBHPRuanganCtrl",
+            "urlDep": "module/Logistik/DaftarPemakaianBHPRuanganCtrl"
+        },
+        {
+            "nameDep": "PemakaianBHPRuanganCtrl",
+            "urlDep": "module/Logistik/PemakaianBHPRuanganCtrl"
         }
         
     ]

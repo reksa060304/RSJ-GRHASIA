@@ -16663,6 +16663,29 @@
         "define": "BPJSToolsCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsuhanGiziPasienRawatInapCtrl",
+    "url": "/AsuhanGiziPasienRawatInap",
+    "templateurl": "module/EMR/AsuhanGiziPasienRawatInap.html",
+    "controller": "AsuhanGiziPasienRawatInapCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
   
 ] 

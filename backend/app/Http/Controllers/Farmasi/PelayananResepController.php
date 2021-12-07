@@ -789,12 +789,20 @@ class PelayananResepController extends ApiController
                 'idLoginUser' => $dataLogin['userData']['id'],
             )
         );
-
+        
         $dataDokter = \DB::table('pegawai_m as ru')
             ->where('ru.kdprofile', $idProfile)
             ->where('ru.statusenabled', true)
             ->where('ru.objectjenispegawaifk', 1)
             ->orderBy('ru.namalengkap')
+            ->get();
+
+        $dataPenyekrining = \DB::table('pegawai_m as pw')
+            ->select('pw.id','pw.namalengkap')
+            ->where('pw.kdprofile', $idProfile)
+            ->where('pw.statusenabled', true)
+            ->where('pw.objectjenispegawaifk', 14)
+            ->orderBy('pw.namalengkap')
             ->get();
 
         $dataKelompok = \DB::table('kelompokpasien_m as kp')
@@ -833,6 +841,7 @@ class PelayananResepController extends ApiController
             'kelompokpasien'=>$dataKelompok,
             'satuanresep'=>$dataSatuanResep,
             'ruanganall'=>$dataRuanganAll,
+            'penyekrining'=>$dataPenyekrining,
             'message' => 'as@epic',
 //            'asdas' => $ruFilter,
         );
@@ -2415,7 +2424,7 @@ class PelayananResepController extends ApiController
             $data = $data->where('pd.noregistrasi','=', $request['noReg']);
         }
         if(isset($request['norec_resep']) && $request['norec_resep']!="" && $request['norec_resep']!="undefined"){
-            $data = $data->where('sr.strukresepfk','=', $request['norec_resep']);
+            $data = $data->where('pp.strukresepfk','=', $request['norec_resep']);
         }
         $data = $data->get();
 
