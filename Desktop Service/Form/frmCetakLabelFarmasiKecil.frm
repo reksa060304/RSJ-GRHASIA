@@ -171,7 +171,7 @@ End If
 '    End If
     
 Set Report = New Cr_cetakLabelKecil
-    strSQL = " SELECT distinct ps.nocm, ps.namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir, CASE WHEN aa.noantri IS NULL THEN sr.noresep ELSE aa.jenis || '-' || aa.noantri END AS noresep, " & _
+    strSQL = " SELECT distinct ps.nocm, ps.namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,sr.noresep AS noresep, " & _
              " to_char(sr.tglresep, 'DD-MM-YYYY') as tglresep,pr.namaproduk || ' (' || CAST(pp.jumlah as varchar) || ')' AS namaproduk,CASE WHEN pp.aturanpakai IS NULL THEN '1X1' WHEN pp.aturanpakai = '' THEN '1X1' ELSE pp.aturanpakai END AS aturanpakai,pp.rke, " & _
              " CASE WHEN alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamat,ps.notelepon,ss.satuanstandar,pp.jumlah, " & _
              " CASE WHEN pp.issiang = 't' THEN 'Siang' ELSE '-' END AS siang, CASE WHEN pp.ispagi = 't' THEN 'Pagi' ELSE '-' END AS pagi, " & _
@@ -189,7 +189,7 @@ Set Report = New Cr_cetakLabelKecil
              " where pp.jeniskemasanfk = 2 and " & _
              str1 & _
              ""
-    strSQL = strSQL & " union all select distinct ps.nocm,ps.namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,CASE WHEN aa.noantri IS NULL THEN sr.noresep ELSE aa.jenis || '-' || aa.noantri END AS noresep,to_char(sr.tglresep, 'DD-MM-YYYY') as tglresep, " & _
+    strSQL = strSQL & " union all select distinct ps.nocm,ps.namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,sr.noresep AS noresep,to_char(sr.tglresep, 'DD-MM-YYYY') as tglresep, " & _
              " ' Racikan' || ' (' || CAST(((CAST(pp.qtydetailresep as INTEGER)/CAST(pp.dosis as INTEGER))*CAST(pro.kekuatan as INTEGER))as varchar) || ')' AS namaproduk,CASE WHEN pp.aturanpakai IS NULL THEN '1X1' WHEN pp.aturanpakai = '' THEN '1X1' ELSE pp.aturanpakai END AS aturanpakai,pp.rke, " & _
              " case when alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamat,ps.notelepon,CASE when jr.jenisracikan IS NULL THEN '' ELSE jr.jenisracikan END AS satuanstandar, " & _
              " ((CAST(pp.qtydetailresep as INTEGER)/CAST(pp.dosis as INTEGER))*CAST(pro.kekuatan as INTEGER)) as jumlah, " & _
@@ -220,7 +220,8 @@ Set Report = New Cr_cetakLabelKecil
     With Report
         .database.AddADOCommand CN_String, adocmd
         If RS3.EOF = False Then
-            .txtNamaRs.SetText strNamaLengkapRs
+            .txtRS.SetText strNamaRS
+            .txtAlamat.SetText strAlamatRS
             .udtTglResep.SetUnboundFieldSource ("{ado.tglresep}")
             .usNoResep.SetUnboundFieldSource ("{ado.noresep}")
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
@@ -294,7 +295,7 @@ Set Report = New Cr_cetakLabelKecil
             str1 & _
             str2 & _
             ""
-    strSQL = strSQL & " union all select distinct ps.nocm,ps.namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,sr.noresep, sr.tglresep,' Racikan' || ' (' || CAST(((CAST(pp.qtydetailresep as INTEGER)/CAST(pp.dosis as INTEGER))*CAST(pro.kekuatan as INTEGER))as varchar) || ')' AS namaproduk,CASE WHEN pp.aturanpakai IS NULL THEN '1X1' WHEN pp.aturanpakai = '' THEN '1X1' ELSE pp.aturanpakai END AS aturanpakai,pp.rke, " & _
+    strSQL = strSQL & " union all select distinct ps.nocm,ps.namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,sr.noresep,sr.tglresep,' Racikan' || ' (' || CAST(((CAST(pp.qtydetailresep as INTEGER)/CAST(pp.dosis as INTEGER))*CAST(pro.kekuatan as INTEGER))as varchar) || ')' AS namaproduk,CASE WHEN pp.aturanpakai IS NULL THEN '1X1' WHEN pp.aturanpakai = '' THEN '1X1' ELSE pp.aturanpakai END AS aturanpakai,pp.rke, " & _
             " CASE WHEN alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamat,ps.notelepon,CASE when jr.jenisracikan IS NULL THEN '' ELSE jr.jenisracikan END AS satuanstandar,((CAST(pp.qtydetailresep as INTEGER)/CAST(pp.dosis as INTEGER))*CAST(pro.kekuatan as INTEGER)) as jumlah, " & _
             " CASE WHEN pp.issiang = 't' THEN 'Siang' ELSE '-' END AS siang, CASE WHEN pp.ispagi = 't' THEN 'Pagi' ELSE '-' END AS pagi, " & _
             " CASE WHEN pp.ismalam = 't' THEN 'Malam' ELSE '-' END as malam, CASE WHEN issore = 't' THEN 'Sore' ELSE '-' END as sore, " & _
@@ -319,7 +320,8 @@ Set Report = New Cr_cetakLabelKecil
         
     With Report
         .database.AddADOCommand CN_String, adocmd
-            .txtNamaRs.SetText strNamaLengkapRs
+            .txtRS.SetText strNamaRS
+            .txtAlamat.SetText strAlamatRS
             .udtTglResep.SetUnboundFieldSource ("{ado.tglresep}")
             .usNoResep.SetUnboundFieldSource ("{ado.noresep}")
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
@@ -330,7 +332,7 @@ Set Report = New Cr_cetakLabelKecil
             .usTelp.SetUnboundFieldSource ("{ado.notelepon}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
             .usss.SetUnboundFieldSource ("{ado.satuanresep}")
-            .unjml.SetUnboundFieldSource ("{ado.jumlah}")
+'            .unjml.SetUnboundFieldSource ("{ado.jumlah}")
             .usWaktuMinumS.SetUnboundFieldSource ("{ado.siang}")
             .usWaktuMinumM.SetUnboundFieldSource ("{ado.malam}")
             .usWaktuMinumP.SetUnboundFieldSource ("{ado.pagi}")

@@ -234,8 +234,7 @@
 			<div class="grid_12">
 				<div class="grid_12 borderBox">
 					<div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" k-columns="columnGrid"
-						k-pageable="'true'" k-sortable="'true'" ng-click="klikGrid(dataSelected)"
-						k-ng-model="dataSelected">
+						k-pageable="'true'" k-sortable="'true'" ng-click="klikGridDv(dataSelect)" k-ng-model="dataSelect">
 						<div k-detail-template>
 							<kendo-tabstrip>
 								<div>
@@ -252,6 +251,9 @@
 				<div class="k-edit-buttons k-state-default pull-right" style="margin-top:10px" ng-hide='isEdit'>
 					<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="unVerifikasi()">
 						<span class="k-icon k-update"></span>Unverifikasi
+					</button>
+					<button class="k-button k-button-icontext k-primary k-grid-update"
+						ng-click="cetakSuratBayar()"><span class="k-icon k-print"></span>Cetak Nota Layanan
 					</button>
 					<button class="k-button k-button-icontext k-grid-cancel" ng-click="Batal()">
 						<span class="k-icon k-cancel"></span>Tutup

@@ -85,7 +85,7 @@ class PelayananResepController extends ApiController
         $idProfile = (int) $kdProfile;
         $detail=$request->all();
         $result=[];
-        $data = \DB::table('pelayananpasien_t as pps')
+        $data = \DB::table('pelayananpasien_t as pp')
             ->JOIN('antrianpasiendiperiksa_t as apd','apd.norec','=','pp.noregistrasifk')
             ->JOIN('pasiendaftar_t as pd','pd.norec','=','apd.noregistrasifk')
             ->JOIN('pasien_m as ps','ps.id','=','pd.nocmfk')
