@@ -541,7 +541,7 @@ errLoad:
     MsgBox Err.Number & " " & Err.Description
 End Sub
 Public Sub cetakTracer(strNorec As String, view As String)
-On Error GoTo errLoad
+'On Error GoTo errLoad
 Set frmCetakPendaftaran = Nothing
 Dim strSQL As String
 boolBlangkoBpjs = False
@@ -596,9 +596,8 @@ namaKomputer = Winsock1.LocalHostName
             .usNamaKel.SetUnboundFieldSource ("{ado.namaayah}")
             .usruangperiksa.SetUnboundFieldSource ("{ado.ruanganPeriksa}")
             .namaPc.SetText namaKomputer
+            
             If view = "false" Then
-               
-
                 strPrinter1 = GetTxt("Setting.ini", "Printer", "Tracer1")
                 .SelectPrinter "winspool", strPrinter1, "Ne00:"
                 .PrintOut False

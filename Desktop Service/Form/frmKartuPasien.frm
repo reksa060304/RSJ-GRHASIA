@@ -350,7 +350,7 @@ strSQL = "SELECT ps.namapasien  ||  ' ( '  ||   jk.reportdisplay  ||  ' ) ' as n
      Printer.fontSize = 6
      Printer.Print ""
      Printer.Print ""
-     Printer.Print "       " & "KARTU IDENTITAS BEROBAT (KIB)"
+     Printer.Print "       "
      Printer.Print ""
      Printer.FontBold = True
      Printer.Print "       " & rs!noCm

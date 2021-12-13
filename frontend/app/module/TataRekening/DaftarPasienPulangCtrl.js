@@ -1014,6 +1014,33 @@ define(['initialize'], function (initialize) {
         });
       }
 
+      $scope.klikGridDv = function (dataSelect) {
+        if (dataSelect != undefined) {
+          $scope.dataSelect = dataSelect
+        }
+      }
+
+      $scope.cetakSuratBayar = function () {
+        var user = medifirstService.getPegawaiLogin().namaLengkap
+        if ($scope.dataSelect == undefined) {
+          toastr.error('Pilih data dulu')
+          return
+        }
+
+        var stt = 'false'
+        if (confirm('View Nota Pelayanan? ')) {
+          // Save it!
+          stt = 'true';
+        } else {
+          // Do nothing!
+          stt = 'false'
+        }
+        var client = new HttpClient();
+        client.get('http://127.0.0.1:1237/printvb/kasir?cetak-nota-layanan=1&nostruk=' + $scope.dataSelect.norec + '&strIdPegawai=' + user + '&view=' + stt, function (response) {
+          // aadc=response;
+        });
+      }
+
       //** BATAS SUCI */
     }
   ]);

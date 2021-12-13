@@ -122,8 +122,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
-Dim Report As New Cr_cetakBuktiStrukNonLayanan
-
+Dim Report As New cetakBuktiLayanaRSJ
 Dim ii As Integer
 Dim tempPrint1 As String
 Dim p As Printer
@@ -199,9 +198,20 @@ Dim Apoteker As String
     With Report
             Set adoReport = New ADODB.Command
             adoReport.ActiveConnection = CN_String
-            strSQL = " SELECT sp.nostruk AS nofaktur,sp.nostruk_intern AS nocm,sp.namapasien_klien AS namapasien, " & _
-                     " sp.totalharusdibayar,to_char(sp.tglstruk, 'DD-MM-YYYY HH24:MI:SS') AS tglstruk " & _
+            strSQL = " SELECT pp.norec,pm.nocm,pm.namapasien,to_char(pd.tglregistrasi, 'DD/MM/YYYY HH24:MI:SS') AS tglregistrasi, " & _
+                     " to_char(pm.tgllahir, 'DD/MM/YYYY') AS tgllahir,alm.alamatlengkap,kp.kelompokpasien, " & _
+                     " ru.namaruangan || ' (Perawat)' AS ruangan,pg.namalengkap,pr.namaproduk,pp.jumlah, " & _
+                     " pp.hargajual,(pp.jumlah*(pp.hargajual - CASE WHEN pp.hargadiscount IS NULL THEN 0 ELSE pp.hargadiscount END + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END)) AS total " & _
                      " FROM strukpelayanan_t AS sp " & _
+                     " INNER JOIN pelayananpasien_t AS pp ON pp.strukfk = sp.norec " & _
+                     " INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk " & _
+                     " INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk " & _
+                     " INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk " & _
+                     " LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.id " & _
+                     " LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk " & _
+                     " LEFT JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk " & _
+                     " LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk " & _
+                     " INNER JOIN produk_m AS pr ON pr.id = pp.produkfk " & _
                      " WHERE sp.statusenabled = true AND sp.norec = '" & strNorec & "' "
             
             ReadRs strSQL
@@ -209,19 +219,27 @@ Dim Apoteker As String
             adoReport.CommandType = adCmdUnknown
              .txtNamaRs.SetText UCase$(strNamaLengkapRs)
              .txtAlamatRs.SetText stralmtLengkapRs
-             .txtNamaKasir.SetText User
              If rs.EOF = False Then
-                 
+                .txtNmrRM.SetText IIf(IsNull(rs("nocm")), "", rs("nocm"))
+                .txtNamaPasien.SetText IIf(IsNull(rs("namapasien")), "", rs("namapasien"))
+                .txtTglKunjungan.SetText IIf(IsNull(rs("tglregistrasi")), "", rs("tglregistrasi"))
+                .txtTglLahir.SetText IIf(IsNull(rs("tgllahir")), "", rs("tgllahir"))
+                .txtAlamat.SetText IIf(IsNull(rs("alamatlengkap")), "", rs("alamatlengkap"))
+                .txtKelPasien.SetText IIf(IsNull(rs("kelompokpasien")), "", rs("kelompokpasien"))
+                .txtNamaDokter.SetText IIf(IsNull(rs("namalengkap")), "", rs("namalengkap"))
+                .txtOperatorPoli.SetText IIf(IsNull(rs("ruangan")), "", rs("ruangan"))
              End If
             .database.AddADOCommand CN_String, adoReport
-            .usNoFaktur.SetUnboundFieldSource IIf(IsNull("{ado.nofaktur}") = True, "", ("{ado.nofaktur}"))
-            .usNoRm.SetUnboundFieldSource IIf(IsNull("{ado.nocm}") = True, "", ("{ado.nocm}"))
-            .usNamaPasien.SetUnboundFieldSource IIf(IsNull("{ado.namapasien}") = True, "", ("{ado.namapasien}"))
-            .usTanggal.SetUnboundFieldSource IIf(IsNull("{ado.tglstruk}") = True, "", ("{ado.tglstruk}"))
-            .ucTotal.SetUnboundFieldSource IIf(IsNull("{ado.totalharusdibayar}") = True, "", ("{ado.totalharusdibayar}"))
+             .usNorec.SetUnboundFieldSource ("{ado.norec}")
+             .usProduk.SetUnboundFieldSource ("{ado.namaproduk}")
+             .ucHargaSatuan.SetUnboundFieldSource ("{ado.hargajual}")
+             .usJml.SetUnboundFieldSource ("{ado.jumlah}")
+             .unJml.SetUnboundFieldSource ("{ado.jumlah}")
+             .ucTotalHarga.SetUnboundFieldSource ("{ado.total}")
+             .ucWjbBayar.SetUnboundFieldSource ("{ado.total}")
             
             If view = "false" Then
-                strPrinter1 = GetTxt("Setting.ini", "Printer", "StrukValidasi")
+                strPrinter1 = GetTxt("Setting.ini", "Printer", "NotaLayanan")
                 .SelectPrinter "winspool", strPrinter1, "Ne00:"
                 .PrintOut False
                 Unload Me

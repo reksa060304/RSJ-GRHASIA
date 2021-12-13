@@ -149,13 +149,12 @@ Private Sub Form_Resize()
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-
     Set frmLembarIdentitas = Nothing
 End Sub
 
 Public Sub Cetak(noCm As String, Noreg As String, caraBayar As String, umur As String, Petugas As String, view As String)
-'On Error GoTo errLoad
-'On Error Resume Next
+On Error GoTo errLoad
+On Error Resume Next
 Set frmLembarIdentitas = Nothing
 Dim adocmd As New ADODB.Command
 Dim strNocm As String
@@ -166,251 +165,58 @@ Dim strPenanggungjawab As String
 Dim tglRegis As String
 Dim JamRegis As String
 
-strNocm = ""
-If noCm <> "" Then
-    strNocm = noCm
-Else
-    strNocm = ""
-End If
 
-If umur <> "" Then
-    strUmur = umur
-Else
-    strUmur = "0"
-End If
-
-If umur <> "" Then
-    strPetugas = Petugas
-Else
-    strPetugas = "-"
-End If
-
-If caraBayar <> "" Then
-    strcaraBayar = caraBayar
-Else
-    strcaraBayar = "-"
-End If
-        ' SQLSERVER
-'        strSQL = "select top 1 pm.nocm,pm.namapasien,pm.tempatlahir,convert(varchar, pm.tgllahir, 105) as tgllahir, " & _
-'             "case when sp.statusperkawinan is null then '-' else sp.statusperkawinan end as statusperkawinan, " & _
-'             "case when ag.agama is null then '-' else ag.agama end as agama, " & _
-'             "case when pk.pekerjaan is null then '-' else pk.pekerjaan end as pekerjaan, " & _
-'             "alm.alamatlengkap,alm.namadesakelurahan,alm.kecamatan, " & _
-'             "alm.kotakabupaten,prop.namapropinsi,alm.kodepos,pm.alamatktr, " & _
-'             "case when pm.nohp is null then '-' else pm.nohp end as notelepon, " & _
-'             "case when pm.noidentitas is null then '-' else pm.noidentitas end as noidentitas, " & _
-'             "case when gd.golongandarah is null then '-' else gd.golongandarah end as golongandarah, " & _
-'             "case when pen.pendidikan is null then '-' else pen.pendidikan end as pendidikan, " & _
-'             "case when pm.noasuransilain is null then '-' else  pm.noasuransilain end as noasuransilain, " & _
-'             "case when pm.nobpjs is null then '-' else pm.nobpjs end as nobpjs,jk.jeniskelamin, " & _
-'             "pm.penanggungjawab,pm.hubungankeluargapj,pm.pekerjaanpenangggungjawab,pm.ktppenanggungjawab, " & _
-'             "pm.alamatrmh, pm.alamatrmh, pm.namaayah, pm.namaibu, pm.namasuamiistri, " & _
-'             "pm.teleponpenanggungjawab,pm.bahasa,pm.alamatdokterpengirim,pm.dokterpengirim,pm.jeniskelaminpenanggungjawab,pm.umurpenanggungjawab " & _
-'             "from pasien_m as pm LEFT JOIN statusperkawinan_m as sp on sp.id = pm.objectstatusperkawinanfk " & _
-'             "LEFT JOIN agama_m as ag on ag.id = pm.objectagamafk LEFT JOIN pekerjaan_m as pk on pk.id = pm.objectpekerjaanfk " & _
-'             "LEFT JOIN pendidikan_m as pen on pen.id = pm.objectpendidikanfk LEFT JOIN alamat_m as alm on alm.nocmfk = pm.id " & _
-'             "LEFT JOIN propinsi_m as prop on prop.id = alm.objectpropinsifk LEFT JOIN golongandarah_m as gd on gd.id = pm.objectgolongandarahfk " & _
-'             "LEFT JOIN jeniskelamin_m as jk on jk.id = pm.objectjeniskelaminfk " & _
-'             "where pm.nocm ='" & strNocm & "' "
-        'POSTGRESQL
-         strSQL = "select pm.nocm,pm.namapasien,pm.tempatlahir,to_char(pm.tgllahir, 'DD-MM-YYYY') AS tgllahir, " & _
-             "case when sp.statusperkawinan is null then '-' else sp.statusperkawinan end as statusperkawinan, " & _
-             "case when ag.agama is null then '-' else ag.agama end as agama, " & _
-             "case when pk.pekerjaan is null then '-' else pk.pekerjaan end as pekerjaan, " & _
-             "alm.alamatlengkap,alm.namadesakelurahan,alm.kecamatan, " & _
-             "alm.kotakabupaten,prop.namapropinsi,alm.kodepos,pm.alamatktr, " & _
-             "case when pm.nohp is null then '-' else pm.nohp end as notelepon, " & _
-             "case when pm.noidentitas is null then '-' else pm.noidentitas end as noidentitas, " & _
-             "case when gd.golongandarah is null then '-' else gd.golongandarah end as golongandarah, " & _
-             "case when pen.pendidikan is null then '-' else pen.pendidikan end as pendidikan, " & _
-             "CASE WHEN pm.noasuransilain IS NOT NULL THEN pm.noasuransilain WHEN pm.nobpjs IS NOT NULL THEN pm.nobpjs ELSE '-' END AS noasuransilain,jk.jeniskelamin, " & _
-             "pm.penanggungjawab,pm.hubungankeluargapj,pm.pekerjaanpenangggungjawab,pm.ktppenanggungjawab, " & _
-             "pm.alamatrmh as almtpenanggungjawab,pm.namaayah, pm.namaibu, pm.namasuamiistri, " & _
-             "pm.teleponpenanggungjawab,pm.bahasa,pm.alamatdokterpengirim,pm.dokterpengirim,pm.jeniskelaminpenanggungjawab,pm.umurpenanggungjawab,ru.namaruangan,pg.namalengkap,kp.kelompokpasien " & _
-             "FROM pasiendaftar_t as pd INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk " & _
-             "LEFT JOIN statusperkawinan_m as sp on sp.id = pm.objectstatusperkawinanfk " & _
-             "LEFT JOIN agama_m as ag on ag.id = pm.objectagamafk LEFT JOIN pekerjaan_m as pk on pk.id = pm.objectpekerjaanfk " & _
-             "LEFT JOIN pendidikan_m as pen on pen.id = pm.objectpendidikanfk LEFT JOIN alamat_m as alm on alm.nocmfk = pm.id " & _
-             "LEFT JOIN propinsi_m as prop on prop.id = alm.objectpropinsifk LEFT JOIN golongandarah_m as gd on gd.id = pm.objectgolongandarahfk " & _
-             "LEFT JOIN jeniskelamin_m as jk on jk.id = pm.objectjeniskelaminfk " & _
-             "LEFT JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk " & _
-             "LEFT JOIN pegawai_m as pg on pg.id = pd.objectdokterpemeriksafk " & _
-             "LEFT JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk " & _
-             "where pd.noregistrasi = '" & Noreg & "' and pd.statusenabled = true limit 1"
-    
-    If Noreg <> "" Then
-        ' SQLSERVER
-'        ReadRs3 "select top 1 *, convert(varchar, tglregistrasi, 105) as tglregis,convert(varchar, tglregistrasi, 8) as jamregistrasi " & _
-'                "from pasiendaftar_t where noregistrasi = '" & Noreg & "'"
-        
-        ' POSTGRESQL
-        ReadRs3 "select *, to_char(tglregistrasi, 'DD-MM-YYYY') AS tglregis,to_char(tglregistrasi, 'HH:MI:SS') AS jamregistrasi " & _
-                "from pasiendaftar_t where noregistrasi = '" & Noreg & "' limit 1"
-        If RS3.EOF = False Then
-            tglRegis = RS3!tglRegis
-            JamRegis = RS3!jamregistrasi
-        Else
-            tglRegis = "-"
-            JamRegis = "-"
-        End If
-    End If
-    
-
+         strSQL = " SELECT pd.noregistrasi,pm.nocm,pm.namapasien,pd.tglregistrasi,pm.tempatlahir,pm.tgllahir,jk.jeniskelamin, " & _
+                  " alm.alamatlengkap,alm.namadesakelurahan,alm.namakecamatan,alm.namakotakabupaten, " & _
+                  " prop.namapropinsi,gd.golongandarah,spn.statusperkawinan,ag.agama,kp.kelompokpasien, " & _
+                  " pkr.pekerjaan,pm.penanggungjawab,pm.alamatrmh,pm.teleponpenanggungjawab,pend.pendidikan,pm.noidentitas " & _
+                  " FROM pasiendaftar_t AS pd " & _
+                  " INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk " & _
+                  " LEFT JOIN jeniskelamin_m AS jk ON jk.id = pm.objectjeniskelaminfk " & _
+                  " LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.id " & _
+                  " LEFT JOIN golongandarah_m AS gd ON gd.id = pm.objectgolongandarahfk " & _
+                  " LEFT JOIN statusperkawinan_m AS spn ON spn.id = pm.objectstatusperkawinanfk " & _
+                  " LEFT JOIN agama_m AS ag ON ag.id = pm.objectagamafk " & _
+                  " LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk " & _
+                  " LEFT JOIN propinsi_m AS prop ON prop.id = alm.objectpropinsifk " & _
+                  " LEFT JOIN pekerjaan_m AS pkr ON pkr.id = pm.objectpekerjaanfk " & _
+                  " LEFT JOIN pendidikan_m AS pend ON pend.id = pm.objectpendidikanfk " & _
+                  " WHERE pd.statusenabled = true AND pd.noregistrasi = '" & Noreg & "' LIMIT 1 "
+                  
     ReadRs2 strSQL
-'    Set rs = New ADODB.Recordset
-'    Set rsc = New ADODB.Recordset
-'    Dim mstream As ADODB.Stream
-'    rs.Open "select p.foto from pasien_m as p " & _
-'                 " where p.nocm ='" & strNocm & "' ", CN, adOpenKeyset, adLockOptimistic
-'
-'    rsc.Open "select p.image as foto from photopasien_m as p " & _
-'                 " where p.id =1", CN, adOpenKeyset, adLockOptimistic
-'
-'    If IsNull(rs.Fields("foto").Value) = False Then
-'        Set mstream = New ADODB.Stream
-'        mstream.Type = adTypeBinary
-'        mstream.Open
-'        mstream.Write rs.Fields("foto").Value
-'        mstream.SavetoFile "c:\tmp_epics.jpg", adSaveCreateOverWrite
-'    Else
-'        Set mstream = New ADODB.Stream
-'        mstream.Type = adTypeBinary
-'        mstream.Open
-'        mstream.Write rsc.Fields("foto").Value
-'        mstream.SavetoFile "c:\tmp_epics.jpg", adSaveCreateOverWrite
-'    End If
-'    rs.Close
-'    rsc.Close
-  
-    
-    If RS2.BOF Then
-        strPenanggungjawab = "-"
+    If Not RS2.EOF Then
+        strUmur = hitungUmur(Format(RS2!tgllahir, "yyyy/MM/dd"), Format(RS2!tglRegistrasi, "yyyy/MM/dd"))
     Else
-         If IsNull(RS2!penanggungjawab) Then
-             strPenanggungjawab = "-"
-         Else
-             strPenanggungjawab = RS2!penanggungjawab
-         End If
-
+        strUmur = ""
     End If
+    
     adocmd.CommandText = strSQL
     adocmd.CommandType = adCmdText
-    
-    
     With Report
         .database.AddADOCommand CN_String, adocmd
         If Not RS2.EOF Then
-            .txtNamaPemerintahan.SetText strNamaPemerintah
-            .txtNamaRs.SetText strNamaLengkapRs
-            .txtAlamatRs.SetText strAlamatRS & ", " & strKodePos
-'            .txtNamaRs1.SetText strNamaRS
-'            .txtNamaRS2.SetText strNamaRS
-'            .txtNamaRs3.SetText strNamaRS
-'            .txtNamaRs4.SetText strNamaRS
-'            .txtTelpFax.SetText strNoTlpn & " " & strNoFax
-'            .txtWebEmail.SetText strEmail & " " & strWebSite
-            .txtNamaKota.SetText strNamaKota & ", "
-            .usNoCM.SetUnboundFieldSource ("{ado.nocm}")
-            .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJenisKelamin.SetUnboundFieldSource ("{ado.jeniskelamin}")
-            .usTempatLahir.SetUnboundFieldSource ("{ado.tempatlahir}")
-            .udTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
+            .txtNomorRm.SetText IIf(IsNull(RS2("nocm")), "", RS2("nocm"))
+            .txtNamaPasien.SetText IIf(IsNull(RS2("namapasien")), "", RS2("namapasien"))
+            .txtJenisKelamin.SetText IIf(IsNull(RS2("jeniskelamin")), "", RS2("jeniskelamin"))
+            .txtJenisKelamin2.SetText IIf(IsNull(RS2("jeniskelamin")), "", RS2("jeniskelamin"))
+            .txtTempatTglLahir.SetText IIf(IsNull(RS2("tempatlahir")), "", RS2("tempatlahir")) & ", " & IIf(IsNull(RS2("tgllahir")), "", Format(RS2!tgllahir, "dd-mm-yyyy"))
+            .txtGolonganDarah.SetText IIf(IsNull(RS2("golongandarah")), "", RS2("golongandarah"))
+            .txtPendidikan.SetText IIf(IsNull(RS2("pendidikan")), "", RS2("pendidikan"))
+            .txtStatus.SetText IIf(IsNull(RS2("statusperkawinan")), "", RS2("statusperkawinan"))
             .txtUmur.SetText strUmur
-            .usStatusNikah.SetUnboundFieldSource ("{ado.statusperkawinan}")
-            .usAgama.SetUnboundFieldSource ("{ado.agama}")
-            .usPekerjaan.SetUnboundFieldSource ("{ado.pekerjaan}")
-            .usAlamatPasien.SetUnboundFieldSource ("{ado.alamatlengkap}")
-            .usKelurahan.SetUnboundFieldSource ("{ado.namadesakelurahan}")
-            .usKecamatan.SetUnboundFieldSource ("{ado.kecamatan}")
-            .usKabupaten.SetUnboundFieldSource ("{ado.kotakabupaten}")
-            .usPropinsi.SetUnboundFieldSource ("{ado.namapropinsi}")
-            .usKodePos.SetUnboundFieldSource ("{ado.kodepos}")
-            .UsTelepon.SetUnboundFieldSource ("{ado.notelepon}")
-            .usNamaPenanggungJawab.SetUnboundFieldSource ("{ado.penanggungjawab}")
-            .usNomorIdentitas.SetUnboundFieldSource ("{ado.noidentitas}")
-'            .usAlamatRumah.SetUnboundFieldSource ("{ado.alamatrmh}")
-'            .usNamaBapak.SetUnboundFieldSource ("{ado.namaayah}")
-            .usNamaIbu.SetUnboundFieldSource ("{ado.namaibu}")
-'            .usNamaSuamiIstri.SetUnboundFieldSource ("{ado.namasuamiistri}")
-'            .txtCaraBayar.SetText strcaraBayar
-'            .usDokterPengirim.SetUnboundFieldSource ("{ado.dokterpengirim}")
-'            .usALamatDokter.SetUnboundFieldSource ("{ado.alamatdokterpengirim}")
-'            .usTeleponP.SetUnboundFieldSource ("{ado.teleponpenanggungjawab}")
-'            .usBahasa.SetUnboundFieldSource ("{ado.bahasa}")
-'            .txtPenanggungJawab.SetText strPenanggungjawab 'RS2!penanggungjawab
-            .usPekerjaan.SetUnboundFieldSource ("{ado.pekerjaan}")
-            .usPendidikan.SetUnboundFieldSource ("{ado.pendidikan}")
-            .usHubunganPasien.SetUnboundFieldSource ("{ado.hubungankeluargapj}")
-            .usAlamatPenanggungJawab.SetUnboundFieldSource ("{ado.almtpenanggungjawab}")
-            .usNamaRuangan.SetUnboundFieldSource ("{ado.namaruangan}")
-            .usDokter.SetUnboundFieldSource ("{ado.namalengkap}")
-            .usNmrKartu.SetUnboundFieldSource ("{ado.noasuransilain}")
-            .usJenisPembayaran.SetUnboundFieldSource ("{ado.kelompokpasien}")
-            .txtPetugas.SetText "(  " & strPetugas & "  )"
-'            .usKtpSatu.SetUnboundFieldSource ("{ado.noidentitas}")
-'            .ucGolonganDarah.SetUnboundFieldSource ("{ado.golongandarah}")
-'            .usHubungan.SetUnboundFieldSource ("{ado.hubungankeluargapj}")
-'            .usAlamatKantor.SetUnboundFieldSource ("{ado.alamatktr}")
-'            .usPekerjaanPj.SetUnboundFieldSource ("{ado.pekerjaanpenangggungjawab}")
-'            .usNoSimPj.SetUnboundFieldSource ("{ado.ktppenanggungjawab}")
-'            .txtPetugas.SetText strPetugas
-'            .txtPenanggungJawab.SetText strPenanggungjawab
-'        Report.Subreport1.Suppress = False
-'        Report.Subreport2.Suppress = False
-'        Report.Subreport3.Suppress = False
-'            Dim adojenis As New ADODB.Command
-'            Set adojenis = New ADODB.Command
-'            adojenis.CommandText = strSQL
-'            adojenis.CommandType = adCmdText
-'            'Report.Subreport1.OpenSubreport.database.AddADOCommand dbConn, adojenis
-'            Report.Subreport1.OpenSubreport.database.AddADOCommand CN_String, adojenis
-'            Report.Subreport2.OpenSubreport.database.AddADOCommand CN_String, adojenis
-'            Report.Subreport3.OpenSubreport.database.AddADOCommand CN_String, adojenis
-'            With Report
-'                .Subreport1_txtNamaPemerintahan1.SetText strNamaPemerintah
-'                .Subreport1_txtNamaRs1.SetText strNamaLengkapRs
-'                .Subreport1_txtAlamatRs1.SetText strAlamatRS & ", " & strKodePos
-'                .Subreport1_txtTelpFax1.SetText strNoTlpn & " " & strNoFax
-'                .Subreport1_txtWebEmail1.SetText strEmail & " " & strWebSite
-'                .Subreport1_txtNamaKota1.SetText strNamaKota
-'                .Subreport1_usNoCm.SetUnboundFieldSource ("{ado.nocm}")
-'                .Subreport1_usJenisKelamin.SetUnboundFieldSource ("{ado.jeniskelamin}")
-'                .Subreport1_usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-'                .Subreport1_udTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
-'                .Subreport1_txtPetugas.SetText strPetugas
-'                .Subreport1_txtPenanggungJawab.SetText strPenanggungjawab 'RS2!penanggungjawab
-'                .Subreport2_txtNamaPemerintahan2.SetText strNamaPemerintah
-'                .Subreport2_txtNamaRs2.SetText strNamaLengkapRs
-'                .Subreport2_txtAlamatRs2.SetText strAlamatRS & ", " & strKodePos
-'                .Subreport2_txtTelpFax2.SetText strNoTlpn & " " & strNoFax
-'                .Subreport2_txtWebEmail2.SetText strEmail & " " & strWebSite
-'                .Subreport2_usNoCm.SetUnboundFieldSource ("{ado.nocm}")
-'                .Subreport2_usJenisKelamin.SetUnboundFieldSource ("{ado.jeniskelamin}")
-'                .Subreport2_usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-'                .Subreport2_udTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
-'                .Subreport2_txtTglRegis.SetText tglRegis
-'                .Subreport2_txtJamRegis.SetText JamRegis
-'                .Subreport3_txtNamaPemerintahan3.SetText strNamaPemerintah
-'                .Subreport3_txtNamaRs3.SetText strNamaLengkapRs
-'                .Subreport3_txtAlamatRs3.SetText strAlamatRS & ", " & strKodePos
-'                .Subreport3_txtTelpFax3.SetText strNoTlpn & " " & strNoFax
-'                .Subreport3_txtWebEmail3.SetText strEmail & " " & strWebSite
-'                .Subreport3_txtNamaKota2.SetText strNamaKota
-'                .Subreport3_usNoCm.SetUnboundFieldSource ("{ado.nocm}")
-'                .Subreport3_usJenisKelamin.SetUnboundFieldSource ("{ado.jeniskelamin}")
-'                .Subreport3_usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-'                .Subreport3_udTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
-'                .Subreport3_usPenanggungJawab.SetUnboundFieldSource ("{ado.penanggungjawab}")
-'                .Subreport3_usPekerjaan.SetUnboundFieldSource ("{ado.pekerjaanpenangggungjawab}")
-'                .Subreport3_usAlamat.SetUnboundFieldSource ("{ado.alamatrmh}")
-'                .Subreport3_usJk.SetUnboundFieldSource ("{ado.jeniskelaminpenanggungjawab}")
-'                .Subreport3_usUmur.SetUnboundFieldSource ("{ado.umurpenanggungjawab}")
-'                .Subreport3_txtPenanggungJawab.SetText strPenanggungjawab 'RS2!penanggungjawab
-'            End With
-'        Else
-'            Report.Subreport1.Suppress = True
-'            Report.Subreport2.Suppress = True
-'            Report.Subreport3.Suppress = True
+            .txtAgama.SetText IIf(IsNull(RS2("agama")), "", RS2("agama"))
+            .txtStatus.SetText IIf(IsNull(RS2("statusperkawinan")), "", RS2("statusperkawinan"))
+            .txtPekerjaan.SetText IIf(IsNull(RS2("pekerjaan")), "", RS2("pekerjaan"))
+            .txtCaraBayar.SetText IIf(IsNull(RS2("kelompokpasien")), "", RS2("kelompokpasien"))
+            .txtNomorKTP.SetText IIf(IsNull(RS2("noidentitas")), "", RS2("noidentitas"))
+            .txtAlamatPasien.SetText IIf(IsNull(RS2("alamatlengkap")), "", RS2("alamatlengkap"))
+            .txtKelurahan.SetText IIf(IsNull(RS2("namadesakelurahan")), "", RS2("namadesakelurahan"))
+            .txtKecamatan.SetText IIf(IsNull(RS2("namakecamatan")), "", RS2("namakecamatan"))
+            .txtKabupaten.SetText IIf(IsNull(RS2("namakotakabupaten")), "", RS2("namakotakabupaten"))
+            .txtPropinsi.SetText IIf(IsNull(RS2("namapropinsi")), "", RS2("namapropinsi"))
+            .txtNamapenanggungJawab.SetText IIf(IsNull(RS2("penanggungjawab")), "", RS2("penanggungjawab"))
+            .txtAlamatPenanggungJawab.SetText IIf(IsNull(RS2("alamatrmh")), "", RS2("alamatrmh"))
+            .txtTelepon.SetText IIf(IsNull(RS2("teleponpenanggungjawab")), "", RS2("teleponpenanggungjawab"))
         End If
         
         If view = "false" Then

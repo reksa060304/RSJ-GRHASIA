@@ -939,9 +939,12 @@ define(['initialize'], function (initialize) {
                 } else {
                     // Do nothing!
                     stt = 'false'
-                }
+                } 
                 var client = new HttpClient();
-                client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep=1&nores=' + $scope.dataSelected.norec_resep + '&view=' + stt + '&user=' + user.namaLengkap, function (response) {
+                // client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep=1&nores=' + $scope.dataSelected.norec_resep + '&view=' + stt + '&user=' + user.namaLengkap, function (response) {
+                //     // aadc=response;
+                // });
+                client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep-new=1&nores=' + $scope.dataSelected.norec_resep + '&view=' + stt + '&user=' + user.namaLengkap, function (response) {
                     // aadc=response;
                 });
             }

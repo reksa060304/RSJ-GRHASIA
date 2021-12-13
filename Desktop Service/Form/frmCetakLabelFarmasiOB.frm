@@ -280,7 +280,7 @@ Set Report = New Cr_cetakLabelKecil
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
 '            .usTelp.SetUnboundFieldSource ("{ado.notelepon}")
 '            .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
-            .unjml.SetUnboundFieldSource ("{ado.jumlah}")
+'            .unjml.SetUnboundFieldSource ("{ado.jumlah}")
             .usaturan.SetUnboundFieldSource ("{ado.aturanpakai}")
             .usss.SetUnboundFieldSource ("{ado.satuanstandar}")
             .usWaktuMinumS.SetUnboundFieldSource ("{ado.siang}")
