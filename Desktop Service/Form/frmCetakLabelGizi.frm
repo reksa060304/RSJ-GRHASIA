@@ -155,32 +155,58 @@ Dim str As String
 Dim jml As Integer
     
     If Noregistrasi <> "" Then
-        str = " op.norec in (" & Right(Noregistrasi, Len(Noregistrasi) - 1) & ")"
+        str = " op.norec in (" & Right(Noregistrasi, Len(Noregistrasi) - 1) & ")ORDER BY ps.namapasien ) as x where x.rownum = 1"
     End If
 
     With reportLabel
             Set adoReport = New ADODB.Command
              adoReport.ActiveConnection = CN_String
             
-            strSQL = "select pd.noregistrasi, sk.nokirim, sk.qtyproduk as qtykirim,op.keteranganlainnya as keteranganlainnyakirim,op.qtyprodukinuse as cc  ,op.jumlah as volume , pd.tglregistrasi,convert(varchar,  ps.tgllahir, 105) as tgllahir, " & _
-                     "to_char(ps.tgllahir, 'YYYY/MM/DD') as tgllahirNew,ps.namapasien, ps.nocm, ru.namaruangan as ruanganasal, " & _
-                     "jw.jeniswaktu,jd.jenisdiet,  op.qtyproduk,kls.namakelas, kd.kategorydiet,to_char(so.tglorder,'DD-MM-YYYY') AS tglorder, " & _
-                     "CASE WHEN jw.jeniswaktu = 'Pagi' THEN '09:00' WHEN jw.jeniswaktu = 'Siang' THEN '14:00' WHEN jw.jeniswaktu = 'Sore' THEN '19:00' " & _
-                     "WHEN jw.jeniswaktu = 'Snack Pagi' THEN '12:00' WHEN jw.jeniswaktu = 'Snack Sore' THEN '19:00' END  as jammakan, " & _
-                     "jd.jenisdiet || ', ' || CASE WHEN op.keteranganlainnya IS NULL THEN '-' ELSE op.keteranganlainnya END AS keterangan " & _
-                     "from orderpelayanan_t as op " & _
-                     "inner join pasiendaftar_t as pd on pd.norec = op.noregistrasifk " & _
-                     "inner join ruangan_m as ru on ru.id = op.objectruanganfk " & _
-                     "inner join pasien_m as ps on ps.id = op.nocmfk " & _
-                     "left join jeniskelamin_m as jk on jk.id = ps.objectjeniskelaminfk " & _
-                     "inner join strukorder_t as so on so.norec = op.strukorderfk " & _
-                     "left join strukkirim_t as sk on  sk.norec = op.strukkirimfk " & _
-                     "inner join jeniswaktu_m as jw on jw.id = op.objectjeniswaktufk " & _
-                     "inner join jenisdiet_m as jd on jd.id = op.objectjenisdietfk " & _
-                     "inner join kategorydiet_m as kd on kd.id = op.objectkategorydietfk " & _
-                     "left join kelas_m as kls on kls.id = op.objectkelasfk " & _
-                     "where " & str
+'            strSQL = "select pd.noregistrasi, sk.nokirim, sk.qtyproduk as qtykirim,op.keteranganlainnya as keteranganlainnyakirim,op.qtyprodukinuse as cc  ,op.jumlah as volume , pd.tglregistrasi, " & _
+'                     "to_char(ps.tgllahir, 'DD/MM/YYYY') as tgllahir,ps.namapasien, ps.nocm, ru.namaruangan as ruanganasal, " & _
+'                     "jw.jeniswaktu,jd.jenisdiet,  op.qtyproduk,kls.namakelas, kd.kategorydiet,to_char(so.tglorder,'DD-MM-YYYY') AS tglorder, " & _
+'                     "CASE WHEN jw.jeniswaktu = 'Pagi' THEN '09:00' WHEN jw.jeniswaktu = 'Siang' THEN '14:00' WHEN jw.jeniswaktu = 'Sore' THEN '19:00' " & _
+'                     "WHEN jw.jeniswaktu = 'Snack Pagi' THEN '12:00' WHEN jw.jeniswaktu = 'Snack Sore' THEN '19:00' END  as jammakan, " & _
+'                     "jd.jenisdiet || ', ' || CASE WHEN op.keteranganlainnya IS NULL THEN '-' ELSE op.keteranganlainnya END AS keterangan,op.arrjenisdiet " & _
+'                     "from orderpelayanan_t as op " & _
+'                     "inner join pasiendaftar_t as pd on pd.norec = op.noregistrasifk " & _
+'                     "inner join ruangan_m as ru on ru.id = op.objectruanganfk " & _
+'                     "inner join pasien_m as ps on ps.id = op.nocmfk " & _
+'                     "left join jeniskelamin_m as jk on jk.id = ps.objectjeniskelaminfk " & _
+'                     "inner join strukorder_t as so on so.norec = op.strukorderfk " & _
+'                     "left join strukkirim_t as sk on  sk.norec = op.strukkirimfk " & _
+'                     "inner join jeniswaktu_m as jw on jw.id = op.objectjeniswaktufk " & _
+'                     "left join jenisdiet_m as jd on jd.id = op.objectjenisdietfk " & _
+'                     "inner join kategorydiet_m as kd on kd.id = op.objectkategorydietfk " & _
+'                     "left join kelas_m as kls on kls.id = op.objectkelasfk " & _
+'                     "where " & str
 '                     "where op.norec= '" & Noregistrasi & "'
+             strSQL = "select * from (select pd.noregistrasi, sk.nokirim, sk.qtyproduk as qtykirim,op.keteranganlainnya as keteranganlainnyakirim,op.qtyprodukinuse as cc  ,op.jumlah as volume,pd.tglregistrasi, " & _
+                    " ps.namapasien || ' ['|| jk.reportdisplay ||']' AS namapasien, ps.nocm, ru.namaruangan AS ruanganasal, " & _
+                    " jw.jeniswaktu,jd.jenisdiet,  op.qtyproduk,kls.namakelas, kd.kategorydiet,to_char(so.tglorder,'DD-MM-YYYY') AS tglorder, " & _
+                    " CASE WHEN jw.jeniswaktu = 'Pagi' THEN '09:00' WHEN jw.jeniswaktu = 'Siang' THEN '14:00' WHEN jw.jeniswaktu = 'Sore' THEN '19:00' " & _
+                    " WHEN jw.jeniswaktu = 'Snack Pagi' THEN '12:00' WHEN jw.jeniswaktu = 'Snack Sore' THEN '19:00' END  as jammakan, " & _
+                    " jd.jenisdiet || ', ' || CASE WHEN op.keteranganlainnya IS NULL THEN '-' ELSE op.keteranganlainnya END AS keterangan, " & _
+                    " to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,op.arrjenisdiet, " & _
+                    " (SELECT string_agg(jm.jenisdiet, ', ') as arrjenisdietket From jenisdiet_m jm WHERE jm.id::varchar IN ( " & _
+                    " select unnest(string_to_array(op.arrjenisdiet,','))))as arrjenisdietket, " & _
+                    " ps.namapasien || '/ ' || to_char(ps.tgllahir, 'DD/MM/YYYY') || ' / ' || ps.nocm AS datapasien,'MAKAN ' || UPPER(jw.jeniswaktu) || ' ' || CASE WHEN sk.tglkirim IS NULL THEN to_char(so.tglorder, 'DD/MM/YYYY') " & _
+                    " ELSE to_char(sk.tglkirim, 'DD/MM/YYYY') END AS makan,row_number() over (partition by pd.noregistrasi order by so.tglorder desc) as rownum " & _
+                    " from orderpelayanan_t as op " & _
+                    " inner join pasiendaftar_t as pd on pd.norec = op.noregistrasifk inner join antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec" & _
+                    " inner join ruangan_m as ru on ru.id = op.objectruanganfk " & _
+                    " inner join pasien_m as ps on ps.id = op.nocmfk " & _
+                    " left join jeniskelamin_m as jk on jk.id = ps.objectjeniskelaminfk " & _
+                    " inner join strukorder_t as so on so.norec = op.strukorderfk " & _
+                    " left join strukkirim_t as sk on  sk.norec = op.strukkirimfk " & _
+                    " inner join jeniswaktu_m as jw on jw.id = op.objectjeniswaktufk " & _
+                    " left join jenisdiet_m as jd on jd.id = op.objectjenisdietfk " & _
+                    " inner join kategorydiet_m as kd on kd.id = op.objectkategorydietfk " & _
+                    " left join kelas_m as kls on kls.id = op.objectkelasfk left join tempattidur_m as tete on tete.id = apd.nobed where apd.objectruanganfk = op.objectruanganfk " & _
+                    " and " & str
+'                    " to_char(ps.tgllahir, 'DD-MM-YYYY') || '(' || EXTRACT(YEAR FROM AGE(pd.tglregistrasi, ps.tgllahir)) || ' Thn ' " & _
+'                    " || EXTRACT(MONTH FROM AGE(pd.tglregistrasi, ps.tgllahir)) || ' Bln ' " & _
+'                    " || EXTRACT(DAY FROM AGE(pd.tglregistrasi, ps.tgllahir)) || ' Hr' || ' )' AS umur,|| ',' || kls.namakelas  || ',' || CASE WHEN apd.nobed is null THEN '-' ELSE tete.reportdisplay END " & _
 '
               ReadRs strSQL
 '            jml = qty - 1
@@ -202,7 +228,7 @@ Dim jml As Integer
             adoReport.CommandType = adCmdUnknown
             .database.AddADOCommand CN_String, adoReport
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
             .usTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNamaRuangan.SetUnboundFieldSource ("{ado.ruanganasal}")
             .usKelas.SetUnboundFieldSource ("{ado.namakelas}")
@@ -210,6 +236,7 @@ Dim jml As Integer
             .usWaktuMakan.SetUnboundFieldSource ("{ado.jeniswaktu}")
             .usTglOrder.SetUnboundFieldSource ("{ado.tglorder}")
             .usJamMakan.SetUnboundFieldSource ("{ado.jammakan}")
+            .usDiet.SetUnboundFieldSource ("{ado.arrjenisdietket}")
 '            view = "true"
             If view = "false" Then
                 strPrinter1 = GetTxt("Setting.ini", "Printer", "LabelGizi")

@@ -537,7 +537,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
 					//cetakan langsung service VB 6 by grh   
 					var client = new HttpClient();
-					client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-kartupasien=1&norec=' + $scope.dataPasienSelected.nocmfk + '&view=false', function (response) {
+					client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-gelangpasien=1&norec=' + $scope.dataPasienSelected.nocmfk + '&view=false' + '&qty=1', function (response) {
 						// do something with response
 					});
 				}

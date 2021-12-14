@@ -2989,6 +2989,10 @@
         {
             "nameDep": "AsuhanGiziPasienRawatInapCtrl",
             "urlDep": "module/EMR/AsuhanGiziPasienRawatInapCtrl"
+        },
+        {
+            "nameDep": "AsesmenTerintegrasiRawatJalanCtrl",
+            "urlDep": "module/EMR/AsesmenTerintegrasiRawatJalanCtrl"
         }
     ]
 }

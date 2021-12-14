@@ -131,7 +131,7 @@ Dim reportBlangko As New crCetakBlangkoBpjs
 Dim reportBuktiLayananRuangan As New Cr_cetakbuktilayananruangan
 'Dim reportBuktiLayananKecil As New Cr_cetakbuktilayanankecil
 Dim reportLabel As New Cr_cetakLabel 'LAMA
-'Dim reportLabel As New Cr_cetakLabel_2
+Dim reportLabel_3 As New Cr_cetakLabel_2
 Dim reportLabelZebra As New Cr_cetakLabelZebra
 Dim reportSumList As New Cr_cetakSummaryList
 Dim reportRmk As New Cr_cetakRmkBaru
@@ -148,7 +148,7 @@ Dim ReportResep As New crSuratPerintahKerja
 'Dim reportLabel_3 As New Cr_cetakLabel_3
 Dim reportGelangPasien As New Cr_cetakLabel_3New
 Dim reportGelangPasienBayi As New Cr_cetakLabel_3NewBayi
-Dim reportLabel_3 As New Cr_cetakLabelFoto
+'Dim reportLabel_3 As New Cr_cetakLabelFoto
 Dim reportLabel_3Bayi As New Cr_cetakLabelFotoBayi
 'Dim reportLabel_3 As New Cr_cetakLabelMagelang
 Dim reportTriage As New Cr_cetakHeaderTriage
@@ -1611,9 +1611,9 @@ boolGelangPasienBayi = False
 '                     " where pd.noregistrasi ='" & strNorec & "' "
 
             ' POSTGRESSQL
-            strSQL = " SELECT pd.noregistrasi,pd.tglregistrasi,'*' || ps.nocm || '*' as barcode, ps.nocm || ' - ' || pd.nokunjungan as nocm,CASE WHEN ps.objectjeniskelaminfk IS NULL THEN '' ELSE UPPER(jk.reportdisplay) END AS jk, " & _
+            strSQL = " SELECT ps.nocm,'*' || ps.nocm || '*' as barcode,CASE WHEN ps.objectjeniskelaminfk IS NULL THEN '' ELSE UPPER(jk.reportdisplay) END AS jk, " & _
                      " UPPER (ps.namapasien) AS namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') || '  (' || EXTRACT(YEAR FROM(age(pd.tglregistrasi, ps.tgllahir))) || ' Thn)' AS umur, " & _
-                     " ps.tgllahir,CASE WHEN pg.namalengkap IS NULL THEN '-' ELSE pg.namalengkap END AS namadokter,to_char(pd.tglregistrasi, 'DD-Mon-YYYY') AS tglregistrasi, ps.noidentitas " & _
+                     " to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,CASE WHEN pg.namalengkap IS NULL THEN '-' ELSE pg.namalengkap END AS namadokter,to_char(pd.tglregistrasi, 'DD-Mon-YYYY') AS tglregistrasi, ps.noidentitas " & _
                      " FROM pasiendaftar_t pd " & _
                      " INNER JOIN pasien_m ps ON pd.nocmfk = ps.id " & _
                      " INNER JOIN jeniskelamin_m jk ON jk.id = ps.objectjeniskelaminfk " & _
@@ -1671,23 +1671,22 @@ boolGelangPasienBayi = False
             
             
             .database.AddADOCommand CN_String, adoReport
-'            .udtLahir.SetUnboundFieldSource ("{ado.tgllahir}")
-'            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .udtLahir.SetUnboundFieldSource ("{ado.tgllahir}")
+'             .usJk.SetUnboundFieldSource ("{ado.jk}")
 '            .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
-'            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
              .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-             .usUmur.SetUnboundFieldSource ("{ado.umur}")
-             .usNoRm.SetUnboundFieldSource ("{ado.nocm}")
-             .usNormBarcode.SetUnboundFieldSource ("{ado.barcode}")
-             .usNoReg.SetUnboundFieldSource ("{ado.noidentitas}")
+'             .usUmur.SetUnboundFieldSource ("{ado.umur}")
+'             .usNoRm.SetUnboundFieldSource ("{ado.nocm}")
+'             .usNormBarcode.SetUnboundFieldSource ("{ado.barcode}")
+'             .usNoReg.SetUnboundFieldSource ("{ado.noidentitas}")
              .usJk.SetUnboundFieldSource ("{ado.jk}")
-             
-             .usNamaPasien1.SetUnboundFieldSource ("{ado.namapasien}")
-             .usUmur1.SetUnboundFieldSource ("{ado.umur}")
-             .usNorm1.SetUnboundFieldSource ("{ado.nocm}")
-             .usNormBarcode1.SetUnboundFieldSource ("{ado.barcode}")
-             .usNoreg1.SetUnboundFieldSource ("{ado.noidentitas}")
-             .usjk1.SetUnboundFieldSource ("{ado.jk}")
+'             .usNamaPasien1.SetUnboundFieldSource ("{ado.namapasien}")
+'             .usUmur1.SetUnboundFieldSource ("{ado.umur}")
+'             .usNorm1.SetUnboundFieldSource ("{ado.nocm}")
+             .Usbarcod.SetUnboundFieldSource ("{ado.barcode}")
+'             .usNoreg1.SetUnboundFieldSource ("{ado.noidentitas}")
+'             .usjk1.SetUnboundFieldSource ("{ado.jk}")
 '             .usTglDaftar.SetUnboundFieldSource ("{ado.tglregistrasi}")
 '             .usDokter.SetUnboundFieldSource ("{ado.namadokter}")
 '           view = "true"
@@ -3382,27 +3381,19 @@ boolGelangPasienBayi = False
 '                     " where pd.noregistrasi ='" & strNorec & "' "
 
             ' POSTGRESSQL
-            strSQL = " select pd.noregistrasi,pd.tglregistrasi,p.nocm || ' - ' || pd.nokunjungan as nocm,p.nocm as noCm, " & _
-                     " upper(p.namapasien) as namapasien,CASE WHEN jk.id = 1 THEN 'L' WHEN jk.id = 2 THEN 'P' ELSE '-' END as jk, " & _
-                     " upper(alm.alamatlengkap) as alamat, p.noidentitas, " & _
-                     " to_char(p.tgllahir, 'DD-MM-YYYY') as tgllahirs,p.tgllahir, " & _
-                     " case when pg.namalengkap is null then '-' ELSE " & _
-                     " pg.namalengkap end as namadokter, '*' || p.nocm || '*' as barcode" & _
-                     " from pasiendaftar_t pd " & _
-                     " INNER JOIN pasien_m p on pd.nocmfk=p.id " & _
-                     " INNER JOIN jeniskelamin_m jk on jk.id=p.objectjeniskelaminfk " & _
-                     " LEFT JOIN pegawai_m as pg on pg.id = pd.objectpegawaifk " & _
-                     " LEFT JOIN alamat_m as alm on alm.nocmfk = p.id " & _
-                     " where pd.noregistrasi ='" & strNorec & "' " & _
-                     " and pd.kdprofile = '" & RS3!kdProfile & "'"
+            strSQL = " select p.namapasien,p.nocm as nocm, " & _
+                     " '*' || p.nocm || '*' as barcode" & _
+                     " from pasien_m p " & _
+                     " where p.id ='" & strNorec & "' " & _
+                     " and p.kdprofile = '" & RS3!kdProfile & "'"
 
             jns = "GelangPasienCowo"
             jml = qty - 1
             ReadRs2 strSQL
             
-            If RS2!jk = "P" Then
-                jns = "GelangPasienCewe"
-            End If
+'            If RS2!jk = "P" Then
+'                jns = "GelangPasienCewe"
+'            End If
             str = ""
             If Val(qty) - 1 = 0 Then
                 adoReport.CommandText = strSQL
@@ -3410,18 +3401,18 @@ boolGelangPasienBayi = False
                 For i = 1 To Val(qty) - 1
                     str = strSQL & " union all " & str
                 Next
-                
+
                 adoReport.CommandText = str & strSQL
-           
+
            End If
                 adoReport.CommandType = adCmdUnknown
                 .database.AddADOCommand CN_String, adoReport
-                .udtLahir.SetUnboundFieldSource ("{ado.tgllahir}")
+'                .udtLahir.SetUnboundFieldSource ("{ado.tgllahir}")
                 .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
                 .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-                .usJk.SetUnboundFieldSource ("{ado.jk}")
+'                .usJk.SetUnboundFieldSource ("{ado.jk}")
                 .usBarcode.SetUnboundFieldSource ("{ado.barcode}")
-                .usNoReg.SetUnboundFieldSource ("{ado.noidentitas}")
+'                .usNoreg.SetUnboundFieldSource ("{ado.noidentitas}")
 '            view = "true"
             If view = "false" Then
                 strPrinter1 = GetTxt("Setting.ini", "Printer", jns)
