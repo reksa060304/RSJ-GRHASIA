@@ -126,3 +126,4 @@ Thumbs.db
 /backend/.env
 /frontend/app/javascripts/Setting.js
 *.tmp
+/frontend/app/javascripts/Setting.js
