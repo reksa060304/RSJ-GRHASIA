@@ -33,11 +33,16 @@ Public StatusCN As String
 Public Sub openConnection()
  On Error GoTo NoConn
  Dim host, Port, username, password, database As String
-   host = GetTxt2("Setting.ini", "Koneksi", "a")
-   Port = GetTxt2("Setting.ini", "Koneksi", "b")
-   username = GetTxt2("Setting.ini", "Koneksi", "c")
-   password = GetTxt2("Setting.ini", "Koneksi", "d")
-   database = GetTxt2("Setting.ini", "Koneksi", "e")
+'   host = GetTxt2("Setting.ini", "Koneksi", "a")
+'   Port = GetTxt2("Setting.ini", "Koneksi", "b")
+'   username = GetTxt2("Setting.ini", "Koneksi", "c")
+'   password = GetTxt2("Setting.ini", "Koneksi", "d")
+'   database = GetTxt2("Setting.ini", "Koneksi", "e")
+   host = "192.168.99.165" 'GetTxt2("Setting.ini", "Koneksi", "a")
+   Port = "3030" 'GetTxt2("Setting.ini", "Koneksi", "b")
+   username = "postgres" 'GetTxt2("Setting.ini", "Koneksi", "c")
+   password = "@@30Pr3scr1ption30@@" 'GetTxt2("Setting.ini", "Koneksi", "d")
+   database = "rsj_grhasia" 'GetTxt2("Setting.ini", "Koneksi", "e")
 'On Error Resume Next
  
     With CN
