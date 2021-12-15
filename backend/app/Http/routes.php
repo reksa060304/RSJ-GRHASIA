@@ -2109,6 +2109,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         // });
 
         // Route::group(['prefix' => 'sysadmin'], function () {
+          Route::get('sysadmin/general/save-nilai-norm', 'Laboratorium\LaboratoriumController@saveMapHasilLabBantu');
           Route::get('sysadmin/get-list-combo', 'SysAdmin\SysAdminController@getlistCombo');
           Route::get('sysadmin/get-map-ruangantojenis', 'SysAdmin\SysAdminController@getDataMapping');
           Route::post('sysadmin/save-map-ruangantojenis', 'SysAdmin\SysAdminController@saveMapRuanganToJenis');
