@@ -19,6 +19,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.model.tglSEP = $scope.now;
             $scope.model.tglRujukan = $scope.now;
             $scope.model.tglPelayanan = $scope.now;
+            $scope.norecScr = "-"
+            $scope.Alsan = false;
             var datas = [];
             var chacePenunjang = cacheHelper.get('isPenunjang');
             if (chacePenunjang != undefined) {
@@ -842,6 +844,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.cetakBuktiLayanan = function () {
                 if ($scope.item != undefined) {
                     //##save identifikasibuktiLayanan
+                    // $scope.cacheNorecAPD
                     medifirstService.get("registrasi/identifikasi-buktiLayanan?norec_pd="
                         + $scope.cacheNorecPD
                     ).then(function (data) {
@@ -853,8 +856,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // window.open(fixUrlLaporan, '', 'width=800,height=600')
 
                     //cetakan langsung service VB6 by grh
+                    var stt = 'false'
+                    if (confirm('View Bukti Layanan? ')) {
+                        // Save it!
+                        stt = 'true';
+                    } else {
+                        // Do nothing!
+                        stt = 'false'
+                    }
                     var client = new HttpClient();
-                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan=1&norec=' + $scope.cacheNoRegistrasi + '&strIdPegawai=' + $scope.pegawai.id + '&view=false', function (response) {
+                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan=1&norec=' + $scope.cacheNoRegistrasi + '&strIdPegawai=' + $scope.pegawai.id + '&view=false', function (response) {
+                    //     // do something with response
+                    // });
+                    client.get('http://127.0.0.1:1237/printvb/kasir?cetak-nota-layanan=1&norec=' + $scope.cacheNorecAPD + '&strIdPegawai=' + $scope.pegawai.id + '&view=' + stt, function (response) {
                         // do something with response
                     });
 
@@ -1368,6 +1382,119 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 var client = new HttpClient();
                 client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-gelangpasien-bayi=1&norec=' + $scope.cacheNoRegistrasi + '&view=' + stt + '&qty=' + 1, function (response) {
+                    // do something with response
+                });
+            }
+
+            $scope.ScreeningPasien = function(){
+                if ($scope.cacheNoRegistrasi == undefined) {
+                    toastr.error("Data Tidak Ditemukan");
+                    return;
+                }
+                medifirstService.get('registrasi/get-data-skrining-awal-pasien?noregistrasi=' + $scope.cacheNoRegistrasi).then(function (dat) {                    
+                    var dataScr = dat.data;
+                    if(dataScr != undefined){
+                        $scope.norecScr = dataScr.norec;
+                        $scope.listKesadaran = dataScr.kesadaran;
+                        $scope.listTransportasi = dataScr.transportasi;
+                        $scope.listTeruskan = dataScr.teruskanke;
+                        $scope.listAlasan = dataScr.ketkhusus;
+                        $scope.listTb = dataScr.screentb;
+                        $scope.item.KeteranganAlasan = dataScr.keterangankhusus;
+                        $scope.listDataPegawai = [{id: dataScr.pegawaifk, namalengkap: dataScr.namalengkap}];
+                        $scope.item.petugasScreening = {id: dataScr.pegawaifk, namalengkap: dataScr.namalengkap};
+                        if ($scope.item.KeteranganAlasan != undefined || $scope.item.KeteranganAlasan != "") {
+                            $scope.Alsan = true;
+                        }else{
+                            $scope.Alsan = false;
+                        }
+                    }
+                    $scope.popScreening.center().open();          
+                })                
+            }
+
+            $scope.$watch('listAlasan', function (newValue, oldValue) {                
+                if ($scope.listAlasan == "0") {
+                    $scope.Alsan = true;
+                }else{
+                    $scope.Alsan = false;
+                }
+
+            });
+
+            $scope.saveScreening = function(){   
+                if ($scope.item.petugasScreening == undefined) {
+                    toastr.error("Petugas Skrining Tidak Boleh Kosong!");
+                    return;
+                }            
+
+                var objSave = {
+                    'norec': $scope.norecScr,
+                    'noregistrasi': $scope.cacheNoRegistrasi,
+                    'petugas': $scope.item.petugasScreening.id,                    
+                    'kesadaran': $scope.listKesadaran != undefined ? $scope.listKesadaran : null,
+                    'transportasi': $scope.listTransportasi != undefined ? $scope.listTransportasi : null,                    
+                    'teruskan': $scope.listTeruskan != undefined ? $scope.listTeruskan : null,
+                    'alasan': $scope.listAlasan != undefined ? $scope.listAlasan : null,
+                    'tb': $scope.listTb != undefined ? $scope.listTb : null,
+                    'keterangan': $scope.item.KeteranganAlasan != undefined ? $scope.item.KeteranganAlasan : null,                    
+                }
+
+                $scope.hideScr = true
+                medifirstService.post('registrasi/save-skrining-awal-pasien', objSave).then(function (e) {                    
+                    $scope.norecScr = e.data.data.norec;
+                    // loadData();
+                }, function (error) {
+                    $scope.hideScr = false
+                })
+            }
+
+            $scope.hapusScreening = function(){
+                if ($scope.norecScr == "-") {
+                    toastr.error("Data Tidak Ditemukan!");
+                    return;
+                }
+
+                var objSave = {
+                    "norec" : $scope.norecScr
+                }
+
+                medifirstService.post('registrasi/hapus-skrining-awal-pasien', objSave).then(function (e) {                    
+                    $scope.norecScr = "-";
+                    $scope.item.petugasScreening = undefined;
+                    $scope.item.KeteranganAlasan = undefined;
+                    $scope.listKesadaran = undefined;
+                    $scope.listTransportasi = undefined;
+                    $scope.listTeruskan = undefined;
+                    $scope.listAlasan = undefined;
+                    $scope.listTb = undefined;
+                    $scope.popScreening.close();
+                }, function (error) {})
+            }
+
+            $scope.batalScreening = function(){
+                $scope.norecScr = "-";
+                $scope.item.petugasScreening = undefined;
+                $scope.item.KeteranganAlasan = undefined;
+                $scope.listKesadaran = undefined;
+                $scope.listTransportasi = undefined;
+                $scope.listTeruskan = undefined;
+                $scope.listAlasan = undefined;
+                $scope.listTb = undefined;
+                $scope.popScreening.close();
+            }
+
+            $scope.cetakScreening = function(){
+                var stt = 'false'
+                if (confirm('View Skrining Awal Pasien? ')) {
+                    // Save it!
+                    stt = 'true';
+                } else {
+                    // Do nothing!
+                    stt = 'false'
+                }
+                var client = new HttpClient();
+                client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-skriningawalpasien=1&norec=' + $scope.cacheNoRegistrasi + '&view=' + stt, function (response) {
                     // do something with response
                 });
             }

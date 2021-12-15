@@ -150,5 +150,6 @@ Private Sub Form_Load()
     Combo1.AddItem "GelangPasienBayiCowo"
     Combo1.AddItem "GelangPasienBayiCewe"
     Combo1.AddItem "NotaLayanan"
+    Combo1.AddItem "SkriningAwalPasien"
 End Sub
 

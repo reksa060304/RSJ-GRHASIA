@@ -1659,8 +1659,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('registrasi/update-rujukan-transdata','Registrasi\RegistrasiController@updateRujukanTransdata');
             Route::post('registrasi/save-adminsitrasi', 'Registrasi\RegistrasiController@saveAdministrasi');
             Route::get('registrasi/get-detail-registrasi-pasien', 'Registrasi\RegistrasiController@getDetailRegistrasiPasien');
-
-             Route::get('registrasi/cek-nobpjs', 'Registrasi\RegistrasiController@cekNoBPJSpasienBaru');
+            Route::get('registrasi/cek-nobpjs', 'Registrasi\RegistrasiController@cekNoBPJSpasienBaru');
             // Route::group(['prefix' => 'daftar-registrasi'], function () {
               // 2019-12 penambahan arif awal
               Route::get('registrasi/daftar-registrasi/get-daftar-registrasi-pasien-db-lama', 'Registrasi\RegistrasiController@getDaftarRegistrasiPasienOperatordblama');
@@ -1801,6 +1800,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // });
 
               Route::post('registrasi/hapus-sep', 'Registrasi\RegistrasiController@updateNoseppa');
+              Route::post('registrasi/save-skrining-awal-pasien','Registrasi\RegistrasiController@saveSkringAwalPasien');
+              Route::get('registrasi/get-data-skrining-awal-pasien','Registrasi\RegistrasiController@getDataSkringAwalPasien');
+              Route::post('registrasi/hapus-skrining-awal-pasien','Registrasi\RegistrasiController@deleteSkringAwalPasien');
 
 
         // });
