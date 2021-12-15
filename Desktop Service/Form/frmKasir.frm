@@ -525,7 +525,7 @@ On Error Resume Next
             Case "cetak-nota-layanan"
                 Call frmCetakStrukNonLayan.cetakBukti(Param2(1), Param3(1), Param4(1))
                 Set Root = New JNode
-                Root("Status") = "Cetak Struk Validasi!!"
+                Root("Status") = "Cetak Nota Layanan!!"
                 '127.0.0.1:1237/printvb/kasir?cetak-billing=1&noregistrasi=1707000053&view=false
             Case Else
                 Set Root = New JNode

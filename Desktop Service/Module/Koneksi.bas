@@ -38,12 +38,19 @@ Public Sub openConnection()
 '   username = GetTxt2("Setting.ini", "Koneksi", "c")
 '   password = GetTxt2("Setting.ini", "Koneksi", "d")
 '   database = GetTxt2("Setting.ini", "Koneksi", "e")
-   host = "192.168.99.165" 'GetTxt2("Setting.ini", "Koneksi", "a")
-   Port = "3030" 'GetTxt2("Setting.ini", "Koneksi", "b")
-   username = "postgres" 'GetTxt2("Setting.ini", "Koneksi", "c")
-   password = "@@30Pr3scr1ption30@@" 'GetTxt2("Setting.ini", "Koneksi", "d")
-   database = "rsj_grhasia" 'GetTxt2("Setting.ini", "Koneksi", "e")
-'On Error Resume Next
+'  LOCAL GRHASIA
+'   host = "192.168.99.165"
+'   Port = "3030"
+'   username = "postgres"
+'   password = "@@30Pr3scr1ption30@@"
+'   database = "rsj_grhasia"
+'  LOCAL Transmedic
+   host = "apps.transmedic.co.id"
+   Port = "5432"
+   username = "postgres"
+   password = "Tr4nsm3dic"
+   database = "rsj_grhasia"
+  'On Error Resume Next
  
     With CN
 '        If .State = adStateOpen Then Exit Sub

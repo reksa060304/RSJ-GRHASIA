@@ -202,17 +202,16 @@ Dim Apoteker As String
                      " to_char(pm.tgllahir, 'DD/MM/YYYY') AS tgllahir,alm.alamatlengkap,kp.kelompokpasien, " & _
                      " ru.namaruangan || ' (Perawat)' AS ruangan,pg.namalengkap,pr.namaproduk,pp.jumlah, " & _
                      " pp.hargajual,(pp.jumlah*(pp.hargajual - CASE WHEN pp.hargadiscount IS NULL THEN 0 ELSE pp.hargadiscount END + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END)) AS total " & _
-                     " FROM strukpelayanan_t AS sp " & _
-                     " INNER JOIN pelayananpasien_t AS pp ON pp.strukfk = sp.norec " & _
-                     " INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk " & _
-                     " INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk " & _
+                     " FROM pasiendaftar_t AS pd " & _
+                     " INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec " & _
+                     " INNER JOIN pelayananpasien_t AS pp ON pp.noregistrasifk = apd.norec " & _
                      " INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk " & _
                      " LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.id " & _
                      " LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk " & _
                      " LEFT JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk " & _
                      " LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk " & _
                      " INNER JOIN produk_m AS pr ON pr.id = pp.produkfk " & _
-                     " WHERE sp.statusenabled = true AND sp.norec = '" & strNorec & "' "
+                     " WHERE pd.statusenabled = true AND apd.norec = '" & strNorec & "' "
             
             ReadRs strSQL
             adoReport.CommandText = strSQL
@@ -223,18 +222,18 @@ Dim Apoteker As String
                 .txtNmrRM.SetText IIf(IsNull(rs("nocm")), "", rs("nocm"))
                 .txtNamaPasien.SetText IIf(IsNull(rs("namapasien")), "", rs("namapasien"))
                 .txtTglKunjungan.SetText IIf(IsNull(rs("tglregistrasi")), "", rs("tglregistrasi"))
-                .txtTglLahir.SetText IIf(IsNull(rs("tgllahir")), "", rs("tgllahir"))
+                .txttgllahir.SetText IIf(IsNull(rs("tgllahir")), "", rs("tgllahir"))
                 .txtAlamat.SetText IIf(IsNull(rs("alamatlengkap")), "", rs("alamatlengkap"))
                 .txtKelPasien.SetText IIf(IsNull(rs("kelompokpasien")), "", rs("kelompokpasien"))
                 .txtNamaDokter.SetText IIf(IsNull(rs("namalengkap")), "", rs("namalengkap"))
                 .txtOperatorPoli.SetText IIf(IsNull(rs("ruangan")), "", rs("ruangan"))
              End If
-            .database.AddADOCommand CN_String, adoReport
+             .database.AddADOCommand CN_String, adoReport
              .usNorec.SetUnboundFieldSource ("{ado.norec}")
              .usProduk.SetUnboundFieldSource ("{ado.namaproduk}")
              .ucHargaSatuan.SetUnboundFieldSource ("{ado.hargajual}")
              .usJml.SetUnboundFieldSource ("{ado.jumlah}")
-             .unJml.SetUnboundFieldSource ("{ado.jumlah}")
+             .unjml.SetUnboundFieldSource ("{ado.jumlah}")
              .ucTotalHarga.SetUnboundFieldSource ("{ado.total}")
              .ucWjbBayar.SetUnboundFieldSource ("{ado.total}")
             

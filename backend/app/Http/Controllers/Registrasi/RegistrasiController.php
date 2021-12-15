@@ -48,6 +48,7 @@ use App\Transaksi\StrukOrder;
 use App\Transaksi\StrukPraOrder;
 use App\Transaksi\StrukResep;
 use App\Transaksi\TempBilling;
+use App\Transaksi\SkriningAwalPasien;
 use Illuminate\Http\Request;
 use App\Traits\PelayananPasienTrait;
 use DB;
@@ -11278,5 +11279,117 @@ GROUP BY y.KET
             );
         }
         return $this->respond($result);
+    }
+
+    public function saveSkringAwalPasien(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $noregistrasi = $request['noregistrasi'];
+        $norec = $request['norec'];
+        $pd = collect(DB::select("
+            select * from pasiendaftar_t where noregistrasi = '$noregistrasi'
+        "))->first();
+        
+        DB::beginTransaction();
+        try {
+            if ($request['norec'] == '-') {
+                $new = new SkriningAwalPasien();
+                $norec = $new->generateNewId();            
+                $new->norec = $norec;
+                $new->kdprofile = $kdProfile;
+                $new->statusenabled = true;
+                $new->nocmfk = $pd->nocmfk;
+                $new->norec_pd = $pd->norec;
+                $new->objectruanganfk = $pd->objectruanganlastfk;
+
+            }else{
+                $new = collect(DB::select("
+                    select * From skriningawalpasien_t where norec = '$norec'
+                "))->first();
+            }
+                $new->kesadaran = $request['kesadaran'];
+                $new->transportasi = $request['transportasi'];
+                $new->teruskanke = $request['teruskan']; 
+                $new->ketkhusus = $request['alasan']; 
+                $new->screentb = $request['tb']; 
+                $new->keterangankhusus = $request['keterangan']; 
+                $new->pegawaifk = $request['petugas']; 
+                $new->save();
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Gagal Simpan Screening!";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => "Berhasil Simpan Screening!",
+                "data" => $new,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => "Gagal Simpan Screening!",
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getDataSkringAwalPasien(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $noregistrasi = $request['noregistrasi'];
+
+        $data = collect(DB::select("
+            SELECT sap.*,pd.noregistrasi,to_char(pm.tgllahir, 'DD/MM/YYYY') AS tgllahir,
+                   to_char(pd.tglregistrasi, 'DD/MM/YYYY HH24:MI:SS') AS tglregistrasi,
+                   jk.jeniskelamin,alm.alamatlengkap,ru.namaruangan,pg.namalengkap
+            FROM pasiendaftar_t AS pd
+            INNER JOIN skriningawalpasien_t AS sap ON sap.norec_pd = pd.norec
+            INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk
+            LEFT JOIN jeniskelamin_m AS jk ON jk.id = pm.objectjeniskelaminfk
+            LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.id
+            LEFT JOIN ruangan_m AS ru ON ru.id = sap.objectruanganfk
+            LEFT JOIN pegawai_m AS pg ON pg.id = sap.pegawaifk
+            WHERE pd.noregistrasi = '$noregistrasi'
+        "))->first();
+
+        return $this->respond($data);
+    }
+
+    public function deleteSkringAwalPasien(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);        
+        $norec = $request['norec'];                
+        DB::beginTransaction();
+        try {
+
+            $del = SkriningAwalPasien::where('norec', $request['norec'])
+                   ->update([
+                        "statusenabled" => false,
+                   ]);                                   
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Gagal Hapus Screening!";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => "Berhasil Hapus Screening!",
+                "data" => $new,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => "Gagal Hapus Screening!",
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

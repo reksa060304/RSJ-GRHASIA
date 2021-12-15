@@ -1214,16 +1214,37 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			}
 
 			$scope.popUpBL = function () {
-
-				if ($scope.item != undefined) {
+				if ($scope.dataPasienSelected == undefined) {
+					toastr.error("Data Belum Dipilih!");
+				}
+				// if ($scope.item != undefined) {
 					//cetakan langsung service VB6 by grh
-					var client = new HttpClient();
-					client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan=1&norec='
-						+ $scope.dataPasienSelected.noregistrasi + '&strIdPegawai='
-						+ $scope.pegawai.id
-						+ '&view=false', function (response) {
+					medifirstService.get("registrasi/get-apd?noregistrasi="
+						+ $scope.dataPasienSelected.noregistrasi
+						+ "&objectruanganlastfk=" + $scope.dataPasienSelected.objectruanganlastfk
+					).then(function (e) {						
+						var norecApd = e.data.data[0].norec_apd
+						var pegawai = medifirstService.getPegawai();
+						var stt = 'false'
+	                    if (confirm('View Bukti Layanan? ')) {
+	                        // Save it!
+	                        stt = 'true';
+	                    } else {
+	                        // Do nothing!
+	                        stt = 'false'
+	                    }                      
+	                    var client = new HttpClient();                 
+	                    client.get('http://127.0.0.1:1237/printvb/kasir?cetak-nota-layanan=1&norec=' + norecApd + '&strIdPegawai=' + pegawai.id + '&view=' + stt, function (response) {
+	                        // do something with response
+	                    });
+					})
+					// var client = new HttpClient();
+					// client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan=1&norec='
+					// 	+ $scope.dataPasienSelected.noregistrasi + '&strIdPegawai='
+					// 	+ $scope.pegawai.id
+					// 	+ '&view=false', function (response) {
 
-						});
+					// 	});
 
 					//##save identifikasibuktiLayanan
 					medifirstService.get("registrasi/identifikasi-buktiLayanan?norec_pd="
@@ -1232,9 +1253,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 						var datas = data.data;
 					})
 					//##end 
-
-				}
-
+				// }
 			}
 			var status = '';
 			$scope.popUpInputTindakan = function () {

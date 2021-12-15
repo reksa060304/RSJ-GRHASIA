@@ -1053,6 +1053,22 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.cetakBuktiLayanan = function () {
                 if ($scope.item.noregistrasi != undefined && norec_apd != null) {
                     //cetakan langsung service VB6 by grh
+                    // var stt = 'false'
+                    // if (confirm('View Bukti Layanan? ')) {
+                    //     // Save it!
+                    //     stt = 'true';
+                    // } else {
+                    //     // Do nothing!
+                    //     stt = 'false'
+                    // }
+                    // var client = new HttpClient();
+
+                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec='
+                    //     + $scope.item.noregistrasi + '&strIdPegawai=' + $scope.pegawai.id +
+                    //     '&strIdRuangan=ORDERRADIOLOGI' + norec_apd + '&view=' + stt, function (response) {
+                    //         // do something with response
+                    //     });
+                    var pegawai = medifirstService.getPegawai();
                     var stt = 'false'
                     if (confirm('View Bukti Layanan? ')) {
                         // Save it!
@@ -1060,14 +1076,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     } else {
                         // Do nothing!
                         stt = 'false'
-                    }
-                    var client = new HttpClient();
-
-                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec='
-                        + $scope.item.noregistrasi + '&strIdPegawai=' + $scope.pegawai.id +
-                        '&strIdRuangan=ORDERRADIOLOGI' + norec_apd + '&view=' + stt, function (response) {
-                            // do something with response
-                        });
+                    }                      
+                    var client = new HttpClient();                 
+                    client.get('http://127.0.0.1:1237/printvb/kasir?cetak-nota-layanan=1&norec=' + $scope.dataSelected.norec_apd + '&strIdPegawai=' + pegawai.id + '&view=' + stt, function (response) {
+                        // do something with response
+                    });
 
                 }
             }

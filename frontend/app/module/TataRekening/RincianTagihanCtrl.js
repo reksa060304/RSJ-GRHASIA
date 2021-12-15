@@ -521,28 +521,33 @@ define(['initialize'], function (initialize) {
 
 			$scope.CetakBuktiLayanan = function () {
 				// $mdDialog.show(confirm).then(function() {
+				var pegawai = medifirstService.getPegawai();
 				if ($scope.dataSelected == undefined) {
 					alert("Pilih pelayanan dahulu!");
 					return;
 				}
 				var NoStruk = $scope.dataRincianTagihan;
 				var struk = "";
-				var kwitansi = "";
-				var stt = 'false'
-				if (confirm('View Rincian Biaya? ')) {
-					// Save it!
-					stt = 'true';
-				} else {
-					// Do nothing!
-					stt = 'false'
-				}
+				var kwitansi = "";				
 				medifirstService.get("tatarekening/get-data-login-cetakan").then(function (e) {
 					var client = new HttpClient();
 					//client.get('http://127.0.0.1:1237/printvb/kasir?cetak-RincianBiaya=1&strNoregistrasi=' + $scope.item.noRegistrasi + '&strNoStruk=' + struk + '&strNoKwitansi=' + kwitansi +  '&strIdPegawai='+ e.data[0].namalengkap + '&view=' + stt, function(response) {
-					client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec=' + $scope.item.noRegistrasi + '&strIdPegawai=' + e.data[0].id + '&strIdRuangan=' + $scope.dataSelected.ruid + '&view=' + stt, function (response) {
-						//http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec=1707000166&strIdPegawai=1&strIdRuangan=&view=true
-						// do something with response
-					});
+					// CETAKAN AWAL//
+					// client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec=' + $scope.item.noRegistrasi + '&strIdPegawai=' + e.data[0].id + '&strIdRuangan=' + $scope.dataSelected.ruid + '&view=' + stt, function (response) {
+					// 	//http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec=1707000166&strIdPegawai=1&strIdRuangan=&view=true
+					// 	// do something with response
+					// });
+					var stt = 'false'
+                    if (confirm('View Bukti Layanan? ')) {
+                        // Save it!
+                        stt = 'true';
+                    } else {
+                        // Do nothing!
+                        stt = 'false'
+                    }                                       
+                    client.get('http://127.0.0.1:1237/printvb/kasir?cetak-nota-layanan=1&norec=' + $scope.dataSelected.norec_apd + '&strIdPegawai=' + pegawai.id + '&view=' + stt, function (response) {
+                        // do something with response
+                    });
 				})
 
 				// client.get('http://127.0.0.1:1237/printvb/kasir?cetak-billing=1&noregistrasi=' + $scope.item.noRegistrasi + '&strIdPegawai='+ $scope.Pegawai.id + '&view=' + stt, function(response) {
