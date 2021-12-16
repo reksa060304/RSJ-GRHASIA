@@ -308,6 +308,10 @@ Private Sub CmdOption_Click()
     CRViewer1.Refresh
 End Sub
 
+Private Sub CRViewer1_CloseButtonClicked(UseDefault As Boolean)
+
+End Sub
+
 Private Sub Form_Load()
     
     Dim p As Printer
@@ -420,9 +424,9 @@ Dim namaRs As String
             .usnoantri.SetUnboundFieldSource ("{ado.noantrian}")
             .udtgl.SetUnboundFieldSource ("{ado.tglregistrasi}")
             .usnodft.SetUnboundFieldSource ("{ado.noregistrasi}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
             .udTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamatlengkap}")
             .usNoTelpon.SetUnboundFieldSource ("{ado.mobilephone2}")
@@ -505,9 +509,9 @@ boolGelangPasienBayi = False
             .usnoantri.SetUnboundFieldSource ("{ado.noantrian}")
             .udtgl.SetUnboundFieldSource ("{ado.tglregistrasi}")
             .usnodft.SetUnboundFieldSource ("{ado.noregistrasi}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
             .udTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamatlengkap}")
             .usNoTelpon.SetUnboundFieldSource ("{ado.mobilephone2}")
@@ -587,9 +591,9 @@ namaKomputer = Winsock1.LocalHostName
             .usnoantri.SetUnboundFieldSource ("{ado.noantrian}")
 '            .udtgl.SetUnboundFieldSource ("{ado.tglregistrasi}")
             .usnodft.SetUnboundFieldSource ("{ado.noregistrasi}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
             .usStatusPasien.SetUnboundFieldSource ("{ado.statuspasien}")
             .udtTglReg.SetUnboundFieldSource ("{ado.tglregistrasi}")
             .usNamaDokter.SetUnboundFieldSource ("{ado.namadokter}")
@@ -1192,9 +1196,9 @@ boolGelangPasienBayi = False
             .txtWebEmail.SetText strEmail & ", " & strWebSite
             .udtgl.SetUnboundFieldSource ("{ado.tglregistrasi}")
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
 
             .usUnitLayanan.SetUnboundFieldSource ("{ado.ruanganperiksa}")
             .usTipe.SetUnboundFieldSource ("{ado.kelompokpasien}")
@@ -1360,9 +1364,9 @@ boolGelangPasienBayi = False
 
             .udtgl.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
     
             .udtgl1.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNoreg1.SetUnboundFieldSource ("{ado.noregistrasi}")
@@ -1674,13 +1678,13 @@ boolGelangPasienBayi = False
             .udtLahir.SetUnboundFieldSource ("{ado.tgllahir}")
 '             .usJk.SetUnboundFieldSource ("{ado.jk}")
 '            .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
              .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
 '             .usUmur.SetUnboundFieldSource ("{ado.umur}")
 '             .usNoRm.SetUnboundFieldSource ("{ado.nocm}")
 '             .usNormBarcode.SetUnboundFieldSource ("{ado.barcode}")
 '             .usNoReg.SetUnboundFieldSource ("{ado.noidentitas}")
-             .usJk.SetUnboundFieldSource ("{ado.jk}")
+             .usjk.SetUnboundFieldSource ("{ado.jk}")
 '             .usNamaPasien1.SetUnboundFieldSource ("{ado.namapasien}")
 '             .usUmur1.SetUnboundFieldSource ("{ado.umur}")
 '             .usNorm1.SetUnboundFieldSource ("{ado.nocm}")
@@ -1817,13 +1821,13 @@ boolGelangPasienBayi = False
 '            .udtLahir.SetUnboundFieldSource ("{ado.tgllahir}")
 '            .usJk.SetUnboundFieldSource ("{ado.jk}")
             .Field2.SetUnboundFieldSource ("{ado.alamatlengkap}")
-             .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
              .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
              .Field1.SetUnboundFieldSource ("{ado.ttl}")
 '             .usNoRm.SetUnboundFieldSource ("{ado.nocm}")
 '             .usNormBarcode.SetUnboundFieldSource ("{ado.barcode}")
 '             .usAyah.SetUnboundFieldSource ("{ado.namaayah}")
-             .usJk.SetUnboundFieldSource ("{ado.jeniskelamin}")
+             .usjk.SetUnboundFieldSource ("{ado.jeniskelamin}")
 '
 '             .usNamaPasien1.SetUnboundFieldSource ("{ado.namapasien}")
 '             .usUmur1.SetUnboundFieldSource ("{ado.umur}")
@@ -1836,7 +1840,7 @@ boolGelangPasienBayi = False
 '           view = "true"
             
             If view = "false" Then
-                strPrinter1 = GetTxt("Setting.ini", "Printer", "LabelPasienBayi")
+                strPrinter1 = GetTxt("Setting.ini", "Printer", "LabelPasienBesar")
                 .SelectPrinter "winspool", strPrinter1, "Ne00:"
                 .PrintOut False
                 Unload Me
@@ -1914,9 +1918,9 @@ boolGelangPasienBayi = False
 
             .udtgl.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
     
             .udtgl1.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNoreg1.SetUnboundFieldSource ("{ado.noregistrasi}")
@@ -2005,8 +2009,8 @@ boolGelangPasienBayi = False
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
             .usNamaKeuarga.SetUnboundFieldSource ("{ado.namakeluarga}")
             .udTglLahir.SetUnboundFieldSource ("{ado.tglLahir}")
-            .usJk.SetUnboundFieldSource ("{ado.jeniskelamin}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usjk.SetUnboundFieldSource ("{ado.jeniskelamin}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamatlengkap}")
             .usKota.SetUnboundFieldSource ("{ado.kotakabupaten}")
            
@@ -2104,8 +2108,8 @@ boolGelangPasienBayi = False
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
            ' .usNamaKeuarga.SetUnboundFieldSource ("{ado.namakeluarga}")
             .udTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
-            .usJk.SetUnboundFieldSource ("{ado.jeniskelamin}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usjk.SetUnboundFieldSource ("{ado.jeniskelamin}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamatlengkap}")
             .usJamRegis.SetUnboundFieldSource ("{ado.jamregistrasi}")
             .usTglRegis.SetUnboundFieldSource ("{ado.tglregistrasi}")
@@ -2580,9 +2584,9 @@ boolGelangPasienBayi = False
             
             .udtgl.SetUnboundFieldSource ("{ado.tglregistrasi}")
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
 
             .usUnitLayanan.SetUnboundFieldSource ("{ado.ruanganperiksa}")
             .usTipe.SetUnboundFieldSource ("{ado.kelompokpasien}")
@@ -2723,9 +2727,9 @@ boolGelangPasienBayi = False
             .txtWebEmail.SetText strEmail & ", " & strWebSite
             .udtgl.SetUnboundFieldSource ("{ado.tglregistrasi}")
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
 
             .usUnitLayanan.SetUnboundFieldSource ("{ado.ruanganperiksa}")
             .usTipe.SetUnboundFieldSource ("{ado.kelompokpasien}")
@@ -2866,9 +2870,9 @@ boolGelangPasienBayi = False
             .txtWebEmail.SetText strEmail & ", " & strWebSite
             .udtgl.SetUnboundFieldSource ("{ado.tglregistrasi}")
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
 
             .usUnitLayanan.SetUnboundFieldSource ("{ado.ruanganperiksa}")
             .usTipe.SetUnboundFieldSource ("{ado.kelompokpasien}")
@@ -3002,9 +3006,9 @@ boolGelangPasienBayi = False
             
             .udtgl.SetUnboundFieldSource ("{ado.tglregistrasi}")
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
 
             .usUnitLayanan.SetUnboundFieldSource ("{ado.ruanganperiksa}")
             .usTipe.SetUnboundFieldSource ("{ado.kelompokpasien}")
@@ -3405,7 +3409,7 @@ boolGelangPasienBayi = False
                 adoReport.CommandType = adCmdUnknown
                 .database.AddADOCommand CN_String, adoReport
 '                .udtLahir.SetUnboundFieldSource ("{ado.tgllahir}")
-                .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+                .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
                 .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
 '                .usJk.SetUnboundFieldSource ("{ado.jk}")
                 .usBarcode.SetUnboundFieldSource ("{ado.barcode}")
@@ -3513,9 +3517,9 @@ boolGelangPasienBayi = True
                 adoReport.CommandType = adCmdUnknown
                 .database.AddADOCommand CN_String, adoReport
                 .udtLahir.SetUnboundFieldSource ("{ado.tgllahir}")
-                .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+                .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
                 .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-                .usJk.SetUnboundFieldSource ("{ado.jk}")
+                .usjk.SetUnboundFieldSource ("{ado.jk}")
                 .usBarcode.SetUnboundFieldSource ("{ado.barcode}")
                 .usAyah.SetUnboundFieldSource ("{ado.namaayah}")
 '            view = "true"
