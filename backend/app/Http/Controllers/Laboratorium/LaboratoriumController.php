@@ -1317,30 +1317,34 @@ class LaboratoriumController extends ApiController
       
   
            $data = DB::select(DB::raw("
-           select * from (
-           select DISTINCT null as id, pr.kdprofile,pr.statusenabled,
-           pr.id as produkfk,maps2.namapemeriksaandet,0 as  nourutdetail,ss.id as satuanfk ,maps2.satuan,null as memo,null as norec , 
-           0 as  nourutjenispemeriksaan,
-           row_number() over (partition by pr.id order by ss.id desc) as rownum 
-           from produk_m as pr 
-           join mapbantus as maps2 on  maps2.idproduk=cast(pr.id as text)
-           left join satuanstandar_m as ss on LOWER(ss.satuanstandar) =LOWER(maps2.satuan)
-           where pr.statusenabled=true
-           and pr.statusenabled =true
-           
-           ) as x where x.rownum =1
-           order by x.produkfk;
+         
+            select * from (
+            select DISTINCT null as id, pr.kdprofile,pr.statusenabled,
+            pr.id as produkfk,maps2.namapemeriksaandet,0 as  nourutdetail,ss.id as satuanfk ,maps2.satuan,null as memo,null as norec , 
+            0 as  nourutjenispemeriksaan,
+            row_number() over (partition by pr.id,maps2.namapemeriksaandet order by ss.id desc) as rownum 
+            from produk_m as pr 
+            join mapbantus as maps2 on  maps2.idproduk=cast(pr.id as text)
+            left join satuanstandar_m as ss on LOWER(ss.satuanstandar) =LOWER(maps2.satuan)
+            where pr.statusenabled=true
+            and pr.statusenabled =true
+          
+
+            ) as x where x.rownum =1
+            order by x.produkfk;
+
                         "));
 
 
             $data2 = DB::select(DB::raw(" 
               
-            select * from (
+                  select * from (
                 select *,row_number() over (partition by x.produkfk,x.jeniskelaminfk,x.nilaitext  order by x.nilainormalfk desc) as rownum2  from ( 
                 select DISTINCT pr.id as produkfk,pr.namaproduk,null as id,pr.kdprofile,pr.statusenabled,
                 jk.id as jeniskelaminfk,
                 nn.id as nilainormalfk,nn.nilaitext,
-                13 as kelompokumur,
+                13 as kelompokumur,maps2.namapemeriksaandet,
+
                 row_number() over (partition by pr.id ,jk.id,nn.id order by nn.id desc) as rownum 
                 from produk_m as pr 
                 join mapbantus as maps2 on   maps2.idproduk=cast(pr.id as text)
@@ -1349,7 +1353,7 @@ class LaboratoriumController extends ApiController
                 join nilainormal_m as  nn on nn.nilaitext=maps2.nilaitext2 and nn.nilaimin=maps2.mix and nn.nilaimax=maps2.max and nn.kelompokumurfk=13
                 where pr.statusenabled=true
                 and pr.statusenabled =true
-                
+         
                 order by pr.namaproduk
                 ) as x WHERE x.rownum=1
                 
@@ -1360,7 +1364,7 @@ class LaboratoriumController extends ApiController
             foreach ($data as $d) {
                 $d->details =[];
                 foreach ($data2 as $d2) {
-                    if($d->produkfk == $d2->produkfk){
+                    if($d->produkfk == $d2->produkfk && $d->namapemeriksaandet == $d2->namapemeriksaandet){
                           $d->details []=$d2;
                     }
                 }

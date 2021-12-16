@@ -251,6 +251,35 @@ define(['initialize'], function (initialize) {
                 //var bln = Math.round((selisih % 365)/(1000*60*60*24));
                 return thn + ' thn '// + bln + ' bln'
             }
+
+            $scope.inputTindakan = function () {
+                if($scope.dataSelected== undefined){
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+                $state.go('InputTindakan', {
+                    norecPD: $scope.dataSelected.norec_pd,
+                    norecAPD: $scope.dataSelected.norec_apd,
+
+                });
+            }
+            $scope.detailTagihan = function () {
+                 if($scope.dataSelected== undefined){
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+
+                if ($scope.dataSelected.noregistrasi != undefined) {
+                  
+                    var obj = {
+                        noRegistrasi: $scope.dataSelected.noregistrasi
+                    }
+
+                    $state.go('RincianTagihan', {
+                        dataPasien: JSON.stringify(obj)
+                    });
+                }
+            }
             //***********************************
 
         }
