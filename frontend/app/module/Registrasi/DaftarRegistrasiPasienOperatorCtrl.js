@@ -761,7 +761,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				var isValid = ModelItem.setValidation($scope, listRawRequired);
 
 				if (isValid.status) {
-					if ($scope.item.jenislabel.id == 1) {
+					if ($scope.item.jenislabel.id == 2) {
 						var qty = data.qty;
 						var qtyhasil = data.qty * 1;
 						if (qty !== undefined) {
@@ -784,7 +784,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
 						}
 						$scope.dialogCetakLabel.close();
-					}else if ($scope.item.jenislabel.id == 2) {
+					}else if ($scope.item.jenislabel.id == 1) {
 						var qty = data.qty;
 						var qtyhasil = data.qty * 1;
 						if (qty !== undefined) {

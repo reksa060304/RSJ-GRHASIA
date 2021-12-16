@@ -111,7 +111,7 @@ Private Sub Form_Load()
     Combo1.AddItem "LabelFarmasi"
     Combo1.AddItem "LabelFarmasiBiru"
     Combo1.AddItem "LabelPasien"
-    Combo1.AddItem "LabelPasienBayi"
+    Combo1.AddItem "LabelPasienBesar"
     Combo1.AddItem "LaporanPasienPulang"
     Combo1.AddItem "LaporanPendapatanRuangan"
     Combo1.AddItem "LaporanPendapatanRuanganDetail"
