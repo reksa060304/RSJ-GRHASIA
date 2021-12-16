@@ -34,7 +34,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				if (chacePeriode != undefined) {
 					//debugger;
 					var arrPeriode = chacePeriode//.split('~');
-					$scope.listJenislabel = [{ id: 1, jenislabel: "Label Besar" }, { id: 2, jenislabel: "Label Kecil" }];
 					$scope.item.periodeAwal = new Date(arrPeriode[0]);
 					$scope.item.periodeAkhir = new Date(arrPeriode[1]);
 					if(arrPeriode[2]!= "")
@@ -62,6 +61,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					$scope.sourceJenisDiagnosisPrimer = data.data.jenisdiagnosa;
 					$scope.item.jenisDiagnosis = { id: data.data.jenisdiagnosa[1].id, jenisdiagnosa: data.data.jenisdiagnosa[1].jenisdiagnosa };
 					$scope.listJenisPel = data.data.jenispelayanan;
+					$scope.listJenislabel = [{ id: 1, jenislabel: "Label Besar" }, { id: 2, jenislabel: "Label Kecil" }];
 				});
 				medifirstService.getPart("registrasi/daftar-registrasi/get-data-diagnosa", true, true, 10).then(function (data) {
 					//  debugger;
@@ -801,7 +801,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 							//##end
 
 							var client = new HttpClient();
-							client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-labelpasien-kecil=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&view=false&qty=' + qty, function (response) {
+							client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-labelpasienbayi-satu=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&view=false&qty=' + qty, function (response) {
 								// do something with response
 							});
 
