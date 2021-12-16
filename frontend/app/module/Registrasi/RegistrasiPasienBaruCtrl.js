@@ -357,13 +357,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                      if (result.bahasa2)
                         $scope.item.Bahasa2 = result.bahasa2
                      if (result.jeniskelaminpenanggungjawab2){
-                        for (let i = 0; i < $scope.listDataJenisKelamin.length; i++) {
-                            const element = $scope.listDataJenisKelamin[i];
-                            if (element.jeniskelamin.toLowerCase() == result.jeniskelaminpenanggungjawab2.toLowerCase()) {
-                                $scope.item.jenisKelaminP2  = element
-                                break
-                            }
-                        }
+                        $scope.item.jenisKelaminP = { id: result.idjk2, jeniskelamin: result.jeniskelaminpenanggungjawab2 };
                      }
                        
                     if (result.umurpenanggungjawab2)
@@ -371,14 +365,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     if (result.alamatrmh2)
                         $scope.item.alamatRumah2 = result.alamatrmh2
                     if (result.pekerjaanpenangggungjawab2){
-                     
-                        for (let i = 0; i < $scope.listDataPekerjaan.length; i++) {
-                            const element = $scope.listDataPekerjaan[i];
-                            if (element.pekerjaan.toLowerCase() == result.pekerjaanpenangggungjawab2.toLowerCase()) {
-                                $scope.item.pekerjaanP2  = element
-                                break
-                            }
-                        }
+                       $scope.item.pekerjaanP2 = { id: result.idpek2, pekerjaan: result.pekerjaanpenangggungjawab2 };
+                 
                     }
                     $scope.item.isAlamat = false
                     if (result.alamatd.length>0){

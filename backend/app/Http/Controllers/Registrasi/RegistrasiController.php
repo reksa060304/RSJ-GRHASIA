@@ -2842,6 +2842,8 @@ class RegistrasiController extends ApiController
             ->leftjoin ('jeniskelamin_m as jk1','jk1.jeniskelamin','=','ps.jeniskelaminpenanggungjawab')
             ->leftjoin ('bahasa_m as bh','bh.id','=','ps.bahasafk')
             ->leftjoin ('hambatankomunikasi_m as ham','ham.id','=','ps.hambatankomunikasifk')
+            ->leftjoin ('jeniskelamin_m as jk1','jk2.jeniskelamin','=','ps.jeniskelaminpenanggungjawab2')
+            ->leftjoin ('pekerjaan_m as pk2','pk2.pekerjaan','=','ps.pekerjaanpenangggungjawab2')
             ->select('ps.nocm','ps.id as nocmfk','ps.namapasien','ps.tgllahir','ps.tempatlahir',
                     'ps.objectjeniskelaminfk','jk.jeniskelamin','ps.objectagamafk','agm.agama','ps.objectstatusperkawinanfk',
                     'sp.statusperkawinan','ps.objectpendidikanfk','pdd.pendidikan','ps.objectpekerjaanfk','pk.pekerjaan',
@@ -2854,7 +2856,7 @@ class RegistrasiController extends ApiController
                     'ps.objectgolongandarahfk','gol.golongandarah','ps.objectsukufk','sk.suku','ps.bahasa','ps.teleponpenanggungjawab',
                     'ps.dokterpengirim','ps.alamatdokterpengirim','jk1.id as jkidpenanggungjawab','ps.jeniskelaminpenanggungjawab','ps.umurpenanggungjawab','ps.hambatankomunikasifk','ps.bahasafk','ham.hambatankomunikasi','bh.bahasa',
                     'ps.penanggungjawab2','ps.hubungankeluargapj2','ps.pekerjaanpenangggungjawab2','ps.alamatrmh2','ps.bahasa2',
-                    'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2')
+                    'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2','jk2.id as idjk2','pk2.id as idpek2')
             ->where('ps.kdprofile', (int)$kdProfile);
 
         if(isset($request['noCm'] ) && $request['noCm']!= '' && $request['noCm']!= 'undefined'){
@@ -2936,6 +2938,8 @@ class RegistrasiController extends ApiController
                 'teleponpenanggungjawab2' => $data->teleponpenanggungjawab2,
                 'jeniskelaminpenanggungjawab2' => $data->jeniskelaminpenanggungjawab2,
                 'umurpenanggungjawab2' => $data->umurpenanggungjawab2,
+                'idjk2' => $data->idjk2,
+                'idpek2' => $data->idpek2,
                 'alamatd' => $alamatd,
             );
 //        }
