@@ -2842,7 +2842,7 @@ class RegistrasiController extends ApiController
             ->leftjoin ('jeniskelamin_m as jk1','jk1.jeniskelamin','=','ps.jeniskelaminpenanggungjawab')
             ->leftjoin ('bahasa_m as bh','bh.id','=','ps.bahasafk')
             ->leftjoin ('hambatankomunikasi_m as ham','ham.id','=','ps.hambatankomunikasifk')
-            ->leftjoin ('jeniskelamin_m as jk1','jk2.jeniskelamin','=','ps.jeniskelaminpenanggungjawab2')
+            ->leftjoin ('jeniskelamin_m as jk2','jk2.jeniskelamin','=','ps.jeniskelaminpenanggungjawab2')
             ->leftjoin ('pekerjaan_m as pk2','pk2.pekerjaan','=','ps.pekerjaanpenangggungjawab2')
             ->select('ps.nocm','ps.id as nocmfk','ps.namapasien','ps.tgllahir','ps.tempatlahir',
                     'ps.objectjeniskelaminfk','jk.jeniskelamin','ps.objectagamafk','agm.agama','ps.objectstatusperkawinanfk',
