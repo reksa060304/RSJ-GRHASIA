@@ -308,10 +308,6 @@ Private Sub CmdOption_Click()
     CRViewer1.Refresh
 End Sub
 
-Private Sub CRViewer1_CloseButtonClicked(UseDefault As Boolean)
-
-End Sub
-
 Private Sub Form_Load()
     
     Dim p As Printer
