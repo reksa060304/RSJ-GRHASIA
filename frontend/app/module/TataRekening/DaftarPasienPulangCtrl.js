@@ -716,7 +716,7 @@ define(['initialize'], function (initialize) {
 
 
       $scope.unVerifikasi = function () {
-        if ($scope.dataSelected == undefined) {
+        if ($scope.dataSelect == undefined) {
           toastr.error('Pilih data dulu')
           return
         }
