@@ -698,7 +698,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         if (norecPD == '' && $scope.item.ruangan.namaruangan != 'IGD' && $scope.model.rawatInap != true
                             && $scope.item.ruangan.namaruangan != 'Hemodialisa' && $scope.item.ruangan.namaruangan != 'RADIOLOGI'
                             && $scope.item.ruangan.namaruangan != 'LABORATORIUM' && $scope.item.ruangan.namaruangan != 'ELEKTROMEDIK') {
-                            $scope.nomorAntrian();
+                            $scope.tracerBon();
                         }
 
                     }
@@ -940,6 +940,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     //cetakan langsung service VB6 by grh    
                     var client = new HttpClient();
+                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
+                    //     // do something with response
+                    // });
                     client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
                         // do something with response
                     });

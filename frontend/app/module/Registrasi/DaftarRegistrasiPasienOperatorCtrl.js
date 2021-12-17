@@ -865,11 +865,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
 					//cetakan langsung service VB6 by grh    
 					var client = new HttpClient();
+					// client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&noCm=' + $scope.dataPasienSelected.nocm +  '&view=false' , function (response) {
+					// 	// do something with response
+					// });
 					client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&noCm=' + $scope.dataPasienSelected.nocm +  '&view=false' , function (response) {
 						// do something with response
 					});
-
-
 				}
 			}
 
