@@ -166,7 +166,7 @@ Public Function Pendaftaran(ByVal QueryText As String) As Byte()
                 
              Case "cetak-tracer"
                 lblStatus.Caption = "Cetak Tracer"
-                Call frmCetakPendaftaran.cetakTracer(Param2(1), Param3(1))
+                Call frmCetakPendaftaran.cetakTracer(Param2(1), Param3(1), Param4(1))
                 'http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=2c9090ce5af40be8015af40eb1f80006&view=false
                 Set Root = New JNode
                 Root("Status") = "Sedang Dicetak!!"

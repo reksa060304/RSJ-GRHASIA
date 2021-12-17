@@ -332,10 +332,14 @@ define(['initialize'], function (initialize) {
                     })
                     //##end
                     var client = new HttpClient();
-                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' +
-                        $scope.item.noregistrasi + '&view=false', function (response) {
-                            // do something with response
-                        });
+                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' +
+                    //     $scope.item.noregistrasi + '&view=false', function (response) {
+                    //         // do something with response
+                    //     });
+                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.item.noregistrasi 
+                        + '&noCm=' + $scope.item.nocm +  '&view=false' , function (response) {
+                        // do something with response
+                    });
                 }
             }
             $scope.CetakSumList = function () {
