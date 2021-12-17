@@ -496,7 +496,8 @@ class TindakanController extends ApiController
                 // ->where('hnp.objectpenjaminfk',$request['idPenjamin'])
                 ->where('mpr.statusenabled',true)
                 ->where('hnp.statusenabled',true)
-                ->where('prd.statusenabled',true);
+                ->where('prd.statusenabled',true)
+                ->whereNull('hnp.objectpenjaminfk');;
             $data = $data->distinct();
             $data = $data->get();
         }
@@ -549,7 +550,8 @@ class TindakanController extends ApiController
                 ->where('sk.statusenabled',true)
                 ->where('mpr.statusenabled',true)
                 ->where('hnp.kdprofile',$idProfile)
-                ->where('prd.statusenabled',true);
+                ->where('prd.statusenabled',true)
+                ->whereNull('hnp.objectpenjaminfk');
             $data2 = $data2->distinct();
             $data2 = $data2->get();
             $istarifpenjamin = false;
