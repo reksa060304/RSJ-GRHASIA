@@ -36,6 +36,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.tglRegistrasi = chacePeriode[7]
                     norec_apd = chacePeriode[8]
                     detail = chacePeriode[9]
+                    $scope.item.tgllahir = chacePeriode[10]
                     medifirstService.get("farmasi/get-detailPD?norec_apd=" + norec_apd, true).then(function (data_ih) {
                         $scope.item.jenisPenjamin = data_ih.data.detailPD[0].namarekanan
                         $scope.item.kelompokPasien = data_ih.data.detailPD[0].kelompokpasien
