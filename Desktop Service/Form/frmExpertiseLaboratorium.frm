@@ -163,7 +163,7 @@ Private Sub Form_Unload(Cancel As Integer)
     Set frmExpertiseLaboratorium = Nothing
 End Sub
 
-Public Sub Cetak(strNorec As String, jenisKelamin As String, umur As String, User As String, view As String)
+Public Sub Cetak(strNorec As String, jenisKelamin As String, umur As String, User As String, view As String, norecpp As String, dokter As String, catatan As String)
 'On Error GoTo errLoad
 'On Error Resume Next
 Set frmExpertiseLaboratorium = Nothing
@@ -173,52 +173,70 @@ Dim noorder As String
 Dim stringExp As String
 Dim Expertise As String
 Dim strUmur As Integer
+Dim dok As String
 If umur <> "" Then
     strUmur = umur
 End If
-'If strNorec <> "" Then
-''    noorder = " (" & Left(strNorec, Len(strNorec) - 1) & ")"
-'    noorder = strNorec
-'End If
+If strNorec <> "" Then
+'    noorder = " (" & Left(strNorec, Len(strNorec) - 1) & ")"
+    noorder = strNorec
+End If
 
     With Report
                     
-'        strSQL = "select pd.noregistrasi,pd.tglregistrasi,ps.nocm,ps.namapasien,ps.tempatlahir,ps.tgllahir, " & _
-'                     "   jk.jeniskelamin,alm.alamatlengkap,so.noorder as nolab, hitungUmurNew(ps.tgllahir,now) as umur,  " & _
-'                     " kp.kelompokpasien pg.namalengkap as pengorder ,jk.id as KdJk " & _
-'                     "    from pasiendaftar_t as pd  " & _
-'                     "   join pasien_m as ps on ps.id = pd.nocmfk  " & _
-'                     "   left join jeniskelamin_m as jk on jk.id =ps.objectjeniskelaminfk  " & _
-'                     "   left join alamat_m as alm on alm.nocmfk=ps.id  " & _
-'                     "   LEFT JOIN strukorder_t as so on pd.norec=so.noregistrasifk  " & _
-'                     "   left join pegawai_m as pg on so.objectpegawaiorderfk =pg.id  " & _
-'                     "   left join kelompokpasien_m as kp on pd.objectkelompokpasienlastfk=kp.id  " & _
-'                     "   where so.noregistrasifk='" & strNorec & "'"
-            strSQL = " SELECT pm.nocm,pd.noregistrasi,so.noorder,pm.namapasien,alm.alamatlengkap,kp.kelompokpasien,rkn.namarekanan,pd.tglregistrasi,to_char(pd.tglregistrasi, 'DD-MM-YYYY') AS tglRegiss, " & _
-                     " pg.namalengkap,pm.tgllahir,to_char(pm.tgllahir, 'DD-MM-YYYY') AS tglLahirs,pp.noregistrasifk AS norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk, " & _
-                     " maps.detailpemeriksaan,CASE WHEN maps.memohasil IS NULL THEN '' ELSE maps.memohasil END AS memohasil,maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.nilaimin,nn.nilaimax,CASE WHEN hh.hasil IS NULL THEN '' ELSE hh.hasil END AS hasil,maps.id AS map_id, " & _
-                     " hh.norec AS norec_hasil,jk.jeniskelamin,to_char(apd.tglmasuk, 'DD-MM-YYYY') AS tglverif FROM pelayananpasien_t  as pp " & _
+
+'            strSQL = "select distinct * from ( SELECT  pp.tglpelayanan,maps.nourutjenispemeriksaan,maps.nourutdetail, pg3.namalengkap as DokterPelayanan,rj.namaruangan as ruanganperejuk,pm.nocm,pd.noregistrasi,so.noorder,pm.namapasien,alm.alamatlengkap,kp.kelompokpasien,rkn.namarekanan,pd.tglregistrasi,to_char(pd.tglregistrasi, 'DD-MM-YYYY') AS tglRegiss,pp.tglpelayanan  as tglawal, " & _
+'                     " case when pg.namalengkap = '' or pg.namalengkap is null then pg2.namalengkap else pg.namalengkap end as namalengkap,pg1.namalengkap as dokterperiksa ,pm.tgllahir,to_char(pm.tgllahir, 'DD-MM-YYYY') AS tglLahirs,pp.noregistrasifk AS norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk, " & _
+'                     " maps.detailpemeriksaan,CASE WHEN maps.memohasil IS NULL THEN '' ELSE maps.memohasil END AS memohasil,maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.nilaimin,nn.nilaimax,CASE WHEN nn.nilaimin <> '' and nn.nilaimax <> '' and hh.hasil <> '' then hh.hasil when hh.hasil IS NULL THEN '' WHEN nn.tipedata = '1' and nn.nilaimin <> '' and nn.nilaimax <> '' THEN(CASE WHEN (CAST (hh.hasil AS FLOAT) >= CAST (nn.nilaimin AS FLOAT) and CAST (hh.hasil AS FLOAT) <= CAST (nn.nilaimax AS FLOAT)) THEN   hh.hasil else '*' || '  ' || hh.hasil END) WHEN nn.tipedata = '2' and nn.nilaimin <> '' and nn.nilaimax <> ''   THEN(CASE WHEN (UPPER (hh.hasil) BETWEEN UPPER (nn.nilaimin) AND UPPER (nn.nilaimax)) THEN hh.hasil ELSE  '*' || '  ' || hh.hasil  END) ELSE   hh.hasil END AS hasil,maps.id AS map_id, " & _
+'                     " hh.norec AS norec_hasil,jk.jeniskelamin,apd.tglmasuk AS tglverif,hh.tglhasil as tglakhir,('Tgl Selesai  :  ' || hh.tglhasil ||  '          (-)         Tgl. Mulai :  '   || pp.tglpelayanan || '    (=)    Durasi :  '  || (hh.tglhasil - pp.tglpelayanan)) as tat FROM pelayananpasien_t  as pp " & _
+'                     " INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk " & _
+'                     " INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk " & _
+'                     " LEFT JOIN strukorder_t AS so ON so.norec = apd.objectstrukorderfk  LEFT JOIN ruangan_m AS rj ON pd.objectruanganlastfk = rj.id " & _
+'                     " INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk " & _
+'                     " LEFT JOIN jeniskelamin_m AS jk ON jk.id = pm.objectjeniskelaminfk " & _
+'                     " LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.id " & _
+'                     " LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk " & _
+'                     " LEFT JOIN rekanan_m AS rkn ON rkn.id = pd.objectrekananfk LEFT JOIN pegawai_m AS pg ON pg.id = so.objectpegawaiorderfk " & _
+'                     " LEFT JOIN pegawai_m AS pg1 ON pg1.id = apd.objectpegawaifk LEFT JOIN pegawai_m AS pg2 ON pg2.id = apd.objectpegawaifk INNER JOIN produk_m as prd on prd.id = pp.produkfk  left join pelayananpasienpetugas_t as p3 on pp.norec = p3.pelayananpasien" & _
+'                     " INNER JOIN detailjenisproduk_m as djp on djp.id = prd.objectdetailjenisprodukfk " & _
+'                     " INNER JOIN maphasillab_m  as maps on maps.produkfk = prd.id " & _
+'                     " INNER JOIN maphasillabdetail_m  as maps2 on maps2.maphasilfk = maps.id " & _
+'                     " and maps2.jeniskelaminfk ='" & jenisKelamin & "' " & _
+'                     " and maps2.kelompokumurfk in (select id from kelompokumur_m kuu where " & strUmur & " BETWEEN kuu.umurmin and kuu.umurmax) " & _
+'                     " LEFT JOIN pegawai_m AS pg3 ON pg3.id = p3.objectpegawaifk and p3.objectpegawaifk ='4' INNER JOIN nilainormal_m  as nn on nn.id = maps2.nilainormalfk " & _
+'                     " LEFT JOIN satuanstandar_m  as ss on ss.id = maps.satuanstandarfk " & _
+'                     " LEFT JOIN hasillaboratorium_t  as hh on hh.norecpelayanan = pp.norec " & _
+'                     " and pp.noregistrasifk=hh.noregistrasifk " & _
+'                     " and maps.detailpemeriksaan = hh.detailpemeriksaan " & _
+'                     " where pp.noregistrasifk = '" & strNorec & "' and pp.norec in (" & norecpp & ") " & _
+'                     " ) as data order by  data.nourutjenispemeriksaan asc"
+
+
+ strSQL = "select distinct * from ( SELECT  pp.tglpelayanan,maps.nourutjenispemeriksaan,maps.nourutdetail, pg3.namalengkap as DokterPelayanan,rj.namaruangan as ruanganperejuk,pm.nocm,pd.noregistrasi,so.noorder,pm.namapasien,alm.alamatlengkap || ' - Kel. ' || case when alm.namadesakelurahan is null then '-' else alm.namadesakelurahan end || ' - Kec.  ' || case when alm.namakecamatan is null then '-' else alm.namakecamatan end || ' -  Kota/Kab.  ' || alm.namakotakabupaten as alamatlengkap,kp.kelompokpasien,rkn.namarekanan,pd.tglregistrasi,to_char(pd.tglregistrasi, 'DD-MM-YYYY') AS tglRegiss,pp.tglpelayanan  as tglawal, " & _
+                     " case when pg.namalengkap = '' or pg.namalengkap is null then pg2.namalengkap else pg.namalengkap end as namalengkap,pg1.namalengkap as dokterperiksa ,pm.tgllahir,to_char(pm.tgllahir, 'DD-MM-YYYY') AS tglLahirs,pp.noregistrasifk AS norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk, " & _
+                     " maps.detailpemeriksaan,CASE WHEN maps.memohasil IS NULL THEN '' ELSE maps.memohasil END AS memohasil,maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.nilaimin,nn.nilaimax,CASE WHEN hh.hasil is null then '' when hh.flag ='Y' then '*   '  ||  hh.hasil else hh.hasil END AS hasil,maps.id AS map_id, " & _
+                     " hh.norec AS norec_hasil,jk.jeniskelamin,apd.tglmasuk AS tglverif,hh.tglhasil as tglakhir,('Tgl Selesai  :  ' || hh.tglhasil ||  '          (-)         Tgl. Mulai :  '   || pp.tglpelayanan || '    (=)    Durasi :  '  || (hh.tglhasil - pp.tglpelayanan)) as tat,hh.flag FROM pelayananpasien_t  as pp " & _
                      " INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk " & _
                      " INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk " & _
-                     " LEFT JOIN strukorder_t AS so ON so.norec = apd.objectstrukorderfk " & _
+                     " LEFT JOIN strukorder_t AS so ON so.norec = apd.objectstrukorderfk  LEFT JOIN ruangan_m AS rj ON pd.objectruanganlastfk = rj.id " & _
                      " INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk " & _
                      " LEFT JOIN jeniskelamin_m AS jk ON jk.id = pm.objectjeniskelaminfk " & _
                      " LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.id " & _
                      " LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk " & _
                      " LEFT JOIN rekanan_m AS rkn ON rkn.id = pd.objectrekananfk LEFT JOIN pegawai_m AS pg ON pg.id = so.objectpegawaiorderfk " & _
-                     " INNER JOIN produk_m as prd on prd.id = pp.produkfk " & _
+                     " LEFT JOIN pegawai_m AS pg1 ON pg1.id = apd.objectpegawaifk LEFT JOIN pegawai_m AS pg2 ON pg2.id = apd.objectpegawaifk INNER JOIN produk_m as prd on prd.id = pp.produkfk  left join pelayananpasienpetugas_t as p3 on pp.norec = p3.pelayananpasien" & _
                      " INNER JOIN detailjenisproduk_m as djp on djp.id = prd.objectdetailjenisprodukfk " & _
                      " INNER JOIN maphasillab_m  as maps on maps.produkfk = prd.id " & _
                      " INNER JOIN maphasillabdetail_m  as maps2 on maps2.maphasilfk = maps.id " & _
                      " and maps2.jeniskelaminfk ='" & jenisKelamin & "' " & _
                      " and maps2.kelompokumurfk in (select id from kelompokumur_m kuu where " & strUmur & " BETWEEN kuu.umurmin and kuu.umurmax) " & _
-                     " INNER JOIN nilainormal_m  as nn on nn.id = maps2.nilainormalfk " & _
+                     " LEFT JOIN pegawai_m AS pg3 ON pg3.id = p3.objectpegawaifk and p3.objectpegawaifk ='4' INNER JOIN nilainormal_m  as nn on nn.id = maps2.nilainormalfk " & _
                      " LEFT JOIN satuanstandar_m  as ss on ss.id = maps.satuanstandarfk " & _
-                     " LEFT JOIN hasillaboratorium_t  as hh on hh.produkfk = prd.id " & _
+                     " LEFT JOIN hasillaboratorium_t  as hh on hh.norecpelayanan = pp.norec " & _
                      " and pp.noregistrasifk=hh.noregistrasifk " & _
                      " and maps.detailpemeriksaan = hh.detailpemeriksaan " & _
-                     " where pp.noregistrasifk = '" & strNorec & "' " & _
-                     " order by  prd.namaproduk asc"
+                     " where pp.noregistrasifk = '" & strNorec & "' and pp.norec in (" & norecpp & ") " & _
+                     " ) as data order by  data.nourutjenispemeriksaan asc"
             
             ReadRs strSQL
             Dim Umurs As String
@@ -226,33 +244,46 @@ End If
             adoReport.CommandType = adCmdUnknown
             .database.AddADOCommand CN_String, adoReport
             If rs.EOF = False Then
+                If rs("tglverif").Value = Null Then
+                
+                     MsgBox "Data Belum Di Verif"
+                     Exit Sub
+                End If
                 Umurs = hitungUmurNew(rs("tgllahir").Value, rs("tglregistrasi").Value)
                'header
-                .Text2.SetText stralmtLengkapRs & " , " & strNamaKota & ","
-                .Text1.SetText strNamaLengkapRs
+'                .Text2.SetText stralmtLengkapRs & " , " & strNamaKota & ","
+'                .Text1.SetText strNamaLengkapRs
                 .Text3.SetText strWebSite & ", " & strEmail
-                .txtNoCM.SetText IIf(IsNull(rs("nocm")), "", rs("nocm"))
+                .txtNocm.SetText IIf(IsNull(rs("nocm")), "", rs("nocm"))
                 .txtNoregis.SetText IIf(IsNull(rs("noregistrasi")), "", rs("noregistrasi"))
                 .txtNamaPasien.SetText IIf(IsNull(rs("namapasien")), "", rs("namapasien"))
                 .txtAlamat.SetText IIf(IsNull(rs("alamatlengkap")), "", rs("alamatlengkap"))
                 .txtJenisKelamin.SetText IIf(IsNull(rs("jeniskelamin")), "", rs("jeniskelamin"))
                 .txtNoOrder.SetText IIf(IsNull(rs("noorder")), "", rs("noorder"))
                 .txtUmur.SetText Umurs
-                .txtTglRegis.SetText IIf(IsNull(rs("tglRegiss")), "", rs("tglRegiss"))
-                .txtLahir.SetText IIf(IsNull(rs("tglLahirs")), "", rs("tglLahirs"))
-                .txtDokterOrder.SetText IIf(IsNull(rs("namalengkap")), "", rs("namalengkap"))
+                .txtCatatan.SetText catatan
+                dok = IIf(IsNull(rs("dokterperiksa")), "", rs("dokterperiksa"))
+                 .txtDokterPenanggungjawab.SetText IIf(IsNull(rs("dokterperiksa")), "", rs("dokterperiksa"))
+                .txtTglregis.SetText IIf(IsNull(rs("tglpelayanan")), Now, rs("tglpelayanan"))
+                .txtLahir.SetText IIf(IsNull(rs("tglLahirs")), "-", rs("tglLahirs"))
+                .txtDokterOrder.SetText dokter
                 .txtNamaPenjamin.SetText IIf(IsNull(rs("kelompokpasien")), "", rs("kelompokpasien"))
                 .txtRekanan.SetText IIf(IsNull(rs("namarekanan")), "", IIf(IsNull(rs("kelompokpasien")), "", rs("kelompokpasien")))
                'header
-             
-                .udTglHasil.SetUnboundFieldSource ("{ado.tglverif}")
+                  .usFlag.SetUnboundFieldSource ("{ado.flag}")
+                  .usTatt.SetUnboundFieldSource ("{ado.tat}")
+                  .txtUser.SetText User
+                  .txtDokterPenanggungjawab.SetText "dr. Ika Yasma Yanti, Sp,PK"
+                  .Tat.SetText "Tanggal Mulai  : " & IIf(IsNull(rs("tglawal")), "", rs("tglawal")) & " - " & "Tanggal Selesai  : " & IIf(IsNull(rs("tglakhir")), Now, rs("tglakhir")) & "  -  " & " Durasi :  " & IIf(IsNull(rs("tat")), "", rs("tat"))
+                 .ruper.SetText IIf(IsNull(rs("ruanganperejuk")), "-", rs("ruanganperejuk"))
+                .udTglHasil.SetUnboundFieldSource ("{ado.tglakhir}")
                 .usKeteranganHasil.SetUnboundFieldSource ("{ado.memohasil}")
                 .Hasil.SetUnboundFieldSource ("{ado.hasil}")
                 .NilaiNormal.SetUnboundFieldSource ("{ado.nilaitext}")
-                .NamaPemeriksaan.SetUnboundFieldSource ("{ado.namaproduk}")
+                .NamaPemeriksaan.SetUnboundFieldSource ("{ado.detailpemeriksaan}")
                 .SatuanHasil.SetUnboundFieldSource ("{ado.satuanstandar}")
                 .jenisspesimen.SetUnboundFieldSource ("{ado.detailjenisproduk}")
-                .usDetailPemeriksaan.SetUnboundFieldSource ("{ado.detailpemeriksaan}")
+                .usDetailPemeriksaan.SetUnboundFieldSource ("{ado.namaproduk}")
                     
         If view = "false" Then
             strPrinter1 = GetTxt("Setting.ini", "Printer", "ExpertiseRadiologi")
@@ -268,6 +299,7 @@ End If
             End With
             Me.Show
             Screen.MousePointer = vbDefault
+            
         End If
             End If
         

@@ -699,6 +699,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             && $scope.item.ruangan.namaruangan != 'Hemodialisa' && $scope.item.ruangan.namaruangan != 'RADIOLOGI'
                             && $scope.item.ruangan.namaruangan != 'LABORATORIUM' && $scope.item.ruangan.namaruangan != 'ELEKTROMEDIK') {
                             $scope.tracerBon();
+                            $scope.nomorAntrian();
                         }
 
                     }

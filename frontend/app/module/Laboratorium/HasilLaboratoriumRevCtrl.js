@@ -611,9 +611,46 @@ define(['initialize'], function (initialize) {
             $scope.showPopUp = function () {
                 $scope.popUpDokter.center().open();
             }
-            $scope.cetak = function () {
-                var dokter ="";
-                var user = medifirstService.getPegawaiLogin(); 
+            // $scope.cetak = function () {
+            //     var dokter ="";
+            //     var user = medifirstService.getPegawaiLogin(); 
+            //     var stt = 'false'
+            //     if (confirm('View Hasil Laboratorium? ')) {
+            //         // Save it!
+            //         stt = 'true';
+            //     } else {
+            //         // Do nothing!
+            //         stt = 'false'
+            //     }
+            //     if($scope.item.DataPegawai == undefined)
+            //     {
+            //         alert("Pilih terlebih dahulu dookter nya!!")
+            //         return;
+            //     }else{
+            //     dokter = $scope.item.DataPegawai
+            //     }
+            //     // medifirstService.get("laboratorium/get-riwayat-bayar?norec=" + $scope.norecAPD ).then(function (data) {
+            //     //     if(data.data.data[0].nostruklastfk == null )
+            //     //     {
+            //     //          alert("Passien Umum Wajib Bayar Terlebih Dahulu!!")
+            //     //          return;
+            //     //     }
+            //     //  });
+
+            //     var client = new HttpClient();
+            //      client.get('http://127.0.0.1:1237/printvb/bridging?cetak-hasil-lab=1&norec=' + $scope.norecAPD 
+            //                 + '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk + '&umur=' + $scope.item.umurDay
+            //                 + '&strIdPegawai=' + user.namaLengkap + '&strNorecPP=' + $scope.item.norecPP + '&view='+ stt + '&doketr=' + dokter.namalengkap +'&catatan=' + $scope.item.catatan, function (response) {
+
+            //     }); 
+            //     // client.get('http://127.0.0.1:1237/printvb/bridging?cetak-hasil-lab=' + $scope.dataSbnSelected.noregistrasi + $scope.dataSbnSelected.norec_sp + '&idPegawai=' + $scope.pegawai.namaLengkap + '&STD=' + sudahTerimaDari + '&view=' + stt, function (response) {                    
+                
+            //         // $scope.popUpDokter.close();
+            //     // });
+            // }
+            $scope.cetakds = function () {
+                var dokter = "";
+                var user = medifirstService.getPegawaiLogin();
                 var stt = 'false'
                 if (confirm('View Hasil Laboratorium? ')) {
                     // Save it!
@@ -622,30 +659,30 @@ define(['initialize'], function (initialize) {
                     // Do nothing!
                     stt = 'false'
                 }
-                if($scope.item.DataPegawai == undefined)
-                {
-                    alert("Pilih terlebih dahulu dookter nya!!")
+                if ($scope.item.DataPegawai == undefined) {
+                    alert("Pilih terlebih dahulu dokter nya!!")
                     return;
-                }else{
-                dokter = $scope.item.DataPegawai
+                } else {
+                    dokter = $scope.item.DataPegawai
                 }
-                // medifirstService.get("laboratorium/get-riwayat-bayar?norec=" + $scope.norecAPD ).then(function (data) {
-                //     if(data.data.data[0].nostruklastfk == null )
-                //     {
-                //          alert("Passien Umum Wajib Bayar Terlebih Dahulu!!")
-                //          return;
-                //     }
-                //  });
+                medifirstService.get("laboratorium/get-riwayat-bayar?norec=" + $scope.norecAPD).then(function (data) {
+                    if (data.data.data.length > 0) {
+                        if (data.data.data[0].nostruklastfk == null) {
+                            alert("Passien Umum Wajib Bayar Terlebih Dahulu!!")
+                            return;
+                        }
+                    }
+                });
 
                 var client = new HttpClient();
-                 client.get('http://127.0.0.1:1237/printvb/bridging?cetak-hasil-lab=1&norec=' + $scope.norecAPD 
-                            + '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk + '&umur=' + $scope.item.umurDay
-                            + '&strIdPegawai=' + user.namaLengkap + '&strNorecPP=' + $scope.item.norecPP + '&view='+ stt + '&doketr=' + dokter.namalengkap +'&catatan=' + $scope.item.catatan, function (response) {
+                client.get('http://127.0.0.1:1237/printvb/bridging?cetak-hasil-lab=1&norec=' + $scope.norecAPD
+                    + '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk + '&umur=' + $scope.item.umurDay
+                    + '&strIdPegawai=' + user.namaLengkap + '&strNorecPP=' + $scope.item.norecPP + '&view=' + stt + '&doketr=' + dokter.namalengkap + '&catatan=' + $scope.item.catatan, function (response) {
 
-                }); 
+                    });
                 // client.get('http://127.0.0.1:1237/printvb/bridging?cetak-hasil-lab=' + $scope.dataSbnSelected.noregistrasi + $scope.dataSbnSelected.norec_sp + '&idPegawai=' + $scope.pegawai.namaLengkap + '&STD=' + sudahTerimaDari + '&view=' + stt, function (response) {                    
-                
-                    // $scope.popUpDokter.close();
+
+                // $scope.popUpDokter.close();
                 // });
             }
 
