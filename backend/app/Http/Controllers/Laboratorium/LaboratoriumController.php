@@ -598,7 +598,7 @@ class LaboratoriumController extends ApiController
     }
     public function getNilaiNormal(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
-        $jenis  = DB::table('nilainormal_m as djps')
+        $jenis  = DB::table('nilainormal_m as djp')
             ->leftjoin('jeniskelamin_m as dp','dp.id','=','djp.objectjeniskelaminfk')
             ->leftjoin('kelompokumur_m as ku','ku.id','=','djp.kelompokumurfk')
             ->select('djp.*','dp.jeniskelamin','ku.kelompokumur','ku.umurmax','ku.umurmin','ku.statusumur')
