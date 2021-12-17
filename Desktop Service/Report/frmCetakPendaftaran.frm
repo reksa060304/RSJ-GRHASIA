@@ -540,7 +540,7 @@ errLoad:
 
     MsgBox Err.Number & " " & Err.Description
 End Sub
-Public Sub cetakTracer(strNorec As String, view As String)
+Public Sub cetakTracer(strNorec As String, nocm As String, view As String)
 'On Error GoTo errLoad
 Set frmCetakPendaftaran = Nothing
 Dim strSQL As String
@@ -559,9 +559,14 @@ boolLembarRMK = False
 boolLembarPersetujuan = False
 bolBuktiLayananRuanganBedah = False
 boolGelangPasien = False
-boolGelangPasienBayi = False
-
+'boolGelangBayi = False
+Dim tglRegis As String
+Dim ruang As String
+Dim tglRegistrasi As String
+Dim ruang2 As String
+Dim tglregistrasi2 As String
 Dim namaKomputer As String
+Dim str As String
 namaKomputer = Winsock1.LocalHostName
     With ReportTracer
             Set adoReport = New ADODB.Command
@@ -569,20 +574,54 @@ namaKomputer = Winsock1.LocalHostName
             
             strSQL = "SELECT pd.noregistrasi,ps.nocm,ps.tgllahir,ps.namapasien, " & _
                        " pd.tglregistrasi,jk.reportdisplay as jk,ap.alamatlengkap,ap.mobilephone2, " & _
-                        " ru.namaruangan as ruanganPeriksa,pp.namalengkap as namadokter,kp.kelompokpasien, " & _
+                        " ru.namaruangan as ruanganPeriksa,pp.namalengkap as namadokter,kp.kelompokpasien as kp, " & _
                         " apdp.noantrian,pd.statuspasien,ps.namaayah  From  pasiendaftar_t pd " & _
                         " INNER JOIN pasien_m ps ON pd.nocmfk = ps.id " & _
                         " LEFT JOIN alamat_m ap ON ap.nocmfk = ps.id " & _
-                        " INNER JOIN jeniskelamin_m jk ON ps.objectjeniskelaminfk = jk.id " & _
-                        " INNER JOIN ruangan_m ru ON pd.objectruanganlastfk = ru.id " & _
+                        " LEFT JOIN jeniskelamin_m jk ON ps.objectjeniskelaminfk = jk.id " & _
+                        " LEFT JOIN ruangan_m ru ON pd.objectruanganlastfk = ru.id " & _
                         " LEFT JOIN pegawai_m pp ON pd.objectpegawaifk = pp.id " & _
-                        " INNER JOIN kelompokpasien_m kp ON pd.objectkelompokpasienlastfk = kp.id " & _
+                        " LEFT JOIN kelompokpasien_m kp ON pd.objectkelompokpasienlastfk = kp.id " & _
                         " INNER JOIN antrianpasiendiperiksa_t apdp ON apdp.noregistrasifk = pd.norec" & _
-                        " where pd.noregistrasi ='" & strNorec & "' "
+                        " where pd.noregistrasi ='" & strNorec & "' limit 1 "
+
+             ReadRs strSQL
+             If rs.EOF = False Then
+                tglRegis = rs!tglRegistrasi
+             End If
+
+            If tglRegis <> "" Then
+                str = " AND pd.tglregistrasi <> '" & tglRegis & "' "
+            End If
+            
+            ReadRs3 "SELECT ru.namaruangan, " & _
+                       " pd.tglregistrasi From  pasiendaftar_t pd " & _
+                        " INNER JOIN pasien_m ps ON pd.nocmfk = ps.id " & _
+                        " INNER JOIN ruangan_m ru ON pd.objectruanganlastfk = ru.id " & _
+                        " LEFT JOIN batalregistrasi_t br ON br.pasiendaftarfk = pd.norec " & _
+                        " where ps.nocm ='" & nocm & "' " & _
+                        " AND ru.objectdepartemenfk = 18 " & _
+                        str & " ORDER BY tglregistrasi DESC limit 1 "
+            If RS3.EOF = False Then
+                ruang = RS3!namaruangan
+                tglRegistrasi = RS3!tglRegistrasi
+            End If
+            
+            ReadRs4 "SELECT ru.namaruangan, " & _
+                       " pd.tglregistrasi From  pasiendaftar_t pd " & _
+                        " INNER JOIN pasien_m ps ON pd.nocmfk = ps.id " & _
+                        " INNER JOIN ruangan_m ru ON pd.objectruanganlastfk = ru.id " & _
+                        " LEFT JOIN batalregistrasi_t br ON br.pasiendaftarfk = pd.norec " & _
+                        " where ps.nocm ='" & nocm & "' " & _
+                        " AND ru.objectdepartemenfk = 16 " & _
+                        " ORDER BY tglregistrasi DESC limit 1 "
+            If RS4.EOF = False Then
+                ruang2 = RS4!namaruangan
+                tglregistrasi2 = RS4!tglRegistrasi
+            End If
             
             adoReport.CommandText = strSQL
             adoReport.CommandType = adCmdUnknown
-            
             .database.AddADOCommand CN_String, adoReport
             .usnoantri.SetUnboundFieldSource ("{ado.noantrian}")
 '            .udtgl.SetUnboundFieldSource ("{ado.tglregistrasi}")
@@ -593,11 +632,16 @@ namaKomputer = Winsock1.LocalHostName
             .usStatusPasien.SetUnboundFieldSource ("{ado.statuspasien}")
             .udtTglReg.SetUnboundFieldSource ("{ado.tglregistrasi}")
             .usNamaDokter.SetUnboundFieldSource ("{ado.namadokter}")
-            .usNamaKel.SetUnboundFieldSource ("{ado.namaayah}")
+            '.usNamaKel.SetUnboundFieldSource ("{ado.namaayah}")
             .usruangperiksa.SetUnboundFieldSource ("{ado.ruanganPeriksa}")
-            .namaPc.SetText namaKomputer
-            
-            If view = "false" Then
+'            .usKelompokPasien.SetUnboundFieldSource ("{ado.kp}")
+'            .unAntrian.SetUnboundFieldSource ("{ado.noantrian}")
+'            .ruang.SetText ruang
+'            .tglRegistrasi.SetText tglRegistrasi
+'            .ruang2.SetText ruang2
+'            .tglregistrasi2.SetText tglregistrasi2
+            '.namaPc.SetText namaKomputer
+            If view = "true" Then
                 strPrinter1 = GetTxt("Setting.ini", "Printer", "Tracer1")
                 .SelectPrinter "winspool", strPrinter1, "Ne00:"
                 .PrintOut False
@@ -612,7 +656,6 @@ namaKomputer = Winsock1.LocalHostName
                 Me.Show
                 Screen.MousePointer = vbDefault
             End If
-     
     End With
 Exit Sub
 errLoad:
@@ -2313,10 +2356,10 @@ End If
                     "where apd.norec = '" & strNorec & "'"
                     
             ReadRs strSQL
-            Dim noCm As String
-            noCm = "-"
+            Dim nocm As String
+            nocm = "-"
             If rs.EOF = False Then
-                noCm = rs!noCm
+                nocm = rs!nocm
                 RuanganAsal = rs!asalruangan
             End If
                     
@@ -2335,7 +2378,7 @@ End If
                     "INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk " & _
                     "LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk " & _
                     "LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec " & _
-                    "WHERE br.pasiendaftarfk IS NULL AND ps.nocm = '" & noCm & "' AND ps.statusenabled = 't' " & _
+                    "WHERE br.pasiendaftarfk IS NULL AND ps.nocm = '" & nocm & "' AND ps.statusenabled = 't' " & _
                     "ORDER BY pd.tglregistrasi ASC"
              
             Dim jmlahRawat As Integer
@@ -3280,7 +3323,7 @@ End If
                .txtTanggalLahir.SetText rs!tgllahir
                .txtJenisKelamin1.SetText rs!jenisKelamin
                .txtkelamin.SetText rs!jenisKelamin
-               .txtnocm2.SetText rs!noCm
+               .txtnocm2.SetText rs!nocm
                .tglRegistrasi.SetText rs!tglRegistrasi
                .txtNomorKartuBpjs.SetText rs!noasuransilain
                .txtdiagnosa.SetText "..................................." 'rs!namadiagnosa
