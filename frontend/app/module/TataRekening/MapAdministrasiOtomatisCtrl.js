@@ -15,6 +15,15 @@ define(['initialize'], function (initialize) {
 
                 medifirstService.get("sysadmin/general/get-jenispel", true).then(function (dat) {
                     $scope.listJenisPelayanan = dat.data;
+                    for (let x = 0; x < $scope.listJenisPelayanan.length; x++) {
+                        const element = $scope.listJenisPelayanan[x];
+                        if(element.jenispelayanan.toLowerCase().indexOf('reguler') > -1){
+                            $scope.item.jenisPasien = element 
+                            getKomponenHarga()
+                            break
+                        }
+                    }
+                  
                 });            
             }
             
@@ -42,6 +51,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.id = dataSelected.maid
                 $scope.item.pelayanan = { id: dataSelected.id, namaproduk: dataSelected.namaproduk }
                 $scope.item.jenisPasien = { id: dataSelected.jenispelayananfk, jenispelayanan: dataSelected.jenispelayanan }
+                $scope.item.tipe = dataSelected.statuspasien
                 getKomponenHarga()
                 if (dataSelected.israwatgabung == '1') {
                     $scope.item.rg = { id: 1, status: 'Yes' }
@@ -94,6 +104,7 @@ define(['initialize'], function (initialize) {
                     rg: rgg,
                     ruangan: $scope.item.ruanganInap.id,
                     jenispelayanan: $scope.item.jenisPasien.id,
+                    statuspasien: $scope.item.tipe? $scope.item.tipe : null,
                     status: 'SIMPAN_JANG'
                 }
                 medifirstService.post('sysadmin/general/save-map-administrasi',objSave).then(function (e) {
@@ -170,6 +181,11 @@ define(['initialize'], function (initialize) {
                 {
                     "field": "jenispelayanan",
                     "title": "Jenis Pelayanan",
+                    "width": "80px",
+                },
+                {
+                    "field": "statuspasien",
+                    "title": "Jenis Pasien",
                     "width": "80px",
                 }
             ];

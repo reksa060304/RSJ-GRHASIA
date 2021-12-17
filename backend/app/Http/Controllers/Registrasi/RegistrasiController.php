@@ -367,6 +367,10 @@ class RegistrasiController extends ApiController
                     $dataPD->statusenabled = true;
                     $noRegistrasi = $noRegistrasiSeq;//$this->generateNoReg(new PasienDaftar, 'noregistrasi', 10, date('ym'));//$this->getMaxNoregistrasi();
                     $dataPD->objectruanganasalfk = $r_NewPD['objectruanganfk'];
+                    if(isset($r_NewPD['statuspasien'])){
+                        $dataPD->statuspasien = $r_NewPD['statuspasien'];
+                    }
+    
 //                    $saveAdminstrasi = $this->saveAdministrasi($idProdile);
                 }else{
                     $dataPD =  PasienDaftar::where('norec',$r_NewPD['norec_pd'])->where('kdprofile', $idProdile)->first();
@@ -406,12 +410,7 @@ class RegistrasiController extends ApiController
 //                }else{
 //                    $statusPasien='BARU';
 //                }
-                if(isset($r_NewPD['statuspasien'])){
-                    $dataPD->statuspasien = $r_NewPD['statuspasien'];//$statusPasien;
-                }else{
-                    $dataPD->statuspasien = 'LAMA';
-                }
-
+             
                 if(isset($r_NewPD['statusschedule'])){
                     $dataPD->statusschedule = $r_NewPD['statusschedule'];
                 }
@@ -10949,29 +10948,30 @@ GROUP BY y.KET
                     INNER JOIN ruangan_m as ru_pd on ru_pd.id=pd.objectruanganlastfk
                     where  pd.norec='$request[norec]'
                     and pd.kdprofile=$kdProfile
-                    and pp.produkfk in (
-                    select 
-                    objectprodukfk
-                    from mapruangantoadministrasi_t 
-                    where objectruanganfk=pd.objectruanganlastfk
-                    and statusenabled=true
-                    )
+                    and pp.status='admin otomatis'
                 "));
 
                 if (count($data) == 0) {
+                    $status = "";
+                    if($pasiendaftar->statuspasien != null ){
+                        $status = $pasiendaftar->statuspasien;
+                    }
                     $sirahMacan = DB::select(DB::raw("select hett.* from mapruangantoadministrasi_t as map
                                 INNER JOIN harganettoprodukbykelas_m as hett on hett.objectprodukfk=map.objectprodukfk
                                 and hett.objectjenispelayananfk =map.jenispelayananfk
                                 where map.objectruanganfk=:ruanganid and hett.objectkelasfk=:kelasid
                                 and map.jenispelayananfk=:jenispelayanan
                                 and map.kdprofile=:kdprofile
+                                and map.statuspasien=:statuspasien
                                 and hett.statusenabled=true
                                 and hett.objectpenjaminfk is null"),
                         array(
                             'ruanganid' => $pasiendaftar->objectruanganlastfk,
                             'kelasid' => $pasiendaftar->objectkelasfk,
                             'jenispelayanan' => $pasiendaftar->jenispelayanan,
-                            'kdprofile' =>$kdProfile
+                            'kdprofile' =>$kdProfile,
+                            'statuspasien' =>$status,
+                            
 
                         )
                     );
@@ -10982,13 +10982,15 @@ GROUP BY y.KET
                                         where map.objectruanganfk=:ruanganid and hett.objectkelasfk=:kelasid 
                                         and map.jenispelayananfk=:jenispelayanan
                                         and map.kdprofile=:kdprofile
+                                        and map.statuspasien=:statuspasien
                                         and hett.statusenabled=true
                                         and hett.objectpenjaminfk is null"),
                         array(
                             'ruanganid' => $pasiendaftar->objectruanganlastfk,
                             'kelasid' => $pasiendaftar->objectkelasfk,
                             'jenispelayanan' => $pasiendaftar->jenispelayanan,
-                            'kdprofile' =>$kdProfile
+                            'kdprofile' =>$kdProfile,
+                            'statuspasien' =>$status,
                         )
                     );
 //                    return $this->respond($buntutMacan);
@@ -11011,7 +11013,7 @@ GROUP BY y.KET
                         $PelPasien->stock = 1;
                         $PelPasien->tglpelayanan = date('Y-m-d H:i:s');
                         $PelPasien->harganetto = $k->harganetto1;
-
+                        $PelPasien->status = 'admin otomatis';
                         $PelPasien->save();
                         $PPnorec = $PelPasien->norec;
                         foreach ($buntutMacan as $itemKomponen) {

@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div class="grid_12">
-                <div class="grid_2">
+                <div class="grid_2" ng-show="tipe">
                     <div class="grid_12">
                         <label c-label item="item">Tipe Layanan </label>
                     </div>
@@ -57,6 +57,21 @@
                         <input style="width: 100%; "  kendo-combo-box
                             k-ng-model="item.jenisPasien" k-data-text-field="'jenispelayanan'" k-filter=" 'contains' "
                             k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listJenisPelayanan " k-on-change='getdetailHarga()' />
+                    </div>
+                </div>
+                <div class="grid_2">
+                    <div class="grid_12">
+                        <label c-label item="item">Jenis Pasien </label>
+                    </div>
+                    <div class="grid_6">
+                        <md-radio-group ng-model="item.tipe">
+                            <md-radio-button value="BARU" class="md-primary">BARU</md-radio-button>
+                        </md-radio-group>
+                    </div>
+                        <div class="grid_6">
+                        <md-radio-group ng-model="item.tipe">
+                            <md-radio-button value="LAMA" class="md-primary">LAMA</md-radio-button>
+                        </md-radio-group>
                     </div>
                 </div>
                 <div class="grid_4">

@@ -565,7 +565,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     noRegistrasizz = $scope.cacheNoRegistrasi
                 }
 
-                var statusPasien = ''
+                var statusPasien = null
                 var cacheBaruLama = cacheHelper.get('cacheStatusPasien')
                 if (cacheBaruLama != undefined) {
                     statusPasien = cacheBaruLama
