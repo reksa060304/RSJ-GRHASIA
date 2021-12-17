@@ -12,6 +12,7 @@ use App\Http\Controllers\ApiController;
 use App\Master\Kelas;
 use App\Master\Agama;
 use App\Master\Alamat;
+use App\Master\AlamatD;
 use App\Master\AsuransiPasien;
 use App\Master\FlagGenerateNoCm;
 use App\Master\JenisDiagnosa;
@@ -2839,6 +2840,10 @@ class RegistrasiController extends ApiController
             ->leftjoin ('suku_m as sk','sk.id','=','ps.objectsukufk')
             ->leftjoin ('golongandarah_m as gol','gol.id','=','ps.objectgolongandarahfk')
             ->leftjoin ('jeniskelamin_m as jk1','jk1.jeniskelamin','=','ps.jeniskelaminpenanggungjawab')
+            ->leftjoin ('bahasa_m as bh','bh.id','=','ps.bahasafk')
+            ->leftjoin ('hambatankomunikasi_m as ham','ham.id','=','ps.hambatankomunikasifk')
+            ->leftjoin ('jeniskelamin_m as jk2','jk2.jeniskelamin','=','ps.jeniskelaminpenanggungjawab2')
+            ->leftjoin ('pekerjaan_m as pk2','pk2.pekerjaan','=','ps.pekerjaanpenangggungjawab2')
             ->select('ps.nocm','ps.id as nocmfk','ps.namapasien','ps.tgllahir','ps.tempatlahir',
                     'ps.objectjeniskelaminfk','jk.jeniskelamin','ps.objectagamafk','agm.agama','ps.objectstatusperkawinanfk',
                     'sp.statusperkawinan','ps.objectpendidikanfk','pdd.pendidikan','ps.objectpekerjaanfk','pk.pekerjaan',
@@ -2849,7 +2854,9 @@ class RegistrasiController extends ApiController
                     'ps.namakeluarga','ps.namasuamiistri','ps.penanggungjawab','ps.hubungankeluargapj','ps.pekerjaanpenangggungjawab',
                     'ps.ktppenanggungjawab','ps.alamatrmh','ps.alamatktr','pk1.id as idpek','ps.photo','ps.foto',
                     'ps.objectgolongandarahfk','gol.golongandarah','ps.objectsukufk','sk.suku','ps.bahasa','ps.teleponpenanggungjawab',
-                    'ps.dokterpengirim','ps.alamatdokterpengirim','jk1.id as jkidpenanggungjawab','ps.jeniskelaminpenanggungjawab','ps.umurpenanggungjawab')
+                    'ps.dokterpengirim','ps.alamatdokterpengirim','jk1.id as jkidpenanggungjawab','ps.jeniskelaminpenanggungjawab','ps.umurpenanggungjawab','ps.hambatankomunikasifk','ps.bahasafk','ham.hambatankomunikasi','bh.bahasa',
+                    'ps.penanggungjawab2','ps.hubungankeluargapj2','ps.pekerjaanpenangggungjawab2','ps.alamatrmh2','ps.bahasa2',
+                    'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2','jk2.id as idjk2','pk2.id as idpek2')
             ->where('ps.kdprofile', (int)$kdProfile);
 
         if(isset($request['noCm'] ) && $request['noCm']!= '' && $request['noCm']!= 'undefined'){
@@ -2860,6 +2867,7 @@ class RegistrasiController extends ApiController
         }
 
         $data=$data->first();
+        $alamatd = DB::table('alamatd_m')->where('nocmfk',$data->nocmfk)->get();
 //        $dt=[];
 //        foreach ($data as $itm){
 //            $foto = null;
@@ -2916,6 +2924,23 @@ class RegistrasiController extends ApiController
                 'jkidpenanggungjawab' => $data->jkidpenanggungjawab,
                 'jeniskelaminpenanggungjawab' => $data->jeniskelaminpenanggungjawab,
                 'umurpenanggungjawab' => $data->umurpenanggungjawab,
+
+
+                'hambatankomunikasifk' => $data->hambatankomunikasifk,
+                'bahasafk' => $data->bahasafk,
+                'hambatankomunikasi' => $data->hambatankomunikasi,
+                'bahasa' => $data->bahasa,
+                'penanggungjawab2' => $data->penanggungjawab2,
+                'hubungankeluargapj2' => $data->hubungankeluargapj2,
+                'pekerjaanpenangggungjawab2' => $data->pekerjaanpenangggungjawab2,
+                'alamatrmh2' => $data->alamatrmh2,
+                'bahasa2' => $data->bahasa2,
+                'teleponpenanggungjawab2' => $data->teleponpenanggungjawab2,
+                'jeniskelaminpenanggungjawab2' => $data->jeniskelaminpenanggungjawab2,
+                'umurpenanggungjawab2' => $data->umurpenanggungjawab2,
+                'idjk2' => $data->idjk2,
+                'idpek2' => $data->idpek2,
+                'alamatd' => $alamatd,
             );
 //        }
         $result = array(
@@ -3349,6 +3374,21 @@ class RegistrasiController extends ApiController
             ->where('statusenabled',true)
             ->where('kdprofile', $kdProfile)
             ->get();
+        $ham = DB::table('hambatankomunikasi_m')
+            ->select(DB::raw("id, UPPER(hambatankomunikasi) as hambatankomunikasi"))
+            ->where('statusenabled',true)
+            ->where('kdprofile', $kdProfile)
+            ->get();
+        $bahasa = DB::table('bahasa_m')
+            ->select(DB::raw("id, UPPER(bahasa) as bahasa"))
+            ->where('statusenabled',true)
+            ->where('kdprofile', $kdProfile)
+            ->get();
+        $jenis = DB::table('jenisalamat_m')
+            ->select(DB::raw("id, UPPER(jenisalamat) as jenisalamat"))
+            ->where('statusenabled',true)
+            ->where('kdprofile', $kdProfile)
+            ->get();
         $result = array(
             'jeniskelamin' => $jk,
             'agama' => $agama,
@@ -3358,6 +3398,9 @@ class RegistrasiController extends ApiController
             'pegawaiLogin' => $dataPegawai->namalengkap,
             'golongandarah' => $gd,
             'suku' => $suku,
+            'hambatan' => $ham,
+            'bahasa' => $bahasa,
+            'jenis' => $jenis,
             'message' => 'inhuman',
         );
 
@@ -3550,6 +3593,7 @@ class RegistrasiController extends ApiController
                 $dataPS->norec =  $dataPS->generateNewId();
             }else{
                 $dataPS = Pasien::where('id',$request['idpasien'])->first();
+                AlamatD::where('nocmfk', $dataPS->id)->delete();
                 $noCm = $dataPS->nocm;
                 if($noCm == null){
                     if(isset($request['isPenunjang'])  &&  $request['isPenunjang'] == true ) {
@@ -3689,6 +3733,38 @@ class RegistrasiController extends ApiController
             }
             if (isset($request['isjkn']) && $request['isjkn'] == true || $request['isjkn'] == "1"){
                $dataPS->foto = $request['pasien']?$request['pasien']['image']:null;
+            }
+            if (isset($request['hambatan'])){
+                $dataPS->hambatankomunikasifk = $request['hambatan'];
+            }
+            if (isset($request['bahasaP'])){
+                $dataPS->bahasafk = $request['bahasaP'];
+            }
+
+            if (isset($request['penanggungjawab2'])){
+                $dataPS->penanggungjawab2 = $request['penanggungjawab2'];
+            }
+            if (isset($request['hubungankeluargapj2'])){
+                $dataPS->hubungankeluargapj2 = $request['hubungankeluargapj2'];
+            }
+            if (isset($request['pekerjaanpenangggungjawab2'])){
+                $dataPS->pekerjaanpenangggungjawab2 = $request['pekerjaanpenangggungjawab2'];
+            }
+            if (isset($request['alamatrmh2'])){
+                $dataPS->alamatrmh2 = $request['alamatrmh2'];
+            }
+            if (isset($request['bahasa2'])){
+                $dataPS->bahasa2 = $request['bahasa2'];
+            }
+            if (isset($request['teleponpenanggungjawab2'])){
+                $dataPS->teleponpenanggungjawab2 = $request['teleponpenanggungjawab2'];
+            }
+          
+            if (isset($request['jeniskelaminpenanggungjawab2'])){
+                $dataPS->jeniskelaminpenanggungjawab2 = $request['jeniskelaminpenanggungjawab2'];
+            }
+            if (isset($request['umurpenanggungjawab2'])){
+                $dataPS->umurpenanggungjawab2 = $request['umurpenanggungjawab2'];
             }
             $dataPS->save();
             $dataNoCMFk = $newId;
@@ -3840,7 +3916,30 @@ class RegistrasiController extends ApiController
             //endregion
             $dataAL->save();
             //endregion
-
+            foreach($request['detailalamat'] as $item){
+                $idAlamat2 = AlamatD::max('id') + 1;
+                $dataAL2 = new AlamatD();
+                $dataAL2->id = $idAlamat2;
+                $dataAL2->kdprofile = (int)$kdProfile;
+                $dataAL2->statusenabled = true;
+                $dataAL2->norec = $dataAL2->generateNewId();
+                $dataAL2->alamatlengkap = $item['alamatlengkap'];
+                $dataAL2->objecthubungankeluargafk = 7;
+                $dataAL2->objectdesakelurahanfk = $item['objectdesakelurahanfk'];
+                $dataAL2->objectjenisalamatfk =$item['objectjenisalamatfk'];
+                $dataAL2->jenisalamat =$item['jenisalamat'];
+                $dataAL2->objectkecamatanfk = $item['objectkecamatanfk'];
+                $dataAL2->kodepos =null;
+                $dataAL2->objectkotakabupatenfk = $item['objectkotakabupatenfk'];
+                $dataAL2->namadesakelurahan = $item['namadesakelurahan'];
+                $dataAL2->namakecamatan = $item['namakecamatan'];
+                $dataAL2->namakotakabupaten = $item['namakotakabupaten'];
+                $dataAL2->propinsi = $item['propinsi'];             
+                $dataAL2->nocmfk = $dataNoCMFk;
+                $dataAL2->objectpropinsifk = $item['objectpropinsifk'];
+                $dataAL2->save();  
+            }
+            
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';

@@ -61,6 +61,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					$scope.sourceJenisDiagnosisPrimer = data.data.jenisdiagnosa;
 					$scope.item.jenisDiagnosis = { id: data.data.jenisdiagnosa[1].id, jenisdiagnosa: data.data.jenisdiagnosa[1].jenisdiagnosa };
 					$scope.listJenisPel = data.data.jenispelayanan;
+					$scope.listJenislabel = [{ id: 1, jenislabel: "Label Besar" }, { id: 2, jenislabel: "Label Kecil" }];
 				});
 				medifirstService.getPart("registrasi/daftar-registrasi/get-data-diagnosa", true, true, 10).then(function (data) {
 					//  debugger;
@@ -716,36 +717,98 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				$scope.dialogCetakLabel.center().open();
 			}
 
+			// $scope.pilihQty = function (data) {
+			// 	var listRawRequired = [
+			// 		"dats.qty|k-ng-model|kuantiti"
+			// 	];
+			// 	var isValid = ModelItem.setValidation($scope, listRawRequired);
+
+			// 	if (isValid.status) {
+			// 		var qty = data.qty;
+			// 		var qtyhasil = data.qty * 2;
+			// 		if (qty !== undefined) {
+			// 			// var fixUrlLaporan = cetakHelper.open("reporting/labelPasien?noCm=" + $scope.item.pasienDaftar.noRegistrasi + "&qty=" + qty);
+			// 			// window.open(fixUrlLaporan, '', 'width=800,height=600')
+			// 			//cetakan langsung service VB6 by grh
+
+			// 			//##save identifikasi label pasien
+			// 			medifirstService.get("registrasi/identifikasi-label?norec_pd="
+			// 				+ $scope.dataPasienSelected.norec + '&islabel=' + qtyhasil
+			// 			).then(function (data) {
+			// 				var datas = data.data;
+			// 			})
+			// 			//##end
+
+			// 			var client = new HttpClient();
+			// 			client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-labelpasien-satu=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&view=false&qty=' + qty, function (response) {
+			// 				// do something with response
+			// 			});
+
+			// 		}
+			// 		$scope.dialogCetakLabel.close();
+			// 	} else {
+			// 		ModelItem.showMessages(isValid.messages);
+			// 	}
+			// };
 			$scope.pilihQty = function (data) {
+				if ($scope.item.jenislabel == undefined) {
+					toastr.warning("Jenis Label Belum Dipilih");
+					return;
+				}
 				var listRawRequired = [
 					"dats.qty|k-ng-model|kuantiti"
 				];
 				var isValid = ModelItem.setValidation($scope, listRawRequired);
 
 				if (isValid.status) {
-					var qty = data.qty;
-					var qtyhasil = data.qty * 2;
-					if (qty !== undefined) {
-						// var fixUrlLaporan = cetakHelper.open("reporting/labelPasien?noCm=" + $scope.item.pasienDaftar.noRegistrasi + "&qty=" + qty);
-						// window.open(fixUrlLaporan, '', 'width=800,height=600')
-						//cetakan langsung service VB6 by grh
+					if ($scope.item.jenislabel.id == 2) {
+						var qty = data.qty;
+						var qtyhasil = data.qty * 1;
+						if (qty !== undefined) {
+							// var fixUrlLaporan = cetakHelper.open("reporting/labelPasien?noCm=" + $scope.item.pasienDaftar.noRegistrasi + "&qty=" + qty);
+							// window.open(fixUrlLaporan, '', 'width=800,height=600')
+							//cetakan langsung service VB6 by grh
 
-						//##save identifikasi label pasien
-						medifirstService.get("registrasi/identifikasi-label?norec_pd="
-							+ $scope.dataPasienSelected.norec + '&islabel=' + qtyhasil
-						).then(function (data) {
-							var datas = data.data;
-						})
-						//##end
+							//##save identifikasi label pasien
+							medifirstService.get("registrasi/identifikasi-label?norec_pd="
+								+ $scope.dataPasienSelected.norec + '&islabel=' + qtyhasil
+							).then(function (data) {
+								var datas = data.data;
+							})
+							//##end
 
-						var client = new HttpClient();
-						client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-labelpasien-satu=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&view=false&qty=' + qty, function (response) {
-							// do something with response
-						});
+							var client = new HttpClient();
+							client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-labelpasien-satu=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&view=false&qty=' + qty, function (response) {
+								// do something with response
+							});
 
+						}
+						$scope.dialogCetakLabel.close();
+					}else if ($scope.item.jenislabel.id == 1) {
+						var qty = data.qty;
+						var qtyhasil = data.qty * 1;
+						if (qty !== undefined) {
+							// var fixUrlLaporan = cetakHelper.open("reporting/labelPasien?noCm=" + $scope.item.pasienDaftar.noRegistrasi + "&qty=" + qty);
+							// window.open(fixUrlLaporan, '', 'width=800,height=600')
+							//cetakan langsung service VB6 by grh
+
+							//##save identifikasi label pasien
+							medifirstService.get("registrasi/identifikasi-label?norec_pd="
+								+ $scope.dataPasienSelected.norec + '&islabel=' + qtyhasil
+							).then(function (data) {
+								var datas = data.data;
+							})
+							//##end
+
+							var client = new HttpClient();
+							client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-labelpasienbayi-satu=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&view=false&qty=' + qty, function (response) {
+								// do something with response
+							});
+
+						}
+						$scope.dialogCetakLabel.close();
 					}
-					$scope.dialogCetakLabel.close();
-				} else {
+				} else {					
 					ModelItem.showMessages(isValid.messages);
 				}
 			};

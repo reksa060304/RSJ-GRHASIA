@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{C4847593-972C-11D0-9567-00A0C9273C2A}#8.0#0"; "crviewer.dll"
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "mswinsck.ocx"
 Begin VB.Form frmCetakPendaftaran 
    Caption         =   "Transmedic"
    ClientHeight    =   7005
@@ -149,7 +149,7 @@ Dim ReportResep As New crSuratPerintahKerja
 Dim reportGelangPasien As New Cr_cetakLabel_3New
 Dim reportGelangPasienBayi As New Cr_cetakLabel_3NewBayi
 'Dim reportLabel_3 As New Cr_cetakLabelFoto
-Dim reportLabel_3Bayi As New Cr_cetakLabelFotoBayi
+Dim reportLabel_3Bayi As New Cr_cetakLabel_Besar
 'Dim reportLabel_3 As New Cr_cetakLabelMagelang
 Dim reportTriage As New Cr_cetakHeaderTriage
 
@@ -422,7 +422,7 @@ Dim namaRs As String
             .usnodft.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
             .udTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamatlengkap}")
             .usNoTelpon.SetUnboundFieldSource ("{ado.mobilephone2}")
@@ -507,7 +507,7 @@ boolGelangPasienBayi = False
             .usnodft.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
             .udTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamatlengkap}")
             .usNoTelpon.SetUnboundFieldSource ("{ado.mobilephone2}")
@@ -628,7 +628,7 @@ namaKomputer = Winsock1.LocalHostName
             .usnodft.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
             .usStatusPasien.SetUnboundFieldSource ("{ado.statuspasien}")
             .udtTglReg.SetUnboundFieldSource ("{ado.tglregistrasi}")
             .usNamaDokter.SetUnboundFieldSource ("{ado.namadokter}")
@@ -1237,7 +1237,7 @@ boolGelangPasienBayi = False
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
 
             .usUnitLayanan.SetUnboundFieldSource ("{ado.ruanganperiksa}")
             .usTipe.SetUnboundFieldSource ("{ado.kelompokpasien}")
@@ -1262,9 +1262,9 @@ boolGelangPasienBayi = False
 
             ReadRs2 "SELECT namalengkap FROM pegawai_m where id='" & strIdPegawai & "' "
             If RS2.BOF Then
-                .txtUser.SetText "-"
+                .txtuser.SetText "-"
             Else
-                .txtUser.SetText UCase(IIf(IsNull(RS2("namalengkap")), "-", RS2("namalengkap")))
+                .txtuser.SetText UCase(IIf(IsNull(RS2("namalengkap")), "-", RS2("namalengkap")))
             End If
             
             If view = "false" Then
@@ -1405,7 +1405,7 @@ boolGelangPasienBayi = False
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
     
             .udtgl1.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNoreg1.SetUnboundFieldSource ("{ado.noregistrasi}")
@@ -1723,7 +1723,7 @@ boolGelangPasienBayi = False
 '             .usNoRm.SetUnboundFieldSource ("{ado.nocm}")
 '             .usNormBarcode.SetUnboundFieldSource ("{ado.barcode}")
 '             .usNoReg.SetUnboundFieldSource ("{ado.noidentitas}")
-             .usJk.SetUnboundFieldSource ("{ado.jk}")
+             .usjk.SetUnboundFieldSource ("{ado.jk}")
 '             .usNamaPasien1.SetUnboundFieldSource ("{ado.namapasien}")
 '             .usUmur1.SetUnboundFieldSource ("{ado.umur}")
 '             .usNorm1.SetUnboundFieldSource ("{ado.nocm}")
@@ -1800,13 +1800,10 @@ boolGelangPasienBayi = False
 '                     " where pd.noregistrasi ='" & strNorec & "' "
 
             ' POSTGRESSQL
-            strSQL = " SELECT pd.noregistrasi,pd.tglregistrasi,'*' || ps.nocm || '*' as barcode, ps.nocm,CASE WHEN ps.objectjeniskelaminfk IS NULL THEN '' ELSE UPPER(jk.reportdisplay) END AS jk, " & _
-                     " UPPER (ps.namapasien) AS namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') AS umur, ps.namaayah," & _
-                     " ps.tgllahir,CASE WHEN pg.namalengkap IS NULL THEN '-' ELSE pg.namalengkap END AS namadokter,to_char(pd.tglregistrasi, 'DD-Mon-YYYY') AS tglregistrasi, ps.noidentitas " & _
-                     " FROM pasiendaftar_t pd " & _
-                     " INNER JOIN pasien_m ps ON pd.nocmfk = ps.id " & _
-                     " INNER JOIN jeniskelamin_m jk ON jk.id = ps.objectjeniskelaminfk " & _
-                     " LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk " & _
+            strSQL = " SELECT ps.nocm,jk.jeniskelamin,UPPER (ps.namapasien) AS namapasien,ps.tempatlahir ||', '||to_char(ps.tgllahir, 'DD-MM-YYYY') AS ttl,alm.alamatlengkap " & _
+                     " FROM pasiendaftar_t pd INNER JOIN pasien_m ps ON pd.nocmfk = ps.id" & _
+                     " INNER JOIN jeniskelamin_m jk ON jk. ID = ps.objectjeniskelaminfk " & _
+                     " LEFT JOIN pegawai_m AS pg ON pg. ID = pd.objectpegawaifk " & _
                      " LEFT JOIN alamat_m AS alm ON alm.nocmfk = ps.id " & _
                      " where pd.noregistrasi = '" & strNorec & "' " & _
                      " and pd.kdprofile = '" & RS3!kdProfile & "'"
@@ -1862,27 +1859,27 @@ boolGelangPasienBayi = False
             .database.AddADOCommand CN_String, adoReport
 '            .udtLahir.SetUnboundFieldSource ("{ado.tgllahir}")
 '            .usJk.SetUnboundFieldSource ("{ado.jk}")
-'            .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
-'            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .Field2.SetUnboundFieldSource ("{ado.alamatlengkap}")
+             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
              .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-             .usUmur.SetUnboundFieldSource ("{ado.umur}")
-             .usNoRm.SetUnboundFieldSource ("{ado.nocm}")
-             .usNormBarcode.SetUnboundFieldSource ("{ado.barcode}")
-             .usAyah.SetUnboundFieldSource ("{ado.namaayah}")
-             .usJk.SetUnboundFieldSource ("{ado.jk}")
-             
-             .usNamaPasien1.SetUnboundFieldSource ("{ado.namapasien}")
-             .usUmur1.SetUnboundFieldSource ("{ado.umur}")
-             .usNorm1.SetUnboundFieldSource ("{ado.nocm}")
-             .usNormBarcode1.SetUnboundFieldSource ("{ado.barcode}")
-             .usAyah1.SetUnboundFieldSource ("{ado.namaayah}")
-             .usjk1.SetUnboundFieldSource ("{ado.jk}")
+             .Field1.SetUnboundFieldSource ("{ado.ttl}")
+'             .usNoRm.SetUnboundFieldSource ("{ado.nocm}")
+'             .usNormBarcode.SetUnboundFieldSource ("{ado.barcode}")
+'             .usAyah.SetUnboundFieldSource ("{ado.namaayah}")
+             .usjk.SetUnboundFieldSource ("{ado.jeniskelamin}")
+'
+'             .usNamaPasien1.SetUnboundFieldSource ("{ado.namapasien}")
+'             .usUmur1.SetUnboundFieldSource ("{ado.umur}")
+'             .usNorm1.SetUnboundFieldSource ("{ado.nocm}")
+'             .usNormBarcode1.SetUnboundFieldSource ("{ado.barcode}")
+'             .usAyah1.SetUnboundFieldSource ("{ado.namaayah}")
+'             .usjk1.SetUnboundFieldSource ("{ado.jk}")
 '             .usTglDaftar.SetUnboundFieldSource ("{ado.tglregistrasi}")
 '             .usDokter.SetUnboundFieldSource ("{ado.namadokter}")
 '           view = "true"
             
             If view = "false" Then
-                strPrinter1 = GetTxt("Setting.ini", "Printer", "LabelPasienBayi")
+                strPrinter1 = GetTxt("Setting.ini", "Printer", "LabelPasienBesar")
                 .SelectPrinter "winspool", strPrinter1, "Ne00:"
                 .PrintOut False
                 Unload Me
@@ -1962,7 +1959,7 @@ boolGelangPasienBayi = False
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
     
             .udtgl1.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNoreg1.SetUnboundFieldSource ("{ado.noregistrasi}")
@@ -2051,7 +2048,7 @@ boolGelangPasienBayi = False
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
             .usNamaKeuarga.SetUnboundFieldSource ("{ado.namakeluarga}")
             .udTglLahir.SetUnboundFieldSource ("{ado.tglLahir}")
-            .usJk.SetUnboundFieldSource ("{ado.jeniskelamin}")
+            .usjk.SetUnboundFieldSource ("{ado.jeniskelamin}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamatlengkap}")
             .usKota.SetUnboundFieldSource ("{ado.kotakabupaten}")
@@ -2150,7 +2147,7 @@ boolGelangPasienBayi = False
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
            ' .usNamaKeuarga.SetUnboundFieldSource ("{ado.namakeluarga}")
             .udTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
-            .usJk.SetUnboundFieldSource ("{ado.jeniskelamin}")
+            .usjk.SetUnboundFieldSource ("{ado.jeniskelamin}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamatlengkap}")
             .usJamRegis.SetUnboundFieldSource ("{ado.jamregistrasi}")
@@ -2628,7 +2625,7 @@ boolGelangPasienBayi = False
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
 
             .usUnitLayanan.SetUnboundFieldSource ("{ado.ruanganperiksa}")
             .usTipe.SetUnboundFieldSource ("{ado.kelompokpasien}")
@@ -2652,9 +2649,9 @@ boolGelangPasienBayi = False
 
             ReadRs2 "SELECT namalengkap FROM pegawai_m where id='" & strIdPegawai & "' "
             If RS2.BOF Then
-                .txtUser.SetText "-"
+                .txtuser.SetText "-"
             Else
-                .txtUser.SetText UCase(IIf(IsNull(RS2("namalengkap")), "-", RS2("namalengkap")))
+                .txtuser.SetText UCase(IIf(IsNull(RS2("namalengkap")), "-", RS2("namalengkap")))
             End If
             
             If view = "false" Then
@@ -2771,7 +2768,7 @@ boolGelangPasienBayi = False
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
 
             .usUnitLayanan.SetUnboundFieldSource ("{ado.ruanganperiksa}")
             .usTipe.SetUnboundFieldSource ("{ado.kelompokpasien}")
@@ -2795,9 +2792,9 @@ boolGelangPasienBayi = False
 
             ReadRs2 "SELECT namalengkap FROM pegawai_m where id='" & strIdPegawai & "' "
             If RS2.BOF Then
-                .txtUser.SetText "-"
+                .txtuser.SetText "-"
             Else
-                .txtUser.SetText UCase(IIf(IsNull(RS2("namalengkap")), "-", RS2("namalengkap")))
+                .txtuser.SetText UCase(IIf(IsNull(RS2("namalengkap")), "-", RS2("namalengkap")))
             End If
             
             If view = "false" Then
@@ -2914,7 +2911,7 @@ boolGelangPasienBayi = False
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
 
             .usUnitLayanan.SetUnboundFieldSource ("{ado.ruanganperiksa}")
             .usTipe.SetUnboundFieldSource ("{ado.kelompokpasien}")
@@ -2937,9 +2934,9 @@ boolGelangPasienBayi = False
 
             ReadRs2 "SELECT namalengkap FROM pegawai_m where id='" & strIdPegawai & "' "
             If RS2.BOF Then
-                .txtUser.SetText "-"
+                .txtuser.SetText "-"
             Else
-                .txtUser.SetText UCase(IIf(IsNull(RS2("namalengkap")), "-", RS2("namalengkap")))
+                .txtuser.SetText UCase(IIf(IsNull(RS2("namalengkap")), "-", RS2("namalengkap")))
             End If
             
             If view = "false" Then
@@ -3050,7 +3047,7 @@ boolGelangPasienBayi = False
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usJk.SetUnboundFieldSource ("{ado.jk}")
+            .usjk.SetUnboundFieldSource ("{ado.jk}")
 
             .usUnitLayanan.SetUnboundFieldSource ("{ado.ruanganperiksa}")
             .usTipe.SetUnboundFieldSource ("{ado.kelompokpasien}")
@@ -3099,9 +3096,9 @@ boolGelangPasienBayi = False
 
             ReadRs2 "SELECT namalengkap FROM pegawai_m where id='" & strIdPegawai & "' "
             If RS2.BOF Then
-                .txtUser.SetText "-"
+                .txtuser.SetText "-"
             Else
-                .txtUser.SetText UCase(IIf(IsNull(RS2("namalengkap")), "-", RS2("namalengkap")))
+                .txtuser.SetText UCase(IIf(IsNull(RS2("namalengkap")), "-", RS2("namalengkap")))
             End If
             
             If view = "false" Then
@@ -3561,7 +3558,7 @@ boolGelangPasienBayi = True
                 .udtLahir.SetUnboundFieldSource ("{ado.tgllahir}")
                 .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
                 .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-                .usJk.SetUnboundFieldSource ("{ado.jk}")
+                .usjk.SetUnboundFieldSource ("{ado.jk}")
                 .usBarcode.SetUnboundFieldSource ("{ado.barcode}")
                 .usAyah.SetUnboundFieldSource ("{ado.namaayah}")
 '            view = "true"

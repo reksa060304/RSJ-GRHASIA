@@ -342,6 +342,53 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.kotaKabupaten = { id: result.objectkotakabupatenfk, namakotakabupaten: result.namakotakabupaten, }
                     if (result.objectpropinsifk)
                         $scope.item.propinsi = { id: result.objectpropinsifk, namapropinsi: result.namapropinsi }
+                    if (result.bahasafk)
+                        $scope.item.bahasaP = { id: result.bahasafk, bahasa: result.bahasa }
+                    if (result.hambatankomunikasifk)
+                        $scope.item.hambatan = { id: result.hambatankomunikasifk, hambatankomunikasi: result.hambatankomunikasi }
+
+
+                     if (result.penanggungjawab2)
+                        $scope.item.PenanggungJawab2 = result.penanggungjawab2
+                     if (result.hubungankeluargapj2)
+                        $scope.item.Hubungan2 = result.hubungankeluargapj2
+                     if (result.teleponpenanggungjawab2)
+                        $scope.item.TeleponP2 = result.teleponpenanggungjawab2
+                     if (result.bahasa2)
+                        $scope.item.Bahasa2 = result.bahasa2
+                     if (result.jeniskelaminpenanggungjawab2){
+                        $scope.item.jenisKelaminP = { id: result.idjk2, jeniskelamin: result.jeniskelaminpenanggungjawab2 };
+                     }
+                       
+                    if (result.umurpenanggungjawab2)
+                        $scope.item.UmurP2 = result.umurpenanggungjawab2
+                    if (result.alamatrmh2)
+                        $scope.item.alamatRumah2 = result.alamatrmh2
+                    if (result.pekerjaanpenangggungjawab2){
+                       $scope.item.pekerjaanP2 = { id: result.idpek2, pekerjaan: result.pekerjaanpenangggungjawab2 };
+                 
+                    }
+                    $scope.item.isAlamat = false
+                    if (result.alamatd.length>0){
+                    $scope.item.isAlamat = true
+                    data2 = []
+                    for (var i = 0; i < result.alamatd.length; i++) {
+                        result.alamatd[i].no = i +1
+                        const el =  result.alamatd[i]
+                        var alamatLeng = ''
+                        if(el.namadesakelurahan){alamatLeng = alamatLeng +' ' + el.namadesakelurahan}
+                        if(el.namakecamatan){alamatLeng = alamatLeng +' ' + el.namakecamatan}
+                        if(el.namakotakabupaten){alamatLeng = alamatLeng +' ' + el.namakotakabupaten}
+                        if(el.propinsi){alamatLeng = alamatLeng +' ' + el.propinsi}    
+
+                        el.alamatdetail  =alamatLeng   
+                        data2.push(el)
+                    }
+                    $scope.listAlamat = new kendo.data.DataSource({
+                        data: data2
+                    });
+
+                  }
 
                     if ($scope.item.kodePos != undefined && $scope.item.kodePos != null) {
                         $scope.findKodePos();
@@ -368,6 +415,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listDataStatusPerkawinan = result[0].data.statusperkawinan
                         $scope.listGolonganDarah = result[0].data.golongandarah
                         $scope.listSuku = result[0].data.suku
+                        $scope.listBahasa = result[0].data.bahasa
+                        $scope.listHamKom = result[0].data.hambatan
+                        $scope.listJenis = result[0].data.jenis
                         var cacheTransdataRujuk = cacheHelper.get('cacheRujukanTransdata')
                         if (cacheTransdataRujuk != undefined) {
                             loadRujukanTransdata(cacheTransdataRujuk)
@@ -391,16 +441,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.listDataKelurahan = e;
             });
 
-            // $scope.findAddress = function (desa) {
-            //     if (desa.objectkecamatanfk)
-            //         $scope.item.kecamatan = { id: desa.objectkecamatanfk, namakecamatan: desa.namakecamatan }
-            //     if (desa.objectkotakabupatenfk)
-            //         $scope.item.kotaKabupaten = { id: desa.objectkotakabupatenfk, namakotakabupaten: desa.namakotakabupaten }
-            //     if (desa.objectpropinsifk)
-            //         $scope.item.propinsi = { id: desa.objectpropinsifk, namapropinsi: desa.namapropinsi }
-            //     if (desa.kodepos)
-            //         $scope.item.kodePos = desa.kodepos
-            // }
+            $scope.findAddress = function (desa) {
+                if (desa.objectkecamatanfk)
+                    $scope.alamat.kecamatan = { id: desa.objectkecamatanfk, namakecamatan: desa.namakecamatan }
+                if (desa.objectkotakabupatenfk)
+                    $scope.alamat.kotaKabupaten = { id: desa.objectkotakabupatenfk, namakotakabupaten: desa.namakotakabupaten }
+                if (desa.objectpropinsifk)
+                    $scope.alamat.propinsi = { id: desa.objectpropinsifk, namapropinsi: desa.namapropinsi }
+                if (desa.kodepos)
+                    $scope.alamat.kodePos = desa.kodepos
+            }
 
 
 
@@ -561,7 +611,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         'jeniskelaminpenanggungjawab': $scope.item.jenisKelaminP != undefined ? $scope.item.jenisKelaminP.jeniskelamin : null,
                         'umurpenanggungjawab': $scope.item.UmurP != undefined ? $scope.item.UmurP : null,
                         'dokterpengirim': $scope.item.DokterPengirim != undefined ? $scope.item.DokterPengirim : null,
-                        'alamatdokter': $scope.item.alamatDokterPengirim != undefined ? $scope.item.alamatDokterPengirim : null
+                        'alamatdokter': $scope.item.alamatDokterPengirim != undefined ? $scope.item.alamatDokterPengirim : null,
+                        'hambatan': $scope.item.hambatan != undefined ? $scope.item.hambatan.id : null,
+                        'bahasaP': $scope.item.bahasaP != undefined ? $scope.item.bahasaP.id : null,
+
+                        'penanggungjawab2': $scope.item.PenanggungJawab2 != undefined ? $scope.item.PenanggungJawab2 : null,
+                        'hubungankeluargapj2': $scope.item.Hubungan2 != undefined ? $scope.item.Hubungan2 : null,
+                        'pekerjaanpenangggungjawab2':  $scope.item.pekerjaanP2 != undefined ? $scope.item.pekerjaanP2.pekerjaan : null,
+                        'alamatrmh2': $scope.item.alamatRumah2 != undefined ? $scope.item.alamatRumah2 : null,
+                        'teleponpenanggungjawab2': $scope.item.TeleponP2 != undefined ? $scope.item.TeleponP2 : null,
+                        'bahasa2': $scope.item.Bahasa2 != undefined ? $scope.item.Bahasa2 : null,
+                        'jeniskelaminpenanggungjawab2': $scope.item.jenisKelaminP2 != undefined ? $scope.item.jenisKelaminP2.jeniskelamin : null,
+                        'umurpenanggungjawab2': $scope.item.UmurP2 != undefined ? $scope.item.UmurP2 : null,
+                        'detailalamat': data2,
                     }
                     medifirstService.post('registrasi/save-pasien-fix', postJson)
                         .then(
@@ -1234,6 +1296,216 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     binary[i] = parseInt(h, 16);
                 }
                 return binary_to_base64(binary);
+            }
+             let data2 =[]
+             $scope.alamat = {}
+             $scope.gridAlamat = {
+                toolbar: [{
+                    name: "create", text: "Input Baru",
+                    template: '<button ng-click="addPop()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah </button>'
+                },],
+                pageable: true,
+                scrollable: true,
+                columns: [
+                   
+                    {
+                        "field": "jenisalamat",
+                        "title": "Jenis Alamat",
+                    },
+                    {
+                        "field": "alamatlengkap",
+                        "title": "Alamat",
+                    },
+                     {
+                        "field": "alamatdetail",
+                        "title": "Detail",
+                    },
+                    {
+                        command:[ {
+                            text: "Edit",
+                            align: "center",
+                            attributes: { align: "center" },
+                            click: ediData
+                        },{
+                            text: "Hapus",
+                            align: "center",
+                            attributes: { align: "center" },
+                            click: removeData
+                        }],
+                        title: "#",
+                    }
+                ]
+            };
+
+           
+             function ediData(e) {
+                e.preventDefault();
+                var grid = this;
+                var row = $(e.currentTarget).closest("tr");
+                var tr = $(e.target).closest("tr");
+                var dataItem = this.dataItem(tr);
+
+                $scope.alamat.no = dataItem.no
+                $scope.alamat.alamatLengkap = dataItem.alamatlengkap
+                $scope.alamat.jenisAlamat = {id:dataItem.objectjenisalamatfk, jenisalamat:dataItem.jenisalamat}
+                if(dataItem.objectdesakelurahanfk){
+                  medifirstService.get("registrasi/get-desa-kelurahan-paging?iddesakelurahan=" + dataItem.objectdesakelurahanfk).then(function (re) {
+                    if (re.data[0] != undefined) {
+                        var data = {
+                            id: re.data[0].id,
+                            namadesakelurahan: re.data[0].namadesakelurahan,
+                            kodepos: re.data[0].kodepos,
+                            namakecamatan: re.data[0].namakecamatan,
+                            namakotakabupaten: re.data[0].namakotakabupaten,
+                            namapropinsi: re.data[0].namapropinsi,
+                            objectkecamatanfk: re.data[0].objectkecamatanfk,
+                            objectkotakabupatenfk: re.data[0].objectkotakabupatenfk,
+                            objectpropinsifk: re.data[0].objectpropinsifk,
+                            desa: re.data[0].namadesakelurahan,
+                        }
+                        $scope.listDataKelurahan.add(data)
+                        $scope.alamat.desaKelurahan= data
+                    }
+                });  
+                }
+                
+                // for (var i = 0; i < $scope.listDataKelurahan.length; i++) {
+                //     const element = $scope.listDataKelurahan[i]
+                //     if(dataItem.desafk == element.id){
+                //        $scope.alamat.desaKelurahan = element
+                //     }
+                // }
+                for (var i = 0; i < $scope.listDataKecamatan.length; i++) {
+                    const element = $scope.listDataKecamatan[i]
+                    if(dataItem.objectkecamatanfk == element.id){
+                       $scope.alamat.kecamatan = element
+                    }
+                }
+                for (var i = 0; i < $scope.listDataKotaKabupaten.length; i++) {
+                    const element = $scope.listDataKotaKabupaten[i]
+                    if(dataItem.objectkotakabupatenfk == element.id){
+                       $scope.alamat.kotaKabupaten = element
+                    }
+                }
+                for (var i = 0; i < $scope.listDataPropinsi.length; i++) {
+                    const element = $scope.listDataPropinsi[i]
+                    if(dataItem.objectpropinsifk == element.id){
+                       $scope.alamat.propinsi = element
+                    }
+                }
+                $scope.popUpAlamat.center().open();
+                
+
+            }
+             function removeData(e) {
+                e.preventDefault();
+                var grid = this;
+                var row = $(e.currentTarget).closest("tr");
+                var tr = $(e.target).closest("tr");
+                var dataItem = this.dataItem(tr);
+                grid.removeRow(row);
+
+                if (dataItem != undefined) {
+                    for (var i = data2.length - 1; i >= 0; i--) {
+                        if (data2[i].no == dataItem.no) {
+                            data2.splice(i, 1);
+                            $scope.listAlamat = new kendo.data.DataSource({
+                                data: data2
+                            });
+                        }
+                    }
+                }
+                if(data2.length == 0 ){
+                   $scope.listAlamat = undefined;
+                }
+                $scope.alamat.no = undefined
+            }
+
+            $scope.addPop = function () {
+                $scope.alamat = {};
+                $scope.alamat.no = undefined
+              
+                $scope.popUpAlamat.center().open();
+            }
+            $scope.tutupAlamat = function () {
+                $scope.alamat = {};
+                $scope.alamat.no = undefined
+                $scope.popUpAlamat.close();
+            }
+
+            $scope.saveAlamat = function () {
+                if($scope.alamat.alamatLengkap == undefined){
+                    messageContainer.error("Alamat Lengkap Harus Di isi")
+                    return
+                }
+                if($scope.alamat.jenisAlamat == undefined){
+                    messageContainer.error("Jenis Alamat Harus Di isi")
+                    return
+                }
+                var nomor = 0
+                if ($scope.listAlamat == undefined) {
+                    nomor = 1
+                } else {
+                    nomor = data2.length + 1
+                }
+                var data = {};
+                var alamatLeng = ''
+                if($scope.alamat.desaKelurahan){alamatLeng = alamatLeng +' ' + $scope.alamat.desaKelurahan.namadesakelurahan}
+                if($scope.alamat.kecamatan){alamatLeng = alamatLeng +' ' + $scope.alamat.kecamatan.namakecamatan}
+                if($scope.alamat.kotaKabupaten){alamatLeng = alamatLeng +' ' + $scope.alamat.kotaKabupaten.namakotakabupaten}
+                if($scope.alamat.propinsi){alamatLeng = alamatLeng +' ' + $scope.alamat.propinsi.namapropinsi}    
+
+                if ($scope.alamat.no != undefined) {
+                     for (var i = data2.length - 1; i >= 0; i--) {
+                        if (data2[i].no == $scope.alamat.no) {
+                            data.no = $scope.alamat.no
+                            data.alamatlengkap = $scope.alamat.alamatLengkap
+                            data.objectdesakelurahanfk = $scope.alamat.desaKelurahan?$scope.alamat.desaKelurahan.id:null
+                            data.namadesakelurahan = $scope.alamat.desaKelurahan?$scope.alamat.desaKelurahan.namadesakelurahan:null
+                            data.objectkecamatanfk =  $scope.alamat.kecamatan?$scope.alamat.kecamatan.id:null
+                            data.namakecamatan =  $scope.alamat.kecamatan?$scope.alamat.kecamatan.namakecamatan:null
+                            data.objectkotakabupatenfk =  $scope.alamat.kotaKabupaten?$scope.alamat.kotaKabupaten.id:null
+                            data.namakotakabupaten =  $scope.alamat.kotaKabupaten?$scope.alamat.kotaKabupaten.namakotakabupaten:null
+                            data.objectpropinsifk =  $scope.alamat.propinsi?$scope.alamat.propinsi.id:null
+                            data.propinsi =  $scope.alamat.propinsi?$scope.alamat.propinsi.namapropinsi:null
+                            data.jenisalamat = $scope.alamat.jenisAlamat.jenisalamat
+                            data.objectjenisalamatfk = $scope.alamat.jenisAlamat.id
+                            data.alamatdetail = alamatLeng
+                            data2[i] = data;
+                            $scope.listAlamat = new kendo.data.DataSource({
+                                data: data2
+                            });
+                        
+                        }
+                }
+             } else {
+                    data = {
+                        no: nomor,
+                        alamatlengkap:$scope.alamat.alamatLengkap,
+                        objectdesakelurahanfk: $scope.alamat.desaKelurahan?$scope.alamat.desaKelurahan.id:null,
+                        namadesakelurahan: $scope.alamat.desaKelurahan?$scope.alamat.desaKelurahan.namadesakelurahan:null,
+                        objectkecamatanfk: $scope.alamat.kecamatan?$scope.alamat.kecamatan.id:null,
+                        namakecamatan: $scope.alamat.kecamatan?$scope.alamat.kecamatan.namakecamatan:null,
+                        objectkotakabupatenfk:  $scope.alamat.kotaKabupaten?$scope.alamat.kotaKabupaten.id:null,
+                        namakotakabupaten: $scope.alamat.kotaKabupaten?$scope.alamat.kotaKabupaten.namakotakabupaten:null,
+                        objectpropinsifk: $scope.alamat.propinsi?$scope.alamat.propinsi.id:null,
+                        propinsi: $scope.alamat.propinsi?$scope.alamat.propinsi.namapropinsi:null,
+                        alamatdetail: alamatLeng,
+                        jenisalamat: $scope.alamat.jenisAlamat.jenisalamat,
+                        objectjenisalamatfk :$scope.alamat.jenisAlamat.id
+                    }
+                    data2.push(data)
+                  
+                    $scope.listAlamat = new kendo.data.DataSource({
+                        data: data2
+                    });
+                
+                }
+              
+
+               $scope.alamat = {};
+               $scope.alamat.no = undefined
+               $scope.popUpAlamat.close();
             }
         }
     ]);

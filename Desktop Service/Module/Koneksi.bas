@@ -45,10 +45,10 @@ Public Sub openConnection()
 '   password = "@@30Pr3scr1ption30@@"
 '   database = "rsj_grhasia"
 '  LOCAL Transmedic
-   host = "apps.transmedic.co.id"
-   Port = "5432"
+   host = "192.168.99.165"
+   Port = "3030"
    username = "postgres"
-   password = "Tr4nsm3dic"
+   password = "@@30Pr3scr1ption30@@"
    database = "rsj_grhasia"
   'On Error Resume Next
  

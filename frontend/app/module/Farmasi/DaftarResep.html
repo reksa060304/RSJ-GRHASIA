@@ -101,8 +101,8 @@
                             <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jmlRows" />
                         </div>
                     </div>
-                    <div class="grid_2">
-                        <button class="c-button"  ng-click="cariFilter()">Cari</button>
+                    <div class="grid_2" style="margin-top: -5px;">
+                       <button class="btnTemplate1"  ng-click="cariFilter()"><i class="fa fa-search"></i> Cari</button>
                     </div>
                 </div>
 
@@ -166,14 +166,33 @@
                         <input c-text-box type="input"  filter="" class="k-textbox" ng-model="item.namaPasien"  ng-keypress="($event.which == 13)? cariEnter():item.namaPasien"  />
                     </div>
                 </div>
-                <div class="grid_5">
+                <div class="grid_1">
                 </div>
-                <div class="grid_2" style="margin-top: 22px">
-                    <button class="c-button" ng-click="TransaksiPelayanan()">Transaksi Pelayanan</button>
+                <div class="grid_2" >
+                    <button class="btnTemplate1"  ng-click="TransaksiPelayanan()"><i class="fa fa-medkit"></i>Transaksi Pelayanan</button>
+                </div>
+                 <div class="grid_2" >
+                   <button class="btnTemplate1"  ng-click="showPop()"><i class="fa fa-stethoscope"></i> Tindakan</button>
+                </div>
+                 <div class="grid_2" >
+                    <button class="btnTemplate1"  ng-click="detailTagihan()"><i class="fa fa-th-list"></i>Detail Tagihan</button>
                 </div>
             </div>
             <div class="grid_12" style="margin-top:60px">
                 <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
             </div>
 </div>
+
+    <div kendo-window="popupAntrians" k-title="'Pilih Ruangan'" k-width="400" k-height="120" k-visible="false"
+        k-on-open="win2visible = true" k-on-close="win2visible = false">
+        <label c-label item="item " c-label-text="Nama Ruangan "></label>
+        <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruanganAntrian" k-data-text-field="'namaruangan'"
+            k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listRuanganApd" />
+        <div class="clear">
+            <button class="k-button" ng-click="inputTindakan()" style="float:right;margin-top:4%"
+              ng-hide="tombolSimpanVis" >Lanjut </button>
+
+        </div>
+    </div>
+
 <!-- </div> -->

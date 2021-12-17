@@ -1058,10 +1058,10 @@ class RadiologiController extends ApiController
 
             $dataAPDnorec = $dataAPD->norec;
             $transStatus = 'true';
-            $transMessage = "simpan AntrianPasienDiperiksa";
+            $transMessage = "Sukses";
         } catch (\Exception $e) {
             $transStatus = 'false';
-            $transMessage = "simpan AntrianPasienDiperiksa";
+            $transMessage = "Simpan Gagal";
         }
 
         if ($transStatus != 'false') {
@@ -1075,7 +1075,7 @@ class RadiologiController extends ApiController
             DB::rollBack();
             $result = array(
                 "status" => 400,
-                "data" => $dataAPD,
+                "e" => $e->getMessage(). ' '.$e->getLine(),
                 "message" => $transMessage,
             );
         }
