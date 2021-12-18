@@ -4,7 +4,12 @@
     <title>
         Report
     </title>
-    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+        @if(stripos(\Request::url(), 'localhost') !== FALSE)
+         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+        @else
+         <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
+        @endif
+ 
 </head>
 <style type="text/css" media="print">
     @page {
@@ -54,7 +59,12 @@
                                                         <tr>
                                                             <td width="105">
                     <p align="left">
-                        <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 80px" border="0">
+                            @if(stripos(\Request::url(), 'localhost') !== FALSE)
+                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 80px" border="0">
+                            @else
+                              <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 80px" border="0">
+                            @endif
+                      
                     </p>
             </td>
             @php
