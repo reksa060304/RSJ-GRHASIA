@@ -5680,6 +5680,7 @@ class RegistrasiController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $pasien = IdentifikasiPasien::where('noregistrasifk', $request['norec_pd'])->first();
         if($pasien == ''){
+            $notracer = $this->generateCodeBySeqTable(new IdentifikasiPasien, 'notracer', 5, date('d'),$kdProfile);
             $ip = new IdentifikasiPasien();
             $norec = $ip->generateNewId();
             $ip->norec = $norec;
@@ -5687,6 +5688,7 @@ class RegistrasiController extends ApiController
             $ip->statusenabled = true;
             $ip->noregistrasifk = $request['norec_pd'];
             $ip->istracer = true;
+            $ip->noantriantracer = $notracer;
             $ip->save();
         }else{
             $ip = IdentifikasiPasien::where('noregistrasifk', $request['norec_pd'])

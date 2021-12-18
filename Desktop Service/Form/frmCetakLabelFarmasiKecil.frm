@@ -279,7 +279,7 @@ Dim adocmd As New ADODB.Command
     
 Set Report = New Cr_cetakLabelKecil
     strSQL = " select distinct ps.nocm, ps.namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,sr.noresep,sr.tglresep,pr.namaproduk || ' (' || CAST(pp.jumlah as varchar) || ')' AS namaproduk,CASE WHEN pp.aturanpakai IS NULL THEN '1X1' WHEN pp.aturanpakai = '' THEN '1X1' ELSE pp.aturanpakai END AS aturanpakai,pp.rke, " & _
-             " case when alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamat,ps.notelepon,ss.satuanstandar,pp.jumlah, " & _
+             " case when pp.keteranganpakai is null then '' else pp.keteranganpakai end as keteranganpakai, case when alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamat,ps.notelepon,ss.satuanstandar,pp.jumlah, " & _
              " CASE WHEN pp.issiang = 't' THEN 'Siang' ELSE '-' END AS siang, CASE WHEN pp.ispagi = 't' THEN 'Pagi' ELSE '-' END AS pagi, " & _
              " CASE WHEN pp.ismalam = 't' THEN 'Malam' ELSE '-' END as malam, CASE WHEN pp.issore = 't' THEN 'Sore' ELSE '-' END as sore, " & _
              " CASE WHEN pp.keteranganpakai  = '' OR pp.keteranganpakai IS NULL THEN 'Semoga Lekas Sembuh' else pp.keteranganpakai END AS keteranganpakai,CASE WHEN sn.satuanresep IS NOT NULL THEN sn.satuanresep ELSE '' END AS satuanresep " & _
@@ -295,8 +295,8 @@ Set Report = New Cr_cetakLabelKecil
             str1 & _
             str2 & _
             ""
-    strSQL = strSQL & " union all select distinct ps.nocm,ps.namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,sr.noresep,sr.tglresep,' Racikan' || ' (' || CAST(((CAST(pp.qtydetailresep as INTEGER)/CAST(pp.dosis as INTEGER))*CAST(pro.kekuatan as INTEGER))as varchar) || ')' AS namaproduk,CASE WHEN pp.aturanpakai IS NULL THEN '1X1' WHEN pp.aturanpakai = '' THEN '1X1' ELSE pp.aturanpakai END AS aturanpakai,pp.rke, " & _
-            " CASE WHEN alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamat,ps.notelepon,CASE when jr.jenisracikan IS NULL THEN '' ELSE jr.jenisracikan END AS satuanstandar,((CAST(pp.qtydetailresep as INTEGER)/CAST(pp.dosis as INTEGER))*CAST(pro.kekuatan as INTEGER)) as jumlah, " & _
+    strSQL = strSQL & " union all select distinct ps.nocm,ps.namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,sr.noresep,sr.tglresep,pro.namaproduk || ' (' || CAST(pp.jumlah as varchar) || ')' AS namaproduk,CASE WHEN pp.aturanpakai IS NULL THEN '1X1' WHEN pp.aturanpakai = '' THEN '1X1' ELSE pp.aturanpakai END AS aturanpakai,pp.rke, " & _
+            " case when pp.keteranganpakai is null then '' else pp.keteranganpakai end as keteranganpakai,CASE WHEN alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamat,ps.notelepon,CASE when jr.jenisracikan IS NULL THEN '' ELSE jr.jenisracikan END AS satuanstandar,((CAST(pp.qtydetailresep as INTEGER)/CAST(pp.dosis as INTEGER))*CAST(pro.kekuatan as INTEGER)) as jumlah, " & _
             " CASE WHEN pp.issiang = 't' THEN 'Siang' ELSE '-' END AS siang, CASE WHEN pp.ispagi = 't' THEN 'Pagi' ELSE '-' END AS pagi, " & _
             " CASE WHEN pp.ismalam = 't' THEN 'Malam' ELSE '-' END as malam, CASE WHEN issore = 't' THEN 'Sore' ELSE '-' END as sore, " & _
             " CASE WHEN pp.keteranganpakai  = '' OR pp.keteranganpakai IS NULL THEN 'Semoga Lekas Sembuh' else pp.keteranganpakai END AS keteranganpakai,CASE WHEN sn.satuanresep IS NOT NULL THEN sn.satuanresep ELSE '' END AS satuanresep " & _
@@ -308,7 +308,7 @@ Set Report = New Cr_cetakLabelKecil
             " left join alamat_m as alm on alm.nocmfk = ps.id " & _
             " INNER JOIN produk_m as pro on pro.id = pp.produkfk " & _
             " INNER JOIN satuanstandar_m as ss on ss.id = pp.satuanviewfk " & _
-            " INNER JOIN jenisracikan_m as jr on jr.id = pp.jenisobatfk " & _
+            " left JOIN jenisracikan_m as jr on jr.id = pp.jenisobatfk " & _
             " LEFT JOIN satuanresep_m AS sn ON sn.id = pp.satuanresepfk " & _
             " where pp.jeniskemasanfk =1 and " & _
             str1 & _
@@ -331,7 +331,7 @@ Set Report = New Cr_cetakLabelKecil
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usTelp.SetUnboundFieldSource ("{ado.notelepon}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
-            .usss.SetUnboundFieldSource ("{ado.satuanresep}")
+            .usss.SetUnboundFieldSource ("{ado.keteranganpakai}")
 '            .unjml.SetUnboundFieldSource ("{ado.jumlah}")
             .usWaktuMinumS.SetUnboundFieldSource ("{ado.siang}")
             .usWaktuMinumM.SetUnboundFieldSource ("{ado.malam}")
