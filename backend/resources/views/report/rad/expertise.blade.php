@@ -20,81 +20,81 @@
             <table cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tbody>
                 <tr>
-                    <td height="25" width="82">
-                        <font style="font-size: 9pt" face="Arial">No Foto</font>
+                    <td height="25" width="100">
+                        <font style="font-size: 12pt" face="Arial">No Foto</font>
                     </td>
                     <td>:</td>
-                    <td height="25" width="401"><b><font style="font-size: 9pt" face="Arial"> {{ $raw->nofoto }}</font></b></td>
+                    <td height="25" width="401"><b><font style="font-size: 12pt" face="Arial"> {{ $raw->nofoto }}</font></b></td>
                     <td height="25" width="105">
-                        <font style="font-size: 9pt" face="Arial">No Radiologi</font>
+                        <font style="font-size: 12pt" face="Arial">No Radiologi</font>
                     </td>
                     <td>:</td>
-                    <td height="25"><b><font style="font-size: 9pt" face="Arial">{{   $raw->noregistrasi  }}</font></b></td>
+                    <td height="25"><b><font style="font-size: 12pt" face="Arial">{{   $raw->noregistrasi  }}</font></b></td>
 
                 </tr>
                 <tr>
-                    <td height="25" width="82">
-                        <font style="font-size: 9pt" face="Arial">No Rekam Medis</font>
+                    <td height="25" width="100">
+                        <font style="font-size: 12pt" face="Arial">No Rekam Medis</font>
                     </td>
                     <td>:</td>
-                    <td height="25" width="401"><b><font style="font-size: 9pt" face="Arial">{{   $raw->nocm }} </font></b></td>
+                    <td height="25" width="401"><b><font style="font-size: 12pt" face="Arial">{{   $raw->nocm }} </font></b></td>
                     <td height="25" width="105">
-                        <font style="font-size: 9pt" face="Arial">Kelamin</font>
+                        <font style="font-size: 12pt" face="Arial">Kelamin</font>
                     </td>
                     <td>:</td>
-                    <td height="25"><b><font style="font-size: 9pt" face="Arial">{{  $raw->jeniskelamin    }} </font></b></td>
+                    <td height="25"><b><font style="font-size: 12pt" face="Arial">{{  $raw->jeniskelamin    }} </font></b></td>
 
                 </tr>
                 <tr>
-                    <td height="25" width="82">
-                        <font style="font-size: 9pt" face="Arial">Nama</font>
+                    <td height="25" width="100">
+                        <font style="font-size: 12pt" face="Arial">Nama</font>
                     </td>
                     <td>:</td>
-                    <td height="25" width="401"><b><font style="font-size: 9pt" face="Arial">{{ $raw->namapasien   }} </font></b></td>
+                    <td height="25" width="401"><b><font style="font-size: 12pt" face="Arial">{{ $raw->namapasien   }} </font></b></td>
                     <td height="25" width="105">
-                        <font style="font-size: 9pt" face="Arial">Alamat</font>
+                        <font style="font-size: 12pt" face="Arial">Alamat</font>
                     </td>
                     <td>:</td>
-                    <td height="25"><b><font style="font-size: 9pt" face="Arial">{{  $raw->alamatlengkap }} </font></b></td>
-
-                </tr>
-                <tr>
-                    <td height="25" width="92">
-                        <font style="font-size: 9pt" face="Arial">Umur</font>
-                    </td>
-                    <td>:</td>
-                    <td height="25" width="401"><b><font style="font-size: 9pt" face="Arial">{{ $raw->umur  }} </font></b></td>
-                    <td height="25" width="105">
-                        <font style="font-size: 9pt" face="Arial">Cara Bayar</font>
-                    </td>
-                    <td>:</td>
-                    <td height="25"><b><font style="font-size: 9pt" face="Arial">{{ $raw->kelompokpasien  }}  </font></b></td>
+                    <td height="25"><b><font style="font-size: 12pt" face="Arial">{{  $raw->alamatlengkap }} </font></b></td>
 
                 </tr>
                 <tr>
                     <td height="25" width="92">
-                        <font style="font-size: 9pt" face="Arial">Asal Pasien</font>
+                        <font style="font-size: 12pt" face="Arial">Umur</font>
                     </td>
                     <td>:</td>
-                    <td height="25" width="401"><b><font style="font-size: 9pt" face="Arial">{{ $raw->namaruangan }} </font></b></td>
+                    <td height="25" width="401"><b><font style="font-size: 12pt" face="Arial">{{ $raw->umur  }} </font></b></td>
                     <td height="25" width="105">
-                        <font style="font-size: 9pt" face="Arial">Cetak</font>
+                        <font style="font-size: 12pt" face="Arial">Cara Bayar</font>
                     </td>
                     <td>:</td>
-                    <td height="25"><b><font style="font-size: 9pt" face="Arial">{{ App\Traits\Valet::getDateIndo(date('Y-m-d')).date(' H:i:s')   }}  </font></b></td>
+                    <td height="25"><b><font style="font-size: 12pt" face="Arial">{{ $raw->kelompokpasien  }}  </font></b></td>
 
                 </tr>
                 <tr>
                     <td height="25" width="92">
-                        <font style="font-size: 9pt" face="Arial">Tgl Transaksi</font>
+                        <font style="font-size: 12pt" face="Arial">Asal Pasien</font>
                     </td>
                     <td>:</td>
-                    <td height="25" width="401"><b><font style="font-size: 9pt" face="Arial">{{ App\Traits\Valet::getDateIndo($raw->tanggal).' '.substr($raw->tanggal,10,9)   }} </font></b></td>
+                    <td height="25" width="401"><b><font style="font-size: 12pt" face="Arial">{{ $raw->namaruangan }} </font></b></td>
                     <td height="25" width="105">
-                        <font style="font-size: 9pt" face="Arial">Dokter Perujuk</font>
+                        <font style="font-size: 12pt" face="Arial">Cetak</font>
                     </td>
                     <td>:</td>
-                    <td height="25"><b><font style="font-size: 9pt" face="Arial">{{ $raw->perujuk  }}  </font></b></td>
+                    <td height="25"><b><font style="font-size: 12pt" face="Arial">{{ App\Traits\Valet::getDateIndo(date('Y-m-d')).date(' H:i:s')   }}  </font></b></td>
+
+                </tr>
+                <tr>
+                    <td height="25" width="92">
+                        <font style="font-size: 12pt" face="Arial">Tgl Transaksi</font>
+                    </td>
+                    <td>:</td>
+                    <td height="25" width="401"><b><font style="font-size: 12pt" face="Arial">{{ App\Traits\Valet::getDateIndo($raw->tanggal).' '.substr($raw->tanggal,10,9)   }} </font></b></td>
+                    <td height="25" width="105">
+                        <font style="font-size: 12pt" face="Arial">Dokter Perujuk</font>
+                    </td>
+                    <td>:</td>
+                    <td height="25"><b><font style="font-size: 12pt" face="Arial">{{ $raw->perujuk  }}  </font></b></td>
 
                 </tr>
                 </tbody>
@@ -160,9 +160,9 @@
                     <tr>
                         <td ></td>
                         <td style="text-align: center">
-                            <font style="font-size: 9pt" face="Arial">Sleman, {{ App\Traits\Valet::getDateIndo(date('Y-m-d'))   }}</font>
+                            <font style="font-size: 12pt" face="Arial">Sleman, {{ App\Traits\Valet::getDateIndo(date('Y-m-d'))   }}</font>
                             <br>
-                            <font style="font-size: 9pt;" face="Arial">Pemeriksa</font>
+                            <font style="font-size: 12pt;" face="Arial">Pemeriksa</font>
                         </td>
                     </tr>
 
@@ -174,7 +174,7 @@
                                  style="max-width:200px;height:100px;margin-top: -40px;" border="0">
                             @endif
                         <br>
-                            <font face="Arial" style="font-size: 9pt"><b>{{ '( '. $raw->dokterrad .' )'}} </b><br><i>NIP :  {{ $raw->nippns != null? $raw->nippns:'-' }} </i></font>
+                            <font face="Arial" style="font-size: 12pt"><b>{{ '( '. $raw->dokterrad .' )'}} </b><br><i>NIP :  {{ $raw->nippns != null? $raw->nippns:'-' }} </i></font>
                         </td>
                     </tr>
                 </table>
