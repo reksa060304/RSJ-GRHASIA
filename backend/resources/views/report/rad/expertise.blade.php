@@ -123,7 +123,7 @@
             // dd($datas);
 
             @endphp
-            <div style="text-align: left;font-size: 9pt">
+            <div style="text-align: left;font-size: 12pt">
             @foreach($datas as $e => $val)
 
                 <p style="margin-block-start: 0px;
