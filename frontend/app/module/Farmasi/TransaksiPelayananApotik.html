@@ -137,7 +137,17 @@
                         ng-disabled="true" />
                 </div>
             </div>
-            <div class="grid_3">
+            <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="item">Kelompok Pasien</label>
+                </div>
+
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kelompokPasien"
+                        ng-disabled="true" />
+                </div>
+            </div>
+            <div class="grid_2">
                 <div class="grid_12">
                     <label c-label item="item">Jenis Penjamin</label>
                 </div>
@@ -179,13 +189,14 @@
                         ng-disabled="true" />
                 </div>
             </div>
-            <div class="grid_3">
+            <div class="grid_2">
                 <div class="grid_12">
-                    <label c-label item="item">Kelompok Pasien</label>
+                    <label c-label item="item" c-label-text="Tgl Lahir"></label>
                 </div>
+                <div class="clear"></div>
 
                 <div class="grid_12">
-                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kelompokPasien"
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.tgllahir"
                         ng-disabled="true" />
                 </div>
             </div>

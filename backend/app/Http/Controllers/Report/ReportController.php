@@ -1685,8 +1685,8 @@ class ReportController extends ApiController{
     }
 
     public static function getProfile(){
-        $res['namaprofile'] = 'Transmedic';
-        $res['alamat'] ='Jl. Cikutra Baru Raya No.28, Neglasari, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40124';
+        $res['namaprofile'] = 'Rumah Sakit Jiwa Grhasia';
+        $res['alamat'] ='Jl. Kaliurang KM.17, Duwetsari, Pakembinangun, Kec. Pakem, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55582';
         return $res;
     }
 

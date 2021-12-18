@@ -125,7 +125,8 @@ define(['initialize'], function (initialize) {
                     6: $scope.dataSelected.namakelas,
                     7: $scope.dataSelected.tglregistrasi,
                     8: $scope.dataSelected.norec_apd,
-                    9: 'resep'
+                    9: 'resep',
+                    10: $scope.dataSelected.tgllahir,
                 }
                 cacheHelper.set('TransaksiPelayananApotikCtrl', arrStr);
                 $state.go('TransaksiPelayananApotik')

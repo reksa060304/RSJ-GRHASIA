@@ -74,7 +74,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.pelayanan = ''
                 $scope.item.rg = ''
                 $scope.item.id = ''
-                $scope.item.jenisPasien = ''
+                // $scope.item.jenisPasien = ''
                 $scope.item.hargaTindakan = 0
             }
             $scope.tambahData = function () {
