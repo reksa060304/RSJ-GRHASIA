@@ -160,7 +160,7 @@
                     <tr>
                         <td ></td>
                         <td style="text-align: center">
-                            <font style="font-size: 9pt" face="Arial">Cibinong, {{ App\Traits\Valet::getDateIndo(date('Y-m-d'))   }}</font>
+                            <font style="font-size: 9pt" face="Arial">Sleman, {{ App\Traits\Valet::getDateIndo(date('Y-m-d'))   }}</font>
                             <br>
                             <font style="font-size: 9pt;" face="Arial">Pemeriksa</font>
                         </td>

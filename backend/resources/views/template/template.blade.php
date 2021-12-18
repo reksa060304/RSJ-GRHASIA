@@ -54,7 +54,7 @@
                                                         <tr>
                                                             <td width="105">
                     <p align="left">
-                        <img src="{{ asset('img/logo_only.png') }}" style="width: 80px" border="0">
+                        <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 80px" border="0">
                     </p>
             </td>
             @php
