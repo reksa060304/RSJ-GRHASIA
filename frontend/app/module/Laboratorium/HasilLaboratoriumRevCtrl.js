@@ -665,14 +665,14 @@ define(['initialize'], function (initialize) {
                 } else {
                     dokter = $scope.item.DataPegawai
                 }
-                medifirstService.get("laboratorium/get-riwayat-bayar?norec=" + $scope.norecAPD).then(function (data) {
-                    if (data.data.data.length > 0) {
-                        if (data.data.data[0].nostruklastfk == null) {
-                            alert("Passien Umum Wajib Bayar Terlebih Dahulu!!")
-                            return;
-                        }
-                    }
-                });
+                // medifirstService.get("laboratorium/get-riwayat-bayar?norec=" + $scope.norecAPD).then(function (data) {
+                //     if (data.data.data.length > 0) {
+                //         if (data.data.data[0].nostruklastfk == null) {
+                //             alert("Passien Umum Wajib Bayar Terlebih Dahulu!!")
+                //             return;
+                //         }
+                //     }
+                // });
 
                 var client = new HttpClient();
                 client.get('http://127.0.0.1:1237/printvb/bridging?cetak-hasil-lab=1&norec=' + $scope.norecAPD
