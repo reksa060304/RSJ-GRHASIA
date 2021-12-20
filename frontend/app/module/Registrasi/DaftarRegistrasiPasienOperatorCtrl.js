@@ -856,11 +856,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					// window.open(fixUrlLaporan, '', 'width=800,height=600')
 
 					//##save identifikasi tracer
-					medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-						+ $scope.dataPasienSelected.norec
-					).then(function (data) {
-						var datas = data.data;
-					})
+					// medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
+					// 	+ $scope.dataPasienSelected.norec
+					// ).then(function (data) {
+					// 	var datas = data.data;
+					// })
 					//##end
 
 					//cetakan langsung service VB6 by grh    
