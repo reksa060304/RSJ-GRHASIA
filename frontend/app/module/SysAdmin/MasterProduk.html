@@ -24,7 +24,8 @@
 				<label c-label item="item" c-label-text="Nama Produk"></label>
 			</div>
 			<div class="grid_12">
-				<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaProdukScr" />
+				<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaProdukScr" 
+				ng-keypress="($event.which == 13)? cariFilter():item.namaProdukScr"/>
 			</div>
 		</div>
 		<div class="grid_2">
@@ -64,8 +65,9 @@
 		</div>
 		<div class="grid_12">
 			<div class="grid_12 borderBox">
-				<kendo-grid options="mainGridOptions" k-data-source="dataSource" k-ng-model="current"
+				<kendo-grid options="mainGridOptions" k-data-source="dataSource" k-sortable="'true'" k-ng-model="current"
 					ng-click="klik(current)">
+					
 				</kendo-grid>
 			</div>
 
