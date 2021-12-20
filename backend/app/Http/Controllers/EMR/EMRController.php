@@ -238,7 +238,7 @@ class EMRController  extends ApiController
             ->select('rm.id', 'rm.namalengkap')
             ->where('rm.kdprofile', $idProfile)
             ->where('rm.statusenabled', true)
-            ->whereIn('rm.objectjenispegawaifk',[1,26])
+            // ->whereIn('rm.objectjenispegawaifk',[1,26])
             ->orderBy('rm.namalengkap')
             ->get();
 
