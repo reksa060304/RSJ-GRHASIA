@@ -999,7 +999,7 @@ define(['initialize'], function (initialize) {
                     alert("Harga Satuan tidak memiliki harga!")
                     return;
                 }
-                if ($scope.item.total == 0) {
+                if ($scope.item.total == 0 && $scope.item.hargaSatuan != 0 && item.diskonTotalPersen != 0) {
                     alert("Stok tidak ada harus di isi!")
                     return;
                 }

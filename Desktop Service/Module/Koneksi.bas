@@ -45,7 +45,7 @@ Public Sub openConnection()
 '   password = "@@30Pr3scr1ption30@@"
 '   database = "rsj_grhasia"
 '  LOCAL Transmedic
-   host = "10.10.1.195"
+   host = "192.168.99.165"
    Port = "3030"
    username = "postgres"
    password = "@@30Pr3scr1ption30@@"
