@@ -4872,7 +4872,7 @@ class RegistrasiController extends ApiController
         $data = \DB::table('pegawai_m')
             ->select('*')
             ->where('statusenabled', true)
-            ->where('objectjenispegawaifk',$kdJenisPegawaiDokter)
+            // ->where('objectjenispegawaifk',$kdJenisPegawaiDokter)
             ->where('kdprofile', (int)$kdProfile)
             ->orderBy('namalengkap');
 
