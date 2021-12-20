@@ -325,11 +325,11 @@ define(['initialize'], function (initialize) {
             $scope.tracerBon = function () {
                 if ($scope.item != undefined) {
                     //##save tracer
-                    medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-                        + $scope.item.norec_pd
-                    ).then(function (data) {
-                        var datas = data.data;
-                    })
+                    // medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
+                    //     + $scope.item.norec_pd
+                    // ).then(function (data) {
+                    //     var datas = data.data;
+                    // })
                     //##end
                     var client = new HttpClient();
                     // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' +
@@ -337,7 +337,7 @@ define(['initialize'], function (initialize) {
                     //         // do something with response
                     //     });
                     client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.item.noregistrasi 
-                        + '&noCm=' + $scope.item.nocm +  '&view=false' , function (response) {
+                        + '&noCm=' + $scope.item.nocm + '&view=false' , function (response) {
                         // do something with response
                     });
                 }
