@@ -1500,6 +1500,7 @@ class RadiologiController extends ApiController
                         and '$idkelas' =hnp.objectkelasfk
                         and hnp.statusenabled=true
                         and hnp.objectjenispelayananfk=$jp
+                        and hnp.objectpenjaminfk is null
                 --and op.objectkelasfk=hnp.objectkelasfk
                 left join kelas_m as kls on kls.id = '$idkelas'
                 --op.objectkelasfk
@@ -1528,7 +1529,8 @@ class RadiologiController extends ApiController
                 where hnp.kdprofile = $idProfile and hnp.objectkelasfk='$idkelas'
                 and hnp.statusenabled=true
                 and hnp.objectjenispelayananfk=$jp
-                and prd.id='$item->prid'"));
+                and prd.id='$item->prid'
+                and hnp.objectpenjaminfk is null"));
 
             $result[] = array(
                 'norec_op' => $item->norec_op,
