@@ -3194,6 +3194,7 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
         $tglAwal = $tglAwal .' 00:00' ;
         $tglAkhir = $tglAkhir.' 23:59' ;
         $dept = $this->settingDataFixed('kdDepartemenEIS',$kdProfile);
+      
         $data = DB::select(DB::raw("SELECT dp.id ,dp.namadepartemen,count(pd.norec) as jumlah
                 FROM departemen_m dp
                 join ruangan_m as ru on ru.objectdepartemenfk=dp.id
@@ -3368,7 +3369,7 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
                 AND ru.objectdepartemenfk = $idDepRaJal 
                 ) as x where x.rownum=1
                 ORDER BY
-                x.noregistrasi
+                x.tglregistrasi
         "));
         $data10=[];
         $sudahPeriksa = 0;
