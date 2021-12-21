@@ -929,11 +929,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if ($scope.item != undefined) {
 
                     //##save identifikasi tracer
-                    // medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-                    //     + $scope.cacheNorecPD
-                    // ).then(function (data) {
-                    //     var datas = data.data;
-                    // })
+                    medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
+                        + $scope.cacheNorecPD
+                    ).then(function (data) {
+                        var datas = data.data;
+                    })
                     //##end
 
                     // var fixUrlLaporan = cetakHelper.open("reporting/lapTracer?noRegistrasi=" + $state.params.noRegistrasi);

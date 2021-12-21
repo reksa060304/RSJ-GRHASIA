@@ -553,7 +553,11 @@ define(['initialize'], function (initialize) {
                 // if ($scope.dataSelected.nostruk != undefined) {
                 //     alert('Sudah verifikasi Tatarekening Tidak Bisa Menambah Obat!')
                 //     return;
-                // }                
+                // }   
+                if ($scope.dataSelectedPopUpAPD == undefined) {
+                    toastr.warning("Data Belum Dipilih!!!")
+                    return;
+                }             
                 if ($scope.dataSelectedPopUpAPD != undefined) {
                     // * Validasi Untuk Sekali Bayar
                     //medifirstService.getDataTableTransaksi("tatarekening/get-sudah-verif?noregistrasi="+
