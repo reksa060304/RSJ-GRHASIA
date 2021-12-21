@@ -930,7 +930,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     //##save identifikasi tracer
                     medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-                        + $scope.cacheNorecPD
+                        + $scope.model.norec_pd
                     ).then(function (data) {
                         var datas = data.data;
                     })
