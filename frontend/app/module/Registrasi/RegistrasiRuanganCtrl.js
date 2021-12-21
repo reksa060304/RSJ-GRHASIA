@@ -698,7 +698,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         if (norecPD == '' && $scope.item.ruangan.namaruangan != 'IGD' && $scope.model.rawatInap != true
                             && $scope.item.ruangan.namaruangan != 'Hemodialisa' && $scope.item.ruangan.namaruangan != 'RADIOLOGI'
                             && $scope.item.ruangan.namaruangan != 'LABORATORIUM' && $scope.item.ruangan.namaruangan != 'ELEKTROMEDIK') {
-                            $scope.tracerBon();
+                            // $scope.tracerBon();
                             $scope.nomorAntrian();
                         }
 
