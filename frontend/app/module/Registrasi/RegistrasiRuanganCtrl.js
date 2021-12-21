@@ -455,7 +455,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             $scope.lanjutDaftar = function () {
                 if (norecPD == '') {
-                    if ($scope.CekPasienDaftar.length > 0 && $scope.CekPasienDaftar[0].objectruanganlastfk == $scope.item.ruangan.id && $scope.item.ruangan.objectdepartemenfk != '24') {
+                    if ($scope.CekPasienDaftar.length > 0 && moment( $scope.CekPasienDaftar[0].tglregistrasi).format('YYYY-MM-DD') == moment($scope.item.tglRegistrasi).format('YYYY-MM-DD') && $scope.CekPasienDaftar[0].objectruanganlastfk == $scope.item.ruangan.id && $scope.item.ruangan.objectdepartemenfk != '24') {
                         toastr.error("Pasien Tidak Bisa Daftar Dipoli yang sama!");
                         return;
 
