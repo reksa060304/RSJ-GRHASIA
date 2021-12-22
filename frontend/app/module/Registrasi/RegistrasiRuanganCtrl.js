@@ -701,7 +701,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             // $scope.tracerBon();
                             $scope.nomorAntrian();
                         }
-
+ 
                     }
 
                     if ($scope.nocmIgd != undefined) {
