@@ -1054,7 +1054,10 @@ class RadiologiController extends ApiController
             $dataAPD->kdprofile = $idProfile;
             $dataAPD->statusenabled = true;
             $dataAPD->objectasalrujukanfk = $request['asalrujukanfk'];
-            $dataAPD->objectkelasfk = $request['objectkelasfk'];
+            if (!isset($request['objectkelasfk']) || $request['objectkelasfk'] == "" || $request['objectkelasfk'] == "objectkelasfk" || $request['objectkelasfk'] == "undefined") {
+                $request['objectkelasfk']=6;
+            }
+            $dataAPD->objectkelasfk = $request['objectkelasfk'];//book
             $dataAPD->noantrian = $noAntrian;
             $dataAPD->noregistrasifk = $request['norec_pd'];
             $dataAPD->objectpegawaifk = $request['dokterfk'];
