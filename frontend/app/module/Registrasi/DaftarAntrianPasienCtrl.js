@@ -337,7 +337,7 @@ define(['initialize'], function (initialize) {
                     //         // do something with response
                     //     });
                     client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.item.noregistrasi 
-                        + '&noCm=' + $scope.item.nocm +  '&view=false' , function (response) {
+                        + '&noCm=' + $scope.item.nocm + '&view=false' , function (response) {
                         // do something with response
                     });
                 }

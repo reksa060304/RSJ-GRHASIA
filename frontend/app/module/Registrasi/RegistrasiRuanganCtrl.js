@@ -455,7 +455,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             $scope.lanjutDaftar = function () {
                 if (norecPD == '') {
-                    if ($scope.CekPasienDaftar.length > 0 && $scope.CekPasienDaftar[0].objectruanganlastfk == $scope.item.ruangan.id && $scope.item.ruangan.objectdepartemenfk != '24') {
+                    if ($scope.CekPasienDaftar.length > 0 && moment( $scope.CekPasienDaftar[0].tglregistrasi).format('YYYY-MM-DD') == moment($scope.item.tglRegistrasi).format('YYYY-MM-DD') && $scope.CekPasienDaftar[0].objectruanganlastfk == $scope.item.ruangan.id && $scope.item.ruangan.objectdepartemenfk != '24') {
                         toastr.error("Pasien Tidak Bisa Daftar Dipoli yang sama!");
                         return;
 
@@ -698,10 +698,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         if (norecPD == '' && $scope.item.ruangan.namaruangan != 'IGD' && $scope.model.rawatInap != true
                             && $scope.item.ruangan.namaruangan != 'Hemodialisa' && $scope.item.ruangan.namaruangan != 'RADIOLOGI'
                             && $scope.item.ruangan.namaruangan != 'LABORATORIUM' && $scope.item.ruangan.namaruangan != 'ELEKTROMEDIK') {
-                            $scope.tracerBon();
+                            // $scope.tracerBon();
                             $scope.nomorAntrian();
                         }
-
+ 
                     }
 
                     if ($scope.nocmIgd != undefined) {
@@ -930,7 +930,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     //##save identifikasi tracer
                     medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-                        + $scope.cacheNorecPD
+                        + $scope.model.norec_pd
                     ).then(function (data) {
                         var datas = data.data;
                     })

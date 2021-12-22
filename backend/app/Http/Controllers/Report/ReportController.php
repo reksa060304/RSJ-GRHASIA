@@ -639,9 +639,8 @@ class ReportController extends ApiController{
                 so.nofoto,ps.nocm, ps.namapasien,ps.tgllahir,kp.kelompokpasien,
             ru.namaruangan, so.tanggal,jk.jeniskelamin,  
             CASE WHEN alm.alamatlengkap IS NULL THEN
-                '-' ELSE (
-                alm.alamatlengkap || ' ' || ds.namadesakelurahan || ' '|| kc.namakecamatan
-                || ' ' || kk.namakotakabupaten || ' '  || pro.namapropinsi )
+                '-' ELSE 
+                alm.alamatlengkap
             END AS alamatlengkap,
             pg.namalengkap as perujuk,pg2.namalengkap as dokterrad,
             pr.namaproduk,so.keterangan,pd.noregistrasi,pg2.nippns,
