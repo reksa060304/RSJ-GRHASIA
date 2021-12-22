@@ -494,7 +494,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 var kelasId = "";
                 if ($scope.item.kelas == undefined || $scope.item.kelas == "") {
-                    kelasId = null;
+                    //kelasId = null;
+                    kelasId = 6;
                 } else
                     kelasId = $scope.item.kelas.id;
 

@@ -667,6 +667,7 @@ class RadiologiController extends ApiController
             ->Join('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
             ->JOIN ('pasien_m as ps','ps.id','=','pd.nocmfk')
             ->JOIN('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
+            ->leftJoin('pelayananpasien_t as pp','apd.norec','=','pp.noregistrasifk')
             ->leftJoin('kelompokpasien_m as kp','kp.id','=','pd.objectkelompokpasienlastfk')
             ->leftJoin('rekanan_m as rk','rk.id','=','pd.objectrekananfk')
             ->leftJoin('kelas_m as kl','kl.id','=','pd.objectkelasfk')
@@ -675,10 +676,11 @@ class RadiologiController extends ApiController
             ->leftJoin('golongandarah_m as gol','gol.id','=','ps.objectgolongandarahfk')
             ->leftjoin('strukorder_t as so','so.norec','=','apd.objectstrukorderfk')
             ->leftJoin('ruangan_m as ru1','ru1.id','=','so.objectruanganfk')
+            ->distinct()
             ->select('apd.norec as norec_apd','ru.id as ruid','ru.namaruangan','pd.noregistrasi','ps.nocm','ps.namapasien','jk.jeniskelamin',
                 'kp.kelompokpasien','rk.namarekanan','kl.namakelas','kl.id as klid',
                 'pd.tglregistrasi','pd.tglpulang','ps.tgllahir','apd.norec','pd.norec as norec_pd',
-                'sp.tglstruk','pd.nostruklastfk','alm.alamatlengkap','gol.golongandarah', 'apd.tglmasuk','ru1.namaruangan as ruanganasal',
+                'sp.tglstruk','pd.nostruklastfk','alm.alamatlengkap','gol.golongandarah', 'apd.tglmasuk','ru1.namaruangan as ruanganasal','apd.tglregistrasi',
                 DB::raw("'' AS expertise
                 "))
             ->where('apd.kdprofile', $idProfile)
@@ -687,12 +689,23 @@ class RadiologiController extends ApiController
             ->orderBy('apd.tglregistrasi','desc');
 
         if(isset($request['tglAwal']) && $request['tglAwal']!="" && $request['tglAwal']!="undefined"){
-            $data = $data->where('apd.tglmasuk','>=', $request['tglAwal']);
+            //$data = $data->where('apd.tglmasuk','>=', $request['tglAwal']);
+            $data = $data->whereRaw("
+                (
+                    (apd.tglmasuk  between  '".$request['tglAwal']."' and '".$request['tglAkhir']."') 
+                    or 
+                    (pp.tglpelayanan  between  '".$request['tglAwal']."' and '".$request['tglAkhir']."')
+                )"
+            );
+            // $data = $data->where(function($query){
+            //     $query->where('apd.tglmasuk','>=', $request['tglAwal'])
+            //         ->orWhere('pp.tglmasuk','>=', $request['tglAwal']);
+            // });
         }
-        if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
-            $tgl= $request['tglAkhir'];
-            $data = $data->where('apd.tglmasuk','<=', $tgl);
-        }
+        // if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
+        //     $tgl= $request['tglAkhir'];
+        //     $data = $data->where('apd.tglmasuk','<=', $tgl);
+        // }
 //        if(isset($request['tglAwal']) && $request['tglAwal']!="" && $request['tglAwal']!="undefined"){
 //            $data = $data->where('so.tglorder','>=', $request['tglAwal']);
 //        }
@@ -1041,7 +1054,10 @@ class RadiologiController extends ApiController
             $dataAPD->kdprofile = $idProfile;
             $dataAPD->statusenabled = true;
             $dataAPD->objectasalrujukanfk = $request['asalrujukanfk'];
-            $dataAPD->objectkelasfk = $request['objectkelasfk'];
+            if (!isset($request['objectkelasfk']) || $request['objectkelasfk'] == "" || $request['objectkelasfk'] == "objectkelasfk" || $request['objectkelasfk'] == "undefined") {
+                $request['objectkelasfk']=6;
+            }
+            $dataAPD->objectkelasfk = $request['objectkelasfk'];//book
             $dataAPD->noantrian = $noAntrian;
             $dataAPD->noregistrasifk = $request['norec_pd'];
             $dataAPD->objectpegawaifk = $request['dokterfk'];
