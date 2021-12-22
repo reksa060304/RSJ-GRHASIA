@@ -2855,7 +2855,7 @@ class RegistrasiController extends ApiController
                     'ps.objectgolongandarahfk','gol.golongandarah','ps.objectsukufk','sk.suku','ps.bahasa','ps.teleponpenanggungjawab',
                     'ps.dokterpengirim','ps.alamatdokterpengirim','jk1.id as jkidpenanggungjawab','ps.jeniskelaminpenanggungjawab','ps.umurpenanggungjawab','ps.hambatankomunikasifk','ps.bahasafk','ham.hambatankomunikasi','bh.bahasa',
                     'ps.penanggungjawab2','ps.hubungankeluargapj2','ps.pekerjaanpenangggungjawab2','ps.alamatrmh2','ps.bahasa2',
-                    'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2','jk2.id as idjk2','pk2.id as idpek2')
+                    'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2','jk2.id as idjk2','pk2.id as idpek2','ps.nik1','ps.nik2')
             ->where('ps.kdprofile', (int)$kdProfile);
 
         if(isset($request['noCm'] ) && $request['noCm']!= '' && $request['noCm']!= 'undefined'){
@@ -2940,6 +2940,8 @@ class RegistrasiController extends ApiController
                 'idjk2' => $data->idjk2,
                 'idpek2' => $data->idpek2,
                 'alamatd' => $alamatd,
+                'nik1' => $data->nik1,
+                'nik2' => $data->nik2,
             );
 //        }
         $result = array(
@@ -3691,6 +3693,9 @@ class RegistrasiController extends ApiController
             if (isset($request['penanggungjawab'])){
                 $dataPS->penanggungjawab = $request['penanggungjawab'];
             }
+            if (isset($request['nik1'])){
+                $dataPS->nik1 = $request['nik1'];
+            }
             if (isset($request['hubungankeluargapj'])){
                 $dataPS->hubungankeluargapj = $request['hubungankeluargapj'];
             }
@@ -3742,6 +3747,9 @@ class RegistrasiController extends ApiController
 
             if (isset($request['penanggungjawab2'])){
                 $dataPS->penanggungjawab2 = $request['penanggungjawab2'];
+            }
+            if (isset($request['nik2'])){
+                $dataPS->nik2 = $request['nik2'];
             }
             if (isset($request['hubungankeluargapj2'])){
                 $dataPS->hubungankeluargapj2 = $request['hubungankeluargapj2'];
