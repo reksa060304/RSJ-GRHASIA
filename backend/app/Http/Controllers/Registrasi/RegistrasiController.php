@@ -5673,28 +5673,75 @@ class RegistrasiController extends ApiController
         return $this->respond($result);
     }
 
-    public function IdentifikasiTracer(Request $request){
-        DB::beginTransaction();
-        $transStatus = true;
+    public function IdentifikasiTracer(Request $request){        
         $dataLogin = $request->all();
         $kdProfile = $this->getDataKdProfile($request);
         $pasien = IdentifikasiPasien::where('noregistrasifk', $request['norec_pd'])->first();
-        if($pasien == ''){
-            $notracer = $this->generateCodeBySeqTable(new IdentifikasiPasien, 'notracer', 5, date('d'),$kdProfile);
-            $ip = new IdentifikasiPasien();
-            $norec = $ip->generateNewId();
-            $ip->norec = $norec;
-            $ip->kdprofile = (int)$kdProfile;
-            $ip->statusenabled = true;
-            $ip->noregistrasifk = $request['norec_pd'];
-            $ip->istracer = true;
-            $ip->noantriantracer = $notracer;
-            $ip->save();
-        }else{
-            $ip = IdentifikasiPasien::where('noregistrasifk', $request['norec_pd'])
-                ->update([
-                    'istracer' => true,
-                ]);
+        $pasienDaftar = PasienDaftar::where('norec', $request['norec_pd'])->first();
+        $tglregAwal = date('Y-m-d 00:00:00',strtotime($pasienDaftar->tglregistrasi));
+        $tglregAkhir = date('Y-m-d 23:59:59',strtotime($pasienDaftar->tglregistrasi));            
+        DB::beginTransaction();
+        try{
+
+            if($pasien == ''){
+                $notracer = $this->generateCodeBySeqTable(new IdentifikasiPasien, 'notracer', 5, date('d'),$kdProfile);
+                $countNoAntrian = collect(DB::select("
+                    SELECT MAX(noantrian) as nomor
+                    FROM identifikasipasien_t AS ip
+                    INNER JOIN pasiendaftar_t AS pd ON pd.norec = ip.noregistrasifk
+                    WHERE pd.kdprofile = $kdProfile AND pd.statusenabled = true
+                    AND pd.tglregistrasi BETWEEN '$tglregAwal' AND '$tglregAkhir'
+                "))->first();                
+                $noAntrian = 0;
+                if (empty($countNoAntrian->nomor)) {
+                    $noAntrian = $noAntrian + 1;
+                }else{
+                    $noAntrian = $countNoAntrian->nomor + 1;
+                }      
+                $ip = new IdentifikasiPasien();
+                $norec = $ip->generateNewId();
+                $ip->norec = $norec;
+                $ip->kdprofile = (int)$kdProfile;
+                $ip->statusenabled = true;
+                $ip->noregistrasifk = $request['norec_pd'];
+                $ip->istracer = true;
+                $ip->noantriantracer = $notracer;
+                $ip->tglregistrasi = $pasienDaftar->tglregistrasi;
+                $ip->noantrian = $noAntrian;
+                $ip->save();
+            }else{
+                $pasienUp = IdentifikasiPasien::where('noregistrasifk', $request['norec_pd'])->first();
+                $countNoAntrian = collect(DB::select("
+                    SELECT MAX(noantrian) as nomor
+                    FROM identifikasipasien_t AS ip
+                    INNER JOIN pasiendaftar_t AS pd ON pd.norec = ip.noregistrasifk
+                    WHERE pd.kdprofile = $kdProfile AND pd.statusenabled = true
+                    AND pd.tglregistrasi BETWEEN '$tglregAwal' AND '$tglregAkhir'
+                "))->first();
+                $noAntrian = 0;
+                if (empty($countNoAntrian->nomor)) {
+                    $noAntrian = $noAntrian + 1;
+                }else{
+                    $noAntrian = $countNoAntrian->nomor + 1;
+                }                                
+                if (empty($pasienUp->noantrian)) {
+                   $ip = IdentifikasiPasien::where('noregistrasifk', $request['norec_pd'])
+                    ->update([
+                        'noantrian' => $noAntrian,
+                        'istracer' => true,
+                    ]);
+                }else{
+                    $ip = IdentifikasiPasien::where('noregistrasifk', $request['norec_pd'])
+                    ->update([
+                        'istracer' => true,
+                    ]);
+                }                
+            }
+
+         $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "";
         }
 
         if ($transStatus == true) {

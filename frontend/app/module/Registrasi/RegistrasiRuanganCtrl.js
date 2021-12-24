@@ -934,20 +934,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         + $scope.model.norec_pd
                     ).then(function (data) {
                         var datas = data.data;
+                        var client = new HttpClient();
+                        client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
+                            // do something with response
+                        });
                     })
                     //##end
 
                     // var fixUrlLaporan = cetakHelper.open("reporting/lapTracer?noRegistrasi=" + $state.params.noRegistrasi);
                     // window.open(fixUrlLaporan, '', 'width=800,height=600')
 
-                    //cetakan langsung service VB6 by grh    
-                    var client = new HttpClient();
+                    //cetakan langsung service VB6 by grh                        
                     // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
                     //     // do something with response
-                    // });
-                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
-                        // do something with response
-                    });
+                    // });                   
                 }
             }
 
