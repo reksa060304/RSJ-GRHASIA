@@ -263,6 +263,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.jenisKelamin = { id: result.objectjeniskelaminfk, jeniskelamin: result.jeniskelamin }
                     $scope.item.agama = { id: result.objectagamafk, agama: result.agama }
                     $scope.item.PenanggungJawab = result.penanggungjawab;
+                    $scope.item.Nik1 = result.nik1;
+                    $scope.item.Nik2 = result.nik2;
                     if (result.penanggungjawab)
                         $scope.item.cekPenanggungJawab = true
                     else
@@ -614,6 +616,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         'alamatdokter': $scope.item.alamatDokterPengirim != undefined ? $scope.item.alamatDokterPengirim : null,
                         'hambatan': $scope.item.hambatan != undefined ? $scope.item.hambatan.id : null,
                         'bahasaP': $scope.item.bahasaP != undefined ? $scope.item.bahasaP.id : null,
+                        'nik1': $scope.item.Nik1 != undefined ? $scope.item.Nik1 : null,
 
                         'penanggungjawab2': $scope.item.PenanggungJawab2 != undefined ? $scope.item.PenanggungJawab2 : null,
                         'hubungankeluargapj2': $scope.item.Hubungan2 != undefined ? $scope.item.Hubungan2 : null,
@@ -624,6 +627,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         'jeniskelaminpenanggungjawab2': $scope.item.jenisKelaminP2 != undefined ? $scope.item.jenisKelaminP2.jeniskelamin : null,
                         'umurpenanggungjawab2': $scope.item.UmurP2 != undefined ? $scope.item.UmurP2 : null,
                         'detailalamat': data2,
+                        'nik2': $scope.item.Nik2 != undefined ? $scope.item.Nik2 : null,
                     }
                     medifirstService.post('registrasi/save-pasien-fix', postJson)
                         .then(
