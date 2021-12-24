@@ -928,11 +928,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.tracerBon = function () {
                 if ($scope.item != undefined) {
-
+                    $scope.isRouteLoading = true;
                     //##save identifikasi tracer
                     medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
                         + $scope.model.norec_pd
                     ).then(function (data) {
+                        $scope.isRouteLoading = false;
                         var datas = data.data;
                         var client = new HttpClient();
                         client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {

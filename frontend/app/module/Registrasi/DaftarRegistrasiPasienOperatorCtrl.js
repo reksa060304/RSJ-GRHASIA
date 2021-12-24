@@ -854,23 +854,25 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				if ($scope.dataPasienSelected.noregistrasi != undefined) {
 					// var fixUrlLaporan = cetakHelper.open("reporting/lapTracer?noRegistrasi=" + $scope.item.pasienDaftar.noRegistrasi);
 					// window.open(fixUrlLaporan, '', 'width=800,height=600')
-
 					//##save identifikasi tracer
+					$scope.isRouteLoading = true;
 					medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
 						+ $scope.dataPasienSelected.norec
 					).then(function (data) {
 						var datas = data.data;
+						$scope.isRouteLoading = false;
+						var client = new HttpClient();
+						client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&noCm=' + $scope.dataPasienSelected.nocm +  '&view=false' , function (response) {
+							// do something with response
+						});
 					})
 					//##end
 
 					//cetakan langsung service VB6 by grh    
-					var client = new HttpClient();
+					
 					// client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&noCm=' + $scope.dataPasienSelected.nocm +  '&view=false' , function (response) {
 					// 	// do something with response
-					// });
-					client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&noCm=' + $scope.dataPasienSelected.nocm +  '&view=false' , function (response) {
-						// do something with response
-					});
+					// });					
 				}
 			}
 
