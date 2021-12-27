@@ -163,7 +163,7 @@ class LaboratoriumController extends ApiController
 
             ->select('ru.namaruangan','pd.noregistrasi','pd.norec as norec_pd',
                 'pd.tglregistrasi','pg.namalengkap as namadokter','kl.namakelas','apd.tglmasuk','apd.tglkeluar','apd.norec','pg.id as pgid',
-                'apd.objectruanganfk')
+                'apd.objectruanganfk','apd.objectkelasfk')
             ->where('pd.kdprofile',$idProfile)
             ->orderBy('apd.tglmasuk');
 
