@@ -904,7 +904,7 @@ class TagihanController  extends ApiController
                         }
                         if ($value->noresep != null) {
                             $namakelas = '';
-                            $ruanganTindakan = $value->ruanganfarmasi;
+                            $ruanganTindakan = $value->ruanganfarmasi . '     Resep No: ' . $value->noresep;
 //                    $jenisproduk = 'Resep';
                         }
                         if ($value->namaproduk == 'Biaya Administrasi') {

@@ -38,12 +38,12 @@ Public Sub openConnection()
 '   username = GetTxt2("Setting.ini", "Koneksi", "c")
 '   password = GetTxt2("Setting.ini", "Koneksi", "d")
 '   database = GetTxt2("Setting.ini", "Koneksi", "e")
-'  LOCAL GRHASIA
-'   host = "192.168.99.165"
+'  PUBLIC GRHASIA
+'   host = "103.131.104.56"
 '   Port = "3030"
 '   username = "postgres"
 '   password = "@@30Pr3scr1ption30@@"
-'   database = "rsj_grhasia"
+'   database = "rsj_grhasia_dev"
 '  LOCAL Transmedic
    host = "192.168.99.165"
    Port = "3030"
