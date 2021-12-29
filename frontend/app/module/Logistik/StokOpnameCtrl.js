@@ -12,6 +12,7 @@ define(['initialize'], function (initialize) {
             $scope.isSelected = false;
             $scope.selectedJenisProduk = [];
             $scope.selectedDetailJenis = [];
+            $scope.tombolSimpanVis = true;
             FormLoad();
 
             function FormLoad() {
@@ -253,12 +254,13 @@ define(['initialize'], function (initialize) {
                 //     $scope.popUp.close();
                 //     return
                 // }
-
+                $scope.tombolSimpanVis = false;
                 medifirstService.get("sysadmin/general/get-validasi-autorisasi-password?namaautorisasi="
                     + $scope.passwordSo
-                    + "&passcode=" + $scope.item.kataKunciPass, true).then(function (dat) {
-                        var datas = dat.data;
+                    + "&passcode=" + $scope.item.kataKunciPass, true).then(function (dat) {                        
+                        var datas = dat.data;                        
                         if (datas.message == "Password Salah") {
+                            $scope.isRouteLoading = false;
                             toastr.error(datas.message  + " Hubungi Pihak IT / SIMRS !", "Info ");
                             return;
                         } else {
@@ -268,10 +270,13 @@ define(['initialize'], function (initialize) {
                             saveStokOpname();
                             $scope.isRouteLoading = false;
                         }
-                    });
+                    }, function (error) {
+                        $scope.isRouteLoading = false;                        
+                    })
             }
 
             function saveStokOpname() {
+                $scope.isRouteLoading = true;
                 var dataArray = [];
                 for (var i = $scope.dataStokOpname._data.length - 1; i >= 0; i--) {
                     if ($scope.dataStokOpname._data[i].selisih != undefined)
@@ -318,10 +323,13 @@ define(['initialize'], function (initialize) {
                                 }
                             }
                         });
-
+                        $scope.tombolSimpanVis = true;
                         $scope.dataExcel = datas;
                         $scope.cari()
                         // refreshSelisih()                          
+                    }, function (error) {
+                        $scope.isRouteLoading = false;
+                        $scope.tombolSimpanVis = true;
                     })
                 } else {
                     window.messageContainer.error('Saldo Real barang belum di isi');
