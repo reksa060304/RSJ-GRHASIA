@@ -1990,7 +1990,7 @@ class RadiologiController extends ApiController
                 LEFT JOIN ruangan_m AS ru2 ON ru2.id = apd.objectruanganasalfk
                 LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
                 LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
-                INNER JOIN pegawai_m AS pg1 ON pg1.id = ppp.objectpegawaifk
+                LEFT JOIN pegawai_m AS pg1 ON pg1.id = ppp.objectpegawaifk
                 LEFT JOIN hasilradiologi_t AS hr ON hr.pelayananpasienfk = pp.norec AND hr.statusenabled = true
                 WHERE pd.kdprofile = $kdProfile AND pd.statusenabled = true AND apd.objectruanganfk = 576
                       AND pro.namaproduk IS NOT NULL AND br.norec IS NULL
