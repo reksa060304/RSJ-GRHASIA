@@ -1508,7 +1508,7 @@ class RadiologiController extends ApiController
         $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
                 op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
                 hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,
-                pps.norec as norec_pp
+                pps.norec as norec_pp, so.keteranganlainnya
                 from orderpelayanan_t op
                 left join strukorder_t as so on so.norec=op.strukorderfk
                 INNER JOIN produk_m as pr on pr.id=op.objectprodukfk
@@ -1547,7 +1547,7 @@ class RadiologiController extends ApiController
                 and hnp.objectjenispelayananfk=$jp
                 and prd.id='$item->prid'
                 and hnp.objectpenjaminfk is null"));
-
+            $keteranganlainnya=$item->keteranganlainnya;
             $result[] = array(
                 'norec_op' => $item->norec_op,
                 'norec_pp' => $item->norec_pp,
@@ -1567,6 +1567,7 @@ class RadiologiController extends ApiController
 
         $result=array(
             'message' =>  'inhuman',
+            'keteranganlainnya' => $keteranganlainnya,         
             'data' =>  $result,
 
         );

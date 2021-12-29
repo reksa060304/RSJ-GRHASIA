@@ -540,15 +540,25 @@
                 </div>
             </div>
             <div class="grid_12">
-                <div class="grid_6">
-                      <div class="grid_12">
+                <div class="grid_12">
+                      <div class="grid_6">
                         <label c-label item="item " c-label-text="Catatan "></label>
                       </div>
-                      <div class="grid_12">
+                      <div class="grid_6">
+                        <label c-label item="item " c-label-text="Keterangan Order "></label>
+                      </div>
+                      <div class="grid_6">
                         <textarea class="k-textbox" ng-model="item.catatanLab" maxlength="8000" ng-disabled="isVerif"
                             style="height: 50px; width: 100%;margin-top:5px;"></textarea>
                         <p class="length-textarea">
                             8000/{{item.catatanLab ? item.catatanLab.length : 0}}
+                        </p>
+                    </div>
+                    <div class="grid_6">
+                        <textarea class="k-textbox" ng-model="item.keteranganLab" maxlength="8000" ng-disabled="isVerif"
+                            style="height: 50px; width: 100%;margin-top:5px;"></textarea>
+                        <p class="length-textarea">
+                            8000/{{item.keteranganLab ? item.keteranganLab.length : 0}}
                         </p>
                     </div>
                  </div>
