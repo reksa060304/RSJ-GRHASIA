@@ -253,8 +253,7 @@ define(['initialize'], function (initialize) {
                 //     $scope.isRouteLoading = false;
                 //     $scope.popUp.close();
                 //     return
-                // }
-                $scope.tombolSimpanVis = false;
+                // }                
                 medifirstService.get("sysadmin/general/get-validasi-autorisasi-password?namaautorisasi="
                     + $scope.passwordSo
                     + "&passcode=" + $scope.item.kataKunciPass, true).then(function (dat) {                        
@@ -276,6 +275,7 @@ define(['initialize'], function (initialize) {
             }
 
             function saveStokOpname() {
+                $scope.tombolSimpanVis = false;
                 $scope.isRouteLoading = true;
                 var dataArray = [];
                 for (var i = $scope.dataStokOpname._data.length - 1; i >= 0; i--) {
@@ -323,7 +323,7 @@ define(['initialize'], function (initialize) {
                                 }
                             }
                         });
-                        $scope.tombolSimpanVis = true;
+                        // $scope.tombolSimpanVis = true;
                         $scope.dataExcel = datas;
                         $scope.cari()
                         // refreshSelisih()                          
