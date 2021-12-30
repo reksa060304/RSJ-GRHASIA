@@ -1508,7 +1508,7 @@ class RadiologiController extends ApiController
         $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
                 op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
                 hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,
-                pps.norec as norec_pp
+                pps.norec as norec_pp, so.keteranganlainnya
                 from orderpelayanan_t op
                 left join strukorder_t as so on so.norec=op.strukorderfk
                 INNER JOIN produk_m as pr on pr.id=op.objectprodukfk
@@ -1547,7 +1547,7 @@ class RadiologiController extends ApiController
                 and hnp.objectjenispelayananfk=$jp
                 and prd.id='$item->prid'
                 and hnp.objectpenjaminfk is null"));
-
+            $keteranganlainnya=$item->keteranganlainnya;
             $result[] = array(
                 'norec_op' => $item->norec_op,
                 'norec_pp' => $item->norec_pp,
@@ -1567,6 +1567,7 @@ class RadiologiController extends ApiController
 
         $result=array(
             'message' =>  'inhuman',
+            'keteranganlainnya' => $keteranganlainnya,         
             'data' =>  $result,
 
         );
@@ -1989,7 +1990,7 @@ class RadiologiController extends ApiController
                 LEFT JOIN ruangan_m AS ru2 ON ru2.id = apd.objectruanganasalfk
                 LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
                 LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
-                INNER JOIN pegawai_m AS pg1 ON pg1.id = ppp.objectpegawaifk
+                LEFT JOIN pegawai_m AS pg1 ON pg1.id = ppp.objectpegawaifk
                 LEFT JOIN hasilradiologi_t AS hr ON hr.pelayananpasienfk = pp.norec AND hr.statusenabled = true
                 WHERE pd.kdprofile = $kdProfile AND pd.statusenabled = true AND apd.objectruanganfk = 576
                       AND pro.namaproduk IS NOT NULL AND br.norec IS NULL

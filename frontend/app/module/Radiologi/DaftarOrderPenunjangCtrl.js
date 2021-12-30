@@ -641,6 +641,8 @@ define(['initialize'], function (initialize) {
                     + "&objectkelasfk=" + $scope.dataSelected.objectkelasfk, true).then(function (dat) {
 
                         var dataSource = dat.data.data;
+                        //keterangan order beda peruntukan dengan catatan lab yg akan dikirim ke LIS
+                        $scope.item.keteranganLab = dat.data.keteranganlainnya == "undefined"?"":dat.data.keteranganlainnya;
                         for (var i = 0; i < dataSource.length; i++) {
                             dataSource[i].statCheckbox = false;
                             dataSource[i].no = i + 1
