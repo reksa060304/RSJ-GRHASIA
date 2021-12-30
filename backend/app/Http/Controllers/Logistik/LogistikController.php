@@ -403,7 +403,8 @@ class LogistikController extends ApiController{
                 $data = $data->whereRaw = (" pr.kdproduk ilike '".$request['KdSirs1']."%'");
             }
         }
-        $data = $data->where('spd.qtyproduk','>', 0);
+        //20211230 permintaan user grhasia
+        //$data = $data->where('spd.qtyproduk','>', 0);
         if(isset($request['jmlRows']) && $request['jmlRows']!="" && $request['jmlRows']!="undefined"){
             $data=$data->take($request['jmlRows']);
         }
