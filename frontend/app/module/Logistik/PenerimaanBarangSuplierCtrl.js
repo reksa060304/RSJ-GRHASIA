@@ -1945,7 +1945,9 @@ define(['initialize'], function (initialize) {
                     .ok('Ya')
                 $mdDialog.show(confirm).then(function () {
                     $scope.SavePenerimaan();
-                })
+                    $state.go('DaftarPenerimaanBarangSuplier')
+                })  
+                   
 
             }
             var HttpClient = function () {
