@@ -1192,7 +1192,7 @@ class TindakanController extends ApiController
                 ->where('prd.namaproduk','ilike','%'.$req['filter']['filters'][0]['value'].'%' );
         }
         $data = $data->orderBy('prd.namaproduk', 'ASC');
-        $data = $data->take(15);
+        $data = $data->take(100);
         $data = $data->get();
         // $result = array(
         //     'data' => $data,
