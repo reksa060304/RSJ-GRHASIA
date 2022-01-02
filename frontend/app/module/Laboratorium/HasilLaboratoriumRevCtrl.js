@@ -2,6 +2,7 @@ define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('HasilLaboratoriumRevCtrl', ['$scope', '$state', 'MedifirstService', 'CacheHelper',
         function ($scope, $state, medifirstService, cacheHelper) {
+            //test 
 
             $scope.isRouteLoading = false;
             $scope.norecPD = $state.params.norecPd
@@ -266,6 +267,8 @@ define(['initialize'], function (initialize) {
                                                 }else{
                                                     e.items[0].flag ="Y"         
                                                 }
+                                            }else if(HasilInput.indexOf("*") >= 0){                                                 
+                                                    e.items[0].flag ="Y"                                                           
                                             }else if(HasilInput.indexOf("<") >= 0){
                                                 let a = parseFloat(e.items[0].nilaimin)
                                                 let b = parseFloat(e.items[0].nilaimax)
@@ -318,38 +321,42 @@ define(['initialize'], function (initialize) {
                                                 
                                             }
                                             else{
-                                                if(e.items[0].nilaimin != null){
-                                                    if(e.items[0].tipedata == 2)
-                                                    {
-                                                        let a = (e.items[0].nilaimin).toUpperCase()
-                                                        let b = (e.items[0].nilaimax).toUpperCase()
-                                                        let hssl = ((e.items[0].hasil).trim()).toUpperCase()
-                                                        if(hssl >= a && hssl <= b){
-                                                            e.items[0].flag ="N"           
-                                                        }else{
-                                                            e.items[0].flag ="Y"         
-                                                        } 
-                                                    }else
-                                                    {
-                                                        let a = parseFloat(e.items[0].nilaimin)
-                                                        let b = parseFloat(e.items[0].nilaimax)
-                                                        let hssl = parseFloat(e.items[0].hasil )
-                                                        if(hssl >= a && hssl <= b){
+                                                if(HasilInput.indexOf("*") >= 0){                                                
+                                                    e.items[0].flag ="Y"
+                                                }else{
+                                                    if(e.items[0].nilaimin != null){
+                                                        if(e.items[0].tipedata == 2)
+                                                        {
+                                                            let a = (e.items[0].nilaimin).toUpperCase()
+                                                            let b = (e.items[0].nilaimax).toUpperCase()
+                                                            let hssl = ((e.items[0].hasil).trim()).toUpperCase()
+                                                            if(hssl >= a && hssl <= b){
+                                                                e.items[0].flag ="N"           
+                                                            }else{
+                                                                e.items[0].flag ="Y"         
+                                                            } 
+                                                        }else
+                                                        {
+                                                            let a = parseFloat(e.items[0].nilaimin)
+                                                            let b = parseFloat(e.items[0].nilaimax)
+                                                            let hssl = parseFloat(e.items[0].hasil )
+                                                            if(hssl >= a && hssl <= b){
+                                                                e.items[0].flag ="N"           
+                                                            }else{
+                                                                e.items[0].flag ="Y"         
+                                                            }
+                                                        }
+                                                        
+                                                    }else{
+                                                        let hssl = (e.items[0].hasil).trim() 
+                                                        let nilaistring = e.items[0].nilaitext
+                                                        nilaistring = nilaistring.toUpperCase();
+                                                        hssl = hssl.toUpperCase();
+                                                        if(hssl == nilaistring){
                                                             e.items[0].flag ="N"           
                                                         }else{
                                                             e.items[0].flag ="Y"         
                                                         }
-                                                    }
-                                                    
-                                                }else{
-                                                    let hssl = (e.items[0].hasil).trim() 
-                                                    let nilaistring = e.items[0].nilaitext
-                                                    nilaistring = nilaistring.toUpperCase();
-                                                    hssl = hssl.toUpperCase();
-                                                    if(hssl == nilaistring){
-                                                        e.items[0].flag ="N"           
-                                                    }else{
-                                                        e.items[0].flag ="Y"         
                                                     }
                                                 }
                                             }
