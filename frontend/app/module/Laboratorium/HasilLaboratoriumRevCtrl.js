@@ -191,9 +191,19 @@ define(['initialize'], function (initialize) {
                         $scope.isRouteLoading = false;
                         if (data.statResponse == true && data.data.data.length > 0) {
                             // sourceGrid = data.data.data
-
+                            if( data.data.dokter.id!=null){
+                               if($scope.ListDataPegawai==undefined){
+                                   $scope.ListDataPegawai =[{id: data.data.dokter.id,namalengkap:  data.data.dokter.namalengkap} ]
+                               } 
+                               $scope.item.DataPegawai = {id: data.data.dokter.id,namalengkap:  data.data.dokter.namalengkap} 
+                            }
+                            
                             for (let i = 0; i < data.data.data.length; i++) {
                                 const element = data.data.data[i];
+                           
+                               
+                                if(element.keterangan)
+                                    $scope.item.catatan = element.keterangan
                             //     if (element.hasil != null) {
                             //         if (parseFloat(element.hasil) <= parseFloat(element.nilaimax)
                                         // && parseFloat(element.hasil) >= parseFloat(element.nilaimin)) {
@@ -546,6 +556,7 @@ define(['initialize'], function (initialize) {
 
             $scope.simpan = function () {
                 var dataArray = [];
+
                 for (var i = $scope.resultGrids._data.length - 1; i >= 0; i--) {
                     if ($scope.resultGrids._data[i].hasil != null)
                         dataArray.push({
@@ -555,6 +566,8 @@ define(['initialize'], function (initialize) {
                             "flag": $scope.resultGrids._data[i].flag,
                             "detailpemeriksaan": $scope.resultGrids._data[i].detailpemeriksaan,
                             "norecpelayanan" : $scope.resultGrids._data[i].norecpp,
+                            "catatan" :$scope.item.catatan?$scope.item.catatan:null,
+                            "dokterfk" :$scope.item.DataPegawai?$scope.item.DataPegawai.id:null
                         });
                 }
 

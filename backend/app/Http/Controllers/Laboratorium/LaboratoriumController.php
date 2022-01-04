@@ -883,7 +883,7 @@ class LaboratoriumController extends ApiController
         $data = DB::select(DB::raw("SELECT pp.noregistrasifk as norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk  ,maps.detailpemeriksaan,maps.memohasil,
                 maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.tipedata,nn.nilaimin,nn.nilaimax,hh.hasil,
                 maps.id as map_id,hh.norec as norec_hasil,maps.nourutjenispemeriksaan,maps.nourutdetail,pp.norec as norecPP,nn.nilaimin || '-' || nn.nilaimax as nilainormalstr,
-                hh.flag,nn.id as idnn,maps2.jeniskelaminfk
+                hh.flag,nn.id as idnn,maps2.jeniskelaminfk,hh.pegawaifk,hh.keterangan
                 FROM pelayananpasien_t  as pp
                 inner join produk_m as prd on prd.id = pp.produkfk
                 inner join detailjenisproduk_m as djp on djp.id = prd.objectdetailjenisprodukfk
@@ -898,8 +898,20 @@ class LaboratoriumController extends ApiController
                  and maps.detailpemeriksaan =hh.detailpemeriksaan 
                 where   pp.norec in ($r[norec])  
                 order by  maps.nourutjenispemeriksaan,maps.nourutdetail asc"));
+        $id = null;
+        $nama= null;
+        foreach($data as $d){
+            if($d->pegawaifk!=null){
+                $id = $d->pegawaifk;
+            }
+        }
+        if($id!=null){
+            $nama = DB::table('pegawai_m')->where('id',$id)->first()->namalengkap;
+
+        }
         $result =  array(
             'data' => $data, 
+            'dokter' => array('id'=>$id,'namalengkap'=>$nama)
         );        
         return $this->respond($result);  
     }
@@ -931,7 +943,8 @@ class LaboratoriumController extends ApiController
                             [
                                 'hasil' => $value['hasil'],
                                 'flag' => $value['flag'],
-                            
+                                'pegawaifk' => $value['dokterfk'],
+                                'keterangan' => $value['catatan'],
                             ]
                         );
                 }else
@@ -941,13 +954,14 @@ class LaboratoriumController extends ApiController
                     $h->kdprofile = $idProfile;
                     $h->statusenabled = true;
                     $h->tglhasil = date('Y-m-d H:i:s');
-                    $h->pegawaifk = $this->getCurrentUserID();
+                    $h->pegawaifk = $value['dokterfk'];
                     $h->hasil = $value['hasil'];
                     $h->noregistrasifk = $value['noregistrasifk'];
                     $h->produkfk = $value['produkfk'];
                     $h->flag = $value['flag'];
                     $h->detailpemeriksaan = $value['detailpemeriksaan'];
                     $h->norecpelayanan = $value['norecpelayanan'];
+                    $h->keterangan = $value['catatan'];
                     $h->save();
                 }
     
