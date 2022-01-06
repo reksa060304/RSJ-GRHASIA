@@ -516,6 +516,14 @@ class ResepElektronikController extends ApiController
     public function saveStatusResepElektronik(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+                where lu.kdprofile = $idProfile and lu.id=:idLoginUser"),
+            array(
+                'idLoginUser' => $dataLogin['userData']['id'],
+            )
+        );
         DB::beginTransaction();
         $dataReq = $request->all();
         try{
@@ -546,7 +554,8 @@ class ResepElektronikController extends ApiController
                     ->update([
                             'status' => $request['statusorder'],
                             'namalengkapambilresep' => $request['namapengambil'],
-                            'tglambilresep' => $request['tglambil']
+                            'tglambilresep' => $request['tglambil'],
+                            'namapemberi' => $request['namapengambil'] != "" ? $dataPegawaiUser[0]->namalengkap : "",
                         ]
                     );
 
@@ -561,6 +570,8 @@ class ResepElektronikController extends ApiController
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errObj = $e;
+            $errMsg = $e->getMessage();
         }
         
         $transMessage = "Save Status";
@@ -578,6 +589,9 @@ class ResepElektronikController extends ApiController
             $result = array(
                 "status" => 400,
                 "by" => 'as@epic',
+                "errObj" => $errObj,
+                "errMsg" => $errMsg,
+                
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
