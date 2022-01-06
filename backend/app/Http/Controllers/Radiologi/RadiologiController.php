@@ -1820,6 +1820,9 @@ class RadiologiController extends ApiController
                 $dataSO->pelayananpasienfk = $request['pelayananpasienfk'];
                 $dataSO->noregistrasifk = $request['norec_pd'];
                 $dataSO->tanggal = $request['tglinput'];
+                if(isset($request['jumlahpengulanganfoto']) && $request['jumlahpengulanganfoto']!="" && $request['jumlahpengulanganfoto']!="undefined"){
+                    $dataSO->jumlahpengulanganfoto = $request['jumlahpengulanganfoto'];
+                }
 
                 // adding random time max 2 h 43 m
                 $start_time = date($request['tglpelayanan']);
@@ -1857,6 +1860,9 @@ class RadiologiController extends ApiController
                 $dataSO->nofoto = $request['nofoto'];
             }
             $dataSO->keterangan = $request['keterangan'];
+            if(isset($request['jumlahpengulanganfoto']) && $request['jumlahpengulanganfoto']!="" && $request['jumlahpengulanganfoto']!="undefined"){
+                $dataSO->jumlahpengulanganfoto = $request['jumlahpengulanganfoto'];
+            }
             $dataSO->save();
 
             $transStatus = 'true';
@@ -1895,7 +1901,9 @@ class RadiologiController extends ApiController
         $idProfile = (int) $kdProfile;
         $data = DB::table('hasilradiologi_t as ar')
             ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'ar.pegawaifk')
-            ->select('ar.*','pg.namalengkap')
+            ->leftjoin('pelayananpasien_t as pp', 'pp.norec', '=', 'ar.pelayananpasienfk')
+            ->leftjoin('strukorder_t as so', 'so.norec', '=', 'pp.strukorderfk')
+            ->select('ar.*','pg.namalengkap','so.keteranganlainnya')
             ->where('ar.kdprofile', $idProfile)
             ->where('ar.statusenabled',true)
             ->where('ar.pelayananpasienfk',$request['norec_pp'])
