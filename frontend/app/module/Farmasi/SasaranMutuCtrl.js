@@ -83,7 +83,7 @@ define(['initialize'], function(initialize) {
 					"title": "Tanggal masuk"
 				}, {
 					"field": "tglselesai",
-					"title": "Tgl Selesai"
+					"title": "Tgl Penyerahan Obat"
 				}, {
 					"field": "waktulayanan",
 					"title": "Waktu Layanan"
