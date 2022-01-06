@@ -6925,6 +6925,7 @@ class LaporanPengunjungController extends ApiController
     public function getLaporanPengunjungPemeriksaan(Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data = \DB::table('antrianpasiendiperiksa_t as apd')
+            ->join('pelayananpasien_t as pp','apd.norec','=','pp.noregistrasifk')
             ->join('pasiendaftar_t as pd','pd.norec','=','apd.noregistrasifk')
             ->JOIN ('pasien_m as ps','ps.id','=','pd.nocmfk')
             ->JOIN ('jeniskelamin_m as jk','jk.id', '=','ps.objectjeniskelaminfk')
@@ -6956,10 +6957,12 @@ class LaporanPengunjungController extends ApiController
             
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $data = $data->where('apd.tglregistrasi', '>=', $request['tglAwal']);
+            //$data = $data->where('apd.tglregistrasi', '>=', $request['tglAwal']);
+            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
         }
         if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $data = $data->where('apd.tglregistrasi', '<=', $request['tglAkhir']);
+            //$data = $data->where('apd.tglregistrasi', '<=', $request['tglAkhir']);
+            $data = $data->where('pp.tglpelayanan', '<=', $request['tglAkhir']);
         }
         if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
             $data = $data->where('rg.id', '=', $request['ruanganId']);
