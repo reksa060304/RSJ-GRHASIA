@@ -6928,28 +6928,28 @@ class LaporanPengunjungController extends ApiController
             ->join('pelayananpasien_t as pp','apd.norec','=','pp.noregistrasifk')
             ->join('pasiendaftar_t as pd','pd.norec','=','apd.noregistrasifk')
             ->JOIN ('pasien_m as ps','ps.id','=','pd.nocmfk')
-            ->JOIN ('jeniskelamin_m as jk','jk.id', '=','ps.objectjeniskelaminfk')
-            ->JOIN ('agama_m as ag','ag.id','=','ps.objectagamafk')
+            ->leftjoin ('jeniskelamin_m as jk','jk.id', '=','ps.objectjeniskelaminfk')
+            ->leftjoin ('agama_m as ag','ag.id','=','ps.objectagamafk')
             ->leftjoin ('pendidikan_m as pdd','pdd.id','=','ps.objectpendidikanfk')
-            ->join ('pekerjaan_m as pkr','pkr.id','=','ps.objectpekerjaanfk')
-            ->join ('alamat_m as alm','alm.nocmfk','=','ps.id')
-            ->join ('desakelurahan_m as dsk','dsk.id','=','alm.objectdesakelurahanfk')
-            ->join ('kotakabupaten_m as kkb','kkb.id','=','alm.objectkotakabupatenfk')
+            ->leftjoin ('pekerjaan_m as pkr','pkr.id','=','ps.objectpekerjaanfk')
+            ->leftjoin ('alamat_m as alm','alm.nocmfk','=','ps.id')
+            ->leftjoin ('desakelurahan_m as dsk','dsk.id','=','alm.objectdesakelurahanfk')
+            ->leftjoin ('kotakabupaten_m as kkb','kkb.id','=','alm.objectkotakabupatenfk')
             ->leftjoin ('statusperkawinan_m as sp','sp.id','=','objectstatusperkawinanfk')
             ->leftjoin ('pegawai_m as pg','pg.id','=','pd.objectdokterpemeriksafk')
             ->join ('ruangan_m as rg','rg.id','=','apd.objectruanganfk')
-            ->join('logginguser_t AS lg',function($join)
+            ->leftjoin('logginguser_t AS lg',function($join)
             {
-                $join->on('lg.noreff','=', 'pd.norec')
-                ->where('lg.jenislog','=','Pendaftaran Pasien');
+                $join->on('lg.noreff','=', 'pp.norec')//'pd.norec')
+                ->where('lg.jenislog','=','Input Tindakan');//'Pendaftaran Pasien');
             })
             ->leftJoin('loginuser_s AS lu','lu.id','=','lg.objectloginuserfk')
             ->leftJoin('pegawai_m AS pg1','pg1.id','=','lu.objectpegawaifk')
             ->leftJoin('kelompokpasien_m as klp','klp.id','=','pd.objectkelompokpasienlastfk')            
-            ->select('pd.norec','pd.noregistrasi','pd.tglregistrasi As tglregistrasiLama',DB::raw('min(pp.tglpelayanan) As tglregistrasi'),'ps.nocm','ps.namapasien','ps.nohp','ps.tgllahir','jk.jeniskelamin','ag.agama','pdd.pendidikan','pkr.pekerjaan','alm.alamatlengkap',
+            ->select('pd.norec','pd.noregistrasi','pd.tglregistrasi As tglregistrasiLama',DB::raw('pp.tglpelayanan::date'),DB::raw('min(pp.tglpelayanan) As tglregistrasi'),'ps.nocm','ps.namapasien','ps.nohp','ps.tgllahir','jk.jeniskelamin','ag.agama','pdd.pendidikan','pkr.pekerjaan','alm.alamatlengkap',
                         'dsk.namadesakelurahan','alm.kecamatan','kkb.namakotakabupaten','sp.statusperkawinan','pd.statuspasien','rg.namaruangan','pg.namalengkap','ps.tgldaftar',
                         'klp.kelompokpasien','pd.statuspasien','apd.noantrian','pg1.namalengkap AS user','apd.objectruanganfk','jk.reportdisplay')
-            ->groupBy('pd.norec','pd.noregistrasi','pd.tglregistrasi','ps.nocm','ps.namapasien','ps.nohp','ps.tgllahir','jk.jeniskelamin','ag.agama','pdd.pendidikan','pkr.pekerjaan','alm.alamatlengkap',
+            ->groupBy('pd.norec','pd.noregistrasi','pd.tglregistrasi',DB::raw('pp.tglpelayanan::date'),'ps.nocm','ps.namapasien','ps.nohp','ps.tgllahir','jk.jeniskelamin','ag.agama','pdd.pendidikan','pkr.pekerjaan','alm.alamatlengkap',
                       'dsk.namadesakelurahan','alm.kecamatan','kkb.namakotakabupaten','sp.statusperkawinan','pd.statuspasien','rg.namaruangan','pg.namalengkap','ps.tgldaftar',
                       'klp.kelompokpasien','pd.statuspasien','apd.noantrian','pg1.namalengkap','apd.objectruanganfk','jk.reportdisplay')
             ->where('pd.statusenabled', true)

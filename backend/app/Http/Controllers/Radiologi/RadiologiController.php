@@ -748,6 +748,14 @@ class RadiologiController extends ApiController
             ->whereIn('pp.noregistrasifk',$apdnorec)
             ->orderBy('hh.tanggal','desc')
             ->get();
+        $hasilRadBlmAdaExpertise = DB::table('pelayananpasien_t as pp')
+            ->join('hasilradiologi_t as hh','pp.norec','=','hh.pelayananpasienfk')
+            ->distinct()
+            ->select('hh.tanggal', 'pp.noregistrasifk as norec_apd')
+            ->whereIn('pp.noregistrasifk',$apdnorec)
+            ->where('hh.norec',null)
+            ->orderBy('hh.tanggal','desc')
+            ->get();
         $hasilLab = DB::table('pelayananpasien_t as pp')
             ->join('hasillaboratorium_t as hh','pp.norec','=','hh.norecpelayanan')
             ->distinct()
@@ -774,6 +782,16 @@ class RadiologiController extends ApiController
                 if($data[$i]->norec_apd ==  $v2->norec_apd){
                     $data[$i]->expertise =true;
                     $data[$i]->tglexpertise =$v2->tanggal;
+                }
+            }
+            $i = $i + 1;
+        }
+        
+        $i=0;
+        foreach ($data as $key => $v) {         
+            foreach ($hasilRadBlmAdaExpertise as $key2 => $v2) {
+                if($data[$i]->norec_apd ==  $v2->norec_apd){
+                    $data[$i]->expertise =false;                    
                 }
             }
             $i = $i + 1;
