@@ -1983,7 +1983,7 @@ class RadiologiController extends ApiController
                        CASE WHEN pg.namalengkap IS NULL THEN '-' ELSE pg.namalengkap END AS dokterdpjp,
                        CASE WHEN pg1.namalengkap IS NULL THEN '-' ELSE pg1.namalengkap END AS dokter,
                        hr.tanggal as tglexpertise,
-                       to_char(hr.tanggalreport, 'YYYY-MM-DD HH24:MI:SS') as tanggalreport
+                       to_char(hr.tanggalreport, 'YYYY-MM-DD HH24:MI:SS') as tanggalreport,hr.jumlahpengulanganfoto
                 FROM pasiendaftar_t AS pd
                 INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
                 INNER JOIN pelayananpasien_t AS pp ON pp.noregistrasifk = apd.norec
