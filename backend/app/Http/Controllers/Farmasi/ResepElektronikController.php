@@ -54,6 +54,8 @@ class ResepElektronikController extends ApiController
         $departemenIdOrder = '';
         $statusIdOrder = '';
         $statusIdResep = '';
+        $checkSOPasienRanap='';
+        $checkSOPasienRajal='';
         if(isset($request['nocm']) && $request['nocm']!="" && $request['nocm']!="undefined"){
             $nocmOrder =  "and ps.nocm ilike '%".$request['nocm']."%'";
         }
@@ -83,8 +85,38 @@ class ResepElektronikController extends ApiController
             foreach ( $arrStatus as $item){
                 $kode[] = (int) $item;
             }
-            $statusIdOrder = " and so.statusorder in ". $kode;
-            $statusIdResep = " and sr.status in ". $kode;
+            /* 
+            ketika order/eresep dibikin... di strukorder statusnya 0, tp di strukresep blm ada
+            $scope.listStatus = [
+                { id: 0, status: 'Menunggu' }, //strukorder pas dibikin 0, tp pas diverif jadi 5
+                { id: 1, status: 'Produksi' },
+                { id: 2, status: 'Packaging' },
+                { id: 3, status: 'Selesai' },
+                { id: 4, status: 'Penyerahan Obat' },
+                { id: 5, status: 'Verifikasi' },//status strukresep ketika baru diverif/simpan entry obat => 0
+            
+            */
+            // $statusIdOrder = " and so.statusorder in ". $kode;
+            // $statusIdResep = " and sr.status in ". $kode;
+            $statusIdOrder = " and so.statusorder in (".$request['statusId'].")";//struk order udah sesuai dengan frontend
+            //status strukresep untuk yg verif 0, klo menunggu ga ada status/null..makanya klo user nyari yg menunggu atau id=0 replace jadi 999(sengaja angka yg ga ada)
+            $statusIdResep = " and sr.status in (".  str_replace("5","0",str_replace("0","999", $request['statusId'])).")";
+ 
+        }
+        //checkPasienRanap
+        if(isset($request['checkPasienRanap']) && $request['checkPasienRanap']!="" && $request['checkPasienRanap']!="undefined"){
+            if($request['checkPasienRanap']=="true"){
+                $checkSOPasienRanap = " and ru.objectdepartemenfk = 16 ";
+            }
+        }
+        if(isset($request['checkPasienRajal']) && $request['checkPasienRajal']!="" && $request['checkPasienRajal']!="undefined"){
+            if($request['checkPasienRajal'] == "true" && $checkSOPasienRanap == ""){
+                $checkSOPasienRanap = " and ru.objectdepartemenfk <> 16 ";
+                
+            }else{
+                $checkSOPasienRanap = " ";
+            }
+
         }
 
         $data = DB::select(DB::raw("
@@ -117,6 +149,7 @@ class ResepElektronikController extends ApiController
                  $depoIdIdOrder        
                  $departemenIdOrder
                  $statusIdOrder
+                 $checkSOPasienRanap
                 
                  UNION ALL
                  
@@ -148,7 +181,8 @@ class ResepElektronikController extends ApiController
                 $ruanganIdResep      
                 $depoIdIdResep 
                 $departemenIdOrder
-                $statusIdResep        
+                $statusIdResep  
+                $checkSOPasienRanap      
         "));
 
         $status ='';

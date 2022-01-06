@@ -121,6 +121,23 @@
                         class="fa fa-search"></i>CARI</button>              
             </div> -->
         </div>
+        <div class="grid_12">
+            <div class="grid_10" style="margin-top:5px">
+                
+            </div>
+            <div class="grid_1" style="margin-top:0px">
+                <input type="checkbox" class="k-checkbox" ng-model="checkPasienRajal" id="checkPasienRajal"
+                        >
+                    <label class="k-checkbox-label" for="checkPasienRajal"><b> &nbsp; Pasien Rajal</b></label>
+                
+            </div>
+            <div class="grid_1" style="margin-top:0px">
+                <input type="checkbox" class="k-checkbox" ng-model="checkPasienRanap" id="checkPasienRanap"
+                        >
+                    <label class="k-checkbox-label" for="checkPasienRanap"><b> &nbsp; Pasien Ranap</b></label>
+                
+            </div>
+        </div>
     </div>
 </div>
 <div class="panel panel-default">
@@ -129,7 +146,7 @@
         <div class="grid_12">
             <!-- <kendo-grid k-groupable="'true'" k-ng-model="item" k-data-source="patienGrids" k-selectable="'row'"
                 k-sortable="'true'" k-columns="arrColumnGridResepElektronik" ng-dblclick="detailVerif()"></kendo-grid> -->
-                      <kendo-grid id="kGrid" data-source="patienGrids"  k-groupable="'true'" k-selectable="'row'" options="arrColumnGridResepElektronik"
+                      <kendo-grid id="kGrid" data-source="patienGrids"  k-resizable="'true'" k-groupable="'true'" k-selectable="'row'" options="arrColumnGridResepElektronik"
                     k-sortable="'true'" k-ng-model="item" ng-click="KlikGrids(item)" ng-dblclick="detailVerif()">
             </kendo-grid>
         </div>
