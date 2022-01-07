@@ -234,7 +234,12 @@ class TindakanController extends ApiController
             if(isset( $item['hargadijamin'])){
                 $PelPasien->hargadijamin =  $item['hargadijamin'];
             }
+            if(isset($item['norec_resep'])){
+                $PelPasien->strukresepfk = $item['norec_resep'];
+                $PelPasien->status =  'tarif service';
+            }
 
+            
             
             $PelPasien->save();
             $PPnorec = $PelPasien->norec;

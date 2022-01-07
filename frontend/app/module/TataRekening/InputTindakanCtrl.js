@@ -23,7 +23,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
         cacheHelper.set('InputTindakanPelayananDokterRevCtrl',undefined)
       }
-
+      var norec_resep = null
+      if(cacheHelper.get('norec_resep_qwertyuio') != undefined ){
+          norec_resep = cacheHelper.get('norec_resep_qwertyuio')
+          cacheHelper.set('norec_resep_qwertyuio',undefined) 
+      }
 
       var cookie = document.cookie.split(';');
       cookie = cookie[0].split('=');
@@ -1013,6 +1017,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
               "nilaicito": nilaijasaCito,
               "istarifdetault": e.istarifdetault,
               "hargadijamin": e.hargadijamin,
+              "norec_resep" :norec_resep?norec_resep:null
             });
 
 
