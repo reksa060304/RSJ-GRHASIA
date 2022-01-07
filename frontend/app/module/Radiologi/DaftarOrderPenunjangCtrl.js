@@ -48,16 +48,20 @@ define(['initialize'], function (initialize) {
                 // toastr.info('No Order : ' + data.noorder + ' dipilih ', 'Info')
                 $scope.dataSelected = data;
                 medifirstService.get("radiologi/get-acc-number?noOrder=" + $scope.dataSelected.noorder)
-                    .then(function (e) {
-                        $scope.dataRisOrder = e.data.data[0]
-
+                    .then(function (e) {                        
+                        if (e.data.data.length > 0) {
+                            $scope.dataRisOrder = e.data.data[0];
+                        }                       
                     })
                 // if ($scope.dataSelected.norec_apd!=null){
                 //     $scope.showBuktiLayanan=true
                 // }
                 medifirstService.get("radiologi/get-antrian?noregistrasi=" + $scope.dataSelected.noregistrasi
                     + "&noorder=" + $scope.dataSelected.noorder + "&idruangan=" + $scope.dataSelected.objectruangantujuanfk).then(function (e) {
-                        $scope.norec_apd = e.data.data[0].norec
+                        // $scope.norec_apd = e.data.data[0].norec                        
+                        if (e.data.data.length > 0) {
+                            $scope.norec_apd = e.data.data[0].norec
+                        }  
                     })
             }
 
@@ -637,6 +641,8 @@ define(['initialize'], function (initialize) {
                     + "&objectkelasfk=" + $scope.dataSelected.objectkelasfk, true).then(function (dat) {
 
                         var dataSource = dat.data.data;
+                        //keterangan order beda peruntukan dengan catatan lab yg akan dikirim ke LIS
+                        $scope.item.keteranganLab = dat.data.keteranganlainnya == "undefined"?"":dat.data.keteranganlainnya;
                         for (var i = 0; i < dataSource.length; i++) {
                             dataSource[i].statCheckbox = false;
                             dataSource[i].no = i + 1
@@ -1018,7 +1024,22 @@ define(['initialize'], function (initialize) {
                     // var fixUrlLaporan = cetakHelper.open("reporting/lapBuktiPelayanan?noRegistrasi=" + $scope.item.pasien.pasienDaftar.noRegistrasi);
                     // window.open(fixUrlLaporan, '', 'width=800,height=600')
 
-                    //cetakan langsung service VB6 by grh
+                    //cetakan langsung service VB6 by grh norec_apd
+                    // var stt = 'false'
+                    // if (confirm('View Bukti Layanan? ')) {
+                    //     // Save it!
+                    //     stt = 'true';
+                    // } else {
+                    //     // Do nothing!
+                    //     stt = 'false'
+                    // }
+                    // var client = new HttpClient();                   
+                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec=' +
+                    //     $scope.dataSelected.noregistrasi + '&strIdPegawai=' + $scope.pegawai.id + '&strIdRuangan=' +
+                    //     $scope.dataSelected.objectruangantujuanfk + '&view=' + stt, function (response) {
+                    //     });
+
+                    var pegawai = medifirstService.getPegawai();
                     var stt = 'false'
                     if (confirm('View Bukti Layanan? ')) {
                         // Save it!
@@ -1026,12 +1047,11 @@ define(['initialize'], function (initialize) {
                     } else {
                         // Do nothing!
                         stt = 'false'
-                    }
-                    var client = new HttpClient();                   
-                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec=' +
-                        $scope.dataSelected.noregistrasi + '&strIdPegawai=' + $scope.pegawai.id + '&strIdRuangan=' +
-                        $scope.dataSelected.objectruangantujuanfk + '&view=' + stt, function (response) {
-                        });
+                    }                      
+                    var client = new HttpClient();                 
+                    client.get('http://127.0.0.1:1237/printvb/kasir?cetak-nota-layanan=1&norec=' + $scope.dataSelected.norec_apd + '&strIdPegawai=' + pegawai.id + '&view=' + stt, function (response) {
+                        // do something with response
+                    });
 
                 }
             }

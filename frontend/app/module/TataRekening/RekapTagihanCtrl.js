@@ -529,22 +529,34 @@ define(['initialize'], function (initialize) {
 					toastr.error("Pilih pelayanan dahulu!");
 					return;
 				}
+				// var stt = 'false'
+				// if (confirm('View Bukti Layanan? ')) {
 
-				var stt = 'false'
-				if (confirm('View Bukti Layanan? ')) {
+				// 	stt = 'true';
+				// } else {
+				// 	// Do nothing!
+				// 	stt = 'false'
+				// }
 
-					stt = 'true';
-				} else {
-					// Do nothing!
-					stt = 'false'
-				}
+				// var client = new HttpClient();
 
-				var client = new HttpClient();
-
-				client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec=' +
-					$scope.item.noregistrasi + '&strIdPegawai=' + $scope.dataLogin.id + '&strIdRuangan=' +
-					$scope.dataSelected.ruid + '&view=' + stt, function (response) {
-					});
+				// client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec=' +
+				// 	$scope.item.noregistrasi + '&strIdPegawai=' + $scope.dataLogin.id + '&strIdRuangan=' +
+				// 	$scope.dataSelected.ruid + '&view=' + stt, function (response) {
+				// 	});
+				var pegawai = medifirstService.getPegawai();
+                var stt = 'false'
+                if (confirm('View Bukti Layanan? ')) {
+                    // Save it!
+                    stt = 'true';
+                } else {
+                    // Do nothing!
+                    stt = 'false'
+                }                      
+                var client = new HttpClient();                 
+                client.get('http://127.0.0.1:1237/printvb/kasir?cetak-nota-layanan=1&norec=' + $scope.dataSelected.norec_apd + '&strIdPegawai=' + pegawai.id + '&view=' + stt, function (response) {
+                    // do something with response
+                });
 
 			}
 			$scope.CetakRincianRanap = function () {

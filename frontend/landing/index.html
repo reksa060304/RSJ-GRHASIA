@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script>document.write('<base href="' + document.location + '" />');</script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>RSJ Grhasia</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="assets/theme/blue/theme-dark.css">
+    <link rel="stylesheet" type="text/css" href="assets/layout/css/blue/layout-dark.css">
+    <link rel="stylesheet" type="text/css" href="assets/pages/primeng.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/pages/primeflex.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/pages/primeicons-static.css">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+
+
+<body class="landing-container"  data-aos="fade-in"  data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
+<div id="header" class="flex flex-column">
+    <div class="header-menu-container flex align-items-center justify-content-between">
+        <div class="header-left-elements flex align-items-center justify-content-between">
+            <div class="layout-topbar-logo flex align-items-center" routerLink="/">
+                <img src="assets/logo.png" alt="diamond-layout" class="logo" style="height: 70px">
+                <h3 style="margin-left:10px;margin-top:5px">RSJ GRHASIA</h3>
+            </div>
+            <ul id="menu">
+                 <!--  <li class="landing-menu-item"><a href="#" class="flex p-3" style="color:white">Home</a></li>
+             <li class="landing-menu-item"><a href="#meet-atlantis" class="flex p-3">Meet Atlantis</a></li>
+                <li class="landing-menu-item"><a href="#features" class="flex p-3">Features</a></li>
+                <li class="landing-menu-item"><a href="#pricing" class="flex p-3">Pricing</a></li>
+                <li class="landing-menu-item"><a href="#footer" class="flex pl-3 py-3">Buy Now</a></li>-->
+            </ul>
+        </div>
+
+        <div class="header-right-elements flex align-items-center justify-content-between">
+          
+
+            <a href="#" class="contact-icons" >
+                <i  style="color:white" class="pi pi-envelope"></i>
+            </a>
+
+            <button class="contact-button p-button-outlined p-button-secondary p-button-text p-button p-component">
+                <span style="color:white" aria-hidden="true" class="p-button-label">Contact</span>
+            </button>
+
+            <a id="menu-button" href="#" class="lg:hidden">
+                <i class="pi pi-bars fs-xlarge"></i>
+            </a>
+        </div>
+    </div>
+
+   
+
+    <div class="header-features aos-init aos-animate" data-aos="fade-up fade-down" data-aos-duration="1000" data-aos-delay="50">
+        <div class="grid flex">
+            <div class="col-12 md:col-4 flex justify-content-center" style="cursor:pointer" id="linkAPP"> 
+                <div class=" header-feature-box mr-3 mb-4" >
+                    <span class="title mb-3">HIS</span>
+                    <span class="content">Hospital Information System. Klik Disini untuk membuka Apps</span>
+                </div>
+            </div>
+            <div class="col-12 md:col-4 flex justify-content-center" style="cursor:pointer"  id="linkEreservasi">
+                <div class="header-feature-box mr-3 mb-4">
+                    <span class="title mb-3">E-Reservasi</span>
+                    <span
+                        class="content"> Aplikasi mobile untuk melakukan reservasi online. Klik Disini untuk membuka Apps</span>
+                </div>
+            </div>
+               <div class="col-12 md:col-4 flex justify-content-center" style="cursor:pointer" id="linkKiosk">
+                <div class="header-feature-box mr-3 mb-4">
+                    <span class="title mb-3">KIOSK</span>
+                    <span
+                        class="content">Sistem Antrian Pendaftaran. Klik Disini untuk membuka Apps</span>
+                </div>
+            </div>
+             
+              <div class="col-12 md:col-4 flex justify-content-center" style="cursor:pointer" id="linkEIS">
+                <div class="header-feature-box mr-3 mb-4">
+                    <span class="title mb-3">EIS</span>
+                    <span class="content">Dashboard Executive Information System. Klik Disini untuk membuka Apps</span>
+                </div>
+            </div>
+              <div class="col-12 md:col-4 flex justify-content-center" style="cursor:pointer"  id="linkViewer">
+                <div class="header-feature-box mr-3 mb-4">
+                    <span class="title mb-3">Viewer</span>
+                    <span class="content">Pemanggil Antrian Sistem. Klik Disini untuk membuka Apps</span>
+                </div>
+            </div>
+              <div class="col-12 md:col-4 flex justify-content-center" style="cursor:pointer">
+                <div class="header-feature-box mr-3 mb-4">
+                    <span class="title mb-3">Well documented</span>
+                    <span class="content">We work hard to write down all aspects of prime themes to make sure that there is no unanswered questions left.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="assets/js/jquery-3.4.1.min.js"></script>
+<script type="text/javascript">
+    $("#linkAPP").click(function(){
+         window.location.href=  window.location.origin+"/app";
+    })
+    $("#linkEreservasi").click(function(){
+         window.location.href= window.location.origin+"/e-reservasi";
+    })
+    $("#linkKiosk").click(function(){
+         window.location.href= window.location.origin+"/kiosk";
+    })
+    $("#linkViewer").click(function(){
+         window.location.href= window.location.origin+"/viewer";
+    })
+    $("#linkEIS").click(function(){
+         window.location.href= window.location.origin+"/eis";
+    })
+  AOS.init();
+    var LandingUtils = {
+        addClass: function (element, classNames) {
+            var classNamesArr = classNames.split(' ');
+            for (var i = 0; i < classNamesArr.length; i++) {
+                var className = classNamesArr[i];
+                if (element.classList)
+                    element.classList.add(className);
+                else
+                    element.className += ' ' + className;
+            }
+        },
+        removeClass: function (element, classNames) {
+            var classNamesArr = classNames.split(' ');
+            for (var i = 0; i < classNamesArr.length; i++) {
+                var className = classNamesArr[i];
+                if (element.classList)
+                    element.classList.remove(className);
+                else
+                    element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+            }
+        },
+        hasClass: function (element, className) {
+            if (element.classList)
+                return element.classList.contains(className);
+            else
+                return new RegExp('(^| )' + className + '( |$)', 'gi').test(element.className);
+        }
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var menuButton = document.getElementById('menu-button');
+        var menuitems = document.querySelectorAll('.landing-menu-item');
+
+        for (var i = 0; i < menuitems.length; i++) {
+            var menuitem = menuitems[i];
+            menuitem.addEventListener('click', function(e) {
+                LandingUtils.removeClass(menu, 'menu-active fadeOutUp');
+            });
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if(e.key === "Escape") {
+                LandingUtils.removeClass(menu, 'menu-active fadeOutUp');
+            }
+        })
+
+        if (menuButton) {
+            var isMenuActive = false;
+
+            menuButton.addEventListener('click', function (e) {
+                var menu = document.getElementById('menu');
+
+                if (LandingUtils.hasClass(menu, 'menu-active')) {
+                    LandingUtils.addClass(menu, 'fadeOutUp');
+                    isMenuActive = false;
+                } else {
+                    LandingUtils.addClass(menu, 'menu-active fadeInDown');
+                    isMenuActive = true;
+                }
+                e.preventDefault();
+            });
+
+            menu.addEventListener('animationend', function (e) {
+                if (isMenuActive) {
+                    LandingUtils.removeClass(menu, 'fadeInDown');
+                } else {
+                    LandingUtils.removeClass(menu, 'menu-active fadeOutUp');
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
+

@@ -74,13 +74,13 @@ export class CallerComponent implements OnInit {
       this.alertService.info('Informasi', 'Isi No Antrian yang mau dipanggil')
       return
     }
-    for (let i = 0; i < this.dataTable.length; i++) {
-      const element = this.dataTable[i];
-      if (parseFloat(this.item.noantri) > element.sekarang && this.item.jenis == element.jenis) {
-        this.alertService.info('Informasi', 'Mohon panggil ulang nomor yang belum di panggil')
-        return
-      }
-    }
+    // for (let i = 0; i < this.dataTable.length; i++) {
+    //   const element = this.dataTable[i];
+    //   if (parseFloat(this.item.noantri) > element.sekarang && this.item.jenis == element.jenis) {
+    //     this.alertService.info('Informasi', 'Mohon panggil ulang nomor yang belum di panggil')
+    //     return
+    //   }
+    // }
     this.socket.emit('caller', { no: this.item.jenis + '-' + this.setNumberStr(this.item.noantri), loket: this.item.loket });
     // this.updatePanggil(this.item.jenis, this.item.loket)
   }

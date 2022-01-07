@@ -667,6 +667,7 @@ class RadiologiController extends ApiController
             ->Join('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
             ->JOIN ('pasien_m as ps','ps.id','=','pd.nocmfk')
             ->JOIN('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
+            ->leftJoin('pelayananpasien_t as pp','apd.norec','=','pp.noregistrasifk')
             ->leftJoin('kelompokpasien_m as kp','kp.id','=','pd.objectkelompokpasienlastfk')
             ->leftJoin('rekanan_m as rk','rk.id','=','pd.objectrekananfk')
             ->leftJoin('kelas_m as kl','kl.id','=','pd.objectkelasfk')
@@ -675,10 +676,11 @@ class RadiologiController extends ApiController
             ->leftJoin('golongandarah_m as gol','gol.id','=','ps.objectgolongandarahfk')
             ->leftjoin('strukorder_t as so','so.norec','=','apd.objectstrukorderfk')
             ->leftJoin('ruangan_m as ru1','ru1.id','=','so.objectruanganfk')
+            ->distinct()
             ->select('apd.norec as norec_apd','ru.id as ruid','ru.namaruangan','pd.noregistrasi','ps.nocm','ps.namapasien','jk.jeniskelamin',
                 'kp.kelompokpasien','rk.namarekanan','kl.namakelas','kl.id as klid',
                 'pd.tglregistrasi','pd.tglpulang','ps.tgllahir','apd.norec','pd.norec as norec_pd',
-                'sp.tglstruk','pd.nostruklastfk','alm.alamatlengkap','gol.golongandarah', 'apd.tglmasuk','ru1.namaruangan as ruanganasal',
+                'sp.tglstruk','pd.nostruklastfk','alm.alamatlengkap','gol.golongandarah', 'apd.tglmasuk','ru1.namaruangan as ruanganasal','apd.tglregistrasi',
                 DB::raw("'' AS expertise
                 "))
             ->where('apd.kdprofile', $idProfile)
@@ -687,12 +689,23 @@ class RadiologiController extends ApiController
             ->orderBy('apd.tglregistrasi','desc');
 
         if(isset($request['tglAwal']) && $request['tglAwal']!="" && $request['tglAwal']!="undefined"){
-            $data = $data->where('apd.tglmasuk','>=', $request['tglAwal']);
+            //$data = $data->where('apd.tglmasuk','>=', $request['tglAwal']);
+            $data = $data->whereRaw("
+                (
+                    (apd.tglmasuk  between  '".$request['tglAwal']."' and '".$request['tglAkhir']."') 
+                    or 
+                    (pp.tglpelayanan  between  '".$request['tglAwal']."' and '".$request['tglAkhir']."')
+                )"
+            );
+            // $data = $data->where(function($query){
+            //     $query->where('apd.tglmasuk','>=', $request['tglAwal'])
+            //         ->orWhere('pp.tglmasuk','>=', $request['tglAwal']);
+            // });
         }
-        if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
-            $tgl= $request['tglAkhir'];
-            $data = $data->where('apd.tglmasuk','<=', $tgl);
-        }
+        // if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
+        //     $tgl= $request['tglAkhir'];
+        //     $data = $data->where('apd.tglmasuk','<=', $tgl);
+        // }
 //        if(isset($request['tglAwal']) && $request['tglAwal']!="" && $request['tglAwal']!="undefined"){
 //            $data = $data->where('so.tglorder','>=', $request['tglAwal']);
 //        }
@@ -735,6 +748,14 @@ class RadiologiController extends ApiController
             ->whereIn('pp.noregistrasifk',$apdnorec)
             ->orderBy('hh.tanggal','desc')
             ->get();
+        $hasilRadBlmAdaExpertise = DB::table('pelayananpasien_t as pp')
+            ->join('hasilradiologi_t as hh','pp.norec','=','hh.pelayananpasienfk')
+            ->distinct()
+            ->select('hh.tanggal', 'pp.noregistrasifk as norec_apd')
+            ->whereIn('pp.noregistrasifk',$apdnorec)
+            ->where('hh.norec',null)
+            ->orderBy('hh.tanggal','desc')
+            ->get();
         $hasilLab = DB::table('pelayananpasien_t as pp')
             ->join('hasillaboratorium_t as hh','pp.norec','=','hh.norecpelayanan')
             ->distinct()
@@ -761,6 +782,16 @@ class RadiologiController extends ApiController
                 if($data[$i]->norec_apd ==  $v2->norec_apd){
                     $data[$i]->expertise =true;
                     $data[$i]->tglexpertise =$v2->tanggal;
+                }
+            }
+            $i = $i + 1;
+        }
+        
+        $i=0;
+        foreach ($data as $key => $v) {         
+            foreach ($hasilRadBlmAdaExpertise as $key2 => $v2) {
+                if($data[$i]->norec_apd ==  $v2->norec_apd){
+                    $data[$i]->expertise =false;                    
                 }
             }
             $i = $i + 1;
@@ -1041,7 +1072,10 @@ class RadiologiController extends ApiController
             $dataAPD->kdprofile = $idProfile;
             $dataAPD->statusenabled = true;
             $dataAPD->objectasalrujukanfk = $request['asalrujukanfk'];
-            $dataAPD->objectkelasfk = $request['objectkelasfk'];
+            if (!isset($request['objectkelasfk']) || $request['objectkelasfk'] == "" || $request['objectkelasfk'] == "objectkelasfk" || $request['objectkelasfk'] == "undefined") {
+                $request['objectkelasfk']=6;
+            }
+            $dataAPD->objectkelasfk = $request['objectkelasfk'];//book
             $dataAPD->noantrian = $noAntrian;
             $dataAPD->noregistrasifk = $request['norec_pd'];
             $dataAPD->objectpegawaifk = $request['dokterfk'];
@@ -1058,10 +1092,10 @@ class RadiologiController extends ApiController
 
             $dataAPDnorec = $dataAPD->norec;
             $transStatus = 'true';
-            $transMessage = "simpan AntrianPasienDiperiksa";
+            $transMessage = "Sukses";
         } catch (\Exception $e) {
             $transStatus = 'false';
-            $transMessage = "simpan AntrianPasienDiperiksa";
+            $transMessage = "Simpan Gagal";
         }
 
         if ($transStatus != 'false') {
@@ -1075,7 +1109,7 @@ class RadiologiController extends ApiController
             DB::rollBack();
             $result = array(
                 "status" => 400,
-                "data" => $dataAPD,
+                "e" => $e->getMessage(). ' '.$e->getLine(),
                 "message" => $transMessage,
             );
         }
@@ -1492,7 +1526,7 @@ class RadiologiController extends ApiController
         $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
                 op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
                 hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,
-                pps.norec as norec_pp
+                pps.norec as norec_pp, so.keteranganlainnya
                 from orderpelayanan_t op
                 left join strukorder_t as so on so.norec=op.strukorderfk
                 INNER JOIN produk_m as pr on pr.id=op.objectprodukfk
@@ -1500,6 +1534,7 @@ class RadiologiController extends ApiController
                         and '$idkelas' =hnp.objectkelasfk
                         and hnp.statusenabled=true
                         and hnp.objectjenispelayananfk=$jp
+                        and hnp.objectpenjaminfk is null
                 --and op.objectkelasfk=hnp.objectkelasfk
                 left join kelas_m as kls on kls.id = '$idkelas'
                 --op.objectkelasfk
@@ -1528,8 +1563,9 @@ class RadiologiController extends ApiController
                 where hnp.kdprofile = $idProfile and hnp.objectkelasfk='$idkelas'
                 and hnp.statusenabled=true
                 and hnp.objectjenispelayananfk=$jp
-                and prd.id='$item->prid'"));
-
+                and prd.id='$item->prid'
+                and hnp.objectpenjaminfk is null"));
+            $keteranganlainnya=$item->keteranganlainnya;
             $result[] = array(
                 'norec_op' => $item->norec_op,
                 'norec_pp' => $item->norec_pp,
@@ -1549,6 +1585,7 @@ class RadiologiController extends ApiController
 
         $result=array(
             'message' =>  'inhuman',
+            'keteranganlainnya' => $keteranganlainnya,         
             'data' =>  $result,
 
         );
@@ -1801,6 +1838,9 @@ class RadiologiController extends ApiController
                 $dataSO->pelayananpasienfk = $request['pelayananpasienfk'];
                 $dataSO->noregistrasifk = $request['norec_pd'];
                 $dataSO->tanggal = $request['tglinput'];
+                if(isset($request['jumlahpengulanganfoto']) && $request['jumlahpengulanganfoto']!="" && $request['jumlahpengulanganfoto']!="undefined"){
+                    $dataSO->jumlahpengulanganfoto = $request['jumlahpengulanganfoto'];
+                }
 
                 // adding random time max 2 h 43 m
                 $start_time = date($request['tglpelayanan']);
@@ -1838,6 +1878,9 @@ class RadiologiController extends ApiController
                 $dataSO->nofoto = $request['nofoto'];
             }
             $dataSO->keterangan = $request['keterangan'];
+            if(isset($request['jumlahpengulanganfoto']) && $request['jumlahpengulanganfoto']!="" && $request['jumlahpengulanganfoto']!="undefined"){
+                $dataSO->jumlahpengulanganfoto = $request['jumlahpengulanganfoto'];
+            }
             $dataSO->save();
 
             $transStatus = 'true';
@@ -1876,7 +1919,9 @@ class RadiologiController extends ApiController
         $idProfile = (int) $kdProfile;
         $data = DB::table('hasilradiologi_t as ar')
             ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'ar.pegawaifk')
-            ->select('ar.*','pg.namalengkap')
+            ->leftjoin('pelayananpasien_t as pp', 'pp.norec', '=', 'ar.pelayananpasienfk')
+            ->leftjoin('strukorder_t as so', 'so.norec', '=', 'pp.strukorderfk')
+            ->select('ar.*','pg.namalengkap','so.keteranganlainnya')
             ->where('ar.kdprofile', $idProfile)
             ->where('ar.statusenabled',true)
             ->where('ar.pelayananpasienfk',$request['norec_pp'])
@@ -1956,7 +2001,7 @@ class RadiologiController extends ApiController
                        CASE WHEN pg.namalengkap IS NULL THEN '-' ELSE pg.namalengkap END AS dokterdpjp,
                        CASE WHEN pg1.namalengkap IS NULL THEN '-' ELSE pg1.namalengkap END AS dokter,
                        hr.tanggal as tglexpertise,
-                       to_char(hr.tanggalreport, 'YYYY-MM-DD HH24:MI:SS') as tanggalreport
+                       to_char(hr.tanggalreport, 'YYYY-MM-DD HH24:MI:SS') as tanggalreport,hr.jumlahpengulanganfoto
                 FROM pasiendaftar_t AS pd
                 INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
                 INNER JOIN pelayananpasien_t AS pp ON pp.noregistrasifk = apd.norec
@@ -1971,7 +2016,7 @@ class RadiologiController extends ApiController
                 LEFT JOIN ruangan_m AS ru2 ON ru2.id = apd.objectruanganasalfk
                 LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
                 LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
-                INNER JOIN pegawai_m AS pg1 ON pg1.id = ppp.objectpegawaifk
+                LEFT JOIN pegawai_m AS pg1 ON pg1.id = ppp.objectpegawaifk
                 LEFT JOIN hasilradiologi_t AS hr ON hr.pelayananpasienfk = pp.norec AND hr.statusenabled = true
                 WHERE pd.kdprofile = $kdProfile AND pd.statusenabled = true AND apd.objectruanganfk = 576
                       AND pro.namaproduk IS NOT NULL AND br.norec IS NULL

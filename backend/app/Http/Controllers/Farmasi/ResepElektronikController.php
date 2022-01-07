@@ -54,6 +54,8 @@ class ResepElektronikController extends ApiController
         $departemenIdOrder = '';
         $statusIdOrder = '';
         $statusIdResep = '';
+        $checkSOPasienRanap='';
+        $checkSOPasienRajal='';
         if(isset($request['nocm']) && $request['nocm']!="" && $request['nocm']!="undefined"){
             $nocmOrder =  "and ps.nocm ilike '%".$request['nocm']."%'";
         }
@@ -83,8 +85,38 @@ class ResepElektronikController extends ApiController
             foreach ( $arrStatus as $item){
                 $kode[] = (int) $item;
             }
-            $statusIdOrder = " and so.statusorder in ". $kode;
-            $statusIdResep = " and sr.status in ". $kode;
+            /* 
+            ketika order/eresep dibikin... di strukorder statusnya 0, tp di strukresep blm ada
+            $scope.listStatus = [
+                { id: 0, status: 'Menunggu' }, //strukorder pas dibikin 0, tp pas diverif jadi 5
+                { id: 1, status: 'Produksi' },
+                { id: 2, status: 'Packaging' },
+                { id: 3, status: 'Selesai' },
+                { id: 4, status: 'Penyerahan Obat' },
+                { id: 5, status: 'Verifikasi' },//status strukresep ketika baru diverif/simpan entry obat => 0
+            
+            */
+            // $statusIdOrder = " and so.statusorder in ". $kode;
+            // $statusIdResep = " and sr.status in ". $kode;
+            $statusIdOrder = " and so.statusorder in (".$request['statusId'].")";//struk order udah sesuai dengan frontend
+            //status strukresep untuk yg verif 0, klo menunggu ga ada status/null..makanya klo user nyari yg menunggu atau id=0 replace jadi 999(sengaja angka yg ga ada)
+            $statusIdResep = " and sr.status in (".  str_replace("5","0",str_replace("0","999", $request['statusId'])).")";
+ 
+        }
+        //checkPasienRanap
+        if(isset($request['checkPasienRanap']) && $request['checkPasienRanap']!="" && $request['checkPasienRanap']!="undefined"){
+            if($request['checkPasienRanap']=="true"){
+                $checkSOPasienRanap = " and ru.objectdepartemenfk = 16 ";
+            }
+        }
+        if(isset($request['checkPasienRajal']) && $request['checkPasienRajal']!="" && $request['checkPasienRajal']!="undefined"){
+            if($request['checkPasienRajal'] == "true" && $checkSOPasienRanap == ""){
+                $checkSOPasienRanap = " and ru.objectdepartemenfk <> 16 ";
+                
+            }else{
+                $checkSOPasienRanap = " ";
+            }
+
         }
 
         $data = DB::select(DB::raw("
@@ -117,6 +149,7 @@ class ResepElektronikController extends ApiController
                  $depoIdIdOrder        
                  $departemenIdOrder
                  $statusIdOrder
+                 $checkSOPasienRanap
                 
                  UNION ALL
                  
@@ -148,7 +181,8 @@ class ResepElektronikController extends ApiController
                 $ruanganIdResep      
                 $depoIdIdResep 
                 $departemenIdOrder
-                $statusIdResep        
+                $statusIdResep  
+                $checkSOPasienRanap      
         "));
 
         $status ='';
@@ -482,6 +516,14 @@ class ResepElektronikController extends ApiController
     public function saveStatusResepElektronik(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+                where lu.kdprofile = $idProfile and lu.id=:idLoginUser"),
+            array(
+                'idLoginUser' => $dataLogin['userData']['id'],
+            )
+        );
         DB::beginTransaction();
         $dataReq = $request->all();
         try{
@@ -512,7 +554,8 @@ class ResepElektronikController extends ApiController
                     ->update([
                             'status' => $request['statusorder'],
                             'namalengkapambilresep' => $request['namapengambil'],
-                            'tglambilresep' => $request['tglambil']
+                            'tglambilresep' => $request['tglambil'],
+                            'namapemberi' => $request['namapengambil'] != "" ? $dataPegawaiUser[0]->namalengkap : "",
                         ]
                     );
 
@@ -527,6 +570,8 @@ class ResepElektronikController extends ApiController
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errObj = $e;
+            $errMsg = $e->getMessage();
         }
         
         $transMessage = "Save Status";
@@ -544,6 +589,9 @@ class ResepElektronikController extends ApiController
             $result = array(
                 "status" => 400,
                 "by" => 'as@epic',
+                "errObj" => $errObj,
+                "errMsg" => $errMsg,
+                
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
@@ -575,7 +623,7 @@ class ResepElektronikController extends ApiController
                 $dataPP->norec_apd = $request['norec'];
                 $dataPP->objectruanganfk = $request['objectruanganfk'];
                 $dataPP->rpenulis = $request['rpenulis'];
-                $dataPP->rpenulis = $request['rpenulis'];
+                $dataPP->rtanggalresep = $request['rtanggalresep'];
                 $dataPP->rmr = $request['rmr'];
                 $dataPP->rpasien = $request['rpasien'];
                 $dataPP->rtanggallahir = $request['rtanggallahir'];
@@ -674,15 +722,19 @@ class ResepElektronikController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $data = \DB::table('skriningfarmasi_t as sf')
-            ->select(DB::raw("sf.rpenulis,rtanggalresep,sf.rmr,sf.rpasien,sf.rtanggallahir,sf.rberatbedan,sf.rdokter,sf.rruang,sf.rstatusjamin,sf.robat,sf.rkekuatan,
+            ->join('pegawai_m as pg1', 'pg1.id', '=', 'sf.namapenyekriningresep')
+            ->join('pegawai_m as pg2', 'pg2.id', '=', 'sf.namaperacik')
+            ->join('pegawai_m as pg3', 'pg3.id', '=', 'sf.namapengecek')
+            ->select(DB::raw("sf.norec, sf.rpenulis,rtanggalresep,sf.rmr,sf.rpasien,sf.rtanggallahir,sf.rberatbedan,sf.rdokter,sf.rruang,sf.rstatusjamin,sf.robat,sf.rkekuatan,
                      sf.rjumlahobat,sf.rstabilitas,sf.raturan,sf.rindikasiobat,sf.ralergi,sf.rindikasi,sf.rkonsumsi,sf.rduplikat,sf.rinteraksi,sf.rantibiotik,
-                     sf.rpolifarmasi,sf.namapenyekriningresep,sf.namaperacik,sf.namapengecek,sf.namapenyrahobat,sf.namapenerimaobat,sf.prinsipbesar,sf.strukresepfk,
+                     sf.rpolifarmasi,sf.namapenyekriningresep as idnamapenyekriningresep, pg1.namalengkap as namapenyekriningresep, sf.namaperacik as idnamaperacik, pg2.namalengkap as namaperacik,sf.namapengecek as idnamapengecek, pg3.namalengkap as namapengecek,sf.namapenyrahobat,sf.namapenerimaobat,sf.prinsipbesar,sf.strukresepfk,
                      sf.ketpenulis,sf.kettanggal,sf.ketrm,sf.ketpasien,sf.kettanggallahir,sf.ketberat,sf.ketdokter,sf.ketruang,sf.ketstatus,sf.ketobat,sf.ketkekuatan,sf.ketjumlah,
                      sf.ketstabilitas,sf.ketaturan,sf.ketalergi,sf.ketkonsumsi,sf.ketduplikasi,sf.ketinteraski,sf.ketantibiotik,sf.ketpolifarmasi,sf.tglinput,sf.ketindikasi,sf.rcek"))
             ->where('sf.kdprofile',$idProfile);
         if(isset($request['norecResep']) && $request['norecResep']!="" && $request['norecResep']!="undefined"){
             $data = $data->where('sf.strukresepfk',$request['norecResep']);
         }
+        $data = $data->orderBy('tglinput', 'desc');
         $data = $data->get();
         return $this->respond($data);
     }

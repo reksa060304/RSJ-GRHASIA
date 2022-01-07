@@ -300,29 +300,48 @@ define(['initialize'], function (initialize) {
                         + $scope.item.norec_pd
                     ).then(function (data) {
                         var datas = data.data;
-                    })
-                    var client = new HttpClient();
-                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan=1&norec='
-                        + $scope.item.noregistrasi + '&strIdPegawai='
-                        + $scope.pegawai.id + '&view=false', function (response) {
-                        });
+                    }) 
+                    // var client = new HttpClient();
+                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan=1&norec='
+                    //     + $scope.item.noregistrasi + '&strIdPegawai='
+                    //     + $scope.pegawai.id + '&view=false', function (response) {
+                    //     });
+                    var pegawai = medifirstService.getPegawai();
+                    var stt = 'false'
+                    if (confirm('View Bukti Layanan? ')) {
+                        // Save it!
+                        stt = 'true';
+                    } else {
+                        // Do nothing!
+                        stt = 'false'
+                    }                      
+                    var client = new HttpClient();                 
+                    client.get('http://127.0.0.1:1237/printvb/kasir?cetak-nota-layanan=1&norec=' + $scope.item.norec_apd + '&strIdPegawai=' + pegawai.id + '&view=' + stt, function (response) {
+                        // do something with response
+                    });
                 }
             }
 
             $scope.tracerBon = function () {
                 if ($scope.item != undefined) {
                     //##save tracer
+                    $scope.isRouteLoading = true;
                     medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
                         + $scope.item.norec_pd
                     ).then(function (data) {
+                        $scope.isRouteLoading = false;
                         var datas = data.data;
-                    })
-                    //##end
-                    var client = new HttpClient();
-                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' +
-                        $scope.item.noregistrasi + '&view=false', function (response) {
+                        var client = new HttpClient();
+                        client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.item.noregistrasi 
+                            + '&noCm=' + $scope.item.nocm + '&view=false' , function (response) {
                             // do something with response
                         });
+                    })
+                    //##end                    
+                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' +
+                    //     $scope.item.noregistrasi + '&view=false', function (response) {
+                    //         // do something with response
+                    //     });                    
                 }
             }
             $scope.CetakSumList = function () {

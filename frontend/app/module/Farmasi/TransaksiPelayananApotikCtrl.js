@@ -36,6 +36,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.tglRegistrasi = chacePeriode[7]
                     norec_apd = chacePeriode[8]
                     detail = chacePeriode[9]
+                    $scope.item.tgllahir = chacePeriode[10]
                     medifirstService.get("farmasi/get-detailPD?norec_apd=" + norec_apd, true).then(function (data_ih) {
                         $scope.item.jenisPenjamin = data_ih.data.detailPD[0].namarekanan
                         $scope.item.kelompokPasien = data_ih.data.detailPD[0].kelompokpasien
@@ -552,7 +553,11 @@ define(['initialize'], function (initialize) {
                 // if ($scope.dataSelected.nostruk != undefined) {
                 //     alert('Sudah verifikasi Tatarekening Tidak Bisa Menambah Obat!')
                 //     return;
-                // }                
+                // }   
+                if ($scope.dataSelectedPopUpAPD == undefined) {
+                    toastr.warning("Data Belum Dipilih!!!")
+                    return;
+                }             
                 if ($scope.dataSelectedPopUpAPD != undefined) {
                     // * Validasi Untuk Sekali Bayar
                     //medifirstService.getDataTableTransaksi("tatarekening/get-sudah-verif?noregistrasi="+
@@ -939,9 +944,12 @@ define(['initialize'], function (initialize) {
                 } else {
                     // Do nothing!
                     stt = 'false'
-                }
+                } 
                 var client = new HttpClient();
-                client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep=1&nores=' + $scope.dataSelected.norec_resep + '&view=' + stt + '&user=' + user.namaLengkap, function (response) {
+                // client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep=1&nores=' + $scope.dataSelected.norec_resep + '&view=' + stt + '&user=' + user.namaLengkap, function (response) {
+                //     // aadc=response;
+                // });
+                client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep-new=1&nores=' + $scope.dataSelected.norec_resep + '&view=' + stt + '&user=' + user.namaLengkap, function (response) {
                     // aadc=response;
                 });
             }

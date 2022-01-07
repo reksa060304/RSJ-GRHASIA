@@ -403,7 +403,8 @@ class LogistikController extends ApiController{
                 $data = $data->whereRaw = (" pr.kdproduk ilike '".$request['KdSirs1']."%'");
             }
         }
-        $data = $data->where('spd.qtyproduk','>', 0);
+        //20211230 permintaan user grhasia
+        //$data = $data->where('spd.qtyproduk','>', 0);
         if(isset($request['jmlRows']) && $request['jmlRows']!="" && $request['jmlRows']!="undefined"){
             $data=$data->take($request['jmlRows']);
         }
@@ -884,6 +885,7 @@ class LogistikController extends ApiController{
             ->leftJoin('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->select(DB::raw('sum(spd.qtyproduk) as qty, pr.id as prid,pr.namaproduk,ss.satuanstandar'))
             ->where('pr.kdprofile', $idProfile)
+            ->where('spd.kdprofile', $idProfile)
             ->groupBy('pr.id','pr.namaproduk',
                 'ss.satuanstandar')
             ->orderBy('pr.namaproduk');
@@ -900,6 +902,7 @@ class LogistikController extends ApiController{
             ->leftJoin('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->select(DB::raw('pr.id as prid,pr.namaproduk,ss.satuanstandar'))
             ->where('pr.kdprofile', $idProfile)
+            ->where('spd.kdprofile', $idProfile)
             ->orderBy('pr.namaproduk');
         $data3 = $data3->whereIn('pr.id',$kode);
         $data3 = $data3->get();
@@ -946,6 +949,7 @@ class LogistikController extends ApiController{
                         ->leftJoin('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
                         ->select(DB::raw('pr.id as prid,pr.namaproduk,ss.satuanstandar'))
                         ->where('pr.kdprofile', $idProfile)
+                        ->where('spd.kdprofile', $idProfile)
                         ->orderBy('pr.namaproduk');
                     $data4 = $data4->where('pr.id',$ketanItem['kd']);
                     $data4 = $data4->get();
@@ -1005,6 +1009,7 @@ class LogistikController extends ApiController{
             ->leftJoin('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->select(DB::raw('sum(spd.qtyproduk) as qty, pr.id as prid,pr.namaproduk,ss.satuanstandar'))
             ->where('pr.kdprofile', $idProfile)
+            ->where('spd.kdprofile', $idProfile)
             ->groupBy('pr.id','pr.namaproduk',
                 'ss.satuanstandar')
             ->orderBy('pr.namaproduk');
@@ -1021,6 +1026,7 @@ class LogistikController extends ApiController{
             ->leftJoin('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->select(DB::raw('pr.id as prid,pr.namaproduk,ss.satuanstandar'))
             ->where('pr.kdprofile', $idProfile)
+            ->where('spd.kdprofile', $idProfile)
             ->orderBy('pr.namaproduk');
         $data3 = $data3->whereIn('pr.id',$kode);
         $data3 = $data3->get();
@@ -1068,6 +1074,7 @@ class LogistikController extends ApiController{
                         ->leftJoin('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
                         ->select(DB::raw('pr.id as prid,pr.namaproduk,ss.satuanstandar'))
                         ->where('pr.kdprofile', $idProfile)
+                        ->where('spd.kdprofile', $idProfile)
                         ->orderBy('pr.namaproduk');
                     $data4 = $data4->where('pr.id',$ketanItem['kd']);
                     $data4 = $data4->get();
@@ -10821,7 +10828,7 @@ class LogistikController extends ApiController{
                         ->orderby('tglkadaluarsa')
                         ->first();
 
-                    if(!empty($dataSPDK2) || $dataSPDK2 != null){
+                    if(count($dataSPDK2) != 0 || $dataSPDK2 != null){
 
                         $dataSPD = new StokProdukDetailOpname();
                         $dataSPD->norec = $dataSPD->generateNewId();
@@ -11023,7 +11030,7 @@ class LogistikController extends ApiController{
                     }
 
                     $dataSaldoAwalK = DB::select(DB::raw("select sum(qtyproduk) as qty from stokprodukdetail_t
-                  where kdprofile = $idProfile and objectruanganfk=:ruanganfk and objectprodukfk=:produkfk"),
+                        where kdprofile = $idProfile and objectruanganfk=:ruanganfk and objectprodukfk=:produkfk"),
                         array(
                             'ruanganfk' => $request['ruanganId'],
                             'produkfk' => $item['produkfk'],

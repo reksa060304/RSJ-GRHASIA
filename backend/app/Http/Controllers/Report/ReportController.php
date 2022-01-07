@@ -639,9 +639,8 @@ class ReportController extends ApiController{
                 so.nofoto,ps.nocm, ps.namapasien,ps.tgllahir,kp.kelompokpasien,
             ru.namaruangan, so.tanggal,jk.jeniskelamin,  
             CASE WHEN alm.alamatlengkap IS NULL THEN
-                '-' ELSE (
-                alm.alamatlengkap || ' ' || ds.namadesakelurahan || ' '|| kc.namakecamatan
-                || ' ' || kk.namakotakabupaten || ' '  || pro.namapropinsi )
+                '-' ELSE 
+                alm.alamatlengkap
             END AS alamatlengkap,
             pg.namalengkap as perujuk,pg2.namalengkap as dokterrad,
             pr.namaproduk,so.keterangan,pd.noregistrasi,pg2.nippns,
@@ -1685,8 +1684,8 @@ class ReportController extends ApiController{
     }
 
     public static function getProfile(){
-        $res['namaprofile'] = 'Transmedic';
-        $res['alamat'] ='Jl. Cikutra Baru Raya No.28, Neglasari, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40124';
+        $res['namaprofile'] = 'Rumah Sakit Jiwa Grhasia';
+        $res['alamat'] ='Jl. Kaliurang KM.17, Duwetsari, Pakembinangun, Kec. Pakem, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55582';
         return $res;
     }
 

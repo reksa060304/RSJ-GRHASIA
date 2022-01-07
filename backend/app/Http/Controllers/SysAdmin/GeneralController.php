@@ -3375,6 +3375,7 @@ class GeneralController extends ApiController
             ->where('hnp.statusenabled',true)
             // ->where('sk.statusenabled',true)
             ->where('prd.statusenabled',true)
+            ->whereNull('hnp.objectpenjaminfk')
 //            ->where('mpr.statusenabled',true)
 //            ->where('hnp.statusenabled',true)
 //            ->where('prd.statusenabled',true)
@@ -3409,7 +3410,8 @@ class GeneralController extends ApiController
             ->where('hnp.statusenabled',true)
             ->where('sk.statusenabled',true)
             ->where('mpr.statusenabled',true)
-            ->where('prd.statusenabled',true);
+            ->where('prd.statusenabled',true)
+            ->whereNull('hnp.objectpenjaminfk');
         $data2 = $data2->distinct();
         $data2 = $data2->get();
 
@@ -4887,7 +4889,7 @@ class GeneralController extends ApiController
             $datalistAkomodasi = \DB::table('produk_m as pr')
                 ->JOIN('mapruangantoadministrasi_t as ma','ma.objectprodukfk','=','pr.id')
                 ->JOIN('jenispelayanan_m as jp','jp.id','=','ma.jenispelayananfk')
-                ->select('pr.id','pr.namaproduk','ma.israwatgabung','ma.id as maid','ma.statusenabled',
+                ->select('pr.id','pr.namaproduk','ma.israwatgabung','ma.id as maid','ma.statusenabled','ma.statuspasien',
                     'ma.jenispelayananfk','jp.jenispelayanan')
                 ->where('pr.kdprofile', $kdProfile)
                 ->where('pr.statusenabled',true)
@@ -4933,6 +4935,7 @@ class GeneralController extends ApiController
                     $newKS->objectprodukfk = $data['pelayanan'];
                     $newKS->objectruanganfk = $data['ruangan'];
                     $newKS->jenispelayananfk = $data['jenispelayanan'];
+                    $newKS->statuspasien = $data['statuspasien'];
                     $newKS->israwatgabung = $RG;
                     $newKS->save();
                 } else {
@@ -4943,6 +4946,7 @@ class GeneralController extends ApiController
                                 'objectruanganfk' => $data['ruangan'],
                                 'objectprodukfk' => $data['pelayanan'],
                                 'jenispelayananfk' => $data['jenispelayanan'],
+                                'statuspasien' => $data['statuspasien'],
                                 'israwatgabung' => null,
                             ]
                         );

@@ -1053,6 +1053,22 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.cetakBuktiLayanan = function () {
                 if ($scope.item.noregistrasi != undefined && norec_apd != null) {
                     //cetakan langsung service VB6 by grh
+                    // var stt = 'false'
+                    // if (confirm('View Bukti Layanan? ')) {
+                    //     // Save it!
+                    //     stt = 'true';
+                    // } else {
+                    //     // Do nothing!
+                    //     stt = 'false'
+                    // }
+                    // var client = new HttpClient();
+
+                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec='
+                    //     + $scope.item.noregistrasi + '&strIdPegawai=' + $scope.pegawai.id +
+                    //     '&strIdRuangan=ORDERRADIOLOGI' + norec_apd + '&view=' + stt, function (response) {
+                    //         // do something with response
+                    //     });
+                    var pegawai = medifirstService.getPegawai();
                     var stt = 'false'
                     if (confirm('View Bukti Layanan? ')) {
                         // Save it!
@@ -1060,14 +1076,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     } else {
                         // Do nothing!
                         stt = 'false'
-                    }
-                    var client = new HttpClient();
-
-                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktilayanan-ruangan=1&norec='
-                        + $scope.item.noregistrasi + '&strIdPegawai=' + $scope.pegawai.id +
-                        '&strIdRuangan=ORDERRADIOLOGI' + norec_apd + '&view=' + stt, function (response) {
-                            // do something with response
-                        });
+                    }                      
+                    var client = new HttpClient();                 
+                    client.get('http://127.0.0.1:1237/printvb/kasir?cetak-nota-layanan=1&norec=' + $scope.dataSelected.norec_apd + '&strIdPegawai=' + pegawai.id + '&view=' + stt, function (response) {
+                        // do something with response
+                    });
 
                 }
             }
@@ -1143,8 +1156,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.norecHasilRadiologi = e.data[0].norec
                         $scope.item.nofoto = e.data[0].nofoto
                         $scope.item.tglInput = e.data[0].tanggal == null ? new Date() :new Date(e.data[0].tanggal)
-                        $scope.item.dokter = { id: e.data[0].pegawaifk, namalengkap: e.data[0].namalengkap }
+                        $scope.item.dokter = { id: e.data[0].pegawaifk, namalengkap: e.data[0].namalengkap }                        
                         $scope.item.keterangan = (e.data[0].keterangan == null) ? '' : e.data[0].keterangan.replace(/~/g, "\n")
+                        $scope.item.jumlahPengulanganFoto = (e.data[0].jumlahpengulanganfoto == null) ? '' : e.data[0].jumlahpengulanganfoto 
+                        $scope.item.keteranganlainnya = (e.data[0].keteranganlainnya == null) ? '' : e.data[0].keteranganlainnya
                         $scope.noeditExpertise2 = $scope.pegawai.id != e.data[0].pegawaifk;
                     }
                     $scope.popUpEkpertise.center().open();
@@ -1157,6 +1172,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             $scope.listNamaGambar = e.data.data.list;
                             $scope.itemimg.gambar = { norec: e.data.data.list[0].norec, filename: e.data.data.list[0].filename }
                             $scope.itemimg.keterangan = e.data.data.list[0].keterangan
+                            //$scope.item.jumlahPengulanganFoto = e.data.data.list[0].jumlahpengulanganfoto
                             var temp = e.data.data.list[0].filename.slice(0, e.data.data.list[0].filename.indexOf('.'))
                             $scope.itemimg.img = config.urlPACSJpeg + "/service/medifirst2000/radiologi/images/pacs/" + temp + "/jpg"
                         }
@@ -1316,6 +1332,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     window.messageContainer.error("Keterangan Tidak Boleh Kosong!");
                     return;
                 }
+                if ($scope.item.jumlahPengulanganFoto == undefined) {
+                    $scope.item.jumlahPengulanganFoto=0;
+                    return;
+                }
                 var objSave = {
                     noregistrasi: $scope.item.noregistrasi,
                     // nofoto: $scope.item.nofoto,
@@ -1325,7 +1345,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     pelayananpasienfk: $scope.dataSelected.norec_pp,
                     norec_pd: norec_pd,
                     norec: $scope.norecHasilRadiologi,
-                    tglpelayanan: $scope.dataSelected.tglpelayanan
+                    tglpelayanan: $scope.dataSelected.tglpelayanan,
+                    jumlahpengulanganfoto:($scope.item.jumlahPengulanganFoto == null || $scope.item.jumlahPengulanganFoto == '') ? 0 : $scope.item.jumlahPengulanganFoto
 
                 }
                 $scope.hideExper = true
@@ -2082,6 +2103,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         13: $scope.item.tgllahir,
                         14: $scope.item.objectjeniskelaminfk,
                         15: dataCetakFix,
+                        16: null,
                         // 16: $scope.dataGrid._data[i].tglpelayanan ,
                     }
                     cacheHelper.set('chaceHasilLab2', arrStr);

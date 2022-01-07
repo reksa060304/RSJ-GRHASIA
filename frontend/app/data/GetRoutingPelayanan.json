@@ -16663,6 +16663,52 @@
         "define": "BPJSToolsCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsuhanGiziPasienRawatInapCtrl",
+    "url": "/AsuhanGiziPasienRawatInap",
+    "templateurl": "module/EMR/AsuhanGiziPasienRawatInap.html",
+    "controller": "AsuhanGiziPasienRawatInapCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenTerintegrasiRawatJalan",
+    "url": "/AsesmenTerintegrasiRawatJalan/",
+    "templateurl": "module/EMR/AsesmenTerintegrasiRawatJalan.html",
+    "controller": "AsesmenTerintegrasiRawatJalanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
   
 ] 

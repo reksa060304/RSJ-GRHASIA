@@ -240,6 +240,10 @@ define(['initialize'], function (initialize) {
                 })
             }
             $scope.showRincian = function () {
+                if ($scope.dataSelectedPopUpAPD == undefined ) {
+                    toastr.error("Ruangan Asal Belum Dipilih!");
+                    return;
+                }
 
                 medifirstService.get("radiologi/get-apd?noregistrasi="
                     + $scope.dataSelected.noregistrasi
@@ -282,6 +286,7 @@ define(['initialize'], function (initialize) {
                     "dokterfk": $scope.item.dokterDpjp.id,
                     "objectruangantujuanfk": $scope.item.ruanganAntrian.id,
                     "objectruanganasalfk": $scope.dataSelectedPopUpAPD.objectruanganfk,
+                    "objectkelasfk": $scope.dataSelectedPopUpAPD.objectkelasfk,
                     "tglregistrasidate": moment($scope.dataSelected.tglregistrasi).format('YYYY-MM-DD'),
                 }
                 medifirstService.post('radiologi/save-apd', dataKonsul).then(function (e) {
@@ -380,8 +385,10 @@ define(['initialize'], function (initialize) {
 
             $scope.klikPopUpAPD = function (e) {
                 delete $scope.item.dokterDPJP
-
                 $scope.item.dokterDpjp = { id: e.pgid, namakengkap: e.namadokter }
+                if (e != undefined) {
+                    $scope.dataSelectedPopUpAPD = e;
+                }
             }
             //***********************************
 

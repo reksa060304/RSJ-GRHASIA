@@ -238,7 +238,7 @@ class EMRController  extends ApiController
             ->select('rm.id', 'rm.namalengkap')
             ->where('rm.kdprofile', $idProfile)
             ->where('rm.statusenabled', true)
-            ->where('rm.objectjenispegawaifk', 1)
+            // ->whereIn('rm.objectjenispegawaifk',[1,26])
             ->orderBy('rm.namalengkap')
             ->get();
 
@@ -1455,7 +1455,7 @@ class EMRController  extends ApiController
                 'rk.namarekanan', 'kls.namakelas', 'pd.nocmfk', 'pd.objectkelompokpasienlastfk', 'apd.objectruanganfk', 'apd.objectpegawaifk',
                 'ps.objectjeniskelaminfk', 'apd.objectkelasfk', 'ps.objectgolongandarahfk', 'gd.golongandarah','ps.foto',
 //                DB::raw('encode(foto, \'base64\') AS foto'),
-                'pg1.namalengkap as dokterdpjp', 'pg1.id as iddpjp')
+                'pg1.namalengkap as dokterdpjp', 'pg1.id as iddpjp','ps.objectjeniskelaminfk')
             ->where('apd.kdprofile',$idProfile)
             ->where('apd.norec', $norecAPD);
 

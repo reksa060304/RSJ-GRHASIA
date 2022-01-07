@@ -12,7 +12,10 @@
                             <label c-label item="item " >Tanggal Pendaftaran</label>
                         </div>
                         <div class="grid_8 ">
-                            <input style="width: 100%" k-ng-model="item.tglRegistrasi" k-max="now" kendo-datetimepicker
+                           <!--  <input style="width: 100%" k-ng-model="item.tglRegistrasi" k-max="now" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm"
+                                ng-disabled='disableTgl' /> -->
+                            <input style="width: 100%" k-ng-model="item.tglRegistrasi" kendo-datetimepicker
                                 placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm"
                                 ng-disabled='disableTgl' />
                         </div>
@@ -591,4 +594,132 @@
                 </div>
             </div>
             <!-- ICD 10 -->
-        </div>                      
+        </div> 
+        <div kendo-window="popScreening" k-title="'Screening Awal Pasien'" k-width="750" k-height="650" k-visible="false"
+            k-on-open="win2visible = true" k-on-close="win2visible = false">
+            <div class="panel panel-default container_12">
+                <div class="grid_12" style="margin-top: 10px;">
+                    <div class="grid_12">                        
+                        <div class="grid_12">
+                            <label c-label style="padding:5px;font-size:14px; font-weight:600">Kesadaran</label>
+                        </div>
+                        <div class="grid_12">
+                            <md-radio-group ng-model="listKesadaran" layout="row" layout-sm="row"
+                                layout-align="left left" layout-wrap>
+                                <div class="grid_4">
+                                    <md-radio-button value="0" class="md-primary">Sadar Penuh</md-radio-button>
+                                </div>
+                                <div class="grid_4">
+                                    <md-radio-button value="1" class="md-primary">Somenolen</md-radio-button>
+                                </div>
+                                 <div class="grid_4">
+                                    <md-radio-button value="2" class="md-primary">Coma</md-radio-button>
+                                </div>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                    <div class="grid_12" style="margin-top:15px;">
+                        <div class="grid_12">
+                            <label c-label style="padding:5px;font-size:14px; font-weight:600">Transportasi & Mobilisasi</label>
+                        </div>
+                        <div class="grid_12">
+                            <md-radio-group ng-model="listTransportasi" layout="row" layout-sm="row"
+                                layout-align="left left" layout-wrap>
+                                <div class="grid_4" style="margin-top:10px;">
+                                    <md-radio-button value="0" class="md-primary">Jalan Sendiri</md-radio-button>
+                                </div>
+                                <div class="grid_4" style="margin-top:10px;">
+                                    <md-radio-button value="1" class="md-primary">Jalan dengan dibantu orang lain</md-radio-button>
+                                </div>
+                                 <div class="grid_4" style="margin-top:10px;">
+                                    <md-radio-button value="2" class="md-primary">Jalan dengan dibantu alat</md-radio-button>
+                                </div>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                    <div class="grid_12" style="margin-top:15px;">
+                        <div class="grid_12">
+                            <label c-label style="padding:5px;font-size:14px; font-weight:600">Pasien diteruskan ke</label>
+                        </div>
+                        <div class="grid_12">
+                            <md-radio-group ng-model="listTeruskan" layout="row" layout-sm="row"
+                                layout-align="left left" layout-wrap>
+                                <div class="grid_6" style="margin-top:10px;">
+                                    <md-radio-button value="0" class="md-primary">IGD</md-radio-button>
+                                </div>
+                                <div class="grid_6" style="margin-top:10px;">
+                                    <md-radio-button value="1" class="md-primary">Pemeriksaan Radiologi</md-radio-button>
+                                </div>
+                                 <div class="grid_6" style="margin-top:10px;">
+                                    <md-radio-button value="2" class="md-primary">Poliklinik</md-radio-button>
+                                </div>
+                                <div class="grid_6" style="margin-top:10px;">
+                                    <md-radio-button value="3" class="md-primary">Pemeriksaan Laboratorium</md-radio-button>
+                                </div>
+                                 <div class="grid_6" style="margin-top:10px;">
+                                    <md-radio-button value="4" class="md-primary">Lain-lain</md-radio-button>
+                                </div>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                    <div class="grid_12" style="margin-top:15px;">
+                        <div class="grid_12">
+                            <label c-label style="padding:5px;font-size:14px; font-weight:600">Apakah ada keyankinan tertentu yang perlu diketahui</label>
+                        </div>
+                        <div class="grid_12">
+                            <md-radio-group ng-model="listAlasan" layout="row" layout-sm="row"
+                                layout-align="left left" layout-wrap>
+                                <div class="grid_12" style="margin-top:10px;">
+                                    <md-radio-button value="0" class="md-primary">Ada, Misalnya : (Vegetarian, Hanya diperiksa oleh jenis kelamin yang sama)</md-radio-button>
+                                </div>
+                                <div class="grid_12" style="margin-top:10px;">
+                                    <md-radio-button value="1" class="md-primary">Tidak Ada</md-radio-button>
+                                </div>                                
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_12">
+                            <textarea required class="k-textbox"
+                                style="height:76px;width:100%;margin-top:5px;resize: none;"
+                                ng-model="item.KeteranganAlasan" ng-show="Alsan"></textarea>
+                        </div>
+                    </div>
+                    <div class="grid_12" style="margin-top:15px;">
+                        <div class="grid_12">
+                            <label c-label style="padding:5px;font-size:14px; font-weight:600">Screening TB</label>
+                        </div>
+                        <div class="grid_12">
+                            <md-radio-group ng-model="listTb" layout="row" layout-sm="row"
+                                layout-align="left left" layout-wrap>
+                                <div class="grid_12" style="margin-top:10px;">
+                                    <md-radio-button value="0" class="md-primary">Batuk lama >= 2 minggu</md-radio-button>
+                                </div>
+                                <div class="grid_12" style="margin-top:10px;">
+                                    <md-radio-button value="0" class="md-primary">Apakah pernah sakit batuk lama & mendapat pengobatan selama 6 bulan</md-radio-button>
+                                </div>                                
+                            </md-radio-group>
+                        </div>
+                    </div>
+                    <div class="grid_12" style="margin-top: 15px;">
+                        <div class="grid_12">
+                            <label c-label real>Petugas Screening</label>
+                        </div>
+                        <div class="grid_12">
+                            <input required style="width: 100%;" kendo-combo-box k-ng-model="item.petugasScreening"
+                                k-data-text-field="'namalengkap'" k-filter="'contains'"
+                                k-data-value-field="'id'" k-data-source="listDataPegawai" />
+                        </div>
+                    </div>             
+                </div>
+                <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:15px">
+                    <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="saveScreening()"
+                        ng-hide="hideScr">
+                        <span class="k-icon k-update"></span>Simpan</button>
+                    <button class="k-button k-button-icontext k-primary k-grid-update"
+                        ng-click="cetakScreening()"><span class="k-icon k-print"></span>Cetak</button>
+                    <button class="k-button  k-button-icontext" ng-click="hapusScreening()"><span
+                            class="k-icon k-delete"></span>Hapus</button>
+                    <button class="k-button  k-button-icontext" ng-click="batalScreening()"><span
+                            class="k-icon k-cancel"></span>Batal</button>
+                </div>
+            </div>
+        </div>                     

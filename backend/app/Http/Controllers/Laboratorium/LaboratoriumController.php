@@ -163,7 +163,7 @@ class LaboratoriumController extends ApiController
 
             ->select('ru.namaruangan','pd.noregistrasi','pd.norec as norec_pd',
                 'pd.tglregistrasi','pg.namalengkap as namadokter','kl.namakelas','apd.tglmasuk','apd.tglkeluar','apd.norec','pg.id as pgid',
-                'apd.objectruanganfk')
+                'apd.objectruanganfk','apd.objectkelasfk')
             ->where('pd.kdprofile',$idProfile)
             ->orderBy('apd.tglmasuk');
 
@@ -598,7 +598,7 @@ class LaboratoriumController extends ApiController
     }
     public function getNilaiNormal(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
-        $jenis  = DB::table('nilainormal_m as djps')
+        $jenis  = DB::table('nilainormal_m as djp')
             ->leftjoin('jeniskelamin_m as dp','dp.id','=','djp.objectjeniskelaminfk')
             ->leftjoin('kelompokumur_m as ku','ku.id','=','djp.kelompokumurfk')
             ->select('djp.*','dp.jeniskelamin','ku.kelompokumur','ku.umurmax','ku.umurmin','ku.statusumur')
@@ -690,7 +690,8 @@ class LaboratoriumController extends ApiController
             ->leftjoin('satuanstandar_m as ss','ss.id','=','map.satuanstandarfk')
             ->select('map.*','prd.namaproduk','ss.satuanstandar','djp.detailjenisproduk')
             ->where('map.kdprofile', $kdProfile  )
-            ->where('map.statusenabled',true);
+            ->where('map.statusenabled',true)
+            ->where('prd.statusenabled',true);
         if(isset($request['nama']) && $request['nama']!='undefined' && $request['nama']!=''){
             $jenis = $jenis->where('prd.namaproduk','ilike','%'.$request['nama'].'%');
         }
@@ -878,27 +879,51 @@ class LaboratoriumController extends ApiController
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
    public function getHasilLabManual(Request $r){
-        $umur =$r['umur'];
+        $umur =$r['umur'];        
+        $paramsPro = "";
+        if (isset($r['norec']) && $r['norec'] != "") {
+            $paramsPro = " AND pp.norec in ( ". $r['norec'] .") ";
+        }else{
+            $norec_apd = $r['norec_apd'];
+            $norecOrder = $r['norecOrder'];
+            $getAntrian = collect(DB::select("SELECT * FROM antrianpasiendiperiksa_t WHERE norec = '$norec_apd' "))->first();
+            $getPD = collect(DB::select("SELECT * FROM antrianpasiendiperiksa_t WHERE noregistrasifk = '$getAntrian->noregistrasifk' AND objectruanganfk = 575 "))->first();
+            $paramsPro = " AND pp.noregistrasifk = '" . $getPD->norec ."'";
+        }
         $data = DB::select(DB::raw("SELECT pp.noregistrasifk as norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk  ,maps.detailpemeriksaan,maps.memohasil,
                 maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.tipedata,nn.nilaimin,nn.nilaimax,hh.hasil,
                 maps.id as map_id,hh.norec as norec_hasil,maps.nourutjenispemeriksaan,maps.nourutdetail,pp.norec as norecPP,nn.nilaimin || '-' || nn.nilaimax as nilainormalstr,
-                hh.flag,nn.id as idnn,maps2.jeniskelaminfk
+                hh.flag,nn.id as idnn,maps2.jeniskelaminfk,hh.pegawaifk,hh.keterangan
                 FROM pelayananpasien_t  as pp
                 inner join produk_m as prd on prd.id = pp.produkfk
                 inner join detailjenisproduk_m as djp on djp.id = prd.objectdetailjenisprodukfk
                 inner join maphasillab_m  as maps on maps.produkfk = prd.id
                 inner join maphasillabdetail_m  as maps2 on maps2.maphasilfk = maps.id 
-                and maps2.jeniskelaminfk ='$r[objectjeniskelaminfk]'
-                and maps2.kelompokumurfk in (select id from kelompokumur_m  kuu where $umur BETWEEN kuu.umurmin and kuu.umurmax) 
+                and maps2.jeniskelaminfk = $r[objectjeniskelaminfk]
+                and maps2.kelompokumurfk in (select id from kelompokumur_m  kuu where '$umur' BETWEEN kuu.umurmin and kuu.umurmax) 
                 inner join nilainormal_m  as nn on nn.id = maps2.nilainormalfk
                 left join satuanstandar_m  as ss on ss.id = maps.satuanstandarfk
                 left join hasillaboratorium_t  as hh on hh.norecpelayanan  = pp.norec 
                 and pp.noregistrasifk=hh.noregistrasifk
                  and maps.detailpemeriksaan =hh.detailpemeriksaan 
-                where   pp.norec in ($r[norec])  
+                where pp.statusenabled = true
+                -- pp.norec in ($r[norec])  
+                $paramsPro
                 order by  maps.nourutjenispemeriksaan,maps.nourutdetail asc"));
+        $id = null;
+        $nama= null;
+        foreach($data as $d){
+            if($d->pegawaifk!=null){
+                $id = $d->pegawaifk;
+            }
+        }
+        if($id!=null){
+            $nama = DB::table('pegawai_m')->where('id',$id)->first()->namalengkap;
+
+        }
         $result =  array(
             'data' => $data, 
+            'dokter' => array('id'=>$id,'namalengkap'=>$nama)
         );        
         return $this->respond($result);  
     }
@@ -930,7 +955,8 @@ class LaboratoriumController extends ApiController
                             [
                                 'hasil' => $value['hasil'],
                                 'flag' => $value['flag'],
-                            
+                                'pegawaifk' => $value['dokterfk'],
+                                'keterangan' => $value['catatan'],
                             ]
                         );
                 }else
@@ -940,13 +966,14 @@ class LaboratoriumController extends ApiController
                     $h->kdprofile = $idProfile;
                     $h->statusenabled = true;
                     $h->tglhasil = date('Y-m-d H:i:s');
-                    $h->pegawaifk = $this->getCurrentUserID();
+                    $h->pegawaifk = $value['dokterfk'];
                     $h->hasil = $value['hasil'];
                     $h->noregistrasifk = $value['noregistrasifk'];
                     $h->produkfk = $value['produkfk'];
                     $h->flag = $value['flag'];
                     $h->detailpemeriksaan = $value['detailpemeriksaan'];
                     $h->norecpelayanan = $value['norecpelayanan'];
+                    $h->keterangan = $value['catatan'];
                     $h->save();
                 }
     
@@ -1309,4 +1336,125 @@ class LaboratoriumController extends ApiController
         return $this->respond($jenis);
 
     }
+    public function saveMapHasilLabBantu(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+             ini_set('max_execution_time', 10000); //6 minutes
+      
+  
+           $data = DB::select(DB::raw("
+         
+            select * from (
+            select DISTINCT null as id, pr.kdprofile,pr.statusenabled,
+            pr.id as produkfk,maps2.namapemeriksaandet,0 as  nourutdetail,ss.id as satuanfk ,maps2.satuan,null as memo,null as norec , 
+            0 as  nourutjenispemeriksaan,
+            row_number() over (partition by pr.id,maps2.namapemeriksaandet order by ss.id desc) as rownum 
+            from produk_m as pr 
+            join mapbantus as maps2 on  maps2.idproduk=cast(pr.id as text)
+            left join satuanstandar_m as ss on LOWER(ss.satuanstandar) =LOWER(maps2.satuan)
+            where pr.statusenabled=true
+            and pr.statusenabled =true
+          
+
+            ) as x where x.rownum =1
+            order by x.produkfk;
+
+                        "));
+
+
+            $data2 = DB::select(DB::raw(" 
+              
+                  select * from (
+                select *,row_number() over (partition by x.produkfk,x.jeniskelaminfk,x.nilaitext  order by x.nilainormalfk desc) as rownum2  from ( 
+                select DISTINCT pr.id as produkfk,pr.namaproduk,null as id,pr.kdprofile,pr.statusenabled,
+                jk.id as jeniskelaminfk,
+                nn.id as nilainormalfk,nn.nilaitext,
+                13 as kelompokumur,maps2.namapemeriksaandet,
+
+                row_number() over (partition by pr.id ,jk.id,nn.id order by nn.id desc) as rownum 
+                from produk_m as pr 
+                join mapbantus as maps2 on   maps2.idproduk=cast(pr.id as text)
+                left join satuanstandar_m as ss on LOWER(ss.satuanstandar) =LOWER(maps2.satuan)
+                left join jeniskelamin_m as jk on cast(jk.ID AS TEXT)=maps2.nilairujukan_jk
+                join nilainormal_m as  nn on nn.nilaitext=maps2.nilaitext2 and nn.nilaimin=maps2.mix and nn.nilaimax=maps2.max and nn.kelompokumurfk=13
+                where pr.statusenabled=true
+                and pr.statusenabled =true
+         
+                order by pr.namaproduk
+                ) as x WHERE x.rownum=1
+                
+                ) as z WHERE z.rownum2=1
+            "));
+  
+
+            foreach ($data as $d) {
+                $d->details =[];
+                foreach ($data2 as $d2) {
+                    if($d->produkfk == $d2->produkfk && $d->namapemeriksaandet == $d2->namapemeriksaandet){
+                          $d->details []=$d2;
+                    }
+                }
+              }
+           // die;
+           // return $this->respond($data);
+            $dataInsert = [];
+            $i = 0;
+            foreach ($data as $d) {
+                // $id =MapHasilLab::max('id') + 1;
+                // $dataInsert[] = array(
+                //         'id' => $id,
+                //         'norec' => substr(Uuid::generate(), 0, 32),
+                //         'kdprofile' => $kdProfile,
+                //         'statusenabled' => true,
+                //         'produkfk' => $d->produkfk,
+                //         'detailpemeriksaan' => $d->namapemeriksaandet,
+                //         'nourutdetail' =>  $id,
+                //         'satuanstandarfk' =>  $d->satuanfk,
+                //         'memohasil' =>'-',
+                //         'ket' => 'RYL',
+                       
+                //  );
+                $dataSO = new MapHasilLab();
+                $id =MapHasilLab::max('id') + 1;
+                $dataSO->id =$id ;
+                $dataSO->norec = $dataSO->generateNewId();
+                $dataSO->kdprofile = $idProfile;
+
+                $dataSO->statusenabled = true;//$request['statusenabled'];
+                $dataSO->produkfk =$d->produkfk;
+                $dataSO->detailpemeriksaan = $d->namapemeriksaandet;
+                $dataSO->nourutdetail = $id;
+                $dataSO->satuanstandarfk = $d->satuanfk;
+                $dataSO->memohasil ='-';
+                $dataSO->ket = 'GRA';
+                $dataSO->save();
+                $iddet =  $dataSO->id;
+
+                foreach ($d->details as $d2) {
+
+                    $dataSO2 = new MapHasilLabDetail();
+                    $dataSO2->id =MapHasilLabDetail::max('id') + 1;
+                    $dataSO2->kdprofile = $idProfile;
+                    $dataSO2->statusenabled = true;//$request['statusenabled'];
+                    $dataSO2->jeniskelaminfk =$d2->jeniskelaminfk;
+                    $dataSO2->nilainormalfk = $d2->nilainormalfk;
+                    $dataSO2->kelompokumurfk = $d2->kelompokumur;
+                    $dataSO2->maphasilfk = $iddet;
+                    $dataSO2->ket = 'GRA';
+                    $dataSO2->save();
+                }
+            }
+     
+            $transMessage = "Simpan";
+            // DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'er@epic',
+            );
+
+    
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
 }

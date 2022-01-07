@@ -2,11 +2,13 @@ define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('HasilLaboratoriumRevCtrl', ['$scope', '$state', 'MedifirstService', 'CacheHelper',
         function ($scope, $state, medifirstService, cacheHelper) {
+            //test 
 
             $scope.isRouteLoading = false;
             $scope.norecPD = $state.params.norecPd
             $scope.norecAPD = $state.params.norecApd
             $scope.norecPP = $state.params.norecPP
+            $scope.norecOrder = undefined;
            
             // $scope.shows = 0;
             $scope.item = {};
@@ -36,6 +38,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.tgllahir = chacePeriode[13]
                     $scope.item.objectjeniskelaminfk = chacePeriode[14]
                     $scope.item.norecPP = chacePeriode[15]
+                    $scope.norecOrder = chacePeriode[16]
                     const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
                     const firstDate = new Date($scope.item.tgllahir);
                     const secondDate = new Date($scope.item.tglRegistrasi);
@@ -185,14 +188,24 @@ define(['initialize'], function (initialize) {
                 $scope.isRouteLoading = true
                 
                 medifirstService.get("laboratorium/get-hasil-lab-manual?norec_apd=" + $state.params.norecApd +
-                    '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk + '&umur=' + $scope.item.umurDay + '&norec=' + $scope.item.norecPP ).then(function (data) {
+                    '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk + '&umur=' + $scope.item.umurDay + '&norec=' + $scope.item.norecPP + '&norecOrder=' + $scope.norecOrder ).then(function (data) {
                         // var sourceGrid = []
                         $scope.isRouteLoading = false;
                         if (data.statResponse == true && data.data.data.length > 0) {
                             // sourceGrid = data.data.data
-
+                            if( data.data.dokter.id!=null){
+                               if($scope.ListDataPegawai==undefined){
+                                   $scope.ListDataPegawai =[{id: data.data.dokter.id,namalengkap:  data.data.dokter.namalengkap} ]
+                               } 
+                               $scope.item.DataPegawai = {id: data.data.dokter.id,namalengkap:  data.data.dokter.namalengkap} 
+                            }
+                            
                             for (let i = 0; i < data.data.data.length; i++) {
                                 const element = data.data.data[i];
+                           
+                               
+                                if(element.keterangan)
+                                    $scope.item.catatan = element.keterangan
                             //     if (element.hasil != null) {
                             //         if (parseFloat(element.hasil) <= parseFloat(element.nilaimax)
                                         // && parseFloat(element.hasil) >= parseFloat(element.nilaimin)) {
@@ -266,6 +279,8 @@ define(['initialize'], function (initialize) {
                                                 }else{
                                                     e.items[0].flag ="Y"         
                                                 }
+                                            }else if(HasilInput.indexOf("*") >= 0){                                                 
+                                                    e.items[0].flag ="Y"                                                           
                                             }else if(HasilInput.indexOf("<") >= 0){
                                                 let a = parseFloat(e.items[0].nilaimin)
                                                 let b = parseFloat(e.items[0].nilaimax)
@@ -318,38 +333,42 @@ define(['initialize'], function (initialize) {
                                                 
                                             }
                                             else{
-                                                if(e.items[0].nilaimin != null){
-                                                    if(e.items[0].tipedata == 2)
-                                                    {
-                                                        let a = (e.items[0].nilaimin).toUpperCase()
-                                                        let b = (e.items[0].nilaimax).toUpperCase()
-                                                        let hssl = ((e.items[0].hasil).trim()).toUpperCase()
-                                                        if(hssl >= a && hssl <= b){
-                                                            e.items[0].flag ="N"           
-                                                        }else{
-                                                            e.items[0].flag ="Y"         
-                                                        } 
-                                                    }else
-                                                    {
-                                                        let a = parseFloat(e.items[0].nilaimin)
-                                                        let b = parseFloat(e.items[0].nilaimax)
-                                                        let hssl = parseFloat(e.items[0].hasil )
-                                                        if(hssl >= a && hssl <= b){
+                                                if(HasilInput.indexOf("*") >= 0){                                                
+                                                    e.items[0].flag ="Y"
+                                                }else{
+                                                    if(e.items[0].nilaimin != null){
+                                                        if(e.items[0].tipedata == 2)
+                                                        {
+                                                            let a = (e.items[0].nilaimin).toUpperCase()
+                                                            let b = (e.items[0].nilaimax).toUpperCase()
+                                                            let hssl = ((e.items[0].hasil).trim()).toUpperCase()
+                                                            if(hssl >= a && hssl <= b){
+                                                                e.items[0].flag ="N"           
+                                                            }else{
+                                                                e.items[0].flag ="Y"         
+                                                            } 
+                                                        }else
+                                                        {
+                                                            let a = parseFloat(e.items[0].nilaimin)
+                                                            let b = parseFloat(e.items[0].nilaimax)
+                                                            let hssl = parseFloat(e.items[0].hasil )
+                                                            if(hssl >= a && hssl <= b){
+                                                                e.items[0].flag ="N"           
+                                                            }else{
+                                                                e.items[0].flag ="Y"         
+                                                            }
+                                                        }
+                                                        
+                                                    }else{
+                                                        let hssl = (e.items[0].hasil).trim() 
+                                                        let nilaistring = e.items[0].nilaitext
+                                                        nilaistring = nilaistring.toUpperCase();
+                                                        hssl = hssl.toUpperCase();
+                                                        if(hssl == nilaistring){
                                                             e.items[0].flag ="N"           
                                                         }else{
                                                             e.items[0].flag ="Y"         
                                                         }
-                                                    }
-                                                    
-                                                }else{
-                                                    let hssl = (e.items[0].hasil).trim() 
-                                                    let nilaistring = e.items[0].nilaitext
-                                                    nilaistring = nilaistring.toUpperCase();
-                                                    hssl = hssl.toUpperCase();
-                                                    if(hssl == nilaistring){
-                                                        e.items[0].flag ="N"           
-                                                    }else{
-                                                        e.items[0].flag ="Y"         
                                                     }
                                                 }
                                             }
@@ -539,6 +558,7 @@ define(['initialize'], function (initialize) {
 
             $scope.simpan = function () {
                 var dataArray = [];
+
                 for (var i = $scope.resultGrids._data.length - 1; i >= 0; i--) {
                     if ($scope.resultGrids._data[i].hasil != null)
                         dataArray.push({
@@ -548,6 +568,8 @@ define(['initialize'], function (initialize) {
                             "flag": $scope.resultGrids._data[i].flag,
                             "detailpemeriksaan": $scope.resultGrids._data[i].detailpemeriksaan,
                             "norecpelayanan" : $scope.resultGrids._data[i].norecpp,
+                            "catatan" :$scope.item.catatan?$scope.item.catatan:null,
+                            "dokterfk" :$scope.item.DataPegawai?$scope.item.DataPegawai.id:null
                         });
                 }
 
@@ -611,9 +633,46 @@ define(['initialize'], function (initialize) {
             $scope.showPopUp = function () {
                 $scope.popUpDokter.center().open();
             }
-            $scope.cetak = function () {
-                var dokter ="";
-                var user = medifirstService.getPegawaiLogin(); 
+            // $scope.cetak = function () {
+            //     var dokter ="";
+            //     var user = medifirstService.getPegawaiLogin(); 
+            //     var stt = 'false'
+            //     if (confirm('View Hasil Laboratorium? ')) {
+            //         // Save it!
+            //         stt = 'true';
+            //     } else {
+            //         // Do nothing!
+            //         stt = 'false'
+            //     }
+            //     if($scope.item.DataPegawai == undefined)
+            //     {
+            //         alert("Pilih terlebih dahulu dookter nya!!")
+            //         return;
+            //     }else{
+            //     dokter = $scope.item.DataPegawai
+            //     }
+            //     // medifirstService.get("laboratorium/get-riwayat-bayar?norec=" + $scope.norecAPD ).then(function (data) {
+            //     //     if(data.data.data[0].nostruklastfk == null )
+            //     //     {
+            //     //          alert("Passien Umum Wajib Bayar Terlebih Dahulu!!")
+            //     //          return;
+            //     //     }
+            //     //  });
+
+            //     var client = new HttpClient();
+            //      client.get('http://127.0.0.1:1237/printvb/bridging?cetak-hasil-lab=1&norec=' + $scope.norecAPD 
+            //                 + '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk + '&umur=' + $scope.item.umurDay
+            //                 + '&strIdPegawai=' + user.namaLengkap + '&strNorecPP=' + $scope.item.norecPP + '&view='+ stt + '&doketr=' + dokter.namalengkap +'&catatan=' + $scope.item.catatan, function (response) {
+
+            //     }); 
+            //     // client.get('http://127.0.0.1:1237/printvb/bridging?cetak-hasil-lab=' + $scope.dataSbnSelected.noregistrasi + $scope.dataSbnSelected.norec_sp + '&idPegawai=' + $scope.pegawai.namaLengkap + '&STD=' + sudahTerimaDari + '&view=' + stt, function (response) {                    
+                
+            //         // $scope.popUpDokter.close();
+            //     // });
+            // }
+            $scope.cetakds = function () {
+                var dokter = "";
+                var user = medifirstService.getPegawaiLogin();
                 var stt = 'false'
                 if (confirm('View Hasil Laboratorium? ')) {
                     // Save it!
@@ -622,30 +681,30 @@ define(['initialize'], function (initialize) {
                     // Do nothing!
                     stt = 'false'
                 }
-                if($scope.item.DataPegawai == undefined)
-                {
-                    alert("Pilih terlebih dahulu dookter nya!!")
+                if ($scope.item.DataPegawai == undefined) {
+                    alert("Pilih terlebih dahulu dokter nya!!")
                     return;
-                }else{
-                dokter = $scope.item.DataPegawai
+                } else {
+                    dokter = $scope.item.DataPegawai
                 }
-                // medifirstService.get("laboratorium/get-riwayat-bayar?norec=" + $scope.norecAPD ).then(function (data) {
-                //     if(data.data.data[0].nostruklastfk == null )
-                //     {
-                //          alert("Passien Umum Wajib Bayar Terlebih Dahulu!!")
-                //          return;
+                // medifirstService.get("laboratorium/get-riwayat-bayar?norec=" + $scope.norecAPD).then(function (data) {
+                //     if (data.data.data.length > 0) {
+                //         if (data.data.data[0].nostruklastfk == null) {
+                //             alert("Passien Umum Wajib Bayar Terlebih Dahulu!!")
+                //             return;
+                //         }
                 //     }
-                //  });
+                // });
 
                 var client = new HttpClient();
-                 client.get('http://127.0.0.1:1237/printvb/bridging?cetak-hasil-lab=1&norec=' + $scope.norecAPD 
-                            + '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk + '&umur=' + $scope.item.umurDay
-                            + '&strIdPegawai=' + user.namaLengkap + '&strNorecPP=' + $scope.item.norecPP + '&view='+ stt + '&doketr=' + dokter.namalengkap +'&catatan=' + $scope.item.catatan, function (response) {
+                client.get('http://127.0.0.1:1237/printvb/bridging?cetak-hasil-lab=1&norec=' + $scope.norecAPD
+                    + '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk + '&umur=' + $scope.item.umurDay
+                    + '&strIdPegawai=' + user.namaLengkap + '&strNorecPP=' + $scope.item.norecPP + '&view=' + stt + '&doketr=' + dokter.namalengkap + '&catatan=' + $scope.item.catatan, function (response) {
 
-                }); 
+                    });
                 // client.get('http://127.0.0.1:1237/printvb/bridging?cetak-hasil-lab=' + $scope.dataSbnSelected.noregistrasi + $scope.dataSbnSelected.norec_sp + '&idPegawai=' + $scope.pegawai.namaLengkap + '&STD=' + sudahTerimaDari + '&view=' + stt, function (response) {                    
-                
-                    // $scope.popUpDokter.close();
+
+                // $scope.popUpDokter.close();
                 // });
             }
 

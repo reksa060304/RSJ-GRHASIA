@@ -30,7 +30,7 @@ define(['initialize'], function (initialize) {
 				var tgltgltgltgl = dat.data.mindate[0].max
 				var tglkpnaja = dat.data.datedate
 				$scope.minDate = new Date(tgltgltgltgl);
-				$scope.maxDate = new Date($scope.now);
+				//$scope.maxDate = new Date($scope.now);
 				$scope.startDateOptions = {
 					disableDates: function (date) {
 						var disabled = tglkpnaja;

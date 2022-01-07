@@ -243,6 +243,15 @@
             <!-- <kendo-button class="c-button" ng-click="CetakBuktiLayananPerTindakan()"><span class="title">Bukti Layanan
                 </span></kendo-button> -->
             <button class="btnTemplate1" style="margin-left: 0;" ng-click="CetakBuktiLayananPerTindakan()"><i
+                    class="fa fa-print"></i>Bukti Layanan Tindakan</button>
+            <!-- <button class="c-button" ng-click="CetakBuktiLayananPerTindakan()">Bukti Layanan Pertindakan</button> -->
+        </div>
+    </div>
+    <div class="grid_2">
+        <div class="grid_12" style="margin-top: 22px">
+            <!-- <kendo-button class="c-button" ng-click="CetakBuktiLayananPerTindakan()"><span class="title">Bukti Layanan
+                </span></kendo-button> -->
+            <button class="btnTemplate1" style="margin-left: 0;" ng-click="cetakBuktiLayanan()"><i
                     class="fa fa-print"></i>Bukti Layanan</button>
             <!-- <button class="c-button" ng-click="CetakBuktiLayananPerTindakan()">Bukti Layanan Pertindakan</button> -->
         </div>
@@ -256,7 +265,7 @@
         </div>
     </div>
     <div class="grid_2">
-        <div class="grid_12" style="margin-top: 22px">
+        <div class="grid_12" >
             <!-- <button class="error c-button" ng-click="back()">Kembali</button> -->
             <button class="btnTemplate1 error" style="margin-left: 0;" ng-click="back()"><i
                     class="fa fa-arrow-left"></i> Kembali</button>
@@ -432,6 +441,27 @@
                             k-auto-bind="false" k-data-source="listDokter" ng-disabled="noeditExpertise1"/>
                     </div>
 
+                </div>
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item">Jumlah Pengulangan Foto</label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="'varchar'" class="k-textbox"
+                            ng-model="item.jumlahPengulanganFoto" />
+                    </div>
+                </div>
+                
+            </div>
+            <div class="grid_12">
+                <div class="grid_12">
+                    <label c-label item="item">Keterangan Order</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea class="k-textbox" style="height: 50px; width: 100%;"
+                        ng-model="item.keteranganlainnya" ng-disabled="true"></textarea>
                 </div>
             </div>
             <div class="grid_12">

@@ -190,6 +190,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.noPesanan = chacePeriode[4]
                     if (chacePeriode[5] != null)
                         $scope.departemen = chacePeriode[5]
+                    if (chacePeriode[6] != null)
+                        $scope.checkPasienRanap = chacePeriode[6]
+                    if (chacePeriode[7] != null)
+                        $scope.checkPasienRajal = chacePeriode[7]
+                        
 
 
                 }
@@ -290,7 +295,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 // },
                 autoBind: false,
 
-            };
+            };            
             $scope.refresh = function () {
                 $scope.isRouteLoading = true
                 // debugger;
@@ -318,6 +323,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if ($scope.depo != undefined) {
                     depoId = '&depoId=' + $scope.depo.id
                 }
+                var checkPasienRanap = ''
+                if ($scope.checkPasienRanap != undefined) {
+                    checkPasienRanap = '&checkPasienRanap=' + $scope.checkPasienRanap
+                }
+                var checkPasienRajal = ''
+                if ($scope.checkPasienRajal != undefined) {
+                    checkPasienRajal = '&checkPasienRajal=' + $scope.checkPasienRajal
+                }
                 // var status = ''
                 // if ($scope.status != undefined) {
                 //     status = '&statusId=' + $scope.status.id
@@ -338,7 +351,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 var tglAwal = moment($scope.startDate).format('YYYY-MM-DD');
                 var tglAkhir = moment($scope.untilDate).format('YYYY-MM-DD');
-                medifirstService.get('farmasi/get-daftar-order?tglAwal=' + tglAwal + '&tglAkhir=' + tglAkhir + nocm + namaPasien + noPesanan + ruanganId + departemenId + '&statusId=' + status + depoId).then(function (e) {
+                medifirstService.get('farmasi/get-daftar-order?tglAwal=' + tglAwal + '&tglAkhir=' + tglAkhir + nocm + namaPasien + noPesanan + ruanganId + departemenId + '&statusId=' + status + depoId + checkPasienRanap + checkPasienRajal).then(function (e) {
                     // findPasien.findOrderObat($scope.noCm, $scope.ruanganId, $scope.startDate, $scope.untilDate).then(function(e) {
                     for (var i = 0; i < e.data.length; i++) {
                         e.data[i].no = i + 1
@@ -393,7 +406,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     2: $scope.noCm != undefined ? $scope.noCm : null,
                     3: $scope.namaPasien != undefined ? $scope.namaPasien : null,
                     4: $scope.noPesanan != undefined ? $scope.noPesanan : null,
-                    5: $scope.departemen != undefined ? $scope.departemen : null
+                    5: $scope.departemen != undefined ? $scope.departemen : null,
+                    6: $scope.checkPasienRanap !=undefined ? $scope.checkPasienRanap : null,
+                    7: $scope.checkPasienRajal !=undefined ? $scope.checkPasienRajal : null
                 }
                 cacheHelper.set('ResepElektronikCtrl', chacePeriode);
             };

@@ -14,7 +14,7 @@ define(['initialize'], function (initialize) {
             $scope.isRouteLoading = false;
             $rootScope.isOpen = true;
             $scope.cboUbahDokter = true;
-            $scope.item.isDokter = true;
+            //$scope.item.isDokter = true;//20211223 permintaan poli jiwa
             // $scope.title = "ini page pencarian pasien";
             // $scope.kodeRuangan = $state.params.kodeRuangan;
             // $scope.isCalling = false;

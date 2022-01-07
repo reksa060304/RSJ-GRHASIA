@@ -234,7 +234,12 @@ class TindakanController extends ApiController
             if(isset( $item['hargadijamin'])){
                 $PelPasien->hargadijamin =  $item['hargadijamin'];
             }
+            if(isset($item['norec_resep'])){
+                $PelPasien->strukresepfk = $item['norec_resep'];
+                $PelPasien->status =  'tarif service';
+            }
 
+            
             
             $PelPasien->save();
             $PPnorec = $PelPasien->norec;
@@ -496,7 +501,8 @@ class TindakanController extends ApiController
                 // ->where('hnp.objectpenjaminfk',$request['idPenjamin'])
                 ->where('mpr.statusenabled',true)
                 ->where('hnp.statusenabled',true)
-                ->where('prd.statusenabled',true);
+                ->where('prd.statusenabled',true)
+                ->whereNull('hnp.objectpenjaminfk');;
             $data = $data->distinct();
             $data = $data->get();
         }
@@ -549,7 +555,8 @@ class TindakanController extends ApiController
                 ->where('sk.statusenabled',true)
                 ->where('mpr.statusenabled',true)
                 ->where('hnp.kdprofile',$idProfile)
-                ->where('prd.statusenabled',true);
+                ->where('prd.statusenabled',true)
+                ->whereNull('hnp.objectpenjaminfk');
             $data2 = $data2->distinct();
             $data2 = $data2->get();
             $istarifpenjamin = false;
@@ -1190,7 +1197,7 @@ class TindakanController extends ApiController
                 ->where('prd.namaproduk','ilike','%'.$req['filter']['filters'][0]['value'].'%' );
         }
         $data = $data->orderBy('prd.namaproduk', 'ASC');
-        $data = $data->take(15);
+        $data = $data->take(100);
         $data = $data->get();
         // $result = array(
         //     'data' => $data,

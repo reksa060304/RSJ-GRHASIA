@@ -311,6 +311,7 @@ define(['initialize'], function (initialize) {
                 }
             }
             $scope.EditPasien = function () {
+                cacheHelper.set('cacheStatusPasien', 'LAMA');
                 if ($scope.nocm != undefined) {
 
                     cacheHelper.set('CacheRegisBayi', undefined);

@@ -24,61 +24,94 @@
         </div>
     </div>
 </div> -->
-<div class="p-grid">
-    <div class="p-col-12">
-        <div class="card toolbar-demo">
+
+<div class="header-navbar navbar navbar-expand-lg align-items-center navbar-shadow navbar-light floating-nav">
+    <div class="navbar-container d-flex content">
+        <div class="bookmark-wrapper d-flex align-items-center">
+            <a aria-current="page" class="nuxt-link-exact-active nuxt-link-active"
+                style="display: flex; height: 100%;"><img style="object-fit: cover; height: 70px;"
+                    src="assets/img/logo_only.png"><span
+                    style="font-size: 18px; margin-left: 20px; font-weight: bold; display: flex; align-items: center;">
+                    <div class="labels white--text" style="line-height: 1; align-self: center;">
+                        <div style="font-size: 2.1rem;">RSJ Grhasia </div>
+                        <div style="font-weight: 500; font-size: 0.9rem; margin-top: 5px;">TRANSMEDIC</div>
+                    </div>
+                </span></a>
+
+        </div>
+        <ul class="nav navbar-nav align-items-center ml-auto">
+            <li class="nav-item d-none d-lg-block"><a type="button" class="nav-link nav-link-style btn"><span
+                        class="ficon font-medium-5 feather icon-moon"></span></a></li>
+            <li ngbdropdown="" class="nav-item dropdown-user">
+                <span id="navbarUserDropdown" ngbdropdowntoggle="" aria-haspopup="true" aria-expanded="false"
+                    class="dropdown-toggle nav-link dropdown-user-link">
+                    <div class="user-nav d-sm-flex d-none">
+                        <span class="user-name font-weight-bolder" [routerLink]="['/index']" pTooltip="Kembali" style="cursor: pointer;">
+                            <h5><span class="tanggal">{{tgl}}</span><span class="jam">{{jamSekarang}}</span></h5>
+
+                        </span>
+                        <!-- <span class="user-status"> Online </span> -->
+                    </div>
+                    <!-- <span class="avatar">
+                        <img src="assets/images/illustration/male.png" alt="avatar" height="40" width="40"
+                            class="round"><span class="avatar-status-online"></span>
+                    </span> -->
+                    <!---->
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="app-content">
+    <div class="p-grid">
+        <div class="p-col-12 ">
+
+            <!-- <div class="card toolbar-demo">
             <h5>
                 <marquee></marquee>{{jamSekarang}}
             </h5>
 
 
-            <!-- <div class="navbar-container d-flex content">
-                <div class="bookmark-wrapper d-flex align-items-center">
-                    <a href="#" aria-current="page" class="nuxt-link-exact-active nuxt-link-active"
-                        style="display: flex; height: 100%;"><img src="assets/layout/images/transmedic.png"
-                            style="object-fit: cover; height: 80px;">
-                        </a>
-                </div>
-                <ul class="nav navbar-nav align-items-center ml-auto">
-                   
-                </ul>
-            </div> -->
+        </div> -->
         </div>
-    </div>
 
 
-    <div class="p-col-12 p-lg-6">
-        <div class="p-grid">
-            <div class="p-col-12 p-md-12  widget-customer-carousel">
-                <div class="card   text-center" style="height: 500px;overflow: auto">
-                    <div class="customer-item-content">
-                        <h4>Antrian Terakhir</h4>
-                    </div>
-                    <div class="container6 " [ngClass]="{'blink badge-light-danger2' : dipanggil}"
-                        style=" height: calc(50vh - 100px); ">
-                        <p class="judul_rata antrian-akhir">
-                            {{item.antriTerakhir != undefined ? item.antriTerakhir : '-' }}
-                        </p>
-                    </div>
-                    <div class="customer-item-content">
-                        <span style="color: #868C9B;font-size: 1.5rem;">Silahkan Menuju</span>
-                        <p style="font-size:3.5rem;color:rgb(252, 97, 97);">{{item.loketPanggil}}</p>
+        <div class="p-col-12 p-lg-6">
+            <div class="p-grid">
+                <div class="p-col-12 p-md-12  widget-customer-carousel">
+                    <div class="card   text-center">
+                        <p-scrollPanel [style]="{width: '100%', height: '450px'}">
+                            <div class="customer-item-content">
+                                <h3>Antrian Terakhir</h3>
+                            </div>
+                            <div class="container6 " [ngClass]="{'blink badge-light-danger2' : dipanggil}"
+                                style=" height: calc(50vh - 100px); ">
+                                <p class="judul_rata antrian-akhir">
+                                    {{item.antriTerakhir != undefined ? item.antriTerakhir : '-' }}
+                                </p>
+                            </div>
+                            <div class="customer-item-content">
+                                <span style="color: #868C9B;font-size: 1.5rem;">Silahkan Menuju</span>
+                                <p style="font-size:3.5rem;color:rgb(252, 97, 97);">{{item.loketPanggil}}</p>
+                            </div>
+                        </p-scrollPanel>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="p-col-12 p-lg-6">
-        <div class="p-grid">
-            <div class="p-col-12 p-md-12  widget-customer-carousel" (click)="showPop()">
-                <div class="card text-center" style="cursor: pointer;height: 500px;overflow: auto">
-
-                    <!-- <div class="container6 " > -->
-                    <div class="video-player-wrapper">
-                        <d-player preload="auto" #player dpHls [video]="{url: pilihVideo}" [loop]='true'
-                            [screenshot]="true"></d-player>
-                        <!-- <d-player dpHls preload="auto" [video]="{url: 'https://query-streamlink.lanesh4d0w.repl.co/iptv-query?streaming-ip=https://www.vidio.com/live/875-net-tv'}" [(volume)]="volume" (resize)="onResize()"></d-player> -->
-                        <!-- <vg-player (onPlayerReady)="videoPlayerInit($event)" vgLoop="true">
+        <div class="p-col-12 p-lg-6">
+            <div class="p-grid">
+                <div class="p-col-12 p-md-12  widget-customer-carousel" (click)="showPop()">
+                    <div class="card text-center" style="cursor: pointer;">
+                        <p-scrollPanel [style]="{width: '100%', height: '450px'}">
+                            <!-- <div class="container6 " > -->
+                            <div class="video-player-wrapper">
+                                <!-- dpHls -->
+                                <d-player dpHls preload="auto" #player [video]="{url: pilihVideo}" [loop]='true'
+                                [volume]="0"
+                                    [screenshot]="true"></d-player>
+                                <!-- <d-player dpHls preload="auto" [video]="{url: 'https://query-streamlink.lanesh4d0w.repl.co/iptv-query?streaming-ip=https://www.vidio.com/live/875-net-tv'}" [(volume)]="volume" (resize)="onResize()"></d-player> -->
+                                <!-- <vg-player (onPlayerReady)="videoPlayerInit($event)" vgLoop="true">
                                 <vg-overlay-play></vg-overlay-play>
                                 <vg-buffering></vg-buffering>
 
@@ -105,74 +138,80 @@
                                     crossorigin>
                                 </video>
                             </vg-player> -->
+                            </div>
+                            <!-- </div> -->
+                        </p-scrollPanel>
                     </div>
-                    <!-- </div> -->
-
                 </div>
             </div>
         </div>
-    </div>
-    <div class="p-col-12 p-lg-12">
-        <div class="card ">
-            <div class="p-grid">
-                <div class="p-col-12 p-md-3 widget-customer-carousel">
-                    <div class="card p-mr-4 badge-light-primary text-center">
-                        <div class="customer-item-content">
-                            <div>
-                                <span class="no-margin f-s-25">{{item.antriLoket1 != undefined ? item.antriLoket1
-                                    :'-'}}</span>
-                                <span class="p-mt-0 no-margin f-s-2">Loket 1</span>
+        <div class="p-col-12 p-lg-12">
+            <div class="card ">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-2 widget-customer-carousel"
+                        *ngFor="let items of listLoket; let i = index">
+                        <div class="card p-mr-4 {{color[i]}} text-center">
+                            <div class="customer-item-content">
+                                <div>
+                                    <span class="no-margin f-s-25">{{items.value}}</span>
+                                    <span class="p-mt-0 no-margin f-s-2">{{items.label}}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="p-col-12 p-md-3 widget-customer-carousel">
-                    <div class="card p-mr-4 badge-light-info text-center">
-                        <div class="customer-item-content">
-                            <div>
-                                <span class="no-margin f-s-25">{{item.antriLoket2 != undefined ? item.antriLoket2
-                                    :'-'}}</span>
-                                <span class="p-mt-0 no-margin f-s-2">Loket 2</span>
+                <!-- <div class="p-grid">
+                    <div class="p-col-12 p-md-3 widget-customer-carousel">
+                        <div class="card p-mr-4 badge-light-primary text-center">
+                            <div class="customer-item-content">
+                                <div>
+                                    <span class="no-margin f-s-25">{{item.antriLoket1 != undefined ? item.antriLoket1
+                                        :'-'}}</span>
+                                    <span class="p-mt-0 no-margin f-s-2">Loket 1</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="p-col-12 p-md-3 widget-customer-carousel">
-                    <div class="card p-mr-4  badge-light-warning text-center">
-                        <div class="customer-item-content">
-                            <div>
-                                <span class="no-margin f-s-25">{{item.antriLoket3 != undefined ? item.antriLoket3
-                                    :'-'}}</span>
-                                <span class="p-mt-0 no-margin f-s-2">Loket 3</span>
+                    <div class="p-col-12 p-md-3 widget-customer-carousel">
+                        <div class="card p-mr-4 badge-light-info text-center">
+                            <div class="customer-item-content">
+                                <div>
+                                    <span class="no-margin f-s-25">{{item.antriLoket2 != undefined ? item.antriLoket2
+                                        :'-'}}</span>
+                                    <span class="p-mt-0 no-margin f-s-2">Loket 2</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="p-col-12 p-md-3 widget-customer-carousel">
-                    <div class="card p-mr-4 badge-light-success text-center">
-                        <div class="customer-item-content">
-                            <div>
-                                <span class="no-margin f-s-25">{{item.antriLoket4 != undefined ? item.antriLoket4
-                                    :'-'}}</span>
-                                <span class="p-mt-0 no-margin f-s-2">Loket 4</span>
+                    <div class="p-col-12 p-md-3 widget-customer-carousel">
+                        <div class="card p-mr-4  badge-light-warning text-center">
+                            <div class="customer-item-content">
+                                <div>
+                                    <span class="no-margin f-s-25">{{item.antriLoket3 != undefined ? item.antriLoket3
+                                        :'-'}}</span>
+                                    <span class="p-mt-0 no-margin f-s-2">Loket 3</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- <div class="p-col-12 p-md-3 widget-customer-carousel">
-                    <div class="card p-mr-4 badge-light-danger text-center">
-                        <div class="customer-item-content">
-                            <div>
-                                <h4>{{item.antriLoket5  != undefined ? item.antriLoket5 :'-'}}</h4>
-                                <h5 class="p-mt-0 p-mb-3">Loket 5</h5>
+                    <div class="p-col-12 p-md-3 widget-customer-carousel">
+                        <div class="card p-mr-4 badge-light-success text-center">
+                            <div class="customer-item-content">
+                                <div>
+                                    <span class="no-margin f-s-25">{{item.antriLoket4 != undefined ? item.antriLoket4
+                                        :'-'}}</span>
+                                    <span class="p-mt-0 no-margin f-s-2">Loket 4</span>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div> -->
             </div>
         </div>
     </div>
 </div>
+
 <p-dialog header="Channel" [(visible)]="popUp" [modal]="true" [style]="{width: '50vw'}" [maximizable]="true"
     [baseZIndex]="10000" [draggable]="false" [resizable]="false">
     <div class="p-fluid p-formgrid ">
@@ -186,11 +225,16 @@
                             <label [for]="itemss.url"> {{itemss.name}}</label>
                         </div>
                     </div>
-                   <div class="p-grid ">
-                    <div class="p-col-12">
-                      <label class="label" for="input">URL</label>
-                        <input type="text" [(ngModel)]="item.url" pInputText
-                            placeholder="URL Video" />
+                    <div class="p-grid ">
+                        <div class="p-col-12">
+                            <label class="label" for="input">URL</label>
+                            <input type="text" [(ngModel)]="item.url" pInputText placeholder="URL Video" />
+                        </div>
+
+                        <div class="p-field-checkbox">
+                            <p-checkbox name="group1"  binary="true" [(ngModel)]="isVoiceBrowser" inputId="ny">
+                            </p-checkbox>
+                            <label for="ny">Pakai Suara Browser</label>
                         </div>
                     </div>
                 </p-panel>
