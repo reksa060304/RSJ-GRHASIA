@@ -879,7 +879,17 @@ class LaboratoriumController extends ApiController
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
    public function getHasilLabManual(Request $r){
-        $umur =$r['umur'];
+        $umur =$r['umur'];        
+        $paramsPro = "";
+        if (isset($r['norec']) && $r['norec'] != "") {
+            $paramsPro = " AND pp.norec in ( ". $r['norec'] .") ";
+        }else{
+            $norec_apd = $r['norec_apd'];
+            $norecOrder = $r['norecOrder'];
+            $getAntrian = collect(DB::select("SELECT * FROM antrianpasiendiperiksa_t WHERE norec = '$norec_apd' "))->first();
+            $getPD = collect(DB::select("SELECT * FROM antrianpasiendiperiksa_t WHERE noregistrasifk = '$getAntrian->noregistrasifk' AND objectruanganfk = 575 "))->first();
+            $paramsPro = " AND pp.noregistrasifk = '" . $getPD->norec ."'";
+        }
         $data = DB::select(DB::raw("SELECT pp.noregistrasifk as norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk  ,maps.detailpemeriksaan,maps.memohasil,
                 maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.tipedata,nn.nilaimin,nn.nilaimax,hh.hasil,
                 maps.id as map_id,hh.norec as norec_hasil,maps.nourutjenispemeriksaan,maps.nourutdetail,pp.norec as norecPP,nn.nilaimin || '-' || nn.nilaimax as nilainormalstr,
@@ -889,14 +899,16 @@ class LaboratoriumController extends ApiController
                 inner join detailjenisproduk_m as djp on djp.id = prd.objectdetailjenisprodukfk
                 inner join maphasillab_m  as maps on maps.produkfk = prd.id
                 inner join maphasillabdetail_m  as maps2 on maps2.maphasilfk = maps.id 
-                and maps2.jeniskelaminfk ='$r[objectjeniskelaminfk]'
-                and maps2.kelompokumurfk in (select id from kelompokumur_m  kuu where $umur BETWEEN kuu.umurmin and kuu.umurmax) 
+                and maps2.jeniskelaminfk = $r[objectjeniskelaminfk]
+                and maps2.kelompokumurfk in (select id from kelompokumur_m  kuu where '$umur' BETWEEN kuu.umurmin and kuu.umurmax) 
                 inner join nilainormal_m  as nn on nn.id = maps2.nilainormalfk
                 left join satuanstandar_m  as ss on ss.id = maps.satuanstandarfk
                 left join hasillaboratorium_t  as hh on hh.norecpelayanan  = pp.norec 
                 and pp.noregistrasifk=hh.noregistrasifk
                  and maps.detailpemeriksaan =hh.detailpemeriksaan 
-                where   pp.norec in ($r[norec])  
+                where pp.statusenabled = true
+                -- pp.norec in ($r[norec])  
+                $paramsPro
                 order by  maps.nourutjenispemeriksaan,maps.nourutdetail asc"));
         $result =  array(
             'data' => $data, 

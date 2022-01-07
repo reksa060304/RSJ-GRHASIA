@@ -29,7 +29,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     day = result.umur.day
                 usia = (result.umur.year * 12) + result.umur.month;
                 departemen = result.objectdepartemenfk
-                result.umur = thn + 'thn ' + bln + 'bln ' + day + 'hr '
+                result.umur = thn + ' thn ' + bln + ' bln ' + day + ' hr '
                 var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
                 var firstDate = new Date(result.tgllahir);
                 var secondDate = new Date(result.tglregistrasi);
@@ -89,7 +89,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     18: $scope.header.tgllahir,
                     19: $scope.header.objectdepartemenfk,
                     20: $scope.header.jenispelayanan,
-                    21: $scope.header.objectkelompokpasienlastfk
+                    21: $scope.header.objectkelompokpasienlastfk,
+                    22: $scope.header.objectjeniskelaminfk
                 }
                 cacheHelper.set('CacheInputDiagnosaDokter', arrStr);
                 cacheHelper.set('InputResepApotikOrderRevCtrl', arrStr);
