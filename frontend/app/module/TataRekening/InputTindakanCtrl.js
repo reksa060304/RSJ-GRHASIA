@@ -112,6 +112,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
       }
 
       function getKomponenHarga() {
+        $scope.isRouteLoading = true;
         $scope.isTarifPenjamin = false
         $scope.item.hargaTindakan = 0
         $scope.item.jumlah = 0
@@ -140,6 +141,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.hargaTindakan = dat.data.data2[0].hargasatuan //$scope.item.namaProduk.hargasatuan;
             $scope.item.hargaDijamin = dat.data.data2[0].hargadijamin
             $scope.item.jumlah = 1;
+            $scope.isRouteLoading = false;
           })
         }
       }
