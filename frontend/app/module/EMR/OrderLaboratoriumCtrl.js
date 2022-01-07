@@ -16,6 +16,8 @@ define(['initialize'], function (initialize) {
             $scope.OrderPelayanan = false;
             $scope.showTombol = false
             $scope.header.DataNoregis = true
+            $scope.jeniskelaminfk = undefined;
+            $scope.tgllahirpasien = undefined;
             var produkDef = []
             $scope.pilihLayanan = 0
 
@@ -26,6 +28,7 @@ define(['initialize'], function (initialize) {
             var namaRuanganFk = ''
             LoadCacheHelper();
             function LoadCacheHelper() {
+                // debugger;
                 var chacePeriode = cacheHelper.get('TransaksiPelayananLaboratoriumDokterRevCtrl');
                 if (chacePeriode != undefined) {
                     //var arrPeriode = chacePeriode.split(':');
@@ -45,6 +48,8 @@ define(['initialize'], function (initialize) {
                     namaRuanganFk = chacePeriode[11]
                     $scope.item.namaRuangan = chacePeriode[12]
                     $scope.header.DataNoregis = chacePeriode[13]
+                    $scope.jeniskelaminfk = chacePeriode[22]
+                    $scope.tgllahirpasien = chacePeriode[18]
                     // if ($scope.header.DataNoregis == undefined) {
                     //     $scope.header.DataNoregis = false;
                     // }
@@ -192,7 +197,7 @@ define(['initialize'], function (initialize) {
                 }
             }
             $scope.LihatHasil = function (data) {
-                //debugger;
+                debugger;
                 if ($scope.dataSelectedRiwayat == undefined) {
                     toastr.error('Pilih data dulu');
                     return
@@ -214,9 +219,10 @@ define(['initialize'], function (initialize) {
                         10: $scope.item.kelas,
                         11: namaRuanganFk,
                         12: $scope.item.namaRuangan,
-                        13: '',
-                        14: null,
+                        13: $scope.tgllahirpasien,
+                        14: $scope.jeniskelaminfk,
                         15: [],
+                        16: $scope.dataSelectedRiwayat.norec
                         // 16: $scope.dataGrid._data[i].tglpelayanan ,
                     }
                     cacheHelper.set('hideHasilLab', true);
@@ -226,9 +232,11 @@ define(['initialize'], function (initialize) {
                     //     norecPd: norec_pd,
                     //     norecApd: norec_apd,
                     //     norecPP: dataCetakFix
+                    // SGFzaWxMYWJvcmF0b3JpdW1SZXY=
 
                     // })
-                    window.open("/app/#/SGFzaWxMYWJvcmF0b3JpdW0=/"+ $scope.dataSelectedRiwayat.noorder)
+                    // window.open("/app/#/SGFzaWxMYWJvcmF0b3JpdW0=/"+ $scope.dataSelectedRiwayat.noorder)
+                    window.open("/app/#/SGFzaWxMYWJvcmF0b3JpdW1SZXY=/"+ norec_pd+"/"+norec_apd)
                     // $state.go('HasilLaboratorium', {
                     //     noOrder: $scope.dataSelectedRiwayat.noorder,
                     //     // norecApd: norec_apd,

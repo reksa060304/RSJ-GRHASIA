@@ -314,6 +314,7 @@ define(['initialize'], function (initialize) {
                 })
             }
             $scope.showTindakan = function (norec_apd) {
+                cacheHelper.set('norec_resep_qwertyuio',$scope.dataSelected.norec);
                 $state.go('InputTindakan', {
                     norecPD: $scope.dataSelected.norec_pd,
                     norecAPD: norec_apd,
@@ -322,6 +323,7 @@ define(['initialize'], function (initialize) {
                
             }
             $scope.showPop =  function () {
+                 cacheHelper.set('norec_resep_qwertyuio',undefined);
                  if($scope.dataSelected== undefined){
                     toastr.error('Pilih data dulu')
                     return

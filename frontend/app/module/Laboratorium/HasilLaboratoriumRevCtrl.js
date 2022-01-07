@@ -8,6 +8,7 @@ define(['initialize'], function (initialize) {
             $scope.norecPD = $state.params.norecPd
             $scope.norecAPD = $state.params.norecApd
             $scope.norecPP = $state.params.norecPP
+            $scope.norecOrder = undefined;
            
             // $scope.shows = 0;
             $scope.item = {};
@@ -37,6 +38,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.tgllahir = chacePeriode[13]
                     $scope.item.objectjeniskelaminfk = chacePeriode[14]
                     $scope.item.norecPP = chacePeriode[15]
+                    $scope.norecOrder = chacePeriode[16]
                     const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
                     const firstDate = new Date($scope.item.tgllahir);
                     const secondDate = new Date($scope.item.tglRegistrasi);
@@ -186,7 +188,7 @@ define(['initialize'], function (initialize) {
                 $scope.isRouteLoading = true
                 
                 medifirstService.get("laboratorium/get-hasil-lab-manual?norec_apd=" + $state.params.norecApd +
-                    '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk + '&umur=' + $scope.item.umurDay + '&norec=' + $scope.item.norecPP ).then(function (data) {
+                    '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk + '&umur=' + $scope.item.umurDay + '&norec=' + $scope.item.norecPP + '&norecOrder=' + $scope.norecOrder ).then(function (data) {
                         // var sourceGrid = []
                         $scope.isRouteLoading = false;
                         if (data.statResponse == true && data.data.data.length > 0) {

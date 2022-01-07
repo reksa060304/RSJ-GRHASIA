@@ -2103,6 +2103,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         13: $scope.item.tgllahir,
                         14: $scope.item.objectjeniskelaminfk,
                         15: dataCetakFix,
+                        16: null,
                         // 16: $scope.dataGrid._data[i].tglpelayanan ,
                     }
                     cacheHelper.set('chaceHasilLab2', arrStr);
