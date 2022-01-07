@@ -37,8 +37,21 @@ define(['initialize'], function (initialize) {
             $scope.cekbelumVerifikasi = function (data) {
                 if (data === true) {
                     $scope.cekBelumVerifs = true;
+                    //$scope.cekSudahVerifs = false;
                 } else if (data === false || data === undefined) {
                     $scope.cekBelumVerifs = false;
+                    //$scope.cekSudahVerifs = true;
+                } else {
+                    return;
+                }
+            }
+            $scope.ceksudahVerifikasi = function (data) {
+                if (data === true) {
+                    //$scope.cekBelumVerifs = false;
+                    $scope.cekSudahVerifs = true;
+                } else if (data === false || data === undefined) {
+                    //$scope.cekBelumVerifs = true;
+                    $scope.cekSudahVerifs = false;
                 } else {
                     return;
                 }
@@ -153,6 +166,14 @@ define(['initialize'], function (initialize) {
                         jmlRow = "&jmlRow=" + $scope.item.jmlRow
                     }
                 }
+                var isVerif = ""
+                if ($scope.item.sudahVerifikasi) {
+                    var isVerif = "isVerif=" + true
+                    var jmlRow = ""
+                    if ($scope.item.jmlRow) {
+                        jmlRow = "&jmlRow=" + $scope.item.jmlRow
+                    }
+                }
                 var jmlRow = ""
                 if ($scope.item.jmlRow) {
                     jmlRow = "&jmlRow=" + $scope.item.jmlRow
@@ -172,6 +193,7 @@ define(['initialize'], function (initialize) {
                
                 medifirstService.get("radiologi/get-daftar-order?" +
                     isNotVerif +
+                    isVerif +
                     tglAwal +
                     tglAkhir +
                     reg +
@@ -544,6 +566,10 @@ define(['initialize'], function (initialize) {
              
                 $scope.listDokter.push({ id: $scope.dataSelected.objectpegawaiorderfk, namalengkap: $scope.dataSelected.pegawaiorder })
                 $scope.item.dokterOrder = { id: $scope.dataSelected.objectpegawaiorderfk, namalengkap: $scope.dataSelected.pegawaiorder };
+                if($scope.dataSelected.objectruangantujuanfk =="576"){
+                    $scope.listDokter.push({id:2669,namalengkap:"dr. HERRI SYAHBANA, Sp.Rad"})
+                    $scope.item.dokterVerif={id:2669,namalengkap:"dr. HERRI SYAHBANA, Sp.Rad"}
+                }
                 loadDiagnosa($scope.dataSelected.noregistrasi)
                 idJenisPelayanan = ''
                 loadjenisPelayanan($scope.dataSelected.norec_pd,$scope.dataSelected.objectruangantujuanfk)
@@ -557,7 +583,34 @@ define(['initialize'], function (initialize) {
                 loadDataVerif();
 
             }
+            // $scope.getHargaTindakan = function (e) {
+                
+            //     delete $scope.popUp.hargaTindakan
+            //     $scope.listKomponen = []
+            //     $scope.popUp.qty = 0
+                
+                
+                    
+            //         $scope.isRouteLoading=true;
+            //         medifirstService.get("sysadmin/general/get-komponenharga?idRuangan="
+            //         + $scope.dataSelected.objectruangantujuanfk
+            //         + "&idKelas=" + $scope.dataSelected.klsid
+            //         + "&idProduk=" + $scope.popUp.layanan.id
+            //         + "&idJenisPelayanan=" + idJenisPelayanan
+            //     ).then(function (dat) {
+            //         if(dat.data.data.length > 0){
+            //             $scope.listKomponen = dat.data.data;
+            //             $scope.popUp.hargaTindakan = dat.data.data2[0].hargasatuan //$scope.item.namaProduk.hargasatuan;
+            //             $scope.popUp.qty = 1;
+            //             $scope.isRouteLoading=false;
+            //         }
+                  
+            //      })
+                
+
+            // }
             function loadjenisPelayanan(norec_pd,ruId){
+                $scope.isRouteLoading=true;
                   medifirstService.get('registrasi/get-jenis-pelayanan?norec_pd=' + norec_pd).then(function (e) {
                       
                     idJenisPelayanan =  e.data.jenispelayanan
@@ -569,15 +622,25 @@ define(['initialize'], function (initialize) {
                             +idJenisPelayanan, true, 10, 10)
                         .then(function (x) {
                             $scope.listLayanan = x;
+                            $scope.isRouteLoading=false;
                         })
                   })
                 }
+                
                 $scope.$watch('popUp.layanan', function(newValue, oldValue) {
                     if (newValue != oldValue  ) {
+                        
                         delete $scope.popUp.hargaTindakan
                         $scope.listKomponen = []
                         $scope.popUp.qty = 0
+                        // if( newValue != undefined && oldValue != undefined ){
+                        //     if(newValue.id ==oldValue.id ){
+                        //         return
+                        //     }
+                        // }
                         if(newValue.id !=undefined){
+                            
+                            $scope.isRouteLoading=true;
                             medifirstService.get("sysadmin/general/get-komponenharga?idRuangan="
                             + $scope.dataSelected.objectruangantujuanfk
                             + "&idKelas=" + $scope.dataSelected.klsid
@@ -588,6 +651,7 @@ define(['initialize'], function (initialize) {
                                 $scope.listKomponen = dat.data.data;
                                 $scope.popUp.hargaTindakan = dat.data.data2[0].hargasatuan //$scope.item.namaProduk.hargasatuan;
                                 $scope.popUp.qty = 1;
+                                $scope.isRouteLoading=false;
                             }
                           
                          })
@@ -966,10 +1030,11 @@ define(['initialize'], function (initialize) {
                                 init()
                             });
                         });
-                        var client = new HttpClient();
-                        client.get('http://127.0.0.1:1237/printvb/bridging?cetak-pacs-order=1&jenis=order&norec=' + itemsave.norec_so + '&view=true', function (response) {
-                                // do something with response
-                        });
+                        //dimatiin bikin error desktop service
+                        //var client = new HttpClient();
+                        // client.get('http://127.0.0.1:1237/printvb/bridging?cetak-pacs-order=1&jenis=order&norec=' + itemsave.norec_so + '&view=true', function (response) {
+                        //         // do something with response
+                        // });
 
                     }else{
                         medifirstService.post('radiologi/save-pelayanan-pasien',itemsave)

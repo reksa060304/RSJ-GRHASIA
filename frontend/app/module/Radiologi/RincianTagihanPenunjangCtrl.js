@@ -1161,6 +1161,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.item.jumlahPengulanganFoto = (e.data[0].jumlahpengulanganfoto == null) ? '' : e.data[0].jumlahpengulanganfoto 
                         $scope.item.keteranganlainnya = (e.data[0].keteranganlainnya == null) ? '' : e.data[0].keteranganlainnya
                         $scope.noeditExpertise2 = $scope.pegawai.id != e.data[0].pegawaifk;
+                    }else{
+                        if($scope.dataSelected.dokterid != null && $scope.dataSelected.dokterid != "undefined"){
+                            $scope.listDokter.push({id:$scope.dataSelected.dokterid,namalengkap:$scope.dataSelected.dokter})
+                            $scope.item.dokter={id:$scope.dataSelected.dokterid,namalengkap:$scope.dataSelected.dokter}
+                        }
+                        $scope.item.keterangan = ""
+                        $scope.item.jumlahPengulanganFoto = 0
+                        
                     }
                     $scope.popUpEkpertise.center().open();
                 })
@@ -1352,8 +1360,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.hideExper = true
                 medifirstService.post('radiologi/save-hasil-radiologi', objSave).then(function (e) {
                     init();
+                    $scope.norecHasilRadiologi=e.data.norecHasilRadiologi;
                     $scope.hideExper = false
-                    $scope.popUpEkpertise.close()
+                    //$scope.popUpEkpertise.close()
                     // var client = new HttpClient();
                     // client.get('http://127.0.0.1:1237/printvb/bridging?cetak-pacs-report=1&jenis=report&norec=' + $scope.dataSelected.norec_pp + '&noorder=' + $scope.dataSelected.noorder + $scope.dataSelected.no + '&view=true', function (response) {
                     //         // do something with response
