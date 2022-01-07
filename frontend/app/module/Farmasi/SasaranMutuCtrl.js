@@ -47,7 +47,34 @@ define(['initialize'], function(initialize) {
        		
        	}
 			
-			$scope.columnGrid = [
+			$scope.columnGrid = {
+				toolbar: [
+					"excel",
+
+				],
+				excel: {
+					fileName: "SasaranMutu.xlsx",
+					allPages: true,
+				},
+				excelExport: function (e) {
+					var sheet = e.workbook.sheets[0];
+					sheet.frozenRows = 2;
+					sheet.mergedCells = ["A1:E1"];
+					sheet.name = "SasaranMutu";
+
+					var myHeaders = [{
+						value: "SasaranMutu",
+						fontSize: 20,
+						textAlign: "center",
+						background: "#ffffff",
+						// color:"#ffffff"
+					}];
+
+					sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+				},
+				selectable: 'row',
+				pageable: true,
+				columns:[
 				{
 					"field": "noresep",
 					"title": "Nomor Resep"
@@ -56,7 +83,7 @@ define(['initialize'], function(initialize) {
 					"title": "Tanggal masuk"
 				}, {
 					"field": "tglselesai",
-					"title": "Tgl Selesai"
+					"title": "Tgl Penyerahan Obat"
 				}, {
 					"field": "waktulayanan",
 					"title": "Waktu Layanan"
@@ -64,7 +91,7 @@ define(['initialize'], function(initialize) {
 					"field": "keterangan",
 					"title": "Keterangan"
 				}
-			];
+			]};
 
 			$scope.Cari = function(){
 				LoadData()

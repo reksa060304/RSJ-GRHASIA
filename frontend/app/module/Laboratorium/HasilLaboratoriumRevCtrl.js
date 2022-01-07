@@ -2,6 +2,7 @@ define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('HasilLaboratoriumRevCtrl', ['$scope', '$state', 'MedifirstService', 'CacheHelper',
         function ($scope, $state, medifirstService, cacheHelper) {
+            //test 
 
             $scope.isRouteLoading = false;
             $scope.norecPD = $state.params.norecPd
@@ -192,9 +193,19 @@ define(['initialize'], function (initialize) {
                         $scope.isRouteLoading = false;
                         if (data.statResponse == true && data.data.data.length > 0) {
                             // sourceGrid = data.data.data
-
+                            if( data.data.dokter.id!=null){
+                               if($scope.ListDataPegawai==undefined){
+                                   $scope.ListDataPegawai =[{id: data.data.dokter.id,namalengkap:  data.data.dokter.namalengkap} ]
+                               } 
+                               $scope.item.DataPegawai = {id: data.data.dokter.id,namalengkap:  data.data.dokter.namalengkap} 
+                            }
+                            
                             for (let i = 0; i < data.data.data.length; i++) {
                                 const element = data.data.data[i];
+                           
+                               
+                                if(element.keterangan)
+                                    $scope.item.catatan = element.keterangan
                             //     if (element.hasil != null) {
                             //         if (parseFloat(element.hasil) <= parseFloat(element.nilaimax)
                                         // && parseFloat(element.hasil) >= parseFloat(element.nilaimin)) {
@@ -268,6 +279,8 @@ define(['initialize'], function (initialize) {
                                                 }else{
                                                     e.items[0].flag ="Y"         
                                                 }
+                                            }else if(HasilInput.indexOf("*") >= 0){                                                 
+                                                    e.items[0].flag ="Y"                                                           
                                             }else if(HasilInput.indexOf("<") >= 0){
                                                 let a = parseFloat(e.items[0].nilaimin)
                                                 let b = parseFloat(e.items[0].nilaimax)
@@ -320,38 +333,42 @@ define(['initialize'], function (initialize) {
                                                 
                                             }
                                             else{
-                                                if(e.items[0].nilaimin != null){
-                                                    if(e.items[0].tipedata == 2)
-                                                    {
-                                                        let a = (e.items[0].nilaimin).toUpperCase()
-                                                        let b = (e.items[0].nilaimax).toUpperCase()
-                                                        let hssl = ((e.items[0].hasil).trim()).toUpperCase()
-                                                        if(hssl >= a && hssl <= b){
-                                                            e.items[0].flag ="N"           
-                                                        }else{
-                                                            e.items[0].flag ="Y"         
-                                                        } 
-                                                    }else
-                                                    {
-                                                        let a = parseFloat(e.items[0].nilaimin)
-                                                        let b = parseFloat(e.items[0].nilaimax)
-                                                        let hssl = parseFloat(e.items[0].hasil )
-                                                        if(hssl >= a && hssl <= b){
+                                                if(HasilInput.indexOf("*") >= 0){                                                
+                                                    e.items[0].flag ="Y"
+                                                }else{
+                                                    if(e.items[0].nilaimin != null){
+                                                        if(e.items[0].tipedata == 2)
+                                                        {
+                                                            let a = (e.items[0].nilaimin).toUpperCase()
+                                                            let b = (e.items[0].nilaimax).toUpperCase()
+                                                            let hssl = ((e.items[0].hasil).trim()).toUpperCase()
+                                                            if(hssl >= a && hssl <= b){
+                                                                e.items[0].flag ="N"           
+                                                            }else{
+                                                                e.items[0].flag ="Y"         
+                                                            } 
+                                                        }else
+                                                        {
+                                                            let a = parseFloat(e.items[0].nilaimin)
+                                                            let b = parseFloat(e.items[0].nilaimax)
+                                                            let hssl = parseFloat(e.items[0].hasil )
+                                                            if(hssl >= a && hssl <= b){
+                                                                e.items[0].flag ="N"           
+                                                            }else{
+                                                                e.items[0].flag ="Y"         
+                                                            }
+                                                        }
+                                                        
+                                                    }else{
+                                                        let hssl = (e.items[0].hasil).trim() 
+                                                        let nilaistring = e.items[0].nilaitext
+                                                        nilaistring = nilaistring.toUpperCase();
+                                                        hssl = hssl.toUpperCase();
+                                                        if(hssl == nilaistring){
                                                             e.items[0].flag ="N"           
                                                         }else{
                                                             e.items[0].flag ="Y"         
                                                         }
-                                                    }
-                                                    
-                                                }else{
-                                                    let hssl = (e.items[0].hasil).trim() 
-                                                    let nilaistring = e.items[0].nilaitext
-                                                    nilaistring = nilaistring.toUpperCase();
-                                                    hssl = hssl.toUpperCase();
-                                                    if(hssl == nilaistring){
-                                                        e.items[0].flag ="N"           
-                                                    }else{
-                                                        e.items[0].flag ="Y"         
                                                     }
                                                 }
                                             }
@@ -541,6 +558,7 @@ define(['initialize'], function (initialize) {
 
             $scope.simpan = function () {
                 var dataArray = [];
+
                 for (var i = $scope.resultGrids._data.length - 1; i >= 0; i--) {
                     if ($scope.resultGrids._data[i].hasil != null)
                         dataArray.push({
@@ -550,6 +568,8 @@ define(['initialize'], function (initialize) {
                             "flag": $scope.resultGrids._data[i].flag,
                             "detailpemeriksaan": $scope.resultGrids._data[i].detailpemeriksaan,
                             "norecpelayanan" : $scope.resultGrids._data[i].norecpp,
+                            "catatan" :$scope.item.catatan?$scope.item.catatan:null,
+                            "dokterfk" :$scope.item.DataPegawai?$scope.item.DataPegawai.id:null
                         });
                 }
 

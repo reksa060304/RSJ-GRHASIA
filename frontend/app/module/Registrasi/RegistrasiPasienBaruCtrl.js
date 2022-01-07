@@ -733,8 +733,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 cacheHelper.set('CacheRegisOnline', cacheSetss);
 
                 cacheHelper.set('CacheRegistrasiPasien', cacheSet);
-
-                cacheHelper.set('cacheStatusPasien', 'BARU');
+                if( $scope.idPasien!=undefined){
+                    cacheHelper.set('cacheStatusPasien', 'LAMA'); 
+                }else{
+                    cacheHelper.set('cacheStatusPasien', 'BARU');
+                }
+               
 
                 if ($scope.isPenunjang != undefined && $scope.isPenunjang == true) {
                     // cacheHelper.set('CacheRegisTriage', noEmr);

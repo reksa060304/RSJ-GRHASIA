@@ -234,7 +234,12 @@ class TindakanController extends ApiController
             if(isset( $item['hargadijamin'])){
                 $PelPasien->hargadijamin =  $item['hargadijamin'];
             }
+            if(isset($item['norec_resep'])){
+                $PelPasien->strukresepfk = $item['norec_resep'];
+                $PelPasien->status =  'tarif service';
+            }
 
+            
             
             $PelPasien->save();
             $PPnorec = $PelPasien->norec;
@@ -1192,7 +1197,7 @@ class TindakanController extends ApiController
                 ->where('prd.namaproduk','ilike','%'.$req['filter']['filters'][0]['value'].'%' );
         }
         $data = $data->orderBy('prd.namaproduk', 'ASC');
-        $data = $data->take(15);
+        $data = $data->take(100);
         $data = $data->get();
         // $result = array(
         //     'data' => $data,

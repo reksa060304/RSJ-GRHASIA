@@ -1156,8 +1156,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.norecHasilRadiologi = e.data[0].norec
                         $scope.item.nofoto = e.data[0].nofoto
                         $scope.item.tglInput = e.data[0].tanggal == null ? new Date() :new Date(e.data[0].tanggal)
-                        $scope.item.dokter = { id: e.data[0].pegawaifk, namalengkap: e.data[0].namalengkap }
+                        $scope.item.dokter = { id: e.data[0].pegawaifk, namalengkap: e.data[0].namalengkap }                        
                         $scope.item.keterangan = (e.data[0].keterangan == null) ? '' : e.data[0].keterangan.replace(/~/g, "\n")
+                        $scope.item.jumlahPengulanganFoto = (e.data[0].jumlahpengulanganfoto == null) ? '' : e.data[0].jumlahpengulanganfoto 
+                        $scope.item.keteranganlainnya = (e.data[0].keteranganlainnya == null) ? '' : e.data[0].keteranganlainnya
                         $scope.noeditExpertise2 = $scope.pegawai.id != e.data[0].pegawaifk;
                     }
                     $scope.popUpEkpertise.center().open();
@@ -1170,6 +1172,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             $scope.listNamaGambar = e.data.data.list;
                             $scope.itemimg.gambar = { norec: e.data.data.list[0].norec, filename: e.data.data.list[0].filename }
                             $scope.itemimg.keterangan = e.data.data.list[0].keterangan
+                            //$scope.item.jumlahPengulanganFoto = e.data.data.list[0].jumlahpengulanganfoto
                             var temp = e.data.data.list[0].filename.slice(0, e.data.data.list[0].filename.indexOf('.'))
                             $scope.itemimg.img = config.urlPACSJpeg + "/service/medifirst2000/radiologi/images/pacs/" + temp + "/jpg"
                         }
@@ -1329,6 +1332,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     window.messageContainer.error("Keterangan Tidak Boleh Kosong!");
                     return;
                 }
+                if ($scope.item.jumlahPengulanganFoto == undefined) {
+                    $scope.item.jumlahPengulanganFoto=0;
+                    return;
+                }
                 var objSave = {
                     noregistrasi: $scope.item.noregistrasi,
                     // nofoto: $scope.item.nofoto,
@@ -1338,7 +1345,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     pelayananpasienfk: $scope.dataSelected.norec_pp,
                     norec_pd: norec_pd,
                     norec: $scope.norecHasilRadiologi,
-                    tglpelayanan: $scope.dataSelected.tglpelayanan
+                    tglpelayanan: $scope.dataSelected.tglpelayanan,
+                    jumlahpengulanganfoto:($scope.item.jumlahPengulanganFoto == null || $scope.item.jumlahPengulanganFoto == '') ? 0 : $scope.item.jumlahPengulanganFoto
 
                 }
                 $scope.hideExper = true

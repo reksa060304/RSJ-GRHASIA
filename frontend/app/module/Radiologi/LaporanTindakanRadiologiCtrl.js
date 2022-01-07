@@ -254,6 +254,12 @@ define(['initialize'], function (initialize) {
                         "width": "100px",                        
                     },
                     {
+                        "field": "jumlahpengulanganfoto",
+                        "title": "Jumlah Pengulangan Foto",
+                        "width": "80px",
+                        "template": "<span class='style-right'>#: jumlahpengulanganfoto #</span>"
+                    },
+                    {
                         "field": "noregistrasi",
                         "title": "No Reg",
                         "width": "100px",
