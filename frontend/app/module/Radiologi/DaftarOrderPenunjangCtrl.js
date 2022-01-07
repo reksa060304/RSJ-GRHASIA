@@ -539,6 +539,8 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.verifikasi = function () {
+                $scope.isSearchingHarga = false;
+                $scope.produkcarisebelumnya='';
                 // isCheckAll = false
                 if ($scope.dataSelected == undefined) {
                     toastr.error('Pilih data dulu');
@@ -628,35 +630,48 @@ define(['initialize'], function (initialize) {
                 }
                 
                 $scope.$watch('popUp.layanan', function(newValue, oldValue) {
-                    if (newValue != oldValue  ) {
-                        
-                        delete $scope.popUp.hargaTindakan
-                        $scope.listKomponen = []
-                        $scope.popUp.qty = 0
-                        // if( newValue != undefined && oldValue != undefined ){
-                        //     if(newValue.id ==oldValue.id ){
-                        //         return
-                        //     }
-                        // }
-                        if(newValue.id !=undefined){
-                            
-                            $scope.isRouteLoading=true;
-                            medifirstService.get("sysadmin/general/get-komponenharga?idRuangan="
-                            + $scope.dataSelected.objectruangantujuanfk
-                            + "&idKelas=" + $scope.dataSelected.klsid
-                            + "&idProduk=" + newValue.id
-                            + "&idJenisPelayanan=" + idJenisPelayanan
-                        ).then(function (dat) {
-                            if(dat.data.data.length > 0){
-                                $scope.listKomponen = dat.data.data;
-                                $scope.popUp.hargaTindakan = dat.data.data2[0].hargasatuan //$scope.item.namaProduk.hargasatuan;
-                                $scope.popUp.qty = 1;
-                                $scope.isRouteLoading=false;
-                            }
-                          
-                         })
-                        }
+                    if($scope.isSearchingHarga==false){
+                        if ($scope.popUp.layanan != undefined){
+                          if($scope.produkcarisebelumnya==$scope.popUp.layanan.id){
+                            return
+                          }                          
+                        }                        
+                    }else{
+                        return
                     }
+                    //if (newValue != oldValue  ) {
+                        
+                    delete $scope.popUp.hargaTindakan
+                    $scope.listKomponen = []
+                    $scope.popUp.qty = 0
+                    // if( newValue != undefined && oldValue != undefined ){
+                    //     if(newValue.id ==oldValue.id ){
+                    //         return
+                    //     }
+                    // }
+                    if(newValue.id !=undefined){
+                        
+                        $scope.isRouteLoading=true;
+                        $scope.isSearchingHarga=true;
+                        $scope.produkcarisebelumnya=$scope.popUp.layanan.id;
+                        medifirstService.get("sysadmin/general/get-komponenharga?idRuangan="
+                        + $scope.dataSelected.objectruangantujuanfk
+                        + "&idKelas=" + $scope.dataSelected.klsid
+                        + "&idProduk=" + newValue.id
+                        + "&idJenisPelayanan=" + idJenisPelayanan
+                    ).then(function (dat) {
+                        if(dat.data.data.length > 0){
+                            $scope.listKomponen = dat.data.data;
+                            $scope.popUp.hargaTindakan = dat.data.data2[0].hargasatuan //$scope.item.namaProduk.hargasatuan;
+                            $scope.popUp.qty = 1;
+                            $scope.isSearchingHarga=false;
+                            $scope.isRouteLoading=false;
+
+                        }
+                        
+                        })
+                    }
+                    //}
                 });
                 // $scope.getHargaTindakan = function () {
                 //     delete $scope.popUp.hargaTindakan
