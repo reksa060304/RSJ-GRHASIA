@@ -1941,9 +1941,10 @@ class PelayananResepController extends ApiController
                             from pelayananpasien_t as pp
                             INNER JOIN strukresep_t sr on sr.norec=pp.strukresepfk
                             where pp.kdprofile = $idProfile 
+                            and pp.status is null 
                             and sr.kdprofile = $idProfile 
                             and sr.norec='$norec_SR'                            
-                    "));
+                    "));//pp.status is not null untuk tarif service grhasia
 
                     if ($r_SR['ruanganfk'] == $resepOld->ruanganfk){
                         foreach ($dataKembaliStok as $item5) {
@@ -1954,6 +1955,8 @@ class PelayananResepController extends ApiController
                                 where kdprofile = $idProfile and objectruanganfk=$resepOld->ruanganfk and objectprodukfk=$item5->produkfk"))
                                 ->first();
                             $saldoAwal = (float)$dataSaldoAwal->qty + $TambahStok;
+                            //b4yu4d4
+                            $kdobatbayu=array($item5->produkfk,$item5->ruanganfk,$item5->strukterimafk);
 
                             $newSPD = StokProdukDetail::where('nostrukterimafk', $item5->strukterimafk)
                                 ->where('kdprofile', $idProfile)
@@ -2296,6 +2299,7 @@ class PelayananResepController extends ApiController
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errMsg = $e->getMessage()." ".$e->getLine();
         }
 
 //        $transMessage = "Kartu Stok Pasien";
@@ -2332,6 +2336,8 @@ class PelayananResepController extends ApiController
                 "status" => 400,
                 "message"  => $transMessage,
                 "noresep" => $newSR,//$noResep,
+                "errmssg" => $errMsg,
+                "xxx" => $kdobatbayu,
                 "as" => 'as@epic',
             );
         }
