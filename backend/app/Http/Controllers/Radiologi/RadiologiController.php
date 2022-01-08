@@ -1860,16 +1860,19 @@ class RadiologiController extends ApiController
                     $dataSO->jumlahpengulanganfoto = $request['jumlahpengulanganfoto'];
                 }
 
-                // adding random time max 2 h 43 m
-                $start_time = date($request['tglpelayanan']);
-                $extra_time = sprintf("+%d hours +%s minutes", rand(0, 2), rand(0, 43));
-                $new_time = date("Y-m-d H:i:s", strtotime($extra_time, strtotime($start_time)));
-                // end adding random time max 2 h 43 m
-                $dataSO->tanggalreport = $new_time;
+                // // adding random time max 2 h 43 m
+                // $start_time = date($request['tglpelayanan']);
+                // $extra_time = sprintf("+%d hours +%s minutes", rand(0, 2), rand(0, 43));
+                // $new_time = date("Y-m-d H:i:s", strtotime($extra_time, strtotime($start_time)));
+                // // end adding random time max 2 h 43 m
+                // $dataSO->tanggalreport = $new_time;
+                $dataSO->tanggalreport = $request['tglinput'];//ini yg dimunculkan sebagai tglexpertise
 
             } else {
                 $dataSO =  HasilRadiologi::where('norec',$request['norec'])->first();
                 $norecHasilRadiologi=$request['norec'];
+                //$dataSO->tanggal = $request['tglinput'];//dimatiin untuk tau tanggal input yg pertama kali
+                $dataSO->tanggalreport = $request['tglinput'];//ini yg dimunculkan sebagai tglexpertise
             }
 
             // if (!empty($request['norec'])){

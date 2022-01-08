@@ -634,6 +634,21 @@ class ReportController extends ApiController{
     }
     public function cetakEkspertise(Request $r) {
         $kdProfile = (int)$r['kdprofile'];
+        //$dataSO =  HasilRadiologi::where('norec',$r[norec])->first();
+        $tglCetak = DB::table('hasilradiologi_t')
+                            ->where('norec','=',$r['norec'])
+                            ->get();
+        //   dd($tglCetak[0]->tglcetak);
+        if (count($tglCetak)>0){
+            if(is_null($tglCetak[0]->tglcetak)){
+                $updateTglCetak = DB::table('hasilradiologi_t')
+                            ->where('norec','=',$r['norec'])
+                            ->update(['tglcetak'=>date("Y-m-d H:i:s")]);
+            }
+
+        }
+        //var_dump($tglCetak);
+        //var_dump($updateTglCetak);   
         $raw = collect(DB::select("
             SELECT
                 so.nofoto,ps.nocm, ps.namapasien,ps.tgllahir,kp.kelompokpasien,

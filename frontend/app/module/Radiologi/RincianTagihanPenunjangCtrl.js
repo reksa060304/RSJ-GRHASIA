@@ -1163,6 +1163,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.noeditExpertise2 = $scope.pegawai.id != e.data[0].pegawaifk;
                     }else{
                         if($scope.dataSelected.dokterid != null && $scope.dataSelected.dokterid != "undefined"){
+                            $scope.item.tglInput = new Date()
                             $scope.listDokter.push({id:$scope.dataSelected.dokterid,namalengkap:$scope.dataSelected.dokter})
                             $scope.item.dokter={id:$scope.dataSelected.dokterid,namalengkap:$scope.dataSelected.dokter}
                         }
