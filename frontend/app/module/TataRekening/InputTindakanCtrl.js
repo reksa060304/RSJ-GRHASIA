@@ -10,6 +10,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
       $scope.isNext = true;
       $scope.isKembali = true;
       $scope.isBatal = true;
+      $scope.isSearchingHarga = false;
+      $scope.produkcarisebelumnya='';
 
       if ($scope.currentNorecPD == undefined) {
         var chacePeriode = cacheHelper.get('InputTindakanPelayananDokterRevCtrl');
@@ -108,15 +110,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 
       $scope.getHargaTindakan = function () {
-        getKomponenHarga()
+        if($scope.isSearchingHarga==false){
+          if ($scope.item.namaProduk != undefined){
+            if($scope.produkcarisebelumnya==$scope.item.namaProduk.id){
+              return
+            }
+            $scope.produkcarisebelumnya=$scope.item.namaProduk.id;
+          }
+          $scope.isSearchingHarga=true
+          
+          getKomponenHarga()
+        }
       }
 
       function getKomponenHarga() {
+        $scope.isRouteLoading = true;
         $scope.isTarifPenjamin = false
         $scope.item.hargaTindakan = 0
         $scope.item.jumlah = 0
         $scope.listKomponen = []
         if ($scope.item.namaProduk != undefined) {
+        
+          
           medifirstService.get("tatarekening/tindakan/get-komponenharga?idRuangan="
             + $scope.item.pasien.objectruanganfk
             + "&idKelas=" + $scope.item.pasien.objectkelasfk
@@ -140,6 +155,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.hargaTindakan = dat.data.data2[0].hargasatuan //$scope.item.namaProduk.hargasatuan;
             $scope.item.hargaDijamin = dat.data.data2[0].hargadijamin
             $scope.item.jumlah = 1;
+            $scope.isSearchingHarga=false;
+            $scope.isRouteLoading = false;
           })
         }
       }

@@ -749,12 +749,11 @@ class RadiologiController extends ApiController
             ->orderBy('hh.tanggal','desc')
             ->get();
         $hasilRadBlmAdaExpertise = DB::table('pelayananpasien_t as pp')
-            ->join('hasilradiologi_t as hh','pp.norec','=','hh.pelayananpasienfk')
+            ->leftjoin('hasilradiologi_t as hh','pp.norec','=','hh.pelayananpasienfk')
             ->distinct()
-            ->select('hh.tanggal', 'pp.noregistrasifk as norec_apd')
-            ->whereIn('pp.noregistrasifk',$apdnorec)
-            ->where('hh.norec',null)
-            ->orderBy('hh.tanggal','desc')
+            ->select('pp.noregistrasifk as norec_apd')
+            ->whereNull('hh.norec')
+            ->whereIn('pp.noregistrasifk',$apdnorec)                        
             ->get();
         $hasilLab = DB::table('pelayananpasien_t as pp')
             ->join('hasillaboratorium_t as hh','pp.norec','=','hh.norecpelayanan')
@@ -791,7 +790,8 @@ class RadiologiController extends ApiController
         foreach ($data as $key => $v) {         
             foreach ($hasilRadBlmAdaExpertise as $key2 => $v2) {
                 if($data[$i]->norec_apd ==  $v2->norec_apd){
-                    $data[$i]->expertise =false;                    
+                    $data[$i]->expertise =false;  
+                    $data[$i]->tglexpertise =null;                  
                 }
             }
             $i = $i + 1;
@@ -1203,6 +1203,11 @@ class RadiologiController extends ApiController
                     $data = $data->whereNull('so.statusorder');
                 }
             }
+            if (isset($request['isVerif']) && $request['isVerif'] != "" && $request['isVerif'] != "undefined") {
+                if ($request['isVerif'] == true) {
+                    $data = $data->whereNotNull('so.statusorder');
+                }
+            }
 //            if (isset($request['isNotVerif']) && $request['isNotVerif'] != "" && $request['isNotVerif'] != "undefined") {
 //                if ($request['isNotVerif'] == true) {
 //                    $data = $data->whereNull('pp.ono');
@@ -1255,6 +1260,11 @@ class RadiologiController extends ApiController
                         $data = $data->whereNull('so.statusorder');
                     }
                 }
+                if (isset($request['isVerif']) && $request['isVerif'] != "" && $request['isVerif'] != "undefined") {
+                    if ($request['isVerif'] == true) {
+                        $data = $data->whereNotNull('so.statusorder');
+                    }
+                }
             }else{
                 $data = \DB::table('strukorder_t as so')
                     ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'so.noregistrasifk')
@@ -1297,6 +1307,11 @@ class RadiologiController extends ApiController
                 if (isset($request['isNotVerif']) && $request['isNotVerif'] != "" && $request['isNotVerif'] != "undefined") {
                     if ($request['isNotVerif'] == true) {
                         $data = $data->whereNull('pp.order_no');
+                    }
+                }
+                if (isset($request['isVerif']) && $request['isVerif'] != "" && $request['isVerif'] != "undefined") {
+                    if ($request['isVerif'] == true) {
+                        $data = $data->whereNotNull('pp.order_no');
                     }
                 }
             }
@@ -1827,12 +1842,15 @@ class RadiologiController extends ApiController
     public function saveHasilRadiologi(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $norecHasilRadiologi='';
         DB::beginTransaction();
         try{
 
             if (empty($request['norec'])) {
                 $dataSO = new HasilRadiologi();
-                $dataSO->norec = $dataSO->generateNewId();
+                $dataSO->norec= $dataSO->generateNewId();
+                
+                
                 $dataSO->kdprofile = $idProfile;
                 $dataSO->pegawaifk = $request['dokterid'];
                 $dataSO->pelayananpasienfk = $request['pelayananpasienfk'];
@@ -1842,15 +1860,19 @@ class RadiologiController extends ApiController
                     $dataSO->jumlahpengulanganfoto = $request['jumlahpengulanganfoto'];
                 }
 
-                // adding random time max 2 h 43 m
-                $start_time = date($request['tglpelayanan']);
-                $extra_time = sprintf("+%d hours +%s minutes", rand(0, 2), rand(0, 43));
-                $new_time = date("Y-m-d H:i:s", strtotime($extra_time, strtotime($start_time)));
-                // end adding random time max 2 h 43 m
-                $dataSO->tanggalreport = $new_time;
+                // // adding random time max 2 h 43 m
+                // $start_time = date($request['tglpelayanan']);
+                // $extra_time = sprintf("+%d hours +%s minutes", rand(0, 2), rand(0, 43));
+                // $new_time = date("Y-m-d H:i:s", strtotime($extra_time, strtotime($start_time)));
+                // // end adding random time max 2 h 43 m
+                // $dataSO->tanggalreport = $new_time;
+                $dataSO->tanggalreport = $request['tglinput'];//ini yg dimunculkan sebagai tglexpertise
 
             } else {
                 $dataSO =  HasilRadiologi::where('norec',$request['norec'])->first();
+                $norecHasilRadiologi=$request['norec'];
+                //$dataSO->tanggal = $request['tglinput'];//dimatiin untuk tau tanggal input yg pertama kali
+                $dataSO->tanggalreport = $request['tglinput'];//ini yg dimunculkan sebagai tglexpertise
             }
 
             // if (!empty($request['norec'])){
@@ -1882,6 +1904,7 @@ class RadiologiController extends ApiController
                 $dataSO->jumlahpengulanganfoto = $request['jumlahpengulanganfoto'];
             }
             $dataSO->save();
+            $norecHasilRadiologi=$dataSO->norec;
 
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -1897,6 +1920,7 @@ class RadiologiController extends ApiController
                 "status" => 201,
                 "message" => $transMessage,
                 "strukorder" => $dataSO,
+                "norecHasilRadiologi" => $norecHasilRadiologi,
                 "as" => 'inhuman',
             );
 
@@ -2168,7 +2192,7 @@ class RadiologiController extends ApiController
 	 */
     public function getEkspertise(Request $request) {
         $transStatus = false;
-        try {
+         try {
             $data = DB::table('hasilradiologi_t as hr')
                 ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'hr.pegawaifk')
                 ->select('hr.*','pg.namalengkap')

@@ -5237,35 +5237,72 @@ class GeneralController extends ApiController
     }
       public function getTindakanWithDetail(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $detail = \DB::table('detailjenisproduk_m')
+        
+        if ($request['idRuangan']=="575"){ //lab
+            $detail= \DB::table('maphasillab_m')
+            ->select(\DB::raw('0 as id'),'jenispemeriksaan')
+            ->where('kdprofile',$kdProfile)
+            ->where('statusenabled',true)
+            ->distinct()
+            ->get();
+            $detail=\DB::select(DB::raw("
+            select  * from (
+                select 5 as id,'IMMUNOLOGI' as detailjenisproduk union all
+                select 15 as id,'URINALISA' as detailjenisproduk  union all
+                select 3 as id,'HEMATOLOGI' as detailjenisproduk  union all
+                select 9 as id,'MIKROBIOLOGI' as detailjenisproduk  union all
+                select 10 as id,'BAKTERIOLOGI' as detailjenisproduk  union all
+                select 14 as id,'FAECES' as detailjenisproduk  union all
+                select 7 as id,'KIMIA DARAH' as detailjenisproduk  union all
+                select 16 as id,'NAPZA' as detailjenisproduk  union all
+                select 17 as id,'Lainnya' as detailjenisproduk  
+            )x order by x.id
+            "));
+        }else{
+            $detail = \DB::table('detailjenisproduk_m')
             ->select('id','detailjenisproduk')
             ->where('kdprofile',$kdProfile)
             ->where('statusenabled',true)
             ->get();
+        }
         $data = \DB::table('mapruangantoproduk_m as mpr')
             ->join ('produk_m as prd','prd.id','=','mpr.objectprodukfk')
+            ->leftjoin('maphasillab_m as maps','prd.id','=','maps.produkfk')
             ->select('mpr.objectprodukfk as id','prd.namaproduk','prd.objectdetailjenisprodukfk',
                 'mpr.objectruanganfk',
-                'prd.namaproduk'
+                'prd.namaproduk',\DB::raw("coalesce(maps.jenispemeriksaan,'Lainnya') as jenispemeriksaan")
             )
             ->where('mpr.kdprofile', $kdProfile)
             ->where('mpr.objectruanganfk',$request['idRuangan'])
             ->where('mpr.statusenabled',true)
             ->where('prd.statusenabled',true)
             ->orderBy('prd.namaproduk', 'ASC')
-            ->get();
+            ->distinct()->get();
         foreach ($detail as $key => $value) {
               $value->details =[];
          }  
           $i= 0;
+           
+        if ($request['idRuangan']=="575"){ //lab
          foreach ($detail as $value) {
-          foreach ($data as $value2) {
-            if( $detail[$i]->id == $value2->objectdetailjenisprodukfk){
-                 $detail[$i]->details[] = $value2 ;//array('namaproduk' =>  $value2->namaproduk, );
+            foreach ($data as $value2) {
+              if( $detail[$i]->detailjenisproduk == $value2->jenispemeriksaan){
+                   $detail[$i]->details[] = $value2 ;//array('namaproduk' =>  $value2->namaproduk, );
+              }
             }
-          }
-          $i++;
-         }  
+            $i++;
+           }  
+        }else{
+            foreach ($detail as $value) {
+                foreach ($data as $value2) {
+                  if( $detail[$i]->id == $value2->objectdetailjenisprodukfk){
+                       $detail[$i]->details[] = $value2 ;//array('namaproduk' =>  $value2->namaproduk, );
+                  }
+                }
+                $i++;
+            }
+            
+        }
 
         for ($i = count($detail) - 1; $i >= 0; $i--) {
             if( count($detail[$i]->details)==0 ){
