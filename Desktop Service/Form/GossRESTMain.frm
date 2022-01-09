@@ -422,7 +422,8 @@ Private Sub Gossamer1_DynamicRequest( _
     
     Dim ErrNumber As Long
     Dim ErrDescription As String
-    
+    'selalu reconnect karena jaringan grhasia ga stabil
+    openConnection
     If Method = "GET" Then
         'We'll assume URI = "/query" but we'll take any as "/query" in this program.
         On Error Resume Next
