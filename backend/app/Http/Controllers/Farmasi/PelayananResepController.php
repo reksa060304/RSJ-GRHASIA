@@ -253,8 +253,14 @@ class PelayananResepController extends ApiController
             ->select('ru.namaruangan','pd.noregistrasi',
                 'pd.tglregistrasi','pg.namalengkap as namadokter','kl.namakelas','apd.tglmasuk','apd.tglkeluar','apd.norec','pg.id as pgid')
             ->where('pd.kdprofile',$idProfile)
+            ->whereNotIn('dp.id',array(14,41,36))
             ->orderBy('apd.tglmasuk');
-
+            /* 
+            agar user ga milih farmasi, input obat kunjungan farmasi/apotik hanya untuk obat bebas, selain itu harus milih sesuai ruangan pelayanan/kunjungan pasien
+            14=>farmasi
+            41=>Logistik
+            36=>umum
+            */
         if(isset($request['noregistrasi']) && $request['noregistrasi']!="" && $request['noregistrasi']!="undefined"){
             $data = $data->where('pd.noregistrasi','ilike','%'. $request['noregistrasi'].'%');
         }
