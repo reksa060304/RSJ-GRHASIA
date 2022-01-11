@@ -328,6 +328,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.item.jenisPasien = { id: $scope.listJenisPelayanan[1].id, jenispelayanan: $scope.listJenisPelayanan[1].jenispelayanan }
 
                         }
+                        else if (e.kelompokpasien.indexOf('Karyawan') > -1) {
+                            $scope.item.rekanan = { id: $scope.listRekanan[0].id, namarekanan: $scope.listRekanan[0].namarekanan };
+                            $scope.nonUmum = true;
+                            $scope.item.jenisPasien = { id: $scope.listJenisPelayanan[1].id, jenispelayanan: $scope.listJenisPelayanan[1].jenispelayanan }
+
+                        }
                         else if (e.kelompokpasien == 'Jamkesda') {
                             $scope.item.rekanan = { id: $scope.listRekanan[0].id, namarekanan: $scope.listRekanan[0].namarekanan };
                             $scope.nonUmum = true;
