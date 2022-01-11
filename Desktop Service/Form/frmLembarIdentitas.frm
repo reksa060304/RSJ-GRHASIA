@@ -195,6 +195,17 @@ Dim JamRegis As String
     With Report
         .database.AddADOCommand CN_String, adocmd
         If Not RS2.EOF Then
+            '.txtNamaPemerintahan.SetText strNamaPemerintah
+'            .txtNamaRs.SetText strNamaLengkapRs
+'            .txtAlamatRs.SetText strAlamatRS & ", " & strKodePos
+            '.txtTelpFax.SetText strNoTlpn & " " & strNoFax
+            '.txtWebEmail.SetText strEmail & " " & strWebSite
+            '.txtNamaKota.SetText strNamaKota & ", "
+            '.txtPetugasRs.SetText "Petugas, " & strNamaRS
+            '.txtNamaPemerintahan.SetText strNamaPemerintah
+            .txtNamaRs.SetText strNamaLengkapRs
+            .txtAlamatRs.SetText strAlamatRS & ", " & strKodePos
+            
             .txtNomorRm.SetText IIf(IsNull(RS2("nocm")), "", RS2("nocm"))
             .txtNamaPasien.SetText IIf(IsNull(RS2("namapasien")), "", RS2("namapasien"))
             .txtJenisKelamin.SetText IIf(IsNull(RS2("jeniskelamin")), "", RS2("jeniskelamin"))
