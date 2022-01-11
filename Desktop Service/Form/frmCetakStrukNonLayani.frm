@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{C4847593-972C-11D0-9567-00A0C9273C2A}#8.0#0"; "crviewer.dll"
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "mswinsck.ocx"
 Begin VB.Form frmCetakStrukNonLayan 
    Caption         =   "Transmedic"
    ClientHeight    =   7005
@@ -195,6 +195,7 @@ Dim alamatRs As String
 Dim namaRs As String
 Dim Apoteker As String
     
+    'Call openConnection
     With Report
             Set adoReport = New ADODB.Command
             adoReport.ActiveConnection = CN_String

@@ -253,8 +253,14 @@ class PelayananResepController extends ApiController
             ->select('ru.namaruangan','pd.noregistrasi',
                 'pd.tglregistrasi','pg.namalengkap as namadokter','kl.namakelas','apd.tglmasuk','apd.tglkeluar','apd.norec','pg.id as pgid')
             ->where('pd.kdprofile',$idProfile)
+            ->whereNotIn('dp.id',array(14,41,36))
             ->orderBy('apd.tglmasuk');
-
+            /* 
+            agar user ga milih farmasi, input obat kunjungan farmasi/apotik hanya untuk obat bebas, selain itu harus milih sesuai ruangan pelayanan/kunjungan pasien
+            14=>farmasi
+            41=>Logistik
+            36=>umum
+            */
         if(isset($request['noregistrasi']) && $request['noregistrasi']!="" && $request['noregistrasi']!="undefined"){
             $data = $data->where('pd.noregistrasi','ilike','%'. $request['noregistrasi'].'%');
         }
@@ -1941,9 +1947,10 @@ class PelayananResepController extends ApiController
                             from pelayananpasien_t as pp
                             INNER JOIN strukresep_t sr on sr.norec=pp.strukresepfk
                             where pp.kdprofile = $idProfile 
+                            and pp.status is null 
                             and sr.kdprofile = $idProfile 
                             and sr.norec='$norec_SR'                            
-                    "));
+                    "));//pp.status is not null untuk tarif service grhasia
 
                     if ($r_SR['ruanganfk'] == $resepOld->ruanganfk){
                         foreach ($dataKembaliStok as $item5) {
@@ -1954,6 +1961,8 @@ class PelayananResepController extends ApiController
                                 where kdprofile = $idProfile and objectruanganfk=$resepOld->ruanganfk and objectprodukfk=$item5->produkfk"))
                                 ->first();
                             $saldoAwal = (float)$dataSaldoAwal->qty + $TambahStok;
+                            //b4yu4d4
+                            $kdobatbayu=array($item5->produkfk,$item5->ruanganfk,$item5->strukterimafk);
 
                             $newSPD = StokProdukDetail::where('nostrukterimafk', $item5->strukterimafk)
                                 ->where('kdprofile', $idProfile)
@@ -2296,6 +2305,7 @@ class PelayananResepController extends ApiController
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errMsg = $e->getMessage()." ".$e->getLine();
         }
 
 //        $transMessage = "Kartu Stok Pasien";
@@ -2332,6 +2342,8 @@ class PelayananResepController extends ApiController
                 "status" => 400,
                 "message"  => $transMessage,
                 "noresep" => $newSR,//$noResep,
+                "errmssg" => $errMsg,
+                "xxx" => $kdobatbayu,
                 "as" => 'as@epic',
             );
         }

@@ -3893,8 +3893,14 @@ class TagihanController  extends ApiController
                 'idLoginUser' => $dataLogin['userData']['id'],
             )
         );
+        /*
+        grhasia dari awal golive diminta...br diingetin 2022-01-08
+        1=>dokter
+        27=>psikolog
+        26=>fisioterapi
+        */
         $dataPenulis = Pegawai::where('statusenabled',true)
-            ->where('objectjenispegawaifk',1)
+            ->whereIn('objectjenispegawaifk',array(1,27,26))
             ->get();
         foreach ($dataPenulis as $item){
             $dataPenulis2[]=array(

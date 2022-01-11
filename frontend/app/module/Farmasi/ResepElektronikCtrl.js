@@ -504,7 +504,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.updateProduksi = function () {
-                if ($scope.item.statusorder == 'Verifikasi') {
+                //if ($scope.item.statusorder == 'Verifikasi') {
+                if ($scope.item.statusorder != 'Menunggu') {
                     //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 1).then(function(e) {
                     //
                     //managePasien.updateStatusOrder($scope.item.noorder, 1).then(function(e) {
@@ -518,6 +519,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         statusorder: 1,
                         tglambil: null,
                         namapengambil: null,
+                        tglselesai: null,
+                        namaselesai: null,
                         strukresep: strukresep
                     }
                     medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
@@ -533,7 +536,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.updatePackaging = function () {
-                if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Produksi') {
+                //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Produksi') {
+                if ($scope.item.statusorder != 'Menunggu') {
                     //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 2).then(function(e) {
                     // managePasien.updateStatusOrder($scope.item.noorder, 2).then(function(e) {
                     //     $scope.refresh();
@@ -549,6 +553,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         statusorder: 2,
                         tglambil: null,
                         namapengambil: null,
+                        tglselesai: null,
+                        namaselesai: null,
                         strukresep: strukresep
                     }
                     medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
@@ -568,7 +574,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             }
             $scope.updateDone = function () {
-                if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging') {
+                //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging') {
+                if ($scope.item.statusorder != 'Menunggu') {
                     //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 3).then(function(e) {
                     // managePasien.updateStatusOrder($scope.item.noorder, 3).then(function(e) {
                     //     $scope.refresh();
@@ -583,6 +590,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         statusorder: 3,
                         tglambil: null,
                         namapengambil: null,
+                        tglselesai: null,
+                        namaselesai: 'selesai',
                         strukresep: strukresep
                     }
                     medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {

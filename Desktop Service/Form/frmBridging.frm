@@ -31,8 +31,10 @@ Public Function Fungsi(ByVal QueryText As String) As Byte()
     Dim Param7() As String
     Dim Param8() As String
     Dim arrItem() As String
-   
-    If CN.State = adStateClosed Then Call openConnection
+    
+    'selalu reconnect, karena jaringan ga stabil
+   'openConnection
+   ' If CN.State = adStateClosed Then Call openConnection
         
     If Len(QueryText) > 0 Then
         arrItem = Split(QueryText, "&")
