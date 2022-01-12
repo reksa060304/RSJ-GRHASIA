@@ -2585,6 +2585,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 //                Route::get('get-tindakan', 'TataRekening\TindakanController@getTindakan');
           Route::get('tatarekening/tindakan/get-combo', 'TataRekening\TindakanController@getCombo');
           Route::get('tatarekening/tindakan/get-pegawaibyjenispetugas', 'TataRekening\TindakanController@getPegawaiByJenisPetugasPe');
+          Route::get('tatarekening/tindakan/get-jenispetugasbypegawai', 'TataRekening\TindakanController@getJenisPetugasPeByPegawai');
           Route::post('tatarekening/tindakan/save-tindakan', 'TataRekening\TindakanController@saveTindakan');
           Route::get('tatarekening/tindakan/get-komponenharga', 'TataRekening\TindakanController@getKomponenHarga');
           Route::post('tatarekening/tindakan/update-dokter-pel-pasien', 'TataRekening\TindakanController@updateDokterAll');
