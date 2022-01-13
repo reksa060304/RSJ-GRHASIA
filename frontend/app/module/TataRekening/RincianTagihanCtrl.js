@@ -1508,7 +1508,8 @@ define(['initialize'], function (initialize) {
 				if (dataDel.length != 0) {
 					medifirstService.post('tatarekening/delete-pelayanan-pasien', objDelete).then(function (e) {
 						//  managePasien.hapusTindakan(tempData).then(function(e){
-						if (e.status === 201) {
+						//if (e.status === 201) {
+						if (e.status == 201) {
 							medifirstService.postNonMessage('sysadmin/logging/save-log-hapus-tindakan', objLog).then(function (e) {
 
 							})
