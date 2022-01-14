@@ -30,10 +30,6 @@
         color: black
     }
 
-    .align-right{
-        text-align: right;
-    }
-
     hr {
         border: 1px solid black;
         margin-top: 0px;
@@ -91,7 +87,7 @@
                         </div>
                     </div>
                     <div class="grid_6">
-                        <!-- <div class="grid_4">
+                        <div class="grid_4">
                             <label c-label item="item" c-label-text="Dokter"></label>
                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.dokter"
                                 k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
@@ -108,16 +104,12 @@
                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
                                 k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listRuangan" />
-                        </div> -->
-                        <div class="grid_6">
-                            <label c-label item="item" c-label-text="Nama Produk"></label>
-                            <input c-text-box type="input" class="k-textbox" ng-model="item.namaProduk"
-                                ng-keypress="($event.which == 13)? cari():item.namaProduk" />
                         </div>
-                        <div class="grid_2" style="margin-top: 20px;">
+                    </div>
+                    <div class="grid_1" style="margin-top: 25px;">
+                        <div class="grid_12">
                             <button class="c-button" ng-click="cariFilter()">Cari</button>
                         </div>
-
                     </div>
                 </div>
                 <!--<div class="grid_12">

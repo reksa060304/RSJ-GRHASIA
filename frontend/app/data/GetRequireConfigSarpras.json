@@ -749,6 +749,10 @@
             "urlDep": "module/Farmasi/LaporanFarmasi/LaporanPenjualanObatDetailCtrl"
         },
         {
+            "nameDep": "LaporanPenjualanObatNewCtrl",
+            "urlDep": "module/Farmasi/LaporanFarmasi/LaporanPenjualanObatNewCtrl"
+        },
+        {
             "nameDep": "DaftarPengeluaranBarangPerBulanCtrl",
             "urlDep": "module/Logistik/DaftarPengeluaranBarangPerBulanCtrl"
         },

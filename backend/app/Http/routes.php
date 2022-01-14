@@ -843,6 +843,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get-nostruk-kasir', 'Farmasi\PelayananResepController@getNoStrukKasir');
           Route::post('farmasi/batal-verifikasi-order-resep', 'Farmasi\PelayananResepController@saveBatalVerifikasiResep');
           Route::get('farmasi/get-laporan-penjualan-obat-detail', 'Farmasi\PelayananResepController@getLaporanPenjualanObatDetail');
+          Route::get('farmasi/get-laporan-penjualan-obat-new', 'Farmasi\PelayananResepController@getLaporanPenjualanObatNew');
+          
           Route::get('farmasi/get-daftar-satuanresep', 'Farmasi\PelayananResepController@getDaftarSatuanResep');
           Route::post('farmasi/save-data-satuanresep', 'Farmasi\PelayananResepController@saveDataSatuanResep');
           Route::get('farmasi/get-laporan-penjualan-perkwitansi', 'Farmasi\PelayananObatBebasController@getLaporanPenjualanObatPerKwitansi');

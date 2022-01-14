@@ -45,30 +45,20 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.jmlRows != undefined) {
                     jmlRows = $scope.item.jmlRows
                 }
-                var namaproduk = "";
-                if ($scope.item.namaProduk != undefined) {
-                    namaproduk = $scope.item.namaProduk
-                }
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
-                // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
                 medifirstService.get("farmasi/get-laporan-penjualan-obat-detail?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
-                    "&namaproduk=" + namaproduk +
                     dok + kp + ru
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
-                        $scope.sumtotalhargajual = 0;
-                        $scope.sumtotalhargabeli = 0;
-                        $scope.sumtotalhargajualdiskon = 0;
-                        for (var i = 0; i < dat.data.daftar.length; i++) {
-                            dat.data.daftar[i].no = i + 1
-                            $scope.sumtotalhargajual= $scope.sumtotalhargajual + parseFloat(dat.data.daftar[i].totalhargajual)
-                            $scope.sumtotalhargabeli= $scope.sumtotalhargabeli + parseFloat(dat.data.daftar[i].totalhargabeli)
-                            $scope.sumtotalhargajualdiskon= $scope.sumtotalhargajualdiskon + parseFloat(dat.data.daftar[i].totalhargajualdiskon)
-                            
-                        }
+                        $scope.totaltunai = 0;
+                        $scope.totalpenjamin = 0;
+                        // for (var i = 0; i < dat.data.daftar.length; i++) {
+                        //     dat.data.daftar[i].no = i + 1
+                        //     // dat.data.daftar[i].subtotal = parseFloat(dat.data.daftar[i].jumlah) * parseFloat(dat.data.daftar[i].hargajual)
+                        // }
 
                         $scope.dataGrid = new kendo.data.DataSource({
                             data: dat.data.daftar,
@@ -79,17 +69,9 @@ define(['initialize'], function (initialize) {
                             schema: {
                                 model: {
                                     fields: {
-                                        totalhargajual: { type: "number" },
-                                        totalhargabeli: { type: "number" },
-                                        totalhargajualdiskon: { type: "number" },
                                     }
                                 }
-                            },
-                            aggregate: [
-                                { field: 'totalhargajual', aggregate: 'sum' },
-                                { field: 'totalhargabeli', aggregate: 'sum' },
-                                { field: 'totalhargajualdiskon', aggregate: 'sum' },
-                            ]
+                            }
                         });                                             
                     });
 
@@ -128,7 +110,11 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.formatTanggal = function (tanggal) {
-                return moment(tanggal).format('YYYY-MM-DD');
+                return moment(tanggal).format('DD-MM-YYYY');
+            }
+
+            $scope.formatRupiah = function (value, currency) {
+                return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
             }
 
             var HttpClient = function () {
@@ -339,24 +325,24 @@ define(['initialize'], function (initialize) {
 
             $scope.group = [
                 // {
-                //     field: "totalhargajual",
+                //     field: "departemen",
                 //     aggregates: [
                 //         {
-                //             field: "namtotalhargajualaobat",
-                //             aggregate: "sum"
+                //             field: "departemen",
+                //             aggregate: "count"
                 //         }
                 //     ]
                 // }
                 // ,
-                // {
-                //     field: "gudang",
-                //     aggregates: [
-                //         {
-                //             field: "gudang",
-                //             aggregate: "count"
-                //         }
-                //     ]
-                // },
+                {
+                    field: "gudang",
+                    aggregates: [
+                        {
+                            field: "gudang",
+                            aggregate: "count"
+                        }
+                    ]
+                },
                 // {
                 //     field: "user",
                 //     aggregates: [
@@ -398,9 +384,6 @@ define(['initialize'], function (initialize) {
             //         aggregate: "count"
             //     }
             // ]
-
-            // $scope.image = {src:"images/asset/logo-medifirst2000.png"};
-
             $scope.columnGrid = {
                 toolbar: [
                     "excel",
@@ -411,76 +394,38 @@ define(['initialize'], function (initialize) {
                 },
                 excelExport: function (e) {
                     var sheet = e.workbook.sheets[0];
-                    sheet.frozenRows = 4;
-                    sheet.mergedCells = ["A1:I1", "A2:I2", "A3:I3", "A4:I4"];
+                    sheet.frozenRows = 2;
+                    sheet.mergedCells = ["A1:M1"];
                     sheet.name = "Report";
-                    sheet.layout = "Landscape";
 
                     var myHeaders = [{
-                        value: "LAPORAN PENJUALAN OBAT RAWAT JALAN",
-                        fontSize: 12,
-                        fontWeight: 900,
+                        value: "Laporan Pengeluaran Obat",
+                        fontSize: 20,
                         textAlign: "center",
-                        backgroundUrl: "#fffff"
+                        background: "#ffffff",
+                        // color:"#ffffff"
                     }];
 
-                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 25 });
-
-                    var mySecondHeaders = [{
-                        value: "RSJ. GRHASIA",
-                        fontSize: 10,
-                        fontWeight: 900,
-                        textAlign: "center",
-                        backgroundUrl: "#fffff"
-                    }];
-
-                    sheet.rows.splice(1, 0, { cells: mySecondHeaders, type: "header", height: 20 });
-
-                    var myThirdHeaders = [{
-                        value: "Jln. Kaliurang Km 17, Pakembinangun, Pakem, Sleman, Prop. DIY. Telp. (0274) 895297, 895142, 895143",
-                        fontSize: 9,
-                        textAlign: "center",
-                        backgroundUrl: "#fffff"
-                    }];
-
-                    sheet.rows.splice(2, 0, { cells: myThirdHeaders, type: "header", height: 15 });
-
-                    var tglAwalTemp = moment($scope.item.tglAwal).format('DD/MM/YYYY');
-                    var tglAkhirTemp = moment($scope.item.tglAkhir).format('DD/MM/YYYY');
-                    var myFourthHeaders = [{
-                        value: "Periode: " + tglAwalTemp+" s/d "+tglAkhirTemp,
-                        fontSize: 9,
-                        textAlign: "left",
-                        backgroundUrl: "#fffff"
-                    }];
-
-                    sheet.rows.splice(3, 0, { cells: myFourthHeaders, type: "header", height: 15 });
+                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
                 },
                 selectable: 'row',
                 pageable: true,
                 columns: [
-                    {
-                        "field": "namaobat",
-                        "title": "Item Transaksi",
-                        "width": "120px"
-                    },
                     // {
                     //     "field": "no",
                     //     "title": "No",
                     //     "width": "55px",
                     // },
                     {
-                        
-                        "field": "tanggal",
+                        "field": "tglresep",
                         "title": "Tanggal",
                         "width": "100px",
-                        template: "<span class='style-right'>{{formatTanggal('#: tanggal #', '')}}</span>"
                     },
                     {
                         // hidden: true,
-                        "field": "qty",
-                        "title": "Qty",
-                        "width": "60px",
+                        "field": "departemen",
+                        "title": "Departemen",
+                        "width": "120px",
                         // aggregates: ["count"],
                         // groupHeaderTemplate:" Departemen : #= value #"
                     },
@@ -509,95 +454,69 @@ define(['initialize'], function (initialize) {
                     //     // groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.tunai.sum  #', '')}}",
                     //     // footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.tunai.sum  #', '')}}"
                     // },                   
-                    
-                    // {
-                    //     "field": "norm",
-                    //     "title": "No. RM",
-                    //     "width": "120px",
-                    // },
                     {
-                        "field": "harganetto",
-                        "title": "Harga Beli Satuan",
+                        "field": "namaproduk",
+                        "title": "Nama Item",
                         "width": "120px",
+                    },
+                    {
+                        "field": "satuanstandar",
+                        "title": "Satuan",
+                        "width": "120px",
+                    },
+                    {
+                        "field": "jumlah",
+                        "title": "Jumlah",
+                        "width": "100px",
                     },
                     {
                         "field": "hargajual",
-                        "title": "Harga Jual Satuan",
-                        "width": "120px",
-                        footerTemplate: "Total"
-                    },
-                    
-                    // /
-                    {
-                        "field": "totalhargabeli",
-                        "title": "Total Harga Beli",
-                        "width": "120px",
-                        aggregates: ["sum"],
-                        template: "#: totalhargabeli  #",
-                        groupFooterTemplate: "#: data.totalhargabeli.sum  #",
-                        footerTemplate: "#: data.totalhargabeli.sum  #"
+                        "title": "Harga",
+                        "width": "100px",
                     },
                     {
-                        "field": "totalhargajual",
-                        "title": "Total  Harga Jual",
-                        "width": "120px",
-                        aggregates: ["sum"],
-                        template: "#: totalhargajual  #",
-                        groupFooterTemplate: "#: data.totalhargajual.sum  #",
-                        footerTemplate: "#: data.totalhargajual.sum  #"
+                        "field": "subtotal",
+                        "title": "Sub Total",
+                        "width": "100px",
                     },
                     {
-                        "field": "persendiskon",
-                        "title": "%",
-                        "width": "80px",
-                    },
-                    {
-                        "field": "totalhargajualdiskon",
-                        "title": "Total Harga Jual Diskon",
-                        "width": "120px",
-                        aggregates: ["sum"],
-                        template: "#: totalhargajualdiskon  #",
-                        groupFooterTemplate: "#: data.totalhargajualdiskon.sum  #",
-                        footerTemplate: "#: data.totalhargajualdiskon.sum  #"
-                    }
-                    // {
-                    //     "title": "Pasien",
-                    //     headerAttributes: { style: "text-align : center" },
-                    //     "columns": [
-                    //         {
-                    //             "field": "noregistrasi",
-                    //             "title": "Noregistrasi",
-                    //             "width": "100px",
-                    //         },
-                    //         {
-                    //             "field": "nocm",
-                    //             "title": "No. RM",
-                    //             "width": "100px",
-                    //         },
-                    //         {
-                    //             "field": "namapasien",
-                    //             "title": "Nama Pasien",
-                    //             "width": "120px",
+                        "title": "Pasien",
+                        headerAttributes: { style: "text-align : center" },
+                        "columns": [
+                            {
+                                "field": "noregistrasi",
+                                "title": "Noregistrasi",
+                                "width": "100px",
+                            },
+                            {
+                                "field": "nocm",
+                                "title": "No. RM",
+                                "width": "100px",
+                            },
+                            {
+                                "field": "namapasien",
+                                "title": "Nama Pasien",
+                                "width": "120px",
                                 //    footerTemplate: "<span>Total </span>"
-                    //         },
-                    //     ]
-                    // },
-                    // {
-                    //     "title": "Dokter",
-                    //     headerAttributes: { style: "text-align : center" },
-                    //     "columns": [
-                    //         {
-                    //             "field": "dokter",
-                    //             "title": "Nama",
-                    //             "width": "100px",
-                    //         },
-                    //         {
-                    //             "field": "noresep",
-                    //             "title": "No. Resep",
-                    //             "width": "100px",
-                    //         }
-                    //     ]
-                    // },
+                            },
+                        ]
+                    },
+                    {
+                        "title": "Dokter",
+                        headerAttributes: { style: "text-align : center" },
+                        "columns": [
+                            {
+                                "field": "dokter",
+                                "title": "Nama",
+                                "width": "100px",
+                            },
+                            {
+                                "field": "noresep",
+                                "title": "No. Resep",
+                                "width": "100px",
+                            }
+                        ]
+                    },
                 ]
             };
 

@@ -3737,6 +3737,26 @@
     ]
   },
   {
+    "name": "LaporanPenjualanObatNew",
+    "url": "/TGFwb3JhblBlbmp1YWxhbk9iYXROZXc=",
+    "templateurl": "module/Farmasi/LaporanFarmasi/LaporanPenjualanObatNew.html",
+    "controller": "LaporanPenjualanObatNewCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "DaftarPengeluaranBarangPerBulan",
     "url": "/RGFmdGFyUGVuZ2VsdWFyYW5CYXJhbmdQZXJCdWxhbg==",
     "templateurl": "module/Logistik/DaftarPengeluaranBarangPerBulan.html",
