@@ -176,9 +176,40 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
       medifirstService.get("tatarekening/tindakan/get-combo")
         .then(function (da) {
-          $scope.listJenisPelaksana = da.data.jenispelaksana;
+          $scope.listJenisPelaksana = da.data.jenispelaksana;          
           $scope.item.nilaiStatusCito = parseFloat(da.data.tarifcito.nilaifield);
-        })
+          $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+          if ($scope.pegawaiLogin.jenisPetugas != undefined){
+            if($scope.pegawaiLogin.jenisPetugas.length>0){
+              $scope.item.jenisPelaksana={ id: $scope.pegawaiLogin.jenisPetugas[0].id, jenispetugaspe: $scope.pegawaiLogin.jenisPetugas[0].jenispetugaspe };
+              var id = $scope.pegawaiLogin.jenisPetugas[0].id;
+              var model = 'dataSource';
+              var listArray = 'selectedPegawai';
+              var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+              if (isInList) {
+                getGenericPegawai(model, listArray);
+              } else {
+                getPegawaiById(id, model, listArray);
+              }
+            }
+          }else{
+            medifirstService.get("tatarekening/tindakan/get-jenispetugasbypegawai?idPegawai=" + $scope.pegawaiLogin.id, true).then(function (dat) {
+              //var id = $scope.item.jenisPelaksana.id;dat.data.jenispelaksana
+              $scope.item.jenisPelaksana={ id: dat.data.jenispelaksana[0].id, jenispetugaspe: dat.data.jenispelaksana[0].jenispetugaspe };
+              var id = dat.data.jenispelaksana[0].id;
+              var model = 'dataSource';
+              var listArray = 'selectedPegawai';
+              var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+              if (isInList) {
+                getGenericPegawai(model, listArray);
+              } else {
+                getPegawaiById(id, model, listArray);
+              }
+            });
+
+          }
+
+      })
       function getPegawaiById(id, input, output) {
         var selectedData = $parse(output);
         selectedData.assign($scope, []);
@@ -192,8 +223,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
           var cookie = document.cookie.split(';');
           cookie = cookie[0].split('=');
-          if (cookie[1] == 'dokter')
-            $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]
+          // if (cookie[1] == 'dokter')
+          $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]
 
         });
       }

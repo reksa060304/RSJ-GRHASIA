@@ -430,7 +430,36 @@ define(['initialize'], function (initialize) {
 				$scope.popUpMenu.setOptions({ actions: actions });
 			}
 
-			$scope.columnGridMenu = [
+			$scope.columnGridMenu = {
+				toolbar: [
+					"excel",
+
+				],
+				excel: {
+					fileName: "DaftarOrderGizi.xlsx",
+					allPages: true,
+				},
+				excelExport: function (e) {
+					var sheet = e.workbook.sheets[0];
+					sheet.frozenRows = 2;
+					sheet.mergedCells = ["A1:R1"];
+					sheet.name = "Orders";
+
+					var myHeaders = [{
+						value: "Daftar Order Gizi",
+						fontSize: 20,
+						textAlign: "center",
+						background: "#ffffff",
+						// color:"#ffffff"
+					}];
+
+					sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+				},
+				selectable: 'row',
+				pageable: true,
+				
+				
+				columns:[
 				// {
 				// 	"template": "<input type='checkbox' class='checkbox' ng-click='onClickDetails($event)' />",
 				// 	"width": 30
@@ -452,7 +481,7 @@ define(['initialize'], function (initialize) {
 
 				},
 
-			];
+			]};
 
 			$scope.tambah = function () {
 				if ($scope.item.qtyProduk == 0) {

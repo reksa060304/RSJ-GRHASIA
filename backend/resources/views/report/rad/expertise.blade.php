@@ -124,17 +124,21 @@
 
             @endphp
             <div style="text-align: left;font-size: 12pt">
-            @foreach($datas as $e => $val)
-
+            
                 <p style="margin-block-start: 0px;
                 margin-block-end: 0px;
                 margin-inline-start: 0px;
                 margin-inline-end: 0px;">
-                    {!!  nl2br(str_replace('~','<br/>',$val['ket'] )) !!}
-{{--                    {!! nl2br(str_replace(" ", " &nbsp;", $val['ket'])) !!}--}}
+                @foreach($datas as $e => $val)
+                    @if($val['ket']!="")
+                    {!!  nl2br(str_replace('~','<br />',$val['ket'].'<br />' )) !!}
+                    @endif
+                    @if($val['ket']=="")
+                    {!!  '<br />' !!}
+                    @endif
+{{--                    {!! nl2br(str_replace(" ", " &nbsp;", $val['ket'])) !!}--}}                
+                @endforeach
                 </p>
-
-            @endforeach
             </div>
 
             <hr>
@@ -148,6 +152,7 @@
 {{--                </tr>--}}
 {{--                </tbody>--}}
 {{--            </table>--}}
+            
         </td>
     </tr>
 

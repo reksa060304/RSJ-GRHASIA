@@ -405,7 +405,7 @@ class LoggingController extends ApiController
             ->select('pd.noregistrasi','sr.norec','sr.noresep')
             ->where('sr.kdprofile', $kdProfile)
             ->where('sr.pasienfk', $request['norec_apd'])
-            ->where ('sr.penulisresepfk',$request['penulisresepfk'])
+            ->where ('sr.penulisresepfk',$request['penulisresepfk'])//jaga2 bisi kadang ga keisi penulisresepfk
             ->where ('sr.ruanganfk',$request['ruanganfk'])
             ->where ('sr.tglresep',$request['tglresep'])
             ->first();
@@ -423,13 +423,23 @@ class LoggingController extends ApiController
         $logUser->kdprofile= $kdProfile;
         $logUser->statusenabled=true;
         $logUser->jenislog = 'Input Resep Apotik';
-        $logUser->noreff = $pasien->norec;
+
+        $noresep = '';
+        $noregistrasi = '';
+        if(!empty($pasien)){
+            $logUser->noreff = $pasien->norec;
+            $noresep = $pasien->noresep;
+            $noregistrasi = $pasien->noregistrasi;
+        } else{
+            $noresep = '';
+            $noregistrasi = '';
+        }     
         $logUser->referensi='norec Struk Resep';
         $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
         $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
 //            try {
         if(!empty($pasien) ){
-            $logUser->keterangan = 'No Resep '. $pasien->noresep .' / No Registrasi '.$pasien->noregistrasi;
+            $logUser->keterangan = 'No Resep '. $noresep .' / No Registrasi '.$noregistrasi;
         }
         $logUser->save();
         $transMsg = "Simpan Log Sukses ";

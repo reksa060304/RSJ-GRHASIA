@@ -691,7 +691,8 @@ class TagihanController  extends ApiController
             ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'ptu.objectpegawaifk')
             ->select('ptu.pelayananpasien', 'pg.namalengkap')
             ->where('pd.kdprofile', $kdProfile)
-            ->where('ptu.objectjenispetugaspefk', 4)
+            //->where('ptu.objectjenispetugaspefk', 4)
+            ->whereIn('ptu.objectjenispetugaspefk', array(4,1))
             ->where('pd.noregistrasi', $noRegister)
             ->get();
 

@@ -250,6 +250,7 @@ Set Report = New crRekapRincianBiaya
               " LEFT JOIN departemen_m AS dp ON dp. ID = ru.objectdepartemenfk " & _
               " WHERE noregistrasi = '" & strNoregistrasi & "' AND tglpelayanan IS NOT NULL AND namaproduk NOT IN ('Biaya Administrasi','Biaya Materai') " & _
               " AND dp. ID IN (16, 25) " & _
+              "  AND (tb.ruangantindakan  not ilike '%farmasi%' AND tb.ruangantindakan  not ilike '%apotik%')  " & _
               " GROUP BY tb.tglstruk,tb.nobilling,tb.nokwitansi,tb.noregistrasi,tb.nocm,tb.namapasienjk,tb.unit,tb.objectdepartemenfk, " & _
               " tb.namakelas,tb.dokterpj,tb.tglregistrasi,tb.tglpulang,tb.namarekanan,tb.tglpelayanan,tb.ruangantindakan, " & _
               " tb.namaproduk,tb.penulisresep,tb.jenisproduk,tb.jumlah,tb.hargajual,tb.diskon,tb.total,tb.namakamar,tb.tipepasien, " & _
@@ -273,6 +274,7 @@ Set Report = New crRekapRincianBiaya
              " WHERE noregistrasi = '" & strNoregistrasi & "' AND tglpelayanan IS NOT NULL " & _
              " AND namaproduk NOT IN ('Biaya Administrasi','Biaya Materai') " & _
              " AND dp. ID NOT IN (16, 25) " & _
+             "  AND (tb.ruangantindakan  not ilike '%farmasi%' and tb.ruangantindakan  not ilike '%apotik%') " & _
              " GROUP BY tb.tglstruk,tb.nobilling,tb.nokwitansi,tb.noregistrasi,tb.nocm,tb.namapasienjk,tb.unit,tb.objectdepartemenfk, " & _
              " tb.namakelas,tb.dokterpj,tb.tglregistrasi,tb.tglpulang,tb.namarekanan,tb.tglpelayanan,tb.ruangantindakan, " & _
              " tb.namaproduk,tb.penulisresep,tb.jenisproduk,tb.jumlah,tb.hargajual,tb.diskon,tb.total,tb.namakamar,tb.tipepasien, " & _
@@ -295,7 +297,7 @@ Set Report = New crRekapRincianBiaya
              " FROM temp_billing_t AS tb " & _
              " WHERE tb.noregistrasi = '" & strNoregistrasi & "' AND tb.tglpelayanan IS NOT NULL " & _
              " AND tb.namaproduk NOT IN ('Biaya Administrasi','Biaya Materai') " & _
-             " AND tb.jenisprodukmaster = 'Jenis Barang Farmasi' " & _
+             " AND (tb.ruangantindakan  ilike '%farmasi%' or tb.ruangantindakan  ilike '%apotik%') /*AND tb.jenisprodukmaster = 'Jenis Barang Farmasi'*/ " & _
              " GROUP BY tb.tglstruk,tb.nobilling,tb.nokwitansi,tb.noregistrasi,tb.nocm,tb.namapasienjk,tb.unit, " & _
              " tb.objectdepartemenfk,tb.namakelas,tb.dokterpj,tb.tglregistrasi,tb.tglpulang,tb.namarekanan, " & _
              " tb.tglpelayanan,tb.ruangantindakan,tb.namaproduk,tb.penulisresep,tb.jenisproduk,tb.jumlah, " & _
@@ -472,7 +474,7 @@ Set Report = New crRekapRincianBiaya
 '            Else
 '                .txtUser.SetText UCase(IIf(isnull(RS2("namalengkap")), "-", RS2("namalengkap")))
 '            End If
-            .txtUser.SetText UCase(strIdPegawai)
+            .txtuser.SetText UCase(strIdPegawai)
             
         ReadRs2 "select 'Piutang' as jenis, sp.nostruk ,rk.namarekanan,sp.tglstruk,sppd.totalppenjamin " & _
                                "from pasiendaftar_t as pd " & _

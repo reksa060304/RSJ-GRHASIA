@@ -154,12 +154,12 @@ Set frmCetakKuitansiPiutangPenjaminPasien = Nothing
 
 Dim adocmd As New ADODB.Command
         
-    Dim strFilter As String
+    Dim StrFilter As String
     Dim orderby As String
     
-    strFilter = ""
+    StrFilter = ""
   
-    strFilter = " where kps.id in (3,5) and pd.noregistrasi = '" & Noregistrasi & "' "
+    StrFilter = " where kps.id in (3,5,1) and pd.noregistrasi = '" & Noregistrasi & "' "
             
     Set Report = New crKuitansiPiutangPenjaminPasien
     
@@ -175,7 +175,7 @@ Dim adocmd As New ADODB.Command
             "INNER JOIN kelompokpasien_m as kps on kps.id=pd.objectkelompokpasienlastfk " & _
             "inner join pasien_m as ps on ps.id = pd.nocmfk " & _
             "inner join ruangan_m as ru on ru.id = sp.objectruanganfk " & _
-            strFilter
+            StrFilter
             
     Dim tPiutang, tmaterai, x As Double
     Dim pasien, rekanan, alamat, ruangan As String
@@ -191,9 +191,9 @@ Dim adocmd As New ADODB.Command
     With Report
         If Not RS2.BOF Then
             .txtNamaKota.SetText strNamaKota & ", "
-            .txtRuangan.SetText ruangan
-            .txtPasien.SetText pasien
-            .txtPenjamin.SetText rekanan
+            .txtruangan.SetText ruangan
+            .txtpasien.SetText pasien
+            .txtpenjamin.SetText rekanan
             .ucJumlah.SetUnboundFieldSource tPiutang
             '.ucJumlah.SetUnboundFieldSource (IIf(isnull(RS2!totalppenjamin), 0, RS2!totalppenjamin))
             

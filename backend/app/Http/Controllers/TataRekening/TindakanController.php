@@ -146,6 +146,34 @@ class TindakanController extends ApiController
 
         return $this->respond($result);
     }
+    
+    public function getJenisPetugasPeByPegawai(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile =(int) $kdProfile;
+            $data = \DB::table('mapjenispetugasptojenispegawai_m as mpp')
+                ->join('jenispegawai_m as jp', 'jp.id', '=', 'mpp.objectjenispegawaifk')
+                ->join('pegawai_m as pg', 'pg.objectjenispegawaifk', '=', 'jp.id')
+                ->join('jenispetugaspelaksana_m as jpp', 'jpp.id', '=', 'mpp.objectjenispetugaspefk')                
+                ->select('jpp.id','jpp.jenispetugaspe','mpp.norec'
+//                    ,'lg.id as idloginuser','lg.namauser'
+                )
+                ->groupBy('jpp.id','jpp.jenispetugaspe','mpp.norec'
+                )
+                ->where('mpp.kdprofile', $idProfile)
+                ->where('pg.id', $request['idPegawai'])
+                ->where('mpp.statusenabled', true)
+                ->where('pg.statusenabled', true)
+                ->where('jpp.statusenabled', true);
+        $data = $data->orderBy('mpp.norec', 'ASC');
+        $data = $data->get();
+
+        $result = array(
+            'jenispelaksana' => $data,
+            'message' => 'ramdanegie',
+        );
+
+        return $this->respond($result);
+    }
     public function saveTindakan(Request $request) {
 
         //TODO : SAVE TINDAKAN

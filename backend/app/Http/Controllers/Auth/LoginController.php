@@ -136,6 +136,19 @@ class LoginController extends ApiController {
                 ->where('ru.statusenabled', true)
                 ->where('lu.id', '=',$LoginUser[0]->id)
                 ->get();
+            $jenisPetugas = \DB::table('mapjenispetugasptojenispegawai_m as mpp')
+                ->join('jenispegawai_m as jp', 'jp.id', '=', 'mpp.objectjenispegawaifk')                
+                ->join('jenispetugaspelaksana_m as jpp', 'jpp.id', '=', 'mpp.objectjenispetugaspefk')                
+                ->select('jpp.id', 'jpp.jenispetugaspe')
+                ->groupBy('jpp.id', 'jpp.jenispetugaspe'
+//                    ,'lg.id','lg.namauser'
+                )                
+                ->where('jp.id', $pegawai->objectjenispegawaifk)
+                ->where('mpp.statusenabled', true)                
+                ->where('jpp.statusenabled', true)
+                //->orderBy('jpp.jenispetugaspe', 'ASC')
+                ->get();
+                
 //            $agama = Agama::where('id',$pegawai->objectagamafk)
 //                ->first();
 //            $detailKat = DB::table('detailkategorypegawai_m')
@@ -199,6 +212,7 @@ class LoginController extends ApiController {
 //                'jadwalPemeriksaanSet' => [],
 //                'jenisKelamin' =>$jenisKelamin,
                 'jenisPegawai' => $jenisPegawai,
+                'jenisPetugas' => $jenisPetugas,
                 'kdProfile' => $pegawai->kdprofile,
 //                'kategoryPegawai' =>$kategoryPegawai,
 //                'kedudukan' =>[],

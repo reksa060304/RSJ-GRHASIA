@@ -89,7 +89,11 @@ h3{
                         <div class="grid_12">
                             <div class="grid_2">
                                 <label c-label item="item">Jenis Pelaksana</label>
-                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.jenisPelaksana" k-data-text-field="'jenispetugaspe'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisPelaksana" k-on-change='init()' /> 
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.jenisPelaksana" 
+                                k-data-text-field="'jenispetugaspe'" 
+                                k-data-value-field="'id'" 
+                                k-filter="'contains'" k-auto-bind="false"
+                                 k-data-source="listJenisPelaksana" k-on-change='init()' /> 
                                 <!-- ng-disabled="item.paramedis == true" -->
                             </div>
                             <div class="grid_5" style="margin-bottom:5px">

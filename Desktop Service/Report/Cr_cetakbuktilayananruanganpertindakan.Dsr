@@ -3,7 +3,7 @@ Begin {BD4B4E61-F7B8-11D0-964D-00A0C9273C2A} Cr_cetakbuktilayananruanganpertinda
    ClientHeight    =   9360
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   15765
+   ClientWidth     =   12930
    OleObjectBlob   =   "Cr_cetakbuktilayananruanganpertindakan.dsx":0000
 End
 Attribute VB_Name = "Cr_cetakbuktilayananruanganpertindakan"
