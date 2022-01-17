@@ -2041,14 +2041,12 @@ class PelayananResepController extends ApiController
                     //END##PENAMBAHAN KEMBALI STOKPRODUKDETAIL
                 }
                 //### LOGACC untuk penjurnalan blm ada
-                $HapusPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)
-                ->whereNull('status')
-                ->get();
+                $HapusPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->get();
                 foreach ($HapusPP as $pp){
                     $HapusPPD = PelayananPasienDetail::where('pelayananpasien', $pp['norec'])->where('kdprofile', $idProfile)->delete();
                     $HapusPPP = PelayananPasienPetugas::where('pelayananpasien', $pp['norec'])->where('kdprofile', $idProfile)->delete();
                 }
-                $HpsPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->whereNull('status')->delete();
+                $HpsPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->delete();
             }
 
             //## PelayananPasien
@@ -2854,7 +2852,7 @@ class PelayananResepController extends ApiController
                     (pp.hargajual * pp.jumlah) as totalhargajual,
                     (pp.harganetto * pp.jumlah) as totalhargabeli,
                     (
-                        case when (pp.hargajual is not null or pp.hargajual != 0) then
+                        case when (pp.hargajual != 0) then
                             coalesce(pp.hargadiscount,0)/pp.hargajual
                         else
                             0
