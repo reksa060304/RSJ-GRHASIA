@@ -114,6 +114,12 @@
                             <input c-text-box type="input" class="k-textbox" ng-model="item.namaProduk"
                                 ng-keypress="($event.which == 13)? cari():item.namaProduk" />
                         </div>
+                        <div class="grid_4">
+                            <label c-label item="item" c-label-text="Status Bayar"></label>
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusBayar"
+                                k-data-text-field="'names'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listStatusBayar" />
+                        </div>
                         <div class="grid_2" style="margin-top: 20px;">
                             <button class="c-button" ng-click="cariFilter()">Cari</button>
                         </div>

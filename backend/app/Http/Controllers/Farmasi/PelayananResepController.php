@@ -2698,6 +2698,7 @@ class PelayananResepController extends ApiController
         $dokid= '';
         $kpid='';
         $ruid='';
+        $statusBayar='';
 
         if(isset($request['dokid']) && $request['dokid']!="" && $request['dokid']!="undefined"){
             $dokid = ' and pg.id='.$request['dokid'];
@@ -2710,6 +2711,15 @@ class PelayananResepController extends ApiController
         }
         if(isset( $request['namaproduk'])&&  $request['namaproduk']!='undefined'){
             $namaproduk = "and pr.namaproduk  ILIKE '%". $request['namaproduk']."%'";
+        }
+        if(isset( $request['namaproduk'])&&  $request['namaproduk']!='undefined'){
+            $namaproduk = "and pr.namaproduk  ILIKE '%". $request['namaproduk']."%'";
+        }
+        if(isset( $request['statusBayar'])&&  $request['statusBayar']=='1'){
+            $statusBayar = "and sbmsdhbyr.tglsbm is not null";
+        }
+        if(isset( $request['statusBayar'])&&  $request['statusBayar']=='2'){
+            $statusBayar = "and sbmsdhbyr.tglsbm is null";
         }
 
 
@@ -2858,11 +2868,14 @@ class PelayananResepController extends ApiController
                             0
                         end										
                     )*100 as persendiskon,
-                    ((pp.hargajual - (coalesce(pp.hargadiscount,0))) * jumlah) as totalhargajualdiskon
+                    ((pp.hargajual - (coalesce(pp.hargadiscount,0))) * jumlah) as totalhargajualdiskon,
+                    sbmsdhbyr.tglsbm
                 FROM
                 pelayananpasien_t AS pp
                 INNER JOIN produk_m AS pr ON pr.id = pp.produkfk
                 INNER JOIN strukresep_t AS sr ON sr.norec = pp.strukresepfk
+                LEFT JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
+                LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk and sbmsdhbyr.statusenabled = true
                 INNER JOIN ruangan_m AS rudp ON rudp.id = sr.ruanganfk
                 INNER JOIN antrianpasiendiperiksa_t AS apd ON sr.pasienfk = apd.norec
                 INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
@@ -2890,6 +2903,7 @@ class PelayananResepController extends ApiController
                     $dokid
                     $kpid
                     $ruid
+                    $statusBayar
                     ORDER BY
                         apd.tglmasuk DESC
                     LIMIT 1
@@ -2904,7 +2918,8 @@ class PelayananResepController extends ApiController
                 $namaproduk
                 $dokid
                 $kpid
-                $ruid              
+                $ruid     
+                $statusBayar         
         "));
 
 
@@ -3038,7 +3053,7 @@ class PelayananResepController extends ApiController
                 LEFT JOIN kelompokpasien_m kp ON kp.id=pd.objectkelompokpasienlastfk
                 LEFT JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
                 LEFT JOIN strukbuktipenerimaan_t as sbm on sbm.norec = sp.nosbmlastfk
-                LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk
+                LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk and sbmsdhbyr.statusenabled = true
                 --LEFT JOIN logginguser_t AS lg ON lg.noreff = sr.norec AND lg.jenislog = 'Input Resep Apotik'
                 --LEFT JOIN loginuser_s AS lu ON lu.id = lg.objectloginuserfk
                 --LEFT JOIN pegawai_m AS pg1 ON pg1.id = lu.objectpegawaifk
@@ -3071,7 +3086,7 @@ class PelayananResepController extends ApiController
                 FROM strukpelayanan_t as sp
                 INNER JOIN pelayananpasien_t AS pp ON pp.strukterimafk = sp.norec
                 INNER JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
-                LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk
+                LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk and sbmsdhbyr.statusenabled = true
                 LEFT JOIN pegawai_m as pg on pg.id=sp.objectpegawaipenanggungjawabfk
                 LEFT JOIN strukbuktipenerimaan_t as sbm on sbm.norec = sp.nosbmlastfk
                 LEFT JOIN pegawai_m as pg2 on pg2.id = sbm.objectpegawaipenerimafk
@@ -3086,6 +3101,7 @@ class PelayananResepController extends ApiController
                 LEFT JOIN satuanstandar_m AS ss ON ss.id = spd.objectsatuanstandarfk
                 WHERE sp.statusenabled = true AND sp.kdprofile = $kdProfile and sp.tglstruk BETWEEN '$tglAwal' and '$tglAkhir'
                 AND substring(sp.nostruk,1,2)='OB'
+                
                 $dokid
                 $ruid                
         "));
