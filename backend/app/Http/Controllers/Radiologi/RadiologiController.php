@@ -1353,7 +1353,7 @@ class RadiologiController extends ApiController
                         'so.objectpegawaiorderfk', 'pg.namalengkap as pegawaiorder', 'so.tglorder', 'sps.nostruk','apd.norec as norec_apd',
                         // 'apd.norec as norec_apd',
                         'ru.namaruangan', 'ru2.namaruangan as ruangantujuan',
-                             'so.keteranganlainnya','so.cito',
+                             'so.keteranganlainnya','so.cito','pd.isclosing as closing',
                         (DB::raw("case when pp.order_no is null then 'MASUK' else
                                     'SELESAI' end as status")))
                     ->where('so.kdprofile', $idProfile)
@@ -1411,7 +1411,7 @@ class RadiologiController extends ApiController
                     // 'apd.norec as norec_apd',
                     // 'apd.norec as norec_apd',
                     'ru.namaruangan', 'ru2.namaruangan as ruangantujuan',
-                         'so.keteranganlainnya','so.cito',
+                         'so.keteranganlainnya','so.cito','pd.isclosing as closing',
                     (DB::raw("case when so.statusorder is null then 'MASUK' else
                                     'SELESAI' end as status")))
                 ->where('so.kdprofile', $idProfile)
@@ -1448,7 +1448,7 @@ class RadiologiController extends ApiController
                     'kps.kelompokpasien', 'dp.namadepartemen', 'pd.objectkelasfk', 'kls.namakelas', 'so.objectruangantujuanfk',
                     'so.objectruanganfk', 'pd.objectkelompokpasienlastfk', 'ru.objectdepartemenfk', 'ru2.objectdepartemenfk as iddeptujuan',
                     'so.objectpegawaiorderfk', 'pg.namalengkap as pegawaiorder','so.tglorder',
-                    'ru.namaruangan', 'ru2.namaruangan as ruangantujuan','so.tglpelayananakhir','pg2.namalengkap as dpjp','apd.norec as norec_apd','so.cito',
+                    'ru.namaruangan', 'ru2.namaruangan as ruangantujuan','so.tglpelayananakhir','pg2.namalengkap as dpjp','apd.norec as norec_apd','so.cito','pd.isclosing as closing',
                     (DB::raw("case when pp.strukorderfk is null then 'MASUK' else
                                     'Sudah Verifikasi' end as status,'' as kddiagnosa")))
                 ->where('so.kdprofile', $idProfile)

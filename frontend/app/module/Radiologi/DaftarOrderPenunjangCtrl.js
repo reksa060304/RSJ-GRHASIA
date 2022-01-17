@@ -572,6 +572,9 @@ define(['initialize'], function (initialize) {
                 if($scope.dataSelected.objectruangantujuanfk =="576"){
                     $scope.listDokter.push({id:2669,namalengkap:"dr. HERRI SYAHBANA, Sp.Rad"})
                     $scope.item.dokterVerif={id:2669,namalengkap:"dr. HERRI SYAHBANA, Sp.Rad"}
+                }else if($scope.dataSelected.objectruangantujuanfk =="575"){
+                    $scope.listDokter.push({id:2668,namalengkap:"dr. DEA NOVIANA PRAMANTIK, Sp.PK(K)."})
+                    $scope.item.dokterVerif={id:2668,namalengkap:"dr. DEA NOVIANA PRAMANTIK, Sp.PK(K)."}
                 }
                 loadDiagnosa($scope.dataSelected.noregistrasi)
                 idJenisPelayanan = ''
