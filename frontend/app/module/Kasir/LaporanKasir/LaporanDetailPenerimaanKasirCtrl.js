@@ -53,6 +53,10 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
                     $scope.listPegawai = data;
                 });
+
+                medifirstService.getPart("sysadmin/general/get-combo-carabayar", true, true, 20).then(function (data) {
+                    $scope.listCarabayar = data;
+                });
             }
 
             $scope.getIsiComboRuangan = function () {
@@ -130,6 +134,16 @@ define(['initialize'], function (initialize) {
                     tempsbm = "&nosbm=" + $scope.item.nosbm;
                 }
 
+                var tempproduk = "";
+                if ($scope.item.namaproduk != undefined) {
+                    tempproduk = "&namaproduk=" + $scope.item.namaproduk;
+                }
+
+                var tempCarabayar = "";
+                if ($scope.item.caraBayar != undefined) {
+                    tempCarabayar = "&carabayar=" + $scope.item.caraBayar.id;
+                }
+
                 var chacePeriode = {
                     0: tglAwal,
                     1: tglAkhir
@@ -143,7 +157,8 @@ define(['initialize'], function (initialize) {
                     + tempDepartemen
                     + tempRuanganId
                     + tempKelDokter
-                    + tempKelPasienId + tempNama + tempNoReg + tempNoRm + tempKelLayanan + tempsbm
+                    + tempCarabayar
+                    + tempKelPasienId + tempNama + tempNoReg + tempNoRm + tempKelLayanan + tempsbm + tempproduk
                     + "&KasirArr=" + listKasir).then(function (data) {
                         $scope.isRouteLoading = false
                         $scope.dataPendapatanRuangan = new kendo.data.DataSource({
@@ -317,7 +332,9 @@ define(['initialize'], function (initialize) {
                 },
                 selectable: 'row',
                 pageable: true,
-                editable: false,
+                editable: true,
+                sortable: true,
+                resizable: true,
                 columns: [
                     {
                         "field": "tglregistrasi",
@@ -358,7 +375,7 @@ define(['initialize'], function (initialize) {
 
                     },
                     {
-                        "field": "namalengkap",
+                        "field": "dokter",
                         "title": "Dokter",
                         "width": "200px",
 
@@ -390,7 +407,6 @@ define(['initialize'], function (initialize) {
                         "field": "jumlah",
                         "title": "Qty",
                         "width": "50px",
-                        groupFooterTemplate: "Jumlah",
 						footerTemplate: "Total Penerimaan",
                     },
                     {
@@ -402,7 +418,12 @@ define(['initialize'], function (initialize) {
 						footerTemplate: "#: data.total.sum #",
 						footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.total.sum #', 'Rp.')}}</span>",
 						footerAttributes: { style: "text-align: right;" }
-                    },                    
+                    },     
+                    {
+                        "field": "carabayar",
+                        "title": "Cara Bayar",
+                        "width": "100px",                        
+                    },            
                     {
                         "field": "nomorverif",
                         "title": "No Verifikasi",
@@ -410,7 +431,7 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         "field": "nosbm",
-                        "title": "No Bayar",
+                        "title": "No Struk Bayar",
                         "width": "100px",                        
                     },
                     {
@@ -430,7 +451,8 @@ define(['initialize'], function (initialize) {
                 },
                 selectable: 'row',
                 pageable: true,
-                editable: false,
+                editable: true,
+                sortable: true,
                 columns: [
                     {
                         "field": "tglregistrasi",
@@ -490,12 +512,7 @@ define(['initialize'], function (initialize) {
 						footerTemplate: "#: data.total.sum #",
 						footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.total.sum #', 'Rp.')}}</span>",
 						footerAttributes: { style: "text-align: right;" }
-                    },                                       
-                    {
-                        "field": "nosbm",
-                        "title": "No Bayar",
-                        "width": "100px",                        
-                    },
+                    },                                  
                     {
                         "field": "kasir",
                         "title": "Kasir",

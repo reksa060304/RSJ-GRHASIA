@@ -380,6 +380,33 @@ class GeneralController extends ApiController
         return $this->respond($dataPenulis2);
     }
 
+    public function getDataCarabayarGeneral(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $req=$request->all();
+        $dataProduk=[];
+        $dataProduk  = \DB::table('carabayar_m as cb')
+            ->select('cb.id','cb.carabayar')
+            ->where('cb.kdprofile', $kdProfile)
+            ->where('cb.statusenabled',true)
+            ->orderBy('cb.carabayar');
+        if(isset($req['filter']['filters'][0]['value']) &&
+            $req['filter']['filters'][0]['value']!="" &&
+            $req['filter']['filters'][0]['value']!="undefined"){
+            $dataProduk = $dataProduk->where('cb.carabayar','ilike','%'. $req['filter']['filters'][0]['value'].'%' );
+        };
+        $dataProduk = $dataProduk->take(10);
+        $dataProduk = $dataProduk->get();
+
+        foreach ($dataProduk as $item){
+            $dataPenulis2[]=array(
+                'id' => $item->id,
+                'carabayar' => $item->carabayar,
+            );
+        }
+
+        return $this->respond($dataPenulis2);
+    }
+
     public function getComboAddressGeneral(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $kebangsaan = DB::table('kebangsaan_m')

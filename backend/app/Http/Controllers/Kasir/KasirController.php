@@ -5078,6 +5078,10 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         if(isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
             $idKelPasien = ' AND pd.objectkelompokpasienlastfk = ' . $request['kelompokPasien'];
         }
+        $namaproduk = '';
+        if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
+            $nosbm = " AND pr.namaproduk ILIKE '%" .  $request['namaproduk']."%'";
+        }
         $paramKasir = '';
         if(isset($request['KasirArr']) && $request['KasirArr']!="" && $request['KasirArr']!="undefined"){
             $arrRuang = explode(',',$request['KasirArr']) ;
@@ -5095,6 +5099,17 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             $paramKasir = " AND pg.id IN ($str)";
 //            return $this->respond($paramKasir);
         }
+        
+        $tempKelDokter= '';
+        if (isset($request['dokter']) && $request['dokter'] != "" && $request['dokter'] != "undefined") {
+            $tempKelDokter = ' AND pgdpjp.id = ' .  $request['dokter'];
+        }
+
+        $tempCarabayar= '';
+        if (isset($request['carabayar']) && $request['carabayar'] != "" && $request['carabayar'] != "undefined") {
+            $tempCarabayar = ' AND cb.id = ' .  $request['carabayar'];
+        }
+
         $paramKelLayanan='';
         if(isset($request['KelLayanan']) && $request['KelLayanan'] != "" && $request['KelLayanan'] != "undefined") {
             if ($request['KelLayanan'] == 1){
@@ -5110,6 +5125,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         }
 
 
+
         $data = \DB::select(DB::raw("
                 SELECT pd.tglregistrasi,pm.nocm,pd.noregistrasi,pm.namapasien,ru.namaruangan,kp.kelompokpasien,
                        pp.tglpelayanan,pp.produkfk,pr.namaproduk,			 
@@ -5118,7 +5134,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                        CASE WHEN pp.jasa IS NULL THEN	0 ELSE	pp.jasa	END AS jasa,pp.jumlah,		
                        (((CASE WHEN pp.hargajual IS NULL THEN	0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
                        0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN	0 ELSE	pp.jasa	END	) AS total,
-                       pd.tglpulang,sp.nostruk as nomorverif,sbm.nosbm,pg.namalengkap as kasir
+                       pd.tglpulang,sp.nostruk as nomorverif,sbm.nosbm,pg.namalengkap as kasir, pgdpjp.namalengkap as dokter, cb.carabayar, sbm.nosbm
                 FROM pelayananpasien_t AS pp  
                 INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk 
                 INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
@@ -5126,10 +5142,14 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
                 INNER JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
                 LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true  
+                INNER JOIN strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
+                INNER JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
                 LEFT JOIN loginuser_s AS lu ON lu.id = sbm.objectpegawaipenerimafk  
                 LEFT JOIN pegawai_m AS pg ON pg.id = lu.objectpegawaifk  
+                LEFT JOIN pegawai_m AS pgdpjp ON pgdpjp.id = pd.objectpegawaifk
                 LEFT JOIN produk_m AS pr ON pr.id = pp.produkfk  
                 LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+
                 WHERE pp.kdprofile = $kdProfile AND sbm.tglsbm BETWEEN '$tglAwal' and '$tglAkhir'
                 AND pd.objectkelompokpasienlastfk <> 2
                 $noreg
@@ -5140,7 +5160,10 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 $paramKasir
                 $paramKelLayanan
                 $idKelPasien   
-                $nosbm                                                               
+                $nosbm  
+                $tempKelDokter 
+                $namaproduk    
+                $tempCarabayar                                                        
         "));
 //        UNION ALL
 //        SELECT pd.tglregistrasi,pm.nocm,pd.noregistrasi,pm.namapasien,ru.namaruangan,kp.kelompokpasien,
