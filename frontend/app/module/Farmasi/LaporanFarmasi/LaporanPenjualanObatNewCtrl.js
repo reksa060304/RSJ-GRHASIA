@@ -22,6 +22,10 @@ define(['initialize'], function (initialize) {
                     $scope.listRuangan = dat.data.ruanganfarmasi;
                     $scope.listDataDokter = dat.data.dokter;
                     $scope.listKelompokPasien = dat.data.kelompokpasien;
+                    $scope.listStatusBayar = [
+                        { id: 1, names: "Sudah Bayar" },
+                        { id: 2, names: "Belum Bayar"}
+                    ];
                     $scope.namaLengkap = medifirstService.getPegawaiLogin();
                     // init();
                 });
@@ -49,6 +53,12 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.namaProduk != undefined) {
                     namaproduk = $scope.item.namaProduk
                 }
+
+                var statusBayar = "";
+                if ($scope.item.statusBayar != undefined) {
+                    statusBayar = $scope.item.statusBayar.id
+                }
+
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
@@ -56,6 +66,7 @@ define(['initialize'], function (initialize) {
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
                     "&namaproduk=" + namaproduk +
+                    "&statusBayar=" + statusBayar +
                     dok + kp + ru
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
@@ -67,6 +78,12 @@ define(['initialize'], function (initialize) {
                             $scope.sumtotalhargajual= $scope.sumtotalhargajual + parseFloat(dat.data.daftar[i].totalhargajual)
                             $scope.sumtotalhargabeli= $scope.sumtotalhargabeli + parseFloat(dat.data.daftar[i].totalhargabeli)
                             $scope.sumtotalhargajualdiskon= $scope.sumtotalhargajualdiskon + parseFloat(dat.data.daftar[i].totalhargajualdiskon)
+                            var sudahbayar = 'TIDAK ADA STATUS';
+                            if(dat.data.daftar[i].tglsbm == null){
+                                dat.data.daftar[i].sudahbayar = "BELUM BAYAR";
+                            }else{
+                                dat.data.daftar[i].sudahbayar = "SUDAH BAYAR";
+                            }
                             
                         }
 
@@ -560,6 +577,12 @@ define(['initialize'], function (initialize) {
                         groupFooterTemplate: "#: data.totalhargajualdiskon.sum  #",
                         footerTemplate: "#: data.totalhargajualdiskon.sum  #"
                     }
+                    // {
+                    //     "field": "sudahbayar",
+                    //     "title": "Status Bayar",
+                    //     "width": "120px",
+                    // },
+                    
                     // {
                     //     "title": "Pasien",
                     //     headerAttributes: { style: "text-align : center" },
