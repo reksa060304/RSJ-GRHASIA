@@ -2939,6 +2939,8 @@ class PelayananResepController extends ApiController
         $kpid='';
         $ruid='';
         $sudahbayar= '';
+        $rajalRanap= '';
+        $rajalRanapObatBebas= '';
 
         if(isset($request['dokid']) && $request['dokid']!="" && $request['dokid']!="undefined"){
             $dokid = ' and pg.id='.$request['dokid'];
@@ -2948,6 +2950,14 @@ class PelayananResepController extends ApiController
         }
         if(isset($request['ruid']) && $request['ruid']!="" && $request['ruid']!="undefined"){
             $ruid = ' and ru.id='.$request['ruid'];
+        }
+        if(isset( $request['rajalRanap'])&&  $request['rajalRanap']=='1'){//rajal
+            $rajalRanap = "and ru1.objectdepartemenfk <> 16 ";
+            $rajalRanapObatBebas = "and ru.objectdepartemenfk <> 16";//obat bebas pasti bakal ikut;asumsi ob dimunculin juga di laporan apotik rajal
+        }
+        if(isset( $request['rajalRanap'])&&  $request['rajalRanap']=='2'){//ranap
+            $rajalRanap = "and ru1.objectdepartemenfk = 16 ";
+            $rajalRanapObatBebas = "and ru.objectdepartemenfk = 16";//ini ga mungkin terjadi
         }
         
 
@@ -3014,7 +3024,16 @@ class PelayananResepController extends ApiController
 //
 //              ) AS x GROUP BY x.tglresep,x.noresep,x.noregistrasi,x.nocm,x.namapasien,
 //              x.jeniskelamin,x.kelompokpasien,x.namalengkap,x.ruanganapotik"));
+/*
+CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed IS NULL THEN 
+                       ru1.namaruangan || '[]'
+                       WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NOT NULL AND tt.nomorbed IS NOT NULL THEN
+                       ru1.namaruangan || '[' || CASE WHEN kmr.namakamar IS NULL THEN '' ELSE kmr.namakamar END || ' ' || 
+                       CASE WHEN tt.nomorbed IS NULL THEN null ELSE tt.nomorbed END || ']'
+                       ELSE dep1.namadepartemen END AS departemen
 
+
+*/
         $data = DB::select(DB::raw("
                 SELECT TO_CHAR(sr.tglresep, 'DD-MM-YYYY') AS tglresep,
                        CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed IS NULL THEN 
@@ -3022,7 +3041,7 @@ class PelayananResepController extends ApiController
                        WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NOT NULL AND tt.nomorbed IS NOT NULL THEN
                        ru1.namaruangan || '[' || CASE WHEN kmr.namakamar IS NULL THEN '' ELSE kmr.namakamar END || ' ' || 
                        CASE WHEN tt.nomorbed IS NULL THEN null ELSE tt.nomorbed END || ']'
-                       ELSE dep1.namadepartemen END AS departemen,ru.namaruangan AS gudang,
+                       ELSE dep1.namadepartemen END AS departemen,ru1.namaruangan namaruanganpasien,ru.namaruangan AS gudang,
                        --pg1.namalengkap as user,
                        pro.namaproduk,
                        pp.rke,
@@ -3063,11 +3082,11 @@ class PelayananResepController extends ApiController
                 $dokid
                 $kpid
                 $ruid
-                
+                $rajalRanap
                 
                 UNION ALL
                 
-                SELECT TO_CHAR(sp.tglstruk, 'DD-MM-YYYY') AS tglresep,dep.namadepartemen AS departemen,
+                SELECT TO_CHAR(sp.tglstruk, 'DD-MM-YYYY') AS tglresep,dep.namadepartemen AS departemen,ru.namaruangan namaruanganpasien,
                        ru.namaruangan AS gudang,
                        --pg1.namalengkap as user,
                        pro.namaproduk,
@@ -3103,7 +3122,8 @@ class PelayananResepController extends ApiController
                 AND substring(sp.nostruk,1,2)='OB'
                 
                 $dokid
-                $ruid                
+                $ruid
+                $rajalRanapObatBebas                
         "));
 
 

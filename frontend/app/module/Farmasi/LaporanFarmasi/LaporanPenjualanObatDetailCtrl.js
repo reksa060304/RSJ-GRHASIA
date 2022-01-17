@@ -22,6 +22,10 @@ define(['initialize'], function (initialize) {
                     $scope.listRuangan = dat.data.ruanganfarmasi;
                     $scope.listDataDokter = dat.data.dokter;
                     $scope.listKelompokPasien = dat.data.kelompokpasien;
+                    $scope.listRajalRanap = [
+                        { id: 1, names: "Rawat Jalan" },
+                        { id: 2, names: "Rawat Inap"}
+                    ];
                     $scope.namaLengkap = medifirstService.getPegawaiLogin();
                     // init();
                 });
@@ -45,11 +49,16 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.jmlRows != undefined) {
                     jmlRows = $scope.item.jmlRows
                 }
+                var rajalRanap = "";
+                if ($scope.item.rajalRanap != undefined) {
+                    rajalRanap = $scope.item.rajalRanap.id
+                }
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("farmasi/get-laporan-penjualan-obat-detail?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
+                    "&rajalRanap=" + rajalRanap +
                     dok + kp + ru
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
@@ -342,15 +351,13 @@ define(['initialize'], function (initialize) {
 
 
             $scope.group = [
-                // {
-                //     field: "departemen",
-                //     aggregates: [
-                //         {
-                //             field: "departemen",
-                //             aggregate: "count"
-                //         }
-                //     ]
-                // }
+                {
+                    field: "namaproduk",
+                    aggregates: [
+                        { field: "jumlah", aggregate: 'sum' },
+                        { field: "subtotal", aggregate: 'sum' },
+                    ]
+                }
                 // ,
                 // {
                 //     field: "gudang",
