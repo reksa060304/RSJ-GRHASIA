@@ -418,7 +418,7 @@ define(['initialize'], function (initialize) {
                 //     "field": "",
                 //     "title": "No Verifikasi",
                 //     "width" : "120px",
-                // },
+                // },                
             ];
             $scope.data2 = function (dataItem) {
                 for (var i = 0; i < dataItem.details.length; i++) {
@@ -550,6 +550,7 @@ define(['initialize'], function (initialize) {
                     toastr.error('Sudah di verifikasi');
                     return
                 }
+                
                 // if ($scope.dataSelected.nostruk != null) {
                 //     toastr.error('Data Sudah DiClosing Hubungi Tata Rekening');
                 //     return
@@ -967,6 +968,10 @@ define(['initialize'], function (initialize) {
                     toastr.error('Dokter Verifikasi harus di isi')
                     return
                 }
+                if ($scope.dataSelected.closing == 'Sudah Di Closing') {
+                    window.messageContainer.error("Pelayanan yang sudah di Closing tidak bisa di ubah!. Silahkan Hubungi Kasir!");
+                    return;
+                }
                 var dataPost = [];
                 for (var i = 0; i < $scope.sourceVerif._data.length; i++) {
                     // if($scope.sourceVerif._data[i].statCheckbox){
@@ -1256,6 +1261,12 @@ define(['initialize'], function (initialize) {
                         "width": "70px",
                         "attributes": { class: "text-center" },
                     },
+                            {
+                                "field": "closing",
+                                "title": "Closing Kasir",
+                                "width": "120px",
+                                "template": "<span class='style-center'>#: closing == null ? 'Belum Closing' : 'Sudah Di Closing' #</span>"
+                            },
                 ]
             }
             $scope.hapusOrder = function(){

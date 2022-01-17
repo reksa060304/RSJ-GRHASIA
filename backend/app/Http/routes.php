@@ -1760,6 +1760,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                   Route::get('registrasi/laporan/get-data-lap-pengunjung','Registrasi\LaporanPengunjungController@getLaporanPengunjung');
               Route::get('registrasi/laporan/get-combo-box-laporan-pengunjung','Registrasi\LaporanPengunjungController@getDataCombo');
               Route::get('registrasi/laporan/get-data-lap-darah','Registrasi\LaporanPengunjungController@getLapDarah');
+              //sensusharianrawatjalan
+              Route::get('registrasi/laporan/get-data-sensus-harian','Registrasi\SensusHarianRawatJalanController@getSensusHarianRawatJalan');
+              Route::get('registrasi/get-datacombo-sensus', 'SensusHarianRawatJalanController@getDataCombo');
 
               Route::get('registrasi/laporan/get-combo-box-laporan-summary','Registrasi\RegistrasiController@getDataComboSummary');
               Route::get('registrasi/laporan/get-data-lap-summary-kunjungan','Registrasi\RegistrasiController@getLaporanSummaryKunjungan');
