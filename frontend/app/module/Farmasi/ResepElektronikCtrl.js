@@ -598,20 +598,23 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         var userLogin = medifirstService.getPegawaiLogin();
                         var Norec = $scope.item.noresep;
                         var Noreg = $scope.item.noregistrasi;
-                        if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai') {
-                            var stt = 'false'
-                            if (confirm('View Antrian Farmasi? ')) {
-                                // Save it!
-                                stt = 'true';
-                            } else {
-                                // Do nothing!
-                                stt = 'false'
-                            }
-                            var client = new HttpClient();
-                            client.get('http://127.0.0.1:1237/printvb/farmasi?cetak-buktiantrianfarmasi=' + Norec + '&noregistrasi=' + Noreg + '&view=' + stt, function (response) {
-                                // aadc=response;
-                            });
-                        }
+                        //grhasia ga perlu cetak ketika tekan selesai
+                        // if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai') {
+                        //     var stt = 'false'
+                        //     if (confirm('View Antrian Farmasi? ')) {
+                        //         // Save it!
+                        //         stt = 'true';
+                        //     } else {
+                        //         // Do nothing!
+                        //         stt = 'false'
+                        //     }
+                        //     var client = new HttpClient();
+                        //     client.get('http://127.0.0.1:1237/printvb/farmasi?cetak-buktiantrianfarmasi=' + Norec + '&noregistrasi=' + Noreg + '&view=' + stt, function (response) {
+                        //         // aadc=response;
+                        //     });
+                        // }
+
+
                         medifirstService.postLogging('Rubah Status Selasai Order Resep Elektronik', 'No Order Struk Order',
                             $scope.item.noorder, 'Rubah Status Selasai Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
                                 $scope.refresh();

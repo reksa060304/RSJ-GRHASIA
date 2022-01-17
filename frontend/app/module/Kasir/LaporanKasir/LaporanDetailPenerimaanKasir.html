@@ -134,6 +134,25 @@
                                                 ng-keypress="($event.which == 13)? SearchData():item.nosbm" />
                                         </div>
                                     </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c>Tindakan</label>
+                                        </div>
+                                        <div class="clear"></div>
+
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" filter="" class="k-textbox"
+                                                ng-model="item.namaproduk"
+                                                ng-keypress="($event.which == 13)? SearchData():item.namaproduk" />
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <label c-label item="item" c-label-text="Cara Bayar"></label>
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.caraBayar"
+                                            k-data-text-field="'carabayar'" k-data-value-field="'id'"
+                                            k-filter="'contains'" k-auto-bind="false" k-data-source="listCarabayar"
+                                            ng-keypress="($event.which == 13)? SearchData():item.caraBayar" />
+                                    </div>
                                     <div class="grid_1" style="margin-top: 14px">
                                         <div class="grid_12">
                                             <button class="btnTemplate1" style="margin-left: 0;"

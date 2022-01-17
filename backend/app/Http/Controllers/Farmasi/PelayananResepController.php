@@ -2041,14 +2041,12 @@ class PelayananResepController extends ApiController
                     //END##PENAMBAHAN KEMBALI STOKPRODUKDETAIL
                 }
                 //### LOGACC untuk penjurnalan blm ada
-                $HapusPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)
-                ->whereNull('status')
-                ->get();
+                $HapusPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->get();
                 foreach ($HapusPP as $pp){
                     $HapusPPD = PelayananPasienDetail::where('pelayananpasien', $pp['norec'])->where('kdprofile', $idProfile)->delete();
                     $HapusPPP = PelayananPasienPetugas::where('pelayananpasien', $pp['norec'])->where('kdprofile', $idProfile)->delete();
                 }
-                $HpsPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->whereNull('status')->delete();
+                $HpsPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->delete();
             }
 
             //## PelayananPasien
@@ -2853,8 +2851,14 @@ class PelayananResepController extends ApiController
                     pp.hargadiscount,
                     (pp.hargajual * pp.jumlah) as totalhargajual,
                     (pp.harganetto * pp.jumlah) as totalhargabeli,
-                    (pp.hargadiscount/NULLIF(pp.hargajual, 0)) as persendiskon,
-                    ((pp.hargajual-pp.hargadiscount) * jumlah) as totalhargajualdiskon
+                    (
+                        case when (pp.hargajual != 0) then
+                            coalesce(pp.hargadiscount,0)/pp.hargajual
+                        else
+                            0
+                        end										
+                    )*100 as persendiskon,
+                    ((pp.hargajual - (coalesce(pp.hargadiscount,0))) * jumlah) as totalhargajualdiskon
                 FROM
                 pelayananpasien_t AS pp
                 INNER JOIN produk_m AS pr ON pr.id = pp.produkfk
@@ -2919,6 +2923,7 @@ class PelayananResepController extends ApiController
         $dokid= '';
         $kpid='';
         $ruid='';
+        $sudahbayar= '';
 
         if(isset($request['dokid']) && $request['dokid']!="" && $request['dokid']!="undefined"){
             $dokid = ' and pg.id='.$request['dokid'];
@@ -2929,6 +2934,7 @@ class PelayananResepController extends ApiController
         if(isset($request['ruid']) && $request['ruid']!="" && $request['ruid']!="undefined"){
             $ruid = ' and ru.id='.$request['ruid'];
         }
+        
 
 
 //        $data=DB::select(DB::raw("SELECT x.tglresep,x.noresep,x.noregistrasi,x.nocm,x.namapasien,x.jeniskelamin,x.kelompokpasien,x.namalengkap,
@@ -3003,8 +3009,19 @@ class PelayananResepController extends ApiController
                        CASE WHEN tt.nomorbed IS NULL THEN null ELSE tt.nomorbed END || ']'
                        ELSE dep1.namadepartemen END AS departemen,ru.namaruangan AS gudang,
                        --pg1.namalengkap as user,
-                       pro.namaproduk,ss.satuanstandar,pp.jumlah,pp.hargajual,(pp.jumlah*pp.hargajual) AS subtotal,
-                       pp.hargadiscount,pd.noregistrasi,ps.nocm,ps.namapasien,pg.namalengkap as dokter,sr.noresep
+                       pro.namaproduk,
+                       pp.rke,
+                       ss.satuanstandar,
+                       pp.jumlah,
+                       pp.hargajual,
+                       ((pp.hargajual - (coalesce(pp.hargadiscount,0))) * jumlah) as subtotal,
+                       pp.hargadiscount,
+                       pd.noregistrasi,
+                       ps.nocm,
+                       ps.namapasien,
+                       pg.namalengkap as dokter,
+                       sr.noresep,
+                       sbmsdhbyr.tglsbm
                 FROM strukresep_t as sr
                 INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
                 INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
@@ -3020,6 +3037,8 @@ class PelayananResepController extends ApiController
                 LEFT JOIN tempattidur_m AS tt ON tt.id = apd.nobed
                 LEFT JOIN kelompokpasien_m kp ON kp.id=pd.objectkelompokpasienlastfk
                 LEFT JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
+                LEFT JOIN strukbuktipenerimaan_t as sbm on sbm.norec = sp.nosbmlastfk
+                LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk
                 --LEFT JOIN logginguser_t AS lg ON lg.noreff = sr.norec AND lg.jenislog = 'Input Resep Apotik'
                 --LEFT JOIN loginuser_s AS lu ON lu.id = lg.objectloginuserfk
                 --LEFT JOIN pegawai_m AS pg1 ON pg1.id = lu.objectpegawaifk
@@ -3036,12 +3055,23 @@ class PelayananResepController extends ApiController
                 SELECT TO_CHAR(sp.tglstruk, 'DD-MM-YYYY') AS tglresep,dep.namadepartemen AS departemen,
                        ru.namaruangan AS gudang,
                        --pg1.namalengkap as user,
-                       pro.namaproduk,ss.satuanstandar,
-                       spd.qtyproduk as jumlah,spd.harganetto AS hargajual,(spd.qtyproduk*spd.harganetto) AS subtotal,
-                       spd.hargadiscount,'' as noregistrasi,sp.nostruk_intern as nocm,sp.namapasien_klien as namapasien,
-                       pg.namalengkap as dokter,sp.nostruk AS noresep
+                       pro.namaproduk,
+                       pp.rke,
+                       ss.satuanstandar,
+                       spd.qtyproduk as jumlah,
+                       spd.harganetto AS hargajual,
+                       (spd.qtyproduk*spd.harganetto) AS subtotal,
+                       spd.hargadiscount,
+                       '' as noregistrasi,
+                       sp.nostruk_intern as nocm,
+                       sp.namapasien_klien as namapasien,
+                       pg.namalengkap as dokter,
+                       sp.nostruk AS noresep,
+                       sbmsdhbyr.tglsbm
                 FROM strukpelayanan_t as sp
+                INNER JOIN pelayananpasien_t AS pp ON pp.strukterimafk = sp.norec
                 INNER JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
+                LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk
                 LEFT JOIN pegawai_m as pg on pg.id=sp.objectpegawaipenanggungjawabfk
                 LEFT JOIN strukbuktipenerimaan_t as sbm on sbm.norec = sp.nosbmlastfk
                 LEFT JOIN pegawai_m as pg2 on pg2.id = sbm.objectpegawaipenerimafk

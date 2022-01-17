@@ -2244,6 +2244,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/general/get-status-close/{noregistrasi}', 'SysAdmin\GeneralController@getStatusClosePeriksa');
                 Route::get('sysadmin/general/get-tgl-posting', 'SysAdmin\GeneralController@getPostingTgl');
                 Route::get('sysadmin/general/get-combo-pegawai', 'SysAdmin\GeneralController@getDataPegawaiGeneral');
+                Route::get('sysadmin/general/get-combo-carabayar', 'SysAdmin\GeneralController@getDataCarabayarGeneral');
                 Route::get('sysadmin/general/get-combo-address','SysAdmin\GeneralController@getComboAddressGeneral');
                 Route::get('sysadmin/general/get-desa-kelurahan', 'SysAdmin\GeneralController@getDesaKelurahanGeneral');
                 Route::get('sysadmin/general/get-alamat-bykodepos', 'SysAdmin\GeneralController@getAlamatByKodePosGeneral');

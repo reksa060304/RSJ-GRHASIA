@@ -55,10 +55,22 @@ define(['initialize'], function (initialize) {
                         $scope.isRouteLoading = false;
                         $scope.totaltunai = 0;
                         $scope.totalpenjamin = 0;
-                        // for (var i = 0; i < dat.data.daftar.length; i++) {
-                        //     dat.data.daftar[i].no = i + 1
-                        //     // dat.data.daftar[i].subtotal = parseFloat(dat.data.daftar[i].jumlah) * parseFloat(dat.data.daftar[i].hargajual)
-                        // }
+                        $scope.totaljumlah = 0;
+                        $scope.grandtotal = 0;
+                        // console.log(dat.data.daftar);
+                        
+                        // console.log(sudahbayar);
+                        for (var i = 0; i < dat.data.daftar.length; i++) {
+                            dat.data.daftar[i].no = i + 1
+                            dat.data.daftar[i].totaljumlah = parseFloat(dat.data.daftar[i].totaljumlah) * parseFloat(dat.data.daftar[i].jumlah)
+                            dat.data.daftar[i].grandtotal = parseFloat(dat.data.daftar[i].grandtotal) * parseFloat(dat.data.daftar[i].subtotal)
+                            var sudahbayar = 'TIDAK ADA STATUS';
+                            if(dat.data.daftar[i].tglsbm == null){
+                                dat.data.daftar[i].sudahbayar = "BELUM BAYAR";
+                            }else{
+                                dat.data.daftar[i].sudahbayar = "SUDAH BAYAR";
+                            }
+                        }
 
                         $scope.dataGrid = new kendo.data.DataSource({
                             data: dat.data.daftar,
@@ -69,9 +81,15 @@ define(['initialize'], function (initialize) {
                             schema: {
                                 model: {
                                     fields: {
+                                        jumlah: { type: "number" },
+                                        subtotal: { type: "number" },
                                     }
                                 }
-                            }
+                            },
+                            aggregate: [
+                                { field: 'jumlah', aggregate: 'sum' },
+                                { field: 'subtotal', aggregate: 'sum' },
+                            ]
                         });                                             
                     });
 
@@ -334,15 +352,15 @@ define(['initialize'], function (initialize) {
                 //     ]
                 // }
                 // ,
-                {
-                    field: "gudang",
-                    aggregates: [
-                        {
-                            field: "gudang",
-                            aggregate: "count"
-                        }
-                    ]
-                },
+                // {
+                //     field: "gudang",
+                //     aggregates: [
+                //         {
+                //             field: "gudang",
+                //             aggregate: "count"
+                //         }
+                //     ]
+                // },
                 // {
                 //     field: "user",
                 //     aggregates: [
@@ -430,12 +448,11 @@ define(['initialize'], function (initialize) {
                         // groupHeaderTemplate:" Departemen : #= value #"
                     },
                     {
-                        hidden: true,
                         field: "gudang",
-                        title: "Gudang",
+                        title: "Depo Farmasi",
                         "width": "120px",
                         aggregates: ["count"],
-                        groupHeaderTemplate: " Gudang : #= value # "
+                        groupHeaderTemplate: "Depo Farmasi : #= value # "
                     },
                     // {
                     //     hidden: true,
@@ -453,21 +470,32 @@ define(['initialize'], function (initialize) {
                     //     // template: "<span class='style-right'>{{formatRupiah('#: tunai  #', '')}}",
                     //     // groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.tunai.sum  #', '')}}",
                     //     // footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.tunai.sum  #', '')}}"
-                    // },                   
+                    // },  
+                    {
+                        "field": "rke",
+                        "title": "R/",
+                        "width": "50px",
+                    },                 
                     {
                         "field": "namaproduk",
                         "title": "Nama Item",
                         "width": "120px",
                     },
+                    
                     {
                         "field": "satuanstandar",
                         "title": "Satuan",
                         "width": "120px",
+                        footerTemplate: "Total",
                     },
                     {
                         "field": "jumlah",
                         "title": "Jumlah",
                         "width": "100px",
+                        aggregates: ["sum"],
+                        template: "#: jumlah  #",
+                        groupFooterTemplate: "#: data.jumlah.sum  #",
+                        footerTemplate: "#: data.jumlah.sum  #"
                     },
                     {
                         "field": "hargajual",
@@ -475,8 +503,22 @@ define(['initialize'], function (initialize) {
                         "width": "100px",
                     },
                     {
+                        "field": "hargadiscount",
+                        "title": "Harga Discount",
+                        "width": "100px",
+                    },
+                    {
                         "field": "subtotal",
                         "title": "Sub Total",
+                        "width": "100px",
+                        aggregates: ["sum"],
+                        template: "#: subtotal  #",
+                        groupFooterTemplate: "#: data.subtotal.sum  #",
+                        footerTemplate: "#: data.subtotal.sum  #"
+                    },
+                    {
+                        "field": "sudahbayar",
+                        "title": "Status Bayar",
                         "width": "100px",
                     },
                     {
