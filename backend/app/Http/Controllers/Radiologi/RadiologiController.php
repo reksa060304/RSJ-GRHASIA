@@ -84,6 +84,61 @@ class RadiologiController extends ApiController
         );
         return $this->respond($result);
     }
+    public function saveTanggalPanggil(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAyeuna = date('Y-m-d H:i:s');
+        $dataLogin=$request->all();
+        
+            
+        DB::beginTransaction();
+        try{
+            foreach ($request['details'] as $item) {
+                
+                    $updatePP=PelayananPasien::where('norec',$item['norec_pp'])
+                        ->whereNull('tglpanggil')
+                        ->update([
+                                'tglpanggil' => $tglAyeuna,
+                                'objectpegawaipanggilfk' => $dataLogin['users']['id'],
+                            ]
+                        );
+                
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "simpan Tanggal Panggil";
+            $errMessage = $e->getMessage();
+            $errLine = $e->getLine();
+        }
+        
+        
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Tanggal Panggil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+//                    "strukorder" => $dataSO,
+                "as" => 'inhuman',
+                "datalogin" => $dataLogin,
+            );
+            
+        } else {
+            $transMessage = "Simpan Tanggal Panggil gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+//                "nokirim" => $dataSO,//$noResep,
+                "as" => 'inhuman',
+                "errMsg" => $errMessage ,
+                "errMsg" => $errLine,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
     public function getRincianPelayanan(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -129,13 +184,13 @@ class RadiologiController extends ApiController
                         'dp.namadepartemen', 'ps.id as psid', 'apd.norec as norec_apd', 'sp.norec as norec_sp', 'pp.norec as norec_pp',
                         'ru.objectdepartemenfk', 'so.noorder', 'ris.order_key as idbridging', 'apd.objectruanganfk','pp.iscito','pp.jasa','so.keteranganlainnya',
                         'ps.objectjeniskelaminfk','ps.tgllahir','sbm.nosbm','pmi.pmi',  'ris.order_cnt as nourutrad', // syamsu tambahan
-                        DB::raw("case when ris.order_key is not null then 'Sudah Dikirim' else '-' end as statusbridging,hr.norec as  hr_norec"))
+                        DB::raw("case when ris.order_key is not null then 'Sudah Dikirim' else '-' end as statusbridging,hr.norec as  hr_norec,pp.tglpanggil"))
                     ->where('pp.kdprofile',$idProfile)
                     ->where('ru.objectdepartemenfk', $this->settingDataFixed('KdDepartemenInstalasiRadiologi', $idProfile))
                     ->groupBy('ps.nocm', 'ps.namapasien', 'jk.jeniskelamin', 'pp.tglpelayanan', 'pp.produkfk', 'pr.namaproduk',
                         'pp.jumlah', 'pp.hargasatuan', 'pp.hargadiscount', 'sp.nostruk', 'pd.noregistrasi', 'ru.namaruangan',
                         'dp.namadepartemen', 'ps.id', 'apd.norec', 'sp.norec', 'pp.norec',
-                        'ru.objectdepartemenfk', 'so.noorder', 'ris.order_key', 'apd.objectruanganfk','pp.iscito','pp.jasa', 'hr.norec','sbm.nosbm','pmi.pmi','so.keteranganlainnya')
+                        'ru.objectdepartemenfk', 'so.noorder', 'ris.order_key', 'apd.objectruanganfk','pp.iscito','pp.jasa', 'hr.norec','sbm.nosbm','pmi.pmi','so.keteranganlainnya','pp.tglpanggil')
                    
                     ->orderBy('pp.tglpelayanan');
 
@@ -164,7 +219,7 @@ class RadiologiController extends ApiController
                         'ru.objectdepartemenfk', 'so.noorder',
                         'lis.no_lab as idbridging','so.keteranganlainnya',
                         'apd.objectruanganfk','pp.iscito','pp.jasa','ps.objectjeniskelaminfk','ps.tgllahir','sbm.nosbm','pmi.pmi','so.keteranganlainnya'
-                        ,DB::raw("case when lis.no_lab is not null then 'Sudah Dikirim' else '-' end as statusbridging,'' as hr_norec , null as nourutrad") // syamsu tambahan
+                        ,DB::raw("case when lis.no_lab is not null then 'Sudah Dikirim' else '-' end as statusbridging,'' as hr_norec , null as nourutrad,pp.tglpanggil") // syamsu tambahan
                     )
                     ->where('pp.kdprofile',$idProfile)
                     ->where('ru.objectdepartemenfk', $this->settingDataFixed('KdDepartemenInstalasiLaboratorium', $idProfile))
@@ -191,7 +246,7 @@ class RadiologiController extends ApiController
                         'dp.namadepartemen', 'ps.id as psid', 'apd.norec as norec_apd', 'sp.norec as norec_sp', 'pp.norec as norec_pp',
                         'ru.objectdepartemenfk', 'so.noorder', 'apd.objectruanganfk','pp.iscito','pp.jasa','ps.objectjeniskelaminfk','ps.tgllahir','so.keteranganlainnya',
                         'sbm.nosbm','pmi.pmi', 
-                        DB::raw("'-' as statusbridging, null as idbridging,'' as hr_norec , '' as nourutrad")) // syamsu tambahan
+                        DB::raw("'-' as statusbridging, null as idbridging,'' as hr_norec , '' as nourutrad,pp.tglpanggil")) // syamsu tambahan
                     ->where('pp.kdprofile',$idProfile)
                     ->where('ru.objectdepartemenfk', $this->settingDataFixed('kdDepartemenElektromedik', $idProfile))
                     ->orderBy('pp.tglpelayanan');
@@ -282,7 +337,8 @@ class RadiologiController extends ApiController
                         'nosbm' => $item->nosbm,
                         'hr_norec' => $item->hr_norec,
                         'pmi' => $item->pmi,
-                        'keteranganlainnya' => $item->keteranganlainnya
+                        'keteranganlainnya' => $item->keteranganlainnya,
+                        'tglpanggil' => $item->tglpanggil
                     );
                 }
             } else {
@@ -2025,7 +2081,7 @@ class RadiologiController extends ApiController
                        CASE WHEN pg.namalengkap IS NULL THEN '-' ELSE pg.namalengkap END AS dokterdpjp,
                        CASE WHEN pg1.namalengkap IS NULL THEN '-' ELSE pg1.namalengkap END AS dokter,
                        hr.tanggal as tglexpertise,
-                       to_char(hr.tanggalreport, 'YYYY-MM-DD HH24:MI:SS') as tanggalreport,hr.jumlahpengulanganfoto
+                       to_char(hr.tanggalreport, 'YYYY-MM-DD HH24:MI:SS') as tanggalreport,hr.jumlahpengulanganfoto, pp.tglpanggil
                 FROM pasiendaftar_t AS pd
                 INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
                 INNER JOIN pelayananpasien_t AS pp ON pp.noregistrasifk = apd.norec
