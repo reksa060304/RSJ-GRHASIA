@@ -741,6 +741,8 @@ define(['initialize'], function (initialize) {
 
             medifirstService.getPart("laboratorium/get-combo-dokter-lab").then(function (data) {
                 $scope.ListDataPegawai = data;
+                $scope.item.DataPegawai={id:2668,namalengkap:"dr. DEA NOVIANA PRAMANTIK, Sp.PK(K)."}
+
             });
 
            

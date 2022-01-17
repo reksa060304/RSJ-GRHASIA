@@ -2139,10 +2139,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 for (var i = 0; i < $scope.dataGrid._data.length; i++) {
                     if ($scope.dataGrid._data[i].statCheckbox) {
                         // daftarCetak.push($scope.dataGrid._data[i].norec_pp)
+                        /*
+                        dokter: "dr. DEA NOVIANA PRAMANTIK, Sp.PK(K)."
+                        dokterid: 2668
+                        */
                         daftarCetak.push(
                             {
                                 "norec_pp": $scope.dataGrid._data[i].norec_pp,
                                 "tglPelayanan": $scope.dataGrid._data[i].tglpelayanan,
+                                "dokterid": $scope.dataGrid._data[i].dokterid,
+                                "dokter": $scope.dataGrid._data[i].dokter,
                             }
                         )
                     }
@@ -2184,6 +2190,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         14: $scope.item.objectjeniskelaminfk,
                         15: dataCetakFix,
                         16: null,
+                        17:daftarCetak,
                         // 16: $scope.dataGrid._data[i].tglpelayanan ,
                     }
                     cacheHelper.set('chaceHasilLab2', arrStr);
