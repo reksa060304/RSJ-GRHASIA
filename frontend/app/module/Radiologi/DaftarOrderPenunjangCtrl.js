@@ -968,9 +968,9 @@ define(['initialize'], function (initialize) {
                     toastr.error('Dokter Verifikasi harus di isi')
                     return
                 }
-                if ($scope.dataSelected.closing == 'Sudah Di Closing') {
-                    window.messageContainer.error("Pelayanan yang sudah di Closing tidak bisa di ubah!. Silahkan Hubungi Kasir!");
-                    return;
+                if ($scope.dataSelected.closing == true) {
+                    window.messageContainer.error("Pelayanan sudah diClosing oleh Kasir!. Silahkan Hubungi Kasir!");
+                    return
                 }
                 var dataPost = [];
                 for (var i = 0; i < $scope.sourceVerif._data.length; i++) {
