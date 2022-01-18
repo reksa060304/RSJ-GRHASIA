@@ -146,8 +146,13 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.TransaksiPelayanan = function () {
+                //rpp=registrasipelayananpasien_t -> pasien ranap yg udah ada nostruklastfk (udah di bayar di kasir)
                 if ($scope.dataSelected.nostruklastfk != null && $scope.dataSelected.rpp != null) {
-                    window.messageContainer.error("Pelayanan yang sudah di Verif tidak bisa di ubah!")
+                    window.messageContainer.error("Pelayanan yang sudah di Verif Kasir tidak bisa di ubah!")
+                    return
+                }
+                if ($scope.dataSelected.isclosing != null ) {
+                    window.messageContainer.error("Pelayanan yang sudah di Closing Kasir tidak bisa di ubah!")
                     return
                 }
                 // debugger;
@@ -236,7 +241,18 @@ define(['initialize'], function (initialize) {
                     "field": "tglpulang",
                     "title": "Tgl Pulang",
                     "width": "100px",
+                },
+                {
+                    "field": "closingkasir",
+                    "title": "Closing Kasir",
+                    "width": "100px",
                 }
+                // ,
+                // {
+                //     "field": "verifkasir",
+                //     "title": "Verif Kasir",
+                //     "width": "100px",
+                // }
             ];
             // $scope.mainGridOptions = { 
             //     pageable: true,

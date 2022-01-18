@@ -65,7 +65,7 @@
             </div>
             <div class="grid_4">
                 <div class="grid_12">
-                    <label c-label item="item" c-label-text="Periode Tanggal"></label>
+                    <label c-label item="item" c-label-text="Periode Tanggal (Pendaftaran / Pulang Pasien)"></label>
                 </div>
                 <div class="grid_12">
                     <!-- AwalPeriode -->
@@ -100,6 +100,7 @@
                         k-columns="columnGrid" 
                         k-pageable="'true'" 
                         k-sortable="'true'" 
+                        k-resizable="'true'" 
                         k-ng-model="dataSelected"
                         ng-dblclick="TransaksiPelayanan()">
 

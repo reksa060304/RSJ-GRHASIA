@@ -867,6 +867,7 @@ class TagihanController  extends ApiController
                     'isparamedis' => $value->isparamedis,
                     'istarifdetault' => $value->istarifdetault,
                     'hargadijamin' => $value->hargadijamin,
+                    'noresep' => is_null($value->noresep) ? "" : $value->noresep,
                 );
 
                 if (is_null($value->nosbm) == true) {

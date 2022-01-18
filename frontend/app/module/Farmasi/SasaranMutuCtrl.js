@@ -79,6 +79,9 @@ define(['initialize'], function(initialize) {
 					"field": "noresep",
 					"title": "Nomor Resep"
 				}, {
+					"field": "jenisantrian",
+					"title": "Jenis Antrian"
+				}, {
 					"field": "tglresep",
 					"title": "Tanggal masuk"
 				}, {
