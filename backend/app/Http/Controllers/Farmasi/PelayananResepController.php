@@ -477,6 +477,8 @@ class PelayananResepController extends ApiController
         } catch (\Exception $e) {
             $transStatus = 'false';
             $transMessage = "Hapus Pelayanan Resep Pasien";
+            $errMsg = $e->getMessage();
+            $errLine = $e->getLine();
         }
 
         if ($transStatus == 'true') {
@@ -500,6 +502,8 @@ class PelayananResepController extends ApiController
 //                "kartustok" => $newKS,//$noResep,,//$noResep,
 //                "pelayananpasien" => $newPP2,
                 "as" => 'as@epic',
+                "errMsg" => $errMsg ,
+                "errLine" => $errLine , 
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
