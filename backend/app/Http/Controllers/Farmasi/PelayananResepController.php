@@ -91,7 +91,7 @@ class PelayananResepController extends ApiController
             ->JOIN('pasien_m as ps','ps.id','=','pd.nocmfk')
             ->JOIN('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
             ->JOIN('produk_m as pr','pr.id','=','pp.produkfk')
-            ->JOIN('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+            ->JOIN('ruangan_m as ru','ru.id','=','apd.objectruanganfk') /* ruangan pasien*/ 
             ->JOIN('jeniskemasan_m as jkm','jkm.id','=','pp.jeniskemasanfk')
             ->leftJoin('jenisracikan_m as jra','jra.id','=','pp.jenisobatfk')
             ->leftJoin('satuanstandar_m as ss','ss.id','=','pp.satuanviewfk')
@@ -104,7 +104,7 @@ class PelayananResepController extends ApiController
                     ->on('ks.satuanstandar_tujuan', '=', 'pp.satuanviewfk');
             })
             ->leftJOIN('strukresep_t as sr','sr.norec','=','pp.strukresepfk')
-            ->leftJOIN('ruangan_m as ru2','ru2.id','=','sr.ruanganfk')
+            ->leftJOIN('ruangan_m as ru2','ru2.id','=','sr.ruanganfk') /* ruangan depo*/ 
             ->leftJOIN('pegawai_m as dok','dok.id','=','sr.penulisresepfk')
             ->leftJOIN('rm_sediaan_m AS rs','rs.id','=','pr.objectsediaanfk')
             ->leftJoin('satuanresep_m as sn','sn.id','=','pp.satuanresepfk')
@@ -114,7 +114,7 @@ class PelayananResepController extends ApiController
                 'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
                 'pp.aturanpakai','ru.namaruangan','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
                 DB::raw("CASE WHEN pr.kekuatan IS NOT NULL AND rs.name IS NOT NULL THEN pr.kekuatan || ' ' || rs.name ELSE '' END AS kekuatan,
-                               sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk"))
+                               sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk,apd.norec norec_apd"))
             ->where('pp.kdprofile', $idProfile)
             ->where('jp.id',97)
             ->where('sr.statusenabled', true)
@@ -207,6 +207,7 @@ class PelayananResepController extends ApiController
                 'rke' => $item->rke,
                 'jeniskemasan' => $JenisKemasan,
                 'norec_resep' =>  $item->norec_resep,
+                'norec_apd' =>  $item->norec_apd,
                 'detail' => $detail,
                 'jasa' =>$jasa,
                 'depoid' => $item->ruangandepoid,
@@ -2350,7 +2351,7 @@ class PelayananResepController extends ApiController
                 "message"  => $transMessage,
                 "noresep" => $newSR,//$noResep,
                 "errmssg" => $errMsg,
-                "xxx" => $kdobatbayu,
+                //"xxx" => $kdobatbayu,
                 "as" => 'as@epic',
             );
         }

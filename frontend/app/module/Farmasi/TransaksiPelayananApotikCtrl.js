@@ -6,7 +6,7 @@ define(['initialize'], function (initialize) {
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             var norec_apd = ''
-            var statusPosting = true
+            var statusPosting = false;
             $scope.isRouteLoading = false;
             // var pegawaiUser = {}
             var statusClosingStok = false;
@@ -806,16 +806,21 @@ define(['initialize'], function (initialize) {
                 var resep = dataSelected.noresep.split("/");
                 var tahunresep = moment(dataSelected.tglpelayanan).format('YYYY');
                 var bulanclosing = resep[1].substr(2) + "." + tahunresep;
+                norec_apd = dataSelected.norec_apd
 
-                medifirstService.get("sysadmin/general/get-sudah-posting?tgl=" +
-                    $scope.dataSelected.tglpelayanan, true).then(function (dat) {
-                        statusPosting = dat.data
-                    });
+                //sementara akuntansi blm jalan dinonaktifkan
+                // medifirstService.get("sysadmin/general/get-sudah-posting?tgl=" +
+                //     $scope.dataSelected.tglpelayanan, true).then(function (dat) {
+                //         //statusPosting = dat.data.status
+                //         statusPosting = false; //sementara nonaktifkan karena akuntansi blm jalan
+                        
+                //     });
                 // statusPosting = true;
-                medifirstService.get("logistik/cek-closing-persediaan?bulan=" + bulanclosing
-                    + "&ruanganfk=" + dataSelected.depoid).then(function (dat) {                        
-                        statusClosingStok = dat.data;
-                    })
+                //kata efan dah ga dipake
+                // medifirstService.get("logistik/cek-closing-persediaan?bulan=" + bulanclosing
+                //     + "&ruanganfk=" + dataSelected.depoid).then(function (dat) {                        
+                //         statusClosingStok = dat.data;
+                //     })
             }
 
             $scope.Retur = function () {
@@ -900,7 +905,7 @@ define(['initialize'], function (initialize) {
                 //     return;
                 // } else {
                     var stt = 'false'
-                    if (confirm('Hapus resep? ')) {
+                    if (confirm('Hapus resep per No Resep? ')) {
                         // Save it!
                         stt = 'true';
                     } else {
