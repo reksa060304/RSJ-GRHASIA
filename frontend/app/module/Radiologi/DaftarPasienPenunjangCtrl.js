@@ -219,6 +219,12 @@ define(['initialize'], function (initialize) {
                     "width": "70px",
                 },
                 {
+                    "field": "cito",
+                    "title": "Cito",
+                    "width": "50px",
+                    "template": "<span class='style-center'>#: cito == true ? '✔' : '✘' #</span>"
+                },
+                {
                     "field": "namapasien",
                     "title": "Nama Pasien",
                     "width": "150px",
