@@ -5,15 +5,38 @@ define(['initialize'], function (initialize) {
 
             // initialize.controller('DaftarResepCtrl', ['$q', '$rootScope', '$scope', 'medifirstService','$state','CacheHelper','DateHelper',
             //     function($q, $rootScope, $scope,medifirstService,$state,cacheHelper,dateHelper) {
-            $scope.item = {};
+            $scope.item = {};            
             $scope.dataVOloaded = true;
             $scope.now = new Date();
-            $scope.item.jmlRows = 50;
+            $scope.item.jmlRows = 100;
             $scope.isRouteLoading = false;
             // $scope.item.tglAwal = $scope.now;
             // $scope.item.tglAkhir = $scope.now;
-            LoadCache();
+            // LoadCache();
             loadCombo();
+            function loadCombo() {
+                medifirstService.get("farmasi/get-datacombo_dp", true).then(function (dat) {
+                    $scope.listDepartemen = dat.data.departemen;
+                    $scope.listKelompokPasien = dat.data.kelompokpasien;
+                    $scope.listRuanganDepo = dat.data.ruanganfarmasi;
+                    LoadCache();
+                });
+                $scope.listJenisRacikan = [{ id: 1, jenisracikan: 'Puyer' }]
+            }
+            $scope.clearFilter  = function(){
+                cacheHelper.set('DaftarResepCtrl2', undefined);
+                $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00');
+                $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59');                
+                $scope.item.instalasi = null;                               
+                $scope.item.ruangan = null;                
+                $scope.item.ruanganDepo = null;  
+                $scope.item.jmlRows = 100;
+                $scope.item.noReg = "";
+                $scope.item.noMr = "";
+                $scope.item.namaPasien = "";
+                $scope.item.noResep = "";
+                init()
+            }
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('DaftarResepCtrl2');
                 if (chacePeriode != undefined) {
@@ -21,7 +44,34 @@ define(['initialize'], function (initialize) {
                     $scope.item.tglAwal = new Date(chacePeriode[0]);
                     $scope.item.tglAkhir = new Date(chacePeriode[1]);
 
-                    // init();
+                    if (chacePeriode[2] != undefined) {
+                        //$scope.listDepartemen = [chacePeriode[2]]
+                        $scope.item.instalasi = chacePeriode[2]
+                    }
+
+                    if (chacePeriode[3] != undefined) {
+                        $scope.listRuangan = [chacePeriode[3]]
+                        $scope.item.ruangan = chacePeriode[3]
+                    }
+
+                    if (chacePeriode[4] != undefined) {
+                        //$scope.item.listKelompokPasien = [chacePeriode[4]]
+                        $scope.item.kelompokPasien = chacePeriode[4]
+                    }
+
+                    if (chacePeriode[5] != undefined) {
+                        $scope.item.noReg = chacePeriode[5]
+                    }
+
+                    if (chacePeriode[6] != undefined) {
+                        $scope.item.noMr = chacePeriode[6]
+                    }
+
+                    if (chacePeriode[7] != undefined) {
+                        $scope.item.namaPasien = chacePeriode[7]
+                    }
+
+                    init();
                 }
                 else {
                     $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00');
@@ -29,27 +79,27 @@ define(['initialize'], function (initialize) {
                     init();
                 }
             }
-            function loadCombo() {
-                medifirstService.get("farmasi/get-datacombo_dp", true).then(function (dat) {
-                    $scope.listDepartemen = dat.data.departemen;
-                    $scope.listKelompokPasien = dat.data.kelompokpasien;
-                    $scope.listRuanganDepo = dat.data.ruanganfarmasi;
-                });
-                $scope.listJenisRacikan = [{ id: 1, jenisracikan: 'Puyer' }]
-            }
+            
             $scope.cariEnter  = function(){
                 init()
             }
+            
             function init() {
                 $scope.isRouteLoading = true;
                 var ins = ""
+                var tempInstalasi = [];
                 if ($scope.item.instalasi != undefined) {
                     var ins = "&dpid=" + $scope.item.instalasi.id
+                    tempInstalasi = { id: $scope.item.instalasi.id, departemen: $scope.item.instalasi.departemen }
                 }
                 var rg = ""
+                var tempRuangan = [];
                 if ($scope.item.ruangan != undefined) {
                     var rg = "&ruid=" + $scope.item.ruangan.id
+                    tempRuangan = { id: $scope.item.ruangan.id, ruangan: $scope.item.ruangan.ruangan }
                 }
+
+                
                 var farmasi = ""
                 if ($scope.item.ruanganDepo != undefined) {
                     var farmasi = "&IdFarmasi=" + $scope.item.ruanganDepo.id
@@ -58,6 +108,29 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.jmlRows != undefined) {
 					jmlRows = $scope.item.jmlRows
 				}
+
+                var kp = ""
+                var tempKelompokPasien = [];
+                if ($scope.item.kelompokPasien != undefined) {
+                    var kp = "&kpid=" + $scope.item.kelompokPasien.id
+                    tempKelompokPasien = { id: $scope.item.kelompokPasien.id, kelompokpasien: $scope.item.kelompokPasien.kelompokpasien }
+                }
+
+                var tempNoReg = "";
+                if ($scope.item.noReg != undefined) {
+                    tempNoReg = $scope.item.noReg;
+                }
+
+                var tempnoMr = "";
+                if ($scope.item.noMr != undefined) {
+                    tempnoMr = $scope.item.noMr;
+                }
+
+                var tempNamaPasien = "";
+                if ($scope.item.namaPasien != undefined) {
+                    tempNamaPasien = $scope.item.namaPasien;
+                }
+
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("farmasi/get-daftar-resep?" +
@@ -95,11 +168,12 @@ define(['initialize'], function (initialize) {
                 var chacePeriode = {
                     0: tglAwal,
                     1: tglAkhir,
-                    2: '',
-                    3: '',
-                    4: '',
-                    5: '',
-                    6: ''
+                    2: tempInstalasi,
+                    3: tempRuangan,
+                    4: tempKelompokPasien,
+                    5: tempNoReg,
+                    6: tempnoMr,
+                    7: tempNamaPasien
                 }
                 cacheHelper.set('DaftarResepCtrl2', chacePeriode);
 
@@ -223,6 +297,11 @@ define(['initialize'], function (initialize) {
                         "field": "namaruanganapotik",
                         "title": "Apotik",
                         "width": "70px",
+                    },
+                    {
+                        "field": "closingkasir",
+                        "title": "Closing Kasir",
+                        "width": "100px",
                     }
                 ]					
 			};

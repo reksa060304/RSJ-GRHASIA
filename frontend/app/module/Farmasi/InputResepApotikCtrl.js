@@ -738,7 +738,7 @@ define(['initialize'], function (initialize) {
                     "&kpid=" + $scope.item.kpid, true).then(function (dat) {
                         dataProdukDetail = dat.data.detail;
                         $scope.item.stok = dat.data.jmlstok / $scope.item.nilaiKonversi
-                        if (dat.data.kekuatan == undefined || dat.data.kekuatan == 0) {
+                        if (dat.data.kekuatan == undefined || dat.data.kekuatan == 0 || dat.data.kekuatan == "") {
                             dat.data.kekuatan = 1
                         }
                         $scope.item.kekuatan = dat.data.kekuatan
@@ -995,11 +995,11 @@ define(['initialize'], function (initialize) {
                     alert("Jumlah harus di isi!")
                     return;
                 }
-                if ($scope.item.hargaSatuan == 0) {
+                if ($scope.item.hargaSatuan == 0 && ($scope.item.stok == 0 || $scope.item.stok =="" || $scope.item.stok == undefined )) {
                     alert("Harga Satuan tidak memiliki harga!")
                     return;
                 }
-                if ($scope.item.total == 0 && $scope.item.hargaSatuan == 0 && parseFloat($scope.item.diskonTotalPersen) == 0) {
+                if ($scope.item.total == 0 && $scope.item.hargaSatuan == 0 && parseFloat($scope.item.diskonTotalPersen) == 0 && ($scope.item.stok == 0 || $scope.item.stok =="" || $scope.item.stok == undefined )) {
                     alert("Stok tidak ada harus di isi!")
                     return;
                 }
@@ -1685,6 +1685,7 @@ define(['initialize'], function (initialize) {
 
             $scope.simpan = function () {
                 $scope.isRouteLoading = true;
+                $scope.tombolSimpanVis = false;
                 // medifirstService.getDataTableTransaksi("tatarekening/get-sudah-verif?noregistrasi="+
                 //     $scope.item.noRegistrasi, true).then(function(dat){
                 //     if (dat.data.status == true) {
@@ -1702,11 +1703,13 @@ define(['initialize'], function (initialize) {
                 }
                 if (data2.length == 0) {
                     alert("Pilih Produk terlebih dahulu!!")
+                    $scope.tombolSimpanVis = true;
                     return
                 }
                 for (var i = data2.length - 1; i >= 0; i--) {
-                    if (data2[i].hargasatuan == 0) {
-                        alert("Terdapat obat dengan harga kosong, kemungkinan stock kosong!!")
+                    if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0 ) {
+                        alert("Terdapat obat " + data2[i].namaproduk + " dengan harga kosong, kemungkinan stock kosong!!")
+                        $scope.tombolSimpanVis = true;
                         $scope.isRouteLoading = false;
                         return
                     }
@@ -1714,7 +1717,8 @@ define(['initialize'], function (initialize) {
                 }
                 for (var i = data2.length - 1; i >= 0; i--) {
                     if (parseFloat(data2[i].jmlstok) < parseFloat(data2[i].jumlah)) {
-                        alert("Terdapat obat dengan jumlah melebihi STOK !! " + data2[i].namaproduk)
+                        alert("Terdapat obat " + data2[i].namaproduk + " dengan jumlah melebihi STOK !! " + data2[i].namaproduk)
+                        $scope.tombolSimpanVis = true;
                         $scope.isRouteLoading = false;
                         return
                     }
@@ -1813,6 +1817,7 @@ define(['initialize'], function (initialize) {
                     //     })
                     // }
                     $scope.isRouteLoading = false;
+                    $scope.tombolSimpanVis = true;
                     window.history.back();
                 }, function (error) {
                     $scope.isRouteLoading = false;

@@ -111,10 +111,10 @@ class PelayananResepController extends ApiController
             ->select('ps.nocm','ps.namapasien','jk.jeniskelamin','pp.tglpelayanan','pp.produkfk','pr.namaproduk',
                 'ss.satuanstandar','pp.jumlah','pp.hargasatuan','pp.hargadiscount','sp.nostruk','pd.noregistrasi',
                 'ks.nilaikonversi','ss2.satuanstandar as satuanstandar2','sr.noresep','sr.norec as norec_resep','pp.rke',
-                'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
-                'pp.aturanpakai','ru.namaruangan','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
+                'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as namaruanganasalid','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
+                'pp.aturanpakai','ru.namaruangan','dok.id as dokterid','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
                 DB::raw("CASE WHEN pr.kekuatan IS NOT NULL AND rs.name IS NOT NULL THEN pr.kekuatan || ' ' || rs.name ELSE '' END AS kekuatan,
-                               sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk,apd.norec norec_apd"))
+                               sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk,apd.norec norec_apd,pd.norec norec_pd,apd.objectkelasfk klid"))
             ->where('pp.kdprofile', $idProfile)
             ->where('jp.id',97)
             ->where('sr.statusenabled', true)
@@ -210,11 +210,13 @@ class PelayananResepController extends ApiController
                 'norec_apd' =>  $item->norec_apd,
                 'detail' => $detail,
                 'jasa' =>$jasa,
-                'depoid' => $item->ruangandepoid,
+                'ruangandepoid' => $item->ruangandepoid,
                 'namaruangandepo' => $item->ruangandepo,
                 'aturanpakai' => $item->aturanpakai,
                 'dokter' => $item->dokter,
+                'dokterid' => $item->dokterid,
                 'pemberiresep' => $item->dokter,
+                'namaruanganasalid' => $item->namaruanganasalid,
                 'namaruangan' => $item->namaruangan,
                 'kekuatan' => $item->kekuatan,
                 'ispagi' => $item->ispagi,
@@ -229,6 +231,8 @@ class PelayananResepController extends ApiController
                 'detailjenisproduk' => $item->detailjenisproduk,
                 'jenisproduk' => $item->jenisproduk,
                 'reseppulang' =>$item->reseppulang,
+                'norec_pd' => $item->norec_pd,
+                'klid' => $item->klid,
             );
         }
         return $this->respond($result);

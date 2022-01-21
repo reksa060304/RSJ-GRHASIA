@@ -10,7 +10,10 @@ define(['initialize'], function (initialize) {
             $scope.isRouteLoading = false;
             // var pegawaiUser = {}
             var statusClosingStok = false;
+            $scope.isSelesaiPeriksa = false;
             var detail = ''
+            
+
             // $scope.item.tglAwal = $scope.now;
             // $scope.item.tglAkhir = $scope.now;
             LoadCache();
@@ -45,10 +48,18 @@ define(['initialize'], function (initialize) {
                         $scope.item.dokterdpjp = { id: data_ih.data.detailPD[0].pgid, namalengkap: data_ih.data.detailPD[0].namadokterdpjp }
                         // pegawaiUser = data_ih.data.datalogin[0]
                     });
+                    medifirstService.get("sysadmin/general/get-status-close/" + $scope.item.noregistrasi, false).then(function (rese) {
+                        if (rese.data.status) {
+                            toastr.error('Pemeriksaan sudah ditutup kasir tanggal ' + moment(new Date(rese.data.tglclosing)).format('DD-MMM-YYYY HH:mm'), 'Peringatan!')
+                            $scope.isSelesaiPeriksa = true
+                        }
+                    });
                     init()
+                    
                 } else {
 
                 }
+                
             }
             function init() {
                 //debugger;
@@ -549,11 +560,7 @@ define(['initialize'], function (initialize) {
 
                 })
             }
-            $scope.TambahObat = function () {
-                // if ($scope.dataSelected.nostruk != undefined) {
-                //     alert('Sudah verifikasi Tatarekening Tidak Bisa Menambah Obat!')
-                //     return;
-                // }   
+            $scope.TambahObat = function () {               
                 if ($scope.dataSelectedPopUpAPD == undefined) {
                     toastr.warning("Data Belum Dipilih!!!")
                     return;
@@ -647,7 +654,44 @@ define(['initialize'], function (initialize) {
                 }
 
             }
-            $scope.tambahtenaga = function () {
+            
+            $scope.tambahtindakan = function () {
+                if ($scope.dataSelected == undefined) {
+                    alert('Pilih resep yg akan ditambahkan tindakan')
+                    return;
+                }
+
+
+                if($scope.tombolTambahTindakanDisabled != undefined){
+                    if($scope.tombolTambahTindakanDisabled == true){
+                        return;
+                    }
+                }
+                $scope.tombolTambahTindakanDisabled = true;
+                var dataKonsul = {
+                    "asalrujukanfk": 5, //datang sendiri
+                    "norec_pd": $scope.dataSelected.norec_pd,
+                    "dokterfk": $scope.dataSelected.dokterid,
+                    "objectruangantujuanfk": $scope.dataSelected.ruangandepoid,
+                    "objectruanganasalfk": $scope.dataSelected.namaruanganasalid,
+                    "objectkelasfk": $scope.dataSelected.klid,
+                    "tglregistrasidate":moment($scope.dataSelected.tglpelayanan).format('YYYY-MM-DD')
+                }
+                medifirstService.post('radiologi/save-apd', dataKonsul).then(function (e) {
+                    $scope.tombolTambahTindakanDisabled = false
+                    var norec_apdapotik = e.data.data.norec
+                   
+                    cacheHelper.set('norec_resep_qwertyuio',$scope.dataSelected.norec_resep);
+                    $state.go('InputTindakan', {
+                        norecPD: $scope.dataSelected.norec_pd,
+                        norecAPD: norec_apdapotik,
+                    });
+                }, function (error) {
+                    $scope.tombolTambahTindakanDisabled = false
+                })
+            }
+            $scope.tambahtenaga = function () {    
+                
                 $scope.popupDetailRegistrasi.center().open();
                 $scope.dataPopUpAPD = [];
                 $scope.isRouteLoading = true;
@@ -723,6 +767,7 @@ define(['initialize'], function (initialize) {
                     alert("Pilih yg akan di ubah!!")
                     return;
                 }
+                
                 var chacePeriode = {
                     0: $scope.item.noMr,
                     1: $scope.item.namaPasien,
@@ -766,10 +811,21 @@ define(['initialize'], function (initialize) {
                     window.messageContainer.error('Data Stok Sudah Diclosing Tidak Bisa Ubah Resep!')
                     return;
                 }
+                if ($scope.dataSelected.nostruk != undefined) {
+                    window.messageContainer.error('Sudah verifikasi Kasir tidak dapat di Ubah Resep!')
+                    $scope.isRouteLoading = false;
+                    return;
+                }
                 // **  VALIDASI CLOSING STOK 
+                medifirstService.get("sysadmin/general/get-status-close/" + $scope.item.noregistrasi, false).then(function (rese) {
+                    if (rese.data.status == true) {
+                        toastr.error('Pemeriksaan sudah ditutup tanggal ' + moment(new Date(rese.data.tglclosing)).format('DD-MMM-YYYY HH:mm'), 'Peringatan!')
+                        $scope.isSelesaiPeriksa = true
+                    }
+                });
 
                 if ($scope.dataSelected.nostruk != undefined) {
-                    window.messageContainer.error('Sudah verifikasi Tatarekening Tidak Bisa mengubah Obat!')
+                    window.messageContainer.error('Sudah verifikasi Kasir Tidak Bisa mengubah Obat!')
                     return;
                 } 
                 // else {
@@ -823,7 +879,7 @@ define(['initialize'], function (initialize) {
                 //     })
             }
 
-            $scope.Retur = function () {
+            $scope.Retur = function () {                
                 if ($scope.dataSelected.nostruk != undefined) {
                     window.messageContainer.error('Data Sudah Diclosing, Hubungi Tatarekening.')
                     return;
@@ -847,7 +903,7 @@ define(['initialize'], function (initialize) {
                 // **  VALIDASI CLOSING STOK 
 
                 if ($scope.dataSelected.nostruk != undefined) {
-                    window.messageContainer.error('Sudah verifikasi Tatarekening Tidak Bisa retur Obat!')
+                    window.messageContainer.error('Sudah verifikasi Kasir Tidak Bisa retur Obat!')
                     return;
                 } 
                 // else {
@@ -884,12 +940,14 @@ define(['initialize'], function (initialize) {
                  // ** VALIDASI CLOSING STOK 
                  if (statusPosting == true) {
                     window.messageContainer.error('Data Stok Sudah Diclosing Tidak Bisa Hapus Resep!')
+                    $scope.isRouteLoading = false;
                     return;
                 }
                 // **  VALIDASI CLOSING STOK 
 
                 if ($scope.dataSelected.nostruk != undefined) {
-                    window.messageContainer.error('Sudah verifikasi Tatarekening tidak dapat di hapus!')
+                    window.messageContainer.error('Sudah verifikasi Kasir tidak dapat di hapus!')
+                    $scope.isRouteLoading = false;
                     return;
                 }
 
@@ -1349,12 +1407,12 @@ define(['initialize'], function (initialize) {
             $scope.HapusKronis = function () {
                 $scope.isRouteLoading = true;
                 if ($scope.dataSelectedOK.nostruk != undefined) {
-                    window.messageContainer.error('Sudah verifikasi Tatarekening tidak dapat di hapus!')
+                    window.messageContainer.error('Sudah verifikasi Kasir tidak dapat di hapus!')
                     return;
                 }
 
                 if ($scope.dataSelectedOK.nostruk != undefined) {
-                    window.messageContainer.error('Sudah verifikasi Tatarekening Tidak Bisa hapus Obat!')
+                    window.messageContainer.error('Sudah verifikasi Kasir Tidak Bisa hapus Obat!')
                     return;
                 } else {
                     var stt = 'false'
