@@ -1204,6 +1204,13 @@ define(['initialize'], function (initialize) {
                         "width": "80px"
                     },
                     {
+                        "field": "cito",
+                        "title": "Cito",
+                        // "template": '# if( cito==true) {# ✔ # } else {# ✘ #} #',
+                        "width": "70px",
+                        "attributes": { class: "text-center" },
+                    },
+                    {
                         "field": "namapasien",
                         "title": "Nama Pasien",
                         "width": "150px"
@@ -1255,18 +1262,11 @@ define(['initialize'], function (initialize) {
                         "width": "80px"
                     },
                     {
-                        "field": "cito",
-                        "title": "Cito",
-                        // "template": '# if( cito==true) {# ✔ # } else {# ✘ #} #',
-                        "width": "70px",
-                        "attributes": { class: "text-center" },
+                        "field": "closing",
+                        "title": "Closing Kasir",
+                        "width": "120px",
+                        "template": "<span class='style-center'>#: closing == null ? 'Belum Closing' : 'Sudah Di Closing' #</span>"
                     },
-                            {
-                                "field": "closing",
-                                "title": "Closing Kasir",
-                                "width": "120px",
-                                "template": "<span class='style-center'>#: closing == null ? 'Belum Closing' : 'Sudah Di Closing' #</span>"
-                            },
                 ]
             }
             $scope.hapusOrder = function(){
