@@ -132,22 +132,32 @@ class FarmasiController extends ApiController
             ->JOIN('kelompokpasien_m as kp','kp.id','=','pd.objectkelompokpasienlastfk')
             ->leftJoin('rekanan_m as rk','rk.id','=','pd.objectrekananfk')
             ->JOIN('kelas_m as kl','kl.id','=','pd.objectkelasfk')
-            ->leftJoin('batalregistrasi_t as br','br.pasiendaftarfk','=','pd.norec')
+            ->leftJoin('batalregistrasi_t as br','br.pasiendaftarfk','=','pd.norec')            
             ->select('pd.noregistrasi','ps.nocm','ps.namapasien','jk.jeniskelamin',
                 'kp.id as kpid','kp.kelompokpasien','rk.namarekanan','kl.namakelas','kl.id as klid',
-                'pd.tglregistrasi','pd.tglpulang','ps.tgllahir','rpp.noregistrasifk as rpp','pd.nostruklastfk','pd.norec as norec_pd','ru.namaruangan','dp.namadepartemen')
+                'pd.tglregistrasi','pd.tglpulang','ps.tgllahir','rpp.noregistrasifk as rpp','pd.nostruklastfk','pd.norec as norec_pd','ru.namaruangan','dp.namadepartemen','pd.isclosing',
+                DB::raw("
+                case when pd.isclosing is null 
+                    then 'Belum Closing' else 'Sudah Closing' 
+                end closingkasir
+                ,case when pd.nostruklastfk is null 
+                    then 'Belum Verif' else 'Sudah Verif' 
+                end verifkasir ")
+            )
             ->where('pd.kdprofile', $idProfile)
             ->where('pd.statusenabled', true)
             ->whereNull('br.pasiendaftarfk')
             ->orderBy('pd.noregistrasi');
 
         if(isset($request['tglAwal']) && $request['tglAwal']!="" && $request['tglAwal']!="undefined"){
-            $data = $data->where('pd.tglregistrasi','>=', $request['tglAwal']);
-        }
-        if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
+           // $data = $data->where('pd.tglregistrasi','>=', $request['tglAwal']);
             $tgl= $request['tglAkhir']." 23:59:59";
-            $data = $data->where('pd.tglregistrasi','<=', $tgl);
+            $data = $data->whereRaw(" ((pd.tglregistrasi between '".$request['tglAwal']."' and '".$tgl."') or (pd.tglpulang between '".$request['tglAwal']."' and '".$tgl."')) ");
         }
+        // if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
+        //     $tgl= $request['tglAkhir']." 23:59:59";
+        //     $data = $data->where('pd.tglregistrasi','<=', $tgl);
+        // }
         if(isset($request['dpid']) && $request['dpid']!="" && $request['dpid']!="undefined"){
             $data = $data->where('dp.id', $request['dpid']);
         }
@@ -216,7 +226,7 @@ class FarmasiController extends ApiController
 //            'kp.id','kp.kelompokpasien','rk.namarekanan','kl.namakelas','kl.id',
 //            'pd.tglregistrasi','pd.tglpulang','ps.tgllahir','apd.norec','rpp.noregistrasifk','pd.nostruklastfk','pd.norec');
 
-        $data = $data->take(50);
+        $data = $data->take(300);
         $data = $data->get();
         return $this->respond($data);
     }
@@ -274,7 +284,6 @@ class FarmasiController extends ApiController
         $data = $data->where('dp.id','=',16);
         $data = $data->whereNull('pd.tglpulang');
         $data = $data->whereNull('apd.tglkeluar');
-        $data = $data->where('pd.tglregistrasi','>','2019-05-25 00:00');
         $data = $data->take(50);
         $data = $data->get();
         return $this->respond($data);
@@ -299,7 +308,15 @@ class FarmasiController extends ApiController
             ->select('sr.norec','sr.statusenabled','sr.noresep','sr.tglresep','ps.id as psid','pd.noregistrasi','ps.nocm','ps.namapasien','ru.id as ruid',
                 'ru.namaruangan','pg.id as pgid','pg.namalengkap as dokter','ru2.id as ruapotikid',
                 'ru2.namaruangan as namaruanganapotik','jk.jeniskelamin','ps.tgllahir','kl.id as klid','kl.namakelas',
-                'pd.tglregistrasi','apd.norec as norec_apd','kp.kelompokpasien','pd.norec as norec_pd')
+                'pd.tglregistrasi','apd.norec as norec_apd','kp.kelompokpasien','pd.norec as norec_pd',
+                DB::raw("
+                case when pd.isclosing is null 
+                    then 'Belum Closing' else 'Sudah Closing' 
+                end closingkasir
+                ,case when pd.nostruklastfk is null 
+                    then 'Belum Verif' else 'Sudah Verif' 
+                end verifkasir ")
+                )
             ->where('sr.kdprofile', $idProfile)
             ->where('pd.statusenabled', true);
 //            ->where('sr.statusenabled' != 'f');
@@ -349,7 +366,7 @@ class FarmasiController extends ApiController
                 ->orWhere('sr.statusenabled', null);
         });
         $data = $data->take($request['jmlRows']);
-        $data = $data->orderby('sr.noresep');
+        $data = $data->orderby('sr.noresep','desc');
         $data = $data->get();
 //        foreach ($data as $item){
 //

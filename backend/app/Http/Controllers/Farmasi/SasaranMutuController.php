@@ -58,13 +58,17 @@ class SasaranMutuController extends ApiController
         $dataLogin=$request->all();
         $filter=$request->all();
         $data = \DB::table('strukresep_t as sr')
+            ->leftJoin(DB::raw('antrianapotik_t aa'), function($x) {
+                $x->on('aa.noresep','=','sr.noresep')
+                ->on('aa.statusenabled','=',DB::raw('true'));
+            })
             ->select('sr.noresep','sr.tglresep','sr.penulisresepfk','sr.ruanganfk','sr.tglambilresep as tglambilreseplama','sr.tglselesai as tglambilresep'
             ,DB::raw("case when sr.tglambilresep is not null then 'Telah diserahkan oleh ' || coalesce(sr.namapemberi,'') || ' kepada ' ||  coalesce(sr.namalengkapambilresep,'') else '' end  as keterangan")
             ,DB::raw(" 
             div(EXTRACT(EPOCH FROM sr.tglselesai - sr.tglresep)::int,3600)
             ||':'||
             to_char(sr.tglselesai - sr.tglresep,'MI:SS')
-            as waktulayanan"))
+            as waktulayanan, case when aa.jenis = 'N' then 'Non Racikan' else 'Racikan' end jenisantrian"))
             ->where('sr.statusenabled',true)
             ->orderBy('sr.tglresep');
         if(isset($filter['tglAwal']) && $filter['tglAwal']!="" && $filter['tglAwal']!="undefined"){
@@ -86,6 +90,7 @@ class SasaranMutuController extends ApiController
         foreach ($data as $item){
             $data2[] = array(
                 'noresep' => $item->noresep,
+                'jenisantrian' => $item->jenisantrian,
                 'tglresep' => $item->tglresep,
                 'tglselesai' => $item->tglambilresep,
                 'waktulayanan' => $item->waktulayanan,

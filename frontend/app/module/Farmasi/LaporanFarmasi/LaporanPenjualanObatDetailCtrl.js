@@ -138,11 +138,7 @@ define(['initialize'], function (initialize) {
 
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MM-YYYY');
-            }
-
-            $scope.formatRupiah = function (value, currency) {
-                return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-            }
+            }            
 
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {

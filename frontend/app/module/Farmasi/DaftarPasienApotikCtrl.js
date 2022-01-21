@@ -13,10 +13,23 @@ define(['initialize'], function (initialize) {
             // $scope.item.tglAkhir = $scope.now;
             LoadCache();
             loadCombo();
+            $scope.clearFilter = function(){
+                cacheHelper.set('DaftarPasienApotikCtrl', undefined);
+                $scope.now = new Date();
+                $scope.item.tglAwal = $scope.now;
+                $scope.item.tglAkhir = $scope.now;
+                $scope.item.noReg = '';
+                $scope.item.noMr = '';
+                $scope.item.namaPasien = '';
+                $scope.item.kelompokPasien = null;
+
+                init();
+            }
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('DaftarPasienApotikCtrl');
                 if (chacePeriode != undefined) {
                     //var arrPeriode = chacePeriode.split(':');
+                    $scope.now = new Date();
                     $scope.item.tglAwal = new Date(chacePeriode[0]);
                     $scope.item.tglAkhir = new Date(chacePeriode[1]);
 
@@ -50,6 +63,7 @@ define(['initialize'], function (initialize) {
                     init();
                 }
                 else {
+                    $scope.now = new Date();
                     $scope.item.tglAwal = $scope.now;
                     $scope.item.tglAkhir = $scope.now;
                     init();
@@ -146,8 +160,14 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.TransaksiPelayanan = function () {
+                //rpp=registrasipelayananpasien_t -> pasien ranap yg udah ada nostruklastfk (udah di bayar di kasir)
                 if ($scope.dataSelected.nostruklastfk != null && $scope.dataSelected.rpp != null) {
-                    window.messageContainer.error("Pelayanan yang sudah di Verif tidak bisa di ubah!")
+                    window.messageContainer.error("Pelayanan yang sudah di Verif Kasir tidak bisa di ubah!")                    
+                    return
+                }
+                if ($scope.dataSelected.isclosing != null ) {
+                    //toastr.warning("Pelayanan yang sudah di Closing Kasir tidak bisa di ubah!")
+                    window.messageContainer.error("Pelayanan yang sudah di Closing Kasir tidak bisa di ubah!")
                     return
                 }
                 // debugger;
@@ -236,7 +256,18 @@ define(['initialize'], function (initialize) {
                     "field": "tglpulang",
                     "title": "Tgl Pulang",
                     "width": "100px",
+                },
+                {
+                    "field": "closingkasir",
+                    "title": "Closing Kasir",
+                    "width": "100px",
                 }
+                // ,
+                // {
+                //     "field": "verifkasir",
+                //     "title": "Verif Kasir",
+                //     "width": "100px",
+                // }
             ];
             // $scope.mainGridOptions = { 
             //     pageable: true,

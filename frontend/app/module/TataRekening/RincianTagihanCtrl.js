@@ -960,7 +960,13 @@ define(['initialize'], function (initialize) {
 						"field": "strukfk",
 						"title": "NoStruk/NoSbm",
 						"width": "120px"
-					}//,
+					},
+					{
+						"field": "noresep",
+						"title": "NoResep",
+						"width": "120px"
+					}
+					//,
 					// {
 					// 	"field": "sbmfk",
 					// 	"title": "NoSBM",
@@ -2025,7 +2031,8 @@ define(['initialize'], function (initialize) {
 				} else if ($scope.item.cetakx=="belum") {
 					y = '&cetakx=belum'
 				}
-				medifirstService.get("tatarekening/detail-tagihan/" + $scope.item.noRegistrasi + '?jenisdata=bill' + y).then(function (dat) {debugger
+				medifirstService.get("tatarekening/detail-tagihan/" + $scope.item.noRegistrasi + '?jenisdata=bill' + y).then(function (dat) {
+					debugger
 					for (var i = 0; i < dat.data.details.length; i++)
 					{	
 						if(dat.data.details[i].dokter == '' || dat.data.details[i].dokter == undefined || dat.data.details[i].dokter=="-" )

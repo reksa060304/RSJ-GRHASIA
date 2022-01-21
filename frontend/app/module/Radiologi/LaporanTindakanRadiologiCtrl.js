@@ -249,6 +249,11 @@ define(['initialize'], function (initialize) {
                         "width": "100px",                        
                     },
                     {                       
+                        "field": "tglpanggil",
+                        "title": "Tanggal Panggil",
+                        "width": "100px",                        
+                    },
+                    {                       
                         "field": "tanggalreport",
                         "title": "Expertise",
                         "width": "100px",                        

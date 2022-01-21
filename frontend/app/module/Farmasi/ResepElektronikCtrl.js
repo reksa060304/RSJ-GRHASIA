@@ -662,11 +662,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if ($scope.item.statusorder == 'Selesai') {
                     // noresep
                     $scope.item.tglambil = new Date()
+                    $scope.item.namapengambil = $scope.item.namapasien 
                     var client = new HttpClient();
                     client.get('http://127.0.0.1:2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.item.noantri + '&namapasien=' + $scope.item.nocm + ', ' + $scope.item.namapasien + '&view=true', function (response) {
                         // do something with response
                     });
                     // if ( $scope.item.statusorder == 'Selesai') {
+                    
                     $scope.popup.center().open();
                     //$state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.strukOrder.noOrder, noAntrianPasien: $scope.item.strukOrder.noRegistrasi.noRec });
                     // $state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.noorder, noAntrianPasien: $scope.item.norec_apd });

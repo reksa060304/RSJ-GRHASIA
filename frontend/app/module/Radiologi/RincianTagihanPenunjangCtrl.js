@@ -235,6 +235,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "90px",
                     },
                     {
+                        "field": "tglpanggil",
+                        "title": "Tgl Panggil",
+                        "width": "90px",
+                    },
+                    {
                       "field": "idpatient",
                       "title": "ID Patient di Alat",
                       "width": "90px",
@@ -1537,6 +1542,71 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 });
 
             }
+            $scope.panggil = function () {
+                var user = medifirstService.getPegawaiLogin();
+                
+                var daftarPanggil = [];
+                for (var i = 0; i < $scope.dataGrid._data.length; i++) {
+                    if ($scope.dataGrid._data[i].statCheckbox) {
+                        // daftarPanggil.push($scope.dataGrid._data[i].norec_pp)
+                        daftarPanggil.push(
+                            {
+                                "norec_pp": $scope.dataGrid._data[i].norec_pp,                
+                            }
+                        )
+                    }
+                }
+
+                if (daftarPanggil.length == 0) {
+                  toastr.warning('Ceklis data yang akan di set Tanggal Pulang', 'Peringatan')
+                    return
+                }                
+
+                var objSave = {
+                    details: daftarPanggil,
+                    users: user,
+
+                };
+                medifirstService.post("radiologi/save-tglpanggil",objSave).then(function (e) {
+                    toastr.info('Berhasil tersimpan','Informasi');
+                    init();
+                    // $scope.listPegawaiPemeriksa = data.data.pegawai;
+
+                }, function (error) {
+                    toastr.error("Data Gagal Tersimpan!");
+                    return;                    
+                });
+                /*
+                var objSave = {
+                    noregistrasi: $scope.item.noregistrasi,
+                    // nofoto: $scope.item.nofoto,
+                    tglinput: moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
+                    dokterid: $scope.item.dokter.id,
+                    keterangan: ($scope.item.keterangan == null) ? '' : $scope.item.keterangan.replace(/\n/ig, '~'),
+                    pelayananpasienfk: $scope.dataSelected.norec_pp,
+                    norec_pd: norec_pd,
+                    norec: $scope.norecHasilRadiologi,
+                    tglpelayanan: $scope.dataSelected.tglpelayanan,
+                    jumlahpengulanganfoto:($scope.item.jumlahPengulanganFoto == null || $scope.item.jumlahPengulanganFoto == '') ? 0 : $scope.item.jumlahPengulanganFoto
+
+                }
+                $scope.hideExper = true
+                medifirstService.post('radiologi/save-hasil-radiologi', objSave).then(function (e) {
+                    init();
+                    $scope.norecHasilRadiologi=e.data.norecHasilRadiologi;
+                    $scope.hideExper = false
+                    //$scope.popUpEkpertise.close()
+                    // var client = new HttpClient();
+                    // client.get('http://127.0.0.1:1237/printvb/bridging?cetak-pacs-report=1&jenis=report&norec=' + $scope.dataSelected.norec_pp + '&noorder=' + $scope.dataSelected.noorder + $scope.dataSelected.no + '&view=true', function (response) {
+                    //         // do something with response
+                    // });
+                }, function (error) {
+                    $scope.hideExper = false
+                })
+                
+                */
+
+            }
             $scope.itemdok = {}
             $scope.model = {}
             $scope.inputDokterPelaksana = function () {
@@ -2069,10 +2139,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 for (var i = 0; i < $scope.dataGrid._data.length; i++) {
                     if ($scope.dataGrid._data[i].statCheckbox) {
                         // daftarCetak.push($scope.dataGrid._data[i].norec_pp)
+                        /*
+                        dokter: "dr. DEA NOVIANA PRAMANTIK, Sp.PK(K)."
+                        dokterid: 2668
+                        */
                         daftarCetak.push(
                             {
                                 "norec_pp": $scope.dataGrid._data[i].norec_pp,
                                 "tglPelayanan": $scope.dataGrid._data[i].tglpelayanan,
+                                "dokterid": $scope.dataGrid._data[i].dokterid,
+                                "dokter": $scope.dataGrid._data[i].dokter,
                             }
                         )
                     }
@@ -2114,6 +2190,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         14: $scope.item.objectjeniskelaminfk,
                         15: dataCetakFix,
                         16: null,
+                        17:daftarCetak,
                         // 16: $scope.dataGrid._data[i].tglpelayanan ,
                     }
                     cacheHelper.set('chaceHasilLab2', arrStr);
