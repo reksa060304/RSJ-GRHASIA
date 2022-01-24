@@ -481,6 +481,14 @@ define(['initialize'], function(initialize) {
                 alert("Pilih Jenis Kemasan terlebih dahulu!!")
                 return;
             }
+            if ( $scope.item.jumlahbulat < parseFloat($scope.item.jumlahRetur)){
+                alert("Jumlah Retur melebihi jumlah penjualan obat tersebut!")
+                return;
+            }
+            if (  parseFloat($scope.item.jumlahRetur) < 0){
+                alert("Jumlah Retur invalid!")
+                return;
+            }
             // if (noTerima == '') {
             //     $scope.item.jumlah = 0
             //     alert("Jumlah blm di isi!!")
