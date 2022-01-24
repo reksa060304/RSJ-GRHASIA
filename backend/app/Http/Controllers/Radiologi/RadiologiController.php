@@ -1264,6 +1264,7 @@ class RadiologiController extends ApiController
                     $data = $data->whereNotNull('so.statusorder');
                 }
             }
+
 //            if (isset($request['isNotVerif']) && $request['isNotVerif'] != "" && $request['isNotVerif'] != "undefined") {
 //                if ($request['isNotVerif'] == true) {
 //                    $data = $data->whereNull('pp.ono');
@@ -1474,6 +1475,11 @@ class RadiologiController extends ApiController
         if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
             $tgl= $request['tglAkhir'];
             $data = $data->where('so.tglorder','<=', $tgl);
+        }
+        if (isset($request['cekOrderHariIni']) && $request['cekOrderHariIni'] != "" && $request['cekOrderHariIni'] != "undefined") {
+            if ($request['cekOrderHariIni'] == true) {
+                $data = $data->whereRaw("so.tglorder::date=now()::date");
+            }
         }
         if(isset($request['tglAwalOperasi']) && $request['tglAwalOperasi']!="" && $request['tglAwalOperasi']!="undefined"){
             $data = $data->where('so.tglpelayananakhir','>=', $request['tglAwalOperasi']);
