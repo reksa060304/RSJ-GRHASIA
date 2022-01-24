@@ -283,11 +283,12 @@ define(['initialize'], function (initialize) {
 					}
 					$scope.item.jumlahBayar = tol - parseFloat($scope.item.deposit)
 					$scope.item.billing = tol
-					if ($scope.item.jenisPasien == 'BPJS' || $scope.item.jenisPasien == 'BPJS Non PBI' || $scope.item.jenisPasien == 'BPJS PBI' || $scope.item.jenisPasien == 'BPJS KELAS I' || $scope.item.jenisPasien == 'BPJS KELAS II' || $scope.item.jenisPasien == 'BPJS KELAS III' || $scope.item.jenisPasien == 'BPJS KELAS III PBI' || $scope.item.jenisPasien == 'BPJS KELAS III NON PBI (Mandiri)') {
-						// if ($scope.item.jenisPasien == 'BPJS' || $scope.item.jenisPasien == 'BPJS Non PBI' || $scope.item.jenisPasien == 'BPJS PBI') {
-						$scope.item.totalKlaim = tol;//- jml723;
-					} else {
+					// if ($scope.item.jenisPasien == 'BPJS' || $scope.item.jenisPasien == 'BPJS Non PBI' || $scope.item.jenisPasien == 'BPJS PBI' || $scope.item.jenisPasien == 'BPJS KELAS I' || $scope.item.jenisPasien == 'BPJS KELAS II' || $scope.item.jenisPasien == 'BPJS KELAS III' || $scope.item.jenisPasien == 'BPJS KELAS III PBI' || $scope.item.jenisPasien == 'BPJS KELAS III NON PBI (Mandiri)' ) {
+						if ($scope.item.jenisPasien == 'Umum/Pribadi' || $scope.item.jenisPasien == 'Karyawan') {
 						$scope.item.totalKlaim = 0;
+					} else {
+						$scope.item.totalKlaim = tol; //- jml723;
+
 					}
 				} else {
 					$scope.item.datachecklist = []
