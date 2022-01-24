@@ -677,12 +677,24 @@ define(['initialize'], function (initialize) {
                 });
             }
 
-            $scope.getSatuan = function () {
+            $scope.getSatuan = function () {                
+/*
+if(!pass || !cpass || !email || !cemail || !user){
+Which will check for empty strings (""), null, undefined, false and the numbers 0 and NaN.
+*/
+                if(!$scope.item.produk){ //sama dengan $scope.item.produk === null
+                    return
+                }
+                if(($scope.item.namaProduks == $scope.item.produk.namaproduk) && ($scope.item.namaRuangans == $scope.item.ruangan.namaruangan)){
+                    return
+                }
 
                 /* info stok all ruangan */
                 medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
                     .then(function (e) {
+                        //dikasih nilai namaProduks & namaRuangans hanya ketika data yg dipilih ada data info stoknya/valid
                         $scope.item.namaProduks = $scope.item.produk.namaproduk;
+                        $scope.item.namaRuangans = $scope.item.ruangan.namaruangan;
                         for (var i = 0; i < e.data.infostok.length; i++) {
                             e.data.infostok[i].no = i + 1
                         }
@@ -1506,6 +1518,7 @@ define(['initialize'], function (initialize) {
 
             function Kosongkan() {
                 $scope.item.produk = ''
+                $scope.HargaMaster = -1;
                 $scope.item.asal = ''
                 $scope.item.satuan = ''
                 $scope.item.nilaiKonversi = 0
@@ -1740,7 +1753,8 @@ define(['initialize'], function (initialize) {
                 }
                 for (var i = data2.length - 1; i >= 0; i--) {
                     //if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0 ) {
-                    if (data2[i].hargasatuan == 0 && $scope.HargaMaster != 0) {
+                    //if (data2[i].hargasatuan == 0 && $scope.HargaMaster != 0) {
+                        if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0) {
                         alert("Terdapat obat " + data2[i].namaproduk + " dengan harga kosong, kemungkinan stock kosong!!")
                         $scope.tombolSimpanVis = true;
                         $scope.isRouteLoading = false;

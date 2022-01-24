@@ -542,7 +542,9 @@
                                             <label c-label item="item" c-label-text="Keterangan"></label>
                                             <div class="grid_12">
                                                 <input c-text-box type="input" filter="" class="k-textbox"
-                                                    style="margin-top: -1px;" ng-model="item.KeteranganPakai" />
+                                                    style="margin-top: -1px;" ng-model="item.KeteranganPakai" 
+                                                    ng-keypress="($event.which == 13)? TambahObat():item.KeteranganPakai"
+                                                    />
                                             </div>
                                         </div>
                                     </div>
