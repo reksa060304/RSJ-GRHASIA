@@ -17,6 +17,7 @@ define(['initialize'], function (initialize) {
             $scope.item.hargaNetto = 0;
             $scope.butPaket = false;
             $scope.tglkadaluarsa = undefined;
+            $scope.HargaMaster = -1;
             $scope.disTanggal = false;
             var statusTambah = true
             var pegawaiUser = {}
@@ -676,12 +677,24 @@ define(['initialize'], function (initialize) {
                 });
             }
 
-            $scope.getSatuan = function () {
+            $scope.getSatuan = function () {                
+/*
+if(!pass || !cpass || !email || !cemail || !user){
+Which will check for empty strings (""), null, undefined, false and the numbers 0 and NaN.
+*/
+                if(!$scope.item.produk){ //sama dengan $scope.item.produk === null
+                    return
+                }
+                if(($scope.item.namaProduks == $scope.item.produk.namaproduk) && ($scope.item.namaRuangans == $scope.item.ruangan.namaruangan)){
+                    return
+                }
 
                 /* info stok all ruangan */
                 medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
                     .then(function (e) {
+                        //dikasih nilai namaProduks & namaRuangans hanya ketika data yg dipilih ada data info stoknya/valid
                         $scope.item.namaProduks = $scope.item.produk.namaproduk;
+                        $scope.item.namaRuangans = $scope.item.ruangan.namaruangan;
                         for (var i = 0; i < e.data.infostok.length; i++) {
                             e.data.infostok[i].no = i + 1
                         }
@@ -732,6 +745,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.dosis = 1
                 $scope.item.jumlahxmakan = 1
                 statusTambah = false
+                $scope.HargaMaster = -1;
                 medifirstService.get("farmasi/get-produkdetail?" +
                     "produkfk=" + $scope.item.produk.id +
                     "&ruanganfk=" + $scope.item.ruangan.id +
@@ -744,9 +758,12 @@ define(['initialize'], function (initialize) {
                         $scope.item.kekuatan = dat.data.kekuatan
                         $scope.item.sediaan = dat.data.sediaan
                         $scope.consis = dat.data.consis;
-                        if (dataProdukDetail.length > 0)
+                        if (dataProdukDetail.length > 0){
+                            $scope.HargaMaster = dataProdukDetail[0].hargajual;
                             $scope.tglkadaluarsa = moment(dataProdukDetail[0].tglkadaluarsa).format('YYYY-MM-DD HH:mm');
+                        }
                         //parseFloat($scope.dataSelected.jumlah) / parseFloat($scope.dataSelected.nilaikonversi)
+                        
                         $scope.item.hargaSatuan = 0
                         $scope.item.hargadiskon = 0
                         $scope.item.hargaNetto = 0
@@ -754,12 +771,14 @@ define(['initialize'], function (initialize) {
                         // $scope.item.jumlahxmakan =1
                         if ($scope.dataSelected != undefined) {
                             // $scope.item.jumlah = 0
+                            
                             $scope.item.jumlah = $scope.dataSelected.jumlahobat
                             $scope.item.jumlahbulat = $scope.dataSelected.jumlahobat//Math.ceil($scope.dataSelected.jumlah);
                             $scope.item.dosis = $scope.dataSelected.dosis
                             $scope.item.jumlahxmakan = (parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
                             $scope.item.satuan = { ssid: $scope.dataSelected.satuanviewfk, satuanstandar: $scope.dataSelected.satuanview }
+                            $scope.HargaMaster = $scope.dataSelected.hargasatuan
                             $scope.item.hargaSatuan = $scope.dataSelected.hargasatuan
                             $scope.item.hargadiskon = $scope.dataSelected.hargadiscount
                             $scope.item.hargaNetto = $scope.dataSelected.harganetto
@@ -791,7 +810,7 @@ define(['initialize'], function (initialize) {
                 }
             });
             $scope.$watch('item.rke', function (newValue, oldValue) {
-                if (newValue != oldValue) {
+                if (newValue != oldValue) {                  
                     if (tarifJasa == 0) {
                         for (var i = data2.length - 1; i >= 0; i--) {
                             tarifJasa = parseFloat($scope.item.tarifadminresep)//800
@@ -921,6 +940,7 @@ define(['initialize'], function (initialize) {
                     for (var i = 0; i < dataProdukDetail.length; i++) {
                         ada = false
                         if (parseFloat($scope.item.jumlah * parseFloat($scope.item.nilaiKonversi)) <= parseFloat(dataProdukDetail[i].qtyproduk)) {
+                            $scope.HargaMaster = parseFloat(dataProdukDetail[i].hargajual)
                             hrg1 = Math.round(parseFloat(dataProdukDetail[i].hargajual) * parseFloat($scope.item.nilaiKonversi))
                             hrgsdk = parseFloat(dataProdukDetail[i].hargadiscount) * parseFloat($scope.item.nilaiKonversi)
                             $scope.item.hargaSatuan = hrg1
@@ -995,11 +1015,13 @@ define(['initialize'], function (initialize) {
                     alert("Jumlah harus di isi!")
                     return;
                 }
-                if ($scope.item.hargaSatuan == 0 && ($scope.item.stok == 0 || $scope.item.stok =="" || $scope.item.stok == undefined )) {
+                //if ($scope.item.hargaSatuan == 0 && ($scope.item.stok == 0 || $scope.item.stok =="" || $scope.item.stok == undefined )) {
+                if ($scope.item.hargaSatuan == 0 && $scope.HargaMaster != 0) {
                     alert("Harga Satuan tidak memiliki harga!")
                     return;
                 }
-                if ($scope.item.total == 0 && $scope.item.hargaSatuan == 0 && parseFloat($scope.item.diskonTotalPersen) == 0 && ($scope.item.stok == 0 || $scope.item.stok =="" || $scope.item.stok == undefined )) {
+                //if ($scope.item.total == 0 && $scope.item.hargaSatuan == 0 && parseFloat($scope.item.diskonTotalPersen) == 0 && ($scope.item.stok == 0 || $scope.item.stok =="" || $scope.item.stok == undefined )) {
+                if ($scope.item.total == 0 && $scope.HargaMaster != 0  && $scope.item.hargaSatuan == 0 && parseFloat($scope.item.diskonTotalPersen) == 0) {
                     alert("Stok tidak ada harus di isi!")
                     return;
                 }
@@ -1344,6 +1366,8 @@ define(['initialize'], function (initialize) {
                 }
                 if ($scope.item.jenisKemasan.jeniskemasan != 'Racikan') {
                     $scope.item.rke = parseFloat($scope.item.rke) + 1
+                    $scope.clearAturanPakai();
+
                 }
                 if ($scope.consis == 1) {
                     $scope.statusConsis = true;
@@ -1358,6 +1382,26 @@ define(['initialize'], function (initialize) {
                 Kosongkan()
                 racikan = ''
                 // statusTambah = false
+            }
+            $scope.clearAturanPakai = function(){
+                $scope.currentAturanPakai = [];
+                $scope.item.aturanPakai = "";
+                $scope.item.chkp = 0;                    
+                $scope.item.chks = 0;
+                $scope.item.chksr = 0;
+                $scope.item.chkm = 0;
+                $scope.listDataSigna = [
+                    {
+                        "id": 1,
+                        "nama": "Aturan Pakai",
+                        "detail": [
+                            { "id": 1, "nama": "P", 'isChecked': false },
+                            { "id": 2, "nama": "S", 'isChecked': false },
+                            { "id": 3, "nama": "Sr", 'isChecked': false },
+                            { "id": 4, "nama": "M", 'isChecked': false }
+                        ]
+                    }
+                ];
             }
 
             $scope.TambahObat = function () {
@@ -1474,6 +1518,7 @@ define(['initialize'], function (initialize) {
 
             function Kosongkan() {
                 $scope.item.produk = ''
+                $scope.HargaMaster = -1;
                 $scope.item.asal = ''
                 $scope.item.satuan = ''
                 $scope.item.nilaiKonversi = 0
@@ -1707,7 +1752,9 @@ define(['initialize'], function (initialize) {
                     return
                 }
                 for (var i = data2.length - 1; i >= 0; i--) {
-                    if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0 ) {
+                    //if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0 ) {
+                    //if (data2[i].hargasatuan == 0 && $scope.HargaMaster != 0) {
+                        if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0) {
                         alert("Terdapat obat " + data2[i].namaproduk + " dengan harga kosong, kemungkinan stock kosong!!")
                         $scope.tombolSimpanVis = true;
                         $scope.isRouteLoading = false;

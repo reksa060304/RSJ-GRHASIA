@@ -7468,7 +7468,8 @@ class RegistrasiController extends ApiController
                 'peg.namalengkap', 'pd.tglpulang', 'pd.objectruanganasalfk', 'ru.namaruangan','pd.norec as norec_pd',
                 'pd.objectruanganlastfk'
             )
-            ->where('ps.kdprofile', $idProfile);
+            ->where('ps.kdprofile', $idProfile)
+            ->where('pd.statusenabled', true);
 
         if(isset($request['noCm']) && $request['noCm']!="" && $request['noCm']!="noCm") {
             $data = $data->where('ps.nocm', 'ilike', '%'. $request['noCm']);

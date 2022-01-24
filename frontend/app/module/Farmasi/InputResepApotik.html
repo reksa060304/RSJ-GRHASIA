@@ -542,7 +542,9 @@
                                             <label c-label item="item" c-label-text="Keterangan"></label>
                                             <div class="grid_12">
                                                 <input c-text-box type="input" filter="" class="k-textbox"
-                                                    style="margin-top: -1px;" ng-model="item.KeteranganPakai" />
+                                                    style="margin-top: -1px;" ng-model="item.KeteranganPakai" 
+                                                    ng-keypress="($event.which == 13)? TambahObat():item.KeteranganPakai"
+                                                    />
                                             </div>
                                         </div>
                                     </div>
@@ -563,7 +565,7 @@
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 style="margin-top: -1px;" ng-model="item.aturanPakai" />
                                         </div>
-                                        <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px;">
+                                        <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px; font-weight: bold;">
                                             <div class="grid_2">
                                                 <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox"
                                                     name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool"
@@ -623,7 +625,7 @@
                                             <label c-label item="item" c-label-text="Qty Obat"></label>
                                         </div>
                                         <div class="grid_6" style="margin-top: -6px">
-                                            <input c-text-box type="input" style="text-align: right" filter=""
+                                            <input style="font-weight: bold" c-text-box type="input" style="text-align: right" filter=""
                                                 class="k-textbox" ng-model="item.jumlah"
                                                 ng-keypress="($event.which == 13)? TambahObat():item.jumlah" />
                                         </div>

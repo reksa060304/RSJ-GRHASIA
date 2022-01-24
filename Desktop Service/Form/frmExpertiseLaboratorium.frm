@@ -212,7 +212,7 @@ End If
 '                     " ) as data order by  data.nourutjenispemeriksaan asc"
 
 
- strSQL = "select distinct * from ( SELECT  pp.tglpelayanan,maps.nourutjenispemeriksaan,maps.nourutdetail, pg3.namalengkap as DokterPelayanan,rj.namaruangan as ruanganperejuk,pm.nocm,pd.noregistrasi,so.noorder,pm.namapasien,alm.alamatlengkap || ' - Kel. ' || case when alm.namadesakelurahan is null then '-' else alm.namadesakelurahan end || ' - Kec.  ' || case when alm.namakecamatan is null then '-' else alm.namakecamatan end || ' -  Kota/Kab.  ' || alm.namakotakabupaten as alamatlengkap,kp.kelompokpasien,rkn.namarekanan,pd.tglregistrasi,to_char(pd.tglregistrasi, 'DD-MM-YYYY') AS tglRegiss,pp.tglpelayanan  as tglawal, " & _
+ strSQL = "select distinct * from ( SELECT  pp.tglpelayanan,maps.nourutjenispemeriksaan,maps.nourutdetail, pg3.namalengkap as DokterPelayanan,rj.namaruangan as ruanganperejuk,pm.nocm,pd.noregistrasi,so.noorder,pm.namapasien,alm.alamatlengkap || ' - Kel. ' || coalesce(alm.namadesakelurahan ,'') || ' - Kec.  ' || coalesce(alm.namakecamatan,'') || ' -  Kota/Kab.  ' || coalesce(alm.namakotakabupaten,'') as  alamatlengkap,kp.kelompokpasien,rkn.namarekanan,pd.tglregistrasi,to_char(pd.tglregistrasi, 'DD-MM-YYYY') AS tglRegiss,pp.tglpelayanan  as tglawal, " & _
                      " case when pg.namalengkap = '' or pg.namalengkap is null then pg2.namalengkap else pg.namalengkap end as namalengkap,pg1.namalengkap as dokterperiksa ,pm.tgllahir,to_char(pm.tgllahir, 'DD-MM-YYYY') AS tglLahirs,pp.noregistrasifk AS norec_apd,maps.jenispemeriksaan detailjenisproduk, djp.detailjenisproduk detailjenisproduklama,pp.produkfk,maps.subjenispemeriksaan namaproduk,prd.namaproduk namaproduklama, " & _
                      " maps.detailpemeriksaan,CASE WHEN maps.memohasil IS NULL THEN '' ELSE maps.memohasil END AS memohasil,maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.nilaimin,nn.nilaimax,CASE WHEN hh.hasil is null then '' when hh.flag ='Y' then '*   '  ||  hh.hasil else hh.hasil END AS hasil,maps.id AS map_id, " & _
                      " hh.norec AS norec_hasil,jk.jeniskelamin,apd.tglmasuk AS tglverif,hh.tglhasil as tglakhir,('Tgl Selesai  :  ' || hh.tglhasil ||  '          (-)         Tgl. Mulai :  '   || pp.tglpelayanan || '    (=)    Durasi :  '  || (hh.tglhasil - pp.tglpelayanan)) as tat,hh.flag FROM pelayananpasien_t  as pp " & _
@@ -254,17 +254,17 @@ End If
 '                .Text2.SetText stralmtLengkapRs & " , " & strNamaKota & ","
 '                .Text1.SetText strNamaLengkapRs
                 .Text3.SetText strWebSite & ", " & strEmail
-                .txtNocm.SetText IIf(IsNull(rs("nocm")), "", rs("nocm"))
+                .txtnocm.SetText IIf(IsNull(rs("nocm")), "", rs("nocm"))
                 .txtNoregis.SetText IIf(IsNull(rs("noregistrasi")), "", rs("noregistrasi"))
                 .txtNamaPasien.SetText IIf(IsNull(rs("namapasien")), "", rs("namapasien"))
                 .txtAlamat.SetText IIf(IsNull(rs("alamatlengkap")), "", rs("alamatlengkap"))
                 .txtJenisKelamin.SetText IIf(IsNull(rs("jeniskelamin")), "", rs("jeniskelamin"))
-                .txtNoOrder.SetText IIf(IsNull(rs("noorder")), "", rs("noorder"))
+                .txtnoorder.SetText IIf(IsNull(rs("noorder")), "", rs("noorder"))
                 .txtUmur.SetText Umurs
                 .txtCatatan.SetText catatan
                 dok = IIf(IsNull(rs("dokterperiksa")), "", rs("dokterperiksa"))
                  .txtDokterPenanggungjawab.SetText IIf(IsNull(rs("dokterperiksa")), "", rs("dokterperiksa"))
-                .txtTglregis.SetText IIf(IsNull(rs("tglpelayanan")), Now, rs("tglpelayanan"))
+                .txtTglRegis.SetText IIf(IsNull(rs("tglpelayanan")), Now, rs("tglpelayanan"))
                 .txtLahir.SetText IIf(IsNull(rs("tglLahirs")), "-", rs("tglLahirs"))
                 .txtDokterOrder.SetText dokter
                 .txtNamaPenjamin.SetText IIf(IsNull(rs("kelompokpasien")), "", rs("kelompokpasien"))
@@ -272,7 +272,7 @@ End If
                'header
                   .usFlag.SetUnboundFieldSource ("{ado.flag}")
                   .usTatt.SetUnboundFieldSource ("{ado.tat}")
-                  .txtUser.SetText User
+                  .txtuser.SetText User
                   .txtDokterPenanggungjawab.SetText "dr. Ika Yasma Yanti, Sp,PK"
                   .Tat.SetText "Tanggal Mulai  : " & IIf(IsNull(rs("tglawal")), "", rs("tglawal")) & " - " & "Tanggal Selesai  : " & IIf(IsNull(rs("tglakhir")), Now, rs("tglakhir")) & "  -  " & " Durasi :  " & IIf(IsNull(rs("tat")), "", rs("tat"))
                  .ruper.SetText IIf(IsNull(rs("ruanganperejuk")), "-", rs("ruanganperejuk"))
