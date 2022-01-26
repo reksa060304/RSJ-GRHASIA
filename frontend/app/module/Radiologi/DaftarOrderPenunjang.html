@@ -4,7 +4,8 @@
         text-align: center;
         width: 100%;
     }
-    .text-center{
+
+    .text-center {
         text-align: center;
     }
 
@@ -46,11 +47,12 @@
         background-color: #98FB98;
         color: #000000;
     }
-    .koneng{
-        background-color:#f1fa7a;
-        color:black;
+
+    .koneng {
+        background-color: #f1fa7a;
+        color: black;
     }
-    
+
     button[disabled] {
         cursor: default;
         color: #c2c2c2;
@@ -169,8 +171,12 @@
                         <span id="square" style="background-color:#3CB27A">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         <span>Selesai Periksa</span>
                     </div> -->
-                    <div class="grid_2">
-                    </div>
+                    <!-- <div class="grid_2">
+                        <input type="checkbox" class="k-checkbox" id="isOderHariInix" ng-model="item.orderHariIni"
+                            value="true" ng-click="cekOderHariIni(item.orderHariIni)">                            
+                            
+                        <label class="k-checkbox-label" for="isOrderHariInix"><b>Order Hari Ini</b></label>
+                    </div> -->
                     <div class="grid_2">
                         <input type="checkbox" class="k-checkbox" id="isSudahVerifikasi" ng-model="item.sudahVerifikasi"
                             value="true" ng-click="ceksudahVerifikasi(item.sudahVerifikasi)">
@@ -181,6 +187,11 @@
                             value="true" ng-click="cekbelumVerifikasi(item.belumVerifikasi)">
                         <label class="k-checkbox-label" for="isBelumVerifikasi"><b>Belum Verifikasi</b></label>
                     </div>
+                    <div class="grid_2">
+                        <input type="checkbox" class="k-checkbox" id="isOrderHariIni" ng-model="item.orderHariIni"
+                            value="true" ng-click="cekOrderHariIni(item.orderHariIni)">
+                        <label class="k-checkbox-label" for="isOrderHariIni"><b>Order Hari Ini</b></label>
+                    </div>                    
                 </div>
             </div>
 
@@ -304,7 +315,7 @@
 
                     <div class="grid_12">
                         <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noReg"
-                        ng-keypress="($event.which == 13)? cariFilter():item.noReg"  />
+                            ng-keypress="($event.which == 13)? cariFilter():item.noReg" />
                     </div>
                 </div>
                 <div class="grid_2">
@@ -313,8 +324,8 @@
                     </div>
 
                     <div class="grid_12">
-                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noMr" 
-                        ng-keypress="($event.which == 13)? cariFilter():item.noMr" />
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noMr"
+                            ng-keypress="($event.which == 13)? cariFilter():item.noMr" />
                     </div>
                 </div>
 
@@ -325,7 +336,7 @@
 
                     <div class="grid_12">
                         <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaPasien"
-                        ng-keypress="($event.which == 13)? cariFilter():item.namaPasien"  />
+                            ng-keypress="($event.which == 13)? cariFilter():item.namaPasien" />
                     </div>
                 </div>
                 <div class="grid_3">
@@ -335,7 +346,7 @@
 
                     <div class="grid_12">
                         <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noOrderCari"
-                          ng-keypress="($event.which == 13)? cariFilter():item.noOrderCari" />
+                            ng-keypress="($event.which == 13)? cariFilter():item.noOrderCari" />
                     </div>
                 </div>
                 <div class="grid_1">
@@ -359,7 +370,8 @@
                     <!-- <button class="c-button" ng-click="verifikasi()">Verifikasi</button> -->
                 </div>
                 <div class="grid_2" style="margin-top: 13px">
-                    <button class="btnTemplate1 " ng-disabled="true"  ng-click="hapusOrder()"><i class="fa fa-trash"></i>Hapus</button>
+                    <button class="btnTemplate1 " ng-disabled="true" ng-click="hapusOrder()"><i
+                            class="fa fa-trash"></i>Hapus</button>
                 </div>
                 <!-- <div class="grid_2" style="margin-top: 22px">
                     <button class="c-button" ng-click="editOrder()">Edit Order</button>
@@ -375,9 +387,9 @@
                     <button class="btnTemplate1" ng-click="pengkajianMedis()"><i
                             class="fa fa-stethoscope"></i>Pengkajian Medis</button>
                 </div>
-                 <div class="grid_2" style="margin-top: 13px">
-                    <button class="btnTemplate1" ng-click="detailVerif()"><i
-                            class="fa fa-th-list"></i>Detal Verif</button>
+                <div class="grid_2" style="margin-top: 13px">
+                    <button class="btnTemplate1" ng-click="detailVerif()"><i class="fa fa-th-list"></i>Detal
+                        Verif</button>
                 </div>
 
             </div>
@@ -448,7 +460,7 @@
                     <!-- <textarea style="width: 99%; height: 50px;" ng-model="headerVerif.diagnosa" disabled></textarea> -->
                 </div>
             </div>
-            
+
             <div class="grid_12 headerBox" style="margin-top:10px;">
                 <p>Rincian Layanan</p>
             </div>
@@ -458,7 +470,8 @@
                         <label c-label item="item">No</label>
                     </div>
                     <div class="grid_12">
-                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="popUp.no" disabled="true" />
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="popUp.no"
+                            disabled="true" />
                     </div>
                 </div>
                 <div class="grid_6">
@@ -493,12 +506,12 @@
             </div>
             <div class="grid_12">
 
-                <div class="pull-right" >
-                    <button class="k-button" ng-click="add()" >Tambah</button>
+                <div class="pull-right">
+                    <button class="k-button" ng-click="add()">Tambah</button>
 
                     <button class="k-button" ng-click="del()">&nbsp;Hapus</button>
                     <button class="k-button" ng-click="cancel()">Batal</button>
-               
+
                 </div>
 
             </div>
@@ -546,13 +559,13 @@
             </div>
             <div class="grid_12">
                 <div class="grid_12">
-                      <div class="grid_6">
+                    <div class="grid_6">
                         <label c-label item="item " c-label-text="Catatan "></label>
-                      </div>
-                      <div class="grid_6">
+                    </div>
+                    <div class="grid_6">
                         <label c-label item="item " c-label-text="Keterangan Order "></label>
-                      </div>
-                      <div class="grid_6">
+                    </div>
+                    <div class="grid_6">
                         <textarea class="k-textbox" ng-model="item.catatanLab" maxlength="8000" ng-disabled="isVerif"
                             style="height: 50px; width: 100%;margin-top:5px;"></textarea>
                         <p class="length-textarea">
@@ -566,7 +579,7 @@
                             8000/{{item.keteranganLab ? item.keteranganLab.length : 0}}
                         </p>
                     </div>
-                 </div>
+                </div>
             </div>
 
 
@@ -574,69 +587,68 @@
 
         <!-- </fieldset> -->
     </div>
-       <div kendo-window="popUpDetailVerif" k-title="'Detail Verifikasi'" k-width="1100"  k-visible="false"
+    <div kendo-window="popUpDetailVerif" k-title="'Detail Verifikasi'" k-width="1100" k-visible="false"
         k-on-open="win2visible = true" k-on-close="win2visible = false">
         <div class="panel panel-default container_12" style="padding: 0px 10px;">
             <fieldset>
                 <legend>Data Pasien</legend>
                 <div class="grid_12">
                     <div class="grid_3">
-                <div class="grid_12">
-                    <label c-label item="item" c-label-text="No Order"></label>
-                </div>
-                <div class="clear"></div>
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="No Order"></label>
+                        </div>
+                        <div class="clear"></div>
 
-                <div class="grid_12">
-                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="headerVerif.noorder"
-                        ng-disabled="true" />
-                </div>
-            </div>
-            <div class="grid_3">
-                <div class="grid_12">
-                    <label c-label item="item">No RM</label>
-                </div>
-                <div class="clear"></div>
+                        <div class="grid_12">
+                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="headerVerif.noorder"
+                                ng-disabled="true" />
+                        </div>
+                    </div>
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item">No RM</label>
+                        </div>
+                        <div class="clear"></div>
 
-                <div class="grid_12">
-                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="headerVerif.nocm"
-                        ng-disabled="true" />
-                </div>
-            </div>
-            <div class="grid_3">
-                <div class="grid_12">
-                    <label c-label item="item" >Nama Pasien</label>
-                </div>
-                <div class="clear"></div>
+                        <div class="grid_12">
+                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="headerVerif.nocm"
+                                ng-disabled="true" />
+                        </div>
+                    </div>
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item">Nama Pasien</label>
+                        </div>
+                        <div class="clear"></div>
 
-                <div class="grid_12">
-                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="headerVerif.namapasien"
-                        ng-disabled="true" />
-                </div>
-            </div>
-             <div class="grid_3">
-                <div class="grid_12">
-                    <label c-label item="item" >Ruang Asal</label>
-                </div>
-                <div class="clear"></div>
+                        <div class="grid_12">
+                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="headerVerif.namapasien"
+                                ng-disabled="true" />
+                        </div>
+                    </div>
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item">Ruang Asal</label>
+                        </div>
+                        <div class="clear"></div>
 
-                <div class="grid_12">
-                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="headerVerif.namaruangan"
-                        ng-disabled="true" />
-                </div>
-            </div>
-            
-           
+                        <div class="grid_12">
+                            <input c-text-box type="input" filter="" class="k-textbox"
+                                ng-model="headerVerif.namaruangan" ng-disabled="true" />
+                        </div>
+                    </div>
+
+
                 </div>
                 <div class="grid_12">
                     <div class="grid_12 borderBox">
-                      
-                        <kendo-grid  data-source="dataGridVerif" options="columnGridVerif" k-selectable="'row'"
-                        k-sortable="'true'" k-resizable="'true'" k-groupable="true" k-pageable="true"
-                        >
-                    </kendo-grid>
+
+                        <kendo-grid data-source="dataGridVerif" options="columnGridVerif" k-selectable="'row'"
+                            k-sortable="'true'" k-resizable="'true'" k-groupable="true" k-pageable="true">
+                        </kendo-grid>
                     </div>
                 </div>
-              
+
             </fieldset>
         </div>
     </div>

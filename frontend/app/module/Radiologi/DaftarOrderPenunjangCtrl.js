@@ -13,6 +13,8 @@ define(['initialize'], function (initialize) {
             $scope.btnSimpanVis = false;
             $scope.headerVerif = {}
             $scope.item.belumVerifikasi = true;
+            $scope.item.orderHariIni = true;
+            $scope.cekOderHariInis = true;
             $scope.popUp = {}
             var data2 =[]
             $scope.ruanganIdElektromedik = ''
@@ -52,6 +54,18 @@ define(['initialize'], function (initialize) {
                 } else if (data === false || data === undefined) {
                     //$scope.cekBelumVerifs = true;
                     $scope.cekSudahVerifs = false;
+                } else {
+                    return;
+                }
+            }
+            
+            $scope.cekOrderHariIni = function (data) {
+                if (data === true) {
+                    //$scope.cekBelumVerifs = false;
+                    $scope.cekOderHariInis = true;
+                } else if (data === false || data === undefined) {
+                    //$scope.cekBelumVerifs = true;
+                    $scope.cekOderHariInis = false;
                 } else {
                     return;
                 }
@@ -185,6 +199,11 @@ define(['initialize'], function (initialize) {
                     tglAwal = "&tglAwal=" + moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                     tglAkhir = "&tglAkhir=" + moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 }
+
+                var cekOrderHariIni = ""
+                if ($scope.cekOderHariInis == true){
+                    cekOrderHariIni = "&cekOrderHariIni=true";
+                }
                 // var ruanganTujuanId= ''
                 // var kelompokUser=medifirstService.getKelompokUser()
                 // if(kelompokUser =='elektromedik'){
@@ -202,7 +221,9 @@ define(['initialize'], function (initialize) {
                     ins + rg + kp
                     + dok
                     + noOrderan
+                    + cekOrderHariIni
                     + jmlRow
+                    
                     // +ruanganTujuanId
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;

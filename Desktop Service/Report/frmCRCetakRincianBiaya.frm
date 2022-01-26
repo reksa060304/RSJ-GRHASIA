@@ -280,7 +280,7 @@ Set Report = New crRincianBiayaPelayanan
             .txtAlamatRs.SetText strAlamatRS & ", " & strKodePos & ", " & strNoTlpn & ", " & strNoFax
             .txtWebEmail.SetText strEmail & ", " & strWebSite
             .txtNamaKota.SetText strNamaKota & ", "
-            .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
+            .usNoRegistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasienjk}")
             .usRuangan.SetUnboundFieldSource ("{ado.unit}")
@@ -288,13 +288,15 @@ Set Report = New crRincianBiayaPelayanan
             .usKelasH.SetUnboundFieldSource ("{ado.namakelaspd}")
             .usDokterPJawab.SetUnboundFieldSource ("{ado.dokterpj}")
             .udTglMasuk.SetUnboundFieldSource ("{ado.tglregistrasi}")
+            .usNoKwitansi.SetUnboundFieldSource ("{ado.nokwitansi}")
+            .udTglStruk.SetUnboundFieldSource ("{ado.tglstruk}")
             .udTglPlng.SetUnboundFieldSource IIf(IsNull("{ado.tglpulang}") = True, "-", ("{ado.tglpulang}"))
             .usPenjamin.SetUnboundFieldSource IIf(IsNull("{ado.namarekanan}") = True, ("-"), ("{ado.namarekanan}"))
             .usTipe.SetUnboundFieldSource ("{ado.tipepasien}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
                      
             .usJenisProduk.SetUnboundFieldSource ("{ado.jenisproduk}")
-            .udtanggal.SetUnboundFieldSource ("{ado.tglpelayanan}")
+            .udTanggal.SetUnboundFieldSource ("{ado.tglpelayanan}")
             .usTglPelayanan.SetUnboundFieldSource ("{ado.tglpelayanan}")
             .usLayanan.SetUnboundFieldSource ("{ado.namaproduk}")
             .usKelas.SetUnboundFieldSource ("{ado.namakelas}")
@@ -358,7 +360,7 @@ Set Report = New crRincianBiayaPelayanan
 '            Else
 '                .txtUser.SetText UCase(IIf(isnull(RS2("namalengkap")), "-", RS2("namalengkap")))
 '            End If
-            .txtuser.SetText UCase(strIdPegawai)
+            .txtUser.SetText UCase(strIdPegawai)
             
             If view = "false" Then
                 Dim strPrinter As String
