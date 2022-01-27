@@ -856,7 +856,7 @@ $scope.getSkor = function (stat) {
                     //     nomorEMR : e.data.data.noemr 
                     // });
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
-                        'MonTranfusiDarahCtrl ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
+                        'LembarPenilaianPanssECCtrl ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
                         $scope.cc.noregistrasi).then(function (res) {})
 
                     var arrStr = {

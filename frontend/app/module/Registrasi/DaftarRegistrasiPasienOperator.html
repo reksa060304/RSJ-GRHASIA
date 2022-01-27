@@ -361,62 +361,69 @@
 
 
 	<div class="grid_12">
+				<div class="grid_2" ng-show='cboUbahDokter'>
+					<button class="btnTemplate1" style="margin-left: 0;" ng-click="cetakNoAntrian()"><i
+							class="fa fa-list-ol"></i>Nomor
+						Antrian</button>
+				</div>
 		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1" style="margin-left: 0;" ng-click="popUpInputTindakan()"><i
-					class="fa fa-stethoscope"></i>Input Tindakan</button>
+			<button class="btnTemplate1" style="margin-left: 0;" ng-click="Tracer()"><i
+					class="fa fa-print"></i>Tracer</button>
 		</div>
-		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1" style="margin-left: 0;" ng-click="DaftarRuangan()"><i
-					class="fa fa-list-alt"></i>Detail Registrasi</button>
-		</div>
-		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1" style="margin-left: 0;" ng-click="Detail()"><i class="fa fa-list"></i>Detail
-				Tagihan</button>
-		</div>
-		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1" style="margin-left: 0;" ng-click="rekapTagihan()"><i
-					class="fa fa-clipboard"></i>Rekap Tagihan</button>
-		</div>
-		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1" style="margin-left: 0;" ng-click="UbahDokter()"><i class="fa fa-users"></i>Ubah
-				Dokter</button>
-		</div>
-
-		<div class="grid_2" ng-show='cboUbahSEP'>
-			<button class="btnTemplate1" style="margin-left: 0;" ng-click="EditPemakaianAsuransi()"><i
-					class="fa fa-heartbeat"></i>Ubah Pemakaian
-				Asuransi</button>
-		</div>
+			<div class="grid_2" ng-show='cboUbahDokter'>
+				<button class="btnTemplate1 success" style="margin-left: 0;"
+					ng-click="cetakIdentifikasiPasien()"><i class="fa fa-user"></i>Identitas Pasien</button>
+			</div>
+			<div class="grid_2" ng-show='cboUbahDokter'>
+				<button class="btnTemplate1" style="margin-left: 0;" ng-click="EditRegistrasi()"><i
+						class="fa fa-edit"></i>Edit
+					Registrasi</button>
+			</div>
+				<div class="grid_2" ng-show='cboUbahDokter'>
+					<button class="btnTemplate1" style="margin-left: 0;" ng-click="Detail()"><i
+							class="fa fa-list"></i>Detail
+						Tagihan</button>
+				</div>
+<div class="grid_2" ng-show='cboUbahDokter'>
+	<button class="btnTemplate1 cancel" style="margin-left: 0;" ng-click="BatalPeriksa()"><i
+			class="fa fa-arrow-left"></i>Batal
+		Periksa</button>
+</div>
+	
+		
 
 
 	</div>
 	<div class="grid_12">
-		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="EditRegistrasi()"><i
-					class="fa fa-edit"></i>Edit
-				Registrasi</button>
+		<div class="grid_2" ng-show='cboUbahSEP'>
+			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="EditPemakaianAsuransi()"><i
+					class="fa fa-heartbeat"></i>Ubah Pemakaian
+				Asuransi</button>
 		</div>
+		<div class="grid_2" ng-show='cboUbahDokter'>
+			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="CetakSEP()"><i
+					class="fa fa-print"></i>Cetak
+				SEP</button>
+		</div>
+	<div class="grid_2" ng-show='cboUbahDokter'>
+		<button class="btnTemplate1 " style="margin-top:-20px;margin-left: 0;" ng-click="showPopRencana()"><i
+				class="fa fa-print"></i>
+			Rencana Kontrol/SPRI</button>
+	</div>
+
 		<div class="grid_2" ng-show='cboUbahSEP'>
 			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="EditSEP()"><i
 					class="fa fa-home"></i>Input
 				SEP</button>
 		</div>
+		
+	<div class="grid_2" ng-show='cboUbahDokter'>
+		<button class="btnTemplate1" style="margin-top:-20px; margin-left: 0;" ng-click="popUpInputTindakan()"><i
+				class="fa fa-stethoscope"></i>Input Tindakan</button>
+	</div>
 
-		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="kartupasien()"><i
-					class="fa fa-print"></i>Kartu
-				Pasien</button>
-		</div>
-		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1 success" style="margin-top:-20px;margin-left: 0;" ng-click="labelpasien()"><i
-					class="fa fa-print"></i>Label
-				Pasien</button>
-		</div>
+	
 
-		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="Tracer()"><i
-					class="fa fa-print"></i>Tracer</button>
-		</div>
 		<div class="grid_2" ng-show='cboUbahDokter'>
 			<button class="btnTemplate1 cancel" style="margin-top:-20px;margin-left: 0;"
 				ng-click="hapusPemakaianAsuransi()"><i class="fa fa-arrow-left"></i>Hapus Pemakaian Asuransi
@@ -440,19 +447,18 @@
 					class="fa fa-print"></i>Gelang
 				Pasien</button>
 		</div>
-		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="CetakSEP()"><i
-					class="fa fa-print"></i>Cetak
-				SEP</button>
-		</div>
+			<div class="grid_2" ng-show='cboUbahDokter'>
+				<button class="btnTemplate1 success" style="margin-top:-20px;margin-left: 0;" ng-click="labelpasien()"><i
+						class="fa fa-print"></i>Label
+					Pasien</button>
+			</div>
 		<div class="grid_2" ng-show='cboUbahDokter'>
 			<button class="btnTemplate1 success" style="margin-top:-20px;margin-left: 0;" ng-click="RMK()"><i
 					class="fa fa-print"></i>Cetak RMK</button>
 		</div>
 		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1 cancel" style="margin-top:-20px;margin-left: 0;" ng-click="BatalPeriksa()"><i
-					class="fa fa-arrow-left"></i>Batal
-				Periksa</button>
+			<button class="btnTemplate1" style="margin-left: 0; margin-top:-20px;" ng-click="DaftarRuangan()"><i
+					class="fa fa-list-alt"></i>Detail Registrasi</button>
 		</div>
 		<div class="grid_2" ng-show='cboUbahDokter'>
 			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="resumeMedis()"><i
@@ -482,9 +488,11 @@
 					class="fa fa-plus-square"></i>Expertisa
 				Radiologi</button>
 		</div>
+	
 		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1 success" style="margin-top:-20px;margin-left: 0;"
-				ng-click="cetakIdentifikasiPasien()"><i class="fa fa-user"></i>Identitas Pasien</button>
+			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="UbahDokter()"><i
+					class="fa fa-users"></i>Ubah
+				Dokter</button>
 		</div>
 
 		<div class="grid_2" ng-show='cboUbahDokter'>
@@ -492,10 +500,10 @@
 					class="fa fa-heart"></i>Input Diagnosa</button>
 		</div>
 		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="cetakNoAntrian()"><i
-					class="fa fa-list-ol"></i>Nomor
-				Antrian</button>
+			<button class="btnTemplate1" style="margin-left: 0;margin-top:-20px;" ng-click="rekapTagihan()"><i
+					class="fa fa-clipboard"></i>Rekap Tagihan</button>
 		</div>
+
 		<div class="grid_2" ng-show='cboUbahDokter'>
 			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="cetakBlangkoBpjs()"><i
 					class="fa fa-print"></i>Cetak Blanko BPJS</button>
@@ -521,8 +529,9 @@
 				Insiden Internal</button>
 		</div>
 		<div class="grid_2" ng-show='cboUbahDokter'>
-			<button class="btnTemplate1 " style="margin-top:-20px;margin-left: 0;" ng-click="showPopRencana()"><i class="fa fa-print"></i>
-				Rencana Kontrol/SPRI</button>
+			<button class="btnTemplate1" style="margin-top:-20px;margin-left: 0;" ng-click="kartupasien()"><i
+					class="fa fa-print"></i>Kartu
+				Pasien</button>
 		</div>
 		<!-- <div class="grid_2" ng-show='cboUbahDokter' >
 			<md-menu>
