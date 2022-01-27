@@ -21,7 +21,23 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			loadCombo();
 			loadData();
 			// postIKTvisite()
-			
+
+			$scope.EditPasien = function () {
+				cacheHelper.set('cacheStatusPasien', 'LAMA');
+				if ($scope.nocm != undefined) {
+
+					cacheHelper.set('CacheRegisBayi', undefined);
+					$state.go('RegistrasiPasienBaru', {
+						noRec: 0,
+						idPasien: $scope.idPasien
+					})
+
+
+				} else {
+					messageContainer.error("Pilih data dulu!")
+				}
+			}
+
 			$scope.selectImage = function () {
                 console.log($scope.itemimg.gambar.keterangan)
                 $scope.itemimg.keterangan = $scope.itemimg.gambar.keterangan
@@ -592,6 +608,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
 			$scope.klikGrid = function (dataPasienSelected) {
 				if (dataPasienSelected != undefined) {
+					$scope.nocm = dataPasienSelected.nocm;
+					$scope.idPasien = dataPasienSelected.nocmfk;
 					$scope.item.namaDokter = { id: dataPasienSelected.pgid, namalengkap: dataPasienSelected.namadokter }
 					// $scope.item.ruanganAntrian = {id:dataPasienSelected.objectruanganlastfk,namaruangan:dataPasienSelected.namaruangan}
 				}
