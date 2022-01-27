@@ -140,649 +140,699 @@ define(['initialize'], function (initialize) {
                 $scope.listData2 = arrayShiftJaga2
             })
 
-            $scope.listRiwayatKesehatanPasien = [
+            // $scope.listRawatDiriPasien = [
+            //     {
+            //         "id": 4, "nama": "Mandi",
+            //         "detail": [
+            //             { "id": 21008062, "nama": "Mandiri", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008063, "nama": "Bantuan Minimal", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008064, "nama": "Bantuan Total", "satuan": "", "type": "textbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 4, "nama": "Toileting/eliminasi",
+            //         "detail": [
+            //             { "id": 21008066, "nama": "Mandiri", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008067, "nama": "Bantuan Minimal", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008068, "nama": "Bantuan Total", "satuan": "", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 4, "nama": "Berpakaian",
+            //         "detail": [
+            //             { "id": 21008070, "nama": "Mandiri", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008071, "nama": "Bantuan Minimal", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008072, "nama": "Bantuan Total", "satuan": "", "type": "textbox" },
+            //         ]
+            //     },
+                // {
+                //     "id": 4, "nama": "Makan",
+                //     "detail": [
+                //         { "id": 21008074, "nama": "Mandiri", "satuan": "", "type": "checkbox" },
+                //         { "id": 21008075, "nama": "Bantuan Minimal", "satuan": "", "type": "checkbox" },
+                //         { "id": 21008076, "nama": "Bantuan Total", "satuan": "", "type": "textbox" },
+                //     ]
+                // },
+            // ]
+
+            $scope.listMandi = [
                 {
-                    "id": 1, "nama": "",
+                    "id": 1, "nama": "a. Mandi",
                     "detail": [
-                        { "id": 21008060, "nama": "Riwayat Penyakit Lalu : ", "satuan": "", "type": "textbox" },
+                        { "id": 1901300203, "nama": "Mandiri", "satuan": "", "type": "checkbox" },
+                        { "id": 1901300204, "nama": "Bantuan Minimal", "satuan": "", "type": "checkbox" },
+                        { "id": 1901300205, "nama": "Bantuan Total", "satuan": "", "type": "checkbox" },
                     ]
-                },
+                }
+            ]
+
+            $scope.listToileting = [
                 {
-                    "id": 1, "nama": "Pernah mengalami gangguan jiwa di masa lalu",
+                    "id": 1, "nama": "b. Toileting/eliminasi",
                     "detail": [
-                        { "id": 21008062, "nama": "Ya", "satuan": "", "type": "checkbox" },
-                        { "id": 21008063, "nama": "Tidak", "satuan": "", "type": "checkbox" },
-                        { "id": 21008064, "nama": "Jika ya jelaskan", "satuan": "", "type": "textbox" },
+                        { "id": 1901300206, "nama": "Mandiri", "satuan": "", "type": "checkbox" },
+                        { "id": 1901300207, "nama": "Bantuan Minimal", "satuan": "", "type": "checkbox" },
+                        { "id": 1901300208, "nama": "Bantuan Total", "satuan": "", "type": "checkbox" },
                     ]
-                },
-                {
-                    "id": 1, "nama": "Pengobatan sebelumnya",
-                    "detail": [
-                        { "id": 21008066, "nama": "Berhasil", "satuan": "", "type": "checkbox" },
-                        { "id": 21008067, "nama": "Kurang berhasil", "satuan": "", "type": "checkbox" },
-                        { "id": 21008068, "nama": "Tidak berhasil", "satuan": "", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Pernah mengalami penyakit fisik (termasuk gangguan tumbuh kembang)",
-                    "detail": [
-                        { "id": 21008070, "nama": "Ya", "satuan": "", "type": "checkbox" },
-                        { "id": 21008071, "nama": "Tidak", "satuan": "", "type": "checkbox" },
-                        { "id": 21008072, "nama": "Jika Ya jelaskan", "satuan": "", "type": "textbox" },
-                    ]
-                },
+                }
             ]
             
-            $scope.listStatusFisik = [
+            $scope.listBerpakaian = [
                 {
-                    "id": 1, "nama": "Tanda vital",
+                    "id": 1, "nama": "c. Berpakaian",
                     "detail": [
-                        { "id": 21008075, "nama": "Tekanan Darah", "satuan": "mmHg", "type": "textbox" },
-                        { "id": 21008076, "nama": "&nbsp;", "satuan": "mmHg", "type": "textbox" },
-                        { "id": 21008077, "nama": "Nadi", "satuan": "x/mnt", "type": "textbox" },
-                        { "id": 21008078, "nama": "RR", "satuan": "x/mnt", "type": "textbox" },
-                        { "id": 21008079, "nama": "Suhu", "satuan": "°C", "type": "textbox" },
-                        { "id": 21008080, "nama": "Pernafasan", "satuan": "x/mnt", "type": "textbox" },
-                        { "id": 21008081, "nama": "BB", "satuan": "Kg", "type": "textbox" },
-                        { "id": 21008082, "nama": "TB", "satuan": "Cm", "type": "textbox" },
+                        { "id": 1901300209, "nama": "Mandiri", "satuan": "", "type": "checkbox" },
+                        { "id": 1901300230, "nama": "Bantuan Minimal", "satuan": "", "type": "checkbox" },
+                        { "id": 1901300231, "nama": "Bantuan Total", "satuan": "", "type": "checkbox" },
                     ]
                 }
             ]
 
-            $scope.listStatusMental = [
+            $scope.listMakan = [
                 {
-                    "id": 1, "nama": "Penampilan",
+                    "id": 1, "nama": "d. Makan",
                     "detail": [
-                        { "nama": "Perbandingan penampilan terhadap usia", "satuan": "", "type": "label" },
-                        { "id": 21008086, "nama": "Lebih muda dari usia", "satuan": "", "type": "checkbox" },
-                        { "id": 21008087, "nama": "Sesuai usia", "satuan": "", "type": "checkbox" },
-                        { "id": 21008088, "nama": "Lebih tua dari usia", "satuan": "", "type": "checkbox" },
-                        { "nama": "Perawatan diri", "satuan": "", "type": "label" },
-                        { "id": 21008090, "nama": "Baik", "satuan": "", "type": "checkbox" },
-                        { "id": 21008091, "nama": "Cukup", "satuan": "", "type": "checkbox" },
-                        { "id": 21008092, "nama": "Kurang", "satuan": "", "type": "checkbox" },
-                        { "nama": "Psikomotor", "satuan": "", "type": "label" },
-                        { "id": 21008094, "nama": "Hipoaktif", "satuan": "", "type": "checkbox" },
-                        { "id": 21008095, "nama": "Normoaktif", "satuan": "", "type": "checkbox" },
-                        { "id": 21008096, "nama": "Hiperaktif", "satuan": "", "type": "checkbox" },
-                        { "nama": "Sikap terhadap pemeriksa", "satuan": "", "type": "label" },
-                        { "id": 21008098, "nama": "Kooperatif", "satuan": "", "type": "checkbox" },
-                        { "id": 21008099, "nama": "Tidak Kooperatif", "satuan": "", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Kesadaran",
-                    "detail": [
-                        { "nama": "Kualitatif", "satuan": "", "type": "label" },
-                        { "id": 21008102, "nama": "Tidak Berubah", "satuan": "", "type": "checkbox" },
-                        { "id": 21008103, "nama": "Berubah", "satuan": "", "type": "checkbox" },
-                        { "nama": "Kuantitatif", "satuan": "", "type": "label" },
-                        { "id": 21008105, "nama": "Compos Mentis", "satuan": "", "type": "checkbox" },
-                        { "id": 21008106, "nama": "Delirium", "satuan": "", "type": "checkbox" },
-                        { "id": 21008107, "nama": "Somnolen", "satuan": "", "type": "checkbox" },
-                        { "id": 21008108, "nama": "Spoor", "satuan": "", "type": "checkbox" },
-                        { "id": 21008109, "nama": "Koma", "satuan": "", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Suasanan/Alam Perasaan",
-                    "detail": [
-                        { "nama": "Mood", "satuan": "", "type": "label" },
-                        { "id": 21008112, "nama": "Euforik", "satuan": "", "type": "checkbox" },
-                        { "id": 21008113, "nama": "Disforik", "satuan": "", "type": "checkbox" },
-                        { "nama": "Afek", "satuan": "", "type": "label" },
-                        { "id": 21008115, "nama": "Hipertimik (meluas)", "satuan": "", "type": "checkbox" },
-                        { "id": 21008116, "nama": "Hipotimik (menyempit)", "satuan": "", "type": "checkbox" },
-                        { "id": 21008117, "nama": "Tumpul", "satuan": "", "type": "checkbox" },
-                        { "id": 21008118, "nama": "Datar", "satuan": "", "type": "checkbox" },
-                        { "nama": "Keserasian", "satuan": "", "type": "label" },
-                        { "id": 21008120, "nama": "Serasi", "satuan": "", "type": "checkbox" },
-                        { "id": 21008121, "nama": "Tidak Serasi", "satuan": "", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Pembicaraan",
-                    "detail": [
-                        { "nama": "Ketersambungan pembicaraan", "satuan": "", "type": "label" },
-                        { "id": 21008124, "nama": "Bicara Menyambung", "satuan": "", "type": "checkbox" },
-                        { "id": 21008125, "nama": "Bicara Tidak Menyambung", "satuan": "", "type": "checkbox" },
-                        { "nama": "Inonasi", "satuan": "", "type": "label" },
-                        { "id": 21008127, "nama": "Jelas", "satuan": "", "type": "checkbox" },
-                        { "id": 21008128, "nama": "Tidak Jelas", "satuan": "", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Persepsi",
-                    "detail": [
-                        { "id": 21008130, "nama": "Halusinasi", "satuan": "", "type": "textbox" },
-                        { "id": 21008131, "nama": "Ilusi", "satuan": "", "type": "textbox" },
-                        { "id": 21008132, "nama": "Depersonalisasi", "satuan": "", "type": "textbox" },
-                        { "id": 21008133, "nama": "Derealisasi", "satuan": "", "type": "textbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Pikiran",
-                    "detail": [
-                        { "nama": "Bentuk", "satuan": "", "type": "label" },
-                        { "id": 21008136, "nama": "Realistic", "satuan": "", "type": "checkbox" },
-                        { "id": 21008137, "nama": "Non realistic", "satuan": "", "type": "checkbox" },
-                        { "nama": "Isi", "satuan": "", "type": "label" },
-                        { "id": 21008139, "nama": "Waham Curiga", "satuan": "", "type": "checkbox" },
-                        { "id": 21008140, "nama": "Paranoid", "satuan": "", "type": "checkbox" },
-                        { "nama": "Arus", "satuan": "", "type": "label" },
-                        { "id": 21008142, "nama": "Koheran", "satuan": "", "type": "checkbox" },
-                        { "id": 21008143, "nama": "Inkoheren", "satuan": "", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Orientasi",
-                    "detail": [
-                        { "nama": "Waktu", "satuan": "", "type": "label" },
-                        { "id": 21008146, "nama": "Mampu", "satuan": "", "type": "checkbox" },
-                        { "id": 21008147, "nama": "Tidak mati", "satuan": "", "type": "checkbox" },
-                        { "nama": "Tempat", "satuan": "", "type": "label" },
-                        { "id": 21008149, "nama": "Tahu Dimana berada", "satuan": "", "type": "checkbox" },
-                        { "id": 21008150, "nama": "Tidak tahu Dimana berada", "satuan": "", "type": "checkbox" },
-                        { "nama": "Orang", "satuan": "", "type": "label" },
-                        { "id": 21008152, "nama": "Tahu siapa pemeriksa dan peranan orang - orang disekitarnya", "satuan": "", "type": "checkbox" },
-                        { "id": 21008153, "nama": "Tidak tahu siapa pemeriksa dan orang orang disekitarnya", "satuan": "", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Daya ingat dan konsentrasi",
-                    "detail": [
-                        { "id": 21008155, "nama": "Baik", "satuan": "", "type": "checkbox" },
-                        { "id": 21008156, "nama": "Menurun", "satuan": "", "type": "checkbox" },
-                    ]
-                },
-            ]
-
-            $scope.listStatusBio = [
-                {
-                    "id": 1, "nama": "Status Biologis",
-                    "detail": [
-                        { "id": 21008159, "nama": "Pola Malan :", "satuan": "x/hari", "type": "textbox" },
-                        { "id": 21008160, "nama": "Pola Minum :", "satuan": "cc/hari", "type": "textbox" },
-                        { "id": 21008161, "nama": "BAK :", "satuan": "x/hari", "type": "textbox" },
-                        { "id": 21008162, "nama": "BAB :", "satuan": "x/hari", "type": "textbox" },
-
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Status Psikologis",
-                    "detail": [
-                        { "id": 21008164, "nama": "Cemas", "type": "checkbox" },
-                        { "id": 21008165, "nama": "Takut", "type": "checkbox" },
-                        { "id": 21008166, "nama": "Marah", "type": "checkbox" },
-                        { "id": 21008167, "nama": "Sedih", "type": "checkbox" },
-                        { "id": 21008168, "nama": "Kecenderungan bunuh diri", "type": "checkbox" },
-                        { "id": 21008169, "nama": "dll", "type": "textbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Status Sosial",
-                    "detail": [
-                        { "nama": "Pekerjaan :", "type": "label" },
-                        { "id": 21008172, "nama": "Wiraswasta", "type": "checkbox" },
-                        { "id": 21008173, "nama": "Pegawai Negeri", "type": "checkbox" },
-                        { "id": 21008174, "nama": "Pegawai Swasta", "type": "checkbox" },
-                        { "id": 21008175, "nama": "Tidak Bekerja", "type": "checkbox" },
-                        { "id": 21008176, "nama": "Siswa/Mahasiswa", "type": "checkbox" },
-                        { "id": 21008177, "nama": "Pensiun", "type": "checkbox" },
-                        { "id": 21008178, "nama": "Alamat Rumah :", "type": "textbox" },
-                        { "id": 21008179, "nama": "No. Telepon :", "type": "textbox" },
-
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Spriritual dan Kulturasi",
-                    "detail": [
-                        { "nama": "Agama", "type": "label" },
-                        { "id": 21008182, "nama": "Islam", "type": "checkbox" },
-                        { "id": 21008183, "nama": "Protestan", "type": "checkbox" },
-                        { "id": 21008184, "nama": "Katolik", "type": "checkbox" },
-                        { "id": 21008185, "nama": "Hindu", "type": "checkbox" },
-                        { "id": 21008186, "nama": "Budha", "type": "checkbox" },
-                        { "id": 21008187, "nama": "Konghucu", "type": "checkbox" },
-                        { "id": 21008188, "nama": "Lain-lain", "type": "checkbox" },
-                        { "id": 21008189, "nama": "", "type": "textbox" },
-                        { "nama": "Kegiatan Spiritual dan nilai nilai kepercayaan yang dilakukan", "type": "label" },
-                        { "id": 21008191, "nama": "Ada, Sebutkan", "type": "checkbox" },
-                        { "id": 21008192, "nama": "Tidak ada", "type": "checkbox" },
-                        { "id": 21008193, "nama": "", "type": "textbox" },
-                        { "nama": "Bahasa sehari-hari", "type": "label" },
-                        { "id": 21008195, "nama": "Indonesia", "type": "checkbox" },
-                        { "id": 21008196, "nama": "Inggris", "type": "checkbox" },
-                        { "id": 21008197, "nama": "Daerah", "type": "checkbox" },
-                        { "id": 21008198, "nama": "Lain-lain", "type": "textbox" },
-                    ]
-                },
-            ]
-
-            $scope.listStatusEkonomi = [
-                {
-                    "id": 1, "nama": "",
-                    "detail": [
-                        { "nama": "Cara Pembayaran", "type": "label" },
-                        { "id": 21008201, "nama": "Pribadi", "type": "checkbox" },
-                        { "id": 21008202, "nama": "Perusahaan", "type": "checkbox" },
-                        { "id": 21008203, "nama": "Asuransi", "type": "checkbox" },
-                        { "nama": "Pendapatan", "type": "label" },
-                        { "id": 21008205, "nama": "UMR/rp", "type": "checkbox" },
-                        { "id": 21008206, "nama": "UMR s/d 5 juta rp", "type": "checkbox" },
-                        { "id": 21008207, "nama": "5 s/d 10 juta rp", "type": "checkbox" },
-                        { "id": 21008208, "nama": "10 s/d 15 juta rp", "type": "checkbox" },
-                        { "id": 21008209, "nama": "> 15 juta rp", "type": "checkbox" },
-                    ]
-                },
-            ]
-
-            $scope.listRiwayatAlergi = [
-                {
-                    "id": 1, "nama": "",
-                    "detail": [
-                        { "id": 21008211, "nama": "Ya, Sebutkan :", "type": "checkbox" },
-                        { "id": 21008212, "nama": "Tidak", "type": "checkbox" },
-                        { "id": 21008213, "nama": "", "type": "textbox" },
-                        { "id": 21008214, "nama": "Sticker tanda alergi dipasang (warna merah)", "type": "checkbox2" },
-                    ]
-                },
-            ]
-
-            $scope.listScoreGambar = [
-                {
-                    "id": 1, "nama": "",
-                    "detail": [
-                        { "id": 21008216, "nama": "0 = Tidak ada Nyeri", "type": "checkbox" },
-                        { "id": 21008217, "nama": "1 - 3 = Nyeri Ringan", "type": "checkbox" },
-                        { "id": 21008218, "nama": "4 - 6 = Nyeri Sedang", "type": "checkbox" },
-                        { "id": 21008219, "nama": "7 - 10 = Nyeri Berat", "type": "checkbox" },
-                    ]
-                },
-            ]
-
-            $scope.listSkalaFlacc = [
-                {
-                    "id": 1, "nama": "Wajah",
-                    "detail": [
-                        { "id": 21008221, "nama": "Tersenyum/tidak ada ekspresi khusus", "descNilai": "0", "target":"21008224", "type": "checkbox" },
-                        { "id": 21008222, "nama": "Terkadang meringis/menarik diri", "descNilai": "1", "target":"21008224", "type": "checkbox" },
-                        { "id": 21008223, "nama": "Sering menggetarkan dagu mengatupkan rahang", "descNilai": "2", "target":"21008224", "type": "checkbox" },
-                        { "id": 21008224, "nama": "", "type": "textbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Kaki",
-                    "detail": [
-                        { "id": 21008226, "nama": "Gerakan normal/relaksasi", "descNilai": "0", "target":"21008229", "type": "checkbox" },
-                        { "id": 21008227, "nama": "Tidak tenang/tegang", "descNilai": "1", "target":"21008229", "type": "checkbox" },
-                        { "id": 21008228, "nama": "Kaki dibuat menendang/menarik diri", "descNilai": "2", "target":"21008229", "type": "checkbox" },
-                        { "id": 21008229, "nama": "", "type": "textbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Aktivitas",
-                    "detail": [
-                        { "id": 21008231, "nama": "Tidur posisi normal, mudah bergerak", "descNilai": "0", "target":"21008234", "type": "checkbox" },
-                        { "id": 21008232, "nama": "Gerakan menggeliat, berguling, kaku", "descNilai": "1", "target":"21008234", "type": "checkbox" },
-                        { "id": 21008233, "nama": "Melengkungkan punggung/kaki/menghentak", "descNilai": "2", "target":"21008234", "type": "checkbox" },
-                        { "id": 21008234, "nama": "", "type": "textbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Menangis",
-                    "detail": [
-                        { "id": 21008236, "nama": "Tidak menangis (bangun/tidur)", "descNilai": "0", "target":"21008239", "type": "checkbox" },
-                        { "id": 21008237, "nama": "Mengerang, merengek-rengek", "descNilai": "1", "target":"21008239", "type": "checkbox" },
-                        { "id": 21008238, "nama": "Menangis terus menerus, terhisak, menjerit", "descNilai": "2", "target":"21008239", "type": "checkbox" },
-                        { "id": 21008239, "nama": "", "type": "textbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Bersuara",
-                    "detail": [
-                        { "id": 21008241, "nama": "Bersuara, normal, tenang", "descNilai": "0", "target":"21008244", "type": "checkbox" },
-                        { "id": 21008242, "nama": "Tenang bila dipeluk, digendong atau diajak bicara", "descNilai": "1", "target":"21008244", "type": "checkbox" },
-                        { "id": 21008243, "nama": "Kaki dibuat menendang/menarik diri", "descNilai": "2", "target":"21008244", "type": "checkbox" },
-                        { "id": 21008244, "nama": "", "type": "textbox" },
-                    ]
-                },
-            ]
-
-            $scope.listPenilaianNyeri = [
-                {
-                    "id": 1, "nama": "Penilaian Nyeri",
-                    "detail": [
-                        { "nama": "Provokatif", "type": "label" },
-                        { "id": 21008252, "nama": "Ruda paksa", "type": "checkbox" },
-                        { "id": 21008253, "nama": "Benturan", "type": "checkbox" },
-                        { "id": 21008254, "nama": "Sayatan", "type": "checkbox" },
-                        { "id": 21008255, "nama": "dll", "type": "textbox" },
-                        { "nama": "Quality", "type": "label" },
-                        { "id": 21008257, "nama": "Tertusuk", "type": "checkbox" },
-                        { "id": 21008258, "nama": "Tertekan/tertindih", "type": "checkbox" },
-                        { "id": 21008259, "nama": "Diiris-iris", "type": "checkbox" },
-                        { "id": 21008260, "nama": "dll", "type": "textbox" },
-                        { "nama": "Regional", "type": "label" },
-                        { "id": 21008262, "nama": "Lokasi", "type": "checkbox1" },
-                        { "id": 21008263, "nama": "", "type": "textbox" },
-                        { "nama": "Menjalar", "type": "label" },
-                        { "id": 21008265, "nama": "Tidak", "type": "checkbox" },
-                        { "id": 21008266, "nama": "Ya, Ke :", "type": "checkbox2" },
-                        { "id": 21008267, "nama": "", "type": "textbox" },
-                        { "nama": "Scala", "type": "label" },
-                        { "id": 21008269, "nama": "", "type": "textbox" },
-                        { "nama": "Time", "type": "label" },
-                        { "id": 21008271, "nama": "Jarang", "type": "checkbox" },
-                        { "id": 21008272, "nama": "Hilang timbul", "type": "checkbox" },
-                        { "id": 21008273, "nama": "Terus menerus", "type": "checkbox" },
-                    ]
-                },
-            ]
-
-            $scope.listPengkajian = [
-                {
-                    "id": 1, "nama": "",
-                    "detail": [
-                        { "nama": "A", "type": "label" },
-                        { "nama": "Cara Bejalan Pasien (salah satu atau lebih) <br> 1. Tidak seimbang/sempoyongan/limbung <br> 2. Jalan dengan menggunakan alat bantu (kruk, tripot, kursi roda, orang lain)", "type": "label" },
-                        { "id": 21008277, "nama": "", "type": "checkbox" },
-                        { "id": 21008278, "nama": "", "type": "checkbox" },
-
-                    ]
-                },
-                {
-                    "id": 1, "nama": "",
-                    "detail": [
-                        { "nama": "B", "type": "label" },
-                        { "nama": "Menopang saat akan duduk : tampak memegang pinggiran kursi atau meja/benda lain sebagai penopang saat akan duduk.", "type": "label" },
-                        { "id": 21008280, "nama": "", "type": "checkbox" },
-                        { "id": 21008281, "nama": "", "type": "checkbox" },
+                        { "id": 1901300232, "nama": "Mandiri", "satuan": "", "type": "checkbox" },
+                        { "id": 1901300233, "nama": "Bantuan Minimal", "satuan": "", "type": "checkbox" },
+                        { "id": 1901300234, "nama": "Bantuan Total", "satuan": "", "type": "checkbox" },
                     ]
                 }
             ]
-            $scope.listHasil = [
-                {
-                    "id": 1, "nama": "1.",
-                    "detail": [
-                        { "nama": "Tidak Beresiko", "type": "label" },
-                        { "nama": "Tidak ditemukan A & B", "type": "label" },
-                        { "id": 21008283, "nama": "", "type": "textarea" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "2.",
-                    "detail": [
-                        { "nama": "Risiko Rendah", "type": "label" },
-                        { "nama": "Ditemukan salah satu A/B", "type": "label" },
-                        { "id": 21008284, "nama": "", "type": "textarea" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "3.",
-                    "detail": [
-                        { "nama": "Risiko tinggi", "type": "label" },
-                        { "nama": "Ditemukan A & B", "type": "label" },
-                        { "id": 21008285, "nama": "", "type": "textarea" },
-                    ]
-                },
+
+            medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                $scope.listPegawai = data
+            })
+
+            // $scope.listStatusFisik = [
+            //     {
+            //         "id": 1, "nama": "Tanda vital",
+            //         "detail": [
+            //             { "id": 21008075, "nama": "Tekanan Darah", "satuan": "mmHg", "type": "textbox" },
+            //             { "id": 21008076, "nama": "&nbsp;", "satuan": "mmHg", "type": "textbox" },
+            //             { "id": 21008077, "nama": "Nadi", "satuan": "x/mnt", "type": "textbox" },
+            //             { "id": 21008078, "nama": "RR", "satuan": "x/mnt", "type": "textbox" },
+            //             { "id": 21008079, "nama": "Suhu", "satuan": "°C", "type": "textbox" },
+            //             { "id": 21008080, "nama": "Pernafasan", "satuan": "x/mnt", "type": "textbox" },
+            //             { "id": 21008081, "nama": "BB", "satuan": "Kg", "type": "textbox" },
+            //             { "id": 21008082, "nama": "TB", "satuan": "Cm", "type": "textbox" },
+            //         ]
+            //     }
+            // ]
+
+            // $scope.listStatusMental = [
+            //     {
+            //         "id": 1, "nama": "Penampilan",
+            //         "detail": [
+            //             { "nama": "Perbandingan penampilan terhadap usia", "satuan": "", "type": "label" },
+            //             { "id": 21008086, "nama": "Lebih muda dari usia", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008087, "nama": "Sesuai usia", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008088, "nama": "Lebih tua dari usia", "satuan": "", "type": "checkbox" },
+            //             { "nama": "Perawatan diri", "satuan": "", "type": "label" },
+            //             { "id": 21008090, "nama": "Baik", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008091, "nama": "Cukup", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008092, "nama": "Kurang", "satuan": "", "type": "checkbox" },
+            //             { "nama": "Psikomotor", "satuan": "", "type": "label" },
+            //             { "id": 21008094, "nama": "Hipoaktif", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008095, "nama": "Normoaktif", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008096, "nama": "Hiperaktif", "satuan": "", "type": "checkbox" },
+            //             { "nama": "Sikap terhadap pemeriksa", "satuan": "", "type": "label" },
+            //             { "id": 21008098, "nama": "Kooperatif", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008099, "nama": "Tidak Kooperatif", "satuan": "", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Kesadaran",
+            //         "detail": [
+            //             { "nama": "Kualitatif", "satuan": "", "type": "label" },
+            //             { "id": 21008102, "nama": "Tidak Berubah", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008103, "nama": "Berubah", "satuan": "", "type": "checkbox" },
+            //             { "nama": "Kuantitatif", "satuan": "", "type": "label" },
+            //             { "id": 21008105, "nama": "Compos Mentis", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008106, "nama": "Delirium", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008107, "nama": "Somnolen", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008108, "nama": "Spoor", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008109, "nama": "Koma", "satuan": "", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Suasanan/Alam Perasaan",
+            //         "detail": [
+            //             { "nama": "Mood", "satuan": "", "type": "label" },
+            //             { "id": 21008112, "nama": "Euforik", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008113, "nama": "Disforik", "satuan": "", "type": "checkbox" },
+            //             { "nama": "Afek", "satuan": "", "type": "label" },
+            //             { "id": 21008115, "nama": "Hipertimik (meluas)", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008116, "nama": "Hipotimik (menyempit)", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008117, "nama": "Tumpul", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008118, "nama": "Datar", "satuan": "", "type": "checkbox" },
+            //             { "nama": "Keserasian", "satuan": "", "type": "label" },
+            //             { "id": 21008120, "nama": "Serasi", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008121, "nama": "Tidak Serasi", "satuan": "", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Pembicaraan",
+            //         "detail": [
+            //             { "nama": "Ketersambungan pembicaraan", "satuan": "", "type": "label" },
+            //             { "id": 21008124, "nama": "Bicara Menyambung", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008125, "nama": "Bicara Tidak Menyambung", "satuan": "", "type": "checkbox" },
+            //             { "nama": "Inonasi", "satuan": "", "type": "label" },
+            //             { "id": 21008127, "nama": "Jelas", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008128, "nama": "Tidak Jelas", "satuan": "", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Persepsi",
+            //         "detail": [
+            //             { "id": 21008130, "nama": "Halusinasi", "satuan": "", "type": "textbox" },
+            //             { "id": 21008131, "nama": "Ilusi", "satuan": "", "type": "textbox" },
+            //             { "id": 21008132, "nama": "Depersonalisasi", "satuan": "", "type": "textbox" },
+            //             { "id": 21008133, "nama": "Derealisasi", "satuan": "", "type": "textbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Pikiran",
+            //         "detail": [
+            //             { "nama": "Bentuk", "satuan": "", "type": "label" },
+            //             { "id": 21008136, "nama": "Realistic", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008137, "nama": "Non realistic", "satuan": "", "type": "checkbox" },
+            //             { "nama": "Isi", "satuan": "", "type": "label" },
+            //             { "id": 21008139, "nama": "Waham Curiga", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008140, "nama": "Paranoid", "satuan": "", "type": "checkbox" },
+            //             { "nama": "Arus", "satuan": "", "type": "label" },
+            //             { "id": 21008142, "nama": "Koheran", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008143, "nama": "Inkoheren", "satuan": "", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Orientasi",
+            //         "detail": [
+            //             { "nama": "Waktu", "satuan": "", "type": "label" },
+            //             { "id": 21008146, "nama": "Mampu", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008147, "nama": "Tidak mati", "satuan": "", "type": "checkbox" },
+            //             { "nama": "Tempat", "satuan": "", "type": "label" },
+            //             { "id": 21008149, "nama": "Tahu Dimana berada", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008150, "nama": "Tidak tahu Dimana berada", "satuan": "", "type": "checkbox" },
+            //             { "nama": "Orang", "satuan": "", "type": "label" },
+            //             { "id": 21008152, "nama": "Tahu siapa pemeriksa dan peranan orang - orang disekitarnya", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008153, "nama": "Tidak tahu siapa pemeriksa dan orang orang disekitarnya", "satuan": "", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Daya ingat dan konsentrasi",
+            //         "detail": [
+            //             { "id": 21008155, "nama": "Baik", "satuan": "", "type": "checkbox" },
+            //             { "id": 21008156, "nama": "Menurun", "satuan": "", "type": "checkbox" },
+            //         ]
+            //     },
+            // ]
+
+            // $scope.listStatusBio = [
+            //     {
+            //         "id": 1, "nama": "Status Biologis",
+            //         "detail": [
+            //             { "id": 21008159, "nama": "Pola Malan :", "satuan": "x/hari", "type": "textbox" },
+            //             { "id": 21008160, "nama": "Pola Minum :", "satuan": "cc/hari", "type": "textbox" },
+            //             { "id": 21008161, "nama": "BAK :", "satuan": "x/hari", "type": "textbox" },
+            //             { "id": 21008162, "nama": "BAB :", "satuan": "x/hari", "type": "textbox" },
+
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Status Psikologis",
+            //         "detail": [
+            //             { "id": 21008164, "nama": "Cemas", "type": "checkbox" },
+            //             { "id": 21008165, "nama": "Takut", "type": "checkbox" },
+            //             { "id": 21008166, "nama": "Marah", "type": "checkbox" },
+            //             { "id": 21008167, "nama": "Sedih", "type": "checkbox" },
+            //             { "id": 21008168, "nama": "Kecenderungan bunuh diri", "type": "checkbox" },
+            //             { "id": 21008169, "nama": "dll", "type": "textbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Status Sosial",
+            //         "detail": [
+            //             { "nama": "Pekerjaan :", "type": "label" },
+            //             { "id": 21008172, "nama": "Wiraswasta", "type": "checkbox" },
+            //             { "id": 21008173, "nama": "Pegawai Negeri", "type": "checkbox" },
+            //             { "id": 21008174, "nama": "Pegawai Swasta", "type": "checkbox" },
+            //             { "id": 21008175, "nama": "Tidak Bekerja", "type": "checkbox" },
+            //             { "id": 21008176, "nama": "Siswa/Mahasiswa", "type": "checkbox" },
+            //             { "id": 21008177, "nama": "Pensiun", "type": "checkbox" },
+            //             { "id": 21008178, "nama": "Alamat Rumah :", "type": "textbox" },
+            //             { "id": 21008179, "nama": "No. Telepon :", "type": "textbox" },
+
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Spriritual dan Kulturasi",
+            //         "detail": [
+            //             { "nama": "Agama", "type": "label" },
+            //             { "id": 21008182, "nama": "Islam", "type": "checkbox" },
+            //             { "id": 21008183, "nama": "Protestan", "type": "checkbox" },
+            //             { "id": 21008184, "nama": "Katolik", "type": "checkbox" },
+            //             { "id": 21008185, "nama": "Hindu", "type": "checkbox" },
+            //             { "id": 21008186, "nama": "Budha", "type": "checkbox" },
+            //             { "id": 21008187, "nama": "Konghucu", "type": "checkbox" },
+            //             { "id": 21008188, "nama": "Lain-lain", "type": "checkbox" },
+            //             { "id": 21008189, "nama": "", "type": "textbox" },
+            //             { "nama": "Kegiatan Spiritual dan nilai nilai kepercayaan yang dilakukan", "type": "label" },
+            //             { "id": 21008191, "nama": "Ada, Sebutkan", "type": "checkbox" },
+            //             { "id": 21008192, "nama": "Tidak ada", "type": "checkbox" },
+            //             { "id": 21008193, "nama": "", "type": "textbox" },
+            //             { "nama": "Bahasa sehari-hari", "type": "label" },
+            //             { "id": 21008195, "nama": "Indonesia", "type": "checkbox" },
+            //             { "id": 21008196, "nama": "Inggris", "type": "checkbox" },
+            //             { "id": 21008197, "nama": "Daerah", "type": "checkbox" },
+            //             { "id": 21008198, "nama": "Lain-lain", "type": "textbox" },
+            //         ]
+            //     },
+            // ]
+
+            // $scope.listStatusEkonomi = [
+            //     {
+            //         "id": 1, "nama": "",
+            //         "detail": [
+            //             { "nama": "Cara Pembayaran", "type": "label" },
+            //             { "id": 21008201, "nama": "Pribadi", "type": "checkbox" },
+            //             { "id": 21008202, "nama": "Perusahaan", "type": "checkbox" },
+            //             { "id": 21008203, "nama": "Asuransi", "type": "checkbox" },
+            //             { "nama": "Pendapatan", "type": "label" },
+            //             { "id": 21008205, "nama": "UMR/rp", "type": "checkbox" },
+            //             { "id": 21008206, "nama": "UMR s/d 5 juta rp", "type": "checkbox" },
+            //             { "id": 21008207, "nama": "5 s/d 10 juta rp", "type": "checkbox" },
+            //             { "id": 21008208, "nama": "10 s/d 15 juta rp", "type": "checkbox" },
+            //             { "id": 21008209, "nama": "> 15 juta rp", "type": "checkbox" },
+            //         ]
+            //     },
+            // ]
+
+            // $scope.listRiwayatAlergi = [
+            //     {
+            //         "id": 1, "nama": "",
+            //         "detail": [
+            //             { "id": 21008211, "nama": "Ya, Sebutkan :", "type": "checkbox" },
+            //             { "id": 21008212, "nama": "Tidak", "type": "checkbox" },
+            //             { "id": 21008213, "nama": "", "type": "textbox" },
+            //             { "id": 21008214, "nama": "Sticker tanda alergi dipasang (warna merah)", "type": "checkbox2" },
+            //         ]
+            //     },
+            // ]
+
+            // $scope.listScoreGambar = [
+            //     {
+            //         "id": 1, "nama": "",
+            //         "detail": [
+            //             { "id": 21008216, "nama": "0 = Tidak ada Nyeri", "type": "checkbox" },
+            //             { "id": 21008217, "nama": "1 - 3 = Nyeri Ringan", "type": "checkbox" },
+            //             { "id": 21008218, "nama": "4 - 6 = Nyeri Sedang", "type": "checkbox" },
+            //             { "id": 21008219, "nama": "7 - 10 = Nyeri Berat", "type": "checkbox" },
+            //         ]
+            //     },
+            // ]
+
+            // $scope.listSkalaFlacc = [
+            //     {
+            //         "id": 1, "nama": "Wajah",
+            //         "detail": [
+            //             { "id": 21008221, "nama": "Tersenyum/tidak ada ekspresi khusus", "descNilai": "0", "target":"21008224", "type": "checkbox" },
+            //             { "id": 21008222, "nama": "Terkadang meringis/menarik diri", "descNilai": "1", "target":"21008224", "type": "checkbox" },
+            //             { "id": 21008223, "nama": "Sering menggetarkan dagu mengatupkan rahang", "descNilai": "2", "target":"21008224", "type": "checkbox" },
+            //             { "id": 21008224, "nama": "", "type": "textbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Kaki",
+            //         "detail": [
+            //             { "id": 21008226, "nama": "Gerakan normal/relaksasi", "descNilai": "0", "target":"21008229", "type": "checkbox" },
+            //             { "id": 21008227, "nama": "Tidak tenang/tegang", "descNilai": "1", "target":"21008229", "type": "checkbox" },
+            //             { "id": 21008228, "nama": "Kaki dibuat menendang/menarik diri", "descNilai": "2", "target":"21008229", "type": "checkbox" },
+            //             { "id": 21008229, "nama": "", "type": "textbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Aktivitas",
+            //         "detail": [
+            //             { "id": 21008231, "nama": "Tidur posisi normal, mudah bergerak", "descNilai": "0", "target":"21008234", "type": "checkbox" },
+            //             { "id": 21008232, "nama": "Gerakan menggeliat, berguling, kaku", "descNilai": "1", "target":"21008234", "type": "checkbox" },
+            //             { "id": 21008233, "nama": "Melengkungkan punggung/kaki/menghentak", "descNilai": "2", "target":"21008234", "type": "checkbox" },
+            //             { "id": 21008234, "nama": "", "type": "textbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Menangis",
+            //         "detail": [
+            //             { "id": 21008236, "nama": "Tidak menangis (bangun/tidur)", "descNilai": "0", "target":"21008239", "type": "checkbox" },
+            //             { "id": 21008237, "nama": "Mengerang, merengek-rengek", "descNilai": "1", "target":"21008239", "type": "checkbox" },
+            //             { "id": 21008238, "nama": "Menangis terus menerus, terhisak, menjerit", "descNilai": "2", "target":"21008239", "type": "checkbox" },
+            //             { "id": 21008239, "nama": "", "type": "textbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Bersuara",
+            //         "detail": [
+            //             { "id": 21008241, "nama": "Bersuara, normal, tenang", "descNilai": "0", "target":"21008244", "type": "checkbox" },
+            //             { "id": 21008242, "nama": "Tenang bila dipeluk, digendong atau diajak bicara", "descNilai": "1", "target":"21008244", "type": "checkbox" },
+            //             { "id": 21008243, "nama": "Kaki dibuat menendang/menarik diri", "descNilai": "2", "target":"21008244", "type": "checkbox" },
+            //             { "id": 21008244, "nama": "", "type": "textbox" },
+            //         ]
+            //     },
+            // ]
+
+            // $scope.listPenilaianNyeri = [
+            //     {
+            //         "id": 1, "nama": "Penilaian Nyeri",
+            //         "detail": [
+            //             { "nama": "Provokatif", "type": "label" },
+            //             { "id": 21008252, "nama": "Ruda paksa", "type": "checkbox" },
+            //             { "id": 21008253, "nama": "Benturan", "type": "checkbox" },
+            //             { "id": 21008254, "nama": "Sayatan", "type": "checkbox" },
+            //             { "id": 21008255, "nama": "dll", "type": "textbox" },
+            //             { "nama": "Quality", "type": "label" },
+            //             { "id": 21008257, "nama": "Tertusuk", "type": "checkbox" },
+            //             { "id": 21008258, "nama": "Tertekan/tertindih", "type": "checkbox" },
+            //             { "id": 21008259, "nama": "Diiris-iris", "type": "checkbox" },
+            //             { "id": 21008260, "nama": "dll", "type": "textbox" },
+            //             { "nama": "Regional", "type": "label" },
+            //             { "id": 21008262, "nama": "Lokasi", "type": "checkbox1" },
+            //             { "id": 21008263, "nama": "", "type": "textbox" },
+            //             { "nama": "Menjalar", "type": "label" },
+            //             { "id": 21008265, "nama": "Tidak", "type": "checkbox" },
+            //             { "id": 21008266, "nama": "Ya, Ke :", "type": "checkbox2" },
+            //             { "id": 21008267, "nama": "", "type": "textbox" },
+            //             { "nama": "Scala", "type": "label" },
+            //             { "id": 21008269, "nama": "", "type": "textbox" },
+            //             { "nama": "Time", "type": "label" },
+            //             { "id": 21008271, "nama": "Jarang", "type": "checkbox" },
+            //             { "id": 21008272, "nama": "Hilang timbul", "type": "checkbox" },
+            //             { "id": 21008273, "nama": "Terus menerus", "type": "checkbox" },
+            //         ]
+            //     },
+            // ]
+
+            // $scope.listPengkajian = [
+            //     {
+            //         "id": 1, "nama": "",
+            //         "detail": [
+            //             { "nama": "A", "type": "label" },
+            //             { "nama": "Cara Bejalan Pasien (salah satu atau lebih) <br> 1. Tidak seimbang/sempoyongan/limbung <br> 2. Jalan dengan menggunakan alat bantu (kruk, tripot, kursi roda, orang lain)", "type": "label" },
+            //             { "id": 21008277, "nama": "", "type": "checkbox" },
+            //             { "id": 21008278, "nama": "", "type": "checkbox" },
+
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "",
+            //         "detail": [
+            //             { "nama": "B", "type": "label" },
+            //             { "nama": "Menopang saat akan duduk : tampak memegang pinggiran kursi atau meja/benda lain sebagai penopang saat akan duduk.", "type": "label" },
+            //             { "id": 21008280, "nama": "", "type": "checkbox" },
+            //             { "id": 21008281, "nama": "", "type": "checkbox" },
+            //         ]
+            //     }
+            // ]
+            // $scope.listHasil = [
+            //     {
+            //         "id": 1, "nama": "1.",
+            //         "detail": [
+            //             { "nama": "Tidak Beresiko", "type": "label" },
+            //             { "nama": "Tidak ditemukan A & B", "type": "label" },
+            //             { "id": 21008283, "nama": "", "type": "textarea" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "2.",
+            //         "detail": [
+            //             { "nama": "Risiko Rendah", "type": "label" },
+            //             { "nama": "Ditemukan salah satu A/B", "type": "label" },
+            //             { "id": 21008284, "nama": "", "type": "textarea" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "3.",
+            //         "detail": [
+            //             { "nama": "Risiko tinggi", "type": "label" },
+            //             { "nama": "Ditemukan A & B", "type": "label" },
+            //             { "id": 21008285, "nama": "", "type": "textarea" },
+            //         ]
+            //     },
                 
-            ]
-            $scope.listTindakan = [
-                {
-                    "id": 1, "nama": "1.",
-                    "detail": [
-                        { "nama": "Tidak beresiko", "type": "label" },
-                        { "nama": "Tidak ada tindakan", "type": "label" },
-                        { "id": 21008286, "nama": "", "type": "checkbox" },
-                        { "id": 21008287, "nama": "", "type": "checkbox" },
-                        { "id": 21008288, "nama": "", "type": "combobox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "2.",
-                    "detail": [
-                        { "nama": "Resiko rendah", "type": "label" },
-                        { "nama": "Edukasi", "type": "label" },
-                        { "id": 21008289, "nama": "", "type": "checkbox" },
-                        { "id": 21008290, "nama": "", "type": "checkbox" },
-                        { "id": 21008291, "nama": "", "type": "combobox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "3.",
-                    "detail": [
-                        { "nama": "Resiko tinggi", "type": "label" },
-                        { "nama": "Pasang pita/stiker resiko jatuh", "type": "label" },
-                        { "id": 21008292, "nama": "", "type": "checkbox" },
-                        { "id": 21008293, "nama": "", "type": "checkbox" },
-                        { "id": 21008294, "nama": "", "type": "combobox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "",
-                    "detail": [
-                        { "nama": "", "type": "label" },
-                        { "nama": "Edukasi", "type": "label" },
-                        { "id": 21008295, "nama": "", "type": "checkbox" },
-                        { "id": 21008296, "nama": "", "type": "checkbox" },
-                        { "id": 21008297, "nama": "", "type": "combobox" },
-                    ]
-                },
-            ]
+            // ]
+            // $scope.listTindakan = [
+            //     {
+            //         "id": 1, "nama": "1.",
+            //         "detail": [
+            //             { "nama": "Tidak beresiko", "type": "label" },
+            //             { "nama": "Tidak ada tindakan", "type": "label" },
+            //             { "id": 21008286, "nama": "", "type": "checkbox" },
+            //             { "id": 21008287, "nama": "", "type": "checkbox" },
+            //             { "id": 21008288, "nama": "", "type": "combobox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "2.",
+            //         "detail": [
+            //             { "nama": "Resiko rendah", "type": "label" },
+            //             { "nama": "Edukasi", "type": "label" },
+            //             { "id": 21008289, "nama": "", "type": "checkbox" },
+            //             { "id": 21008290, "nama": "", "type": "checkbox" },
+            //             { "id": 21008291, "nama": "", "type": "combobox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "3.",
+            //         "detail": [
+            //             { "nama": "Resiko tinggi", "type": "label" },
+            //             { "nama": "Pasang pita/stiker resiko jatuh", "type": "label" },
+            //             { "id": 21008292, "nama": "", "type": "checkbox" },
+            //             { "id": 21008293, "nama": "", "type": "checkbox" },
+            //             { "id": 21008294, "nama": "", "type": "combobox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "",
+            //         "detail": [
+            //             { "nama": "", "type": "label" },
+            //             { "nama": "Edukasi", "type": "label" },
+            //             { "id": 21008295, "nama": "", "type": "checkbox" },
+            //             { "id": 21008296, "nama": "", "type": "checkbox" },
+            //             { "id": 21008297, "nama": "", "type": "combobox" },
+            //         ]
+            //     },
+            // ]
 
-            $scope.listAssementFungsional = [
-                {
-                    "id": 1, "nama": "Sensorik",
-                    "detail": [
-                        { "nama": "Penglihatan", "type": "label" },
-                        { "id": 21008298, "nama": "Normal", "type": "checkbox" },
-                        { "id": 21008299, "nama": "Kabur", "type": "checkbox" },
-                        { "id": 21008300, "nama": "Kacamata", "type": "checkbox" },
-                        { "id": 21008301, "nama": "Lensa kotak", "type": "checkbox" },
-                        { "nama": "Penciuman", "type": "label" },
-                        { "id": 21008302, "nama": "Normal", "type": "checkbox" },
-                        { "id": 21008303, "nama": "Tidak", "type": "checkbox" },
-                        { "nama": "Pendengaran", "type": "label" },
-                        { "id": 21008304, "nama": "Normal", "type": "checkbox" },
-                        { "id": 21008305, "nama": "Tuli kanan/kiri", "type": "checkbox" },
-                        { "id": 21008306, "nama": "Alat bantu dengan kanan/kiri", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Kognitif",
-                    "detail": [
-                        { "id": 21008307, "nama": "Orientasi penuh", "type": "checkbox" },
-                        { "id": 21008308, "nama": "Pelupa", "type": "checkbox" },
-                        { "id": 21008309, "nama": "Bingung", "type": "checkbox" },
-                        { "id": 21008310, "nama": "Tidak dapat dimengerti", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Motorik",
-                    "detail": [
-                        { "nama": "Aktifitas sehari-hari", "type": "label" },
-                        { "id": 21008311, "nama": "Mandiri", "type": "checkbox" },
-                        { "id": 21008312, "nama": "Bantuan Minimal", "type": "checkbox" },
-                        { "id": 21008313, "nama": "Bantuan Sebagian", "type": "checkbox" },
-                        { "id": 21008314, "nama": "Ketergantungan Total", "type": "checkbox" },
-                        { "nama": "Berjalan", "type": "label" },
-                        { "id": 21008315, "nama": "Tidak ada kesulitan", "type": "checkbox" },
-                        { "id": 21008316, "nama": "Perlu bantuan", "type": "checkbox" },
-                        { "id": 21008317, "nama": "Sering Jatuh", "type": "checkbox" },
-                        { "id": 21008318, "nama": "Kelumpuhan", "type": "checkbox" },
-                    ]
-                },
-            ]
+            // $scope.listAssementFungsional = [
+            //     {
+            //         "id": 1, "nama": "Sensorik",
+            //         "detail": [
+            //             { "nama": "Penglihatan", "type": "label" },
+            //             { "id": 21008298, "nama": "Normal", "type": "checkbox" },
+            //             { "id": 21008299, "nama": "Kabur", "type": "checkbox" },
+            //             { "id": 21008300, "nama": "Kacamata", "type": "checkbox" },
+            //             { "id": 21008301, "nama": "Lensa kotak", "type": "checkbox" },
+            //             { "nama": "Penciuman", "type": "label" },
+            //             { "id": 21008302, "nama": "Normal", "type": "checkbox" },
+            //             { "id": 21008303, "nama": "Tidak", "type": "checkbox" },
+            //             { "nama": "Pendengaran", "type": "label" },
+            //             { "id": 21008304, "nama": "Normal", "type": "checkbox" },
+            //             { "id": 21008305, "nama": "Tuli kanan/kiri", "type": "checkbox" },
+            //             { "id": 21008306, "nama": "Alat bantu dengan kanan/kiri", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Kognitif",
+            //         "detail": [
+            //             { "id": 21008307, "nama": "Orientasi penuh", "type": "checkbox" },
+            //             { "id": 21008308, "nama": "Pelupa", "type": "checkbox" },
+            //             { "id": 21008309, "nama": "Bingung", "type": "checkbox" },
+            //             { "id": 21008310, "nama": "Tidak dapat dimengerti", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Motorik",
+            //         "detail": [
+            //             { "nama": "Aktifitas sehari-hari", "type": "label" },
+            //             { "id": 21008311, "nama": "Mandiri", "type": "checkbox" },
+            //             { "id": 21008312, "nama": "Bantuan Minimal", "type": "checkbox" },
+            //             { "id": 21008313, "nama": "Bantuan Sebagian", "type": "checkbox" },
+            //             { "id": 21008314, "nama": "Ketergantungan Total", "type": "checkbox" },
+            //             { "nama": "Berjalan", "type": "label" },
+            //             { "id": 21008315, "nama": "Tidak ada kesulitan", "type": "checkbox" },
+            //             { "id": 21008316, "nama": "Perlu bantuan", "type": "checkbox" },
+            //             { "id": 21008317, "nama": "Sering Jatuh", "type": "checkbox" },
+            //             { "id": 21008318, "nama": "Kelumpuhan", "type": "checkbox" },
+            //         ]
+            //     },
+            // ]
 
-            $scope.listNutrisional = [
-                {
-                    "id": 1, "no": 1, "nama": "Apakah ada penurunan berat badan yang tidak diinginkan selama 6 bulan terakhir ?",
-                    "detail": [
-                        { "id": 21008319, "nama": "a. Tidak", "descNilai" : "0", "type": "checkbox" },
-                        { "id": 21008320, "nama": "b. Tidak Yakin", "descNilai" : "2", "type": "checkbox" },
-                        { "nama": "(Tanda: ukuran baju atau celana menjadi lebih longgar)", "type": "label" },
-                        { "id": 21008321, "nama": "c. Ya, 1-5 Kg", "descNilai" : "1", "type": "checkbox" },
-                        { "id": 21008322, "nama": "6-10 Kg", "descNilai" : "2", "type": "checkbox" },
-                        { "id": 21008323, "nama": "11-15 Kg", "descNilai" : "3", "type": "checkbox" },
-                        { "id": 21008324, "nama": "> 15 Kg", "descNilai" : "4", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "no": 2, "nama": "Apakah asupan makan menurun yang dikarenakan adanya penurunan nafsu makan/kesulitan menerima makan ?",
-                    "detail": [
-                        { "id": 21008325, "nama": "Tidak", "descNilai" : "0", "type": "checkbox" },
-                        { "id": 21008326, "nama": "Tidak yakin", "descNilai" : "1", "type": "checkbox" },
-                    ]
-                },
-            ]
+            // $scope.listNutrisional = [
+            //     {
+            //         "id": 1, "no": 1, "nama": "Apakah ada penurunan berat badan yang tidak diinginkan selama 6 bulan terakhir ?",
+            //         "detail": [
+            //             { "id": 21008319, "nama": "a. Tidak", "descNilai" : "0", "type": "checkbox" },
+            //             { "id": 21008320, "nama": "b. Tidak Yakin", "descNilai" : "2", "type": "checkbox" },
+            //             { "nama": "(Tanda: ukuran baju atau celana menjadi lebih longgar)", "type": "label" },
+            //             { "id": 21008321, "nama": "c. Ya, 1-5 Kg", "descNilai" : "1", "type": "checkbox" },
+            //             { "id": 21008322, "nama": "6-10 Kg", "descNilai" : "2", "type": "checkbox" },
+            //             { "id": 21008323, "nama": "11-15 Kg", "descNilai" : "3", "type": "checkbox" },
+            //             { "id": 21008324, "nama": "> 15 Kg", "descNilai" : "4", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "no": 2, "nama": "Apakah asupan makan menurun yang dikarenakan adanya penurunan nafsu makan/kesulitan menerima makan ?",
+            //         "detail": [
+            //             { "id": 21008325, "nama": "Tidak", "descNilai" : "0", "type": "checkbox" },
+            //             { "id": 21008326, "nama": "Tidak yakin", "descNilai" : "1", "type": "checkbox" },
+            //         ]
+            //     },
+            // ]
 
-            $scope.listKebutuhanEdukasi = [
-                {
-                    "id": 1, "nama": "A. Terdapat hambatan dalam pembelajaran",
-                    "detail": [
-                        { "id": 21008327, "nama": "Tidak", "type": "checkbox" },
-                        { "id": 21008328, "nama": "Ya", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "B. Jika ya, sebutkan hambatan (bisa dipilih lebih dari satu) :",
-                    "detail": [
-                        { "id": 21008329, "nama": "Pendengaran", "type": "checkbox" },
-                        { "id": 21008330, "nama": "Penglihatan", "type": "checkbox" },
-                        { "id": 21008331, "nama": "Kognitif", "type": "checkbox" },
-                        { "id": 21008332, "nama": "Fisik", "type": "checkbox" },
-                        { "id": 21008333, "nama": "Budaya", "type": "checkbox" },
-                        { "id": 21008334, "nama": "Agama", "type": "checkbox" },
-                        { "id": 21008335, "nama": "Emosi", "type": "checkbox" },
-                        { "id": 21008336, "nama": "Bahasa", "type": "checkbox" },
-                        { "id": 21008337, "nama": "Lain-lain", "type": "checkbox" },
-                        { "id": 21008338, "nama": "", "type": "textbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "C. Dibutuhkan penerjemah",
-                    "detail": [
-                        { "id": 21008339, "nama": "Tidak", "type": "checkbox" },
-                        { "id": 21008340, "nama": "Ya, jika ya sebutkan", "type": "checkbox" },
-                        { "id": 21008341, "nama": "", "type": "textbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "D. Kebutuhan pembelajaran pasien (pilih topik pembelajaran pada kotak yang tersedia)",
-                    "detail": [
-                        { "id": 21008342, "nama": "Diagnosa & Manajemen", "type": "checkbox" },
-                        { "id": 21008343, "nama": "Obat-obtan", "type": "checkbox" },
-                        { "id": 21008344, "nama": "Perawatan Luka", "type": "checkbox" },
-                        { "id": 21008345, "nama": "Rehabilitasi", "type": "checkbox" },
-                        { "id": 21008346, "nama": "Manajemen nyeri", "type": "checkbox" },
-                        { "id": 21008347, "nama": "Diet dan nutrisi", "type": "checkbox" },
-                        { "id": 21008348, "nama": "Lain-lainnya", "type": "checkbox" },
-                        { "id": 21008349, "nama": "", "type": "textbox" },
-                    ]
-                },
-            ]
+            // $scope.listKebutuhanEdukasi = [
+            //     {
+            //         "id": 1, "nama": "A. Terdapat hambatan dalam pembelajaran",
+            //         "detail": [
+            //             { "id": 21008327, "nama": "Tidak", "type": "checkbox" },
+            //             { "id": 21008328, "nama": "Ya", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "B. Jika ya, sebutkan hambatan (bisa dipilih lebih dari satu) :",
+            //         "detail": [
+            //             { "id": 21008329, "nama": "Pendengaran", "type": "checkbox" },
+            //             { "id": 21008330, "nama": "Penglihatan", "type": "checkbox" },
+            //             { "id": 21008331, "nama": "Kognitif", "type": "checkbox" },
+            //             { "id": 21008332, "nama": "Fisik", "type": "checkbox" },
+            //             { "id": 21008333, "nama": "Budaya", "type": "checkbox" },
+            //             { "id": 21008334, "nama": "Agama", "type": "checkbox" },
+            //             { "id": 21008335, "nama": "Emosi", "type": "checkbox" },
+            //             { "id": 21008336, "nama": "Bahasa", "type": "checkbox" },
+            //             { "id": 21008337, "nama": "Lain-lain", "type": "checkbox" },
+            //             { "id": 21008338, "nama": "", "type": "textbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "C. Dibutuhkan penerjemah",
+            //         "detail": [
+            //             { "id": 21008339, "nama": "Tidak", "type": "checkbox" },
+            //             { "id": 21008340, "nama": "Ya, jika ya sebutkan", "type": "checkbox" },
+            //             { "id": 21008341, "nama": "", "type": "textbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "D. Kebutuhan pembelajaran pasien (pilih topik pembelajaran pada kotak yang tersedia)",
+            //         "detail": [
+            //             { "id": 21008342, "nama": "Diagnosa & Manajemen", "type": "checkbox" },
+            //             { "id": 21008343, "nama": "Obat-obtan", "type": "checkbox" },
+            //             { "id": 21008344, "nama": "Perawatan Luka", "type": "checkbox" },
+            //             { "id": 21008345, "nama": "Rehabilitasi", "type": "checkbox" },
+            //             { "id": 21008346, "nama": "Manajemen nyeri", "type": "checkbox" },
+            //             { "id": 21008347, "nama": "Diet dan nutrisi", "type": "checkbox" },
+            //             { "id": 21008348, "nama": "Lain-lainnya", "type": "checkbox" },
+            //             { "id": 21008349, "nama": "", "type": "textbox" },
+            //         ]
+            //     },
+            // ]
 
-            $scope.listPerencanaanPulang = [
-                {
-                    "id": 1, "nama": "Kriteria Discharge Planning :",
-                    "detail": [
-                        { "nama": "A. Umur > 65 tahun", "type": "label" },
-                        { "id": 21008350, "nama": "Ya", "type": "checkbox" },
-                        { "id": 21008351, "nama": "Tidak", "type": "checkbox" },
-                        { "nama": "B. Keterbatasan mobilitas", "type": "label" },
-                        { "id": 21008352, "nama": "Ya", "type": "checkbox" },
-                        { "id": 21008353, "nama": "Tidak", "type": "checkbox" },
-                        { "nama": "C. Perawatan atau pengobatan lanjutan", "type": "label" },
-                        { "id": 21008354, "nama": "Ya", "type": "checkbox" },
-                        { "id": 21008355, "nama": "Tidak", "type": "checkbox" },
-                        { "nama": "D. Bantuan untuk melakukan aktifitas sehari-hari", "type": "label" },
-                        { "id": 21008356, "nama": "Ya", "type": "checkbox" },
-                        { "id": 21008357, "nama": "Tidak", "type": "checkbox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "Bila salah satu jawaban 'Ya' dari kriteria perencanaan pulang diatas, maka akan dilanjutkan dengan perencanaan pulang sebagai berikut :",
-                    "detail": [
-                        { "id": 21008358, "nama": "Perawatan diri (mandi, BAB, BAK)", "type": "checkbox2" },
-                        { "id": 21008359, "nama": "Latihan fisik lanjutan", "type": "checkbox2" },
-                        { "id": 21008360, "nama": "Pemantauan pemberian obat", "type": "checkbox2" },
-                        { "id": 21008361, "nama": "Pendampingan tenaga khusus di rumah", "type": "checkbox2" },
-                        { "id": 21008362, "nama": "Pemantauan diet", "type": "checkbox2" },
-                        { "id": 21008363, "nama": "Bantuan medis/perawat di rumah (home care)", "type": "checkbox2" },
-                        { "id": 21008364, "nama": "Perawatan luka", "type": "checkbox2" },
-                        { "id": 21008365, "nama": "Bantuan untuk melakukan aktifitas fisik (kursi roda, alat bantu jalan)", "type": "checkbox2" },
-                    ]
-                },
-            ]
+            // $scope.listPerencanaanPulang = [
+            //     {
+            //         "id": 1, "nama": "Kriteria Discharge Planning :",
+            //         "detail": [
+            //             { "nama": "A. Umur > 65 tahun", "type": "label" },
+            //             { "id": 21008350, "nama": "Ya", "type": "checkbox" },
+            //             { "id": 21008351, "nama": "Tidak", "type": "checkbox" },
+            //             { "nama": "B. Keterbatasan mobilitas", "type": "label" },
+            //             { "id": 21008352, "nama": "Ya", "type": "checkbox" },
+            //             { "id": 21008353, "nama": "Tidak", "type": "checkbox" },
+            //             { "nama": "C. Perawatan atau pengobatan lanjutan", "type": "label" },
+            //             { "id": 21008354, "nama": "Ya", "type": "checkbox" },
+            //             { "id": 21008355, "nama": "Tidak", "type": "checkbox" },
+            //             { "nama": "D. Bantuan untuk melakukan aktifitas sehari-hari", "type": "label" },
+            //             { "id": 21008356, "nama": "Ya", "type": "checkbox" },
+            //             { "id": 21008357, "nama": "Tidak", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "Bila salah satu jawaban 'Ya' dari kriteria perencanaan pulang diatas, maka akan dilanjutkan dengan perencanaan pulang sebagai berikut :",
+            //         "detail": [
+            //             { "id": 21008358, "nama": "Perawatan diri (mandi, BAB, BAK)", "type": "checkbox2" },
+            //             { "id": 21008359, "nama": "Latihan fisik lanjutan", "type": "checkbox2" },
+            //             { "id": 21008360, "nama": "Pemantauan pemberian obat", "type": "checkbox2" },
+            //             { "id": 21008361, "nama": "Pendampingan tenaga khusus di rumah", "type": "checkbox2" },
+            //             { "id": 21008362, "nama": "Pemantauan diet", "type": "checkbox2" },
+            //             { "id": 21008363, "nama": "Bantuan medis/perawat di rumah (home care)", "type": "checkbox2" },
+            //             { "id": 21008364, "nama": "Perawatan luka", "type": "checkbox2" },
+            //             { "id": 21008365, "nama": "Bantuan untuk melakukan aktifitas fisik (kursi roda, alat bantu jalan)", "type": "checkbox2" },
+            //         ]
+            //     },
+            // ]
 
-            $scope.listDiagnosaKeperatawan = [
-                {
-                    "id": 1, "nama": "",
-                    "detail": [
-                        { "id": 21008367, "nama": "A. Gangguan sensori persepsi", "type": "checkbox" },
-                        { "id": 21008368, "nama": "G. Resiko bunuh diri", "type": "checkbox" },
-                        { "id": 21008369, "nama": "B. Berduka kompleks", "type": "checkbox" },
-                        { "id": 21008370, "nama": "H. Harga diri rendah kronik", "type": "checkbox" },
-                        { "id": 21008371, "nama": "C. Deficit perawatan diri", "type": "checkbox" },
-                        { "id": 21008372, "nama": "I. Kerusakan komunikasi verbal", "type": "checkbox" },
-                        { "id": 21008373, "nama": "D. Regiment terapeutik tidak efektif", "type": "checkbox" },
-                        { "id": 21008374, "nama": "J. Resiko perilaku kekerasan", "type": "checkbox" },
-                        { "id": 21008375, "nama": "E. Isolasi sosial", "type": "checkbox" },
-                        { "id": 21008376, "nama": "K. Tidak efektif regimen terapeutik", "type": "checkbox" },
-                        { "id": 21008377, "nama": "F. Waham", "type": "checkbox" },
-                        { "id": 21008378, "nama": "L. Lain-lain", "type": "checkbox" },
-                        { "id": 21008379, "nama": "", "type": "textbox" },
-                    ]
-                },
-            ]
+            // $scope.listDiagnosaKeperatawan = [
+            //     {
+            //         "id": 1, "nama": "",
+            //         "detail": [
+            //             { "id": 21008367, "nama": "A. Gangguan sensori persepsi", "type": "checkbox" },
+            //             { "id": 21008368, "nama": "G. Resiko bunuh diri", "type": "checkbox" },
+            //             { "id": 21008369, "nama": "B. Berduka kompleks", "type": "checkbox" },
+            //             { "id": 21008370, "nama": "H. Harga diri rendah kronik", "type": "checkbox" },
+            //             { "id": 21008371, "nama": "C. Deficit perawatan diri", "type": "checkbox" },
+            //             { "id": 21008372, "nama": "I. Kerusakan komunikasi verbal", "type": "checkbox" },
+            //             { "id": 21008373, "nama": "D. Regiment terapeutik tidak efektif", "type": "checkbox" },
+            //             { "id": 21008374, "nama": "J. Resiko perilaku kekerasan", "type": "checkbox" },
+            //             { "id": 21008375, "nama": "E. Isolasi sosial", "type": "checkbox" },
+            //             { "id": 21008376, "nama": "K. Tidak efektif regimen terapeutik", "type": "checkbox" },
+            //             { "id": 21008377, "nama": "F. Waham", "type": "checkbox" },
+            //             { "id": 21008378, "nama": "L. Lain-lain", "type": "checkbox" },
+            //             { "id": 21008379, "nama": "", "type": "textbox" },
+            //         ]
+            //     },
+            // ]
 
-            $scope.listTindakan16 = [
-                {
-                    "id": 1, "nama": "",
-                    "detail": [
-                        { "id": 21008381, "nama": "", "type": "datetime" },
-                        { "id": 21008382, "nama": "", "type": "textbox" },
-                        { "id": 21008383, "nama": "", "type": "combobox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "",
-                    "detail": [
-                        { "id": 21008384, "nama": "", "type": "datetime" },
-                        { "id": 21008385, "nama": "", "type": "textbox" },
-                        { "id": 21008386, "nama": "", "type": "combobox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "",
-                    "detail": [
-                        { "id": 21008387, "nama": "", "type": "datetime" },
-                        { "id": 21008388, "nama": "", "type": "textbox" },
-                        { "id": 21008389, "nama": "", "type": "combobox" },
-                    ]
-                },
-                {
-                    "id": 1, "nama": "",
-                    "detail": [
-                        { "id": 21008390, "nama": "", "type": "datetime" },
-                        { "id": 21008391, "nama": "", "type": "textbox" },
-                        { "id": 21008392, "nama": "", "type": "combobox" },
-                    ]
-                },
-            ]
+            // $scope.listTindakan16 = [
+            //     {
+            //         "id": 1, "nama": "",
+            //         "detail": [
+            //             { "id": 21008381, "nama": "", "type": "datetime" },
+            //             { "id": 21008382, "nama": "", "type": "textbox" },
+            //             { "id": 21008383, "nama": "", "type": "combobox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "",
+            //         "detail": [
+            //             { "id": 21008384, "nama": "", "type": "datetime" },
+            //             { "id": 21008385, "nama": "", "type": "textbox" },
+            //             { "id": 21008386, "nama": "", "type": "combobox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "",
+            //         "detail": [
+            //             { "id": 21008387, "nama": "", "type": "datetime" },
+            //             { "id": 21008388, "nama": "", "type": "textbox" },
+            //             { "id": 21008389, "nama": "", "type": "combobox" },
+            //         ]
+            //     },
+            //     {
+            //         "id": 1, "nama": "",
+            //         "detail": [
+            //             { "id": 21008390, "nama": "", "type": "datetime" },
+            //             { "id": 21008391, "nama": "", "type": "textbox" },
+            //             { "id": 21008392, "nama": "", "type": "combobox" },
+            //         ]
+            //     },
+            // ]
 
             $scope.listNamaPengkaji = [
                 {
-                    "id": 1, "nama": "Tanggal & Jam",
+                    "id": 1, "nama": "Tanggal",
                     "detail": [
-                        { "id": 21008393, "nama": "", "type": "datetime" },
+                        { "id": 1901300243, "nama": "", "type": "datetime" },
                     ]
                 },
                 {
-                    "id": 1, "nama": "Nama Perawat",
+                    "id": 1, "nama": "Dokter",
                     "detail": [
-                        { "id": 21008394, "nama": "", "type": "combobox" },
+                        { "id": 1901300244, "nama": "", "type": "combobox" },
                     ]
                 }
             ]

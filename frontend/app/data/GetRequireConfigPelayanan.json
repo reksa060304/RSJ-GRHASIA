@@ -2992,7 +2992,14 @@
         },
         {
             "nameDep": "AsesmenTerintegrasiRawatJalanCtrl",
-            "urlDep": "module/EMR/AsesmenTerintegrasiRawatJalanCtrl"
+            "urlDep": "module/EMR/AsesmenTerintegrasiRawatJalanCtrl"        },
+        {
+            "nameDep": "AsesmenAwalMedisRJJiwaCtrl",
+            "urlDep": "module/EMR/AsesmenAwalMedisRJJiwaCtrl"
+        },
+        {
+            "nameDep": "FormulirTransferPasienAntarRuanganCtrl",
+            "urlDep": "module/EMR/FormulirTransferPasienAntarRuanganCtrl"
         }, 
         {
             "nameDep": "SensusHarianRawatJalanCtrl",
