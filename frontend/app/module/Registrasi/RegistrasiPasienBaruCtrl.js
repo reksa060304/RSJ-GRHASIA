@@ -6,6 +6,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item = {};
             $scope.now = new Date();
             $scope.isBayi = false;
+            $scope.isEditPasien = false;
             $scope.isPenunjang = false;
             $scope.isRouteLoading = false
             $scope.reservasi = {}
@@ -137,6 +138,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     if (result.foto)
                         $scope.item.image = result.foto
                     $scope.item.noCmIbu = result.nocm;
+                    $scope.item.noCmPasien = result.nocm;
                     $scope.item.namaIbu = result.namapasien
                     $scope.item.namaPasien = result.namapasien + " By Ny";
                     $scope.item.alamatLengkap = result.alamatlengkap
@@ -249,13 +251,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             function editPasien() {
-                $scope.isRouteLoading = true
+                $scope.isEditPasien = true;
+                $scope.isRouteLoading = true;
                 medifirstService.get("registrasi/get-bynocm?idPasien=" + $state.params.idPasien).then(function (e) {
                     $scope.isRouteLoading = false
                     var result = e.data.data                    
                     if (result.foto)// && result.foto != 'data:image/jpeg;base64,')
                         $scope.item.image = result.foto
                     $scope.item.noCmIbu = result.nocm;
+                    $scope.item.noCmPasien = result.nocm;
                     $scope.item.namaPasien = result.namapasien;
                     $scope.item.alamatLengkap = result.alamatlengkap
                     $scope.item.tempatLahir = result.tempatlahir;
@@ -538,6 +542,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     var postJson = {
                         'isbayi': $scope.isBayi,
+                        'isEditPasien': $scope.isEditPasien,
                         'istriageigd': $scope.isTriage,
                         'isPenunjang': $scope.isPenunjang,
                         'idpasien': $scope.idPasien != undefined ? $scope.idPasien : '',
@@ -735,6 +740,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 cacheHelper.set('CacheRegistrasiPasien', cacheSet);
                 if( $scope.idPasien!=undefined){
                     cacheHelper.set('cacheStatusPasien', 'LAMA'); 
+                    
                 }else{
                     cacheHelper.set('cacheStatusPasien', 'BARU');
                 }
