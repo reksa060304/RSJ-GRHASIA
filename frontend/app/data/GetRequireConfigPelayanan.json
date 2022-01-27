@@ -2993,6 +2993,18 @@
         {
             "nameDep": "AsesmenTerintegrasiRawatJalanCtrl",
             "urlDep": "module/EMR/AsesmenTerintegrasiRawatJalanCtrl"
+        }, 
+        {
+            "nameDep": "SensusHarianRawatJalanCtrl",
+            "urlDep": "module/Registrasi/Laporan/SensusHarianRawatJalanCtrl"
+        },
+        {
+            "nameDep": "AsesmenMedisPsikiatriRawatInapCtrl",
+            "urlDep": "module/EMR/AsesmenMedisPsikiatriRawatInapCtrl"
+        },
+        {
+            "nameDep": "LembarPenilaianPanssEcCtrl",
+            "urlDep": "module/EMR/LembarPenilaianPanssEcCtrl"
         }
     ]
 }
