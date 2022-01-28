@@ -62,12 +62,13 @@ class SasaranMutuController extends ApiController
                 $x->on('aa.noresep','=','sr.noresep')
                 ->on('aa.statusenabled','=',DB::raw('true'));
             })
-            ->select('sr.noresep','sr.tglresep','sr.penulisresepfk','sr.ruanganfk','sr.tglambilresep as tglambilreseplama','sr.tglselesai as tglambilresep'
+            //->select('sr.noresep','sr.tglresep','sr.penulisresepfk','sr.ruanganfk','sr.tglambilresep as tglambilreseplama','sr.tglselesai as tglambilresep'
+            ->select('sr.noresep','sr.tglresep','sr.penulisresepfk','sr.ruanganfk','sr.tglambilresep as tglambilreseplama','sr.tglambilresep as tglambilresep'
             ,DB::raw("case when sr.tglambilresep is not null then 'Telah diserahkan oleh ' || coalesce(sr.namapemberi,'') || ' kepada ' ||  coalesce(sr.namalengkapambilresep,'') else '' end  as keterangan")
             ,DB::raw(" 
-            div(EXTRACT(EPOCH FROM sr.tglselesai - sr.tglresep)::int,3600)
+            div(EXTRACT(EPOCH FROM sr.tglambilresep - sr.tglresep)::int,3600)
             ||':'||
-            to_char(sr.tglselesai - sr.tglresep,'MI:SS')
+            to_char(sr.tglambilresep - sr.tglresep,'MI:SS')
             as waktulayanan, case when aa.jenis = 'N' then 'Non Racikan' else 'Racikan' end jenisantrian"))
             ->where('sr.statusenabled',true)
             ->orderBy('sr.tglresep');

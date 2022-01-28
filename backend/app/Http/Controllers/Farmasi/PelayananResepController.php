@@ -114,7 +114,7 @@ class PelayananResepController extends ApiController
                 'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as namaruanganasalid','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
                 'pp.aturanpakai','ru.namaruangan','dok.id as dokterid','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
                 DB::raw("CASE WHEN pr.kekuatan IS NOT NULL AND rs.name IS NOT NULL THEN pr.kekuatan || ' ' || rs.name ELSE '' END AS kekuatan,
-                               sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk,apd.norec norec_apd,pd.norec norec_pd,apd.objectkelasfk klid"))
+                               sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk,apd.norec norec_apd,pd.norec norec_pd,apd.objectkelasfk klid,pp.keteranganpakai"))
             ->where('pp.kdprofile', $idProfile)
             ->where('jp.id',97)
             ->where('sr.statusenabled', true)
@@ -233,6 +233,8 @@ class PelayananResepController extends ApiController
                 'reseppulang' =>$item->reseppulang,
                 'norec_pd' => $item->norec_pd,
                 'klid' => $item->klid,
+                'keteranganpakai' => $item->keteranganpakai,
+                
             );
         }
         return $this->respond($result);
