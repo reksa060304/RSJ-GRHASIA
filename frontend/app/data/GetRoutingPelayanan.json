@@ -16708,7 +16708,117 @@
       {
         "define": "RekamMedisCtrl"
       }
+    ]  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenAwalMedisRJJiwa",
+    "url": "/AsesmenAwalMedisRJJiwa",
+    "templateurl": "module/EMR/AsesmenAwalMedisRJJiwa.html",
+    "controller": "AsesmenAwalMedisRJJiwaCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FormulirTransferPasienAntarRuangan",
+    "url": "/FormulirTransferPasienAntarRuangan",
+    "templateurl": "module/EMR/FormulirTransferPasienAntarRuangan.html",
+    "controller": "FormulirTransferPasienAntarRuanganCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "SensusHarianRawatJalan",
+    "url": "/U2Vuc3VzSGFyaWFuUmF3YXRKYWxhbg==",
+    "templateurl": "module/Registrasi/Laporan/SensusHarianRawatJalan.html",
+    "controller": "SensusHarianRawatJalanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenMedisPsikiatriRawatInap",
+    "url": "/AsesmenMedisPsikiatriRawatInapCtrl",
+    "templateurl": "module/EMR/AsesmenMedisPsikiatriRawatInap.html",
+    "controller": "AsesmenMedisPsikiatriRawatInapCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.LembarPenilaianPanssEC",
+    "url": "/LembarPenilaianPanssEcCtrl",
+    "templateurl": "module/EMR/LembarPenilaianPanssEc.html",
+    "controller": "LembarPenilaianPanssEcCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
     ]
   }
-  
 ] 
