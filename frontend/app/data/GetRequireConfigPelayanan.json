@@ -3001,6 +3001,18 @@
         {
             "nameDep": "FormulirTransferPasienAntarRuanganCtrl",
             "urlDep": "module/EMR/FormulirTransferPasienAntarRuanganCtrl"
+        },
+        {
+            "nameDep": "SensusHarianRawatJalanCtrl",
+            "urlDep": "module/Registrasi/Laporan/SensusHarianRawatJalanCtrl"
+        },
+        {
+            "nameDep": "LaporanLayananFarmasiCtrl",
+            "urlDep": "module/Farmasi/LaporanFarmasi/LaporanLayananFarmasiCtrl"
+        },
+        {
+            "nameDep": "LaporanSensusNewCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanSensusNewCtrl"
         }
     ]
 }

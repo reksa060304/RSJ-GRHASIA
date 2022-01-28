@@ -1713,6 +1713,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-data-pasien-pindahan','Registrasi\LaporanRegistrasiController@getDataLaporanPasienPindahan');
               Route::get('registrasi/laporan/get-data-pasien-meninggal', 'Registrasi\LaporanRegistrasiController@getDataLaporanPasienMeninggalRuangan');
               Route::get('registrasi/laporan/get-data-pasien-informasi-ruangan', 'Registrasi\LaporanRegistrasiController@getDataLaporanInformasiRuangan');
+              Route::get('registrasi/laporan/get-data-pasien-masuk-ranap-new','Registrasi\LaporanRegistrasiController@getDataLaporanPasienMasukRawatInapNew');
+              Route::get('registrasi/laporan/get-data-pasien-keluar-ruangan-ranap-new','Registrasi\LaporanRegistrasiController@getDataLaporanPasienKeluarRuanganRawatInapNew');
+              Route::get('registrasi/laporan/get-data-pasien-pindahan-new','Registrasi\LaporanRegistrasiController@getDataLaporanPasienPindahanNew');
+              Route::get('registrasi/laporan/get-data-pasien-meninggal-new', 'Registrasi\LaporanRegistrasiController@getDataLaporanPasienMeninggalRuanganNew');
+              Route::get('registrasi/laporan/get-data-pasien-informasi-ruangan-new', 'Registrasi\LaporanRegistrasiController@getDataLaporanInformasiRuanganNew');
               Route::get('registrasi/laporan/get-data-pasien-dipindahan', 'Registrasi\LaporanRegistrasiController@getDataLaporanPasienDipindahankan');
               // Route::get('registrasi/laporan/get-laporan-pasien-pulang', 'Registrasi\LaporanRegistrasiController@getDataLaporanPasienPulang');
               Route::get('registrasi/laporan/get-laporan-pasien-pulang', 'Registrasi\LaporanRegistrasiController@getDataLaporanPasienPulangNew');

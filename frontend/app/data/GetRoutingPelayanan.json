@@ -16755,5 +16755,69 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "SensusHarianRawatJalan",
+    "url": "/U2Vuc3VzSGFyaWFuUmF3YXRKYWxhbg==",
+    "templateurl": "module/Registrasi/Laporan/SensusHarianRawatJalan.html",
+    "controller": "SensusHarianRawatJalanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "LaporanLayananFarmasi",
+    "url": "/TGFwb3JhblBlbGF5YW5hbkZhcm1hc2k=",
+    "templateurl": "module/Farmasi/LaporanFarmasi/LaporanLayananFarmasi.html",
+    "controller": "LaporanLayananFarmasiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "LaporanSensusNew",
+    "url": "/TGFwb3JhblNlbnN1c1Yy",
+    "templateurl": "module/Registrasi/Laporan/LaporanSensusNew.html",
+    "controller": "LaporanSensusNewCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ] 
