@@ -409,6 +409,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             function loadCombo() {
                 $scope.isRouteLoading = true;
+                $scope.listJenislabel = [{ id: 1, jenislabel: "Label Besar" }, { id: 2, jenislabel: "Label Kecil" }];
                 $q.all([
                     medifirstService.get("registrasi/get-combo-registrasi"),
                     medifirstService.get("registrasi/get-combo-address"),
@@ -517,6 +518,53 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             //     var url = configuration.urlPrinting + "registrasi-pelayanan/kartuPasien?id=" + tempId + "&X-AUTH-TOKEN=" + ModelItem.getAuthorize();
             //     window.open(url);
             // }
+            $scope.formatNum = {
+				format: "#.#",
+				decimals: 0
+			}
+            $scope.pjke="";
+            $scope.cetakPJ = function (pjke){
+                $scope.pjke=pjke;
+                $scope.dats = {
+					qty: 0
+				}
+                $scope.dialogCetakLabel.center().open();
+
+            };
+            $scope.pilihQty = function (data) {				
+				var listRawRequired = [
+					"dats.qty|k-ng-model|kuantiti"
+				];
+				var isValid = ModelItem.setValidation($scope, listRawRequired);
+
+				if (isValid.status) {					
+						var qty = data.qty;
+						var qtyhasil = data.qty * 1;
+						if (qty !== undefined) {
+							// var fixUrlLaporan = cetakHelper.open("reporting/labelPasien?noCm=" + $scope.item.pasienDaftar.noRegistrasi + "&qty=" + qty);
+							// window.open(fixUrlLaporan, '', 'width=800,height=600')
+							//cetakan langsung service VB6 by grh
+
+							//##save identifikasi label pasien
+							// medifirstService.get("registrasi/identifikasi-label?norec_pd="
+							// 	+ $scope.dataPasienSelected.norec + '&islabel=' + qtyhasil 
+							// ).then(function (data) {
+							// 	var datas = data.data;
+							// })
+							//##end
+
+							var client = new HttpClient();
+							client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-labelpasienbayi-satu-pj=1&idpasien=' + $state.params.idPasien + '&view=false&qty=' + qty + '&pjke=' + $scope.pjke, function (response) {
+								// do something with response
+							});
+
+						}
+						$scope.dialogCetakLabel.close();
+					
+				} else {					
+					ModelItem.showMessages(isValid.messages);
+				}
+			};
 
             $scope.Save = function () {
                 var pekerjaanPj = null
