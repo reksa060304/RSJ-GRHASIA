@@ -69,8 +69,8 @@ define(['initialize'], function (initialize) {
 					$scope.item.periodeAkhir = new Date(moment($scope.now).format('YYYY-MM-DD 23:59'))
 					$scope.item.tglpulang = $scope.now;
 				}
-				medifirstService.get("humas/get-daftar-combo", false).then(function (data) {
-					$scope.listDepartemen = data.data.datadept;
+				medifirstService.get("humas/get-daftar-combo", true).then(function (data) {
+					$scope.listDepartemen = data.data.datainstalasi;
 					$scope.listKelompokPasien = data.data.kelompokpasien;
 					$scope.listHubungan = data.data.hubungan;					
 				})

@@ -60,12 +60,12 @@ class HumasController extends ApiController
         );
         $dataInstalasi = \DB::table('departemen_m as dp')
             ->whereIn('dp.id',$kdDepartemenRawatPelayanan)
-            ->where('dp.kdprofile', $idProfile)
+            ->where('dp.kdprofile', $kdProfile)
             ->where('dp.statusenabled', true)
             ->orderBy('dp.namadepartemen')
             ->get();
         $dataRuangan = \DB::table('ruangan_m as ru')
-            ->where('ru.kdprofile', $idProfile)
+            ->where('ru.kdprofile', $kdProfile)
             ->where('ru.statusenabled', true)
             ->orderBy('ru.namaruangan')
             ->get();
@@ -80,9 +80,9 @@ class HumasController extends ApiController
                 }
             }
 
-            $dataInstalasi[] = array(
+            $dataDepartemen[] = array(
                 'id' => $item->id,
-                'departemen' => $item->namadepartemen,
+                'namadepartemen' => $item->namadepartemen,
                 'ruangan' => $detail,
             );
         }
@@ -173,7 +173,7 @@ class HumasController extends ApiController
             ->where('ru.statusenabled', true)
             ->orderBy('ru.namaruangan')
             ->get();
-          $dataHari = \DB::table('hari_m as hr')
+        $dataHari = \DB::table('hari_m as hr')
             ->where('hr.kdprofile', $idProfile)
             ->where('hr.statusenabled', true)
             ->orderBy('hr.id')
@@ -205,7 +205,7 @@ class HumasController extends ApiController
             'pekerjaan' => $pekerjaan,
             'jeniskelamin' => $jeniskelamin,
             'kelompokpasien' => $dataKelompok,
-            'datadept' => $dataInstalasi,
+            'datainstalasi' => $dataDepartemen,
             'dataruangan' => $dataRuangan,
             'jabatan' => $dataJabatan,
             'asalproduk' => $AsalProduk,

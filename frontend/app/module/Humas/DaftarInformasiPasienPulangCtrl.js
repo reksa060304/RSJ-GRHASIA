@@ -63,18 +63,18 @@ define(['initialize'], function (initialize) {
         }
       }
 
-      $scope.getIsiComboRuangan = function () {
-        $scope.listRuangan = $scope.item.instalasi.ruangan
-      }
-
       function LoadCombo() {
-        medifirstService.get("humas/get-daftar-combo", false).then(function (data) {
-          $scope.listDepartemen = data.data.datadept;
+        medifirstService.get("humas/get-daftar-combo", true).then(function (data) {
+          $scope.listDepartemen = data.data.datainstalasi;
           $scope.listKelompokPasien = data.data.kelompokpasien;
           dataLogin = data.data.pegawaiuser[0];
         })       
         $scope.listStatus = [{ "id": "1", "namaExternal": "Semua" }, { "id": "2", "namaExternal": "Belum Verifikasi" }, { "id": "3", "namaExternal": "Verifikasi" }, { "id": "4", "namaExternal": "Lunas" }]
       };
+
+      $scope.getIsiComboRuangan = function () {
+        $scope.listRuangan = $scope.item.instalasi.ruangan
+      }
 
       $scope.formatTanggal = function (tanggal) {
         return moment(tanggal).format('DD-MMM-YYYY');
