@@ -354,7 +354,7 @@ select '-' as smf,* from  (
     select pd.tglregistrasi,apd.tglmasuk,pm.nocm,pd.noregistrasi,pm.namapasien,kp.kelompokpasien,kls.namakelas,ru.namaruangan,apd.norec,ru1.namaruangan as asal,
                                           case when ddp.noregistrasifk is not null THEN  cast (dm.kddiagnosa as text) || ', ' || dm.namadiagnosa else '-' end as namadiagnosa,
 
-                                            row_number() over (partition by apd.norec order by ddp.tglinputdiagnosa asc) as rownum,
+                                            row_number() over (partition by apd.norec order by ddp.tglinputdiagnosa asc) as rownum
                                     FROM pasiendaftar_t as pd
                                     INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
                                     INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
