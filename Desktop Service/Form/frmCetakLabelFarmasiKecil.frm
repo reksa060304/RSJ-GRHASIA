@@ -228,7 +228,7 @@ Set Report = New Cr_cetakLabelKecil
             .udtTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNamaProduk.SetUnboundFieldSource ("{ado.namaproduk}")
             .usCaraPakai.SetUnboundFieldSource ("{ado.aturanpakai}")
-            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
+            .usnocm.SetUnboundFieldSource ("{ado.nocm}")
             .usTelp.SetUnboundFieldSource ("{ado.notelepon}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
 '            .unjml.SetUnboundFieldSource ("{ado.jumlah}")
@@ -328,7 +328,7 @@ Set Report = New Cr_cetakLabelKecil
             .udtTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNamaProduk.SetUnboundFieldSource ("{ado.namaproduk}")
             .usCaraPakai.SetUnboundFieldSource ("{ado.aturanpakai}")
-            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
+            .usnocm.SetUnboundFieldSource ("{ado.nocm}")
             .usTelp.SetUnboundFieldSource ("{ado.notelepon}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
             .usss.SetUnboundFieldSource ("{ado.keteranganpakai}")
@@ -337,7 +337,7 @@ Set Report = New Cr_cetakLabelKecil
             .usWaktuMinumM.SetUnboundFieldSource ("{ado.malam}")
             .usWaktuMinumP.SetUnboundFieldSource ("{ado.pagi}")
             .usWaktuMinumSr.SetUnboundFieldSource ("{ado.sore}")
-            .usKeteranganPakai.SetUnboundFieldSource ("{ado.keteranganpakai}")
+'            .usKeteranganPakai.SetUnboundFieldSource ("{ado.keteranganpakai}")
             
             If view = "false" Then
                 Dim strPrinter As String
