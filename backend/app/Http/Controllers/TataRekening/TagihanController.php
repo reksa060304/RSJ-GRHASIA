@@ -5925,7 +5925,7 @@ class TagihanController  extends ApiController
 
         $dataDokter = \DB::table('pegawai_m as dp')
             ->select('dp.id','dp.namalengkap')
-            ->where('ru.kdprofile',$idProfile)
+            ->where('dp.kdprofile',$idProfile)
             ->whereIn('dp.objectjenispegawaifk',array(1))
             ->where('dp.statusenabled',true)
             ->orderBy('dp.namalengkap')

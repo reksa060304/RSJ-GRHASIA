@@ -3000,7 +3000,7 @@ class EMRController  extends ApiController
             ->where('emr.kdprofile',$idProfile)
             ->where('emr.nocm', $request['nocm'])
             ->get();
-
+            $dt2=[];
         foreach ($data as $itm) {
             $dt2[] = array(
                 'colour' => $itm->colour,
