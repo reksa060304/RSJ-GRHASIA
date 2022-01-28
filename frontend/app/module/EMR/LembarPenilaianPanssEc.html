@@ -1,0 +1,1024 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading" c-translate>Lembar Penilaian PANSS-EC</div>
+    </div>
+    <div class="grid_12">
+        <fieldset style="margin-top: 10px;">
+            <table style="border: 0px">
+                <tr>
+                    <th rowspan="2">NO</th>
+                    <th rowspan="2" colspan="2">PENILAIAN</th>
+                    <th>HARI TANGGAL</th>
+                    <th>HARI TANGGAL</th>
+                    <th>HARI TANGGAL</th>
+                </tr>
+                <tr>
+                    <td>
+                        <input k-ng-model="item.obj[51001]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                            k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.datevalue}}" />
+                    </td>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[51002]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                                k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[51003]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                                k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>P4 <br> GADUH GELISAH</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51004]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51005]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51006]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>P7 <br> PERMUSUHAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51007]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51008]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51009]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>G4 <br> KETEGANGAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51010]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51011]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51012]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>G8 <br> KETIDAK KOOPERATIFAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51013]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51014]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51015]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>G14 <br> PENGENDALIAN IMPULS YANG BURUK</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51016]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51017]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51018]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">JUMLAH</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51022]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51023]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51024]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">PARAF DOKTER PENILAI</td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51019]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51020]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51021]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        <br>
+        <fieldset style="margin-top: 10px;">
+            <table style="border: 0px">
+                <tr>
+                    <th rowspan="2">NO</th>
+                    <th rowspan="2" colspan="2">PENILAIAN</th>
+                    <th>HARI TANGGAL</th>
+                    <th>HARI TANGGAL</th>
+                    <th>HARI TANGGAL</th>
+                </tr>
+                <tr>
+                    <td>
+                        <input k-ng-model="item.obj[51025]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                            k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.datevalue}}" />
+                    </td>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[51026]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                                k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[51027]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                                k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>P4 <br> GADUH GELISAH</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51028]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51029]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51030]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>P7 <br> PERMUSUHAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51031]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51032]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51033]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>G4 <br> KETEGANGAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51034]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51035]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51036]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>G8 <br> KETIDAK KOOPERATIFAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51037]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51038]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51039]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>G14 <br> PENGENDALIAN IMPULS YANG BURUK</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51040]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51041]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51042]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">JUMLAH</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51046]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51047]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51048]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">PARAF DOKTER PENILAI</td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51043]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51044]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51045]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        <br>
+        <fieldset style="margin-top: 10px;">
+            <table style="border: 0px">
+                <tr>
+                    <th rowspan="2">NO</th>
+                    <th rowspan="2" colspan="2">PENILAIAN</th>
+                    <th>HARI TANGGAL</th>
+                    <th>HARI TANGGAL</th>
+                    <th>HARI TANGGAL</th>
+                </tr>
+                <tr>
+                    <td>
+                        <input k-ng-model="item.obj[51049]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                            k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.datevalue}}" />
+                    </td>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[51050]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                                k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[51051]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                                k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>P4 <br> GADUH GELISAH</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51052]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51053]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51054]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>P7 <br> PERMUSUHAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51055]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51056]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51057]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>G4 <br> KETEGANGAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51058]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51059]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51060]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>G8 <br> KETIDAK KOOPERATIFAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51061]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51062]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51063]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>G14 <br> PENGENDALIAN IMPULS YANG BURUK</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51064]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51065]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51066]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">JUMLAH</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51067]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51068]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51069]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">PARAF DOKTER PENILAI</td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51070]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51071]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51072]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        <br>
+        <fieldset style="margin-top: 10px;">
+            <table style="border: 0px">
+                <tr>
+                    <th rowspan="2">NO</th>
+                    <th rowspan="2" colspan="2">PENILAIAN</th>
+                    <th>HARI TANGGAL</th>
+                    <th>HARI TANGGAL</th>
+                    <th>HARI TANGGAL</th>
+                </tr>
+                <tr>
+                    <td>
+                        <input k-ng-model="item.obj[51073]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                            k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.   datevalue}}" />
+                    </td>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[51074]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                                k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[51075]" kendo-date-picker k-max="now" placeholer="yyyy-MM-dd"
+                                k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>P4 <br> GADUH GELISAH</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51077]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51078]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51079]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>P7 <br> PERMUSUHAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51081]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51082]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51083]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>G4 <br> KETEGANGAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51085]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51086]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51087]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>G8 <br> KETIDAK KOOPERATIFAN</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51089]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51090]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51091]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>G14 <br> PENGENDALIAN IMPULS YANG BURUK</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51093]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51094]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51095]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">JUMLAH</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51097]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51098]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[51099]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">PARAF DOKTER PENILAI</td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51100]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51101]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[51102]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        <br>
+
+    </div>
+    <div class="grid_12">
+        <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+    </div>
+    <fieldset style="margin-top: 10px;">
+        <h3>PANSS - EXCITED COMPONENT</h3>
+        <table>
+            <tr>
+                <td colspan="3"><b>P4. GADUH GELISAH</b></td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    Hiperaktifitas yang ditampilkan dalam bentuk percepatan perilaku motorik, peningkatan
+                    respons
+                    terhadap stimuli, waspada berlebihan atau labilitas alam perasaan yang berlebihan.
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">Dasar Penilaian</td>
+                <td>
+                    manifastasi perilaku selama wawancara dan juga laporan perawat atau keluarga tentang
+                    perilaku.
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20px;">1</td>
+                <td style="width: 30px;">Tidak Ada</td>
+                <td>Definisi tidak terpenuhi. </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Minimal</td>
+                <td>Patologis diragukan; mungkin suatu ujung ekstrim dari batas normal.</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Ringan</td>
+                <td>Cenderung sedikit agitatif, waspada berlebihan atau sedikit mudah terangsang selama
+                    wawancara, tetapi tanpa episode yang jelas dari gaduh gelisah atau labilitas alam perasaan
+                    yang mencolok. Pembicaraan mungkin sedikit mendesak.</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Sedang</td>
+                <td>Agitasi atau mudah terangsang yang jelas terbukti selama wawancara, mempengaruhi pembicaraan
+                    dan mobilitas umum atau ledakan-ledakan episodik yang terjadi secara sporadik.</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Agak berat</td>
+                <td>tampak Hiperaktifitas yang bermakna, atau sering terjadi ledakan-ledakan atau aktifitas
+                    motoik yang menyebabkan kesulitanbagi pasien tetap duduk untuk waktu yang lebih lama dari
+                    beberapa menit dalam setiap kesempatan. </td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Berat</td>
+                <td>Gaduh gelisah yang mencolok mendominasi wawancara, membatasi perhatian sedemikian rupa
+                    sehingga mempengaruhi fungsi sehari </td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>Sangat Berat</td>
+                <td>Gaduh gelisah yang mencolok, sangat serius mempengaruhi kegiatan makan dan tidur, serta
+                    jelas tidak memungkinkan interaksi interpersonal. Percepatan pembicaraan dan aktivitas
+                    motorik dapat menimbulkan inkoherensi dan kelelahan </td>
+            </tr>
+
+            <tr>
+                <td colspan="3"><b>P7. PERMUSUHAN</b></td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    Ekspresi Verbal dan non verbal tentang kemarahan dan kebencian, termasuk sarkasme, perilaku
+                    pasif agresif, caci maki dan penyerangan.
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">Dasar Penilaian</td>
+                <td>
+                    perilaku interpersonal yang diamati selama wawancara dan laporan oleh perawat atau keluarga.
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20px;">1</td>
+                <td style="width: 30px;">Tidak Ada</td>
+                <td>Definisi tidak terpenuhi. </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Minimal</td>
+                <td>Patologis diragukan; mungkin suatu ujung ekstrim dari batas normal.</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Ringan</td>
+                <td>Melampiaskan kemarahan secaa tidak langsung atau ditahan seperti sarkasme, sikap tidak
+                    sopan, ekspesi bermusuhan</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Sedang</td>
+                <td>adanya sikap bermusuhan yang nyata, sering memperlihatkan iritabilitas dan ekspresi
+                    kemarahan atau kebencian yang langsung</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Agak berat</td>
+                <td>pasien sangat mudah marah dan kadang-kadang memaki dengan kata-kata kasar atau mengancam
+                </td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Berat</td>
+                <td>tidak kooperatif dan mencaci maki dengan kasar atau mengancam khususnya mempengaruhi
+                    wawancara dan berdampak serius terhadap relasi sosial. pasien dapat beringas dan merusak
+                    tetapi tidak menyerang orang lain secara fisik </td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>Sangat Berat</td>
+                <td>kemarahan yang hebat berakibat sangat tidak kooperatif, menghalangi interaksi atau secara
+                    episodik melakukan penyerangan fisik</td>
+            </tr>
+
+            <tr>
+                <td colspan="3"><b>G4. KETEGANGAN</b></td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    Manifestasi yang jelas tentang ketakutan, anxietas, dan agitasi, seperti kelakukan, tremor,
+                    keringat berlebihan dan ketidaktenangan
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">Dasar Penilaian</td>
+                <td>
+                    Laporan lisan membuktikan adanya anxietas dan karenanya derajat keparahan manifestasi fisik
+                    ketegangan dapat dilihat selama wawancara.
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20px;">1</td>
+                <td style="width: 30px;">Tidak Ada</td>
+                <td>Definisi tidak terpenuhi. </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Minimal</td>
+                <td>Patologis diragukan; mungkin suatu ujung ekstrim dari batas normal.</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Ringan</td>
+                <td>Postur dan gerakan - gerakan menunjukan kekhawatiran ringan seperti rigiditas yang ringan,
+                    ketidaktenangan yang sekali - sekali, perubahan posisi atau tremor tangan yang halus dan
+                    cepat</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Sedang</td>
+                <td>suatu penampilan yang nyata - nyata gelisah yang terbukti dari adanya pelbagai manifestasi
+                    seperti perilaku tidak tenang, tremor tangan yang nyata, keringat berlebihan atau menerisme
+                    karena gugup.</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Agak berat</td>
+                <td>ketegangan yang berat yang dibuktikan oleh pelbagai manifestasi seperti gemetaran karena
+                    gugup, keringat sangat berlebihan dan ketidaktenangan, tetapi perilaku selama wawancara
+                    tidak terpengaruh secara bermakna.
+                </td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Berat</td>
+                <td>ketegangan berat sedemikian rupa sehingga taraf interaksi interpesonal terganggu. Misalnya
+                    pasien mungkin terus - menerus bergerak seperti cacing kepanasan, tidak dapat tetap duduk
+                    untuk waktu lama atau menunjukkan hiperventilasi.</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>Sangat Berat</td>
+                <td>Ketegangan yang sangat mencolok yang memanifestasikan oleh tanda-tanda panik atau
+                    perpcepatan gerakan motorik kasar, seperti langkah cepat yang gelisah dan ketidakmampuan
+                    tetap duduk waktu lebih lama dari semenit yang menyebabkan percakapan tidak mungkin
+                    diteruskan.</td>
+            </tr>
+
+            <tr>
+                <td colspan="3"><b>G8. KETIDAKKOOPERATIFAN</b></td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    aktif menolak untuk patuh terhadap tokoh bermakna termasuk pewawancara, staf rumah sakit
+                    atau keluargaa yang mungkin disertai dengan rasa tidak percaya, defensif, keras kepala,
+                    negativistik, penolakan terhadap otoritas, hostilitas atau suka membangkang.
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">Dasar Penilaian</td>
+                <td>
+                    perilaku interpersonal yang diobservasi selama wawancara dan juga dilaporkan oleh perawat
+                    atau keluarga.
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20px;">1</td>
+                <td style="width: 30px;">Tidak Ada</td>
+                <td>Definisi tidak terpenuhi. </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Minimal</td>
+                <td>Patologis diragukan; mungkin suatu ujung ekstrim dari batas normal.</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Ringan</td>
+                <td>
+                    patuh tetapi disertai sikap marah, tidak sabaran / sarkasme. Mungkin ada penolakan yang
+                    tidak mengganggu, terhadap penyelidikan.
+                </td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Sedang</td>
+                <td>
+                    kadang-kadangg terdapat penolakan langsung untuk patuh terhadpa tuntutan-tuntuan yang normal
+                    seperti merapikan tempat tidur, mengikuti acara yang telah dijadwalkan dan sebagainya.
+                    pasien mungkin memproyeksikan hostiiltas, defensif atau bersikap.
+                </td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Agak berat</td>
+                <td>
+                    pasien seringkali tidak patuh terhadap tuntutan lingkungannya dan mungkin dijuluki sebagai
+                    "orang buangan" atau "orang yang mempunyai problem yang serius". Ketidakkooperatifan
+                    tercermin jelas dalam sikap defensif atau iritabilitas terhadap pemeriksa dan mungkin tidak
+                    bersedia menghadapi banyak pertanyaan
+                </td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Berat</td>
+                <td>
+                    pasien sangat tidak kooperati, negativistik, dan mungkin suka membangkang. menolak untuk
+                    patuh terhadap sebagian besar tuntutan
+                    sosial dan mungkin tidak mau memulai atau mengikuti wawancara sepenuhnya.
+                </td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>Sangat Berat</td>
+                <td>
+                    Resistensi aktif yang jelas berdampak serius terhadap benar-benar seluruh bidang fungsi
+                    utama. pasien mungkin menolak untuk ikut dalam aktivitas sosial apapun, mengurus kebersihan
+                    diri, bercakap-cakap dengan keluarga atau staf dan bahkan untuk berpartisipasi.
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3"><b>G14. PENGENDALIAN IMPULS YANG BURUK</b></td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    Gangguan pengaturan dan pengendalian impuls yang mengakibatkan pelepasan ketegangan dan
+                    emosi yang tiba-tiba tidak teratur, sewenang-wenang atau tidak terarah tanpa merisaukan
+                    konsekuensinya.
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">Dasar Penilaian</td>
+                <td>
+                    perilaku selama wawancara dan yang dilaporkan perawat atau tetangga.
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20px;">1</td>
+                <td style="width: 30px;">Tidak Ada</td>
+                <td>Definisi tidak terpenuhi. </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Minimal</td>
+                <td>Patologis diragukan; mungkin suatu ujung ekstrim dari batas normal.</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Ringan</td>
+                <td>
+                    Pasien cenderung mudah marah dan frustasi bila menghadapi stres atau pemuasannya ditolak
+                    tetapi jarang bertindak impulsif.
+                </td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Sedang</td>
+                <td>
+                    dengan provokasi yang minimal pasien menjadi marah dan mencaci maki. Mungkin sekali-sekali
+                    mengancam, merusak atau terdapat satu atau dua episode yang melibatkan konfrontasi fisik
+                    atau perselisihan ringan
+                </td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Agak berat</td>
+                <td>
+                    pasien memperlihatkan episode implsif yang berulang-ulang, termasuk mencaci maki,
+                    pengrusakan harta benda atau ancaman fisik. Mungkin ada satu atau dua episode yang
+                    melibatkan serangan serius sehingga pasien perlu diisolasi, difiksasi dan bila perlu diberi
+                    sedasi.
+                </td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Berat</td>
+                <td>
+                    pasien sering agresif secara impulsif, mengancam, menuntut dan merusak, tanpa pertimbangan
+                    yang nyata tentang konsekuensinya. menunjukan perilaku menyerang dan mungkin juga serangan
+                    seksual dan kemungkinan berperilaku yang merupakan respons terhadap pasien.
+                </td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>Sangat Berat</td>
+                <td>
+                    pasien memperlihatkan serangan yang dapat membunuh orang, oenyerangan seksusal, kebrutalan
+                    yang berulang atau perilaku yang merusak diri sendiri. Membutuhkan pengawasan langsung yang
+                    terus-menerus atau fiksasi karena ketidakmampuan mengendalikan impuls yang berbahaya
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+</div>
+</div>

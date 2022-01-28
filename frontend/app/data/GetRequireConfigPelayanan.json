@@ -3013,6 +3013,18 @@
         {
             "nameDep": "LaporanSensusNewCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanSensusNewCtrl"
+        },
+        {
+            "nameDep": "AsesmenMedisPsikiatriRawatInapCtrl",
+            "urlDep": "module/EMR/AsesmenMedisPsikiatriRawatInapCtrl"
+        },
+        {
+            "nameDep": "LembarPenilaianPanssEcCtrl",
+            "urlDep": "module/EMR/LembarPenilaianPanssEcCtrl"
+        },
+        {
+            "nameDep": "PengkategorianPasienJiwaCtrl",
+            "urlDep": "module/EMR/PengkategorianPasienJiwaCtrl"
         }
     ]
 }

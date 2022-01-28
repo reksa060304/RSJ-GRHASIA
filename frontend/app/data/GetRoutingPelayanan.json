@@ -16819,5 +16819,71 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenMedisPsikiatriRawatInap",
+    "url": "/AsesmenMedisPsikiatriRawatInapCtrl",
+    "templateurl": "module/EMR/AsesmenMedisPsikiatriRawatInap.html",
+    "controller": "AsesmenMedisPsikiatriRawatInapCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.LembarPenilaianPanssEC",
+    "url": "/LembarPenilaianPanssEcCtrl",
+    "templateurl": "module/EMR/LembarPenilaianPanssEc.html",
+    "controller": "LembarPenilaianPanssEcCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkategorianPasienJiwa",
+    "url": "/PengkategorianPasienJiwa",
+    "templateurl": "module/EMR/PengkategorianPasienJiwa.html",
+    "controller": "PengkategorianPasienJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ] 

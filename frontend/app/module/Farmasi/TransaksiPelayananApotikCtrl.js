@@ -1565,7 +1565,8 @@ define(['initialize'], function (initialize) {
                                     namaruangan: array[i].namaruangan,
                                     dokter: array[i].dokter,
                                     cekreseppulang: array[i].cekreseppulang,
-                                    details: dataDetail0
+                                    details: dataDetail0,
+                                   // keterangan:  array[i].keteranganpakai,
                                 }
                                 group.push(result)
                             }
@@ -1633,13 +1634,21 @@ define(['initialize'], function (initialize) {
                 return {
                     dataSource: new kendo.data.DataSource({
                         data: dataItem.details,
+                        sort:[{ field: "rke", dir: "asc" }],
 
                     }),
+                    resizable: true,
                     columns: [
                         {
                             "field": "no",
                             "title": "No",
                             "width": "15px",
+                            "hidden": "true",
+                        },
+                        {
+                            "field": "rke",
+                            "title": "R/",
+                            "width": "35px",
                         },
                         {
                             "field": "namaproduk",
@@ -1660,6 +1669,11 @@ define(['initialize'], function (initialize) {
                             "field": "jumlah",
                             "title": "Qty",
                             "width": "40px",
+                        },
+                        {
+                            "field": "keteranganpakai",
+                            "title": "Keterangan",
+                            "width": "400px",
                         },
                         {
                             "field": "kekuatan",
