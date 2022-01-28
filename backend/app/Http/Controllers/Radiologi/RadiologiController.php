@@ -96,9 +96,11 @@ class RadiologiController extends ApiController
             foreach ($request['details'] as $item) {
                 
                     $updatePP=PelayananPasien::where('norec',$item['norec_pp'])
-                        ->whereNull('tglpanggil')
+                        //mas praswoto minta bisa di timpa dan pakai waktu pc 20220128
+                        //->whereNull('tglpanggil')
                         ->update([
-                                'tglpanggil' => $tglAyeuna,
+                                //'tglpanggil' => $tglAyeuna,
+                                'tglpanggil' => $item['tglpanggil'],
                                 'objectpegawaipanggilfk' => $dataLogin['users']['id'],
                             ]
                         );

@@ -1546,12 +1546,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var user = medifirstService.getPegawaiLogin();
                 
                 var daftarPanggil = [];
+                var tglpc = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
                 for (var i = 0; i < $scope.dataGrid._data.length; i++) {
                     if ($scope.dataGrid._data[i].statCheckbox) {
                         // daftarPanggil.push($scope.dataGrid._data[i].norec_pp)
                         daftarPanggil.push(
                             {
-                                "norec_pp": $scope.dataGrid._data[i].norec_pp,                
+                                "norec_pp": $scope.dataGrid._data[i].norec_pp,
+                                "tglpanggil": tglpc,
                             }
                         )
                     }
