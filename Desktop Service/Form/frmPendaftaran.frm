@@ -419,6 +419,11 @@ Public Function Pendaftaran(ByVal QueryText As String) As Byte()
                 Param4 = Split(arrItem(3), "=")
                 lblStatus.Caption = "Cetak Label Pasien"
                 Call frmCetakPendaftaran.cetakLabelPasien_3Bayi(Param2(1), Param3(1), Param4(1))
+            Case "cetak-labelpasienbayi-satu-pj"
+                Param4 = Split(arrItem(3), "=")
+                Param5 = Split(arrItem(4), "=")
+                lblStatus.Caption = "Cetak Label Pasien PJ"
+                Call frmCetakPendaftaran.cetakLabelPasien_3Bayi_PJ(Param2(1), Param3(1), Param4(1), Param5(1))
                 
              Case "cetak-triage"
                 lblStatus.Caption = "Cetak Summary list Pasien Rawat Jalan"

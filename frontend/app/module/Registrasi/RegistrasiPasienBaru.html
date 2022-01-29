@@ -507,6 +507,10 @@
                                                 style="height: 76px; width: 100%; resize: none;"
                                                 ng-model="item.alamatRumah"></textarea>
                                         </div>
+                                        <div class="grid_12">
+                                            <button class="c-button" ng-click="cetakPJ(1)"
+                                            >Cetak</button>
+                                        </div>
                                     
                                         </fieldset>
                                     </div>
@@ -570,6 +574,10 @@
                                             <textarea required class="k-textbox"
                                                 style="height: 76px; width: 100%; resize: none;"
                                                 ng-model="item.alamatRumah2"></textarea>
+                                        </div>
+                                        <div class="grid_12">
+                                            <button class="c-button" ng-click="cetakPJ(2)"
+                                            >Cetak</button>
                                         </div>
                                     
                                     </fieldset>
@@ -729,4 +737,14 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div kendo-window="dialogCetakLabel" k-title="'Masukkan kuantiti cetak'" k-width="400" k-height="200"
+		k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+		
+		<label c-label item="item " c-label-text="kuantiti "></label>
+		<input id="qtyCetak" name="qtyCetak" kendo-numeric-text-box k-options="formatNum" k-ng-model="dats.qty"
+			style="width:100%;" />
+		<div class="clear">
+			<button class="k-button" ng-click="pilihQty(dats)" style="float:right;margin-top:4%">Cetak</button>
+		</div>        
     </div>
