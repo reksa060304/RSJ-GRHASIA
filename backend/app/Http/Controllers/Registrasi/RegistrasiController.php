@@ -5154,6 +5154,11 @@ class RegistrasiController extends ApiController
 //        if(isset($request['tglLahir']) && $request['tglLahir']!="" && $request['tglLahir']!="undefined"){
 //            $data = $data->where('ps.tgllahir','<=', $request['tglLahir'].' 23:59');
 //        };
+
+        if(isset($request['tglhariini']) && $request['tglhariini']!="" && $request['tglhariini']!="undefined") {
+            $data = $data->where('pd.tglregistrasi', '=', '%'. $request['tglhariini'] .'%');
+        };
+
         if(isset($request['norm']) && $request['norm']!="" && $request['norm']!="undefined") {
             $data = $data->where('ps.nocm', 'ilike', '%'. $request['norm'] .'%');
         };
@@ -11551,4 +11556,47 @@ GROUP BY y.KET
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getDaftarRiwayatRegistrasi1( Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+            $tglhariini = $request['tglhariini'];
+            $norm = $request['norm'];
+        $data = \DB::select("SELECT
+	pd.norec,
+	pd.tglregistrasi,
+	ps.nocm,
+	pd.noregistrasi,
+	ps.namapasien,
+	pd.objectruanganlastfk,
+	kp.kelompokpasien,
+	ru.namaruangan,
+	pd.objectpegawaifk,
+	pg.namalengkap AS namadokter,
+	pd.tglpulang,
+	ru.objectdepartemenfk,
+CASE
+		
+		WHEN ru.objectdepartemenfk IN ( 16, 25, 26 ) THEN
+		1 ELSE 0 
+	END AS statusinap 
+FROM
+	pasien_m AS ps
+	INNER JOIN pasiendaftar_t AS pd ON pd.nocmfk = ps.
+	ID INNER JOIN ruangan_m AS ru ON ru.ID = pd.objectruanganlastfk
+	INNER JOIN kelompokpasien_m AS kp ON kp.ID = pd.objectkelompokpasienlastfk
+	LEFT JOIN pegawai_m AS pg ON pg.ID = pd.objectpegawaifk 
+WHERE
+	pd.statusenabled = TRUE 
+	AND ps.kdprofile = 30 
+	AND CAST(pd.tglregistrasi as date) = '%$tglhariini%' 
+	AND ps.nocm = '$norm'");
+
+        $result = array(
+            'daftar' => $data,//array_merge($data,$data2),
+            // 'data2' =>$data2,
+            'message' => 'ea@epic',
+        );
+        return $this->respond($result);
+    }
+
 }
