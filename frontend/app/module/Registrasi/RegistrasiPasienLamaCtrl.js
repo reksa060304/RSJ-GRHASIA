@@ -276,7 +276,6 @@ define(['initialize'], function (initialize) {
             })
             $scope.tglhariini = moment($scope.now).format('YYYY-MM-DD');
 
-            console.log($scope.tglhariini)
             $scope.RegistrasiPasien = function () {
                 var rm ="";
                 if ($scope.nocm != undefined) {
@@ -287,78 +286,74 @@ define(['initialize'], function (initialize) {
                     tglhariini = "&tglhariini=" + $scope.tglhariini;
                 }
 
-                medifirstService.get('registrasi/daftar-riwayat-registrasi1?'+ rm + tglhariini)
-                .then(function (data) {
+                // medifirstService.get('registrasi/daftar-riwayat-registrasi1?'+ rm + tglhariini)
+                // .then(function (data) {
                     
-                console.log(data.data.daftar.length)
-                console.log(data.data.daftar)
-                    if (data.data.daftar.length > 0) {
-                        cacheHelper.set('cacheStatusPasien', 'LAMA');
-                        var namaru = new Array();
-                        var tglregistrasi = new Array();
-                        var no = new Array();
-                        var strnotif = "";
-                        for (let i = 0; i < data.data.daftar.length; i++) {
-                            strnotif = strnotif + " Waktu Kunjungan: " + data.data.daftar[i].tglregistrasi + " & tujuan kunjungan: " + data.data.daftar[i].namaruangan + "<br>"
-                            namaru[i] = data.data.daftar[i].namaruangan;
-                            tglregistrasi[i] = data.data.daftar[i].tglregistrasi;
-                            no[i]= 1+i;
-                        }
+                // console.log(data.data.daftar.length)
+                // console.log(data.data.daftar)
+                //     if (data.data.daftar.length > 0) {
+                //         var strnotif = "";
+                //         for (let i = 0; i < data.data.daftar.length; i++) {
+                //             strnotif = strnotif + " Waktu Kunjungan: " + data.data.daftar[i].tglregistrasi + " & tujuan kunjungan: " + data.data.daftar[i].namaruangan + "<br>"
+                //         }
 
-                        var confirm = $mdDialog.confirm()
-                            .title('Informasi')
-                            .htmlContent("Pasien Sudah registrasi hari ini : <br> " + strnotif + "Apakah mau melanjutkan registrasi?")
-                            .ariaLabel('Lucky day')
-                            .cancel('Batal')
-                            .ok('Ok')
-                            // 'Pasien Sudah registrai hari ini. apakah anda mau melanjutkan registrasi?'
-                        $mdDialog.show(confirm).then(function () {
-                            if (!$scope.isPenunjang) {
-                                cacheHelper.set('isPenunjang', undefined);
-                                $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
-                                    noCm: $scope.dataPasienSelected.nocmfk
-                                })
-                                var cacheSet = undefined;
-                                cacheHelper.set('CacheRegistrasiPasien', cacheSet);
-                                var cacheSetss = undefined;
-                                cacheHelper.set('CacheRegisOnline', cacheSetss);
+                //         var confirm = $mdDialog.confirm()
+                //             .title('Informasi')
+                //             .htmlContent("Pasien Sudah registrasi hari ini : <br> " + strnotif + "Apakah mau melanjutkan registrasi?")
+                //             .ariaLabel('Lucky day')
+                //             .cancel('Batal')
+                //             .ok('Ok')
+                //             // 'Pasien Sudah registrai hari ini. apakah anda mau melanjutkan registrasi?'
+                //         $mdDialog.show(confirm).then(function () {
+                //             cacheHelper.set('cacheStatusPasien', 'LAMA');
+                //             if (!$scope.isPenunjang) {
+                //                 cacheHelper.set('isPenunjang', undefined);
+                //                 $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
+                //                     noCm: $scope.dataPasienSelected.nocmfk
+                //                 })
+                //                 var cacheSet = undefined;
+                //                 cacheHelper.set('CacheRegistrasiPasien', cacheSet);
+                //                 var cacheSetss = undefined;
+                //                 cacheHelper.set('CacheRegisOnline', cacheSetss);
 
-                            } else {
-                                cacheHelper.set('isPenunjang', true);
-                                $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
-                                    noCm: $scope.dataPasienSelected.nocmfk
-                                })
-                                var cacheSet = undefined;
-                                cacheHelper.set('CacheRegistrasiPasien', cacheSet);
-                                var cacheSetss = undefined;
-                                cacheHelper.set('CacheRegisOnline', cacheSetss);
-                            }
-                        })
-                    }else{
-                        console.log('belum dipilih datanya')
-                        if (!$scope.isPenunjang) {
-                            cacheHelper.set('isPenunjang', undefined);
-                            $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
-                                noCm: $scope.dataPasienSelected.nocmfk
-                            })
-                            var cacheSet = undefined;
-                            cacheHelper.set('CacheRegistrasiPasien', cacheSet);
-                            var cacheSetss = undefined;
-                            cacheHelper.set('CacheRegisOnline', cacheSetss);
+                //             } 
+                //             else {
+                //                 cacheHelper.set('isPenunjang', true);
+                //                 $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
+                //                     noCm: $scope.dataPasienSelected.nocmfk
+                //                 })
+                //                 var cacheSet = undefined;
+                //                 cacheHelper.set('CacheRegistrasiPasien', cacheSet);
+                //                 var cacheSetss = undefined;
+                //                 cacheHelper.set('CacheRegisOnline', cacheSetss);
+                //             }
+                //         })
+                //     }
+                //     else{
+                //         cacheHelper.set('cacheStatusPasien', 'LAMA');
+                //         if (!$scope.isPenunjang) {
+                //             cacheHelper.set('isPenunjang', undefined);
+                //             $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
+                //                 noCm: $scope.dataPasienSelected.nocmfk
+                //             })
+                //             var cacheSet = undefined;
+                //             cacheHelper.set('CacheRegistrasiPasien', cacheSet);
+                //             var cacheSetss = undefined;
+                //             cacheHelper.set('CacheRegisOnline', cacheSetss);
 
-                        } else {
-                            cacheHelper.set('isPenunjang', true);
-                            $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
-                                noCm: $scope.dataPasienSelected.nocmfk
-                            })
-                            var cacheSet = undefined;
-                            cacheHelper.set('CacheRegistrasiPasien', cacheSet);
-                            var cacheSetss = undefined;
-                            cacheHelper.set('CacheRegisOnline', cacheSetss);
-                        }
+                //         } else {
+                //             cacheHelper.set('isPenunjang', true);
+                //             $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
+                //                 noCm: $scope.dataPasienSelected.nocmfk
+                //             })
+                //             var cacheSet = undefined;
+                //             cacheHelper.set('CacheRegistrasiPasien', cacheSet);
+                //             var cacheSetss = undefined;
+                //             cacheHelper.set('CacheRegisOnline', cacheSetss);
+                //         }
 
-                    }
-                })
+                //     }
+                // })
                 if ($scope.nocm == undefined) {
                     toastr.warning('Pilih data dulu!')
                     return
@@ -369,27 +364,27 @@ define(['initialize'], function (initialize) {
                     return
                 }
 
-                // cacheHelper.set('cacheStatusPasien', 'LAMA');
-                // if (!$scope.isPenunjang) {
-                //     cacheHelper.set('isPenunjang', undefined);
-                //     $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
-                //         noCm: $scope.dataPasienSelected.nocmfk
-                //     })
-                //     var cacheSet = undefined;
-                //     cacheHelper.set('CacheRegistrasiPasien', cacheSet);
-                //     var cacheSetss = undefined;
-                //     cacheHelper.set('CacheRegisOnline', cacheSetss);
+                cacheHelper.set('cacheStatusPasien', 'LAMA');
+                if (!$scope.isPenunjang) {
+                    cacheHelper.set('isPenunjang', undefined);
+                    $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
+                        noCm: $scope.dataPasienSelected.nocmfk
+                    })
+                    var cacheSet = undefined;
+                    cacheHelper.set('CacheRegistrasiPasien', cacheSet);
+                    var cacheSetss = undefined;
+                    cacheHelper.set('CacheRegisOnline', cacheSetss);
 
-                // } else {
-                //     cacheHelper.set('isPenunjang', true);
-                //     $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
-                //         noCm: $scope.dataPasienSelected.nocmfk
-                //     })
-                //     var cacheSet = undefined;
-                //     cacheHelper.set('CacheRegistrasiPasien', cacheSet);
-                //     var cacheSetss = undefined;
-                //     cacheHelper.set('CacheRegisOnline', cacheSetss);
-                // }
+                } else {
+                    cacheHelper.set('isPenunjang', true);
+                    $state.go("UmVnaXN0cmFzaVJ1YW5nYW4=", {
+                        noCm: $scope.dataPasienSelected.nocmfk
+                    })
+                    var cacheSet = undefined;
+                    cacheHelper.set('CacheRegistrasiPasien', cacheSet);
+                    var cacheSetss = undefined;
+                    cacheHelper.set('CacheRegisOnline', cacheSetss);
+                }
             }
             $scope.EditPasien = function () {
                 cacheHelper.set('cacheStatusPasien', 'LAMA');
