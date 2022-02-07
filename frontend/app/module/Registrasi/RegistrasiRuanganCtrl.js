@@ -50,10 +50,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("tatarekening/daftar-piutang-pasiencek?"
 						+"nocm="+$scope.currentNoCm)
 				.then(function (e) {
-                    $scope.formatRupiah = function (value, currency) {
-                        return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-                    }
-                    console.log($scope.currentNoCm)
+
                     for (let i = 0; i < e.data.data.length; i++) {
                         if (e.data.data[i].totalBayar != e.data.data[i].totalHarusBayar) {
                             toastr.warning('Pasien masih memiliki piutang! <br/> No. Registrasi : ' + e.data.data[i].noRegistrasi 
