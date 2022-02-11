@@ -8767,4 +8767,70 @@ class TagihanController  extends ApiController
         );
         return $this->respond($result);
     }
+    
+    public function daftarPiutangPasiencek(Request $request){
+        $filter=$request->all();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+//        $dataPiutang=[];
+        $dataPiutang= \DB::table('strukpelayanan_t as sp')
+            ->leftjoin('strukpelayananpenjamin_t as spp', 'sp.norec', '=', 'spp.nostrukfk')
+            ->join('pelayananpasien_t as pp', 'pp.strukfk', '=', 'sp.norec')
+            ->join('antrianpasiendiperiksa_t as ap', 'ap.norec', '=', 'pp.noregistrasifk')
+            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'ap.noregistrasifk')
+            ->leftjoin('pemakaianasuransi_t as pa', 'pa.noregistrasifk', '=', 'sp.noregistrasifk')
+            ->leftjoin('bpjsklaimtxt_t as bpjs', 'bpjs.sep', '=', 'pa.nosep')
+            ->leftjoin('rekanan_m as rkn', 'rkn.id', '=', 'pd.objectrekananfk')
+            ->join('pasien_m as p', 'p.id', '=', 'pd.nocmfk')
+            ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
+            ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
+            ->leftJoin('rekanan_m as r', 'r.id', '=', 'spp.kdrekananpenjamin')
+            ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
+            ->leftJoin('postinghutangpiutang_t as php', 'php.nostrukfk', '=', 'spp.norec')
+            ->leftJoin('strukposting_t as spt', 'spt.noposting', '=', 'php.noposting')
+            ->select('kp.kelompokpasien', 'spp.norec','sp.tglstruk', 'pd.noregistrasi', 'pd.tglregistrasi','p.nocm',
+                'p.namapasien','spp.totalppenjamin','spp.totalharusdibayar','bpjs.tarif_inacbg as tarifklaim',
+                'spp.totalsudahdibayar', 'r.namarekanan', 'spp.totalbiaya', 'spp.noverifikasi','rkn.namarekanan','pd.norec as norec_pd',
+                'pd.tglpulang','php.noposting','spt.statusenabled','ru.namaruangan')
+                ->distinct()
+            ->where('sp.statusenabled', true)
+            ->where('pd.objectkelompokpasienlastfk',1)
+            ->where('sp.kdprofile',$idProfile);
+
+
+        
+
+        if(isset($request['nocm']) && $request['nocm']!=""){
+            $dataPiutang = $dataPiutang->where('pd.nocmfk','=',$request['nocm']);
+        }
+        $dataPiutang =$dataPiutang->get();
+        $result = [];
+        foreach ($dataPiutang as $item) {
+            if ($item->statusenabled ==  1 || is_null($item->statusenabled)) {
+               
+                $result[] = array(
+                    'namaRuangan' => $item->namaruangan,
+                    'tglTransaksi' => $item->tglstruk,
+                    'noRegistrasi' => $item->noregistrasi,
+                    'namaPasien' => $item->namapasien,
+                    'jenisPasisen' => $item->kelompokpasien,
+                    'totalBilling' => $item->totalbiaya,
+                    'totalKlaim' => $item->totalppenjamin,
+                    'totalBayar' => $item->totalsudahdibayar,
+                    'tglpulang' => $item->tglpulang,
+                    'totalHarusBayar' => $item->totalharusdibayar,
+
+
+                );
+            }
+
+
+        }
+
+        $datadata =array(
+            'data' =>   $result,
+        );
+        return $this->respond($datadata);
+    }
+    
 }
