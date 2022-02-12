@@ -16885,5 +16885,25 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "LaporanKegiatanPelayananResep",
+    "url": "/TGFwb3JhbktlZ2lhdGFuUGVsYXlhbmFuUmVzZXAg",
+    "templateurl": "module/Farmasi/LaporanFarmasi/LaporanKegiatanPelayananResep.html",
+    "controller": "LaporanKegiatanPelayananResepCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ] 

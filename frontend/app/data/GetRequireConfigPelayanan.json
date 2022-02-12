@@ -3025,6 +3025,10 @@
         {
             "nameDep": "PengkategorianPasienJiwaCtrl",
             "urlDep": "module/EMR/PengkategorianPasienJiwaCtrl"
+        },
+        {
+            "nameDep": "LaporanKegiatanPelayananResepCtrl",
+            "urlDep": "module/Farmasi/LaporanFarmasi/LaporanKegiatanPelayananResepCtrl"
         }
     ]
 }

@@ -3437,4 +3437,240 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getLaporanKegiatanPelayananResep(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['tglAwal'];
+
+        $month = DB::select(DB::raw("
+            select EXTRACT(MONTH from d), to_char(d, 'Month') as month
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 YEAR - 1 day', '1 day'::interval) d
+            group by to_char(d, 'Month'), EXTRACT(MONTH from d)
+            order by EXTRACT(MONTH from d) 
+        "));
+
+        $tglmax = DB::select(DB::raw("
+            select max(d::date) as tglmax
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 YEAR - 1 day', '1 day'::interval) d
+        "));
+
+        $tglmin = DB::select(DB::raw("
+            select min(d::date) as tglmin
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 YEAR - 1 day', '1 day'::interval) d
+        "));
+
+        $arrmax = [];
+        foreach($tglmax as $rowmax)
+        {
+            $arrmax[] =  $rowmax->tglmax;
+        } 
+
+        $arrmin = [];
+        foreach($tglmin as $rowmin)
+        {
+            $arrmin[] =  $rowmin->tglmin;
+        } 
+
+        
+        $jumlahrke = DB::select(DB::raw("select rtrim(y.bulan, ' ') as bulan, count(y.rke) as jumlahrke from (select 
+        to_char(sr.tglresep, 'Month') as bulan, pr.namaproduk, pp.isobat,  sr.noresep, pp.rke
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk 
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner  join produk_m pr on pr.id=pp.produkfk
+        inner join strukresep_t sr on pp.strukresepfk = sr.norec
+        WHERE
+            pp.kdprofile=30 
+            and sr.tglresep::date between '$arrmin[0]' and '$arrmax[0]'
+            and isobat = true
+        group by to_char(sr.tglresep, 'Month'), pr.namaproduk, isobat,  sr.noresep,pp.rke) as y group by y.bulan"));
+
+        
+        $jumlahresep = DB::select(DB::raw("select rtrim(x.bulan, ' ') as bulan, count(x.resep) as jumlahresep from (select 
+        to_char(sr.tglresep, 'Month') as bulan, sr.noresep as resep
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk 
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner  join produk_m pr on pr.id=pp.produkfk
+        inner join strukresep_t sr on pp.strukresepfk = sr.norec
+        WHERE
+            pp.kdprofile=30 
+            and sr.tglresep::date between '$arrmin[0]' and '$arrmax[0]'
+            and isobat = true
+        group by to_char(sr.tglresep, 'Month'), sr.noresep) as x group by x.bulan"));
+        
+        $jumlahtotalrkejanuary = 0;
+        $jumlahtotalrkefebruary = 0;
+        $jumlahtotalrkemarch = 0;
+        $jumlahtotalrkeapril = 0;
+        $jumlahtotalrkemay = 0;
+        $jumlahtotalrkejune = 0;
+        $jumlahtotalrkejuly = 0;
+        $jumlahtotalrkeaugust = 0;
+        $jumlahtotalrkeseptember = 0;
+        $jumlahtotalrkeoctober = 0;
+        $jumlahtotalrkenovember = 0;
+        $jumlahtotalrkedecember = 0;
+        $jumlahtotalresepjanuary = 0;
+        $jumlahtotalresepfebruary = 0;
+        $jumlahtotalresepmarch = 0;
+        $jumlahtotalresepapril = 0;
+        $jumlahtotalresepmay = 0;
+        $jumlahtotalresepjune = 0;
+        $jumlahtotalresepjuly = 0;
+        $jumlahtotalresepaugust = 0;
+        $jumlahtotalresepseptember = 0;
+        $jumlahtotalresepoctober = 0;
+        $jumlahtotalresepnovember = 0;
+        $jumlahtotalresepdecember = 0;
+        $totalrke = 0;
+        $totalresep = 0;
+        $detail=[];
+        
+        foreach ($jumlahresep  as $resep){
+            foreach ($jumlahrke  as $rke){
+                $jumlahtotalrkejanuary = 0;
+                $jumlahtotalrkefebruary = 0;
+                $jumlahtotalrkemarch = 0;
+                $jumlahtotalrkeapril = 0;
+                $jumlahtotalrkemay = 0;
+                $jumlahtotalrkejune = 0;
+                $jumlahtotalrkejuly = 0;
+                $jumlahtotalrkeaugust = 0;
+                $jumlahtotalrkeseptember = 0;
+                $jumlahtotalrkeoctober = 0;
+                $jumlahtotalrkenovember = 0;
+                $jumlahtotalrkedecember = 0;
+                $jumlahtotalresepjanuary = 0;
+                $jumlahtotalresepfebruary = 0;
+                $jumlahtotalresepmarch = 0;
+                $jumlahtotalresepapril = 0;
+                $jumlahtotalresepmay = 0;
+                $jumlahtotalresepjune = 0;
+                $jumlahtotalresepjuly = 0;
+                $jumlahtotalresepaugust = 0;
+                $jumlahtotalresepseptember = 0;
+                $jumlahtotalresepoctober = 0;
+                $jumlahtotalresepnovember = 0;
+                $jumlahtotalresepdecember = 0;
+                if ($rke->bulan == 'January' && $resep->bulan == 'January'){
+                    $jumlahtotalrkejanuary = $rke->jumlahrke;
+                    $jumlahtotalresepjanuary = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkejanuary;
+                    $totalresep+=$jumlahtotalresepjanuary;
+                }
+
+                if ($rke->bulan == 'February' && $resep->bulan == 'February' ){
+                    $jumlahtotalrkefebruary = $rke->jumlahrke;
+                    $jumlahtotalresepfebruary = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkefebruary;
+                    $totalresep+=$jumlahtotalresepfebruary;
+                }
+                if ($rke->bulan == 'March' && $resep->bulan == 'March'){
+                    $jumlahtotalrkemarch = $rke->jumlahrke;
+                    $jumlahtotalresepmarch = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkemarch;
+                    $totalresep+=$jumlahtotalresepmarch;
+                }
+                if ($rke->bulan == 'April' && $resep->bulan == 'April'){
+                    $jumlahtotalrkeapril = $rke->jumlahrke;
+                    $jumlahtotalresepapril = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkeapril;
+                    $totalresep+=$jumlahtotalresepapril;
+                }
+                if ($rke->bulan == 'May' && $resep->bulan == 'May'){
+                    $jumlahtotalrkemay = $rke->jumlahrke;
+                    $jumlahtotalresepmay = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkemay;
+                    $totalresep+=$jumlahtotalresepmay;
+                }
+                if ($rke->bulan == 'June'&& $resep->bulan == 'June'){
+                    $jumlahtotalrkejune = $rke->jumlahrke;
+                    $jumlahtotalresepjune = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkejune;
+                    $totalresep+=$jumlahtotalresepjune;
+                }
+                if ($rke->bulan == 'July' && $resep->bulan == 'July'){
+                    $jumlahtotalrkejuly = $rke->jumlahrke;
+                    $jumlahtotalresepjuly = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkejuly;
+                    $totalresep+=$jumlahtotalresepjuly;
+                }
+                if ($rke->bulan == 'August' && $resep->bulan == 'August'){
+                    $jumlahtotalrkeaugust = $rke->jumlahrke;
+                    $jumlahtotalresepaugust = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkeaugust;
+                    $totalresep+=$jumlahtotalresepaugust;
+                }
+                if ($rke->bulan == 'September' && $resep->bulan == 'September'){
+                    $jumlahtotalrkeseptember = $rke->jumlahrke;
+                    $jumlahtotalresepseptember = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkeseptember;
+                    $totalresep+=$jumlahtotalresepseptember;
+
+                }
+                if ($rke->bulan == 'October' && $resep->bulan == 'October'){
+                    $jumlahtotalrkeoctober = $rke->jumlahrke;
+                    $jumlahtotalresepoctober = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkeoctober;
+                    $totalresep+=$jumlahtotalresepoctober;
+
+                }
+                if ($rke->bulan == 'November' && $resep->bulan == 'November'){
+                    $jumlahtotalrkenovember = $rke->jumlahrke;
+                    $jumlahtotalresepnovember = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkenovember;
+                    $totalresep+=$jumlahtotalresepnovember;
+                }
+                if ($rke->bulan == 'December' && $resep->bulan == 'December'){
+                    $jumlahtotalrkedecember = $rke->jumlahrke;
+                    $jumlahtotalresepdecember = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkedecember;
+                    $totalresep+=$jumlahtotalresepdecember;
+                }
+
+                $detail[] =array(
+                    'jumlahtotalrkejanuary' =>   $jumlahtotalrkejanuary,
+                    'jumlahtotalrkefebruary' =>   $jumlahtotalrkefebruary,
+                    'jumlahtotalresepjanuary' =>   $jumlahtotalresepjanuary,
+                    'jumlahtotalresepfebruary' =>   $jumlahtotalresepfebruary,
+                    'jumlahtotalrkemarch' =>   $jumlahtotalrkemarch,
+                    'jumlahtotalrkeapril' =>   $jumlahtotalrkeapril,
+                    'jumlahtotalrkemay' =>   $jumlahtotalrkemay,
+                    'jumlahtotalrkejune' =>   $jumlahtotalrkejune,
+                    'jumlahtotalrkejuly' =>   $jumlahtotalrkejuly,
+                    'jumlahtotalrkeaugust' =>   $jumlahtotalrkeaugust,
+                    'jumlahtotalrkeseptember' =>   $jumlahtotalrkeseptember,
+                    'jumlahtotalrkeoctober' =>   $jumlahtotalrkeoctober,
+                    'jumlahtotalrkenovember' =>   $jumlahtotalrkenovember,
+                    'jumlahtotalrkedecember' =>   $jumlahtotalrkedecember,
+                    'jumlahtotalresepmarch' =>   $jumlahtotalresepmarch,
+                    'jumlahtotalresepapril' =>   $jumlahtotalresepapril,
+                    'jumlahtotalresepmay' =>   $jumlahtotalresepmay,
+                    'jumlahtotalresepjune' =>   $jumlahtotalresepjune,
+                    'jumlahtotalresepjuly' =>   $jumlahtotalresepjuly,
+                    'jumlahtotalresepaugust' =>   $jumlahtotalresepaugust,
+                    'jumlahtotalresepseptember' =>   $jumlahtotalresepseptember,
+                    'jumlahtotalresepoctober' =>   $jumlahtotalresepoctober,
+                    'jumlahtotalresepnovember' =>   $jumlahtotalresepnovember,
+                    'jumlahtotalresepdecember' =>   $jumlahtotalresepdecember,
+                    'totalrke' =>   $totalrke,
+                    'totalresep' =>   $totalresep,
+                );
+            }
+        }
+
+        
+
+        $result = array(
+            'detail' => $detail,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
 }
