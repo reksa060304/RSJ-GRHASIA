@@ -1571,6 +1571,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('registrasi/save-batal-ranap', 'Registrasi\RegistrasiController@saveBatalRanap');
             Route::get('registrasi/cek-pasien-bayar', 'Registrasi\RegistrasiController@cekPasienBayar');
             Route::get('registrasi/daftar-riwayat-registrasi', 'Registrasi\RegistrasiController@getDaftarRiwayatRegistrasi');
+            Route::get('registrasi/daftar-riwayat-registrasi1', 'Registrasi\RegistrasiController@getDaftarRiwayatRegistrasi1');
             Route::post('registrasi/save-batal-ranap-rev', 'Registrasi\RegistrasiController@saveBatalRanapRev');
             Route::post('registrasi/save-batal-pindah-ruangan', 'Registrasi\RegistrasiController@saveBatalPindahRuangan');
             Route::get('registrasi/get-combo-pemakaian-asuransi', 'Registrasi\RegistrasiController@getDataComboAsuransiPasien');
@@ -2550,6 +2551,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('tatarekening/get-penjaminbykelompokpasien','TataRekening\TagihanController@getPenjaminByKelompokPasien');
           Route::post('tatarekening/save-update-rekanan_pd', 'TataRekening\TagihanController@simpanUpdateRekananPD');
           Route::get('tatarekening/daftar-piutang-pasien', 'TataRekening\TagihanController@daftarPiutangPasien');
+          Route::get('tatarekening/daftar-piutang-pasiencek', 'TataRekening\TagihanController@daftarPiutangPasiencek');
           Route::post('tatarekening/verify-piutang-pasien', 'TataRekening\TagihanController@verifyPiutangPasien');
           Route::post('tatarekening/cancel-verify-piutang-pasien', 'TataRekening\TagihanController@cancelVerifyPiutangPasien');
           Route::get('tatarekening/get-daftar-registrasi-pasien', 'TataRekening\TagihanController@getDaftarRegistrasiPasien');

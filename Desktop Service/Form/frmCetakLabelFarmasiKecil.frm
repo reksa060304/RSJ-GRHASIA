@@ -110,6 +110,7 @@ Dim Report As New Cr_cetakLabelKecil
 Dim strDeviceName As String
 Dim strDriverName As String
 Dim strPort As String
+Dim strView As String
 
 Private Sub cmdCetak_Click()
     Report.SelectPrinter "winspool", cboPrinter.Text, "Ne00:"
@@ -123,6 +124,12 @@ Private Sub CmdOption_Click()
 End Sub
 
 
+Private Sub Form_Activate()
+    If strView = "false" Then
+        Unload Me
+    End If
+End Sub
+
 Private Sub Form_Load()
     Dim p As Printer
     cboPrinter.Clear
@@ -130,6 +137,7 @@ Private Sub Form_Load()
         cboPrinter.AddItem p.DeviceName
     Next
     cboPrinter.Text = GetTxt("Setting.ini", "Printer", "LabelFarmasi")
+    
 End Sub
 
 Private Sub Form_Resize()
@@ -147,6 +155,7 @@ End Sub
 Public Sub CetakLabelFarmasi(Norec As String, view As String)
 On Error GoTo errLoad
 On Error Resume Next
+strView = view
 Dim adocmd As New ADODB.Command
 Dim str1, str2 As String
 Dim Apoteker As String
@@ -228,7 +237,7 @@ Set Report = New Cr_cetakLabelKecil
             .udtTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNamaProduk.SetUnboundFieldSource ("{ado.namaproduk}")
             .usCaraPakai.SetUnboundFieldSource ("{ado.aturanpakai}")
-            .usnocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usTelp.SetUnboundFieldSource ("{ado.notelepon}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
 '            .unjml.SetUnboundFieldSource ("{ado.jumlah}")
@@ -243,12 +252,25 @@ Set Report = New Cr_cetakLabelKecil
 '            .txtApoteker.SetText Apoteker
             .txtAturanPakai.SetText aturan(0) & " x Sehari " & aturan(1) & " " & RS3!satuanstandar
 '            If view = "false" Then
-             Dim strPrinter As String
+             
+            If view = "false" Then
+                Dim strPrinter As String
 '
-            strPrinter = GetTxt("Setting.ini", "Printer", "LabelFarmasi")
-            .SelectPrinter "winspool", strPrinter, "Ne00:"
-            .PrintOut False
-            Unload Me
+                strPrinter = GetTxt("Setting.ini", "Printer", "LabelFarmasi")
+                .SelectPrinter "winspool", strPrinter, "Ne00:"
+                .PrintOut False
+                Unload Me
+            Else
+                With CRViewer1
+                    .ReportSource = Report
+                    .ViewReport
+                    .Zoom 1
+                End With
+                Me.Show
+            End If
+            
+            
+            
         End If
 '            Else
 '                With CRViewer1
@@ -328,7 +350,7 @@ Set Report = New Cr_cetakLabelKecil
             .udtTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNamaProduk.SetUnboundFieldSource ("{ado.namaproduk}")
             .usCaraPakai.SetUnboundFieldSource ("{ado.aturanpakai}")
-            .usnocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usTelp.SetUnboundFieldSource ("{ado.notelepon}")
             .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
             .usss.SetUnboundFieldSource ("{ado.keteranganpakai}")
