@@ -2586,7 +2586,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
           Route::post('tatarekening/sync-trandata-new','TataRekening\TagihanController@saveSyncTransNEW');
           Route::post('tatarekening/sync-trandata-update-status','TataRekening\TagihanController@updateStatusCovid');
-
+            Route::get('tatarekening/get-data-combo-daftarregpasienruangan', 'TataRekening\TagihanController@getDataComboDaftarRegPasienruangan');
           Route::post('tatarekening/save-nosuratketerangakematian-pasien','TataRekening\TagihanController@saveNomorSuratKeteranganKematian');
           Route::post('tatarekening/delete-nosuratketerangakematian-pasien','TataRekening\TagihanController@HapusNomorSuratKeteranganKematian');
           Route::get('tatarekening/get-nosuratketerangakematian-pasien','TataRekening\TagihanController@getDataNoSuratKeteranganKematian');

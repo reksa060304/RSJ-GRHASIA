@@ -15,22 +15,49 @@ define(['initialize'], function (initialize) {
             $scope.showAndHide = function () {
                 $('#contentPencarian').fadeToggle("fast", "linear");
             }
-
+            
             function LoadCombo(){
+                $scope.StatusPasien = [{
+                    "id": 1,
+                    'statuspasien': 'LAMA',
+                }, {
+                    "id": 2,
+                    'statuspasien': 'BARU',
+                }]
+                $scope.listDepartemen = [{
+                        "id": 1,
+                        "departemen": 'Rawat Inap'
+                    },
+                    {
+                        "id": 2,
+                        "departemen": 'Rawat Jalan'
+                    },
+                ]
                 $scope.item.tglawal =  moment($scope.now).format('YYYY-MM-DD 00:00');
                 $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD 23:59');
+                
                 medifirstService.get("tatarekening/get-data-combo-daftarregpasien", true).then(function (dat) {                                    
-                    $scope.listDepartemen = dat.data.departemen; 
-                    $scope.listJenisDiagnosa = dat.data.jenisdiagnosa;                                    
+                    
+                    $scope.listJenisDiagnosa = dat.data.jenisdiagnosa;
                 });
-
+                
                 medifirstService.getPart("sysadmin/general/get-datacombo-icd10", true, true, 10).then(function(data) {
-                     $scope.listDiagnosa = data;
+                    $scope.listDiagnosa = data;
                 }); 
             }
-
+            
+            
             $scope.getIsiComboRuangan = function () {
-                $scope.listRuangan = $scope.item.departement.ruangan                
+                var getruangan = "";
+                if ($scope.item.departement.id != undefined) {
+                    getruangan = "getruangan=" + $scope.item.departement.id;
+                }
+                medifirstService.get("tatarekening/get-data-combo-daftarregpasienruangan?" + getruangan).then(function (dat) {
+                    
+                    $scope.listRuangan = dat.data.ruangan;
+
+                });
+
             }
                               
             $scope.SearchData = function () {            
@@ -64,23 +91,30 @@ define(['initialize'], function (initialize) {
                 var tempDiagnosa = ""
                 if ($scope.item.Diagnosa != undefined) {
                     tempDiagnosa = "&idDiagnosa=" + $scope.item.Diagnosa.id;
+                }
+                var tempstatusPasien = ""
+                if ($scope.item.StatuspasieN != undefined) {
+                    tempstatusPasien = "&statusPasien=" + $scope.item.StatuspasieN.statuspasien;
                 }                                                        
-
                 var chacePeriode = {
                     0: tglAwal,
                     1: tglAkhir,
                     2: '',
                     3: '',
                     4: '',
-                    5: '',                        
+                    5: '',
+                    6: '',                        
                 }
                 cacheHelper.set('LaporanDiagnosaPasienCtrl', chacePeriode);
                 medifirstService.get("tatarekening/get-data-diagnosa-pasien?"
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir
-                    + tempDepartemenId + tempRuanganId + tempJenisDiagnosa + tempDiagnosa).then(function (data) {
+                    + tempDepartemenId + tempRuanganId + tempJenisDiagnosa + tempDiagnosa + tempstatusPasien).then(function (data) {
+
+
                     $scope.isRouteLoading = false;                                    
                     var datas = data.data.data;
+                    
                     for (var i = 0; i < datas.length; i++) {
                         datas[i].no = i + 1;
                         var umur = dateHelper.CountAge(new Date(datas[i].tgllahir), new Date(datas[i].tglregistrasi));
@@ -89,6 +123,16 @@ define(['initialize'], function (initialize) {
                             day = umur.day                       
                          datas[i].umur = thn + 'thn ' + bln + 'bln ' + day + 'hr '                        
                     }
+                    for (let i = 0; i < data.data.count.length; i++) {
+                         $scope.a = data.data.count[i].a;
+                         $scope.b = data.data.count[i].b;
+                            $scope.c = data.data.count[i].c;
+                            $scope.d = data.data.count[i].d;
+                            $scope.e = data.data.count[i].e;
+                            $scope.f = data.data.count[i].f;
+                    }
+                    
+                    
                     $scope.sourceLaporan = new kendo.data.DataSource({                            
                         data: datas,
                         group: $scope.group,
@@ -96,9 +140,15 @@ define(['initialize'], function (initialize) {
                         total: datas.length,
                         serverPaging: false,
                         schema: {
-                            model: {                                
-                            }
-                        }
+                            model: {}
+                        },
+                        
+                        aggregate: [{
+                            field: "jenisdiagnosa",
+                            aggregate: "count"
+                        }],
+                        
+
                     });
                 })
             }
@@ -115,123 +165,165 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.columnLaporan = {
-                toolbar: [
-                    "excel",                    
-                ],
+                toolbar: ["excel",],
                 excel: { fileName: "LaporanDiagnosaPasien.xlsx", allPages: true, },
-                // pdf: { fileName: "RekapPembayaranJasaPelayanan.pdf", allPages: true, },
                 excelExport: function (e) {
                     var sheet = e.workbook.sheets[0];
-                    sheet.frozenRows = 3;
-                    sheet.mergedCells = ["A1:P1"];
+                    sheet.frozenRows = 1;
+                    sheet.mergedCells = ["A1:J1"];
                     sheet.name = "Orders";
 
                     var myHeaders = [{
-                        value: "Laporan Diagnosa Pasien",
+                        value: "Data Indeks Penyakit " + $scope.item.departement.departemen,
                         fontSize: 20,
                         textAlign: "center",
                         background: "#ffffff",
                         // color:"#ffffff"
                     }];
 
-                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        type: "header",
+                        height: 70
+                    });
+
+                    var jenisdiagnosa = [{
+                        value: "Jenis Diagnosa",
+                        fontSize: 11,
+                        background: "#ffffff",
+                    }]
+
+                    sheet.rows.splice(2999, 0, {
+                        cells: jenisdiagnosa,
+                        type: "header",
+                        height: 30
+                    });
+
+                    var a = [{
+                        value: " Primary / Utama : " + $scope.a,
+                    }]
+                    sheet.rows.splice(3000,0, {
+                        cells: a,
+                        type: "header",
+                        height: 20 
+
+                    })
+                    var b = [{
+                        value: " Secondary : " + $scope.b,
+                    }]
+                    sheet.rows.splice(3001, 0, {
+                        cells: b,
+                        type: "header",
+                        height: 20
+
+                    })
+                    var c = [{
+                        value: " Diagnosa Pra Bedah : " + $scope.c,
+                    }]
+                    sheet.rows.splice(3002, 0, {
+                        cells: c,
+                        type: "header",
+                        height: 20
+
+                    })
+                    var d = [{
+                        value: " Diagnosa Pasca Bedah : " + $scope.d,
+                    }]
+                    sheet.rows.splice(3003, 0, {
+                        cells: d,
+                        type: "header",
+                        height: 20
+
+                    })
+                    var e = [{
+                        value: " Diagnosa Awal : " + $scope.e,
+                    }]
+                    sheet.rows.splice(3004, 0, {
+                        cells: e,
+                        type: "header",
+                        height: 20
+
+                    })
+                    var f = [{
+                        value: " - : " + $scope.f,
+                    }]
+                    sheet.rows.splice(3005, 0, {
+                        cells: f,
+                        type: "header",
+                        height: 20
+
+                    })
+
+                    
                 },
+                
+
+                groupable: true,
+                filterable: true,
+                columnMenu: true,
+                reorderable: true,
+                resizable: true,
                 sortable: true,
                 pageable: true,
+                // dataBound: function (e) {
+                //     $('.k-pager-wrap').append('<span style="padding-left: 50px; color:red; font-weight:bold;"> Hello world </span>');
+                // },
                 selectable: "row",
                 columns: [  
-
-                    { field: "no", title: "No", width: "45px" },
                     {
-                        field: "tglregistrasi",
-                        title: "Tgl Registrasi",
-                        width: "105px",
-                        template: "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                        field: "no",
+                        title: "No",
+                        width: "40px",
                     },
-                    {
-                        field: "tglregistrasi",
-                        title: "Jam Registrasi",
-                        width: "105px",
-                        template: "<span class='style-left'>{{formatJam('#: tglregistrasi #')}}</span>"
-                    },
-                    {
-                        field: "tglpulang",
-                        title: "Tgl Pulang",
-                        width: "105px",
-                        template: "<span class='style-left'>{{formatTanggal('#: tglpulang #')}}</span>"
-                    },  
-                    {
-                        field: "tglpulang",
-                        title: "Jam Pulang",
-                        width: "105px",
-                        template: "<span class='style-left'>{{formatJam('#: tglpulang #')}}</span>"
-                    },                   
                     {
                         field: "nocm",
-                        title: "No Rekam Medis",
-                        width: "100px"
-                    },
-                    {
-                        field: "noregistrasi",
-                        title: "Noregistrasi",
-                        width: "105px"
-                    },
-                    {
-                        field: "namapasien",
-                        title: "Nama Pasien",
-                        width: "150px"                    
-                    },
-                    {
-                        field: "jeniskelamin",
-                        title: "JK",
-                        width: "50px"
-                    },
-                    {
-                        field: "umur",
-                        title: "Umur",
-                        width: "100px"
-                    },
-                    {
-                        field: "namaruangan",
-                        title: "Ruang Rawat",
-                        width: "140px"                        
-                    },
-                    {
-                        field: "namadokter",
-                        title: "Dokter",
-                        width: "150px"                    
+                        title: "No RM",
+                        width: "100px",
                     },
                     {
                         field: "jenisdiagnosa",
                         title: "Jenis Diagnosa",
-                        width: "100px"                    
+                        width: "100px",
+                        aggregates: ["count"], footerTemplate: "Total Diagnosa: #=count#",                     },
+                    {
+                        field: "kddiagnosa",
+                        title: "ICD-X",
+                        width: "50px",
                     },
                     {
                         field: "namadiagnosa",
                         title: "Diagnosa",
-                        width: "150px"                    
+                        width: "150px"
                     },
                     {
-                        field: "statuskeluar",
-                        title: "Status Keluar",
-                        width: "150px"                    
+                        field: "ttl",
+                        title: "Tempat Tgl Lahir",
+                        width: "105px",
                     },
                     {
-                        field: "statuspulang",
-                        title: "Status Pulang",
-                        width: "150px"                    
+                        field: "jeniskelamin",
+                        title: "JK",
+                        width: "40px",
+
+                    },  
+                    {
+                        field: "umurs",
+                        title: "Umur",
+                        width: "50px",
+                    },
+                    {
+                        field: "pendidikan",
+                        title: "Pendidikan",
+                        width: "80px",
                     },
                     {
                         field: "alamatlengkap",
                         title: "Alamat",
                         width: "150px"
-                    },
-                    {
-                        field: "notelepon",
-                        title: "No Telepon",
-                        width: "100px"
-                    }                 
-                ] 
+                    }
+                ],
+                
+                    
             }
 ////////////////////////////////////////////////////////    END     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
