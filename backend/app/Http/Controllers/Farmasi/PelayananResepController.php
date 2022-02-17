@@ -710,6 +710,20 @@ class PelayananResepController extends ApiController
             ->orderBy('pr.namaproduk')
             ->get();
 
+        $dataProdukAll = \DB::table('produk_m as pr')
+            ->JOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
+            ->JOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
+            ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
+            ->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
+            ->select('pr.id','pr.namaproduk','ss.id as ssid','ss.satuanstandar')
+            ->where('pr.kdprofile', $idProfile)
+            ->where('pr.statusenabled',true)
+            // ->whereIn('jp.id',[97,283])
+            ->whereIn('jp.id',$arrkdjenisobat)
+            ->groupBy('pr.id','pr.namaproduk','ss.id','ss.satuanstandar')
+            ->orderBy('pr.namaproduk')
+            ->get();
+
         $dataProduk1 = \DB::table('produk_m as pr')
             ->JOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
             ->JOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
@@ -802,6 +816,27 @@ class PelayananResepController extends ApiController
                 'konversisatuan' => $satuanKonversi,
             );
         }
+        $dataProdukResultAll=[];
+        foreach ($dataProdukAll as $item){
+            $satuanKonversi=[];
+            foreach ($dataKonversiProduk  as $item2){
+                if ($item->id == $item2->objekprodukfk){
+                    $satuanKonversi[] =array(
+                        'ssid' =>   $item2->satuanstandar_tujuan,
+                        'satuanstandar' =>   $item2->satuanstandar2,
+                        'nilaikonversi' =>   $item2->nilaikonversi,
+                    );
+                }
+            }
+
+            $dataProdukResultAll[]=array(
+                'id' =>   $item->id,
+                'namaproduk' =>   $item->namaproduk,
+                'ssid' =>   $item->ssid,
+                'satuanstandar' =>   $item->satuanstandar,
+                'konversisatuan' => $satuanKonversi,
+            );
+        }
 
         $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
                 INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
@@ -847,6 +882,7 @@ class PelayananResepController extends ApiController
         $result = array(
             'produk' => $dataProdukResult,
             'produk1' => $dataProdukResult1,
+            'produkall' => $dataProdukResultAll,
             'penulisresep' =>   $dataPenulis2,
             'ruangan' => $dataRuangan,
             'ruanganfarmasi' => $dataRuanganFamasi,
@@ -2957,6 +2993,15 @@ class PelayananResepController extends ApiController
         $sudahbayar= '';
         $rajalRanap= '';
         $rajalRanapObatBebas= '';
+        $namaItem = '';
+        if(isset($request['namaItem']) && $request['namaItem']!="" && $request['namaItem']!="undefined"){
+            $namaItem = ' and pro.id='.$request['namaItem'];
+        }
+        $namaItemText = '';
+        if(isset($request['namaItemText']) && $request['namaItemText']!="" && $request['namaItemText']!="undefined"){
+            $namaItemText = " and pro.namaproduk ilike '%".$request['namaItemText']."%' ";
+        }
+        
 
         if(isset($request['dokid']) && $request['dokid']!="" && $request['dokid']!="undefined"){
             $dokid = ' and pg.id='.$request['dokid'];
@@ -3099,6 +3144,8 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 $kpid
                 $ruid
                 $rajalRanap
+                $namaItem
+                $namaItemText
                 
                 UNION ALL
                 
@@ -3139,7 +3186,9 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 
                 $dokid
                 $ruid
-                $rajalRanapObatBebas                
+                $rajalRanapObatBebas    
+                $namaItem    
+                $namaItemText        
         "));
 
 
@@ -3700,10 +3749,11 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         $idProfile = (int) $kdProfile;
         $tglAwal= $request['tglAwal'];
         $tglAkhir= $request['tglAkhir'];
-        $namaproduk ='';
+        $namaItem = '';
 
-        if(isset( $request['namaproduk']) &&  $request['namaproduk']!='undefined' && $request['namaproduk']!=''){
-            $namaproduk = "and pr.namaproduk  ILIKE '%". $request['namaproduk']."%'";
+        if (isset($request['namaItem']) && $request['namaItem'] != "" && $request['namaItem'] != "undefined") {
+            $request['namaItem'] =  str_replace("'", "",   $request['namaItem']);
+            $namaItem = "  AND replace(pr.namaproduk,'''','') ILIKE '%".$request['namaItem']."%'";
         }
 
         $produkmain = DB::select(DB::raw("select pr.namaproduk as namaproduk
@@ -3720,7 +3770,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
 		or pr.isantibiotik = true
 		and sr.tglresep between '$tglAwal' and '$tglAkhir'
         and pp.kdprofile = $kdProfile
-        $namaproduk
+        $namaItem
 		group by pr.namaproduk;"));
 
         $dataranap =  DB::select(DB::raw("select pr.namaproduk as namaproduk, sum(pp.jumlah) as jumlahproduk, count(ps.namapasien) as jumlahpasien
@@ -3738,7 +3788,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
 		or pr.isantibiotik = true
 		and sr.tglresep between '$tglAwal' and '$tglAkhir'
         and pp.kdprofile = $kdProfile
-        $namaproduk
+        $namaItem
 		group by pr.namaproduk;"));
 
         $datarajal = DB::select(DB::raw("select pr.namaproduk as namaproduk, sum(pp.jumlah) as jumlahproduk, count(ps.namapasien) as jumlahpasien
@@ -3756,7 +3806,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
 		or pr.isantibiotik = true
 		and sr.tglresep between '$tglAwal' and '$tglAkhir'
 		and pp.kdprofile = $kdProfile
-        $namaproduk
+        $namaItem
 		group by pr.namaproduk;"));
 
         $jumlahobatranap = 0;
