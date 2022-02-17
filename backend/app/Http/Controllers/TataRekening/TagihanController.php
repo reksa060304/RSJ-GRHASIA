@@ -2678,6 +2678,7 @@ class TagihanController  extends ApiController
     }
     public function getLogin(Request $request)
     {
+        $kdProfile = (int) $this->getDataKdProfile($request);
         $dataLogin = $request->all();
         $dataPegawai = \DB::table('loginuser_s as lu')
             ->select('lu.objectpegawaifk')
@@ -2704,11 +2705,13 @@ class TagihanController  extends ApiController
                 'noregistrasi' => $request['noRegistrasi'] ,
             )
         );
+        $pass = $this->settingDataFixed('PassDiskonTotal', $kdProfile);
         $result = array(
             'datalogin' => $dataLogin,
             'kelompokuser' => $KelompokUser,
             'listRuangan' =>$dataAPD,
             'pegawailoginfk' =>$dataPegawai,
+            'pass' => $pass,
             'xby' => 'as@epic',
         );
         return $this->respond($result);

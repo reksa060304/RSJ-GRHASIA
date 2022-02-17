@@ -3029,6 +3029,14 @@
         {
             "nameDep": "LaporanKegiatanPelayananResepCtrl",
             "urlDep": "module/Farmasi/LaporanFarmasi/LaporanKegiatanPelayananResepCtrl"
+        },
+        {
+            "nameDep": "LaporanObatAntibiotikCtrl",
+            "urlDep": "module/Farmasi/LaporanFarmasi/LaporanObatAntibiotikCtrl"
+        },
+        {
+            "nameDep": "LaporanJasaPelayananObatCtrl",
+            "urlDep": "module/Farmasi/LaporanFarmasi/LaporanJasaPelayananObatCtrl"
         }
     ]
 }

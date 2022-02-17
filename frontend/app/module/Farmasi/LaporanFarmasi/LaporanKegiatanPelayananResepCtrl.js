@@ -12,6 +12,18 @@ define(['initialize'], function (initialize) {
             $scope.item.jmlRows = 50;
             FormLoad();
 
+            function LoadCombo() {
+                medifirstService.get("farmasi/get-datacombo?", true).then(function (dat) {
+                    $scope.listKelompokPasien = dat.data.kelompokpasien;
+                    $scope.namaLengkap = medifirstService.getPegawaiLogin();
+                    $scope.listRajalRanap = [
+                        { id: 1, names: "Rawat Jalan" },
+                        { id: 2, names: "Rawat Inap"}
+                    ];
+                    // init();
+                });
+            }
+
             $scope.showAndHide = function () {
                 $('#contentPencarian').fadeToggle("fast", "linear");
             }
@@ -20,8 +32,18 @@ define(['initialize'], function (initialize) {
                 $scope.isRouteLoading = true;
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
 
+                var kp = ""
+                if ($scope.item.kelompokPasien != undefined) {
+                    kp = "&kpid=" + $scope.item.kelompokPasien.id
+                }
+
+                var rajalRanap = "";
+                if ($scope.item.rajalRanap != undefined) {
+                    rajalRanap = $scope.item.rajalRanap.id
+                }
+
                 medifirstService.get("farmasi/get-laporan-kegiatan-pelayanan-resep?" +
-                    "tglAwal=" + tglAwal
+                    "tglAwal=" + tglAwal + kp + rajalRanap
                     , true).then(function (data) {
                         $scope.isRouteLoading = false;
                         var datas = data.data.detail;
@@ -167,10 +189,12 @@ define(['initialize'], function (initialize) {
 
             function FormLoad() {
                 $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
+                LoadCombo();
             }
 
             $scope.ClearData = function () {
                 $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
+                $scope.item.kelompokPasien = undefined;
             }
 
             $scope.cariFilter = function () {
