@@ -85,6 +85,18 @@
                                 placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
                         </div>
                     </div>
+                    <div class="grid_2">
+                        <label c-label item="item" c-label-text="Kelompok Pasien"></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.kelompokPasien"
+                            k-data-text-field="'kelompokpasien'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listKelompokPasien" />
+                    </div>
+                    <div class="grid_2">
+                        <label c-label item="item" c-label-text="Departemen"></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.rajalRanap"
+                            k-data-text-field="'names'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listRajalRanap" />
+                    </div>
                     <div class="grid_2" style="margin-top: 20px;">
                         <button class="c-button" ng-click="cariFilter()">Cari</button>
                     </div>

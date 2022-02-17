@@ -74,7 +74,7 @@
             </legend>
             <div class="grid_12" id="contentPencarian">
                 <div class="grid_12">
-                    <div class="grid_4">
+                    <div class="grid_3">
                         <div class="grid_6">
                             <label c-label item="item" c-label-text="Tanggal awal"></label>
                             <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datetimepicker
@@ -86,30 +86,41 @@
                                 placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
                         </div>
                     </div>
-                    <div class="grid_6">
-                        <div class="grid_3">
+                    <div class="grid_8">
+                        <div class="grid_2">
                             <label c-label item="item" c-label-text="Dokter"></label>
                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.dokter"
                                 k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listDataDokter" />
                         </div>
-                        <div class="grid_3">
+                        <div class="grid_2">
                             <label c-label item="item" c-label-text="Kelompok Pasien"></label>
                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.kelompokPasien"
                                 k-data-text-field="'kelompokpasien'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listKelompokPasien" />
                         </div>
-                        <div class="grid_3">
+                        <div class="grid_2">
                             <label c-label item="item" c-label-text="Ruangan"></label>
                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
                                 k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listRuangan" />
                         </div>
-                        <div class="grid_3">
+                        <div class="grid_2">
                             <label c-label item="item" c-label-text="Departemen"></label>
                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.rajalRanap"
                                 k-data-text-field="'names'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listRajalRanap" />
+                        </div>
+                        <div class="grid_2">
+                            <label c-label item="item" c-label-text="Nama Item"></label>
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.namaItem"
+                                k-data-text-field="'namaproduk'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listNamaItem" />
+                        </div>
+                        <div class="grid_2">
+                            <label c-label item="item" c-label-text="Nama Item"></label>
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.namaItemText"
+                                 />
                         </div>
                     </div>
                     <div class="grid_1" style="margin-top: 25px;">

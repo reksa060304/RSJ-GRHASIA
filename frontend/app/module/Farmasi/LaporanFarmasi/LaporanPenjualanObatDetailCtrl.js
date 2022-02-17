@@ -22,6 +22,7 @@ define(['initialize'], function (initialize) {
                     $scope.listRuangan = dat.data.ruanganfarmasi;
                     $scope.listDataDokter = dat.data.dokter;
                     $scope.listKelompokPasien = dat.data.kelompokpasien;
+                    $scope.listNamaItem = dat.data.produkall;
                     $scope.listRajalRanap = [
                         { id: 1, names: "Rawat Jalan" },
                         { id: 2, names: "Rawat Inap"}
@@ -53,13 +54,24 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.rajalRanap != undefined) {
                     rajalRanap = $scope.item.rajalRanap.id
                 }
+                var namaItem = "";
+                if ($scope.item.namaItem != undefined) {
+                  namaItem = "&namaItem=" + $scope.item.namaItem.id;
+                }
+                var namaItemText="";
+                
+                var namaItemText = "";
+                if ($scope.item.namaItemText != undefined) {
+                  namaItemText = "&namaItemText=" + $scope.item.namaItemText;
+                }
+
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("farmasi/get-laporan-penjualan-obat-detail?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
                     "&rajalRanap=" + rajalRanap +
-                    dok + kp + ru
+                    dok + kp + ru + namaItem + namaItemText
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         $scope.totaltunai = 0;
@@ -171,6 +183,11 @@ define(['initialize'], function (initialize) {
                 var tempRuanganId = "";
                 if ($scope.item.ruangan != undefined) {
                     tempRuanganId = $scope.item.ruangan.id;
+                }
+
+                var tempNama = "";
+                if ($scope.item.namaItem != undefined) {
+                  tempNama = "&namaItem=" + $scope.item.namaItem;
                 }
 
                 var stt = 'false'
