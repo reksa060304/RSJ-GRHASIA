@@ -4006,6 +4006,36 @@ class TagihanController  extends ApiController
                     );
             }
 
+            $dataAPD =  AntrianPasienDiperiksa::where('norec',$request['norec_apd'])->first();
+            $kdProfile = $this->getDataKdProfile($request);
+            // var_dump($dataAPD->tglmasuk);
+            // var_dump($request['tglmasuk']);
+            // var_dump($kdProfile);
+            
+            
+            if($dataAPD->tglmasuk != $request['tglmasuk']){
+                
+                    // if($dataAPD->tglmasuk != $request['tglmasuk'] ){
+                    // var_dump(date('Y-m-d',strtotime($request['tglmasuk'])));
+                $countNoAntrian = AntrianPasienDiperiksa::where('antrianpasiendiperiksa_t.objectruanganfk',$dataAPD->objectruanganfk)
+                    ->join('pasiendaftar_t as pd','pd.norec','=','antrianpasiendiperiksa_t.noregistrasifk')
+                    ->where('antrianpasiendiperiksa_t.kdprofile', $kdProfile)
+                    ->where('antrianpasiendiperiksa_t.tglmasuk', '>=', date('Y-m-d',strtotime($request['tglmasuk'])).' 00:00:00')
+                    ->where('antrianpasiendiperiksa_t.tglmasuk', '<=', date('Y-m-d',strtotime($request['tglmasuk'])).' 23:59:59')
+                    ->where('antrianpasiendiperiksa_t.statusenabled',true)
+                    ->where('pd.statusenabled',true)
+                    ->max('noantrian');
+                    
+                $noAntrian = $countNoAntrian + 1;
+                $dataAPD->noantrian = $noAntrian;
+                $dataAPD->save();
+
+                    // }
+            // var_dump($dataAPD);
+            // var_dump($noAntrian);
+
+            }
+            
             if ($request['tglkeluar'] != ''&& $request['tglmasuk'] != '') {
                 $updateAPD= AntrianPasienDiperiksa::where('norec', $request['norec_apd'])
                     ->update([
@@ -4065,6 +4095,7 @@ class TagihanController  extends ApiController
         } catch (\Exception $e) {
             $transStatus = 'false';
             $transMessage = "simpan  Pasien";
+            $transError = $e->getMessage(). '\n Line: '.$e->getLine();
         }
 
         if ($transStatus == 'true') {
@@ -4075,6 +4106,7 @@ class TagihanController  extends ApiController
                 'message' => $transMessage,
                 'dataPD' => $dataRPP,
                 'as' => 'ramdanegie',
+                // 'noantrian' => $countNoAntrian,
             );
         } else {
             $transMessage = "GAGAL";
@@ -4083,6 +4115,7 @@ class TagihanController  extends ApiController
                 'status' => 400,
                 'message'  => $transMessage,
                 'as' => 'ramdanegie',
+                'errMessage' => $transError,
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
