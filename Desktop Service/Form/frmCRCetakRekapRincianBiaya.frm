@@ -251,7 +251,7 @@ Set Report = New crRekapRincianBiaya
               " WHERE noregistrasi = '" & strNoregistrasi & "' AND tglpelayanan IS NOT NULL AND namaproduk NOT IN ('Biaya Administrasi','Biaya Materai') " & _
               " AND dp. ID IN (16, 25) " & _
               "  AND (tb.ruangantindakan  not ilike '%farmasi%' AND tb.ruangantindakan  not ilike '%apotik%')  " & _
-              " GROUP BY tb.tglstruk,tb.nobilling,tb.nokwitansi,tb.noregistrasi,tb.nocm,tb.namapasienjk,tb.unit,tb.objectdepartemenfk, " & _
+              " GROUP BY tb.norec_pp,tb.tglstruk,tb.nobilling,tb.nokwitansi,tb.noregistrasi,tb.nocm,tb.namapasienjk,tb.unit,tb.objectdepartemenfk, " & _
               " tb.namakelas,tb.dokterpj,tb.tglregistrasi,tb.tglpulang,tb.namarekanan,tb.tglpelayanan,tb.ruangantindakan, " & _
               " tb.namaproduk,tb.penulisresep,tb.jenisproduk,tb.jumlah,tb.hargajual,tb.diskon,tb.total,tb.namakamar,tb.tipepasien, " & _
               " tb.totalharusdibayar,tb.totalprekanan,tb.totalppenjamin,tb.totalbiayatambahan,tb.namakelaspd,tb.nama_kelasasal, " & _
@@ -275,7 +275,7 @@ Set Report = New crRekapRincianBiaya
              " AND namaproduk NOT IN ('Biaya Administrasi','Biaya Materai') " & _
              " AND dp. ID NOT IN (16, 25) " & _
              "  AND (tb.ruangantindakan  not ilike '%farmasi%' and tb.ruangantindakan  not ilike '%apotik%') " & _
-             " GROUP BY tb.tglstruk,tb.nobilling,tb.nokwitansi,tb.noregistrasi,tb.nocm,tb.namapasienjk,tb.unit,tb.objectdepartemenfk, " & _
+             " GROUP BY tb.norec_pp,tb.tglstruk,tb.nobilling,tb.nokwitansi,tb.noregistrasi,tb.nocm,tb.namapasienjk,tb.unit,tb.objectdepartemenfk, " & _
              " tb.namakelas,tb.dokterpj,tb.tglregistrasi,tb.tglpulang,tb.namarekanan,tb.tglpelayanan,tb.ruangantindakan, " & _
              " tb.namaproduk,tb.penulisresep,tb.jenisproduk,tb.jumlah,tb.hargajual,tb.diskon,tb.total,tb.namakamar,tb.tipepasien, " & _
              " tb.totalharusdibayar,tb.totalprekanan,tb.totalppenjamin,tb.totalbiayatambahan,tb.namakelaspd, " & _
@@ -298,7 +298,7 @@ Set Report = New crRekapRincianBiaya
              " WHERE tb.noregistrasi = '" & strNoregistrasi & "' AND tb.tglpelayanan IS NOT NULL " & _
              " AND tb.namaproduk NOT IN ('Biaya Administrasi','Biaya Materai') " & _
              " AND (tb.ruangantindakan  ilike '%farmasi%' or tb.ruangantindakan  ilike '%apotik%') /*AND tb.jenisprodukmaster = 'Jenis Barang Farmasi'*/ " & _
-             " GROUP BY tb.tglstruk,tb.nobilling,tb.nokwitansi,tb.noregistrasi,tb.nocm,tb.namapasienjk,tb.unit, " & _
+             " GROUP BY tb.norec_pp,tb.tglstruk,tb.nobilling,tb.nokwitansi,tb.noregistrasi,tb.nocm,tb.namapasienjk,tb.unit, " & _
              " tb.objectdepartemenfk,tb.namakelas,tb.dokterpj,tb.tglregistrasi,tb.tglpulang,tb.namarekanan, " & _
              " tb.tglpelayanan,tb.ruangantindakan,tb.namaproduk,tb.penulisresep,tb.jenisproduk,tb.jumlah, " & _
              " tb.hargajual,tb.diskon,tb.total,tb.namakamar,tb.tipepasien,tb.totalharusdibayar,tb.totalprekanan, " & _

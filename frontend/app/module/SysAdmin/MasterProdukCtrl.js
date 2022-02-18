@@ -6,6 +6,8 @@ define(['initialize'], function (initialize) {
 			$scope.now = new Date();
 			$scope.item.jumlahRows = 50;
 
+			loadCombo();
+
 			var init = function () {
 				var chacePeriode = cacheHelper.get('MasterProdukCtrl');
 				if (chacePeriode != undefined) {
@@ -30,51 +32,95 @@ define(['initialize'], function (initialize) {
 					loadData()
 				}
 			}
+			
 
 			init();
+			
 
 			$scope.cariFilter = function () {
+				
 				loadData()
 			}
+			
+			function searchProdukFilter(status,jmlRows){
+				var strFilter ="";
+				if(status === undefined){
+					//strFilter = "";
+				}else{
+					strFilter = strFilter + "&status=" + status.id;
+				}
+				if(jmlRows === undefined){
+
+				}else{
+					strFilter = strFilter + "&jmlRows=" + jmlRows;
+				}
+				return strFilter;
+			}
+			function loadCombo(){
+				$scope.listStatus = [{id:true,status:'True'},{id:false,status:'False'}];
+				medifirstService.getPart("sysadmin/master/get-data-produk?test=true" + searchProdukFilter($scope.item.Status,$scope.item.jumlahRows), true, true, 20).then(function (data) {
+					$scope.listProduk = data;
+				});
+
+			}
+
+			medifirstService.getPart("sysadmin/master/get-data-produk?test=true" + searchProdukFilter($scope.item.Status,$scope.item.jumlahRows), true, true, 20).then(function (data) {
+				$scope.listProduk = data;
+			});
+					
 
 			function loadData() {
-				var kode, kodeintern, kdBarcode, kdBmn, NamaProduk, jmlRows;
-				if ($scope.item.kdProdukScr === undefined) {
+				var kode, kodeintern, kdBarcode, kdBmn, NamaProduk, idProduk, jmlRows,status;
+				if ($scope.item.kdProdukScr === undefined || $scope.item.kdProdukScr == null) {
 					kode = "";
 				} else {
 					kode = $scope.item.kdProdukScr
 				}
-				if ($scope.item.kdProdukInternScr === undefined) {
+				if ($scope.item.kdProdukInternScr === undefined || $scope.item.kdProdukInternScr == null) {
 					kodeintern = "";
 				} else {
 					kodeintern = $scope.item.kdProdukInternScr
 				}
-				if ($scope.item.kdBarcodeScr === undefined) {
+				if ($scope.item.kdBarcodeScr === undefined  || $scope.item.kdBarcodeScr == null) {
 					kdBarcode = "";
 				} else {
 					kdBarcode = $scope.item.kdBarcodeScr
 				}
-				if ($scope.item.kodeBmnScr === undefined) {
+				if ($scope.item.kodeBmnScr === undefined || $scope.item.kodeBmnScr == null) {
 					kdBmn = "";
 				} else {
 					kdBmn = $scope.item.kodeBmnScr
 				}
-				if ($scope.item.namaProdukScr === undefined) {
+				if ($scope.item.namaProdukScr === undefined || $scope.item.namaProdukScr == null) {
 					NamaProduk = "";
 				} else {
 					NamaProduk = $scope.item.namaProdukScr
 				}
-				if ($scope.item.jumlahRows === undefined) {
+				if($scope.item.produk === undefined || $scope.item.produk == null){
+					idProduk = "";
+
+				}else{
+					idProduk = '&idProduk=' + $scope.item.produk.id;
+
+				}
+
+				if ($scope.item.jumlahRows === undefined || $scope.item.jumlahRows == null) {
 					jmlRows = "";
 				} else {
 					jmlRows = '&jmlRows=' + $scope.item.jumlahRows;
 				}
+				if ($scope.item.Status === undefined || $scope.item.Status == null) {
+					status = "";
+				} else {
+					status = '&status=' + $scope.item.Status.id;
+				}
+
 
 				medifirstService.get('sysadmin/master/get-data-produk?kdProduk=' + kode
 					+ '&kdInternal=' + kodeintern
 					+ '&kdBarcode=' + kdBarcode
 					+ '&kdBmn=' + kdBmn
-					+ '&nmProduk=' + NamaProduk + jmlRows).then(function (e) {
+					+ '&nmProduk=' + NamaProduk + jmlRows + status + idProduk).then(function (e) {
 						for (var i = 0; i < e.data.length; i++) {
 							e.data[i].no = i + 1
 						}
@@ -238,7 +284,31 @@ define(['initialize'], function (initialize) {
 				columns: $scope.columnProduk,
 				editable: "popup",
 				selectable: "row",
-				scrollable: false,				
+				scrollable: false,
+				toolbar: [
+                    "excel",
+
+                ],
+                excel: {
+                    fileName: "MasterProduk.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    // sheet.frozenRows = 2;
+                    //sheet.mergedCells = ["A1:H1"];
+                    sheet.name = "Master Produk";
+
+                    // var myHeaders = [{
+                    //     value: "Master Produk",
+                    //     fontSize: 20,
+                    //     textAlign: "center",
+                    //     background: "#ffffff",
+                    //     // color:"#ffffff"
+                    // }];
+
+                    // sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+                }				
 			};
 			$scope.KelBPJS = function () {
 				$state.go('KelompokProdukBPJS')
