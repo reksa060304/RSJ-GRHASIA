@@ -79,14 +79,37 @@ class MasterController extends ApiController{
 
         if(isset($filter['kdProduk']) && !empty($filter['kdProduk'])){
             $data = $data->where('p.id','=',$filter['kdProduk']);
-        }elseif (isset($filter['kdInternal']) && !empty($filter['kdInternal'])) {
+        }
+        if (isset($filter['kdInternal']) && !empty($filter['kdInternal'])) {
             $data = $data->where('p.kdproduk','=',$filter['kdInternal']);
-        }elseif (isset($filter['kdBarcode']) && !empty($filter['kdBarcode'])) {
+        }
+        if (isset($filter['kdBarcode']) && !empty($filter['kdBarcode'])) {
             $data = $data->where('p.kdbarcode','=',$filter['kdBarcode']);
-        }elseif (isset($filter['kdBmn']) && !empty($filter['kdBmn'])) {
+        }
+        if (isset($filter['kdBmn']) && !empty($filter['kdBmn'])) {
             $data = $data->where('p.kodebmn','=',$filter['kdBmn']);
-        }elseif (isset($filter['nmProduk']) && !empty($filter['nmProduk'])) {
+        }
+        if (isset($filter['nmProduk']) && !empty($filter['nmProduk'])) {
             $data = $data->where('p.namaproduk','ilike','%'.$filter['nmProduk'].'%');
+        }
+        if (isset($filter['status']) && !empty($filter['status'])) {            
+            if($filter['status'] == "true"){
+                $data = $data->where('p.statusenabled','=',true);
+
+            }else{
+                $data = $data->where('p.statusenabled','=',false);
+            }
+            
+        }        
+        if (isset($filter['idProduk']) && !empty($filter['idProduk'])) {
+            $data = $data->where('p.id','=',$filter['idProduk']);
+        }
+        //var_dump($filter['filter']);
+        if(isset($filter['filter']['filters'][0]['value']) &&
+            $filter['filter']['filters'][0]['value']!="" &&
+            $filter['filter']['filters'][0]['value']!="undefined"){
+            $data = $data
+                ->where('p.namaproduk','ilike','%'.$filter['filter']['filters'][0]['value'].'%' );
         }
         
 

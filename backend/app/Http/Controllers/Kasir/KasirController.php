@@ -228,7 +228,7 @@ class KasirController extends ApiController{
                 ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
                 ->select('sp.norec', 'sp.tglstruk', 'sp.namapasien_klien', 'kt.reportdisplay as jenistagihan',
                      'keteranganlainnya', 'sp.nosbklastfk', 'sp.nosbmlastfk', 'kt.id as jenisTagihanId',
-                    \DB::raw("CAST(sp.totalharusdibayar) AS totalharusdibayar AS FLOAT"))
+                    \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar "))
                 ->where('sp.kdprofile', $kdProfile)
                 ->whereNotNull('sp.totalharusdibayar')
                 ->whereIn('sp.objectkelompoktransaksifk', $KdList)
