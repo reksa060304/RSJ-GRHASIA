@@ -3497,11 +3497,11 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         $rajalRanap= '';
 
         
-        if(isset( $request['rajalRanap'])&&  $request['rajalRanap']=='1'){//rajal
+        if(isset( $request['rajalRanap'])&& $request['rajalRanap']!="" && $request['rajalRanap']!="undefined" &&  $request['rajalRanap']=='1'){//rajal
             $rajalRanap = "and ru.objectdepartemenfk <> 16";
         }
 
-        if(isset( $request['rajalRanap'])&&  $request['rajalRanap']=='2'){//ranap
+        if(isset( $request['rajalRanap'])&& $request['rajalRanap']!="" && $request['rajalRanap']!="undefined" && $request['rajalRanap']=='2'){//ranap
             $rajalRanap = "and ru.objectdepartemenfk = 16";//ini ga mungkin terjadi
         }
 
@@ -3548,6 +3548,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
         inner  join produk_m pr on pr.id=pp.produkfk
         inner join strukresep_t sr on pp.strukresepfk = sr.norec
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
         WHERE
             pp.kdprofile=30 
             and sr.tglresep::date between '$arrmin[0]' and '$arrmax[0]'
@@ -3566,6 +3567,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
         inner  join produk_m pr on pr.id=pp.produkfk
         inner join strukresep_t sr on pp.strukresepfk = sr.norec
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
         WHERE
             pp.kdprofile=30 
             and sr.tglresep::date between '$arrmin[0]' and '$arrmax[0]'

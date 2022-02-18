@@ -15,13 +15,14 @@ define(['initialize'], function (initialize) {
             function LoadCombo() {
                 medifirstService.get("farmasi/get-datacombo?", true).then(function (dat) {
                     $scope.listKelompokPasien = dat.data.kelompokpasien;
-                    $scope.namaLengkap = medifirstService.getPegawaiLogin();
                     $scope.listRajalRanap = [
                         { id: 1, names: "Rawat Jalan" },
                         { id: 2, names: "Rawat Inap"}
                     ];
+                    $scope.namaLengkap = medifirstService.getPegawaiLogin();
                     // init();
                 });
+                
             }
 
             $scope.showAndHide = function () {
@@ -34,7 +35,7 @@ define(['initialize'], function (initialize) {
 
                 var kp = ""
                 if ($scope.item.kelompokPasien != undefined) {
-                    kp = "&kpid=" + $scope.item.kelompokPasien.id
+                    kp = $scope.item.kelompokPasien.id
                 }
 
                 var rajalRanap = "";
@@ -43,13 +44,71 @@ define(['initialize'], function (initialize) {
                 }
 
                 medifirstService.get("farmasi/get-laporan-kegiatan-pelayanan-resep?" +
-                    "tglAwal=" + tglAwal + kp + rajalRanap
+                    "tglAwal=" + tglAwal + "&kpid=" + kp + "&rajalRanap=" + rajalRanap
                     , true).then(function (data) {
                         $scope.isRouteLoading = false;
                         var datas = data.data.detail;
 
                         if(datas.length === 1){
                             datas.length = 2;
+                            datas[1]={};
+                            datas[1].jumlahtotalrkedecember = 0;
+                            datas[1].jumlahtotalrkeapril = 0;
+                            datas[1].jumlahtotalrkeaugust = 0;
+                            datas[1].jumlahtotalrkefebruary = 0;
+                            datas[1].jumlahtotalrkejanuary = 0;
+                            datas[1].jumlahtotalrkejuly = 0;
+                            datas[1].jumlahtotalrkejune = 0;
+                            datas[1].jumlahtotalrkemarch = 0;
+                            datas[1].jumlahtotalrkemay = 0;
+                            datas[1].jumlahtotalrkenovember = 0;
+                            datas[1].jumlahtotalrkeoctober = 0;
+                            datas[1].jumlahtotalrkeseptember = 0;
+                            datas[1].jumlahtotalresepdecember = 0;
+                            datas[1].jumlahtotalresepapril = 0;
+                            datas[1].jumlahtotalresepaugust = 0;
+                            datas[1].jumlahtotalresepfebruary = 0;
+                            datas[1].jumlahtotalresepjanuary = 0;
+                            datas[1].jumlahtotalresepjuly = 0;
+                            datas[1].jumlahtotalresepjune = 0;
+                            datas[1].jumlahtotalresepmarch = 0;
+                            datas[1].jumlahtotalresepmay = 0;
+                            datas[1].jumlahtotalresepnovember = 0;
+                            datas[1].jumlahtotalresepoctober = 0;
+                            datas[1].jumlahtotalresepseptember = 0;
+                            datas[1].totalresep = 0;
+                            datas[1].totalrke = 0;
+                        }
+
+                        if(datas.length === 0){
+                            datas.length = 2;
+                            datas[0]={};
+                            datas[0].jumlahtotalrkedecember = 0;
+                            datas[0].jumlahtotalrkeapril = 0;
+                            datas[0].jumlahtotalrkeaugust = 0;
+                            datas[0].jumlahtotalrkefebruary = 0;
+                            datas[0].jumlahtotalrkejanuary = 0;
+                            datas[0].jumlahtotalrkejuly = 0;
+                            datas[0].jumlahtotalrkejune = 0;
+                            datas[0].jumlahtotalrkemarch = 0;
+                            datas[0].jumlahtotalrkemay = 0;
+                            datas[0].jumlahtotalrkenovember = 0;
+                            datas[0].jumlahtotalrkeoctober = 0;
+                            datas[0].jumlahtotalrkeseptember = 0;
+                            datas[0].jumlahtotalresepdecember = 0;
+                            datas[0].jumlahtotalresepapril = 0;
+                            datas[0].jumlahtotalresepaugust = 0;
+                            datas[0].jumlahtotalresepfebruary = 0;
+                            datas[0].jumlahtotalresepjanuary = 0;
+                            datas[0].jumlahtotalresepjuly = 0;
+                            datas[0].jumlahtotalresepjune = 0;
+                            datas[0].jumlahtotalresepmarch = 0;
+                            datas[0].jumlahtotalresepmay = 0;
+                            datas[0].jumlahtotalresepnovember = 0;
+                            datas[0].jumlahtotalresepoctober = 0;
+                            datas[0].jumlahtotalresepseptember = 0;
+                            datas[0].totalresep = 0;
+                            datas[0].totalrke = 0;
                             datas[1]={};
                             datas[1].jumlahtotalrkedecember = 0;
                             datas[1].jumlahtotalrkeapril = 0;
