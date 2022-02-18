@@ -2678,6 +2678,7 @@ class TagihanController  extends ApiController
     }
     public function getLogin(Request $request)
     {
+        $kdProfile = (int) $this->getDataKdProfile($request);
         $dataLogin = $request->all();
         $dataPegawai = \DB::table('loginuser_s as lu')
             ->select('lu.objectpegawaifk')
@@ -2704,11 +2705,13 @@ class TagihanController  extends ApiController
                 'noregistrasi' => $request['noRegistrasi'] ,
             )
         );
+        $pass = $this->settingDataFixed('PassDiskonTotal', $kdProfile);
         $result = array(
             'datalogin' => $dataLogin,
             'kelompokuser' => $KelompokUser,
             'listRuangan' =>$dataAPD,
             'pegawailoginfk' =>$dataPegawai,
+            'pass' => $pass,
             'xby' => 'as@epic',
         );
         return $this->respond($result);
@@ -2950,7 +2953,7 @@ class TagihanController  extends ApiController
 //            ->where('ru.objectjenispegawaifk', 1)
             ->orderBy('jd.jenisdiagnosa')
             ->get();
-
+            
         $dataRuanganJalan = \DB::table('ruangan_m as ru')
             ->where('ru.statusenabled', true)
             ->whereIn('ru.objectdepartemenfk', [18,28,24,3,27])
@@ -4006,6 +4009,36 @@ class TagihanController  extends ApiController
                     );
             }
 
+            $dataAPD =  AntrianPasienDiperiksa::where('norec',$request['norec_apd'])->first();
+            $kdProfile = $this->getDataKdProfile($request);
+            // var_dump($dataAPD->tglmasuk);
+            // var_dump($request['tglmasuk']);
+            // var_dump($kdProfile);
+            
+            
+            if($dataAPD->tglmasuk != $request['tglmasuk']){
+                
+                    // if($dataAPD->tglmasuk != $request['tglmasuk'] ){
+                    // var_dump(date('Y-m-d',strtotime($request['tglmasuk'])));
+                $countNoAntrian = AntrianPasienDiperiksa::where('antrianpasiendiperiksa_t.objectruanganfk',$dataAPD->objectruanganfk)
+                    ->join('pasiendaftar_t as pd','pd.norec','=','antrianpasiendiperiksa_t.noregistrasifk')
+                    ->where('antrianpasiendiperiksa_t.kdprofile', $kdProfile)
+                    ->where('antrianpasiendiperiksa_t.tglmasuk', '>=', date('Y-m-d',strtotime($request['tglmasuk'])).' 00:00:00')
+                    ->where('antrianpasiendiperiksa_t.tglmasuk', '<=', date('Y-m-d',strtotime($request['tglmasuk'])).' 23:59:59')
+                    ->where('antrianpasiendiperiksa_t.statusenabled',true)
+                    ->where('pd.statusenabled',true)
+                    ->max('noantrian');
+                    
+                $noAntrian = $countNoAntrian + 1;
+                $dataAPD->noantrian = $noAntrian;
+                $dataAPD->save();
+
+                    // }
+            // var_dump($dataAPD);
+            // var_dump($noAntrian);
+
+            }
+            
             if ($request['tglkeluar'] != ''&& $request['tglmasuk'] != '') {
                 $updateAPD= AntrianPasienDiperiksa::where('norec', $request['norec_apd'])
                     ->update([
@@ -4065,6 +4098,7 @@ class TagihanController  extends ApiController
         } catch (\Exception $e) {
             $transStatus = 'false';
             $transMessage = "simpan  Pasien";
+            $transError = $e->getMessage(). '\n Line: '.$e->getLine();
         }
 
         if ($transStatus == 'true') {
@@ -4075,6 +4109,7 @@ class TagihanController  extends ApiController
                 'message' => $transMessage,
                 'dataPD' => $dataRPP,
                 'as' => 'ramdanegie',
+                // 'noantrian' => $countNoAntrian,
             );
         } else {
             $transMessage = "GAGAL";
@@ -4083,6 +4118,7 @@ class TagihanController  extends ApiController
                 'status' => 400,
                 'message'  => $transMessage,
                 'as' => 'ramdanegie',
+                'errMessage' => $transError,
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
@@ -6278,9 +6314,14 @@ class TagihanController  extends ApiController
         $ruanganId = $request['idRuangan'];
         $idJenisDiagnosa = $request['idJenisDiagnosa'];
         $diagnosaId = $request['idDiagnosa'];
+        $statusPasien = $request['statusPasien'];
+
         $paramDep = ' ';
-        if (isset($deptId) && $deptId != "" && $deptId != "undefined") {
-            $paramDep = ' and ru.objectdepartemenfk = ' . $deptId;
+        if (isset($deptId) && $deptId != "" && $deptId == 1) {
+            $paramDep = ' and ru.objectdepartemenfk = 16  ';
+        }
+        if (isset($deptId) && $deptId != "" && $deptId == 2) {
+            $paramDep = ' and ru.objectdepartemenfk <> 16  ';
         }
 
         $paramRuangan = ' ';
@@ -6297,13 +6338,18 @@ class TagihanController  extends ApiController
         if (isset($diagnosaId) && $diagnosaId != "" && $diagnosaId != "undefined") {
             $paramDiagnosa = ' and dm.id = '.$diagnosaId;
         }
+        $paramstatusPasien = ' ';
+        if (isset($statusPasien) && $statusPasien != "" && $statusPasien != "undefined") {
+            $paramstatusPasien = ' and pd.statuspasien ILIKE'. "'%". $statusPasien . "%'";
+        }
 
-        $data = DB::select(DB::raw("select pd.tglregistrasi,pd.tglpulang,pm.nocm,pd.noregistrasi,pm.namapasien,pm.tgllahir,
-                jk.reportdisplay as jeniskelamin,case when sk.statuskeluar is null then '-' else sk.statuskeluar end as statuskeluar,
+        $data = DB::select(DB::raw("select pen.pendidikan, date_part('year', pd.tglregistrasi) - date_part('year', pm.tgllahir) as umurs,dm.kddiagnosa, pd.tglregistrasi,pd.tglpulang,pm.nocm,pd.noregistrasi,pm.namapasien,pm.tgllahir,pd.statuspasien,
+                jk.reportdisplay as jeniskelamin,case when sk.statuskeluar is null then '-' else sk.statuskeluar end as statuskeluar,ru.namaruangan as namaruangan,
 			    case when sp.statuspulang is null then '-' else sp.statuspulang end as statuspulang,ru.namaruangan,
 			    (case when pg.namalengkap is not null then pg.namalengkap when pg1.namalengkap is not null then pg1.namalengkap else '-' end) as namadokter,
 			    case when jd.jenisdiagnosa is null then '-' else jd.jenisdiagnosa end as jenisdiagnosa,
-			    case when dm.namadiagnosa = '-' then '-, ' || ddp.keterangan else dm.kddiagnosa || ', ' || dm.namadiagnosa end as namadiagnosa,
+                	case when pm.tgllahir = null then '-, ' || pm.tgllahir else pm.tempatlahir || ', ' || pm.tgllahir::date end as ttl,
+			    case when dm.namadiagnosa = '-' then '-, ' || ddp.keterangan else dm.namadiagnosa end as namadiagnosa,
 			    case when alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamatlengkap,pm.notelepon || '/' || pm.nohp as notelepon
                 from pasiendaftar_t as pd
                 INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
@@ -6320,15 +6366,51 @@ class TagihanController  extends ApiController
                 LEFT JOIN statuskeluar_m as sk on sk.id = pd.objectstatuskeluarfk
                 LEFT JOIN statuspulang_m as sp on sp.id = pd.objectstatuspulangfk
                 LEFT JOIN batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
+                inner join pendidikan_m pen on pen.id = pm.objectpendidikanfk
                 WHERE br.pasiendaftarfk is null and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
                 and pd.kdprofile = $idProfile  
                 $paramDep
                 $paramRuangan
                 $paramJenisDiagnosa
-                $paramDiagnosa"));
+                $paramDiagnosa
+                $paramstatusPasien
+                order by jd.jenisdiagnosa asc"));
 
+        $count = DB::select(DB::Raw("SELECT
+		count(jd.id)filter(where jd.id = 1) a,
+		count(jd.id)filter(where jd.id = 2) b,
+		count(jd.id)filter(where jd.id = 3) c,
+		count(jd.id)filter(where jd.id = 4) d,
+		count(jd.id)filter(where jd.id = 5) e,
+		count(jd.id)filter(where jd.id = 6) f
+FROM
+	pasiendaftar_t AS pd
+	INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
+	LEFT JOIN detaildiagnosapasien_t AS ddp ON ddp.noregistrasifk = apd.norec
+	LEFT JOIN diagnosapasien_t AS dp ON dp.norec = ddp.objectdiagnosapasienfk
+	INNER JOIN pasien_m AS pm ON pm.ID = pd.nocmfk
+	LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.
+	ID LEFT JOIN jeniskelamin_m AS jk ON jk.ID = pm.objectjeniskelaminfk
+	INNER JOIN diagnosa_m AS dm ON dm.ID = ddp.objectdiagnosafk
+	LEFT JOIN jenisdiagnosa_m AS jd ON jd.ID = ddp.objectjenisdiagnosafk
+	LEFT JOIN pegawai_m AS pg ON pg.ID = apd.objectpegawaifk
+	LEFT JOIN pegawai_m AS pg1 ON pg1.ID = pd.objectpegawaifk
+	INNER JOIN ruangan_m AS ru ON ru.ID = apd.objectruanganfk
+		inner join pendidikan_m pen on pen.id = pm.objectpendidikanfk
+	LEFT JOIN statuskeluar_m AS sk ON sk.ID = pd.objectstatuskeluarfk
+	LEFT JOIN statuspulang_m AS sp ON sp.ID = pd.objectstatuspulangfk
+	LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec 
+	INNER JOIN departemen_m dep on dep.id=ru.objectdepartemenfk
+    WHERE br.pasiendaftarfk is null and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                and pd.kdprofile = $idProfile  
+                $paramDep
+                $paramRuangan
+                $paramJenisDiagnosa
+                $paramDiagnosa
+                $paramstatusPasien"));
         $result = array(
             'data' => $data,
+            'count' => $count,
             'message' => 'ea@epic',
         );
         return $this->respond($result);
@@ -8831,6 +8913,34 @@ class TagihanController  extends ApiController
             'data' =>   $result,
         );
         return $this->respond($datadata);
+    }
+
+    public function getDataComboDaftarRegPasienruangan(Request $request)
+    {
+        $dataLogin = $request->all();
+        $getruangan = $request['getruangan'];
+        if ($getruangan == 1) {
+            $ruangan = DB::select(DB::raw('SELECT ru.id, ru.namaruangan, ru.objectdepartemenfk FROM ruangan_m ru where ru.statusenabled=true and ru.objectdepartemenfk in (16) ORDER BY ru.objectdepartemenfk asc'));
+        }else{
+            $ruangan = DB::select(DB::raw('SELECT ru.id, ru.namaruangan, ru.objectdepartemenfk FROM ruangan_m ru where ru.statusenabled=true and ru.objectdepartemenfk not in (16) ORDER BY ru.objectdepartemenfk asc'));
+        }
+        $dataRuangan = \DB::table('ruangan_m as ru')
+            ->where('ru.statusenabled', true)
+            ->orderBy('ru.namaruangan')
+            ->get();
+
+        $ruanganRi = \DB::table('ruangan_m as ru')
+            ->whereIn('ru.objectdepartemenfk',[16,17,25,35])
+//            ->wherein('ru.objectdepartemenfk', ['18', '28'])
+            ->where('ru.statusenabled',true)
+            ->orderBy('ru.namaruangan')
+            ->get();
+        $result = array(
+            'ruangan' => $ruangan,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
     }
     
 }

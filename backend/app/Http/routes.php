@@ -844,6 +844,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('farmasi/batal-verifikasi-order-resep', 'Farmasi\PelayananResepController@saveBatalVerifikasiResep');
           Route::get('farmasi/get-laporan-penjualan-obat-detail', 'Farmasi\PelayananResepController@getLaporanPenjualanObatDetail');
           Route::get('farmasi/get-laporan-penjualan-obat-new', 'Farmasi\PelayananResepController@getLaporanPenjualanObatNew');
+          Route::get('farmasi/get-laporan-kegiatan-pelayanan-resep', 'Farmasi\PelayananResepController@getLaporanKegiatanPelayananResep');
+          Route::get('farmasi/get-laporan-obat-antibiotik', 'Farmasi\PelayananResepController@getLaporanObatAntibiotik');
+          Route::get('farmasi/get-laporan-jasa-pelayanan-obat', 'Farmasi\PelayananResepController@getLaporanJasaPelayanan');
           
           Route::get('farmasi/get-daftar-satuanresep', 'Farmasi\PelayananResepController@getDaftarSatuanResep');
           Route::post('farmasi/save-data-satuanresep', 'Farmasi\PelayananResepController@saveDataSatuanResep');
@@ -2584,7 +2587,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
           Route::post('tatarekening/sync-trandata-new','TataRekening\TagihanController@saveSyncTransNEW');
           Route::post('tatarekening/sync-trandata-update-status','TataRekening\TagihanController@updateStatusCovid');
-
+            Route::get('tatarekening/get-data-combo-daftarregpasienruangan', 'TataRekening\TagihanController@getDataComboDaftarRegPasienruangan');
           Route::post('tatarekening/save-nosuratketerangakematian-pasien','TataRekening\TagihanController@saveNomorSuratKeteranganKematian');
           Route::post('tatarekening/delete-nosuratketerangakematian-pasien','TataRekening\TagihanController@HapusNomorSuratKeteranganKematian');
           Route::get('tatarekening/get-nosuratketerangakematian-pasien','TataRekening\TagihanController@getDataNoSuratKeteranganKematian');

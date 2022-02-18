@@ -1,4 +1,5 @@
 <?php
+
 //“Great men are not born great, they grow great . . .”
 //― Mario Puzo, The Godfather
 /**
@@ -14,6 +15,7 @@
  * Date: 09/08/2019
  * Time: 10:27
  */
+
 namespace App\Http\Controllers\Farmasi;
 
 use App\Http\Controllers\ApiController;
@@ -708,6 +710,20 @@ class PelayananResepController extends ApiController
             ->orderBy('pr.namaproduk')
             ->get();
 
+        $dataProdukAll = \DB::table('produk_m as pr')
+            ->JOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
+            ->JOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
+            ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
+            ->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
+            ->select('pr.id','pr.namaproduk','ss.id as ssid','ss.satuanstandar')
+            ->where('pr.kdprofile', $idProfile)
+            ->where('pr.statusenabled',true)
+            // ->whereIn('jp.id',[97,283])
+            ->whereIn('jp.id',$arrkdjenisobat)
+            ->groupBy('pr.id','pr.namaproduk','ss.id','ss.satuanstandar')
+            ->orderBy('pr.namaproduk')
+            ->get();
+
         $dataProduk1 = \DB::table('produk_m as pr')
             ->JOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
             ->JOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
@@ -800,6 +816,27 @@ class PelayananResepController extends ApiController
                 'konversisatuan' => $satuanKonversi,
             );
         }
+        $dataProdukResultAll=[];
+        foreach ($dataProdukAll as $item){
+            $satuanKonversi=[];
+            foreach ($dataKonversiProduk  as $item2){
+                if ($item->id == $item2->objekprodukfk){
+                    $satuanKonversi[] =array(
+                        'ssid' =>   $item2->satuanstandar_tujuan,
+                        'satuanstandar' =>   $item2->satuanstandar2,
+                        'nilaikonversi' =>   $item2->nilaikonversi,
+                    );
+                }
+            }
+
+            $dataProdukResultAll[]=array(
+                'id' =>   $item->id,
+                'namaproduk' =>   $item->namaproduk,
+                'ssid' =>   $item->ssid,
+                'satuanstandar' =>   $item->satuanstandar,
+                'konversisatuan' => $satuanKonversi,
+            );
+        }
 
         $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
                 INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
@@ -845,6 +882,7 @@ class PelayananResepController extends ApiController
         $result = array(
             'produk' => $dataProdukResult,
             'produk1' => $dataProdukResult1,
+            'produkall' => $dataProdukResultAll,
             'penulisresep' =>   $dataPenulis2,
             'ruangan' => $dataRuangan,
             'ruanganfarmasi' => $dataRuanganFamasi,
@@ -2955,6 +2993,15 @@ class PelayananResepController extends ApiController
         $sudahbayar= '';
         $rajalRanap= '';
         $rajalRanapObatBebas= '';
+        $namaItem = '';
+        if(isset($request['namaItem']) && $request['namaItem']!="" && $request['namaItem']!="undefined"){
+            $namaItem = ' and pro.id='.$request['namaItem'];
+        }
+        $namaItemText = '';
+        if(isset($request['namaItemText']) && $request['namaItemText']!="" && $request['namaItemText']!="undefined"){
+            $namaItemText = " and pro.namaproduk ilike '%".$request['namaItemText']."%' ";
+        }
+        
 
         if(isset($request['dokid']) && $request['dokid']!="" && $request['dokid']!="undefined"){
             $dokid = ' and pg.id='.$request['dokid'];
@@ -3097,6 +3144,8 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 $kpid
                 $ruid
                 $rajalRanap
+                $namaItem
+                $namaItemText
                 
                 UNION ALL
                 
@@ -3137,7 +3186,9 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 
                 $dokid
                 $ruid
-                $rajalRanapObatBebas                
+                $rajalRanapObatBebas    
+                $namaItem    
+                $namaItemText        
         "));
 
 
@@ -3436,5 +3487,526 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getLaporanKegiatanPelayananResep(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['tglAwal'];
+        $kpid='';
+        $rajalRanap= '';
+
+        
+        if(isset( $request['rajalRanap'])&& $request['rajalRanap']!="" && $request['rajalRanap']!="undefined" &&  $request['rajalRanap']=='1'){//rajal
+            $rajalRanap = "and ru.objectdepartemenfk <> 16";
+        }
+
+        if(isset( $request['rajalRanap'])&& $request['rajalRanap']!="" && $request['rajalRanap']!="undefined" && $request['rajalRanap']=='2'){//ranap
+            $rajalRanap = "and ru.objectdepartemenfk = 16";//ini ga mungkin terjadi
+        }
+
+        if(isset($request['kpid']) && $request['kpid']!="" && $request['kpid']!="undefined"){
+            $kpid = ' and pd.objectkelompokpasienlastfk='.$request['kpid'];
+        }
+
+        $month = DB::select(DB::raw("
+            select EXTRACT(MONTH from d), to_char(d, 'Month') as month
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 YEAR - 1 day', '1 day'::interval) d
+            group by to_char(d, 'Month'), EXTRACT(MONTH from d)
+            order by EXTRACT(MONTH from d) 
+        "));
+
+        $tglmax = DB::select(DB::raw("
+            select max(d::date) as tglmax
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 YEAR - 1 day', '1 day'::interval) d
+        "));
+
+        $tglmin = DB::select(DB::raw("
+            select min(d::date) as tglmin
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 YEAR - 1 day', '1 day'::interval) d
+        "));
+
+        $arrmax = [];
+        foreach($tglmax as $rowmax)
+        {
+            $arrmax[] =  $rowmax->tglmax;
+        } 
+
+        $arrmin = [];
+        foreach($tglmin as $rowmin)
+        {
+            $arrmin[] =  $rowmin->tglmin;
+        } 
+
+        
+        $jumlahrke = DB::select(DB::raw("select rtrim(y.bulan, ' ') as bulan, count(y.rke) as jumlahrke from (select 
+        to_char(sr.tglresep, 'Month') as bulan, pr.namaproduk, pp.isobat,  sr.noresep, pp.rke
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk 
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner  join produk_m pr on pr.id=pp.produkfk
+        inner join strukresep_t sr on pp.strukresepfk = sr.norec
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        WHERE
+            pp.kdprofile=30 
+            and sr.tglresep::date between '$arrmin[0]' and '$arrmax[0]'
+            and isobat = true
+            $kpid
+            $rajalRanap
+        group by to_char(sr.tglresep, 'Month'), pr.namaproduk, isobat,  sr.noresep,pp.rke) as y group by y.bulan"));
+
+        
+        $jumlahresep = DB::select(DB::raw("select rtrim(x.bulan, ' ') as bulan, count(x.resep) as jumlahresep from (select 
+        to_char(sr.tglresep, 'Month') as bulan, sr.noresep as resep
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk 
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner  join produk_m pr on pr.id=pp.produkfk
+        inner join strukresep_t sr on pp.strukresepfk = sr.norec
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        WHERE
+            pp.kdprofile=30 
+            and sr.tglresep::date between '$arrmin[0]' and '$arrmax[0]'
+            and isobat = true
+            $kpid
+            $rajalRanap
+        group by to_char(sr.tglresep, 'Month'), sr.noresep) as x group by x.bulan"));
+        
+        $jumlahtotalrkejanuary = 0;
+        $jumlahtotalrkefebruary = 0;
+        $jumlahtotalrkemarch = 0;
+        $jumlahtotalrkeapril = 0;
+        $jumlahtotalrkemay = 0;
+        $jumlahtotalrkejune = 0;
+        $jumlahtotalrkejuly = 0;
+        $jumlahtotalrkeaugust = 0;
+        $jumlahtotalrkeseptember = 0;
+        $jumlahtotalrkeoctober = 0;
+        $jumlahtotalrkenovember = 0;
+        $jumlahtotalrkedecember = 0;
+        $jumlahtotalresepjanuary = 0;
+        $jumlahtotalresepfebruary = 0;
+        $jumlahtotalresepmarch = 0;
+        $jumlahtotalresepapril = 0;
+        $jumlahtotalresepmay = 0;
+        $jumlahtotalresepjune = 0;
+        $jumlahtotalresepjuly = 0;
+        $jumlahtotalresepaugust = 0;
+        $jumlahtotalresepseptember = 0;
+        $jumlahtotalresepoctober = 0;
+        $jumlahtotalresepnovember = 0;
+        $jumlahtotalresepdecember = 0;
+        $totalrke = 0;
+        $totalresep = 0;
+        $detail=[];
+        
+        foreach ($jumlahresep  as $resep){
+            foreach ($jumlahrke  as $rke){
+                $jumlahtotalrkejanuary = 0;
+                $jumlahtotalrkefebruary = 0;
+                $jumlahtotalrkemarch = 0;
+                $jumlahtotalrkeapril = 0;
+                $jumlahtotalrkemay = 0;
+                $jumlahtotalrkejune = 0;
+                $jumlahtotalrkejuly = 0;
+                $jumlahtotalrkeaugust = 0;
+                $jumlahtotalrkeseptember = 0;
+                $jumlahtotalrkeoctober = 0;
+                $jumlahtotalrkenovember = 0;
+                $jumlahtotalrkedecember = 0;
+                $jumlahtotalresepjanuary = 0;
+                $jumlahtotalresepfebruary = 0;
+                $jumlahtotalresepmarch = 0;
+                $jumlahtotalresepapril = 0;
+                $jumlahtotalresepmay = 0;
+                $jumlahtotalresepjune = 0;
+                $jumlahtotalresepjuly = 0;
+                $jumlahtotalresepaugust = 0;
+                $jumlahtotalresepseptember = 0;
+                $jumlahtotalresepoctober = 0;
+                $jumlahtotalresepnovember = 0;
+                $jumlahtotalresepdecember = 0;
+                if ($rke->bulan == 'January' && $resep->bulan == 'January'){
+                    $jumlahtotalrkejanuary = $rke->jumlahrke;
+                    $jumlahtotalresepjanuary = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkejanuary;
+                    $totalresep+=$jumlahtotalresepjanuary;
+                }
+
+                if ($rke->bulan == 'February' && $resep->bulan == 'February' ){
+                    $jumlahtotalrkefebruary = $rke->jumlahrke;
+                    $jumlahtotalresepfebruary = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkefebruary;
+                    $totalresep+=$jumlahtotalresepfebruary;
+                }
+                if ($rke->bulan == 'March' && $resep->bulan == 'March'){
+                    $jumlahtotalrkemarch = $rke->jumlahrke;
+                    $jumlahtotalresepmarch = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkemarch;
+                    $totalresep+=$jumlahtotalresepmarch;
+                }
+                if ($rke->bulan == 'April' && $resep->bulan == 'April'){
+                    $jumlahtotalrkeapril = $rke->jumlahrke;
+                    $jumlahtotalresepapril = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkeapril;
+                    $totalresep+=$jumlahtotalresepapril;
+                }
+                if ($rke->bulan == 'May' && $resep->bulan == 'May'){
+                    $jumlahtotalrkemay = $rke->jumlahrke;
+                    $jumlahtotalresepmay = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkemay;
+                    $totalresep+=$jumlahtotalresepmay;
+                }
+                if ($rke->bulan == 'June'&& $resep->bulan == 'June'){
+                    $jumlahtotalrkejune = $rke->jumlahrke;
+                    $jumlahtotalresepjune = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkejune;
+                    $totalresep+=$jumlahtotalresepjune;
+                }
+                if ($rke->bulan == 'July' && $resep->bulan == 'July'){
+                    $jumlahtotalrkejuly = $rke->jumlahrke;
+                    $jumlahtotalresepjuly = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkejuly;
+                    $totalresep+=$jumlahtotalresepjuly;
+                }
+                if ($rke->bulan == 'August' && $resep->bulan == 'August'){
+                    $jumlahtotalrkeaugust = $rke->jumlahrke;
+                    $jumlahtotalresepaugust = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkeaugust;
+                    $totalresep+=$jumlahtotalresepaugust;
+                }
+                if ($rke->bulan == 'September' && $resep->bulan == 'September'){
+                    $jumlahtotalrkeseptember = $rke->jumlahrke;
+                    $jumlahtotalresepseptember = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkeseptember;
+                    $totalresep+=$jumlahtotalresepseptember;
+
+                }
+                if ($rke->bulan == 'October' && $resep->bulan == 'October'){
+                    $jumlahtotalrkeoctober = $rke->jumlahrke;
+                    $jumlahtotalresepoctober = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkeoctober;
+                    $totalresep+=$jumlahtotalresepoctober;
+
+                }
+                if ($rke->bulan == 'November' && $resep->bulan == 'November'){
+                    $jumlahtotalrkenovember = $rke->jumlahrke;
+                    $jumlahtotalresepnovember = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkenovember;
+                    $totalresep+=$jumlahtotalresepnovember;
+                }
+                if ($rke->bulan == 'December' && $resep->bulan == 'December'){
+                    $jumlahtotalrkedecember = $rke->jumlahrke;
+                    $jumlahtotalresepdecember = $resep->jumlahresep;
+                    $totalrke+=$jumlahtotalrkedecember;
+                    $totalresep+=$jumlahtotalresepdecember;
+                }
+
+                $detail[] =array(
+                    'jumlahtotalrkejanuary' =>   $jumlahtotalrkejanuary,
+                    'jumlahtotalrkefebruary' =>   $jumlahtotalrkefebruary,
+                    'jumlahtotalresepjanuary' =>   $jumlahtotalresepjanuary,
+                    'jumlahtotalresepfebruary' =>   $jumlahtotalresepfebruary,
+                    'jumlahtotalrkemarch' =>   $jumlahtotalrkemarch,
+                    'jumlahtotalrkeapril' =>   $jumlahtotalrkeapril,
+                    'jumlahtotalrkemay' =>   $jumlahtotalrkemay,
+                    'jumlahtotalrkejune' =>   $jumlahtotalrkejune,
+                    'jumlahtotalrkejuly' =>   $jumlahtotalrkejuly,
+                    'jumlahtotalrkeaugust' =>   $jumlahtotalrkeaugust,
+                    'jumlahtotalrkeseptember' =>   $jumlahtotalrkeseptember,
+                    'jumlahtotalrkeoctober' =>   $jumlahtotalrkeoctober,
+                    'jumlahtotalrkenovember' =>   $jumlahtotalrkenovember,
+                    'jumlahtotalrkedecember' =>   $jumlahtotalrkedecember,
+                    'jumlahtotalresepmarch' =>   $jumlahtotalresepmarch,
+                    'jumlahtotalresepapril' =>   $jumlahtotalresepapril,
+                    'jumlahtotalresepmay' =>   $jumlahtotalresepmay,
+                    'jumlahtotalresepjune' =>   $jumlahtotalresepjune,
+                    'jumlahtotalresepjuly' =>   $jumlahtotalresepjuly,
+                    'jumlahtotalresepaugust' =>   $jumlahtotalresepaugust,
+                    'jumlahtotalresepseptember' =>   $jumlahtotalresepseptember,
+                    'jumlahtotalresepoctober' =>   $jumlahtotalresepoctober,
+                    'jumlahtotalresepnovember' =>   $jumlahtotalresepnovember,
+                    'jumlahtotalresepdecember' =>   $jumlahtotalresepdecember,
+                    'totalrke' =>   $totalrke,
+                    'totalresep' =>   $totalresep,
+                );
+            }
+        }
+
+        
+
+        $result = array(
+            'detail' => $detail,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
+    public function getLaporanObatAntibiotik(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal= $request['tglAwal'];
+        $tglAkhir= $request['tglAkhir'];
+        $namaItem = '';
+
+        if (isset($request['namaItem']) && $request['namaItem'] != "" && $request['namaItem'] != "undefined") {
+            $request['namaItem'] =  str_replace("'", "",   $request['namaItem']);
+            $namaItem = "  AND replace(pr.namaproduk,'''','') ILIKE '%".$request['namaItem']."%'";
+        }
+
+        $produkmain = DB::select(DB::raw("select pr.namaproduk as namaproduk
+        FROM strukresep_t as sr
+        INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
+        INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
+        INNER JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
+        INNER JOIN pasien_m AS ps ON ps.id=pd.nocmfk
+		inner  join produk_m pr on pr.id=pp.produkfk
+		inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+		LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+		LEFT JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
+		where djp.id = 1444 
+		or pr.isantibiotik = true
+		and sr.tglresep between '$tglAwal' and '$tglAkhir'
+        and pp.kdprofile = $kdProfile
+        $namaItem
+		group by pr.namaproduk;"));
+
+        $dataranap =  DB::select(DB::raw("select pr.namaproduk as namaproduk, sum(pp.jumlah) as jumlahproduk, count(ps.namapasien) as jumlahpasien
+        FROM strukresep_t as sr
+        INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
+        INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
+        INNER JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
+        INNER JOIN pasien_m AS ps ON ps.id=pd.nocmfk
+		inner  join produk_m pr on pr.id=pp.produkfk
+		inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+		LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+		LEFT JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
+		where ru.objectdepartemenfk = 16
+		and djp.id = 1444 
+		or pr.isantibiotik = true
+		and sr.tglresep between '$tglAwal' and '$tglAkhir'
+        and pp.kdprofile = $kdProfile
+        $namaItem
+		group by pr.namaproduk;"));
+
+        $datarajal = DB::select(DB::raw("select pr.namaproduk as namaproduk, sum(pp.jumlah) as jumlahproduk, count(ps.namapasien) as jumlahpasien
+        FROM strukresep_t as sr
+        INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
+        INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
+        INNER JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
+        INNER JOIN pasien_m AS ps ON ps.id=pd.nocmfk
+		inner  join produk_m pr on pr.id=pp.produkfk
+		inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+		LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+		LEFT JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
+		where ru.objectdepartemenfk <> 16
+		and djp.id = 1444 
+		or pr.isantibiotik = true
+		and sr.tglresep between '$tglAwal' and '$tglAkhir'
+		and pp.kdprofile = $kdProfile
+        $namaItem
+		group by pr.namaproduk;"));
+
+        $jumlahobatranap = 0;
+        $jumlahpasienranap = 0;
+        $jumlahobatrajal = 0;
+        $jumlahpasienrajal = 0;
+        $detail = [];
+
+        foreach($produkmain as $produk){
+            $jumlahobatranap = 0;
+            $jumlahpasienranap = 0;
+            $jumlahobatrajal = 0;
+            $jumlahpasienrajal = 0;
+            $namaobat = $produk->namaproduk;
+            foreach($datarajal as $rajal){
+                if($produk->namaproduk == $rajal->namaproduk){
+                    $jumlahobatrajal = $rajal->jumlahproduk;
+                    $jumlahpasienrajal= $rajal->jumlahpasien;
+                }
+            }
+            foreach($dataranap as $ranap){
+                if($produk->namaproduk == $ranap->namaproduk){
+                    $jumlahobatranap = $ranap->jumlahproduk;
+                    $jumlahpasienranap= $ranap->jumlahpasien;
+                }
+            }
+
+            $detail[] =array(
+                'namaobat' => $namaobat,
+                'jumlahobatrajal' => $jumlahobatrajal,
+                'jumlahpasienrajal' => $jumlahpasienrajal,
+                'jumlahobatranap' => $jumlahobatranap,
+                'jumlahpasienranap' => $jumlahpasienranap,
+            );
+        }
+
+        $result = array(
+            'detail' => $detail,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
+    public function getLaporanJasaPelayanan(Request $request) {
+        ini_set('max_execution_time', 1000);
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal= $request['tglAwal'];
+        $tglAkhir= $request['tglAkhir'];
+        $dokid= '';
+
+        if(isset($request['dokid']) && $request['dokid']!="" && $request['dokid']!="undefined"){
+            $dokid = ' and pg.id='.$request['dokid'];
+        }
+
+        $ruid='';
+        if(isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
+            $ruid = ' AND ru.id = ' . $request['idRuangan'];
+        }
+        $deptid='';
+        if(isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
+            $deptid = ' AND ru.objectdepartemenfk = ' . $request['idDept'];
+        }
+
+        $totalpertanggal = DB::select(DB::raw("select x.tanggal, (sum(coalesce(x.totalsarana, 0)) + sum(coalesce(x.totalpelayanan, 0))) as grandtotal from(select 
+        pp.tglpelayanan::date as tanggal,
+        (((CASE WHEN ppd.hargajual IS NULL and ppd.komponenhargafk = 94 THEN	0  WHEN ppd.hargajual IS NOT NULL and ppd.komponenhargafk = 94 THEN ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL and ppd.komponenhargafk = 94 THEN
+        0 WHEN ppd.hargadiscount IS NOT NULL and ppd.komponenhargafk = 94 THEN ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL and ppd.komponenhargafk = 94 THEN	0 WHEN ppd.jasa IS NOT NULL and ppd.komponenhargafk = 94 THEN	ppd.jasa	END	) as totalpelayanan,
+        (((CASE WHEN ppd.hargajual IS NULL and ppd.komponenhargafk = 93 THEN	0  WHEN ppd.hargajual IS NOT NULL and ppd.komponenhargafk = 93 THEN ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL and ppd.komponenhargafk = 93 THEN
+        0 WHEN ppd.hargadiscount IS NOT NULL and ppd.komponenhargafk = 93 THEN ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL and ppd.komponenhargafk = 93 THEN	0 WHEN ppd.jasa IS NOT NULL and ppd.komponenhargafk = 93 THEN	ppd.jasa	END	) AS totalsarana
+            
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+		left join pegawai_m pg on pg.id = pd.objectpegawaifk
+        inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+        inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
+        left  join produk_m pr on pr.id=pp.produkfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+        where pp.isobat is null
+        and ppd.komponenhargafk = 93 or ppd.komponenhargafk = 94
+        and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+        and pp.kdprofile = $kdProfile
+        $dokid
+        $ruid
+        $deptid
+        group by pp.tglpelayanan::date, ppd.hargajual, ppd.hargadiscount, ppd.jasa, ppd.komponenhargafk
+        order by pp.tglpelayanan::date) as x group by x.tanggal"));
+    
+        $datasarana = DB::select(DB::raw("select 
+        pp.tglpelayanan::date, pr.namaproduk, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(ppd.jumlah) as totaljumlah,
+        (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
+        0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
+            
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        left join pegawai_m pg on pg.id = pd.objectpegawaifk
+        inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+        inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
+        left  join produk_m pr on pr.id=pp.produkfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+        where pp.isobat is null
+        and ppd.komponenhargafk = 93
+        and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+        and pp.kdprofile = $kdProfile
+        $dokid
+        $ruid
+        $deptid
+        group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap
+        order by pp.tglpelayanan::date"));
+
+        $datapelayanan = DB::select(DB::raw("select 
+        pp.tglpelayanan::date, pr.namaproduk, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(ppd.jumlah) as totaljumlah,
+        (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
+        0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
+            
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        left join pegawai_m pg on pg.id = pd.objectpegawaifk
+        inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+        inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
+        left  join produk_m pr on pr.id=pp.produkfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+        where pp.isobat is null
+        and ppd.komponenhargafk = 94
+        and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+        and pp.kdprofile = $kdProfile
+        $dokid
+        $ruid
+        $deptid
+        group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap
+        order by pp.tglpelayanan::date"));
+
+        $jumlahhargapelayanan = 0;
+        $hargapelayanan = 0;
+        $jumlahpertanggal = 0;
+        $jumlahpertanggal = 0;
+        $detail = [];
+
+        $currentTgl = date("Y-m-d", strtotime('2001-01-01'));
+            
+        foreach($datasarana as $sarana){
+            $tglpelayanan = $sarana->tglpelayanan;
+            $namaproduk = $sarana->namaproduk;
+            $jumlah = $sarana->totaljumlah;
+            $jumlahhargasarana = $sarana->total;
+            $hargasarana = $sarana->hargajual;
+            $instalasi = $sarana->ruangan;
+            $namalengkap = $sarana->nama;
+            $jumlahhargapelayanan = 0;
+            $hargapelayanan = 0;
+            $jumlahpertanggal = 0;
+
+            
+
+            foreach($datapelayanan as $pelayanan){
+                if($sarana->tglpelayanan == $pelayanan->tglpelayanan && $sarana->namaproduk == $pelayanan->namaproduk && $sarana->totaljumlah == $pelayanan->totaljumlah && $sarana->ruangan == $pelayanan->ruangan){
+                    $jumlahhargapelayanan = $pelayanan->total;
+                    $hargapelayanan = $pelayanan->hargajual;
+                }
+            }
+            foreach($totalpertanggal as $tanggal){
+                if($sarana->tglpelayanan == $tanggal->tanggal && date("Y-m-d", strtotime($tanggal->tanggal)) != $currentTgl){
+                    $jumlahpertanggal = $tanggal->grandtotal;
+                    $currentTgl= date("Y-m-d", strtotime($sarana->tglpelayanan));
+                    break;      
+                }
+                    
+            }
+            $detail[] =array(
+                'tglpelayanan' => $tglpelayanan,
+                'namaproduk' => $namaproduk,
+                'jumlah' => $jumlah,
+                'jumlahhargasarana' => $jumlahhargasarana,
+                'jumlahhargapelayanan' => $jumlahhargapelayanan,
+                'hargasarana' => $hargasarana,
+                'hargapelayanan' => $hargapelayanan,
+                'instalasi' => $instalasi,
+                'totalpertanggal' => $jumlahpertanggal,
+                'namalengkap' => $namalengkap,
+            );
+        }
+        
+        $result = array(
+            'detail' => $detail,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
 }

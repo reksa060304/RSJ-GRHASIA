@@ -16885,5 +16885,65 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "LaporanKegiatanPelayananResep",
+    "url": "/TGFwb3JhbktlZ2lhdGFuUGVsYXlhbmFuUmVzZXAg",
+    "templateurl": "module/Farmasi/LaporanFarmasi/LaporanKegiatanPelayananResep.html",
+    "controller": "LaporanKegiatanPelayananResepCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanObatAntibiotik",
+    "url": "/LaporanObatAntibiotik",
+    "templateurl": "module/Farmasi/LaporanFarmasi/LaporanObatAntibiotik.html",
+    "controller": "LaporanObatAntibiotikCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanJasaPelayananObat",
+    "url": "/THBhb3Jhbkphc2FQZWxheWFuYW5PYmF0",
+    "templateurl": "module/Farmasi/LaporanFarmasi/LaporanJasaPelayananObat.html",
+    "controller": "LaporanJasaPelayananObatCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ] 

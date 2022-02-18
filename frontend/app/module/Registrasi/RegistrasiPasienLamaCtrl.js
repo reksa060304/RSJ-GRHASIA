@@ -677,7 +677,7 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.idRmAsal == undefined) return;
                 var confirm = $mdDialog.confirm()
                     .title('Peringatan')
-                    .alert('Apakah Anda yakin menggabungkan No RM ' + $scope.item.rmAsal + ' Ke ' + $scope.item.rmTujukan + ' ?!')
+                    .htmlContent('Apakah Anda yakin menggabungkan No RM ' + $scope.item.rmAsal + ' Ke ' + $scope.item.rmTujukan + ' ?!')
                     .ariaLabel('Lucky day')
                     .cancel('Tidak')
                     .ok('Ya')

@@ -442,11 +442,13 @@ class RegistrasiController extends ApiController
 
                 if ($r_NewAPD['norec_apd']=='' ){
                     $countNoAntrian = AntrianPasienDiperiksa::where('objectruanganfk',$r_NewPD['objectruanganfk'])
-                        ->where('kdprofile', $idProdile)
-                        ->where('tglregistrasi', '>=', $r_NewPD['tglregistrasidate'].' 00:00')
-                        ->where('tglregistrasi', '<=', $r_NewPD['tglregistrasidate'].' 23:59')
-                        ->where('statusenabled',true)
-                        ->max('noantrian');
+                            ->join('pasiendaftar_t as pd','pd.norec','=','antrianpasiendiperiksa_t.noregistrasifk')
+                            ->where('antrianpasiendiperiksa_t.kdprofile', $idProdile)
+                            ->where('antrianpasiendiperiksa_t.tglmasuk', '>=', $r_NewPD['tglregistrasidate'].' 00:00:00')
+                            ->where('antrianpasiendiperiksa_t.tglmasuk', '<=', $r_NewPD['tglregistrasidate'].' 23:59:59')
+                            ->where('antrianpasiendiperiksa_t.statusenabled',true)
+                            ->where('pd.statusenabled',true)
+                            ->max('noantrian');
                     $noAntrian = $countNoAntrian + 1;
 //                    return $noAntrian;
                     $dataAPD =new AntrianPasienDiperiksa;
@@ -458,12 +460,30 @@ class RegistrasiController extends ApiController
                 }else{
                     $dataAPD =  AntrianPasienDiperiksa::where('norec',$r_NewAPD['norec_apd'])->where('kdprofile', $idProdile)->first();
                     if($r_NewPD['objectruanganfk'] != $dataAPD->objectruanganfk ){
+                        
                         $countNoAntrian = AntrianPasienDiperiksa::where('objectruanganfk',$r_NewPD['objectruanganfk'])
-                            ->where('kdprofile', $idProdile)
-                            ->where('tglregistrasi', '>=', $r_NewPD['tglregistrasidate'].' 00:00')
-                            ->where('tglregistrasi', '<=', $r_NewPD['tglregistrasidate'].' 23:59')
-                            ->where('statusenabled',true)
+                            ->join('pasiendaftar_t as pd','pd.norec','=','antrianpasiendiperiksa_t.noregistrasifk')
+                            ->where('antrianpasiendiperiksa_t.kdprofile', $idProdile)
+                            ->where('antrianpasiendiperiksa_t.tglmasuk', '>=', $r_NewPD['tglregistrasidate'].' 00:00:00')
+                            ->where('antrianpasiendiperiksa_t.tglmasuk', '<=', $r_NewPD['tglregistrasidate'].' 23:59:59')
+                            ->where('antrianpasiendiperiksa_t.statusenabled',true)
+                            ->where('pd.statusenabled',true)
                             ->max('noantrian');
+                            
+                        $noAntrian = $countNoAntrian + 1;
+                        $dataAPD->noantrian = $noAntrian;
+                    }
+                    if($r_NewPD['tglregistrasi'] != $dataAPD->tglmasuk ){
+                        
+                        $countNoAntrian = AntrianPasienDiperiksa::where('objectruanganfk',$r_NewPD['objectruanganfk'])
+                            ->join('pasiendaftar_t as pd','pd.norec','=','antrianpasiendiperiksa_t.noregistrasifk')
+                            ->where('antrianpasiendiperiksa_t.kdprofile', $idProdile)
+                            ->where('antrianpasiendiperiksa_t.tglmasuk', '>=', $r_NewPD['tglregistrasidate'].' 00:00:00')
+                            ->where('antrianpasiendiperiksa_t.tglmasuk', '<=', $r_NewPD['tglregistrasidate'].' 23:59:59')
+                            ->where('antrianpasiendiperiksa_t.statusenabled',true)
+                            ->where('pd.statusenabled',true)
+                            ->max('noantrian');
+                            
                         $noAntrian = $countNoAntrian + 1;
                         $dataAPD->noantrian = $noAntrian;
                     }
@@ -4118,10 +4138,10 @@ class RegistrasiController extends ApiController
             ->where('apd.kdprofile', (int)$kdProfile);
 
         if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
-            $data = $data->where('apd.tglregistrasi', '>=', $filter['tglAwal']);
+            $data = $data->where('apd.tglmasuk', '>=', $filter['tglAwal']);
         }
         if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
-            $data = $data->where('apd.tglregistrasi', '<=', $filter['tglAkhir']);
+            $data = $data->where('apd.tglmasuk', '<=', $filter['tglAkhir']);
         }
         if (isset($filter['ruanganId']) && $filter['ruanganId'] != "" && $filter['ruanganId'] != "undefined") {
             $data = $data->where('ru.id', '=', $filter['ruanganId']);
@@ -4135,7 +4155,7 @@ class RegistrasiController extends ApiController
         }
 //		$data = $data->whereIn('dept.id',[18,24,28,27,3]);
         $data = $data->limit(50);
-        $data = $data->orderBy('apd.tglregistrasi','desc');
+        $data = $data->orderBy('apd.tglmasuk','desc');
 
         $data = $data->get();
         $result = array(
@@ -7426,6 +7446,7 @@ class RegistrasiController extends ApiController
         return $this->respond($result);
     }
     public function getPasienByNoCmRiwayatRegis( Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
         $data = \DB::table('pasien_m as ps')
             ->select('ps.nocm','ps.namapasien','ag.agama','ps.nohp','ps.notelepon','ps.namakeluarga','ps.namaibu',
                 'ps.namaayah','ps.tempatlahir','ps.tgllahir','alm.alamatlengkap','ng.namanegara','jk.jeniskelamin',
@@ -7434,7 +7455,9 @@ class RegistrasiController extends ApiController
             ->leftJoin('agama_m as ag','ag.id','=','ps.objectagamafk')
             ->leftJoin('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
             ->leftJoin('negara_m as ng','ng.id','=','ps.objectnegarafk')
-            ->leftJoin('kebangsaan_m as kb','kb.id','=','ps.objectkebangsaanfk');
+            ->leftJoin('kebangsaan_m as kb','kb.id','=','ps.objectkebangsaanfk')
+            ->where('ps.statusenabled', true)
+            ->where('ps.kdprofile',$kdProfile);
 
         if(isset($request['noCm']) && $request['noCm']!="" && $request['noCm']!="undefined"){
             // $data = $data->where('ps.nocm', 'ilike', '%'. $request['noCm']);
