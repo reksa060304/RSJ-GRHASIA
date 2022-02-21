@@ -912,12 +912,78 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 });
             }
             // **
-
+            $scope.columnGrid = [
+                {
+                    "field": "noSep",
+                    "title": "No SEP",
+                    "width": "100%"
+                },
+                {
+                    "field": "tglSep",
+                    "title": "Tgl. SEP",
+                    "width": "100%"
+                },
+                {
+                    "field": "jnsPelayanan",
+                    "title": "Jenis Pelayanan",
+                    "width": "100%"
+                }, {
+    
+                    "field": "kelasRawat",
+                    "title": "Kelas RAwat",
+                    "width": "100%"
+                },
+                {
+    
+                    "field": "diagnosa",
+                    "title": "Diagnosa",
+                    "width": "100%"
+                },
+                {
+    
+                    "field": "noRujukan",
+                    "title": "No Rujukan",
+                    "width": "100%"
+                },
+                {
+    
+                    "field": "poli",
+                    "title": "Poli Tujuan",
+                    "width": "100%"
+                },
+                {
+    
+                    "field": "peserta.nama",
+                    "title": "Nama Peserta",
+                    "width": "100%"
+                },
+                {
+    
+                    "field": "peserta.noKartu",
+                    "title": "No.Kartu Peserta",
+                    "width": "100%"
+                },
+                {
+    
+                    "field": "peserta.noMr",
+                    "title": "No. RM Peserta",
+                    "width": "100%"
+                }
+                ]
             // ** Cari SEP
             $scope.findDataBySep = function (data) {
                 $scope.isRouteLoading = true;
                 medifirstService.get("bridging/bpjs/cek-sep?nosep=" + data).then(function (e) {
-                    document.getElementById("jsonCekSep").innerHTML = JSON.stringify(e.data, undefined, 4);
+                    // document.getElementById("jsonCekSep").innerHTML = JSON.stringify(e.data, undefined, 4);
+                    if (e.data.metaData.code == '200') {
+                        var data= [];
+                        data =[e.data.response];
+                        $scope.dataSource = new kendo.data.DataSource({
+                            data: data,
+                            pageSize: 10,
+                            serverPaging: false,
+                        });
+                     }
                 }).then(function () {
                     $scope.isRouteLoading = false;
                 });
@@ -976,7 +1042,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // };
 
                 medifirstService.postNonMessage('bridging/bpjs/tools', json).then(function (e) {
-                    document.getElementById("jsonResApproval").innerHTML = JSON.stringify(e.data, undefined, 4);
+                    // document.getElementById("jsonResApproval").innerHTML = JSON.stringify(e.data, undefined, 4);
+                    window.messageContainer.error(e.data.metaData.message);
                 }).then(function () {
                     $scope.isRouteLoading = false;
                 })
@@ -1010,7 +1077,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // };
 
                 medifirstService.postNonMessage('bridging/bpjs/tools', json).then(function (e) {
-                    document.getElementById("jsonResApprovalPengajuan").innerHTML = JSON.stringify(e.data, undefined, 4);
+                    // document.getElementById("jsonResApprovalPengajuan").innerHTML = JSON.stringify(e.data, undefined, 4);
+                    window.messageContainer.error(e.data.metaData.message);
                 }).then(function () {
                     $scope.isRouteLoading = false;
                 })
@@ -1078,6 +1146,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.isRouteLoading = false;
                 });
             }
+
+           
             $scope.checkKepesertaanByNoSep = function () {
                 if (!$scope.item.cekNomorSep) return;
                 if ($scope.item.noSep === '' || $scope.item.noSep === undefined) return;

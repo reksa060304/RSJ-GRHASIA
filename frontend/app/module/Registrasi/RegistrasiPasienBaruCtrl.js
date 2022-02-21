@@ -62,6 +62,96 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                 }
             }
+            $scope.$watch('item.noBpjs', function (e) { 
+                
+                debugger;
+                    medifirstService.get("registrasi/cek-nobpjs?nobpjs=" + $scope.item.noBpjs)
+                        .then(function (data) {
+                            $scope.ceks = data.data;
+                            if ($scope.ceks.data.length >= 1) {
+                                checkKepesertan()
+                                var nocm = $scope.ceks.data[0].nocm;
+                                var nama = $scope.ceks.data[0].namapasien;
+                                toastr.error("NO BPJS ini sudah di pakai oleh pasien RM : " + nocm + " (" + nama + ") !", "Peringatan")
+                                // ceknobpjsdouble = true
+                                $state.params.idPasien = $scope.ceks.data[0].id;
+                                editPasien();
+                                // return;
+                               
+                            } else {
+                                checkKepesertan()
+                            }
+                        })
+            
+            
+        });
+        function checkKepesertan() {
+               
+            if ($scope.item.noBpjs != '' || $scope.item.noBpjs != undefined)
+            {
+                $scope.isLoadingNoKartu = true;
+                medifirstService.get("bridging/bpjs/get-no-peserta?nokartu=" + $scope.item.noBpjs + "&tglsep=" + new moment(new Date).format('YYYY-MM-DD')).then(function (e) {
+                    if (e.data.metaData.code === "200") {
+                        var tglLahir = new Date(e.data.response.peserta.tglLahir);
+                        // $scope.model.noKepesertaan = $scope.noKartu = e.data.response.peserta.noKartu;
+                        $scope.item.namaPasien = e.data.response.peserta.nama;
+                        $scope.item.tglLahir = tglLahir;
+                        $scope.item.noIdentitas = e.data.response.peserta.nik;
+                       if(e.data.response.peserta.sex == 'L' )
+                       {
+                        // item.jenisKelamin
+                        $scope.item.jenisKelamin = { id: '1', jeniskelamin: 'LAKI-LAKI' };
+                       }else
+                       {
+                        $scope.item.jenisKelamin = { id: '2', jeniskelamin: 'PEREMPUAN' }; 
+                       }
+                        toastr.info(e.data.response.peserta.statusPeserta.keterangan, 'Status Peserta');
+                       
+                    } else {
+                        window.messageContainer.error(e.data.metaData.message);
+                    }
+                    $scope.isLoadingNoKartu = false;
+                }, function (err) {
+                    $scope.isLoadingNoKartu = false;
+                });
+            }
+            
+        
+    }
+    function checkKepesertanBynik() {
+       
+        if ($scope.item.noIdentitas != '' || $scope.item.noIdentitas != undefined)
+        {
+            $scope.isLoadingNoKartu = true;
+            medifirstService.get("bridging/bpjs/get-nik?nik=" + $scope.item.noIdentitas + "&tglsep=" + new moment(new Date).format('YYYY-MM-DD')).then(function (e) {
+                if (e.data.metaData.code === "200") {
+                    var tglLahir = new Date(e.data.response.peserta.tglLahir);
+                    // $scope.model.noKepesertaan = $scope.noKartu = e.data.response.peserta.noKartu;
+                    $scope.item.namaPasien = e.data.response.peserta.nama;
+                    $scope.item.tglLahir = tglLahir;
+                    $scope.item.noBpjs = e.data.response.peserta.noKartu;
+                    $scope.item.noIdentitas = e.data.response.peserta.nik;
+                   if(e.data.response.peserta.sex == 'L' )
+                   {
+                    // item.jenisKelamin
+                    $scope.item.jenisKelamin = { id: '1', jeniskelamin: 'LAKI-LAKI' };
+                   }else
+                   {
+                    $scope.item.jenisKelamin = { id: '2', jeniskelamin: 'PEREMPUAN' }; 
+                   }
+                    toastr.info(e.data.response.peserta.statusPeserta.keterangan, 'Status Peserta');
+                   
+                } else {
+                    window.messageContainer.error(e.data.metaData.message);
+                }
+                $scope.isLoadingNoKartu = false;
+            }, function (err) {
+                $scope.isLoadingNoKartu = false;
+            });
+        }
+        
+    
+}
             function loadRujukanTransdata(result) {
                 $scope.item.namaPasien = result.namapasien
                 $scope.item.tempatLahir = result.tempatlahir
@@ -985,6 +1075,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     "number": 0,
                 //     "size": 1
                 // }
+                checkKepesertanBynik();
 
             }
 
