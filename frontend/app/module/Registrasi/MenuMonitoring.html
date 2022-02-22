@@ -58,13 +58,21 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-
-                                                                <div class="grid_6">
+                                                                <div class="grid_12">
+                                                                    <div id="kGrid" kendo-grid
+                                                                        k-data-source="dataSource" k-selectable="'row'"
+                                                                        k-columns="columnGrid" k-pageable="'true'"
+                                                                        k-groupable="'true'" k-sortable="'true'"
+                                                                        k-ng-model="dataSelected"
+                                                                        ng-click="klikGrid(dataSelected)">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- <div class="grid_6">
                                                                     <div class="grid_12">
                                                                         <label c-label>Results :</label>
                                                                     </div>
                                                                     <pre id="jsonKunjungan" class="json-viewer"></pre>
-                                                                </div>
+                                                                </div> -->
                                                             </div>
                                                         </div>
                                                     </div>
@@ -161,12 +169,21 @@
                                                                     </div>
 
                                                                 </div>
-                                                                <div class="grid_6">
+                                                                <div class="grid_12">
+                                                                    <div id="kGrid" kendo-grid
+                                                                        k-data-source="dataSource" k-selectable="'row'"
+                                                                        k-columns="columnGrid" k-pageable="'true'"
+                                                                        k-groupable="'true'" k-sortable="'true'"
+                                                                        k-ng-model="dataSelected"
+                                                                        ng-click="klikGrid(dataSelected)">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- <div class="grid_6">
                                                                     <div class="grid_12">
                                                                         <label c-label>Results :</label>
                                                                     </div>
                                                                     <pre id="jsonHistori" class="json-viewer"></pre>
-                                                                </div>
+                                                                </div> -->
                                                             </div>
                                                         </div>
                                                     </div>

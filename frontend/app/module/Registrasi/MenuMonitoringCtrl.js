@@ -70,7 +70,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + "&jenispelayanan="
                     + data.jenispelayanan
                 ).then(function (e) {
-                    document.getElementById("jsonKunjungan").innerHTML = JSON.stringify(e.data, undefined, 4);
+                    if (e.data.metaData.code == '200') {
+                        var data= [];
+                        data =e.data.response.sep;
+                        $scope.dataSource = new kendo.data.DataSource({
+                            data: data,
+                            pageSize: 10,
+                            serverPaging: false,
+                        });
+                     }
+                    // document.getElementById("jsonKunjungan").innerHTML = JSON.stringify(e.data, undefined, 4);
                 }).then(function () {
                     $scope.isRouteLoading = false;
                 });
@@ -91,7 +100,58 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 "id": 5, "statusklaim": "Klaim", "value": 3
             }];
 
-
+            $scope.columnGrid = [
+                {
+                    "field": "noSep",
+                    "title": "No SEP",
+                    "width": "100%"
+                },
+                {
+                    "field": "tglSep",
+                    "title": "Tgl. SEP",
+                    "width": "100%"
+                },
+                {
+                    "field": "jnsPelayanan",
+                    "title": "Jenis Pelayanan",
+                    "width": "100%"
+                }, {
+    
+                    "field": "kelasRawat",
+                    "title": "Kelas RAwat",
+                    "width": "100%"
+                },
+                {
+    
+                    "field": "diagnosa",
+                    "title": "Diagnosa",
+                    "width": "100%"
+                },
+                {
+    
+                    "field": "noRujukan",
+                    "title": "No Rujukan",
+                    "width": "100%"
+                },
+                {
+    
+                    "field": "poli",
+                    "title": "Poli Tujuan",
+                    "width": "100%"
+                },
+                {
+    
+                    "field": "nama",
+                    "title": "Nama Peserta",
+                    "width": "100%"
+                },
+                {
+    
+                    "field": "noKartu",
+                    "title": "No.Kartu Peserta",
+                    "width": "100%"
+                }
+                ]
             $scope.findKlaim = function (data) {
                 $scope.isRouteLoading = true;
                 var data = {
@@ -106,7 +166,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + "&status="
                     + data.status
                 ).then(function (e) {
-                    document.getElementById("jsonKlaim").innerHTML = JSON.stringify(e.data, undefined, 4);
+                    // document.getElementById("jsonKlaim").innerHTML = JSON.stringify(e.data, undefined, 4);
                 }).then(function () {
                     $scope.isRouteLoading = false;
                 });
@@ -124,7 +184,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + "&tglAkhir="
                     + moment(data.tglAkhir).format('YYYY-MMDD')
                 ).then(function (e) {
-                    document.getElementById("jsonHistori").innerHTML = JSON.stringify(e.data, undefined, 4);
+                    if (e.data.metaData.code == '200') {
+                        var data= [];
+                        data =e.data.response.histori;
+                        $scope.dataSource = new kendo.data.DataSource({
+                            data: data,
+                            pageSize: 10,
+                            serverPaging: false,
+                        });
+                     }
+                     $scope.isRouteLoading = false;
+                    // document.getElementById("jsonHistori").innerHTML = JSON.stringify(e.data, undefined, 4);
                 }).then(function () {
                     $scope.isRouteLoading = false;
                 });
@@ -140,7 +210,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + "&tglAkhir="
                     + moment(data.tglAkhir).format('YYYY-MMDD')
                 ).then(function (e) {
-                    document.getElementById("jsonRaharja").innerHTML = JSON.stringify(e.data, undefined, 4);
+                    // document.getElementById("jsonRaharja").innerHTML = JSON.stringify(e.data, undefined, 4);
                 }).then(function () {
                     $scope.isRouteLoading = false;
                 });
