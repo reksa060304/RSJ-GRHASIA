@@ -6411,7 +6411,95 @@ FROM
         $result = array(
             'data' => $data,
             'count' => $count,
-            'message' => 'ea@epic',
+            'message' => 'fazri@epic',
+        );
+        return $this->respond($result);
+    }
+    public function getDataLaporanDiagnosaPerPasien(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = [];
+        $kdProfile = $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $deptId = $request['idDept'];
+        $ruanganId = $request['idRuangan'];
+        $idJenisDiagnosa = $request['idJenisDiagnosa'];
+        $diagnosaId = $request['idDiagnosa'];
+        $statusPasien = $request['statusPasien'];
+
+        $paramDep = ' ';
+        if (isset($deptId) && $deptId != "" && $deptId == 1) {
+            $paramDep = ' and ru.objectdepartemenfk = 16  ';
+        }
+        if (isset($deptId) && $deptId != "" && $deptId == 2) {
+            $paramDep = ' and ru.objectdepartemenfk <> 16  ';
+        }
+
+        $paramRuangan = ' ';
+        if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined") {
+            $paramRuangan = ' and ru.id = ' . $ruanganId;
+        }
+
+        $paramJenisDiagnosa = ' ';
+        if (isset($idJenisDiagnosa) && $idJenisDiagnosa != "" && $idJenisDiagnosa != "undefined") {
+            $paramJenisDiagnosa = ' and jd.id = '.$idJenisDiagnosa;
+        }
+
+        $paramDiagnosa = ' ';
+        if (isset($diagnosaId) && $diagnosaId != "" && $diagnosaId != "undefined") {
+            $paramDiagnosa = ' and dm.id = '.$diagnosaId;
+        }
+        $paramstatusPasien = ' ';
+        if (isset($statusPasien) && $statusPasien != "" && $statusPasien != "undefined") {
+            $paramstatusPasien = ' and pd.statuspasien ILIKE'. "'%". $statusPasien . "%'";
+        }
+
+        $data = DB::select(DB::raw(" WITH diagnosapasien AS (
+	SELECT
+    pd.norec,
+		pd.nocmfk,
+		ps.namapasien,
+		di.kddiagnosa,
+		di.namadiagnosa,ru.objectdepartemenfk
+	FROM
+		diagnosapasien_t dip
+		INNER JOIN antrianpasiendiperiksa_t apd ON apd.norec = dip.noregistrasifk
+		INNER JOIN pasiendaftar_t pd ON pd.norec = apd.noregistrasifk
+		INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+		INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganasalfk
+		INNER JOIN pegawai_m pe ON pe.ID = pd.objectpegawaifk
+		INNER JOIN detaildiagnosapasien_t ddip ON ddip.noregistrasifk = apd.norec
+		INNER JOIN jenisdiagnosa_m jdi ON jdi.ID = ddip.objectjenisdiagnosafk
+		INNER JOIN diagnosa_m di ON di.ID = ddip.objectdiagnosafk
+		LEFT JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk 
+	WHERE
+		ddip.tglregistrasi BETWEEN '$tglAwal' 
+		AND '$tglAkhir'
+        and pd.kdprofile = $idProfile  
+                $paramDep
+                $paramRuangan
+                $paramJenisDiagnosa
+                $paramDiagnosa
+                $paramstatusPasien 
+	GROUP BY
+    pd.norec,
+		pd.nocmfk,
+		di.kddiagnosa,
+		di.namadiagnosa,
+		ps.namapasien,
+		ru.objectdepartemenfk
+	ORDER BY
+		ps.namapasien ASC
+
+)
+SELECT dp.kddiagnosa, dp.namadiagnosa, count(dp.nocmfk) FROM diagnosapasien dp GROUP BY dp.kddiagnosa, dp.namadiagnosa ORDER BY count desc"));
+
+        
+        $result = array(
+            'data' => $data,
+            'message' => 'fazri@epic',
         );
         return $this->respond($result);
     }

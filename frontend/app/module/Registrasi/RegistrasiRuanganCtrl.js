@@ -218,9 +218,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         var dateNow = new Date();
                         var dateRegis = new Date($scope.item.tglRegistrasi);
                         var diffDays = Math.round(Math.abs((dateNow.getTime() - dateRegis.getTime()) / (oneDay)))
-                        if (diffDays >= 1) {
-                            $scope.disableTgl = true
-                        }
+                        // if (diffDays >= 1) {
+                        //     $scope.disableTgl = true
+                        // }
                         $scope.resultEdit = his.data.data[0]
                         // ruanganLog = his.data.data[0].namaruangan
                         $scope.item.kelas = { id: his.data.data[0].objectkelasfk, namakelas: his.data.data[0].namakelas }

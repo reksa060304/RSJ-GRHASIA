@@ -2568,6 +2568,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('tatarekening/get-list-laporan-volume','TataRekening\TagihanController@getDataLaporanVolumeKegiatan');
           Route::get('tatarekening/get-laporan-rehab','TataRekening\TagihanController@getLaporanRehab');
           Route::get('tatarekening/get-data-diagnosa-pasien', 'TataRekening\TagihanController@getDataLaporanDiagnosaPasien');
+          Route::get('tatarekening/get-data-diagnosa-perpasien','TataRekening\TagihanController@getDataLaporanDiagnosaPerPasien');
           Route::get('tatarekening/get-penerimaan-deposit', 'TataRekening\TagihanController@getDepositPasienPulang');
           Route::get('tatarekening/get-rekapkunjungan-rawatjalan', 'TataRekening\TagihanController@getRekapKunjunganRJ');
           Route::get('tatarekening/get-rekappembayaran-jasapelayanan', 'TataRekening\TagihanController@getRekapPembayaranJasaPelayanan');

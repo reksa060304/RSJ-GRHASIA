@@ -2,8 +2,10 @@ define(['initialize'], function (initialize) {
 'use strict';
     initialize.controller('LaporanDiagnosaPasienCtrl', ['CacheHelper', '$scope', 'DateHelper', 'MedifirstService', 
         function (cacheHelper, $scope, dateHelper, medifirstService) {
+
             FormLoad();   
             function FormLoad(){
+                
                 $scope.isRouteLoading = false;
                 $scope.now = new Date();
                 $scope.date = new Date();
@@ -106,11 +108,45 @@ define(['initialize'], function (initialize) {
                     6: '',                        
                 }
                 cacheHelper.set('LaporanDiagnosaPasienCtrl', chacePeriode);
+                
+                medifirstService.get("tatarekening/get-data-diagnosa-perpasien?" +
+                    "tglAwal=" + tglAwal +
+                    "&tglAkhir=" + tglAkhir +
+                    tempDepartemenId +
+                    tempRuanganId +
+                    tempJenisDiagnosa +
+                    tempDiagnosa +
+                    tempstatusPasien
+                ).then(function (data) {
+            $scope.departemens = $scope.item.departement.departemen;
+
+                    $scope.isRouteLoading = false;
+                    var dataa = data.data.data;
+                    for (var i = 0; i < dataa.length; i++) {
+                        dataa[i].no = i + 1;
+                    }
+                    $scope.dataSourceGridDiagnosapasien = new kendo.data.DataSource({
+                        data: dataa,
+                        pageSize: 50,
+                        total: dataa.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                
+                            }
+                        },
+
+                    });
+
+
+                });
+
+                
                 medifirstService.get("tatarekening/get-data-diagnosa-pasien?"
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir
                     + tempDepartemenId + tempRuanganId + tempJenisDiagnosa + tempDiagnosa + tempstatusPasien).then(function (data) {
-
+                        
 
                     $scope.isRouteLoading = false;                                    
                     var datas = data.data.data;
@@ -168,13 +204,17 @@ define(['initialize'], function (initialize) {
                 toolbar: ["excel",],
                 excel: { fileName: "LaporanDiagnosaPasien.xlsx", allPages: true, },
                 excelExport: function (e) {
+                    var departemens = "";
+                    if ($scope.item.departement != undefined) {
+                        departemens = $scope.item.departement.departemen;
+                    } 
                     var sheet = e.workbook.sheets[0];
                     sheet.frozenRows = 1;
                     sheet.mergedCells = ["A1:J1"];
                     sheet.name = "Orders";
 
                     var myHeaders = [{
-                        value: "Data Indeks Penyakit " + $scope.item.departement.departemen,
+                        value: "Data Indeks Penyakit " + departemens,
                         fontSize: 20,
                         textAlign: "center",
                         background: "#ffffff",
@@ -206,7 +246,6 @@ define(['initialize'], function (initialize) {
                         cells: a,
                         type: "header",
                         height: 20 
-
                     })
                     var b = [{
                         value: " Secondary : " + $scope.b,
@@ -215,7 +254,6 @@ define(['initialize'], function (initialize) {
                         cells: b,
                         type: "header",
                         height: 20
-
                     })
                     var c = [{
                         value: " Diagnosa Pra Bedah : " + $scope.c,
@@ -224,7 +262,6 @@ define(['initialize'], function (initialize) {
                         cells: c,
                         type: "header",
                         height: 20
-
                     })
                     var d = [{
                         value: " Diagnosa Pasca Bedah : " + $scope.d,
@@ -233,7 +270,6 @@ define(['initialize'], function (initialize) {
                         cells: d,
                         type: "header",
                         height: 20
-
                     })
                     var e = [{
                         value: " Diagnosa Awal : " + $scope.e,
@@ -242,7 +278,6 @@ define(['initialize'], function (initialize) {
                         cells: e,
                         type: "header",
                         height: 20
-
                     })
                     var f = [{
                         value: " - : " + $scope.f,
@@ -251,13 +286,9 @@ define(['initialize'], function (initialize) {
                         cells: f,
                         type: "header",
                         height: 20
-
                     })
-
                     
                 },
-                
-
                 groupable: true,
                 filterable: true,
                 columnMenu: true,
@@ -324,6 +355,67 @@ define(['initialize'], function (initialize) {
                 ],
                 
                     
+            }
+
+
+
+
+            $scope.columnGridDiagnosapasien = {
+                toolbar: ["excel",],
+                excel: { fileName: "Laporan Diagnosa Per-Pasien.xlsx", allPages: true, },
+                excelExport: function (e) {
+                    var departemenss
+                    if ($scope.item.departement != undefined) {
+                        departemenss = $scope.item.departement.departemen;
+                    }
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 1;
+                    sheet.mergedCells = ["A1:J1"];
+                    sheet.name = "Orders";
+
+                    var myHeaders = [{
+                        value: "Laporan Diagnosa Per-pasien " + departemenss,
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                        // color:"#ffffff"
+                    }];
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        type: "header",
+                        height: 70
+                    });
+                },
+                groupable: false,
+                columns: [
+                    {
+                        field: "no",
+                        title: "No",
+                        width: "30px",
+                    },
+                    {
+                        field: "kddiagnosa",
+                        title: "Kode",
+                        width: "40px",
+                    },
+                    {
+                        field: "namadiagnosa",
+                        title: "Diagnosa",
+                        width: "570px",
+                    },
+                    {
+                        field: "count",
+                        title: "Jumlah",
+                        width: "50px",
+                    },
+                ],
+                // groupable: true,
+                // filterable: true,
+                columnMenu: true,
+                reorderable: true,
+                resizable: true,
+                sortable: true,
+                pageable: true,
             }
 ////////////////////////////////////////////////////////    END     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
