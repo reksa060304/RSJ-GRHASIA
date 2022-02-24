@@ -62,6 +62,19 @@ define(['initialize'], function (initialize) {
                         },
                         aggregate: [
                             {field: "total", aggregate:"sum"},
+                            {field: "januari", aggregate:"sum"},
+                            {field: "februari", aggregate:"sum"},
+                            {field: "maret", aggregate:"sum"},
+                            {field: "april", aggregate:"sum"},
+                            {field: "mei", aggregate:"sum"},
+                            {field: "juni", aggregate:"sum"},
+                            {field: "juli", aggregate:"sum"},
+                            {field: "agustus", aggregate:"sum"},
+                            {field: "september", aggregate:"sum"},
+                            {field: "oktober", aggregate:"sum"},
+                            {field: "november", aggregate:"sum"},
+                            {field: "desember", aggregate:"sum"},
+
                         ]
 
 
@@ -72,6 +85,7 @@ define(['initialize'], function (initialize) {
                     medifirstService.get("registrasi/laporan/get-data-lap-jumlah-pasien-cara-igd?"
                     + "tahun=" + tahun).then(function (data) {
                         var datas =data.data;
+                        console.log(datas)
                         for (var i = 0; i < datas.length; i++) {
                             datas[i].no = i + 1;
                         }
@@ -90,6 +104,18 @@ define(['initialize'], function (initialize) {
                         },
                         aggregate: [
                             {field: "total", aggregate:"sum"},
+                            {field: "januari", aggregate:"sum"},
+                            {field: "februari", aggregate:"sum"},
+                            {field: "maret", aggregate:"sum"},
+                            {field: "april", aggregate:"sum"},
+                            {field: "mei", aggregate:"sum"},
+                            {field: "juni", aggregate:"sum"},
+                            {field: "juli", aggregate:"sum"},
+                            {field: "agustus", aggregate:"sum"},
+                            {field: "september", aggregate:"sum"},
+                            {field: "oktober", aggregate:"sum"},
+                            {field: "november", aggregate:"sum"},
+                            {field: "desember", aggregate:"sum"},
                         ]
 
 
@@ -115,7 +141,8 @@ define(['initialize'], function (initialize) {
                     {
                         field: "namaruangan",
                         aggregate: "count"
-                    }]
+                    },
+                ]
             };
 
 
@@ -152,61 +179,61 @@ define(['initialize'], function (initialize) {
                      {
                         "field": "ket",
                         "title": "Keterangan",
-                        "width": "200px"
+                        "width": "200px",
                     },
                     {
                         "title": "Bulan",
                         "width": "200px",
-
+                        
                         "columns":
                         [{
-                            "field" : "Januari",
-                            "title" : "Januari",
-                        },
-                        {
-                            "field" : "Februari",
-                            "title" : "Februari",
-                        },
-                        {
-                            "field" : "Maret",
-                            "title" : "Maret",
-                        },
-                        {
-                            "field" : "April",
-                            "title" : "April",
-                        },
-                        {
-                            "field" : "Mei",
-                            "title" : "Mei",
-                        },
-                        {
-                            "field" : "",
-                            "title" : "Juni",
-                        },
-                        {
-                            "field" : "Juli",
-                            "title" : "Juli",
-                        },
-                        {
-                            "field" : "Agustus",
-                            "title" : "Agustus",
-                        },
-                        {
-                            "field" : "September",
-                            "title" : "September",
-                        },
-                        {
-                            "field" : "Oktober",
-                            "title" : "Oktober",
-                        },
-                        {
-                            "field" : "November",
-                            "title" : "November",
-                        },
-                        {
-                            "field" : "Desember",
-                            "title" : "Desember",
-                        }
+                                "field": "januari",
+                                "title": "Januari",
+                            },
+                            {
+                                "field": "februari",
+                                "title": "Februari",
+                            },
+                            {
+                                "field": "maret",
+                                "title": "Maret",
+                            },
+                            {
+                                "field": "april",
+                                "title": "April",
+                            },
+                            {
+                                "field": "mei",
+                                "title": "Mei",
+                            },
+                            {
+                                "field": "juni",
+                                "title": "Juni",
+                            },
+                            {
+                                "field": "juli",
+                                "title": "Juli",
+                            },
+                            {
+                                "field": "agustus",
+                                "title": "Agustus",
+                            },
+                            {
+                                "field": "september",
+                                "title": "September",
+                            },
+                            {
+                                "field": "oktober",
+                                "title": "Oktober",
+                            },
+                            {
+                                "field": "november",
+                                "title": "November",
+                            },
+                            {
+                                "field": "desember",
+                                "title": "Desember",
+                            }
                         ],
 
                     }
@@ -255,53 +282,91 @@ define(['initialize'], function (initialize) {
 
                         "columns":
                         [{
-                            "field" : "Januari",
-                            "title" : "Januari",
-                        },
-                        {
-                            "field" : "Februari",
-                            "title" : "Februari",
-                        },
-                        {
-                            "field" : "Maret",
-                            "title" : "Maret",
-                        },
-                        {
-                            "field" : "April",
-                            "title" : "April",
-                        },
-                        {
-                            "field" : "Mei",
-                            "title" : "Mei",
-                        },
-                        {
-                            "field" : "",
-                            "title" : "Juni",
-                        },
-                        {
-                            "field" : "Juli",
-                            "title" : "Juli",
-                        },
-                        {
-                            "field" : "Agustus",
-                            "title" : "Agustus",
-                        },
-                        {
-                            "field" : "September",
-                            "title" : "September",
-                        },
-                        {
-                            "field" : "Oktober",
-                            "title" : "Oktober",
-                        },
-                        {
-                            "field" : "November",
-                            "title" : "November",
-                        },
-                        {
-                            "field" : "Desember",
-                            "title" : "Desember",
-                        }
+                                "field": "januari",
+                                "title": "Januari",
+                                aggregates: ["sum"],
+                                template: "#: januari  #",
+                                footerTemplate: "#: data.januari.sum #",
+                            },
+                            {
+                                "field": "februari",
+                                "title": "Februari",
+                                aggregates: ["sum"],
+                                template: "#: februari  #",
+                                footerTemplate: "#: data.februari.sum #",
+                            },
+                            {
+                                "field": "maret",
+                                "title": "Maret",
+                                aggregates: ["sum"],
+                                template: "#: maret  #",
+                                footerTemplate: "#: data.maret.sum #",
+                            },
+                            {
+                                "field": "april",
+                                "title": "April",
+                                aggregates: ["sum"],
+                                template: "#: april  #",
+                                footerTemplate: "#: data.april.sum #",
+                            },
+                            {
+                                "field": "mei",
+                                "title": "Mei",
+                                aggregates: ["sum"],
+                                template: "#: mei  #",
+                                footerTemplate: "#: data.mei.sum #",
+
+
+                            },
+                            {
+                                "field": "juni",
+                                "title": "Juni",
+                                aggregates: ["sum"],
+                                template: "#: juni  #",
+                                footerTemplate: "#: data.juni.sum #",
+                            },
+                            {
+                                "field": "juli",
+                                "title": "Juli",
+                                aggregates: ["sum"],
+                                template: "#: juli  #",
+                                footerTemplate: "#: data.juli.sum #",
+                            },
+                            {
+                                "field": "agustus",
+                                "title": "Agustus",
+                                aggregates: ["sum"],
+                                template: "#: agustus  #",
+                                footerTemplate: "#: data.agustus.sum #",
+                            },
+                            {
+                                "field": "september",
+                                "title": "September",
+                                aggregates: ["sum"],
+                                template: "#: september  #",
+                                footerTemplate: "#: data.september.sum #",
+                            },
+                            {
+                                "field": "oktober",
+                                "title": "Oktober",
+                                aggregates: ["sum"],
+                                template: "#: oktober  #",
+                                footerTemplate: "#: data.oktober.sum #",
+                            },
+                            {
+                                "field": "november",
+                                "title": "November",
+                                aggregates: ["sum"],
+                                template: "#: november  #",
+                                footerTemplate: "#: data.november.sum #",
+                            },
+                            {
+                                "field": "desember",
+                                "title": "Desember",
+                                aggregates: ["sum"],
+                                template: "#: desember  #",
+                                footerTemplate: "#: data.desember.sum #",
+                            }
                         ],
 
                     }

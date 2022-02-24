@@ -3494,15 +3494,18 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         $idProfile = (int) $kdProfile;
         $tglAwal = $request['tglAwal'];
         $kpid='';
+        $rajalRanapAsal= '';
         $rajalRanap= '';
 
         
         if(isset( $request['rajalRanap'])&& $request['rajalRanap']!="" && $request['rajalRanap']!="undefined" &&  $request['rajalRanap']=='1'){//rajal
             $rajalRanap = "and ru.objectdepartemenfk <> 16";
+            $rajalRanapAsal = "and ruasal.objectdepartemenfk <> 16";
         }
 
         if(isset( $request['rajalRanap'])&& $request['rajalRanap']!="" && $request['rajalRanap']!="undefined" && $request['rajalRanap']=='2'){//ranap
             $rajalRanap = "and ru.objectdepartemenfk = 16";//ini ga mungkin terjadi
+            $rajalRanapAsal = "and ruasal.objectdepartemenfk = 16";//ini ga mungkin terjadi
         }
 
         if(isset($request['kpid']) && $request['kpid']!="" && $request['kpid']!="undefined"){
@@ -3575,6 +3578,33 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             $kpid
             $rajalRanap
         group by to_char(sr.tglresep, 'Month'), sr.noresep) as x group by x.bulan"));
+
+
+        $pelayananmain = DB::select(DB::raw("select namaruangan, namaproduk from mapruangantoproduk_m mpr
+        left join produk_m pr on pr.id  = mpr.objectprodukfk
+        left join ruangan_m ru on ru.id = mpr.objectruanganfk
+        where mpr.objectruanganfk = 94"));
+
+
+        $pelayanan = DB::select(DB::raw("
+        select rtrim(x.bulan, ' ') as bulan, x.namaproduk, x.jumlah from (select 
+        to_char(pp.tglpelayanan, 'Month') as bulan, pr.namaproduk, count(pr.namaproduk) as jumlah 
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk 
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner join produk_m pr on pr.id=pp.produkfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+		inner join ruangan_m ruasal on ruasal.id = apd.objectruanganasalfk
+			where ru.objectdepartemenfk = 14
+			and pp.isobat is null
+			and pp.tglpelayanan::date between '$arrmin[0]' and '$arrmax[0]'
+            $kpid
+            $rajalRanapAsal
+		group by to_char(pp.tglpelayanan, 'Month'), pr.namaproduk) x group by x.bulan, x.namaproduk, x.jumlah"));
+
+        //var_dump($pelayanan);
         
         $jumlahtotalrkejanuary = 0;
         $jumlahtotalrkefebruary = 0;
@@ -3588,6 +3618,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         $jumlahtotalrkeoctober = 0;
         $jumlahtotalrkenovember = 0;
         $jumlahtotalrkedecember = 0;
+
         $jumlahtotalresepjanuary = 0;
         $jumlahtotalresepfebruary = 0;
         $jumlahtotalresepmarch = 0;
@@ -3600,12 +3631,223 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         $jumlahtotalresepoctober = 0;
         $jumlahtotalresepnovember = 0;
         $jumlahtotalresepdecember = 0;
+
+        $jumlahtotalobatjadijanuary = 0;
+        $jumlahtotalobatjadifebruary = 0;
+        $jumlahtotalobatjadimarch = 0;
+        $jumlahtotalobatjadiapril = 0;
+        $jumlahtotalobatjadimay = 0;
+        $jumlahtotalobatjadijune = 0;
+        $jumlahtotalobatjadijuly = 0;
+        $jumlahtotalobatjadiaugust = 0;
+        $jumlahtotalobatjadiseptember = 0;
+        $jumlahtotalobatjadioctober = 0;
+        $jumlahtotalobatjadinovember = 0;
+        $jumlahtotalobatjadidecember = 0;
+
+        $jumlahtotalkapsulkurangjanuary = 0;
+        $jumlahtotalkapsulkurangfebruary = 0;
+        $jumlahtotalkapsulkurangmarch = 0;
+        $jumlahtotalkapsulkurangapril = 0;
+        $jumlahtotalkapsulkurangmay = 0;
+        $jumlahtotalkapsulkurangjune = 0;
+        $jumlahtotalkapsulkurangjuly = 0;
+        $jumlahtotalkapsulkurangaugust = 0;
+        $jumlahtotalkapsulkurangseptember = 0;
+        $jumlahtotalkapsulkurangoctober = 0;
+        $jumlahtotalkapsulkurangnovember = 0;
+        $jumlahtotalkapsulkurangdecember = 0;
+
+        $jumlahtotalkapsullebihjanuary = 0;
+        $jumlahtotalkapsullebihfebruary = 0;
+        $jumlahtotalkapsullebihmarch = 0;
+        $jumlahtotalkapsullebihapril = 0;
+        $jumlahtotalkapsullebihmay = 0;
+        $jumlahtotalkapsullebihjune = 0;
+        $jumlahtotalkapsullebihjuly = 0;
+        $jumlahtotalkapsullebihaugust = 0;
+        $jumlahtotalkapsullebihseptember = 0;
+        $jumlahtotalkapsullebihoctober = 0;
+        $jumlahtotalkapsullebihnovember = 0;
+        $jumlahtotalkapsullebihdecember = 0;
+        
+        $jumlahtotalracikkurangjanuary = 0;
+        $jumlahtotalracikkurangfebruary = 0;
+        $jumlahtotalracikkurangmarch = 0;
+        $jumlahtotalracikkurangapril = 0;
+        $jumlahtotalracikkurangmay = 0;
+        $jumlahtotalracikkurangjune = 0;
+        $jumlahtotalracikkurangjuly = 0;
+        $jumlahtotalracikkurangaugust = 0;
+        $jumlahtotalracikkurangseptember = 0;
+        $jumlahtotalracikkurangoctober = 0;
+        $jumlahtotalracikkurangnovember = 0;
+        $jumlahtotalracikkurangdecember = 0;
+
+        $jumlahtotalraciklebihjanuary = 0;
+        $jumlahtotalraciklebihfebruary = 0;
+        $jumlahtotalraciklebihmarch = 0;
+        $jumlahtotalraciklebihapril = 0;
+        $jumlahtotalraciklebihmay = 0;
+        $jumlahtotalraciklebihjune = 0;
+        $jumlahtotalraciklebihjuly = 0;
+        $jumlahtotalraciklebihaugust = 0;
+        $jumlahtotalraciklebihseptember = 0;
+        $jumlahtotalraciklebihoctober = 0;
+        $jumlahtotalraciklebihnovember = 0;
+        $jumlahtotalraciklebihdecember = 0;
+
+        $jumlahtotalraciksalepjanuary = 0;
+        $jumlahtotalraciksalepfebruary = 0;
+        $jumlahtotalraciksalepmarch = 0;
+        $jumlahtotalraciksalepapril = 0;
+        $jumlahtotalraciksalepmay = 0;
+        $jumlahtotalraciksalepjune = 0;
+        $jumlahtotalraciksalepjuly = 0;
+        $jumlahtotalraciksalepaugust = 0;
+        $jumlahtotalraciksalepseptember = 0;
+        $jumlahtotalraciksalepoctober = 0;
+        $jumlahtotalraciksalepnovember = 0;
+        $jumlahtotalraciksalepdecember = 0;
+
+        $jumlahtotalraciksirupjanuary = 0;
+        $jumlahtotalraciksirupfebruary = 0;
+        $jumlahtotalraciksirupmarch = 0;
+        $jumlahtotalraciksirupapril = 0;
+        $jumlahtotalraciksirupmay = 0;
+        $jumlahtotalraciksirupjune = 0;
+        $jumlahtotalraciksirupjuly = 0;
+        $jumlahtotalraciksirupaugust = 0;
+        $jumlahtotalraciksirupseptember = 0;
+        $jumlahtotalraciksirupoctober = 0;
+        $jumlahtotalraciksirupnovember = 0;
+        $jumlahtotalraciksirupdecember = 0;
+
+        $jumlahtotalkonselingjanuary = 0;
+        $jumlahtotalkonselingfebruary = 0;
+        $jumlahtotalkonselingmarch = 0;
+        $jumlahtotalkonselingapril = 0;
+        $jumlahtotalkonselingmay = 0;
+        $jumlahtotalkonselingjune = 0;
+        $jumlahtotalkonselingjuly = 0;
+        $jumlahtotalkonselingaugust = 0;
+        $jumlahtotalkonselingseptember = 0;
+        $jumlahtotalkonselingoctober = 0;
+        $jumlahtotalkonselingnovember = 0;
+        $jumlahtotalkonselingdecember = 0;
+
+        $jumlahtotalpetunjukjanuary = 0;
+        $jumlahtotalpetunjukfebruary = 0;
+        $jumlahtotalpetunjukmarch = 0;
+        $jumlahtotalpetunjukapril = 0;
+        $jumlahtotalpetunjukmay = 0;
+        $jumlahtotalpetunjukjune = 0;
+        $jumlahtotalpetunjukjuly = 0;
+        $jumlahtotalpetunjukaugust = 0;
+        $jumlahtotalpetunjukseptember = 0;
+        $jumlahtotalpetunjukoctober = 0;
+        $jumlahtotalpetunjuknovember = 0;
+        $jumlahtotalpetunjukdecember = 0;
+
+        $jumlahtotalvisitejanuary = 0;
+        $jumlahtotalvisitefebruary = 0;
+        $jumlahtotalvisitemarch = 0;
+        $jumlahtotalvisiteapril = 0;
+        $jumlahtotalvisitemay = 0;
+        $jumlahtotalvisitejune = 0;
+        $jumlahtotalvisitejuly = 0;
+        $jumlahtotalvisiteaugust = 0;
+        $jumlahtotalvisiteseptember = 0;
+        $jumlahtotalvisiteoctober = 0;
+        $jumlahtotalvisitenovember = 0;
+        $jumlahtotalvisitedecember = 0;
+
+        $jumlahtotalpemantauanjanuary = 0;
+        $jumlahtotalpemantauanfebruary = 0;
+        $jumlahtotalpemantauanmarch = 0;
+        $jumlahtotalpemantauanapril = 0;
+        $jumlahtotalpemantauanmay = 0;
+        $jumlahtotalpemantauanjune = 0;
+        $jumlahtotalpemantauanjuly = 0;
+        $jumlahtotalpemantauanaugust = 0;
+        $jumlahtotalpemantauanseptember = 0;
+        $jumlahtotalpemantauanoctober = 0;
+        $jumlahtotalpemantauannovember = 0;
+        $jumlahtotalpemantauandecember = 0;
+
+        $jumlahtotalembalacejanuary = 0;
+        $jumlahtotalembalacefebruary = 0;
+        $jumlahtotalembalacemarch = 0;
+        $jumlahtotalembalaceapril = 0;
+        $jumlahtotalembalacemay = 0;
+        $jumlahtotalembalacejune = 0;
+        $jumlahtotalembalacejuly = 0;
+        $jumlahtotalembalaceaugust = 0;
+        $jumlahtotalembalaceseptember = 0;
+        $jumlahtotalembalaceoctober = 0;
+        $jumlahtotalembalacenovember = 0;
+        $jumlahtotalembalacedecember = 0;
+
+        $jumlahtotalinjeksijanuary = 0;
+        $jumlahtotalinjeksifebruary = 0;
+        $jumlahtotalinjeksimarch = 0;
+        $jumlahtotalinjeksiapril = 0;
+        $jumlahtotalinjeksimay = 0;
+        $jumlahtotalinjeksijune = 0;
+        $jumlahtotalinjeksijuly = 0;
+        $jumlahtotalinjeksiaugust = 0;
+        $jumlahtotalinjeksiseptember = 0;
+        $jumlahtotalinjeksioctober = 0;
+        $jumlahtotalinjeksinovember = 0;
+        $jumlahtotalinjeksidecember = 0;
+
+        $jumlahtotalinfusjanuary = 0;
+        $jumlahtotalinfusfebruary = 0;
+        $jumlahtotalinfusmarch = 0;
+        $jumlahtotalinfusapril = 0;
+        $jumlahtotalinfusmay = 0;
+        $jumlahtotalinfusjune = 0;
+        $jumlahtotalinfusjuly = 0;
+        $jumlahtotalinfusaugust = 0;
+        $jumlahtotalinfusseptember = 0;
+        $jumlahtotalinfusoctober = 0;
+        $jumlahtotalinfusnovember = 0;
+        $jumlahtotalinfusdecember = 0;
+
+        $jumlahtotalrekonjanuary = 0;
+        $jumlahtotalrekonfebruary = 0;
+        $jumlahtotalrekonmarch = 0;
+        $jumlahtotalrekonapril = 0;
+        $jumlahtotalrekonmay = 0;
+        $jumlahtotalrekonjune = 0;
+        $jumlahtotalrekonjuly = 0;
+        $jumlahtotalrekonaugust = 0;
+        $jumlahtotalrekonseptember = 0;
+        $jumlahtotalrekonoctober = 0;
+        $jumlahtotalrekonnovember = 0;
+        $jumlahtotalrekondecember = 0;
+
         $totalrke = 0;
         $totalresep = 0;
+        $totalobatjadi = 0;
+        $totalkapsulkurang = 0;
+        $totalkapsullebih = 0;
+        $totalracikkurang = 0;
+        $totalraciklebih = 0;
+        $totalraciksalep = 0;
+        $totalraciksirup = 0;
+        $totalkonseling = 0;
+        $totalpetunjuk = 0;
+        $totalvisite = 0;
+        $totalpemantauan = 0;
+        $totalembalace = 0;
+        $totalinjeksi = 0;
+        $totalinfus = 0;
+        $totalrekon = 0;
         $detail=[];
         
         foreach ($jumlahresep  as $resep){
-            foreach ($jumlahrke  as $rke){
+
                 $jumlahtotalrkejanuary = 0;
                 $jumlahtotalrkefebruary = 0;
                 $jumlahtotalrkemarch = 0;
@@ -3618,6 +3860,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 $jumlahtotalrkeoctober = 0;
                 $jumlahtotalrkenovember = 0;
                 $jumlahtotalrkedecember = 0;
+
                 $jumlahtotalresepjanuary = 0;
                 $jumlahtotalresepfebruary = 0;
                 $jumlahtotalresepmarch = 0;
@@ -3630,6 +3873,203 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 $jumlahtotalresepoctober = 0;
                 $jumlahtotalresepnovember = 0;
                 $jumlahtotalresepdecember = 0;
+
+                $jumlahtotalobatjadijanuary = 0;
+                $jumlahtotalobatjadifebruary = 0;
+                $jumlahtotalobatjadimarch = 0;
+                $jumlahtotalobatjadiapril = 0;
+                $jumlahtotalobatjadimay = 0;
+                $jumlahtotalobatjadijune = 0;
+                $jumlahtotalobatjadijuly = 0;
+                $jumlahtotalobatjadiaugust = 0;
+                $jumlahtotalobatjadiseptember = 0;
+                $jumlahtotalobatjadioctober = 0;
+                $jumlahtotalobatjadinovember = 0;
+                $jumlahtotalobatjadidecember = 0;
+
+                $jumlahtotalkapsulkurangjanuary = 0;
+                $jumlahtotalkapsulkurangfebruary = 0;
+                $jumlahtotalkapsulkurangmarch = 0;
+                $jumlahtotalkapsulkurangapril = 0;
+                $jumlahtotalkapsulkurangmay = 0;
+                $jumlahtotalkapsulkurangjune = 0;
+                $jumlahtotalkapsulkurangjuly = 0;
+                $jumlahtotalkapsulkurangaugust = 0;
+                $jumlahtotalkapsulkurangseptember = 0;
+                $jumlahtotalkapsulkurangoctober = 0;
+                $jumlahtotalkapsulkurangnovember = 0;
+                $jumlahtotalkapsulkurangdecember = 0;
+
+                $jumlahtotalkapsullebihjanuary = 0;
+                $jumlahtotalkapsullebihfebruary = 0;
+                $jumlahtotalkapsullebihmarch = 0;
+                $jumlahtotalkapsullebihapril = 0;
+                $jumlahtotalkapsullebihmay = 0;
+                $jumlahtotalkapsullebihjune = 0;
+                $jumlahtotalkapsullebihjuly = 0;
+                $jumlahtotalkapsullebihaugust = 0;
+                $jumlahtotalkapsullebihseptember = 0;
+                $jumlahtotalkapsullebihoctober = 0;
+                $jumlahtotalkapsullebihnovember = 0;
+                $jumlahtotalkapsullebihdecember = 0;
+
+                $jumlahtotalracikkurangjanuary = 0;
+                $jumlahtotalracikkurangfebruary = 0;
+                $jumlahtotalracikkurangmarch = 0;
+                $jumlahtotalracikkurangapril = 0;
+                $jumlahtotalracikkurangmay = 0;
+                $jumlahtotalracikkurangjune = 0;
+                $jumlahtotalracikkurangjuly = 0;
+                $jumlahtotalracikkurangaugust = 0;
+                $jumlahtotalracikkurangseptember = 0;
+                $jumlahtotalracikkurangoctober = 0;
+                $jumlahtotalracikkurangnovember = 0;
+                $jumlahtotalracikkurangdecember = 0;
+
+                $jumlahtotalraciklebihjanuary = 0;
+                $jumlahtotalraciklebihfebruary = 0;
+                $jumlahtotalraciklebihmarch = 0;
+                $jumlahtotalraciklebihapril = 0;
+                $jumlahtotalraciklebihmay = 0;
+                $jumlahtotalraciklebihjune = 0;
+                $jumlahtotalraciklebihjuly = 0;
+                $jumlahtotalraciklebihaugust = 0;
+                $jumlahtotalraciklebihseptember = 0;
+                $jumlahtotalraciklebihoctober = 0;
+                $jumlahtotalraciklebihnovember = 0;
+                $jumlahtotalraciklebihdecember = 0;
+
+                $jumlahtotalraciksalepjanuary = 0;
+                $jumlahtotalraciksalepfebruary = 0;
+                $jumlahtotalraciksalepmarch = 0;
+                $jumlahtotalraciksalepapril = 0;
+                $jumlahtotalraciksalepmay = 0;
+                $jumlahtotalraciksalepjune = 0;
+                $jumlahtotalraciksalepjuly = 0;
+                $jumlahtotalraciksalepaugust = 0;
+                $jumlahtotalraciksalepseptember = 0;
+                $jumlahtotalraciksalepoctober = 0;
+                $jumlahtotalraciksalepnovember = 0;
+                $jumlahtotalraciksalepdecember = 0;
+
+                $jumlahtotalraciksirupjanuary = 0;
+                $jumlahtotalraciksirupfebruary = 0;
+                $jumlahtotalraciksirupmarch = 0;
+                $jumlahtotalraciksirupapril = 0;
+                $jumlahtotalraciksirupmay = 0;
+                $jumlahtotalraciksirupjune = 0;
+                $jumlahtotalraciksirupjuly = 0;
+                $jumlahtotalraciksirupaugust = 0;
+                $jumlahtotalraciksirupseptember = 0;
+                $jumlahtotalraciksirupoctober = 0;
+                $jumlahtotalraciksirupnovember = 0;
+                $jumlahtotalraciksirupdecember = 0;
+
+                $jumlahtotalkonselingjanuary = 0;
+                $jumlahtotalkonselingfebruary = 0;
+                $jumlahtotalkonselingmarch = 0;
+                $jumlahtotalkonselingapril = 0;
+                $jumlahtotalkonselingmay = 0;
+                $jumlahtotalkonselingjune = 0;
+                $jumlahtotalkonselingjuly = 0;
+                $jumlahtotalkonselingaugust = 0;
+                $jumlahtotalkonselingseptember = 0;
+                $jumlahtotalkonselingoctober = 0;
+                $jumlahtotalkonselingnovember = 0;
+                $jumlahtotalkonselingdecember = 0;
+
+                $jumlahtotalpetunjukjanuary = 0;
+                $jumlahtotalpetunjukfebruary = 0;
+                $jumlahtotalpetunjukmarch = 0;
+                $jumlahtotalpetunjukapril = 0;
+                $jumlahtotalpetunjukmay = 0;
+                $jumlahtotalpetunjukjune = 0;
+                $jumlahtotalpetunjukjuly = 0;
+                $jumlahtotalpetunjukaugust = 0;
+                $jumlahtotalpetunjukseptember = 0;
+                $jumlahtotalpetunjukoctober = 0;
+                $jumlahtotalpetunjuknovember = 0;
+                $jumlahtotalpetunjukdecember = 0;
+
+                $jumlahtotalvisitejanuary = 0;
+                $jumlahtotalvisitefebruary = 0;
+                $jumlahtotalvisitemarch = 0;
+                $jumlahtotalvisiteapril = 0;
+                $jumlahtotalvisitemay = 0;
+                $jumlahtotalvisitejune = 0;
+                $jumlahtotalvisitejuly = 0;
+                $jumlahtotalvisiteaugust = 0;
+                $jumlahtotalvisiteseptember = 0;
+                $jumlahtotalvisiteoctober = 0;
+                $jumlahtotalvisitenovember = 0;
+                $jumlahtotalvisitedecember = 0;
+
+                $jumlahtotalpemantauanjanuary = 0;
+                $jumlahtotalpemantauanfebruary = 0;
+                $jumlahtotalpemantauanmarch = 0;
+                $jumlahtotalpemantauanapril = 0;
+                $jumlahtotalpemantauanmay = 0;
+                $jumlahtotalpemantauanjune = 0;
+                $jumlahtotalpemantauanjuly = 0;
+                $jumlahtotalpemantauanaugust = 0;
+                $jumlahtotalpemantauanseptember = 0;
+                $jumlahtotalpemantauanoctober = 0;
+                $jumlahtotalpemantauannovember = 0;
+                $jumlahtotalpemantauandecember = 0;
+
+                $jumlahtotalembalacejanuary = 0;
+                $jumlahtotalembalacefebruary = 0;
+                $jumlahtotalembalacemarch = 0;
+                $jumlahtotalembalaceapril = 0;
+                $jumlahtotalembalacemay = 0;
+                $jumlahtotalembalacejune = 0;
+                $jumlahtotalembalacejuly = 0;
+                $jumlahtotalembalaceaugust = 0;
+                $jumlahtotalembalaceseptember = 0;
+                $jumlahtotalembalaceoctober = 0;
+                $jumlahtotalembalacenovember = 0;
+                $jumlahtotalembalacedecember = 0;
+
+                $jumlahtotalinjeksijanuary = 0;
+                $jumlahtotalinjeksifebruary = 0;
+                $jumlahtotalinjeksimarch = 0;
+                $jumlahtotalinjeksiapril = 0;
+                $jumlahtotalinjeksimay = 0;
+                $jumlahtotalinjeksijune = 0;
+                $jumlahtotalinjeksijuly = 0;
+                $jumlahtotalinjeksiaugust = 0;
+                $jumlahtotalinjeksiseptember = 0;
+                $jumlahtotalinjeksioctober = 0;
+                $jumlahtotalinjeksinovember = 0;
+                $jumlahtotalinjeksidecember = 0;
+
+                $jumlahtotalinfusjanuary = 0;
+                $jumlahtotalinfusfebruary = 0;
+                $jumlahtotalinfusmarch = 0;
+                $jumlahtotalinfusapril = 0;
+                $jumlahtotalinfusmay = 0;
+                $jumlahtotalinfusjune = 0;
+                $jumlahtotalinfusjuly = 0;
+                $jumlahtotalinfusaugust = 0;
+                $jumlahtotalinfusseptember = 0;
+                $jumlahtotalinfusoctober = 0;
+                $jumlahtotalinfusnovember = 0;
+                $jumlahtotalinfusdecember = 0;
+
+                $jumlahtotalrekonjanuary = 0;
+                $jumlahtotalrekonfebruary = 0;
+                $jumlahtotalrekonmarch = 0;
+                $jumlahtotalrekonapril = 0;
+                $jumlahtotalrekonmay = 0;
+                $jumlahtotalrekonjune = 0;
+                $jumlahtotalrekonjuly = 0;
+                $jumlahtotalrekonaugust = 0;
+                $jumlahtotalrekonseptember = 0;
+                $jumlahtotalrekonoctober = 0;
+                $jumlahtotalrekonnovember = 0;
+                $jumlahtotalrekondecember = 0;
+                
+            foreach ($jumlahrke  as $rke){
                 if ($rke->bulan == 'January' && $resep->bulan == 'January'){
                     $jumlahtotalrkejanuary = $rke->jumlahrke;
                     $jumlahtotalresepjanuary = $resep->jumlahresep;
@@ -3705,39 +4145,999 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $totalrke+=$jumlahtotalrkedecember;
                     $totalresep+=$jumlahtotalresepdecember;
                 }
-
-                $detail[] =array(
-                    'jumlahtotalrkejanuary' =>   $jumlahtotalrkejanuary,
-                    'jumlahtotalrkefebruary' =>   $jumlahtotalrkefebruary,
-                    'jumlahtotalresepjanuary' =>   $jumlahtotalresepjanuary,
-                    'jumlahtotalresepfebruary' =>   $jumlahtotalresepfebruary,
-                    'jumlahtotalrkemarch' =>   $jumlahtotalrkemarch,
-                    'jumlahtotalrkeapril' =>   $jumlahtotalrkeapril,
-                    'jumlahtotalrkemay' =>   $jumlahtotalrkemay,
-                    'jumlahtotalrkejune' =>   $jumlahtotalrkejune,
-                    'jumlahtotalrkejuly' =>   $jumlahtotalrkejuly,
-                    'jumlahtotalrkeaugust' =>   $jumlahtotalrkeaugust,
-                    'jumlahtotalrkeseptember' =>   $jumlahtotalrkeseptember,
-                    'jumlahtotalrkeoctober' =>   $jumlahtotalrkeoctober,
-                    'jumlahtotalrkenovember' =>   $jumlahtotalrkenovember,
-                    'jumlahtotalrkedecember' =>   $jumlahtotalrkedecember,
-                    'jumlahtotalresepmarch' =>   $jumlahtotalresepmarch,
-                    'jumlahtotalresepapril' =>   $jumlahtotalresepapril,
-                    'jumlahtotalresepmay' =>   $jumlahtotalresepmay,
-                    'jumlahtotalresepjune' =>   $jumlahtotalresepjune,
-                    'jumlahtotalresepjuly' =>   $jumlahtotalresepjuly,
-                    'jumlahtotalresepaugust' =>   $jumlahtotalresepaugust,
-                    'jumlahtotalresepseptember' =>   $jumlahtotalresepseptember,
-                    'jumlahtotalresepoctober' =>   $jumlahtotalresepoctober,
-                    'jumlahtotalresepnovember' =>   $jumlahtotalresepnovember,
-                    'jumlahtotalresepdecember' =>   $jumlahtotalresepdecember,
-                    'totalrke' =>   $totalrke,
-                    'totalresep' =>   $totalresep,
-                );
             }
-        }
 
-        
+            foreach($pelayanan as $layanan){
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadijanuary = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadijanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadifebruary = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadifebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadimarch = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadimarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadiapril = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadiapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadimay = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadimay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadijune = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadijune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadijuly = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadijuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadiaugust = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadiaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadiseptember = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadiseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadioctober = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadioctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadinovember = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadinovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Resep Obat Jadi / Alkes'){
+                    $jumlahtotalobatjadidecember = $layanan->jumlah;
+                    $totalobatjadi+=$jumlahtotalobatjadidecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangjanuary = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangjanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangfebruary = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangfebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangmarch = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangmarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangapril = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangmay = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangmay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangjune = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangjune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangjuly = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangjuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangaugust = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangseptember = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangoctober = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangnovember = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangnovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul'){
+                    $jumlahtotalkapsulkurangdecember = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangdecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihjanuary = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihjanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihfebruary = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihfebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihmarch = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihmarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihapril = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihmay = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihmay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihjune = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihjune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihjuly = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihjuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihaugust = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihseptember = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihoctober = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihnovember = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihnovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul'){
+                    $jumlahtotalkapsullebihdecember = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihdecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangjanuary = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangjanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangfebruary = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangfebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangmarch = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangmarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangapril = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangmay = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangmay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangjune = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangjune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangjuly = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangjuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangaugust = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangseptember = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangoctober = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangnovember = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangnovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus'){
+                    $jumlahtotalracikkurangdecember = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangdecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihjanuary = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihjanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihfebruary = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihfebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihmarch = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihmarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihapril = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihmay = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihmay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihjune = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihjune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihjuly = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihjuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihaugust = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihseptember = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihoctober = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihnovember = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihnovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus'){
+                    $jumlahtotalraciklebihdecember = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihdecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalraciksalepjanuary = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepjanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalracisalepfebruary = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepfebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalraciksalepmarch = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepmarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalraciksalepapril = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalraciksalepmay = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepmay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalraciksalepjune = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepjune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalraciksalepjuly = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepjuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalraciksalepaugust = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalraciksalepseptember = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalraciksalepoctober = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalraciksalepnovember = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepnovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
+                    $jumlahtotalraciksalepdecember = $layanan->jumlah;
+                    $totalraciksalep+=$jumlahtotalraciksalepdecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupjanuary = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupjanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupfebruary = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupfebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupmarch = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupmarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupapril = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupmay = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupmay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupjune = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupjune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupjuly = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupjuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupaugust = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupseptember = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupoctober = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupnovember = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupnovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Resep Racik Sirup'){
+                    $jumlahtotalraciksirupdecember = $layanan->jumlah;
+                    $totalraciksirup+=$jumlahtotalraciksirupdecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotalkonselingjanuary = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingjanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotakonselingfebruary = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingfebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotalkonselingmarch = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingmarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotalkonselingapril = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotalkonselingmay = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingmay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotalkonselingjune = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingjune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotalkonselingjuly = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingjuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotalkonselingaugust = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotalkonselingseptember = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotalkonselingoctober = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotalkonselingnovember = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingnovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
+                    $jumlahtotalkonselingdecember = $layanan->jumlah;
+                    $totalkonseling+=$jumlahtotalkonselingdecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotalpetunjukjanuary = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukjanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotapetunjukfebruary = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukfebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotalpetunjukmarch = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukmarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotalpetunjukapril = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotalpetunjukmay = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukmay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotalpetunjukjune = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukjune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotalpetunjukjuly = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukjuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotalpetunjukaugust = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotalpetunjukseptember = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotalpetunjukoctober = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotalpetunjuknovember = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjuknovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                    $jumlahtotalpetunjukdecember = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukdecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotalvisitejanuary = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisitejanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotavisitefebruary = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisitefebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotalvisitemarch = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisitemarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotalvisiteapril = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisiteapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotalvisitemay = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisitemay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotalvisitejune = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisitejune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotalvisitejuly = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisitejuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotalvisiteaugust = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisiteaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotalvisiteseptember = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisiteseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotalvisiteoctober = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisiteoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotalvisitenovember = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisitenovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Visite Apoteker'){
+                    $jumlahtotalvisitedecember = $layanan->jumlah;
+                    $totalvisite+=$jumlahtotalvisitedecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotalpemantauanjanuary = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauanjanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotapemantauanfebruary = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauanfebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotalpemantauanmarch = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauanmarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotalpemantauanapril = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauanapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotalpemantauanmay = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauanmay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotalpemantauanjune = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauanjune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotalpemantauanjuly = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauanjuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotalpemantauanaugust = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauanaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotalpemantauanseptember = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauanseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotalpemantauanoctober = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauanoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotalpemantauannovember = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauannovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
+                    $jumlahtotalpemantauandecember = $layanan->jumlah;
+                    $totalpemantauan+=$jumlahtotalpemantauandecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotalembalacejanuary = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalacejanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotaembalacefebruary = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalacefebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotalembalacemarch = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalacemarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotalembalaceapril = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalaceapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotalembalacemay = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalacemay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotalembalacejune = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalacejune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotalembalacejuly = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalacejuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotalembalaceaugust = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalaceaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotalembalaceseptember = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalaceseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotalembalaceoctober = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalaceoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotalembalacenovember = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalacenovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Embalace'){
+                    $jumlahtotalembalacedecember = $layanan->jumlah;
+                    $totalembalace+=$jumlahtotalembalacedecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotalinjeksijanuary = $layanan->jumlah;
+                    $totalinjeksi+=$jumlahtotalinjeksijanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotainjeksifebruary = $layanan->jumlah;
+                    $totalinjeksi+=$jumlahtotalinjeksifebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotalinjeksimarch = $layanan->jumlah;
+                    $totalinjeksi+=$jumlahtotalinjeksimarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotalinjeksiapril = $layanan->jumlah;
+                    $totalinjeksi+=$jumlahtotalinjeksiapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotalinjeksimay = $layanan->jumlah;
+                    $totalinjeksi+=$jumlahtotalinjeksimay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotalinjeksijune = $layanan->jumlah;
+                    $totalinjeksi+=$jumlahtotalinjeksijune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotalinjeksijuly = $layanan->jumlah;
+                    $totalinjeksi+=$jumlahtotalinjeksijuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotalinjeksiaugust = $layanan->jumlah;
+                    $totalinjeksi+=$jumlahtotalinjeksiaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotalinjeksiseptember = $layanan->jumlah;
+                    $totainjeksi+=$jumlahtotalinjeksiseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotalinjeksioctober = $layanan->jumlah;
+                    $totalinjeksi+=$jumlahtotalinjeksioctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotalinjeksinovember = $layanan->jumlah;
+                    $totalinjeksi+=$jumlahtotalinjeksinovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
+                    $jumlahtotalinjeksidecember = $layanan->jumlah;
+                    $totalinjeksi+=$jumlahtotalinjeksidecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotalinfusjanuary = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusjanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotainfusfebruary = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusfebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotalinfusmarch = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusmarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotalinfusapril = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotalinfusmay = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusmay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotalinfusjune = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusjune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotalinfusjuly = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusjuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotalinfusaugust = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotalinfusseptember = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusseptember;
+
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotalinfusoctober = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotalinfusnovember = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusnovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
+                    $jumlahtotalinfusdecember = $layanan->jumlah;
+                    $totalinfus+=$jumlahtotalinfusdecember;
+                }
+
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotalrekonjanuary = $layanan->jumlah;
+                    $totalrekon+=$jumlahtotalrekonjanuary;
+                }
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotarekonfebruary = $layanan->jumlah;
+                    $totalrekon+=$jumlahtotalrekonfebruary;
+                }
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotalrekonmarch = $layanan->jumlah;
+                    $totalrekon+=$jumlahtotalrekonmarch;
+                }
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotalrekonapril = $layanan->jumlah;
+                    $totalrekon+=$jumlahtotalrekonapril;
+                }
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotalrekonmay = $layanan->jumlah;
+                    $totalrekon+=$jumlahtotalrekonmay;
+                }
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotalrekonjune = $layanan->jumlah;
+                    $totalrekon+=$jumlahtotalrekonjune;
+                }
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotalrekonjuly = $layanan->jumlah;
+                    $totalrekon+=$jumlahtotalrekonjuly;
+                }
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotalrekonaugust = $layanan->jumlah;
+                    $totalrekon+=$jumlahtotalrekonaugust;
+                }
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotalrekonseptember = $layanan->jumlah;
+                    $totarekon+=$jumlahtotalrekonseptember;
+                }
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotalrekonoctober = $layanan->jumlah;
+                    $totalrekon+=$jumlahtotalrekonoctober;
+
+                }
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotalrekonnovember = $layanan->jumlah;
+                    $totalrekon+=$jumlahtotalrekonnovember;
+                }
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
+                    $jumlahtotalrekondecember = $layanan->jumlah;
+                    $totalrekon+=$jumlahtotalrekondecember;
+                }
+            }
+            
+
+            $detail[]=array(
+                'jumlahtotalrkejanuary' =>   $jumlahtotalrkejanuary,
+                'jumlahtotalrkefebruary' =>   $jumlahtotalrkefebruary,
+                'jumlahtotalresepjanuary' =>   $jumlahtotalresepjanuary,
+                'jumlahtotalresepfebruary' =>   $jumlahtotalresepfebruary,
+                'jumlahtotalrkemarch' =>   $jumlahtotalrkemarch,
+                'jumlahtotalrkeapril' =>   $jumlahtotalrkeapril,
+                'jumlahtotalrkemay' =>   $jumlahtotalrkemay,
+                'jumlahtotalrkejune' =>   $jumlahtotalrkejune,
+                'jumlahtotalrkejuly' =>   $jumlahtotalrkejuly,
+                'jumlahtotalrkeaugust' =>   $jumlahtotalrkeaugust,
+                'jumlahtotalrkeseptember' =>   $jumlahtotalrkeseptember,
+                'jumlahtotalrkeoctober' =>   $jumlahtotalrkeoctober,
+                'jumlahtotalrkenovember' =>   $jumlahtotalrkenovember,
+                'jumlahtotalrkedecember' =>   $jumlahtotalrkedecember,
+                'jumlahtotalresepmarch' =>   $jumlahtotalresepmarch,
+                'jumlahtotalresepapril' =>   $jumlahtotalresepapril,
+                'jumlahtotalresepmay' =>   $jumlahtotalresepmay,
+                'jumlahtotalresepjune' =>   $jumlahtotalresepjune,
+                'jumlahtotalresepjuly' =>   $jumlahtotalresepjuly,
+                'jumlahtotalresepaugust' =>   $jumlahtotalresepaugust,
+                'jumlahtotalresepseptember' =>   $jumlahtotalresepseptember,
+                'jumlahtotalresepoctober' =>   $jumlahtotalresepoctober,
+                'jumlahtotalresepnovember' =>   $jumlahtotalresepnovember,
+                'jumlahtotalresepdecember' =>   $jumlahtotalresepdecember,
+                'jumlahtotalobatjadijanuary' =>   $jumlahtotalobatjadijanuary,
+                'jumlahtotalobatjadifebruary' =>   $jumlahtotalobatjadifebruary,
+                'jumlahtotalobatjadimarch' =>   $jumlahtotalobatjadimarch,
+                'jumlahtotalobatjadiapril' =>   $jumlahtotalobatjadiapril,
+                'jumlahtotalobatjadimay' =>   $jumlahtotalobatjadimay,
+                'jumlahtotalobatjadijune' =>   $jumlahtotalobatjadijune,
+                'jumlahtotalobatjadijuly' =>   $jumlahtotalobatjadijuly,
+                'jumlahtotalobatjadiaugust' =>   $jumlahtotalobatjadiaugust,
+                'jumlahtotalobatjadiseptember' =>   $jumlahtotalobatjadiseptember,
+                'jumlahtotalobatjadioctober' =>   $jumlahtotalobatjadioctober,
+                'jumlahtotalobatjadinovember' =>   $jumlahtotalobatjadinovember,
+                'jumlahtotalobatjadidecember' =>   $jumlahtotalobatjadidecember,
+                'jumlahtotalkapsulkurangjanuary' =>   $jumlahtotalkapsulkurangjanuary,
+                'jumlahtotalkapsulkurangfebruary' =>   $jumlahtotalkapsulkurangfebruary,
+                'jumlahtotalkapsulkurangmarch' =>   $jumlahtotalkapsulkurangmarch,
+                'jumlahtotalkapsulkurangapril' =>   $jumlahtotalkapsulkurangapril,
+                'jumlahtotalkapsulkurangmay' =>   $jumlahtotalkapsulkurangmay,
+                'jumlahtotalkapsulkurangjune' =>   $jumlahtotalkapsulkurangjune,
+                'jumlahtotalkapsulkurangjuly' =>   $jumlahtotalkapsulkurangjuly,
+                'jumlahtotalkapsulkurangaugust' =>   $jumlahtotalkapsulkurangaugust,
+                'jumlahtotalkapsulkurangseptember' =>   $jumlahtotalkapsulkurangseptember,
+                'jumlahtotalkapsulkurangoctober' =>   $jumlahtotalkapsulkurangoctober,
+                'jumlahtotalkapsulkurangnovember' =>   $jumlahtotalkapsulkurangnovember,
+                'jumlahtotalkapsulkurangdecember' =>   $jumlahtotalkapsulkurangdecember,
+                'jumlahtotalkapsullebihjanuary' =>   $jumlahtotalkapsullebihjanuary,
+                'jumlahtotalkapsullebihfebruary' =>   $jumlahtotalkapsullebihfebruary,
+                'jumlahtotalkapsullebihmarch' =>   $jumlahtotalkapsullebihmarch,
+                'jumlahtotalkapsullebihapril' =>   $jumlahtotalkapsullebihapril,
+                'jumlahtotalkapsullebihmay' =>   $jumlahtotalkapsullebihmay,
+                'jumlahtotalkapsullebihjune' =>   $jumlahtotalkapsullebihjune,
+                'jumlahtotalkapsullebihjuly' =>   $jumlahtotalkapsullebihjuly,
+                'jumlahtotalkapsullebihaugust' =>   $jumlahtotalkapsullebihaugust,
+                'jumlahtotalkapsullebihseptember' =>   $jumlahtotalkapsullebihseptember,
+                'jumlahtotalkapsullebihoctober' =>   $jumlahtotalkapsullebihoctober,
+                'jumlahtotalkapsullebihnovember' =>   $jumlahtotalkapsullebihnovember,
+                'jumlahtotalkapsullebihdecember' =>   $jumlahtotalkapsullebihdecember,
+                'jumlahtotalracikkurangjanuary' =>   $jumlahtotalracikkurangjanuary,
+                'jumlahtotalracikkurangfebruary' =>   $jumlahtotalracikkurangfebruary,
+                'jumlahtotalracikkurangmarch' =>   $jumlahtotalracikkurangmarch,
+                'jumlahtotalracikkurangapril' =>   $jumlahtotalracikkurangapril,
+                'jumlahtotalracikkurangmay' =>   $jumlahtotalracikkurangmay,
+                'jumlahtotalracikkurangjune' =>   $jumlahtotalracikkurangjune,
+                'jumlahtotalracikkurangjuly' =>   $jumlahtotalracikkurangjuly,
+                'jumlahtotalracikkurangaugust' =>   $jumlahtotalracikkurangaugust,
+                'jumlahtotalracikkurangseptember' =>   $jumlahtotalracikkurangseptember,
+                'jumlahtotalracikkurangoctober' =>   $jumlahtotalracikkurangoctober,
+                'jumlahtotalracikkurangnovember' =>   $jumlahtotalracikkurangnovember,
+                'jumlahtotalracikkurangdecember' =>   $jumlahtotalracikkurangdecember,
+                'jumlahtotalraciklebihjanuary' =>   $jumlahtotalraciklebihjanuary,
+                'jumlahtotalraciklebihfebruary' =>   $jumlahtotalraciklebihfebruary,
+                'jumlahtotalraciklebihmarch' =>   $jumlahtotalraciklebihmarch,
+                'jumlahtotalraciklebihapril' =>   $jumlahtotalraciklebihapril,
+                'jumlahtotalraciklebihmay' =>   $jumlahtotalraciklebihmay,
+                'jumlahtotalraciklebihjune' =>   $jumlahtotalraciklebihjune,
+                'jumlahtotalraciklebihjuly' =>   $jumlahtotalraciklebihjuly,
+                'jumlahtotalraciklebihaugust' =>   $jumlahtotalraciklebihaugust,
+                'jumlahtotalraciklebihseptember' =>   $jumlahtotalraciklebihseptember,
+                'jumlahtotalraciklebihoctober' =>   $jumlahtotalraciklebihoctober,
+                'jumlahtotalraciklebihnovember' =>   $jumlahtotalraciklebihnovember,
+                'jumlahtotalraciklebihdecember' =>   $jumlahtotalraciklebihdecember,
+                'jumlahtotalraciksalepjanuary' =>   $jumlahtotalraciksalepjanuary,
+                'jumlahtotalraciksalepfebruary' =>   $jumlahtotalraciksalepfebruary,
+                'jumlahtotalraciksalepmarch' =>   $jumlahtotalraciksalepmarch,
+                'jumlahtotalraciksalepapril' =>   $jumlahtotalraciksalepapril,
+                'jumlahtotalraciksalepmay' =>   $jumlahtotalraciksalepmay,
+                'jumlahtotalraciksalepjune' =>   $jumlahtotalraciksalepjune,
+                'jumlahtotalraciksalepjuly' =>   $jumlahtotalraciksalepjuly,
+                'jumlahtotalraciksalepaugust' =>   $jumlahtotalraciksalepaugust,
+                'jumlahtotalraciksalepseptember' =>   $jumlahtotalraciksalepseptember,
+                'jumlahtotalraciksalepoctober' =>   $jumlahtotalraciksalepoctober,
+                'jumlahtotalraciksalepnovember' =>   $jumlahtotalraciksalepnovember,
+                'jumlahtotalraciksalepdecember' =>   $jumlahtotalraciksalepdecember,
+                'jumlahtotalraciksirupjanuary' =>   $jumlahtotalraciksirupjanuary,
+                'jumlahtotalraciksirupfebruary' =>   $jumlahtotalraciksirupfebruary,
+                'jumlahtotalraciksirupmarch' =>   $jumlahtotalraciksirupmarch,
+                'jumlahtotalraciksirupapril' =>   $jumlahtotalraciksirupapril,
+                'jumlahtotalraciksirupmay' =>   $jumlahtotalraciksirupmay,
+                'jumlahtotalraciksirupjune' =>   $jumlahtotalraciksirupjune,
+                'jumlahtotalraciksirupjuly' =>   $jumlahtotalraciksirupjuly,
+                'jumlahtotalraciksirupaugust' =>   $jumlahtotalraciksirupaugust,
+                'jumlahtotalraciksirupseptember' =>   $jumlahtotalraciksirupseptember,
+                'jumlahtotalraciksirupoctober' =>   $jumlahtotalraciksirupoctober,
+                'jumlahtotalraciksirupnovember' =>   $jumlahtotalraciksirupnovember,
+                'jumlahtotalraciksirupdecember' =>   $jumlahtotalraciksirupdecember,
+                'jumlahtotalkonselingjanuary' =>   $jumlahtotalkonselingjanuary,
+                'jumlahtotalkonselingfebruary' =>   $jumlahtotalkonselingfebruary,
+                'jumlahtotalkonselingmarch' =>   $jumlahtotalkonselingmarch,
+                'jumlahtotalkonselingapril' =>   $jumlahtotalkonselingapril,
+                'jumlahtotalkonselingmay' =>   $jumlahtotalkonselingmay,
+                'jumlahtotalkonselingjune' =>   $jumlahtotalkonselingjune,
+                'jumlahtotalkonselingjuly' =>   $jumlahtotalkonselingjuly,
+                'jumlahtotalkonselingaugust' =>   $jumlahtotalkonselingaugust,
+                'jumlahtotalkonselingseptember' =>   $jumlahtotalkonselingseptember,
+                'jumlahtotalkonselingoctober' =>   $jumlahtotalkonselingoctober,
+                'jumlahtotalkonselingnovember' =>   $jumlahtotalkonselingnovember,
+                'jumlahtotalkonselingdecember' =>   $jumlahtotalkonselingdecember,
+                'jumlahtotalpetunjukjanuary' =>   $jumlahtotalpetunjukjanuary,
+                'jumlahtotalpetunjukfebruary' =>   $jumlahtotalpetunjukfebruary,
+                'jumlahtotalpetunjukmarch' =>   $jumlahtotalpetunjukmarch,
+                'jumlahtotalpetunjukapril' =>   $jumlahtotalpetunjukapril,
+                'jumlahtotalpetunjukmay' =>   $jumlahtotalpetunjukmay,
+                'jumlahtotalpetunjukjune' =>   $jumlahtotalpetunjukjune,
+                'jumlahtotalpetunjukjuly' =>   $jumlahtotalpetunjukjuly,
+                'jumlahtotalpetunjukaugust' =>   $jumlahtotalpetunjukaugust,
+                'jumlahtotalpetunjukseptember' =>   $jumlahtotalpetunjukseptember,
+                'jumlahtotalpetunjukoctober' =>   $jumlahtotalpetunjukoctober,
+                'jumlahtotalpetunjuknovember' =>   $jumlahtotalpetunjuknovember,
+                'jumlahtotalpetunjukdecember' =>   $jumlahtotalpetunjukdecember,
+                'jumlahtotalvisitejanuary' =>   $jumlahtotalvisitejanuary,
+                'jumlahtotalvisitefebruary' =>   $jumlahtotalvisitefebruary,
+                'jumlahtotalvisitemarch' =>   $jumlahtotalvisitemarch,
+                'jumlahtotalvisiteapril' =>   $jumlahtotalvisiteapril,
+                'jumlahtotalvisitemay' =>   $jumlahtotalvisitemay,
+                'jumlahtotalvisitejune' =>   $jumlahtotalvisitejune,
+                'jumlahtotalvisitejuly' =>   $jumlahtotalvisitejuly,
+                'jumlahtotalvisiteaugust' =>   $jumlahtotalvisiteaugust,
+                'jumlahtotalvisiteseptember' =>   $jumlahtotalvisiteseptember,
+                'jumlahtotalvisiteoctober' =>   $jumlahtotalvisiteoctober,
+                'jumlahtotalvisitenovember' =>   $jumlahtotalvisitenovember,
+                'jumlahtotalvisitedecember' =>   $jumlahtotalvisitedecember,
+                'jumlahtotalpemantauanjanuary' =>   $jumlahtotalpemantauanjanuary,
+                'jumlahtotalpemantauanfebruary' =>   $jumlahtotalpemantauanfebruary,
+                'jumlahtotalpemantauanmarch' =>   $jumlahtotalpemantauanmarch,
+                'jumlahtotalpemantauanapril' =>   $jumlahtotalpemantauanapril,
+                'jumlahtotalpemantauanmay' =>   $jumlahtotalpemantauanmay,
+                'jumlahtotalpemantauanjune' =>   $jumlahtotalpemantauanjune,
+                'jumlahtotalpemantauanjuly' =>   $jumlahtotalpemantauanjuly,
+                'jumlahtotalpemantauanaugust' =>   $jumlahtotalpemantauanaugust,
+                'jumlahtotalpemantauanseptember' =>   $jumlahtotalpemantauanseptember,
+                'jumlahtotalpemantauanoctober' =>   $jumlahtotalpemantauanoctober,
+                'jumlahtotalpemantauannovember' =>   $jumlahtotalpemantauannovember,
+                'jumlahtotalpemantauandecember' =>   $jumlahtotalpemantauandecember,
+                'jumlahtotalembalacejanuary' =>   $jumlahtotalembalacejanuary,
+                'jumlahtotalembalacefebruary' =>   $jumlahtotalembalacefebruary,
+                'jumlahtotalembalacemarch' =>   $jumlahtotalembalacemarch,
+                'jumlahtotalembalaceapril' =>   $jumlahtotalembalaceapril,
+                'jumlahtotalembalacemay' =>   $jumlahtotalembalacemay,
+                'jumlahtotalembalacejune' =>   $jumlahtotalembalacejune,
+                'jumlahtotalembalacejuly' =>   $jumlahtotalembalacejuly,
+                'jumlahtotalembalaceaugust' =>   $jumlahtotalembalaceaugust,
+                'jumlahtotalembalaceseptember' =>   $jumlahtotalembalaceseptember,
+                'jumlahtotalembalaceoctober' =>   $jumlahtotalembalaceoctober,
+                'jumlahtotalembalacenovember' =>   $jumlahtotalembalacenovember,
+                'jumlahtotalembalacedecember' =>   $jumlahtotalembalacedecember,
+                'jumlahtotalinjeksijanuary' =>   $jumlahtotalinjeksijanuary,
+                'jumlahtotalinjeksifebruary' =>   $jumlahtotalinjeksifebruary,
+                'jumlahtotalinjeksimarch' =>   $jumlahtotalinjeksimarch,
+                'jumlahtotalinjeksiapril' =>   $jumlahtotalinjeksiapril,
+                'jumlahtotalinjeksimay' =>   $jumlahtotalinjeksimay,
+                'jumlahtotalinjeksijune' =>   $jumlahtotalinjeksijune,
+                'jumlahtotalinjeksijuly' =>   $jumlahtotalinjeksijuly,
+                'jumlahtotalinjeksiaugust' =>   $jumlahtotalinjeksiaugust,
+                'jumlahtotalinjeksiseptember' =>   $jumlahtotalinjeksiseptember,
+                'jumlahtotalinjeksioctober' =>   $jumlahtotalinjeksioctober,
+                'jumlahtotalinjeksinovember' =>   $jumlahtotalinjeksinovember,
+                'jumlahtotalinjeksidecember' =>   $jumlahtotalinjeksidecember,
+                'jumlahtotalinfusjanuary' =>   $jumlahtotalinfusjanuary,
+                'jumlahtotalinfusfebruary' =>   $jumlahtotalinfusfebruary,
+                'jumlahtotalinfusmarch' =>   $jumlahtotalinfusmarch,
+                'jumlahtotalinfusapril' =>   $jumlahtotalinfusapril,
+                'jumlahtotalinfusmay' =>   $jumlahtotalinfusmay,
+                'jumlahtotalinfusjune' =>   $jumlahtotalinfusjune,
+                'jumlahtotalinfusjuly' =>   $jumlahtotalinfusjuly,
+                'jumlahtotalinfusaugust' =>   $jumlahtotalinfusaugust,
+                'jumlahtotalinfusseptember' =>   $jumlahtotalinfusseptember,
+                'jumlahtotalinfusoctober' =>   $jumlahtotalinfusoctober,
+                'jumlahtotalinfusnovember' =>   $jumlahtotalinfusnovember,
+                'jumlahtotalinfusdecember' =>   $jumlahtotalinfusdecember,
+                'jumlahtotarekonjanuary' =>   $jumlahtotalrekonjanuary,
+                'jumlahtotarekonfebruary' =>   $jumlahtotalrekonfebruary,
+                'jumlahtotarekonmarch' =>   $jumlahtotalrekonmarch,
+                'jumlahtotarekonapril' =>   $jumlahtotalrekonapril,
+                'jumlahtotarekonmay' =>   $jumlahtotalrekonmay,
+                'jumlahtotarekonjune' =>   $jumlahtotalrekonjune,
+                'jumlahtotarekonjuly' =>   $jumlahtotalrekonjuly,
+                'jumlahtotarekonaugust' =>   $jumlahtotalrekonaugust,
+                'jumlahtotarekonseptember' =>   $jumlahtotalrekonseptember,
+                'jumlahtotarekonoctober' =>   $jumlahtotalrekonoctober,
+                'jumlahtotarekonnovember' =>   $jumlahtotalrekonnovember,
+                'jumlahtotarekondecember' =>   $jumlahtotalrekondecember,
+                'totalkapsullebih' =>   $totalkapsullebih,
+                'totalkapsulkurang' =>   $totalkapsulkurang,
+                'totalracikkurang' =>   $totalracikkurang,
+                'totalraciklebih' =>   $totalraciklebih,
+                'totalraciksalep' =>   $totalraciksalep,
+                'totalraciksirup' =>   $totalraciksirup,
+                'totalkonseling' =>   $totalkonseling,
+                'totalpetunjuk' =>   $totalpetunjuk,
+                'totalobatjadi' =>   $totalobatjadi,
+                'totalvisite' =>   $totalvisite,
+                'totalpemantauan' =>   $totalpemantauan,
+                'totalembalace' =>   $totalembalace,
+                'totalinjeksi' =>   $totalinjeksi,
+                'totalinfus' =>   $totalinfus,
+                'totalrekon' =>   $totalrekon,
+                'totalrke' =>   $totalrke,
+                'totalresep' =>   $totalresep,
+            );
+        }
 
         $result = array(
             'detail' => $detail,

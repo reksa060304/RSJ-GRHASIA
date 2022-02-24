@@ -68,14 +68,24 @@
                                                                                 tabindex="0 "><span
                                                                                     class="k-sprite k-icon k-i-cancel ">Clear</span></em>
                                                                         </div>
+                                                                        
                                                                     </div>
                                                                 </div>
-                                                                <div class="grid_8 ">
+                                                                <div class="grid_12">
+                                                                    <div id="kGrid" kendo-grid
+                                                                        k-data-source="dataSource" k-selectable="'row'"
+                                                                        k-columns="columnGrid" k-pageable="'true'"
+                                                                        k-groupable="'true'" k-sortable="'true'"
+                                                                        k-ng-model="dataSelected"
+                                                                        ng-click="klikGrid(dataSelected)">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- <div class="grid_8 ">
                                                                     <div class="grid_12 ">
                                                                         <label c-label>Results :</label>
                                                                     </div>
                                                                     <pre id="jsonCekSep" class="json-viewer "></pre>
-                                                                </div>
+                                                                </div> -->
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1544,13 +1554,13 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="grid_6">
+                                                                <!-- <div class="grid_6">
                                                                     <div class="grid_12">
                                                                         <label c-label>Results :</label>
                                                                     </div>
                                                                     <pre id="jsonResApprovalPengajuan"
                                                                         class="json-viewer"></pre>
-                                                                </div>
+                                                                </div> -->
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1627,12 +1637,12 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="grid_6">
+                                                                <!-- <div class="grid_6">
                                                                     <div class="grid_12">
                                                                         <label c-label>Results :</label>
                                                                     </div>
                                                                     <pre id="jsonResApproval" class="json-viewer"></pre>
-                                                                </div>
+                                                                </div> -->
                                                             </div>
                                                         </div>
                                                     </div>
