@@ -19,8 +19,9 @@ define(['initialize'], function (initialize) {
 					$scope.listKamar = dat.data;
 				});
 				medifirstService.get("sysadmin/master/get-list-komponen?jenis=kelas").then(function (dat) {
-					$scope.listKamar = dat.data;
-					$scope.listKamar2 = dat.data;
+					// $scope.listKamar = dat.data;
+					// $scope.listKamar2 = dat.data;
+					$scope.listkelas = dat.data;
 				});
 			}
 			
