@@ -9,6 +9,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isEditPasien = false;
             $scope.isPenunjang = false;
             $scope.isRouteLoading = false
+            $scope.item.hakKelas = "";
             $scope.reservasi = {}
             $scope.item.image = "../app/images/avatar.jpg"
             loadCombo()
@@ -78,7 +79,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 checkKepesertan()
                                 var nocm = $scope.ceks.data[0].nocm;
                                 var nama = $scope.ceks.data[0].namapasien;
-                                toastr.error("NO BPJS ini sudah di pakai oleh pasien RM : " + nocm + " (" + nama + ") !", "Peringatan")
+                                toastr.error("NO BPJS ini sudah di pakai oleh pasien RM : " + nocm + " (" + nama + ") Hak Kelas " +  $scope.item.hakKelas  + "!", "Peringatan")
                                 // ceknobpjsdouble = true
                                 $state.params.idPasien = $scope.ceks.data[0].id;
                                 editPasien();
@@ -103,6 +104,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.namaPasien = e.data.response.peserta.nama;
                         $scope.item.tglLahir = tglLahir;
                         $scope.item.noIdentitas = e.data.response.peserta.nik;
+                        $scope.item.hakKelas = e.data.response.peserta.hakKelas.keterangan;
                        if(e.data.response.peserta.sex == 'L' )
                        {
                         // item.jenisKelamin
