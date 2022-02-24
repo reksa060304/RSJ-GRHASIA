@@ -65,6 +65,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.$watch('item.noBpjs', function (e) { 
                 
                 debugger;
+                    if ($scope.item.noBpjs == undefined){
+                        return;
+                    }
+                    if ($scope.item.noBpjs.length != 13){
+                        return;
+                    }
                     medifirstService.get("registrasi/cek-nobpjs?nobpjs=" + $scope.item.noBpjs)
                         .then(function (data) {
                             $scope.ceks = data.data;
