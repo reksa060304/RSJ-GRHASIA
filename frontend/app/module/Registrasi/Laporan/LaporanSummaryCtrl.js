@@ -56,763 +56,345 @@ define(['initialize'], function (initialize) {
                 }
                 cacheHelper.set('LaporanSummaryCtrl', chacePeriode);
 
-             medifirstService.get("registrasi/laporan/get-data-lap-summary-kunjungan?"
-                    + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
-                    + tempRuanganId
-                    + tempKelPasienId
-                    + tempJenPelId).then(function (data) {
-                        // $scope.totallaki = 0;
-                        // $scope.totalwanita = 0;
-                        // $scope.totalbaru = 0;
-                        // $scope.totallama = 0;
-                        // $scope.jumlahkunjungan = 0;
-                        var data =data.data
-                        var group =  []
-                        var podo = false
-                        for (var i = 0; i < data.length; i++) {
-                            var element1 = data[i]
-                            podo = false
-                            for (var x = 0; x < group.length; x++) {
-                               var element=  group[x]
-                               // var jumlah = 
-                                group[x].no = x + 1
-                               if(element.namaruangan == element1.namaruangan && element.kelompokpasien == element1.kelompokpasien){
-                                    
-                                    // $scope.totallaki= $scope.totallaki + parseFloat(group[x].laki)
-                                    // $scope.totalwanita= $scope.totalwanita + parseFloat(group[x].wanita)
-                                    // $scope.totalbaru= $scope.totalbaru + parseFloat(group[x].baru)
-                                    // $scope.totallama= $scope.totallama + parseFloat(group[x].lama)
-                                    // $scope.totaljumlah = $scope.totaljumlah + parseFloat(group[x].jumlah)
-
-                                    element.laki = parseFloat(element.laki) + parseFloat(element1.laki)
-                                    element.wanita = parseFloat(element.wanita) + parseFloat(element1.wanita)        
-                                    element.baru = parseFloat(element.baru) + parseFloat(element1.baru)       
-                                    element.lama = parseFloat(element.lama) + parseFloat(element1.lama)
-                                    element.tunai = parseFloat(element.tunai) + parseFloat(element1.tunai)
-                                    element.bpjs = parseFloat(element.bpjs) + parseFloat(element1.bpjs)
-                                    element.jamsostek = parseFloat(element.jamsostek) + parseFloat(element1.jamsostek)
-                                    element.swasta = parseFloat(element.swasta) + parseFloat(element1.swasta)
-                                    element.hardient = parseFloat(element.hardient) + parseFloat(element1.hardient)
-                                    element.iks = parseFloat(element.iks) + parseFloat(element1.iks)
-                                    element.thamrin = parseFloat(element.thamrin) + parseFloat(element1.thamrin)
-                                    element.jamkesda = parseFloat(element.jamkesda) + parseFloat(element1.jamkesda)
-                                    element.jamkesmas = parseFloat(element.jamkesmas) + parseFloat(element1.jamkesmas)
-                                    element.skmm = parseFloat(element.skmm) + parseFloat(element1.skmm)
-                                    element.karyawan = parseFloat(element.karyawan) + parseFloat(element1.karyawan)
-                                    element.lakibaru = parseFloat(element.lakibaru) + parseFloat(element1.lakibaru)
-                                    element.lakilama = parseFloat(element.lakilama) + parseFloat(element1.lakilama)
-                                    element.wanitalama = parseFloat(element.wanitalama) + parseFloat(element1.wanitalama)
-                                    element.wanitabaru = parseFloat(element.wanitabaru) + parseFloat(element1.wanitabaru)
-                                    element.jml = parseFloat(element.jml) + parseFloat(element.jml)
-                                    // element.total = parseFloat(element.jumlah) + parseFloat(element1.jumlah)  
-                                    podo = true  
-                               }
-                            }
-                            if(podo== false){
-                                var datass ={
-                                    baru: element1.baru,
-                                    kelompokpasien: element1.kelompokpasien,
-                                    laki: element1.laki,
-                                    lakibaru: element1.lakibaru,
-                                    lakilama: element1.lakilama,
-                                    wanitabaru: element1.wanitabaru,
-                                    wanitalama: element1.wanitalama,
-                                    lama: element1.lama,
-                                    namaruangan: element1.namaruangan,
-                                    wanita: element1.wanita,
-                                    tunai: element1.tunai,
-                                    bpjs: element1.bpjs,
-                                    jamsostek: element1.jamsostek,
-                                    swasta: element1.swasta,
-                                    hardient: element1.hardient,
-                                    iks: element1.iks,
-                                    thamrin: element1.thamrin,
-                                    jamkesda: element1.jamkesda,
-                                    jamkesmas: element1.jamkesmas,
-                                    skmm: element1.skmm,
-                                    karyawan: element1.karyawan,
-                                    jml: element1.jml,
-                                }
-                                group.push(datass)
-                            }
-
-                        }
-
-                        for (var i = 0; i < group.length; i++) {
-                           var elemn= group[i] 
-                            elemn.jumlah = parseFloat(elemn.laki) + parseFloat(elemn.wanita)
-                            elemn.total = parseFloat(elemn.jumlah) + parseFloat(elemn.jumlah)
-                        }
-                        $scope.dataSourceGridK ={
-                            // group: $scope.group,
-                            data: group,
-                            pageSize: 10,
-                            total: group.length,
-                            serverPaging: false,
-                            schema: 
-                            // {
-                            //     model: {
-                            //         fields: {
-                            //         }
-                            //     }
-                            // }
-                            {
-                                model: {
-                                    fields: {   
-                                        namaruangan: { type: "string" },
-                                        laki: { type: "number" },
-                                        lakibaru: { type: "number" },
-                                        lakilama: { type: "number" },
-                                        wanitalama: { type: "number" },
-                                        wanitabaru: { type: "number" },
-                                        wanita: { type: "number" },
-                                        baru: { type: "number" },
-                                        lama: { type: "number" },
-                                        tunai: { type: "number" },
-                                        bpjs: { type: "number" },
-                                        jamsostek: { type: "number" },
-                                        swasta: { type: "number" },
-                                        hardient: { type: "number" },
-                                        iks: { type: "number" },
-                                        thamrin: { type: "number" },
-                                        jamkesda: { type: "number" },
-                                        jamkesmas: { type: "number" },
-                                        skmm: { type: "number" },
-                                        karyawan: { type: "number" },
-                                        jml: { type: "number" },
-                                    }
-                                }
-                            },
-                            pageSize: 200,
-                            total: group.length,
-                            serverPaging: false,
-                            // group: [
-                            //     {
-                            //         field: "namaruangan", aggregates: [
-                            //             { field: 'laki', aggregate: 'sum' },
-                            //             { field: "wanita", aggregate: 'sum' },
-                            //             { field: "baru", aggregate: 'sum' },
-                            //             { field: "lama", aggregate: 'sum' },
-                            //             { field: "tunai", aggregate: 'sum' },
-                            //             { field: "bpjs", aggregate: 'sum' },
-                            //             { field: "jamsostek", aggregate: 'sum' },
-                            //             { field: "swasta", aggregate: 'sum' },
-                            //             { field: "hardient", aggregate: 'sum' },
-                            //             { field: "iks", aggregate: 'sum' },
-                            //             { field: "thamrin", aggregate: 'sum' },
-                            //             { field: "jamkesda", aggregate: 'sum' },
-                            //             { field: "jamkesmas", aggregate: 'sum' },
-                            //             { field: "skmm", aggregate: 'sum' },
-                            //             { field: "karyawan", aggregate: 'sum' },
-                            //         ]
-                            //     },
-                            // ],
-                            // aggregate: [
-                            //     { field: 'laki', aggregate: 'sum' },
-                            //            { field: "wanita", aggregate: 'sum' },
-                            //             { field: "baru", aggregate: 'sum' },
-                            //             { field: "lama", aggregate: 'sum' },
-                            //             { field: "tunai", aggregate: 'sum' },
-                            //             { field: "bpjs", aggregate: 'sum' },
-                            //             { field: "jamsostek", aggregate: 'sum' },
-                            //             { field: "swasta", aggregate: 'sum' },
-                            //             { field: "hardient", aggregate: 'sum' },
-                            //             { field: "iks", aggregate: 'sum' },
-                            //             { field: "thamrin", aggregate: 'sum' },
-                            //             { field: "jamkesda", aggregate: 'sum' },
-                            //             { field: "jamkesmas", aggregate: 'sum' },
-                            //             { field: "skmm", aggregate: 'sum' },
-                            //             { field: "karyawan", aggregate: 'sum' },
-                            // ]
-
-
-                        }
-                        // $scope.isRouteLoading = false;
-                    })
-
-                    medifirstService.get("registrasi/laporan/get-data-lap-summary-usia?"
-                    + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
-                    + tempRuanganId
-                    + tempKelPasienId
-                    + tempJenPelId).then(function (data)
-                    {
-                        $scope.isRouteLoading = false;
-                        var data2 = data.data;                       
-                        for (var i = 0; i < data2.length; i++) {
-                            data2[i].no = i + 1
-                        }
-                        $scope.dataSourceGridDUsia = new kendo.data.DataSource({
-                            data: data2,
-                            group: $scope.group,
-                            pageSize: 100,
-                            total: data2.length,
-                            serverPaging: false,
-                            schema: {
-                            model: { 
-                                fields: {
-                                    jml: {type: "number"},
-                                }                               
+                medifirstService.get("registrasi/laporan/get-data-lap-summary-hambatan-komunikasi?" 
+                + "tglAwal=" + tglAwal + "&tglAkhir=" 
+                + tglAkhir + tempRuanganId 
+                + tempKelPasienId + tempJenPelId).then(function (data) {
+                    var data1 = data.data.detail;
+                    var totalhambatan = 0;
+                    var totaletnis = 0;
+                    var totalbahasa = 0;
+                    for(var i = 0; i < data1.length; i++){
+                        totalhambatan = totalhambatan + data1[i].totalhambatan;
+                        totaletnis = totaletnis + data1[i].totaletnis;
+                        totalbahasa = totalbahasa + data1[i].totalbahasa;
+                    }
+                    $scope.totalhambatan = totalhambatan;
+                    $scope.totaletnis = totaletnis;
+                    $scope.totalbahasa = totalbahasa;
+                    $scope.dataSourceGrid = new kendo.data.DataSource({
+                        data: data1,
+                        allPages:true,
+                        pageSize: 30,
+                        total: data1.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
                             }
                         },
                         aggregate: [
-                            {field: "jml", aggregate:"sum"},
-                        ]
-                        });
+                            {
+                                field: "gangguanpendengaran",
+                                aggregate: "sum"
+                            }, {
+                                field: "gangguanpenglihatan",
+                                aggregate: "sum"
+                            }, {
+                                field: "gangguanbicara",
+                                aggregate: "sum"
+                            }, {
+                                field: "gangguanlainnya",
+                                aggregate: "sum"
+                            }, {
+                                field: "tidakada",
+                                aggregate: "sum"
+                            }, {
+                                field: "daerah",
+                                aggregate: "sum"
+                            }, {
+                                field: "indonesia",
+                                aggregate: "sum"
+                            }, {
+                                field: "asing",
+                                aggregate: "sum"
+                            }, {
+                                field: "isyarat",
+                                aggregate: "sum"
+                            }, {
+                                field: "lainnya1",
+                                aggregate: "sum",
+                            }, {
+                                field: "jawa",
+                                aggregate: "sum"
+                            }, {
+                                field: "sunda",
+                                aggregate: "sum"
+                            }, {
+                                field: "tionhoa",
+                                aggregate: "sum"
+                            }, {
+                                field: "papua",
+                                aggregate: "sum"
+                            }, {
+                                field: "lainnya2",
+                                aggregate: "sum"
+                            }, {
+                                field: "batak",
+                                aggregate: "sum",
+                            }
+                        ],
                     });
+                });
+                $scope.columnGrid = {
+                    excelExport: function (e) {
+                        var sheet = e.workbook.sheets[0];
+                        sheet.mergedCells = ["A1:Q1"];
+                        sheet.frozenRows = 3;
+                        sheet.name = "Report";
+                        var myHeaders = [{
+                            value: "Rekap Data Kunjungan Rawat Jalan",
+                            fontSize: 20,
+                            textAlign: "center",
+                            background: "#ffffff",
+                        }];
+                        var total = {
+                            value: "TOTAL",
 
-            medifirstService.get("registrasi/laporan/get-data-lap-summary-pendidikan?"
-                    + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
-                    + tempRuanganId
-                    + tempKelPasienId
-                    + tempJenPelId).then(function (data) {
-                        // $scope.totallaki = 0;
-                        // $scope.totalwanita = 0;
-                        // $scope.totalbaru = 0;
-                        // $scope.totallama = 0;
-                        // $scope.jumlahkunjungan = 0;
-                        var data =data.data
-                        var group =  []
-                        var podo = false
-                        for (var i = 0; i < data.length; i++) {
-                            var element1 = data[i]
-                            podo = false
-                            for (var x = 0; x < group.length; x++) {
-                               var element=  group[x]
-                               // var jumlah = 
-                                group[x].no = x + 1
-                               if(element.pendidikan == element1.pendidikan){
-                                                
-                                element.laki = parseFloat(element.laki) + parseFloat(element1.laki)
-                                element.wanita = parseFloat(element.wanita) + parseFloat(element1.wanita)        
-                                element.baru = parseFloat(element.baru) + parseFloat(element1.baru)       
-                                element.lama = parseFloat(element.lama) + parseFloat(element1.lama)
-                                element.tunai = parseFloat(element.tunai) + parseFloat(element1.tunai)
-                                element.bpjs = parseFloat(element.bpjs) + parseFloat(element1.bpjs)
-                                element.jamsostek = parseFloat(element.jamsostek) + parseFloat(element1.jamsostek)
-                                element.swasta = parseFloat(element.swasta) + parseFloat(element1.swasta)
-                                element.hardient = parseFloat(element.hardient) + parseFloat(element1.hardient)
-                                element.iks = parseFloat(element.iks) + parseFloat(element1.iks)
-                                element.thamrin = parseFloat(element.thamrin) + parseFloat(element1.thamrin)
-                                element.jamkesda = parseFloat(element.jamkesda) + parseFloat(element1.jamkesda)
-                                element.jamkesmas = parseFloat(element.jamkesmas) + parseFloat(element1.jamkesmas)
-                                element.skmm = parseFloat(element.skmm) + parseFloat(element1.skmm)
-                                element.karyawan = parseFloat(element.karyawan) + parseFloat(element1.karyawan)       
-                                    podo = true   
-                               }
-                            }
-                            if(podo== false){
-                                var datass ={
-                                    baru: element1.baru,
-                                    kelompokpasien: element1.kelompokpasien,
-                                    laki: element1.laki,
-                                    lama: element1.lama,
-                                    pendidikan: element1.pendidikan,
-                                    wanita: element1.wanita,
-                                    tunai: element1.tunai,
-                                    bpjs: element1.bpjs,
-                                    jamsostek: element1.jamsostek,
-                                    swasta: element1.swasta,
-                                    hardient: element1.hardient,
-                                    iks: element1.iks,
-                                    thamrin: element1.thamrin,
-                                    jamkesda: element1.jamkesda,
-                                    jamkesmas: element1.jamkesmas,
-                                    skmm: element1.skmm,
-                                    karyawan: element1.karyawan,
-                                }
-                                group.push(datass)
-                            }
+                        };
+                        var hambatan = {
+                            value: $scope.totalhambatan,
+                            colSpan: 5,
+                            textAlign: "center"
+                        }
+                        var etnis = {
+                            value: $scope.totaletnis,
+                            colSpan: 6,
+                            textAlign: "center"
+                        }
+                        var bahasa = {
+                            value: $scope.totalbahasa,
+                            colSpan: 5,
+                            textAlign: "center"
+                        }
+                        var kethambatan = {
+                            value: "1. Gangguan pendengaran \n2. Gangguan penglihatan \n3. Gangguan bicara \n4. Gangguan lainnya \n5. Tidak ada ",
+                            colSpan: 3,
+                            verticalAlign: "top",
+                            wrap: true
+                        }
+                        var ketetnis = {
+                            value: "1. Jawa \n2. Sunda \n3. Batak \n4. Tionghoa \n5. Papua \n6. Lainnya ",			
+                            colSpan: 2,
+                            verticalAlign: "top",
+                            wrap: true,
+                        }
+                        var ketbahasa = {
+                            value: "1. Daerah \n2. Indonesia \n3. Isyarat \n4. Asing \n5. Lainnya",
+                            colSpan: 2,
+                            verticalAlign: "top",
+                            wrap: true,			
 
                         }
+                        sheet.rows.splice(0, 0, {
+                            cells: myHeaders,
+                            type: "header",
+                            height: 60
+                        });
+                        sheet.rows.splice(35, 0, {
+                            cells: [total, hambatan, bahasa,etnis ],
+                            type: "data"
+                        })
+                        sheet.rows.splice(36, 0, {
+                            cells: [{
+                                    value: "Ket : ",
+                                    verticalAlign: "top"
+                                }, {
+                                    value: "Hambatan Komunikasi",
+                                    verticalAlign: "top",
+                                    wrap: true
+                                },
+                                kethambatan,
+                                {
+                                    value: "Etnis",
+                                    verticalAlign: "top",
+                                }, ketetnis,
+                                {
+                                    value: "Bahasa",
+                                    verticalAlign: "top",
+                                }, ketbahasa
+                            ],
+                            height: 130
+                            })
+                        //sheet.rows.splice(30, 0, { cells: ttlpasiens, type: "data", height: 40 });
 
-                        for (var i = 0; i < group.length; i++) {
-                           var elemn= group[i] 
-                            elemn.jumlah = parseFloat(elemn.laki) + parseFloat(elemn.wanita)
-                            elemn.total = parseFloat(elemn.jumlah) + parseFloat(elemn.jumlah)
-                        }
-                        $scope.dataSourceGridP ={
-                            // group: $scope.group,
-                            data: group,
-                            pageSize: 10,
-                            total: group.length,
-                            serverPaging: false,
-                            schema: 
-                            {
-                                model: {
-                                    fields: {   
-                                        pendidikan: { type: "string" },
-                                        laki: { type: "number" },
-                                        wanita: { type: "number" },
-                                        baru: { type: "number" },
-                                        lama: { type: "number" },
-                                        tunai: { type: "number" },
-                                        bpjs: { type: "number" },
-                                        jamsostek: { type: "number" },
-                                        swasta: { type: "number" },
-                                        hardient: { type: "number" },
-                                        iks: { type: "number" },
-                                        thamrin: { type: "number" },
-                                        jamkesda: { type: "number" },
-                                        jamkesmas: { type: "number" },
-                                        skmm: { type: "number" },
-                                        karyawan: { type: "number" },
-                                    }
-                                }
+                    },
+                    toolbar: [
+                        "excel",
+                    ],
+                    excel: {
+                        fileName: "Laporan Rekap Data Kunjungan Demografi.xlsx",
+                        allPages: true,
+                    },
+                    selectable: 'row',
+                    pageable: true,
+                        sortable: true,
+                        pageable: true,
+                        resizable: true,
+                    columns: 
+                    [
+
+                        {
+                            field : "namaruangan",
+                            "title": "POLIKLINIK",
+                            "width": "100px",
+                            footerTemplate: "SUB TOTAL"
+                        },
+                        {
+                            "title": "Hambatan Komunikasi",
+                            "width": "200px",
+                            headerAttributes: {
+                                style: "text-align : center"
                             },
-                            pageSize: 200,
-                            total: group.length,
-                            serverPaging: false,
-
-                            // aggregate: [
-                            //     { field: 'NONPSI', aggregate: 'sum' },
-                            //     { field: "PSIKIATRI", aggregate: 'sum' },
-                            //     { field: "jumlah", aggregate: 'sum'},
-                            // ]
-
-
-                        }
-                        // $scope.isRouteLoading = false;
-                    })
-
-             medifirstService.get("registrasi/laporan/get-data-lap-summary-daerah?"
-                    + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
-                    + tempRuanganId
-                    + tempKelPasienId
-                    + tempJenPelId).then(function (data) {
-                        // $scope.totallaki = 0;
-                        // $scope.totalwanita = 0;
-                        // $scope.totalbaru = 0;
-                        // $scope.totallama = 0;
-                        // $scope.jumlahkunjungan = 0;
-                        var data =data.data
-                        var group =  []
-                        var podo = false
-                        for (var i = 0; i < data.length; i++) {
-                            var element1 = data[i]
-                            podo = false
-                            for (var x = 0; x < group.length; x++) {
-                               var element=  group[x]
-                               // var jumlah = 
-                                group[x].no = x + 1
-                               if(element.namakotakabupaten == element1.namakotakabupaten){
-
-                                    element.PSIKIATRI = parseFloat(element.PSIKIATRI) + parseFloat(element1.PSIKIATRI)
-                                    element.NONPSI = parseFloat(element.NONPSI) + parseFloat(element1.NONPSI)        
-                                    podo = true  
-                               }
-                            }
-                            if(podo== false){
-                                var datass ={
-                                    namakotakabupaten: element1.namakotakabupaten,
-                                    baru: element1.baru,
-                                    kelompokpasien: element1.kelompokpasien,
-                                    laki: element1.laki,
-                                    lama: element1.lama,
-                                    pendidikan: element1.pendidikan,
-                                    wanita: element1.wanita,
-                                    tunai: element1.tunai,
-                                    bpjs: element1.bpjs,
-                                    jamsostek: element1.jamsostek,
-                                    swasta: element1.swasta,
-                                    hardient: element1.hardient,
-                                    iks: element1.iks,
-                                    thamrin: element1.thamrin,
-                                    jamkesda: element1.jamkesda,
-                                    jamkesmas: element1.jamkesmas,
-                                    skmm: element1.skmm,
-                                    karyawan: element1.karyawan,
-                                }
-                                group.push(datass)
-                            }
-
-                        }
-
-                        for (var i = 0; i < group.length; i++) {
-                           var elemn= group[i] 
-                            elemn.jumlah = parseFloat(elemn.PSIKIATRI) + parseFloat(elemn.NONPSI)
-                            elemn.total = parseFloat(elemn.jumlah) + parseFloat(elemn.jumlah)
-                        }
-                        $scope.dataSourceGridD ={
-                            // group: $scope.group,
-                            data: group,
-                            pageSize: 10,
-                            total: group.length,
-                            serverPaging: false,
-                            schema: 
-                            // {
-                            //     model: {
-                            //         fields: {
-                            //         }
-                            //     }
-                            // }
-                            {
-                                model: {
-                                    fields: {   
-                                        namakotakabupaten: { type: "string" },
-                                        laki: { type: "number" },
-                                        wanita: { type: "number" },
-                                        baru: { type: "number" },
-                                        lama: { type: "number" },
-                                        tunai: { type: "number" },
-                                        bpjs: { type: "number" },
-                                        jamsostek: { type: "number" },
-                                        swasta: { type: "number" },
-                                        hardient: { type: "number" },
-                                        iks: { type: "number" },
-                                        thamrin: { type: "number" },
-                                        jamkesda: { type: "number" },
-                                        jamkesmas: { type: "number" },
-                                        skmm: { type: "number" },
-                                        karyawan: { type: "number" },
-                                    }
-                                }
+                            "columns": 
+                            [{
+                                field: "gangguanpendengaran",
+                                "title": "1",
+                                "width": "75px",
+                                aggregates: ["sum"],        
+                                 groupFooterTemplate: "#=data.gangguanpendengaran.sum  #",
+                                footerTemplate: "#:data.gangguanpendengaran.sum  #"
                             },
-                            pageSize: 200,
-                            // total: group.length,
-                            serverPaging: false,
-                            // aggregate: [
-                            //     { field: 'NONPSI', aggregate: 'sum' },
-                            //     { field: "PSIKIATRI", aggregate: 'sum' },
-                            //     { field: "jumlah", aggregate: 'sum'},
-                            // ]
-
-
-                        }
-                        // $scope.isRouteLoading = false;
-                    })
-
-                     medifirstService.get("registrasi/laporan/get-data-lap-summary-pekerjaan?"
-                    + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
-                    + tempRuanganId
-                    + tempKelPasienId
-                    + tempJenPelId).then(function (data) {
-                        // $scope.totallaki = 0;
-                        // $scope.totalwanita = 0;
-                        // $scope.totalbaru = 0;
-                        // $scope.totallama = 0;
-                        // $scope.jumlahkunjungan = 0;
-                        var data =data.data
-                        var group =  []
-                        var podo = false
-                        for (var i = 0; i < data.length; i++) {
-                            var element1 = data[i]
-                            podo = false
-                            for (var x = 0; x < group.length; x++) {
-                               var element=  group[x]
-                               // var jumlah = 
-                                group[x].no = x + 1
-                               if(element.pekerjaan == element1.pekerjaan){
-
-                                    element.PSIKIATRI = parseFloat(element.PSIKIATRI) + parseFloat(element1.PSIKIATRI)
-                                    element.NONPSI = parseFloat(element.NONPSI) + parseFloat(element1.NONPSI)        
-                                    podo = true  
-                               }
-                            }
-                            if(podo== false){
-                                var datass ={
-                                    pekerjaan: element1.pekerjaan,
-                                    baru: element1.baru,
-                                    kelompokpasien: element1.kelompokpasien,
-                                    laki: element1.laki,
-                                    lama: element1.lama,
-                                    pendidikan: element1.pendidikan,
-                                    wanita: element1.wanita,
-                                    tunai: element1.tunai,
-                                    bpjs: element1.bpjs,
-                                    jamsostek: element1.jamsostek,
-                                    swasta: element1.swasta,
-                                    hardient: element1.hardient,
-                                    iks: element1.iks,
-                                    thamrin: element1.thamrin,
-                                    jamkesda: element1.jamkesda,
-                                    jamkesmas: element1.jamkesmas,
-                                    skmm: element1.skmm,
-                                    karyawan: element1.karyawan,
-                                }
-                                group.push(datass)
-                            }
-
-                        }
-
-                        for (var i = 0; i < group.length; i++) {
-                           var elemn= group[i] 
-                            elemn.jumlah = parseFloat(elemn.PSIKIATRI) + parseFloat(elemn.NONPSI)
-                            elemn.total = parseFloat(elemn.jumlah) + parseFloat(elemn.jumlah)
-                        }
-                        $scope.dataSourceGridPek ={
-                            // group: $scope.group,
-                            data: group,
-                            pageSize: 10,
-                            total: group.length,
-                            serverPaging: false,
-                            schema: 
-                            // {
-                            //     model: {
-                            //         fields: {
-                            //         }
-                            //     }
-                            // }
                             {
-                                model: {
-                                    fields: {   
-                                        pekerjaan: { type: "string" },
-                                        laki: { type: "number" },
-                                        wanita: { type: "number" },
-                                        baru: { type: "number" },
-                                        lama: { type: "number" },
-                                        tunai: { type: "number" },
-                                        bpjs: { type: "number" },
-                                        jamsostek: { type: "number" },
-                                        swasta: { type: "number" },
-                                        hardient: { type: "number" },
-                                        iks: { type: "number" },
-                                        thamrin: { type: "number" },
-                                        jamkesda: { type: "number" },
-                                        jamkesmas: { type: "number" },
-                                        skmm: { type: "number" },
-                                        karyawan: { type: "number" },
-                                    }
-                                }
+                                field:"gangguanpenglihatan",
+                                "title": "2",
+                                "width": "75px",
+                                aggregates: ["sum"],
+                                groupFooterTemplate: "#=data.gangguanpenglihatan.sum  #",
+                                footerTemplate: "#:data.gangguanpenglihatan.sum  #"
                             },
-                            pageSize: 200,
-                            // total: group.length,
-                            serverPaging: false,
-                            aggregate: [
-                                { field: 'NONPSI', aggregate: 'sum' },
-                                { field: "PSIKIATRI", aggregate: 'sum' },
-                                { field: "jumlah", aggregate: 'sum'},
-                            ]
-
-
-                        }
-                        // $scope.isRouteLoading = false;
-                    })
-
-                    medifirstService.get("registrasi/laporan/get-data-lap-summary-agama?"
-                    + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
-                    + tempRuanganId
-                    + tempKelPasienId
-                    + tempJenPelId).then(function (data) {
-                        // $scope.totallaki = 0;
-                        // $scope.totalwanita = 0;
-                        // $scope.totalbaru = 0;
-                        // $scope.totallama = 0;
-                        // $scope.jumlahkunjungan = 0;
-                        var data =data.data
-                        var group =  []
-                        var podo = false
-                        for (var i = 0; i < data.length; i++) {
-                            var element1 = data[i]
-                            podo = false
-                            for (var x = 0; x < group.length; x++) {
-                               var element=  group[x]
-                               // var jumlah = 
-                                group[x].no = x + 1
-                               if(element.agama == element1.agama){
-
-                                    element.PSIKIATRI = parseFloat(element.PSIKIATRI) + parseFloat(element1.PSIKIATRI)
-                                    element.NONPSI = parseFloat(element.NONPSI) + parseFloat(element1.NONPSI)        
-                                    podo = true  
-                               }
-                            }
-                            if(podo== false){
-                                var datass ={
-                                    agama: element1.agama,
-                                    baru: element1.baru,
-                                    kelompokpasien: element1.kelompokpasien,
-                                    laki: element1.laki,
-                                    lama: element1.lama,
-                                    pendidikan: element1.pendidikan,
-                                    wanita: element1.wanita,
-                                    tunai: element1.tunai,
-                                    bpjs: element1.bpjs,
-                                    jamsostek: element1.jamsostek,
-                                    swasta: element1.swasta,
-                                    hardient: element1.hardient,
-                                    iks: element1.iks,
-                                    thamrin: element1.thamrin,
-                                    jamkesda: element1.jamkesda,
-                                    jamkesmas: element1.jamkesmas,
-                                    skmm: element1.skmm,
-                                    karyawan: element1.karyawan,
-                                }
-                                group.push(datass)
-                            }
-
-                        }
-
-                        for (var i = 0; i < group.length; i++) {
-                           var elemn= group[i] 
-                            elemn.jumlah = parseFloat(elemn.PSIKIATRI) + parseFloat(elemn.NONPSI)
-                            elemn.total = parseFloat(elemn.jumlah) + parseFloat(elemn.jumlah)
-                        }
-                        $scope.dataSourceGridAg ={
-                            // group: $scope.group,
-                            data: group,
-                            pageSize: 10,
-                            total: group.length,
-                            serverPaging: false,
-                            schema: 
-                            // {
-                            //     model: {
-                            //         fields: {
-                            //         }
-                            //     }
-                            // }
                             {
-                                model: {
-                                    fields: {   
-                                        agama: { type: "string" },
-                                        laki: { type: "number" },
-                                        wanita: { type: "number" },
-                                        baru: { type: "number" },
-                                        lama: { type: "number" },
-                                        tunai: { type: "number" },
-                                        bpjs: { type: "number" },
-                                        jamsostek: { type: "number" },
-                                        swasta: { type: "number" },
-                                        hardient: { type: "number" },
-                                        iks: { type: "number" },
-                                        thamrin: { type: "number" },
-                                        jamkesda: { type: "number" },
-                                        jamkesmas: { type: "number" },
-                                        skmm: { type: "number" },
-                                        karyawan: { type: "number" },
-                                    }
-                                }
+                                field:"gangguanbicara",
+                                "title": "3",
+                                "width": "75px",
+                                aggregates: ["sum"],
+                                groupFooterTemplate: "#=data.gangguanbicara.sum  #",
+                                footerTemplate: "#:data.gangguanbicara.sum  #"
                             },
-                            pageSize: 200,
-                            // total: group.length,
-                            serverPaging: false,
-                            aggregate: [
-                                { field: 'NONPSI', aggregate: 'sum' },
-                                { field: "PSIKIATRI", aggregate: 'sum' },
-                                { field: "jumlah", aggregate: 'sum'},
-                            ]
-
-
-                        }
-                        // $scope.isRouteLoading = false;
-                    })
-
-                    medifirstService.get("registrasi/laporan/get-data-lap-summary-kujungan-tahunan?"
-                    + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
-                    + tempRuanganId
-                    + tempKelPasienId
-                    + tempJenPelId).then(function (data) {
-                        // $scope.totallaki = 0;
-                        // $scope.totalwanita = 0;
-                        // $scope.totalbaru = 0;
-                        // $scope.totallama = 0;
-                        // $scope.jumlahkunjungan = 0;
-                        var data =data.data
-                        var group =  []
-                        var podo = false
-                        for (var i = 0; i < data.length; i++) {
-                            var element1 = data[i]
-                            podo = false
-                            for (var x = 0; x < group.length; x++) {
-                               var element=  group[x]
-                               // var jumlah = 
-                                group[x].no = x + 1
-                               if(element.bulan == element1.bulan){
-
-                                    element.PSIKIATRI = parseFloat(element.PSIKIATRI) + parseFloat(element1.PSIKIATRI)
-                                    element.NONPSI = parseFloat(element.NONPSI) + parseFloat(element1.NONPSI)        
-                                    podo = true  
-                               }
-                            }
-                            if(podo== false){
-                                var datass ={
-                                    bulan: element1.bulan,
-                                    baru: element1.baru,
-                                    kelompokpasien: element1.kelompokpasien,
-                                    laki: element1.laki,
-                                    lama: element1.lama,
-                                    pendidikan: element1.pendidikan,
-                                    wanita: element1.wanita,
-                                    tunai: element1.tunai,
-                                    bpjs: element1.bpjs,
-                                    jamsostek: element1.jamsostek,
-                                    swasta: element1.swasta,
-                                    hardient: element1.hardient,
-                                    iks: element1.iks,
-                                    thamrin: element1.thamrin,
-                                    jamkesda: element1.jamkesda,
-                                    jamkesmas: element1.jamkesmas,
-                                    skmm: element1.skmm,
-                                    karyawan: element1.karyawan,
-                                }
-                                group.push(datass)
-                            }
-
-                        }
-
-                        for (var i = 0; i < group.length; i++) {
-                           var elemn= group[i] 
-                            elemn.jumlah = parseFloat(elemn.PSIKIATRI) + parseFloat(elemn.NONPSI)
-                            elemn.total = parseFloat(elemn.jumlah) + parseFloat(elemn.jumlah)
-                        }
-                        
-                        $scope.dataSourceGridKjT ={
-                            // group: $scope.group,
-                            data: group,
-                            pageSize: 10,
-                            total: group.length,
-                            serverPaging: false,
-                            schema: 
-                            // {
-                            //     model: {
-                            //         fields: {
-                            //         }
-                            //     }
-                            // }
                             {
-                                model: {
-                                    fields: {   
-                                        bulan: { type: "string" },
-                                        lakibaru: { type: "number" },
-                                        lakilama: { type: "number" },
-                                        wanitabaru: { type: "number" },
-                                        wanitalama: { type: "number" },
-                                        baru: { type: "number" },
-                                        lama: { type: "number" },
-                                        tunai: { type: "number" },
-                                        bpjs: { type: "number" },
-                                        jamsostek: { type: "number" },
-                                        swasta: { type: "number" },
-                                        hardient: { type: "number" },
-                                        iks: { type: "number" },
-                                        thamrin: { type: "number" },
-                                        jamkesda: { type: "number" },
-                                        jamkesmas: { type: "number" },
-                                        skmm: { type: "number" },
-                                        karyawan: { type: "number" },
-                                    }
-                                }
+                                field:"gangguanlainnya",
+                                "title": "4",
+                                "width": "75px",
+                                aggregates: ["sum"],
+                                groupFooterTemplate: "#=data.gangguanlainnya.sum  #",
+                                footerTemplate: "#:data.gangguanlainnya.sum  #"
                             },
-                            pageSize: 200,
-                            // total: group.length,
-                            serverPaging: false,
-                            aggregate: [
-                                { field: 'NONPSI', aggregate: 'sum' },
-                                { field: "PSIKIATRI", aggregate: 'sum' },
-                                { field: "jumlah", aggregate: 'sum'},
-                            ]
+                            {
+                                field: "tidakada",
+                                "title": "5",
+                                "width": "75px",
+                                aggregates: ["sum"],
+                                groupFooterTemplate: "#=data.tidakada.sum  #",
+                                footerTemplate: "#:data.tidakada.sum  #"
+                            }],
+                        },
+                        {
+                            "title": "Bahasa",
+                            "width": "200px",
+                            headerAttributes: {
+                                style: "text-align : center"
+                            },
+                            "columns": [{
+                                    "field": "daerah",
+                                    "title": "1",
+                                    "width": "75px",
+                                    aggregates: ["sum"],        
+                                    groupFooterTemplate: "#=data.daerah.sum  #",
+                                    footerTemplate: "#:data.daerah.sum  #"
+                                },
+                                {
+                                    "field": "indonesia",
+                                    "title": "2",
+                                    "width": "75px",
+                                    aggregates: ["sum"],
+                                    groupFooterTemplate: "#=data.indonesia.sum  #",
+                                    footerTemplate: "#:data.indonesia.sum  #"
+                                },
+                                {
+                                    "field": "isyarat",
+                                    "title": "3",
+                                    "width": "75px",
+                                    aggregates: ["sum"],
+                                    groupFooterTemplate: "#=data.isyarat.sum  #",
+                                    footerTemplate: "#:data.isyarat.sum  #"
+                                },
+                                {
+                                    "field":"asing",
+                                    "title": "4",
+                                    "width": "75px",
+                                    aggregates: ["sum"],
+                                    groupFooterTemplate: "#=data.asing.sum  #",
+                                    footerTemplate: "#:data.asing.sum  #"
+                                },
+                                {
+                                    "field": "lainnya1",
+                                    "title": "5",
+                                    "width": "75px",
+                                    aggregates: ["sum"],
+                                    groupFooterTemplate: "#=data.lainnya1.sum  #",
+                                    footerTemplate: "#:data.lainnya1.sum  #"
+                                },
+                                
+                            ],
+                        },
+                        {
+                            "title": "Etnis",
+                            "width": "200px",
+                            headerAttributes: {
+                                style: "text-align : center"
+                            },
+                            "columns": [{
+                                    "field": "jawa",
+                                    "title": "1",
+                                    "width": "75px",
+                                    aggregates: ["sum"],        
+                                    groupFooterTemplate: "#=data.jawa.sum  #",
+                                    footerTemplate: "#:data.jawa.sum  #"
+                                },
+                                {
+                                    "field": "sunda",
+                                    "title": "2",
+                                    "width": "75px",
+                                    aggregates: ["sum"],
+                                    groupFooterTemplate: "#=data.sunda.sum  #",
+                                    footerTemplate: "#:data.sunda.sum  #"
+                                },
+                                {
+                                    "field": "batak",
+                                    "title": "3",
+                                    "width": "75px",
+                                    aggregates: ["sum"],
+                                    groupFooterTemplate: "#=data.batak.sum  #",
+                                    footerTemplate: "#:data.batak.sum  #"
+                                },
+                                {
+                                    "field": "tionhoa",
+                                    "title": "4",
+                                    "width": "75px",
+                                    aggregates: ["sum"],
+                                    groupFooterTemplate: "#=data.tionhoa.sum  #",
+                                    footerTemplate: "#:data.tionhoa.sum  #"
+                                },
+                                {
+                                    "field": "papua",
+                                    "title": "5",
+                                    "width": "75px",
+                                    aggregates: ["sum"],
+                                    groupFooterTemplate: "#=data.papua.sum  #",
+                                    footerTemplate: "#:data.papua.sum  #"
+                                },
+                                {
+                                    "field": "lainnya2",
+                                    "title": "6",
+                                    "width": "75px",
+                                    aggregates: ["sum"],        
+                                    groupFooterTemplate: "#=data.lainnya2.sum  #",
+                                    footerTemplate: "#:data.lainnya2.sum  #"
+                                }
+                            ],
+                        },
 
-
-                        }
-                        // $scope.isRouteLoading = false;
-                    })
-
-
+                    ]
+                }
 
             }
 
@@ -854,10 +436,18 @@ define(['initialize'], function (initialize) {
                 // columnMenu: true,
                 resizable: true,
                 excelExport: function (e) {
-                    var rows = e.workbook.sheets[0].rows;
-                    rows.unshift({
-                        cells: [{ value: "Summary Register Pendaftaran Instalasi (Kunjungan)", background: "#fffff" }]
-                    });
+                    var sheet = e.workbook.sheets[0];
+                    sheet.mergedCells = ["A1:Q1"];
+                    sheet.frozenRows = 3;
+                    var myHeaders = [{
+                        value: "Laporan Rekap Data Kunjungan Demografi Rawat Jalan",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+
+                    }];
+                    sheet.rows.splice(35,0, {cells: myHeaders, type: "header", height: 70});
+                    sheet.rows.splice()
                 },      
                 columns: [
                     
@@ -1998,6 +1588,12 @@ define(['initialize'], function (initialize) {
                 $scope.item.tglawal = $scope.now;
                 $scope.item.tglakhir = $scope.now;
                 $scope.CariLapPendapatanPoli();
+            }
+            $scope.ClearData = function(){
+                $scope.item.kelompokPasien = undefined;
+                $scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD 00:00');
+                $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD 23:59');
+                $scope.SearchData();
             }
 
 

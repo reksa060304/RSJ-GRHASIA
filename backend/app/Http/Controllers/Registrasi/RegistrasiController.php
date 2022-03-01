@@ -8220,6 +8220,447 @@ class RegistrasiController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getLaporanSummaryHambatanKomunikasi(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = [];
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $ruanganId = $request['ruanganId'];
+        $kelompokId = $request['kelompokPasien'];
+        $jenispelayananId = $request['jenisPelayanan'];
+
+        $paramRuangan = ' ';
+        if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined") {
+            $paramRuangan = ' and pd.objectruanganlastfk = ' . $ruanganId;
+        }
+
+        $paramKelompok = ' ';
+        if (isset($kelompokId) && $kelompokId != "" && $kelompokId != "undefined") {
+            $paramKelompok = ' and pd.objectkelompokpasienlastfk = ' . $kelompokId;
+        }
+
+        $paramJenisPelayanan = ' ';
+        if (isset($jenispelayananId) && $jenispelayananId != "" && $jenispelayananId != "undefined") {
+            if($jenispelayananId == 1){
+                $paramJenisPelayanan = ' and ru.iseksekutif = false' ;
+            }else{
+                $paramJenisPelayanan = ' and ru.iseksekutif = true';
+            }
+        }
+
+        $deptRawatJalan = $this->settingDataFixed('kdDepartemenRawatJalanFix',$kdProfile);
+
+        $ruangan = DB::select(DB::raw("
+            SELECT * FROM ruangan_m where id in(752,753,755,756,757,758,759,761,762,764,765,29,767,768,
+            769,770,771,772,773,774,777,782,785,786,576,575)
+        "));
+        
+        $hambatan = DB::select(DB::raw("
+        WITH nonlab AS (
+        SELECT distinct
+        ru.id,
+        pd.norec,
+        pd.nocmfk,
+        apd.tglmasuk,
+        ps.namapasien,
+        ru.namaruangan,
+        apd.objectruanganfk,
+        ps.hambatankomunikasifk,
+        ru.objectdepartemenfk
+        FROM
+        pasiendaftar_t pd
+        INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+        INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+        INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+        WHERE
+        apd.tglmasuk BETWEEN '$tglAwal'
+        AND '$tglAkhir'
+        $paramKelompok
+        AND pd.statusenabled = TRUE
+        AND apd.statusenabled = TRUE
+        AND ps.statusenabled = TRUE
+        AND ru.objectdepartemenfk NOT IN ( 27, 3 )
+        and apd.kdprofile=$idProfile
+        ORDER BY
+        pd.nocmfk,
+        apd.tglmasuk ASC
+        ),
+        lab AS (
+        SELECT DISTINCT
+        ru.id,
+        pp.norec,
+        pd.nocmfk,
+        pp.tglpelayanan,
+        ps.namapasien,
+        ru.namaruangan,
+        apd.objectruanganfk,
+        ps.hambatankomunikasifk,
+        ru.objectdepartemenfk
+        FROM
+        pasiendaftar_t pd
+        INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+        INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+        INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+        INNER JOIN pelayananpasien_t pp ON apd.norec = pp.noregistrasifk
+        WHERE
+        pp.tglpelayanan BETWEEN '$tglAwal'
+        AND '$tglAkhir'
+        $paramKelompok
+        AND pd.statusenabled = TRUE
+        AND apd.statusenabled = TRUE
+        AND ps.statusenabled = TRUE
+        AND ru.objectdepartemenfk IN ( 27, 3 )
+        and pp.kdprofile=$idProfile
+        ORDER BY
+        pd.nocmfk,
+        pp.tglpelayanan ASC
+        )
+        SELECT
+        nl.id,
+        nl.namaruangan,
+        COUNT ( nl.hambatankomunikasifk ) FILTER(where nl.hambatankomunikasifk = 1) gangguanbicara,
+        COUNT ( nl.hambatankomunikasifk ) FILTER(where nl.hambatankomunikasifk = 2) gangguanlainnya,
+        COUNT ( nl.hambatankomunikasifk ) FILTER(where nl.hambatankomunikasifk = 3) gangguanpendengaran,
+        COUNT ( nl.hambatankomunikasifk ) FILTER(where nl.hambatankomunikasifk = 4) gangguanpenglihatan,
+        COUNT ( nl.hambatankomunikasifk ) FILTER(where nl.hambatankomunikasifk = 5) tidakada
+
+        FROM
+        nonlab nl
+        INNER JOIN hambatankomunikasi_m hk ON hk.ID = nl.hambatankomunikasifk
+        WHERE
+        nl.objectdepartemenfk <> 16
+            GROUP BY
+            nl.namaruangan ,nl.id
+            UNION ALL
+            SELECT
+            l.id,
+            l.namaruangan,
+            COUNT ( l.hambatankomunikasifk ) FILTER(where l.hambatankomunikasifk = 1) gangguanbicara,
+            COUNT ( l.hambatankomunikasifk ) FILTER(where l.hambatankomunikasifk = 2) gangguanlainnya,
+            COUNT ( l.hambatankomunikasifk ) FILTER(where l.hambatankomunikasifk = 3) gangguanpendengaran,
+            COUNT ( l.hambatankomunikasifk ) FILTER(where l.hambatankomunikasifk = 4) gangguanpenglihatan,
+            COUNT ( l.hambatankomunikasifk ) FILTER(where l.hambatankomunikasifk = 5) tidakada
+            FROM
+            lab l
+            INNER JOIN hambatankomunikasi_m hk ON hk.ID = l.hambatankomunikasifk
+            WHERE
+            l.objectdepartemenfk <> 16
+                GROUP BY
+                l.namaruangan,l.id
+                "));
+
+            $bahasa = DB::select(DB::raw("
+
+            with nonlab as (
+            SELECT
+            ru.id,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.bahasafk,
+            ru.objectdepartemenfk
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+            INNER JOIN bahasa_m ba on ba.id = ps.bahasafk
+            WHERE
+            apd.tglmasuk BETWEEN '$tglAwal'
+            AND '$tglAkhir'
+            $paramKelompok
+            AND pd.statusenabled = TRUE
+            AND apd.statusenabled = TRUE
+            AND ps.statusenabled = TRUE
+            AND ru.objectdepartemenfk NOT IN ( 27, 3 )
+            and apd.kdprofile=$idProfile
+            GROUP BY
+            ru.id,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.bahasafk,
+            ru.objectdepartemenfk
+            ORDER BY
+            ru.namaruangan ASC
+
+            ), lab as(
+            SELECT
+            ru.id,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.bahasafk,
+            ru.objectdepartemenfk
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN pelayananpasien_t pp on apd.norec = pp.noregistrasifk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+            INNER JOIN bahasa_m ba on ba.id = ps.bahasafk
+            WHERE
+            pp.tglpelayanan BETWEEN '$tglAwal'
+            AND '$tglAkhir'
+            $paramKelompok
+            AND pd.statusenabled = TRUE
+            AND pp.statusenabled = TRUE
+            AND ps.statusenabled = TRUE
+            AND ru.objectdepartemenfk IN ( 27, 3 )
+            and pp.kdprofile=$idProfile
+            GROUP BY
+            ru.id,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.bahasafk,
+            ru.objectdepartemenfk
+            ORDER BY
+            pd.nocmfk ASC
+
+            )
+            SELECT
+            nl.id,
+            nl.namaruangan,
+            COUNT(nl.bahasafk) filter(where nl.bahasafk = 1) asing,
+            COUNT(nl.bahasafk) filter(where nl.bahasafk = 2) indonesia,
+            COUNT(nl.bahasafk) filter(where nl.bahasafk = 3) daerah,
+            COUNT(nl.bahasafk) filter(where nl.bahasafk = 4) isyarat,
+            COUNT(nl.bahasafk) filter(where nl.bahasafk not in(1,2,3,4)) lainnya
+
+            FROM nonlab nl
+            where
+            nl.objectdepartemenfk <>16
+                GROUP BY nl.id,nl.namaruangan
+
+                union ALL
+                SELECT
+                nl.id,
+                nl.namaruangan,
+                COUNT(nl.bahasafk) filter(where nl.bahasafk = 1) asing,
+                COUNT(nl.bahasafk) filter(where nl.bahasafk = 2) indonesia,
+                COUNT(nl.bahasafk) filter(where nl.bahasafk = 3) daerah,
+                COUNT(nl.bahasafk) filter(where nl.bahasafk = 4) isyarat,
+                COUNT(nl.bahasafk) filter(where nl.bahasafk not in(1,2,3,4)) lainnya
+
+                FROM lab nl
+                where
+                nl.objectdepartemenfk <>16
+                    GROUP BY nl.id,nl.namaruangan
+
+                    "));
+        
+            $etnis = DB::Select(DB::raw("
+            with nonlabrad as (
+            SELECT distinct
+            ru.id,
+            pd.norec,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.objectsukufk,
+            ru.objectdepartemenfk
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+            INNER JOIN suku_m su on su.id = ps.objectsukufk
+            WHERE
+            apd.tglmasuk BETWEEN '$tglAwal'
+            AND '$tglAkhir'
+            $paramKelompok
+            AND pd.statusenabled = TRUE
+            AND apd.statusenabled = TRUE
+            AND ps.statusenabled = TRUE
+            AND ru.objectdepartemenfk NOT IN ( 27, 3 )
+            and apd.kdprofile=$idProfile
+            ORDER BY
+            pd.nocmfk ASC
+            ), labrad as (
+            SELECT distinct
+            ru.id,
+            pd.norec,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.objectsukufk,
+            ru.objectdepartemenfk
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+            INNER JOIN suku_m su on su.id = ps.objectsukufk
+            		inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+            WHERE
+            pp.tglpelayanan BETWEEN '$tglAwal'
+            AND '$tglAkhir'
+            $paramKelompok
+            AND pd.statusenabled = TRUE
+            AND apd.statusenabled = TRUE
+            AND ps.statusenabled = TRUE
+            AND ru.objectdepartemenfk IN ( 27, 3 )
+
+            and apd.kdprofile=$idProfile
+            ORDER BY
+            pd.nocmfk ASC
+            )
+
+            SELECT nl.id, nl.namaruangan, count(nl.objectsukufk) filter(where nl.objectsukufk = 1) as jawa,
+            count(nl.objectsukufk) filter(where nl.objectsukufk = 2) as sunda, count(nl.objectsukufk) filter(where
+            nl.objectsukufk = 21) as batak, count(nl.objectsukufk) filter(where nl.objectsukufk = 16) as tionhoa,
+            count(nl.objectsukufk) filter(where nl.objectsukufk = 9) as papua, count(nl.objectsukufk) filter(where
+            nl.objectsukufk not in(1,2,21,16,9)) as lainnya FROM nonlabrad nl where nl.objectdepartemenfk <>16 GROUP BY
+                nl.id, nl.namaruangan
+                union ALL
+                SELECT nl.id, nl.namaruangan, count(nl.objectsukufk) filter(where nl.objectsukufk = 1) as jawa,
+                count(nl.objectsukufk) filter(where nl.objectsukufk = 2) as sunda, count(nl.objectsukufk) filter(where
+                nl.objectsukufk = 21) as batak, count(nl.objectsukufk) filter(where nl.objectsukufk = 16) as tionhoa,
+                count(nl.objectsukufk) filter(where nl.objectsukufk = 9) as papua, count(nl.objectsukufk) filter(where
+                nl.objectsukufk not in(1,2,21,16,9)) as lainnya FROM labrad nl where nl.objectdepartemenfk <>16 GROUP BY
+                    nl.id, nl.namaruangan
+                    "));
+        $detail = [];
+        //jmlhambatan
+        $gangguanbicara = 0;
+        $gangguanlainnya = 0;
+        $gangguanpendengaran = 0;
+        $gangguanpenglihatan = 0;
+        $tidakada = 0;
+        //bahasa
+        $indonesia = 0;
+        $daerah = 0;
+        $isyarat = 0;
+        $lainnya1 = 0;
+        $asing = 0;
+
+        //etnis
+        $jawa = 0;
+        $sunda = 0;
+        $batak = 0;
+        $tionhoa = 0;
+        $papua = 0;
+        $lainnya2 = 0;
+        //total
+        $totalbahasa = 0;
+        $totaletnis = 0;
+        $totalhambatan = 0;
+
+        foreach ($ruangan as $ru) {
+            $gangguanbicara = 0;
+            $gangguanlainnya = 0;
+            $gangguanpendengaran = 0;
+            $gangguanpenglihatan = 0;
+            $tidakada = 0;
+
+            $indonesia = 0;
+            $daerah = 0;
+            $isyarat = 0;
+            $lainnya1 = 0;
+            $asing = 0;
+
+            $jawa = 0;
+            $sunda = 0;
+            $batak = 0;
+            $tionhoa = 0;
+            $papua = 0;
+            $lainnya2 = 0;
+            $totalbahasa = 0;
+            $totaletnis = 0;
+            $totalhambatan = 0;
+
+            foreach($hambatan as $hb){
+                if($ru->id == $hb->id){
+                    $gangguanbicara = $hb->gangguanbicara;
+                    $gangguanlainnya = $hb->gangguanlainnya;
+                    $gangguanpendengaran = $hb->gangguanpendengaran;
+                    $gangguanpenglihatan = $hb->gangguanpenglihatan;
+                    $tidakada = $hb->tidakada;
+                    break;
+                }else{
+                    $gangguanbicara = 0;
+                    $gangguanlainnya = 0;
+                    $gangguanpendengaran = 0;
+                    $gangguanpenglihatan = 0;
+                    $tidakada = 0;
+                }
+            }
+
+            foreach($bahasa as $ba){
+                if($ru->id == $ba->id){
+                    $indonesia = $ba->indonesia;
+                    $asing = $ba->asing;
+                    $daerah = $ba->daerah;
+                    $isyarat = $ba->isyarat;
+                    $lainnya1 = $ba->lainnya;
+                    break;
+                }else{
+                    $indonesia = 0;
+                    $daerah = 0;
+                    $isyarat = 0;
+                    $lainnya1 = 0;
+                    $asing = 0;
+                }
+            }
+
+            foreach($etnis as $et){
+                if($ru->id == $et->id){
+                    $jawa = $et->jawa;
+                    $sunda = $et->sunda;
+                    $batak = $et->batak;
+                    $tionhoa = $et->tionhoa;
+                    $papua = $et->papua;
+                    $lainnya2 = $et->lainnya;
+                    break;
+                }else{
+                    $jawa = 0;
+                    $sunda = 0;
+                    $batak = 0;
+                    $tionhoa = 0;
+                    $papua = 0;
+                    $lainnya2 = 0;
+                }
+            }
+
+            $totalhambatan = $gangguanbicara + $gangguanlainnya+ $gangguanpendengaran+$gangguanpenglihatan+$tidakada;
+            $totalbahasa = $indonesia+$asing+$daerah+$isyarat+$lainnya1;
+            $totaletnis = $jawa+$sunda+$papua+$batak+$lainnya2+$tionhoa;
+
+            $detail[] = array(
+                'namaruangan' => $ru->namaruangan,
+                'gangguanbicara' => $gangguanbicara,
+                'gangguanlainnya' => $gangguanlainnya,
+                'gangguanpendengaran' => $gangguanpendengaran,
+                'gangguanpenglihatan' => $gangguanpenglihatan,
+                'tidakada' => $tidakada,
+                'indonesia' => $indonesia,
+                'daerah' => $daerah,
+                'isyarat' => $isyarat,
+                'lainnya1' => $lainnya1,
+                'asing' => $asing,
+                'jawa' => $jawa,
+                'sunda' => $sunda,
+                'batak' => $batak,
+                'tionhoa' => $tionhoa,
+                'papua' => $papua,
+                'lainnya2' => $lainnya2,
+                'totalhambatan' => $totalhambatan,
+                'totalbahasa' =>$totalbahasa,
+                'totaletnis' => $totaletnis,
+
+            );
+        }
+        $result = array(
+                'detail' => $detail,
+            );
+        
+        return $this->respond($result);
+    }
+
+
     public function getLaporanSummaryKunjungan(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

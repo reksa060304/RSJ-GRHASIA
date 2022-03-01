@@ -1775,6 +1775,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/get-datacombo-sensus', 'SensusHarianRawatJalanController@getDataCombo');
               
               Route::get('registrasi/laporan/get-combo-box-laporan-summary','Registrasi\RegistrasiController@getDataComboSummary');
+              Route::get('registrasi/laporan/get-data-lap-summary-hambatan-komunikasi','Registrasi\RegistrasiController@getLaporanSummaryHambatanKomunikasi');
               Route::get('registrasi/laporan/get-data-lap-summary-kunjungan','Registrasi\RegistrasiController@getLaporanSummaryKunjungan');
               Route::get('registrasi/laporan/get-data-lap-summary-pendidikan','Registrasi\RegistrasiController@getLaporanSummaryPendidikan');
               Route::get('registrasi/laporan/get-data-lap-summary-daerah','Registrasi\RegistrasiController@getLaporanSummaryDaerah');
