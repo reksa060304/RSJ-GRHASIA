@@ -2556,8 +2556,15 @@ class MasterController extends ApiController{
         $transStatus = true;
         $transMsg =null;
         DB::beginTransaction();
-
-        $TT = TempatTidur::where('id',$input['idtempattidur'])->where('kdprofile', $kdProfile)->first();
+        if($input['idtempattidur']=='0'){
+            $newId = TempatTidur::max('id');
+            $newId = $newId + 1;
+            $TT = new TempatTidur();
+            $TT->id = $newId;
+            $TT->statusenabled = true;
+        }else{
+            $TT = TempatTidur::where('id',$input['idtempattidur'])->where('kdprofile', $kdProfile)->first();
+        }
         $TT->kdprofile = $kdProfile;
         $TT->objectkamarfk = $input['idkamar'];
         $TT->objectstatusbedfk = $input['idstatusbed'];
@@ -2568,7 +2575,7 @@ class MasterController extends ApiController{
         }
         catch(\Exception $e){
             $transStatus = false;
-            $transMsg = "Update Tempat Tidur Gagal";
+            $transMsg = "Update Tempat Tidur Gagal"."Baris: ".$e->getLine()." Pesan: ".$e->getMessage();
             //break;
         }
         $kosong = 0;
@@ -2592,7 +2599,7 @@ class MasterController extends ApiController{
         }
         catch(\Exception $e){
             $transStatus = false;
-            $transMsg = "Update Kamar Gagal";
+            $transMsg = "Update Kamar Gagal"."Baris: ".$e->getLine()." Pesan: ".$e->getMessage();
             //break;
         }
 
