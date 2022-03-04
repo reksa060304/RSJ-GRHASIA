@@ -244,7 +244,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 $scope.isReportIgd = true;
                             }
 
-                            // $scope.isAsuransi = true;
+                            $scope.isAsuransi = true;
                         } else {
                             $scope.isBatal = true;
                             $scope.isSelesaiSimpan = true
@@ -716,7 +716,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 $scope.isReportIgd = true;
                             }
                             $scope.isInputAsuransi = true;
-                            // $scope.isAsuransi = true;
+                            $scope.isAsuransi = true;
                         } else {
                             $scope.isSelesaiSimpan = true
                         }
@@ -934,24 +934,44 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.cetakSEP = function () {
                 if ($scope.cacheNoRegistrasi != undefined && $scope.item.kelompokPasien.kelompokpasien !== "Umum/Pribadi") {
 
-                    //##save identifikasi sep
-                    medifirstService.get("registrasi/identifikasi-sep?norec_pd="
-                        + $scope.cacheNorecPD
-                    ).then(function (data) {
-                        var datas = data.data;
-                    })
-                    //##end
+                    // //##save identifikasi sep
+                    // medifirstService.get("registrasi/identifikasi-sep?norec_pd="
+                    //     + $scope.cacheNorecPD
+                    // ).then(function (data) {
+                    //     var datas = data.data;
+                    // })
+                    // //##end
 
-                    // var noSep = e.data.data === null ? "2423432" : e.data.data;
-                    // var fixUrlLaporan = cetakHelper.open("asuransi/asuransiBPJS?noSep=" + $scope.model.noSep);
-                    // window.open(fixUrlLaporan, '', 'width=800,height=600')
+                    // // var noSep = e.data.data === null ? "2423432" : e.data.data;
+                    // // var fixUrlLaporan = cetakHelper.open("asuransi/asuransiBPJS?noSep=" + $scope.model.noSep);
+                    // // window.open(fixUrlLaporan, '', 'width=800,height=600')
 
-                    //http://127.0.0.1:1237/printvb/Pendaftaran?cetak-sep=1&norec=1708000087&view=true   
-                    //cetakan langsung service VB6 by grh    
-                    var client = new HttpClient();
-                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-sep-new=1&norec=' + $scope.cacheNoRegistrasi + '&view=false', function (response) {
-                        // do something with response
-                    });
+                    // //http://127.0.0.1:1237/printvb/Pendaftaran?cetak-sep=1&norec=1708000087&view=true   
+                    // //cetakan langsung service VB6 by grh    
+                    // var client = new HttpClient();
+                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-sep-new=1&norec=' + $scope.cacheNoRegistrasi + '&view=false', function (response) {
+                    //     // do something with response
+                    // });
+
+                    medifirstService.get("registrasi/cek-sep-by-regis?noreg="
+                            + $scope.cacheNoRegistrasi 
+                        ).then(function (data) {
+                            if(data.data.data==null){
+                                toastr.warning('SEP Tidak ada', 'Info')
+                                return
+                            }
+                            let json = {
+                                "url": "SEP/" + data.data.data.nosep ,
+                                "method": "GET",
+                                "data": null
+                            }
+                            medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
+                                if (e.data.metaData.code == 200) {
+                                    cetakSEP(e.data.response,data.data)
+                                }
+                                else toastr.warning(e.data.metaData.code, 'Info')
+                            })
+                        })
                 } else {
                     toastr.warning("Pasien Selain Bpjs Tidak Bisa Cetak Sep!");
                     return;
@@ -1649,6 +1669,108 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                        
                     })
                 })
+            }
+            $scope.listPenjaminLaka = [
+                { "id": 12, "name": "Jasa Raharja PT", "value": 1 },
+                { "id": 13, "name": "BPJS Ketenagakerjaan", "value": 2 },
+                { "id": 14, "name": "TASPEN PT", "value": 3 },
+                { "id": 15, "name": "ASABRI PT", "value": 4 }
+            ];
+			$scope.currentListPenjaminLaka =[]
+			function cetakSEP(response,data) {
+           
+                var nosep = response.noSep
+                var nmperujuk = data.data.nmprovider
+
+                var tglsep = response.tglSep
+                var nokartu =response.peserta.noKartu + '  ( MR. ' + response.peserta.noMr + ' )';
+                var nmpst =response.peserta.nama
+                var tgllahir = response.peserta.tglLahir
+                var jnskelamin =response.peserta.kelamin== 'L' ? '  Kelamin : Laki-Laki' : '  Kelamin :Perempuan';
+                var poli = response.jnsPelayanan== 'Rawat Inap' ? '-' : data.data.namaruangan;
+                var faskesperujuk = response.jnsPelayanan== 'Rawat Inap' ? data.namaPPKRujukan : nmperujuk;
+                var notelp =  data.data.nohp
+                var dxawal = response.diagnosa.substring(0, 45);
+                var catatan = response.catatan
+                var jnspst = response.peserta.jnsPeserta
+                var FLAGCOB = response.cob
+                var cob = '-';
+                if (FLAGCOB) {
+                    cob = response.cob ? response.cob : null
+                }
+
+                //cob non aktif
+                var FLAGNAIKKELAS = response.klsRawat.klsRawatNaik != null &&  response.klsRawat.klsRawatNaik != '' ? '1' : '0'
+                var klsrawat_naik = response.klsRawat.klsRawatNaik != null &&  response.klsRawat.klsRawatNaik != '' ?response.klsRawat.klsRawatNaik:''
+
+                var jnsrawat = response.jnsPelayanan == 'Rawat Inap'  ? 'R.Inap' : 'R.Jalan';
+                var klsrawat = response.kelasRawat
+                var prolanis =  ""
+                var eksekutif = response.jnsPelayanan == 'Rawat Inap'  ? '' : response.poliEksekutif== 1 ? ' (Poli Eksekutif)' : '';
+                //var penjaminJR = $('#chkjaminan_JR').is(":checked") == true ? 'Jasa Raharja PT' : '';
+                //var penjaminTK = $('#chkjaminan_BPJSTK').is(":checked") == true ? 'BPJS Ketenagakerjaan' : '';
+                //var penjaminTP = $('#chkjaminan_TASPEN').is(":checked") == true ? 'PT TASPEN' : '';
+                //var penjaminAS = $('#chkjaminan_ASABRI').is(":checked") == true ? 'ASABRI' : '';
+                var katarak = response.katarak ;
+                var potensiprb = ""
+                var statuskll = response.kdStatusKecelakaan
+                var _kodejaminan = '-';
+                if (response.kdStatusKecelakaan !='' && response.kdStatusKecelakaan!='0') {
+					var pen =  response.penjamin.split(', ')
+                    var a = ""
+                    var b = ""
+					for (let x = 0; x < 	$scope.listPenjaminLaka.length; x++) {
+						const element = 	$scope.listPenjaminLaka[x];
+						for (let z = 0; z < pen.length; z++) {
+							const element2 = pen[z];
+							if(element2 == element.name){
+								$scope.currentListPenjaminLaka.push({value:element.value})
+							}
+						}
+					}
+                    for (var i = $scope.currentListPenjaminLaka.length - 1; i >= 0; i--) {
+                        var c = $scope.currentListPenjaminLaka[i].value
+                        b = ";" + c
+                        a = a + b
+                    }
+                    _kodejaminan = a.slice(1, a.length)
+                }
+                var dokter = (response.jnsPelayanan == 'Rawat Inap') ? (response.kontrol.nmDokter ) : response.dpjp.nmDPJP ;
+                var FLAGPROSEDUR = data.data.flagprocedure
+
+                var kunjungan = 0;
+                if (response.jnsPelayanan == 'Rawat Inap') {
+                    kunjungan = 3
+                } else if (data.data.statuskunjungan) {
+                    kunjungan = data.data.statuskunjungan
+                } else {
+                    kunjungan = 1
+                }
+
+                var isrujukanthalasemia_hemofilia = 0
+
+                if ( data.data.namaruangan.indexOf('IGD') >-1) {
+                    nmperujuk = '';
+                    kunjungan = 0;
+                    FLAGPROSEDUR = null;
+                }
+                var poliPerujuk = '-'
+                if (data.data.poliasalkode) {
+                    poliPerujuk = data.data.poliasalkode
+                }
+
+                //var sepdate = new Date(tglsep);
+                //var currDate = new Date(dataSEP.sep.sep.FDATE);
+                //var backdate = sepdate < new Date(currDate.getFullYear(), currDate.getMonth(), currDate.getDate()) ? " (BACKDATE)" : "";
+
+                var backdate = medifirstService.cekBackdate(tglsep, data.data.tglcreate ? data.data.tglcreate : tglsep);
+                var ispotensiHEMOFILIA_cetak = 0
+				var cetakan = 1;
+				medifirstService.jspdfSEP(nosep + backdate, tglsep, nokartu, nmpst, tgllahir, jnskelamin, notelp, poli, faskesperujuk, dxawal, catatan, jnspst, cob, jnsrawat, klsrawat,
+                    prolanis, eksekutif, _kodejaminan, statuskll, katarak, potensiprb,cetakan, dokter, kunjungan, FLAGPROSEDUR, poliPerujuk, FLAGNAIKKELAS, klsrawat_naik,
+					 isrujukanthalasemia_hemofilia, ispotensiHEMOFILIA_cetak,data.namaPPKRujukan);
+
+
             }
 
             //** BATAS */

@@ -2545,9 +2545,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //jspdfctk(nosep, tglsep, nokartu, nmpst, tgllahir, jnskelamin, notelp, poli, faskesperujuk, dxawal, catatan, jnspst, cob, jnsrawat, klsrawat,
                 //    prolanis, eksekutif, penjamin, statuskll, katarak, potensiprb, cetakan);
 
-                jspdfctk(nosep, tglsep, nokartu, nmpst, tgllahir, jnskelamin, notelp, poli, faskesperujuk, dxawal, catatan,
+                medifirstService.jspdfSEP(nosep, tglsep, nokartu, nmpst, tgllahir, jnskelamin, notelp, poli, faskesperujuk, dxawal, catatan,
                     jnspst, cob, jnsrawat, klsrawat, prolanis, eksekutif, penjamin, statuskll, katarak, potensiprb, cetakan, dokter, kunjungan, berkelanjutan, poliPerujuk, FLAGNAIKKELAS, klsrawat_naik, is_rujukanThalasemia_Hemofilia,
-                    ispotensiHEMOFILIA_cetak)
+                    ispotensiHEMOFILIA_cetak,namappkRumahSakit)
 
             }
 

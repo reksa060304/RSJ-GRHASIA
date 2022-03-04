@@ -1819,7 +1819,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('registrasi/save-skrining-awal-pasien','Registrasi\RegistrasiController@saveSkringAwalPasien');
               Route::get('registrasi/get-data-skrining-awal-pasien','Registrasi\RegistrasiController@getDataSkringAwalPasien');
               Route::post('registrasi/hapus-skrining-awal-pasien','Registrasi\RegistrasiController@deleteSkringAwalPasien');
-
+              Route::get('registrasi/cek-sep-by-regis', 'Registrasi\RegistrasiController@getSEPByNoreg');
 
         // });
         // Route::group(['prefix' => 'remunerasi'], function () {

@@ -6675,7 +6675,8 @@ class RegistrasiController extends ApiController
                 'pa.norec as norec_pa', 'pa.objectasuransipasienfk', 'pd.objectpegawaifk as pgid', 'pd.objectruanganlastfk',
                 'pa.nosep as nosep', 'br.norec as norec_br', 'pd.nostruklastfk','klstg.namakelas as kelasditanggung','kls.namakelas',
                 'ps.tgllahir','ru.objectdepartemenfk', 'pd.objectkelasfk','dept.id as deptid','pa.ppkrujukan','ddt.objectdiagnosafk',
-                'jpl.jenispelayanan','pa.objectdiagnosafk as iddiagnosabpjs','ps.nobpjs','jks.jeniskelamin')
+                'jpl.jenispelayanan','pa.objectdiagnosafk as iddiagnosabpjs','ps.nobpjs','jks.jeniskelamin',
+                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider')
             ->whereNull('br.norec')
             ->where('pd.statusenabled', true)
             ->where('pd.kdprofile', (int)$kdProfile);
@@ -12251,5 +12252,23 @@ GROUP BY y.KET
             return $result;
         }
 
+    }
+    public function getSEPByNoreg(Request $request)
+    {
+      
+        $dataz = \DB::table('pasiendaftar_t as pd')
+            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
+            ->join('pemakaianasuransi_t as pa', 'pa.noregistrasifk', '=', 'pd.norec')
+            ->join('asuransipasien_m as asu', 'pa.objectasuransipasienfk', '=', 'asu.id')
+            ->select('ps.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'pa.nosep',
+                 'pa.ppkrujukan','ps.nobpjs',
+                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider'
+            )
+            ->where('pd.noregistrasi',$request['noreg'])
+            ->first();
+        $data['namaPPKRujukan'] = $this->settingDataFixed('namaPPKRujukan',0);
+        $data['data']  =$dataz;
+        return $this->respond($data);
     }
 }

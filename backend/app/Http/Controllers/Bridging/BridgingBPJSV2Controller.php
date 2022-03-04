@@ -2329,9 +2329,9 @@ class BridgingBPJSV2Controller extends ApiController
 
         if($tipe !='Aplicaresws'){
 
-            $versiEncrypt = $this->settingDataFixed('versiEncryptBPJS', $this->getKdProfile());
+            // $versiEncrypt = $this->settingDataFixed('versiEncryptBPJS', $this->getKdProfile());
 
-            if (!empty($versiEncrypt) && $versiEncrypt == 'true') {
+            // if (!empty($versiEncrypt) && $versiEncrypt == 'true') {
                 if (isset($result->response) && $result->response != null) {
                     if (isset($headers['cons'])) {
                         $consId = $headers['cons']['data'];
@@ -2347,9 +2347,9 @@ class BridgingBPJSV2Controller extends ApiController
                 } else {
                     return $result;
                 }
-            } else {
-                return $result;
-            }
+            // } else {
+            //     return $result;
+            // }
           }else{
              return $result;
           }
@@ -2405,7 +2405,7 @@ class BridgingBPJSV2Controller extends ApiController
         return $header;
     }
     function stringDecrypt2($key, $string)
-    {
+    {   
 
         $bahan = $string->response;
 
@@ -2437,7 +2437,8 @@ class BridgingBPJSV2Controller extends ApiController
         return $data2;
     }
     function stringDecrypt3($key, $string)
-    {
+    {   
+    
  
         $bahan = $string->response;
 
