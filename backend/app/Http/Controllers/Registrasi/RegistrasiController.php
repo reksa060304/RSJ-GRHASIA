@@ -341,6 +341,7 @@ class RegistrasiController extends ApiController
         DB::beginTransaction();
         $cekUdahDaftar=PasienDaftar::where('nocmfk', $r_NewPD['nocmfk'])
             ->wherenull('tglpulang')
+            ->where('statusenabled',true)
             ->count();
         if($cekUdahDaftar > 0 && $r_NewPD['norec_pd']=='') {
             $transStatus='belumdipulangkan';
@@ -385,8 +386,8 @@ class RegistrasiController extends ApiController
                 }
 
                 $dataPD->objectruanganlastfk = $r_NewPD['objectruanganfk'];
-                $dataPD->objectdokterpemeriksafk =  $r_NewPD['objectpegawaifk'];
-                $dataPD->objectpegawaifk = $r_NewPD['objectpegawaifk'];
+                $dataPD->objectdokterpemeriksafk =  isset($r_NewPD['objectpegawaifk']) ? $r_NewPD['objectpegawaifk'] : null;
+                $dataPD->objectpegawaifk = isset($r_NewPD['objectpegawaifk']) ? $r_NewPD['objectpegawaifk'] : null;
                 $dataPD->iskajianawal = false;
                 $dataPD->isonsiteservice = 0;
                 $dataPD->isregistrasilengkap = 0;
@@ -510,7 +511,7 @@ class RegistrasiController extends ApiController
                     $dataAPD->nobed = $r_NewAPD['nobed'];
                 }
                 $dataAPD->noregistrasifk = $dataPDnorec;
-                $dataAPD->objectpegawaifk = $r_NewAPD['objectpegawaifk'] == null ? $r_NewPD['objectpegawaifk'] :  $r_NewAPD['objectpegawaifk'] ;
+                $dataAPD->objectpegawaifk = isset($r_NewAPD['objectpegawaifk']) && $r_NewAPD['objectpegawaifk'] != null ? $r_NewAPD['objectpegawaifk'] : (isset( $r_NewPD['objectpegawaifk'])? $r_NewPD['objectpegawaifk']:null) ;
                 $dataAPD->statusantrian = 0;
                 $dataAPD->statuskunjungan =$dataStatusPasien;
                 $dataAPD->statuspasien = 1;
@@ -559,7 +560,9 @@ class RegistrasiController extends ApiController
                     $dataRPP->noregistrasifk = $dataPDnorec;
                     $dataRPP->objectruanganfk = $r_NewAPD['objectruanganfk'];
                     $dataRPP->objectstatuskeluarfk = null;
-                    $dataRPP->objecttempattidurfk = $r_NewAPD['nobed'];
+                    if (isset($r_NewAPD['nobed'])){
+                        $dataAPD->objecttempattidurfk = $r_NewAPD['nobed'];
+                    }
                     $dataRPP->tglmasuk = $r_NewAPD['tglregistrasi'];
                     //region Dibuang Sayang Deui
                     //            $dataRPP->objectkasuspenyakitfk = null;
@@ -631,12 +634,18 @@ class RegistrasiController extends ApiController
                 return $this->setStatusCode(200)->respond($result, $transMessage);
             }else{
                 DB::commit();
+                $antrol = '';
+                if($r_NewPD['norec_pd'] == '' && $r_NewPD['statusschedule'] != '' && $r_NewPD['statusschedule'] != 'Kios-K'){
+                    $antrol = $this->saveAntrolV2($r_NewPD['statusschedule']);
+                }
+              
                 $transMessage = 'SUKSES';
                 $result = array(
                     'status' => 201,
                     'message'=>$transMessage,
                     'dataPD' => $dataPD,
                     'dataAPD' => $dataAPD,
+                    'antrol'=>$antrol,
                     'as' => 'ramdanegie',
                 );
             }
@@ -750,21 +759,21 @@ class RegistrasiController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         DB::beginTransaction();
         try{
-            $cekSEP = PemakaianAsuransi::where('noregistrasifk','!=',$request['pemakaianasuransi']['noregistrasifk'])
-                ->where('nosep', $request['pemakaianasuransi']['nosep'])
-                ->where('kdprofile',$kdProfile)
-                ->first();
-//            return $this->respond($cekSEP);
-            if ($request['pemakaianasuransi']['nosep']!= '' &&!empty($cekSEP)){
-                $transMessage = "No SEP sudah ada di pasien lain dengan no Kartu ".$cekSEP->nokepesertaan;
-                DB::rollBack();
-                $result = array(
-                    "status" => 400,
-                    "message"  => $transMessage,
-                    "as" => 'as@epic',
-                );
-                return $this->setStatusCode($result['status'])->respond($result, $transMessage);
-            }
+//             $cekSEP = PemakaianAsuransi::where('noregistrasifk','!=',$request['pemakaianasuransi']['noregistrasifk'])
+//                 ->where('nosep', $request['pemakaianasuransi']['nosep'])
+//                 ->where('kdprofile',$kdProfile)
+//                 ->first();
+// //            return $this->respond($cekSEP);
+//             if ($request['pemakaianasuransi']['nosep']!= '' &&!empty($cekSEP)){
+//                 $transMessage = "No SEP sudah ada di pasien lain dengan no Kartu ".$cekSEP->nokepesertaan;
+//                 DB::rollBack();
+//                 $result = array(
+//                     "status" => 400,
+//                     "message"  => $transMessage,
+//                     "as" => 'as@epic',
+//                 );
+//                 return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+//             }
             if ($request['asuransipasien']['kelompokpasien'] != 'null' || $request['asuransipasien']['kelompokpasien'] != 'undefined') {
                 $updateKPS = PasienDaftar::where('noregistrasi', $request['asuransipasien']['noregistrasi'])
                     ->update([
@@ -872,6 +881,7 @@ class RegistrasiController extends ApiController
                 $dataPA->norec = $dataPA->generateNewId();;
                 $dataPA->kdprofile = (int)$kdProfile;
                 $dataPA->statusenabled = true;
+                $dataPA->tglcreate = date('Y-m-d');
             }else{
                 $dataPA = $cekPemakaian;
             }
@@ -950,6 +960,16 @@ class RegistrasiController extends ApiController
             if(isset($pemA['assesmentpel'])) {   
                 $dataPA->assesmentpel = $pemA['assesmentpel'];
             }
+            if(isset($pemA['statuskunjungan'])) {   
+                $dataPA->statuskunjungan = $pemA['statuskunjungan'];
+            }
+            if(isset($pemA['poliasalkode'])) {   
+                $dataPA->poliasalkode = $pemA['poliasalkode'];
+            }
+            if(isset($pemA['politujuankode'])) {   
+                $dataPA->politujuankode = $pemA['politujuankode'];
+            }
+          
           
             /*** end nu anyar */
             $dataPA->save();
@@ -2994,7 +3014,7 @@ class RegistrasiController extends ApiController
                 'pa.namakabupaten','pa.kdkecamatan','pa.namakecamatan','pa.nosuratskdp','pa.kodedpjp','pa.namadpjp',
                 'pa.asalrujukanfk','asl.asalrujukan','pa.kodedpjpmelayani','pa.namadjpjpmelayanni',
                 'pa.klsrawatnaik', 'pa.pembiayaan', 'pa.penanggungjawab','pa.tujuankunj','pa.flagprocedure','pa.kdpenunjang',
-                'pa.assesmentpel'
+                'pa.assesmentpel','pa.tglcreate','pa.statuskunjungan','pa.poliasalkode','pa.politujuankode'
                 )
             ->whereRaw(" ( pa.norec='$request[noregistrasi]' or pd.noregistrasi='$request[noregistrasi]')")
 //               ->orWhere('pd.noregistrasi', $request['noregistrasi'])
@@ -4826,7 +4846,7 @@ class RegistrasiController extends ApiController
             ->orderBy('ru.namaruangan')
             ->get();
         $dataRuanganJalan = \DB::table('ruangan_m as ru')
-            ->select('ru.id','ru.namaruangan','ru.objectdepartemenfk')
+            ->select('ru.id','ru.namaruangan','ru.objectdepartemenfk','ru.kdinternal as kodebpjs')
             ->where('ru.statusenabled', true)
             ->wherein('ru.objectdepartemenfk', $kdDepartemenRawatJalan)
             ->where('ru.kdprofile',(int)$kdProfile)
@@ -4898,7 +4918,7 @@ class RegistrasiController extends ApiController
         $kdJenisPegawaiDokter = $this->settingDataFixed('kdJenisPegawaiDokter',$kdProfile);
         $req = $request->all();
         $data = \DB::table('pegawai_m')
-            ->select('*')
+            ->select('*','kddokterbpjs as kodebpjs')
             ->where('statusenabled', true)
             // ->where('objectjenispegawaifk',$kdJenisPegawaiDokter)
             ->where('kdprofile', (int)$kdProfile)
@@ -5575,6 +5595,9 @@ class RegistrasiController extends ApiController
             'kelas' => $dataKelas,
             'asalrujukan' => $dataAsalRujukan,
             'hubunganpeserta' => $dataHubunganPeserta,
+            'kodePPKRujukan' => $this->settingDataFixed('kodePPKRujukan',$kdProfile),
+            'namaPPKRujukan' => $this->settingDataFixed('namaPPKRujukan',$kdProfile),
+            'statusBridgingTemporary' => $this->settingDataFixed('statusBridgingTemporary',$kdProfile),
             'message' => 'ramdanegie',
         );
 
@@ -5605,7 +5628,7 @@ class RegistrasiController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $req=$request->all();
         $dataPenulis = \DB::table('pegawai_m as st')
-            ->select('st.id','st.namalengkap','st.nip_pns')
+            ->select('st.id','st.namalengkap','st.nip_pns','st.kddokterbpjs as kodebpjs')
             ->where('st.statusenabled',true)
             ->where('st.kdprofile',(int)$kdProfile)
             ->orderBy('st.namalengkap');
@@ -5624,6 +5647,7 @@ class RegistrasiController extends ApiController
                 'id' => $item->id,
                 'namalengkap' => $item->namalengkap,
                 'nip_pns' => $item->nip_pns,
+                'kodebpjs' => $item->kodebpjs,
             );
         }
         return $this->respond($dataPenulis2);
@@ -6651,7 +6675,8 @@ class RegistrasiController extends ApiController
                 'pa.norec as norec_pa', 'pa.objectasuransipasienfk', 'pd.objectpegawaifk as pgid', 'pd.objectruanganlastfk',
                 'pa.nosep as nosep', 'br.norec as norec_br', 'pd.nostruklastfk','klstg.namakelas as kelasditanggung','kls.namakelas',
                 'ps.tgllahir','ru.objectdepartemenfk', 'pd.objectkelasfk','dept.id as deptid','pa.ppkrujukan','ddt.objectdiagnosafk',
-                'jpl.jenispelayanan','pa.objectdiagnosafk as iddiagnosabpjs','ps.nobpjs','jks.jeniskelamin')
+                'jpl.jenispelayanan','pa.objectdiagnosafk as iddiagnosabpjs','ps.nobpjs','jks.jeniskelamin',
+                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider')
             ->whereNull('br.norec')
             ->where('pd.statusenabled', true)
             ->where('pd.kdprofile', (int)$kdProfile);
@@ -12139,5 +12164,111 @@ GROUP BY y.KET
         );
         return $this->respond($result);
     }
+    public function saveAntrolV2($noreservasi){
+        try{
+            $json = array(
+                "kodebooking" => $noreservasi,
+                "taskid" => 3, //pasien lama langsung task 3 //(akhir waktu layan admisi/mulai waktu tunggu poli)
+                "waktu" => strtotime(date('Y-m-d H:i:s')) * 1000,
+            );
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['url']= "antrean/updatewaktu";
+            $objetoRequest ['jenis']= "antrean";
+            $objetoRequest ['method']= "POST";
+            $objetoRequest ['data']= $json;
+         
+            $post = app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($objetoRequest);
+       
+            if(is_array($post)){
+                $code = $post['metaData']->code;
+                $message = $post['metaData']->message;
+            }else{
+                $cek = json_decode($post->content(), true);
+                $code = $cek['metaData']['code'];
+                $message = isset($cek['metaData']['message']) ? $cek['metaData']['message']: "";
+            }
+            if($code != '200'){
+                $json2 = array(
+                    "kodebooking" => $noreservasi,
+                    "taskid" => 1, 
+                    "waktu" => strtotime(date('Y-m-d H:i:s')) * 1000,
+                );
+                $objetoRequest2 = new \Illuminate\Http\Request();
+                $objetoRequest2 ['url']= "antrean/updatewaktu";
+                $objetoRequest2 ['jenis']= "antrean";
+                $objetoRequest2 ['method']= "POST";
+                $objetoRequest2 ['data']= $json2;
+             
+                $post2 = app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($objetoRequest2);
 
+                $json3 = array(
+                    "kodebooking" => $noreservasi,
+                    "taskid" => 2, 
+                    "waktu" => (strtotime(date('Y-m-d H:i:s')) * 1000 )-240000 ,
+                );
+                $objetoRequest3 = new \Illuminate\Http\Request();
+                $objetoRequest3 ['url']= "antrean/updatewaktu";
+                $objetoRequest3 ['jenis']= "antrean";
+                $objetoRequest3 ['method']= "POST";
+                $objetoRequest3 ['data']= $json3;
+             
+                $post3 = app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($objetoRequest3);
+
+                $json4 = array(
+                    "kodebooking" => $noreservasi,
+                    "taskid" => 3, 
+                    "waktu" =>  (strtotime(date('Y-m-d H:i:s')) * 1000 )-120000 ,
+                );
+                $objetoRequest4 = new \Illuminate\Http\Request();
+                $objetoRequest4 ['url']= "antrean/updatewaktu";
+                $objetoRequest4 ['jenis']= "antrean";
+                $objetoRequest4 ['method']= "POST";
+                $objetoRequest4 ['data']= $json4;
+             
+                $post5= app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($objetoRequest4);
+                if(is_array($post5)){
+                    $code = $post5['metaData']->code;
+                    $message = $post5['metaData']->message;
+                }else{
+                    $cek = json_decode($post5->content(), true);
+                    $code = $cek['metaData']['code'];
+                    $message = isset($cek['metaData']['message']) ? $cek['metaData']['message']: "";
+                }
+                if($code != '200'){
+                    $result = array("metadata"=>array("message" => "Add antrol gagal : ".$message, "code" => 201));
+                    return $result;
+                }else{
+                    $result = array("metadata"=>array("message" =>$message, "code" => 200));
+                    return $result;
+                }
+                $result = array("metadata"=>array("message" => "Add antrol gagal : ".$message, "code" => 201));
+                return $result;
+            }else{
+                $result = array("metadata"=>array("message" =>$message, "code" => 200));
+                return $result;
+            }
+        } catch (\Exception $e) {
+            $result = array("metadata"=>array("message" =>$e->getMessage().' ' .$e->getLine(), "code" => 201));
+            return $result;
+        }
+
+    }
+    public function getSEPByNoreg(Request $request)
+    {
+      
+        $dataz = \DB::table('pasiendaftar_t as pd')
+            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
+            ->join('pemakaianasuransi_t as pa', 'pa.noregistrasifk', '=', 'pd.norec')
+            ->join('asuransipasien_m as asu', 'pa.objectasuransipasienfk', '=', 'asu.id')
+            ->select('ps.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'pa.nosep',
+                 'pa.ppkrujukan','ps.nobpjs',
+                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider'
+            )
+            ->where('pd.noregistrasi',$request['noreg'])
+            ->first();
+        $data['namaPPKRujukan'] = $this->settingDataFixed('namaPPKRujukan',0);
+        $data['data']  =$dataz;
+        return $this->respond($data);
+    }
 }

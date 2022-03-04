@@ -28,8 +28,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     var inap = "1"
                 else
                     var inap = "2"
-                medifirstService.get("bridging/bpjs/get-ref-dokter-dpjp?jenisPelayanan=" + inap
-                    + "&tglPelayanan=" + new moment($scope.now).format('YYYY-MM-DD') + "&kodeSpesialis=" + 10
+                medifirstService.get("bridging/bpjs/get-ref-dokter-dpjp?jenisPelayanan=1&tglPelayanan=" + new moment($scope.now).format('YYYY-MM-DD') + "&kodeSpesialis=" + 10
                 ).then(function (e) {
                     if (e.data.metaData.code == 200) {
                         $scope.listDPJP = e.data.response.list;

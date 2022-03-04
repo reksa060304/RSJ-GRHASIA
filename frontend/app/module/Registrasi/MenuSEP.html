@@ -68,24 +68,14 @@
                                                                                 tabindex="0 "><span
                                                                                     class="k-sprite k-icon k-i-cancel ">Clear</span></em>
                                                                         </div>
-                                                                        
                                                                     </div>
                                                                 </div>
-                                                                <div class="grid_12">
-                                                                    <div id="kGrid" kendo-grid
-                                                                        k-data-source="dataSource" k-selectable="'row'"
-                                                                        k-columns="columnGrid" k-pageable="'true'"
-                                                                        k-groupable="'true'" k-sortable="'true'"
-                                                                        k-ng-model="dataSelected"
-                                                                        ng-click="klikGrid(dataSelected)">
-                                                                    </div>
-                                                                </div>
-                                                                <!-- <div class="grid_8 ">
+                                                                <div class="grid_8 ">
                                                                     <div class="grid_12 ">
                                                                         <label c-label>Results :</label>
                                                                     </div>
                                                                     <pre id="jsonCekSep" class="json-viewer "></pre>
-                                                                </div> -->
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1554,13 +1544,13 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <!-- <div class="grid_6">
+                                                                <div class="grid_6">
                                                                     <div class="grid_12">
                                                                         <label c-label>Results :</label>
                                                                     </div>
                                                                     <pre id="jsonResApprovalPengajuan"
                                                                         class="json-viewer"></pre>
-                                                                </div> -->
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1610,6 +1600,21 @@
                                                                                 style="margin:5px">{{listjenispelayanan.jenispelayanan}}</label>
                                                                         </div>
                                                                     </div>
+                                                                    <div class="grid_6">
+                                                                        <label c-label>Jenis Pengajuan :</label>
+
+                                                                        <div class="grid_6"
+                                                                            ng-repeat="listjenispengajuan in jenisPengajuan">
+                                                                            <input type="radio"
+                                                                                name="{{listjenispengajuan.jenisPengajuan}}"
+                                                                                id="{{listjenispengajuan.idjenispengajuan}}"
+                                                                                ng-model="approval.jenisPengajuan"
+                                                                                ng-value="listjenispengajuan">
+                                                                            <label
+                                                                                for="{{listjenispengajuan.idjenispengajuan}}"
+                                                                                style="margin:5px">{{listjenispengajuan.jenispengajuan}}</label>
+                                                                        </div>
+                                                                    </div>
                                                                     <div class="grid_6"
                                                                         style="padding-left:6px;padding-right:6px;margin-top: 10px">
                                                                         <label c-label>Keterangan</label>
@@ -1637,12 +1642,12 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <!-- <div class="grid_6">
+                                                                <div class="grid_6">
                                                                     <div class="grid_12">
                                                                         <label c-label>Results :</label>
                                                                     </div>
                                                                     <pre id="jsonResApproval" class="json-viewer"></pre>
-                                                                </div> -->
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>

@@ -488,7 +488,6 @@ class LoginController extends ApiController {
 
             $date = strtotime('+10 minutes',strtotime( date('Y-m-d H:i:s')));
             $expired = date('Y-m-d H:i:s',$date);
-
             $en = base64_encode($expired);
             $token['X-AUTH-TOKEN'] = $this->createToken($LoginUser[0]->namauser).'';
             $result = array(

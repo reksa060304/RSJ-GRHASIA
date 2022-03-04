@@ -91,12 +91,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 medifirstService.get(`bridging/bpjs/antrean/v2/get-jadwal-dokter?kodepoli=${kodepoli}&tanggal=${tanggal}`, false).then(function (data) {
                     // console.log(data)
-                    if (data.data.metadata.code === 201) {
+                    if (data.data.metaData.code === 201) {
                         $scope.isRouteLoading = false;
-                        toastr.error(data.data.metadata.message)
+                        toastr.error(data.data.metaData.message)
                     }
                     $scope.daftarJadwalDokter = new kendo.data.DataSource({
-                        data: data.data.response.list,
+                        data: data.data.response,
                         // data: $scope.dataset,
                         // pageSize: 10
                     })
@@ -124,8 +124,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "width": "30%"
                     },
                     {
-                        "field": "hari",
-                        "title": "Hari",
+                        "field": "jadwal",
+                        "title": "Jadwal",
                         "width": "30%"
                     },
                     {
@@ -232,24 +232,53 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.update = function() {
                 var isOk = confirm('Apakah anda yakin dengan semua ini?')
                 if (!isOk) return
+                var newdata = [];
                 if (data === 0) {
                     toastr.error('Data masih kosong')
-                }
-
-                var obj = {
-                    data: {
-                        kodepoli: $scope.item.ruangan.id,
-                        kodesubspesialis: $scope.item.ruangan.id,
-                        kodedokter: $scope.item.dokter.id,
-                        jadwal: data
+                } else {
+                    for(var i = 0; i < data.length; i++){
+                        var obj = {
+                            hari: data[i].hari,
+                            buka: data[i].buka,
+                            tutup: data[i].tutup
+                        }
+                        newdata.push(obj);
                     }
                 }
 
-                // console.log(obj)
-                medifirstService.post('bridging/bpjs/antrean/v2/update-jadwal-dokter', obj).then(function (e) {
-                    toastr.error(e.data.metadata.message)
-                    // console.log(e)
+                // var obj = {
+                //     data: {
+                //         kodepoli: $scope.item.ruangan.id,
+                //         kodesubspesialis: $scope.item.ruangan.id,
+                //         kodedokter: $scope.item.dokter.id,
+                //         jadwal: newdata
+                //     }
+                // }
+
+                var json =  {
+                    "url": "jadwaldokter/updatejadwaldokter",
+                    "jenis": "antrean",
+                    "method": "POST",
+                    "data": {
+                        "kodepoli": $scope.item.ruangan.id,
+                        "kodesubspesialis": $scope.item.ruangan.id,
+                        "kodedokter":  $scope.item.dokter.id,
+                        "jadwal": newdata
+                    }
+                }
+                medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
+
+                    if (e.data.metaData.code === 200) {
+                        toastr.success(e.data.metaData.message)
+                    } else {
+                        toastr.error(e.data.metaData.message)
+                    }
                 })
+                // console.log(obj)
+                // medifirstService.postNo('bridging/bpjs/antrean/v2/update-jadwal-dokter', obj).then(function (e) {
+                //     toastr.error(e.data.metadata.message)
+                //     // console.log(e)
+                // })
             }
 
                 

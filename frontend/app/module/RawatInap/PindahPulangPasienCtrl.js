@@ -366,7 +366,7 @@ define(['initialize'], function (initialize) {
 
 
                 medifirstService.post('rawatinap/save-pulang-pasien', objSave).then(function (e) {
-                    if ($scope.item.pasien.israwatinap == 'true' && $scope.item.pasien.objectkelompokpasienlastfk == '2'
+                    if ($scope.item.pasien.israwatinap == 'true' &&  $scope.item.pasien.kelompokpasien.indexOf('BPJS') > -1
                         && $scope.item.statusKeluar.id == 1) {
                         $scope.setTglPulangBridging()
                     }

@@ -101,6 +101,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.dokterdpjp = chacePeriode[16]
                     $scope.item.iddpjp = chacePeriode[17]
                     $scope.item.kpid = chacePeriode[21]
+                    $scope.item.noreservasi = chacePeriode[30]
                     medifirstService.get("sysadmin/general/get-sudah-verif?noregistrasi=" +
                         $scope.item.noregistrasi, true).then(function (dat) {
                             $scope.item.statusVerif = dat.data.status
@@ -1114,6 +1115,12 @@ define(['initialize'], function (initialize) {
                     $scope.disabledRuangan = false
                     if ($scope.item.noRuang != undefined)
                         cacheHelper.set('noRuangInputResep', $scope.item.noRuang)
+
+                    let params = $scope.item.noregistrasi    
+                    if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                        params = $scope.item.noreservasi
+                    } 
+                    saveAntrol(params)  
                 })
             }
 
@@ -1887,6 +1894,21 @@ define(['initialize'], function (initialize) {
             racikan = ''
             // statusTambah = false
         }
+        function saveAntrol(param){
+            var data = {
+               "url": "antrean/updatewaktu",
+               "jenis": "antrean",
+               "method": "POST",
+               "data":                                                 
+               {
+                  "kodebooking": param,
+                  "taskid": 5,//Waktu mulai farmasi
+                  "waktu": new Date().getTime()  
+               }
+           }
+           medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
+        }
+        
 
            //** BATAS SUCI */
         }
