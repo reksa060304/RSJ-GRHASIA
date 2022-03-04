@@ -10,12 +10,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $state.go(state, $state.params);
                 // console.log($scope.currentState);
             }
+            $scope.jenisPencarian = [{
+                "id": 1, "nama": "Pasien Baru"
+            }, {
+                "id": 0, "nama": "Pasien Lama"
+            }];
             $scope.isRouteLoading = false
-            $scope.item = {}
+            $scope.item = {
+                isbaru: 0
+            }
             $scope.isShowPotensi = true;
             $scope.listJenisPasien = [
                 { "id": 1, "jenispasien": "JKN" },
-                { "id": 2, "jenispasien": "NON JKN"}];
+                { "id": 2, "jenispasien": "NON JKN" }];
 
             // $scope.listJamPraktek = [{
             //     "id": 1, "nama": "08:00 - 12:00", "kode": "08:00 - 12:00"
@@ -41,49 +48,67 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //         }
                 // });
                 var kodepoli = e.kdinternal
-                var tanggal = new moment($scope.now).format('YYYY-MM-DD')
-                
-                medifirstService.get(`bridging/bpjs/antrean/v2/get-jadwal-dokter?kodepoli=${kodepoli}&tanggal=${tanggal}`, false).then(function (data) {
-                    if (data.data.metadata.code === 201) {
+                var tanggal = moment($scope.item.tgldiperiksa).format('YYYY-MM-DD')
+                let json = {
+                    "url": "jadwaldokter/kodepoli/" + kodepoli + "/tanggal/" + tanggal,
+                    "jenis": "antrean",
+                    "method": "GET",
+                    "data": null
+                }
+                medifirstService.postNonMessage('bridging/bpjs/tools', json).then(function (data) {
+                    // medifirstService.get(`bridging/bpjs/antrean/v2/get-jadwal-dokter?kodepoli=${kodepoli}&tanggal=${tanggal}`, false).then(function (data) {
+                    if (data.data.metaData.code === 201) {
                         $scope.isRouteLoading = false;
-                        toastr.error(data.data.metadata.message)
+                        toastr.error(data.data.metaData.message)
                         return
                     }
-                    
-                    var data = data.data.response.list
+
+                    var data = data.data.response
                     var tampungdata = [];
+                    var jadwalpratek = [];
                     for (let i = 0; i < data.length; i++) {
                         const element = data[i];
                         const found = tampungdata.some(el => el.nama === element.namadokter);
-                        if (!found) tampungdata.push({kode:element.kodedokter, nama:element.namadokter});
+                        if (!found) {
+                            tampungdata.push({ kode: element.kodedokter, nama: element.namadokter })
+                            jadwalpratek.push({ id: i, nama: element.jadwal, kode: element.jadwal })
+                        }
                     }
                     $scope.listDPJP = tampungdata
+                    $scope.listJamPraktek = jadwalpratek;
                 })
 
             }
 
             $scope.getIsiComboJP = function (e) {
-                if (!e) return;
-                var kodepoli = $scope.item.poliKontrol.kdinternal
-                var tanggal = new moment($scope.now).format('YYYY-MM-DD')
-                
-                medifirstService.get(`bridging/bpjs/antrean/v2/get-jadwal-dokter?kodepoli=${kodepoli}&tanggal=${tanggal}`, false).then(function (data) {
-                    if (data.data.metadata.code === 201) {
-                        $scope.isRouteLoading = false;
-                        toastr.error(data.data.metadata.message)
-                        return
-                    }
+                // if (!e) return;
+                // var kodepoli = $scope.item.poliKontrol.kdinternal
+                // var tanggal = new moment($scope.now).format('YYYY-MM-DD')
 
-                    var data = data.data.response.list
-                    var jadwalpratek = [];
-                    for(var i=0; i < data.length; i++) {
-                        const element =  data.data.response.list[i];
-                        if(element.kodedokter == e.kode){
-                            jadwalpratek.push({id:i, nama:element.jadwal, kode: element.jadwal})
-                        }
-                    }
-                    $scope.listJamPraktek = data.data.response.list;
-                })
+                // let json  = {
+                //     "url": "jadwaldokter/kodepoli/"+kodepoli+"/tanggal/"+tanggal,
+                //     "jenis": "antrean",
+                //     "method": "GET",
+                //     "data": null
+                // }
+                // medifirstService.postNonMessage('bridging/bpjs/tools',json).then(function (data) {
+                // // medifirstService.get(`bridging/bpjs/antrean/v2/get-jadwal-dokter?kodepoli=${kodepoli}&tanggal=${tanggal}`, false).then(function (data) {
+                //     if (data.data.metaData.code === 201) {
+                //         $scope.isRouteLoading = false;
+                //         toastr.error(data.data.metaData.message)
+                //         return
+                //     }
+
+                //     var data = data.data.response
+                //     var jadwalpratek = [];
+                //     for(var i=0; i < data.length; i++) {
+                //         const element =  data.data.response[i];
+                //         if(element.kodedokter == e.kode){
+                //             jadwalpratek.push({id:i, nama:element.jadwal, kode: element.jadwal})
+                //         }
+                //     }
+                //     $scope.listJamPraktek = data.data.response;
+                // })
 
             }
 
@@ -104,7 +129,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         umur = umur.year + ' thn ' + umur.month + ' bln ' + umur.day + ' hari';
                         $scope.item.umur = umur
 
-                    }else{
+                    } else {
                         $scope.item.noKartu = null
                         $scope.item.nik = null
                         $scope.item.nama = null
@@ -116,11 +141,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
 
-            $scope.save = function() {
-                if ($scope.item.nama == undefined) {
-                    toastr.error('Pasien belum dipilih !')
+            $scope.save = function () {
+                if ($scope.item.noKartu == undefined) {
+                    toastr.error('No Kartu Belum di isi !')
                     return
                 }
+                if ($scope.item.nama == undefined) {
+                    toastr.error('Nama Pasien  Belum di isi !')
+                    return
+                }
+                if ($scope.item.nik == undefined) {
+                    toastr.error('NIK  Belum di isi !')
+                    return
+                }
+                if ($scope.item.nohp == undefined) {
+                    toastr.error('No HP  Belum di isi !')
+                    return
+                }
+
                 if ($scope.item.tgldiperiksa == undefined) {
                     toastr.error('Tanggal diperiksa belum diisi !')
                     return
@@ -161,8 +199,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     nohp: $scope.item.nohp,
                     kodepoli: $scope.item.poliKontrol.kdinternal,
                     namapoli: $scope.item.poliKontrol.namaruangan,
-                    pasienbaru: 0,
-                    norm: $scope.item.norm,
+                    pasienbaru: $scope.item.isbaru,
+                    norm: $scope.item.norm ? $scope.item.norm : "-",
+                    nama: $scope.item.nama,
                     tanggalperiksa: moment($scope.item.tgldiperiksa).format('YYYY-MM-DD'),
                     kodedokter: $scope.item.kodeDokter.kode,
                     namadokter: $scope.item.kodeDokter.nama,
@@ -172,21 +211,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     keterangan: $scope.item.keterangan
                 }
                 var objData = {
-					"data": objSave
-				}
+                    "data": objSave
+                }
                 // console.log(objSave)
-                medifirstService.post('bridging/bpjs/antrean/v2/tambah-antrean', objData).then(function (e) {
+                medifirstService.postNonMessage('bridging/bpjs/antrean/v2/tambah-antrean', objData).then(function (data) {
                     // alert
                     if (data.data.metadata.code === 201) {
                         toastr.error(data.data.metadata.message)
                     } else {
                         toastr.info(data.data.metadata.message)
                     }
-                    
+
                 })
             }
 
-            $scope.batalkan = function() {
+            $scope.batalkan = function () {
                 if ($scope.item.kodebooking === undefined) {
                     toastr.error('kodebooking kosong')
                     return
@@ -210,7 +249,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
 
-                
+
 
         }
     ]);

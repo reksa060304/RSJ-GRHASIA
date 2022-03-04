@@ -72,7 +72,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.peserta = e.data.response.peserta
 
                     } else {
-                        toastr.error(e.data.metaData.code)
+                        toastr.error(e.data.metaData.message)
                     }
                 })
             }
@@ -104,7 +104,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.noKartu = e.data.response.peserta.noKartu
 
                     } else {
-                        toastr.error(e.data.metaData.code)
+                        toastr.error(e.data.metaData.message)
                     }
                 })
             }
@@ -195,8 +195,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "data": {
                                 "request": {
                                     "noKartu": $scope.item.noKartu,
-                                    "kodeDokter": $scope.item.kodeDokter.kode,
-                                    "poliKontrol": $scope.item.poliKontrol.kdinternal,
+                                    "kodeDokter": $scope.item.kodeDokter ? $scope.item.kodeDokter.kode: "",
+                                    "poliKontrol": $scope.item.poliKontrol? $scope.item.poliKontrol.kdinternal:"",
                                     "tglRencanaKontrol": moment($scope.item.tglRencanaKontrol).format('YYYY-MM-DD'),
                                     "user": "Ramdanegie"
                                 }
@@ -218,8 +218,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "data": {
                                 "request": {
                                     "noSPRI": $scope.item.noSuratKontrol,
-                                    "kodeDokter": $scope.item.kodeDokter.kode,
-                                    "poliKontrol": $scope.item.poliKontrol.kdinternal,
+                                    "kodeDokter": $scope.item.kodeDokter ? $scope.item.kodeDokter.kode: "",
+                                    "poliKontrol": $scope.item.poliKontrol? $scope.item.poliKontrol.kdinternal:"",
                                     "tglRencanaKontrol": moment($scope.item.tglRencanaKontrol).format('YYYY-MM-DD'),
                                     "user": "cobdda"
                                 }
@@ -244,8 +244,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "data": {
                                 "request": {
                                     "noSEP": $scope.item.noSep,
-                                    "kodeDokter": $scope.item.kodeDokter.kode,
-                                    "poliKontrol": $scope.item.poliKontrol.kdinternal,
+                                    "kodeDokter": $scope.item.kodeDokter ? $scope.item.kodeDokter.kode: "",
+                                    "poliKontrol": $scope.item.poliKontrol? $scope.item.poliKontrol.kdinternal:"",
                                     "tglRencanaKontrol": moment($scope.item.tglRencanaKontrol).format('YYYY-MM-DD'),
                                     "user": "Ramdanegie"
                                 }
@@ -268,8 +268,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 "request": {
                                     "noSuratKontrol": $scope.item.noSuratKontrol,
                                     "noSEP": $scope.item.noSep,
-                                    "kodeDokter": $scope.item.kodeDokter.kode,
-                                    "poliKontrol": $scope.item.poliKontrol.kdinternal,
+                                    "kodeDokter": $scope.item.kodeDokter ? $scope.item.kodeDokter.kode: "",
+                                    "poliKontrol": $scope.item.poliKontrol? $scope.item.poliKontrol.kdinternal:"",
                                     "tglRencanaKontrol": moment($scope.item.tglRencanaKontrol).format('YYYY-MM-DD'),
                                     "user": "Ramdanegie"
                                 }

@@ -44,7 +44,15 @@
                                                     <div class="panel panel-default container_12">
                                                         <div class="panel-body">
                                                             <div class="grid_12">
-                                                                <div class="grid_4">
+                                                              
+                                                                <div class="grid_12">
+                                                                    <label c-label>Tipe :</label>
+                                                                    <div class="grid_3" ng-repeat="list in jenisPencarian">
+                                                                        <input type="radio" name="jenisPencarian" id="{{list.nama}}" class="k-radio" ng-model="item.isbaru" value="{{list.id}}" ng-click="chageSearch()">
+                                                                        <label class="k-radio-label" for="{{list.nama}}">{{list.nama}}</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="grid_4" ng-show="item.isbaru == 0"> 
                                                                     <label c-label style="padding-left:6px ">Masukkan
                                                                         Nomor Rekam Medis :</label>
 
@@ -52,7 +60,7 @@
                                                                                 'char' " class="k-textbox "
                                                                         ng-model="item.norm " />
                                                                 </div>
-                                                                <div class="grid_1" style="margin-top: 15px">
+                                                                <div class="grid_1" style="margin-top: 15px" ng-show="item.isbaru == 0">
                                                                     <button class="k-button
                                                                                         k-primary k-button-icon "
                                                                         ng-click="cariPasien() "><span
@@ -70,38 +78,38 @@
                                                                                 <label c-label item="item" required>No
                                                                                     Kartu</label>
                                                                                 <input c-text-box type="input" style="width:98%"
-                                                                                    filter="'string'" class="k-textbox"
-                                                                                    ng-model="item.noKartu" disabled />
+                                                                                     class="k-textbox"
+                                                                                    ng-model="item.noKartu" ng-disabled="item.isbaru == 0" />
                                                                             </div>
                                                                             <div class="grid_12" style="margin-top: 5px;margin-left:5px">
                                                                                 <label c-label item="item" required>NIK
                                                                                     </label>
                                                                                 <input c-text-box type="input" style="width:98%"
-                                                                                    filter="'string'" class="k-textbox"
-                                                                                    ng-model="item.nik" disabled />
+                                                                                     class="k-textbox"
+                                                                                    ng-model="item.nik" ng-disabled="item.isbaru == 0" />
                                                                             </div>
                                                                             <div class="grid_12" style="margin-top: 5px;margin-left:5px">
                                                                                 <label c-label item="item"
                                                                                     required>Nama</label>
                                                                                 <input c-text-box type="input" style="width:98%"
-                                                                                    filter="'string'" class="k-textbox"
-                                                                                    ng-model="item.nama" disabled />
+                                                                                     class="k-textbox"
+                                                                                    ng-model="item.nama" ng-disabled="item.isbaru == 0" />
                                                                             </div>
                                                                             <div class="grid_12" style="margin-top: 5px;margin-left:5px">
                                                                                 <label c-label item="item"
                                                                                     required>No Hp</label>
                                                                                 <input c-text-box type="input" style="width:98%"
-                                                                                    filter="'string'" class="k-textbox"
+                                                                                     class="k-textbox"
                                                                                     ng-model="item.nohp"
-                                                                                    disabled />
+                                                                                    ng-disabled="item.isbaru == 0" />
                                                                             </div>
                                                                             <div class="grid_6">
                                                                                 <label c-label class="k-label" c-label-text="Jenis Kelamin"></label>
-                                                                                <input c-text-box type="input" class="k-textbox" ng-model="item.jeniskelamin" disabled/>
+                                                                                <input c-text-box type="input" class="k-textbox" ng-model="item.jeniskelamin" ng-disabled="item.isbaru == 0"/>
                                                                             </div>
                                                                             <div class="grid_6">
                                                                                 <label c-label class="k-label" c-label-text="Umur"></label>
-                                                                                <input c-text-box type="input" class="k-textbox" ng-model="item.umur" disabled/>
+                                                                                <input c-text-box type="input" class="k-textbox" ng-model="item.umur" ng-disabled="item.isbaru == 0"/>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -110,7 +118,7 @@
                                                                             <div class="grid_12">
                                                                                 <div class="grid_4">
                                                                                     <label c-label item="item">Tgl
-                                                                                        Diperikasa</label>
+                                                                                        Diperiksa</label>
                                                                                     <input style="width: 100%"
                                                                                         k-ng-model='item.tgldiperiksa'
                                                                                         kendo-date-picker
@@ -187,7 +195,7 @@
                                                                                     <label c-label item="item">Keterangan</label>
                                                                                     <textarea c-text-area 
                                                                                         type="input" 
-                                                                                        filter="'string'" 
+                                                                                         
                                                                                         class="k-textbox" 
                                                                                         style="width: 99%;"
                                                                                         rows="7"

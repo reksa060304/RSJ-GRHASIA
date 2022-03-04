@@ -125,7 +125,7 @@ class ResepElektronikController extends ApiController
                         kp.kelompokpasien,apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,so.tglambilorder,
                         sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,sr.norec AS norecresep,sr.noresep,so.nourutruangan AS noruangan,
                         so.isreseppulang as checkreseppulang,so.isambilobat,so.no_hp as nohp,so.alamat_kirim AS alamatlengkap,so.isordergrab,
-                        so.iskurir
+                        so.iskurir , pd.statusschedule as noreservasi
                  FROM strukorder_t AS so
                  INNER JOIN pasien_m AS ps ON ps.id = so.nocmfk
                  INNER JOIN alamat_m AS alm ON ps.id = alm.nocmfk
@@ -159,7 +159,7 @@ class ResepElektronikController extends ApiController
                          apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,sr.tglambilresep AS tglambilorder,
                          sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,sr.norec AS norecresep,sr.noresep,NULL AS noruangan,
                          sr.isreseppulang as checkreseppulang,null as isambilobat,ps.nohp,alm.alamatlengkap, null as isordergrab,
-                         null as iskurir
+                         null as iskurir, '' as noreservasi
                 FROM strukresep_t AS sr
                 INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = sr.pasienfk
                 INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
@@ -228,7 +228,8 @@ class ResepElektronikController extends ApiController
                 'nohp' => $item->nohp,
                 'alamatlengkap' => $item->alamatlengkap,
                 'isordergrab' => $item->isordergrab,
-                'iskurir' => $item->iskurir
+                'iskurir' => $item->iskurir,
+                'noreservasi' => $item->noreservasi
             );
         }
 

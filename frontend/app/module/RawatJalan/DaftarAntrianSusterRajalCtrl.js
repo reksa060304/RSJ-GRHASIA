@@ -1751,6 +1751,8 @@ define(['initialize'], function (initialize) {
                     toastr.error('Pilih Data dulu')
                     return
                 }
+                let param = $scope.dataPasienSelected.isonline =='Online'? $scope.dataPasienSelected.noreservasi : $scope.dataPasienSelected.noregistrasi
+                saveAntrol(param)
                 // var cookie = document.cookie.split(';');
                 // cookie = cookie[0].split('=');
                 // var data ={
@@ -2191,6 +2193,20 @@ define(['initialize'], function (initialize) {
                     noRec: $scope.dataPasienSelected.norec_apd
                 })
 
+            }
+            function saveAntrol(param){
+                var data = {
+                   "url": "antrean/updatewaktu",
+                   "jenis": "antrean",
+                   "method": "POST",
+                   "data":                                                 
+                   {
+                      "kodebooking": param,
+                      "taskid": 4,//Waktu layan poli
+                      "waktu": new Date().getTime()  
+                   }
+               }
+               medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
             }
 
             //** BATAS */

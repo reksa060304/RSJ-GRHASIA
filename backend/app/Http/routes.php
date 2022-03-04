@@ -2688,13 +2688,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('get-rekap-antrean','ReservasiOnline\ReservasiOnlineController@GetRekapMobileJKN');
         Route::post('get-kode-booking-operasi','ReservasiOnline\ReservasiOnlineController@getKodeBokingOperasi');
         Route::post('get-jadwal-operasi','ReservasiOnline\ReservasiOnlineController@getJadwalOperasi');
-        //** BPJS V.2.0 */
+        Route::post('save-pasien-baru','ReservasiOnline\ReservasiOnlineController@savePasienBaru');
+  //        Route::post('get-token', 'Auth\LoginController@getTokens');
         Route::post('get-status-antrean','ReservasiOnline\ReservasiOnlineController@GetStatusAntrianMobileJKN');
         Route::post('get-antrean','ReservasiOnline\ReservasiOnlineController@GetAntrean');
         Route::post('get-sisa-antrean','ReservasiOnline\ReservasiOnlineController@GetSisaAntrean');
         Route::post('save-batal-antrean','ReservasiOnline\ReservasiOnlineController@saveBatalAntrean');
         Route::post('save-checkin','ReservasiOnline\ReservasiOnlineController@saveCheckInAntrean');
-        Route::post('save-pasien-baru','ReservasiOnline\ReservasiOnlineController@savePasienBaru');
         //** END BPJS V.2.0 */
 //        Route::post('get-token', 'Auth\LoginController@getTokens');
     });

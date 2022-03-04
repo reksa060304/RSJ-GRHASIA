@@ -620,6 +620,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 $scope.refresh();
                             })
                     });
+                    let params = $scope.item.noregistrasi    
+                    if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                        params = $scope.item.noreservasi
+                    } 
+                    saveAntrol(params,7)
                 } else {
                     if ($scope.item.statusorder == 'Menunggu') {
                         toastr.error("Status Data Belum Diverifikasi !!")
@@ -654,6 +659,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                     cacheHelper.set('InputResepApotikCtrl', arrStr);
                     $state.go('InputResepApotik')
+
+                    let params = $scope.item.noregistrasi    
+                    if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                        params = $scope.item.noreservasi
+                    } 
+                    saveAntrol(params,6)
                 } else {
                     alert('Sudah di verifikasi!!')
                 }
@@ -1404,7 +1415,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 $scope.popupGrab.close()
             }
-
+            function saveAntrol(param,waktu){
+                var data = {
+                   "url": "antrean/updatewaktu",
+                   "jenis": "antrean",
+                   "method": "POST",
+                   "data":                                                 
+                   {
+                      "kodebooking": param,
+                      "taskid": waktu,//Waktu akhir farmasi/mulai buat obat
+                      "waktu": new Date().getTime()  
+                   }
+               }
+               medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
+            }
             //** BATAS SUCI */
         }
     ]);
