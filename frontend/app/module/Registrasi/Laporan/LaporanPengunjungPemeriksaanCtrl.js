@@ -454,6 +454,11 @@ define(['initialize'], function (initialize) {
                         width: "125px",
                     },
                     {
+                        field: "lamahari",
+                        title: "LAMA HARI",
+                        width: "125px",
+                    },
+                    {
                         "field": "statuskeluar",
                         title : "CARA KELUAR",
                         width: "125px",

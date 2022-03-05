@@ -7092,6 +7092,7 @@ class LaporanPengunjungController extends ApiController
         ke.namakelas,
         apd.tglmasuk,
         apd.tglkeluar,
+        apd.tglkeluar::date - apd.tglmasuk::date as lamahari,
         sk.statuskeluar,
         kp.kondisipasien,
         kep.kelompokpasien
