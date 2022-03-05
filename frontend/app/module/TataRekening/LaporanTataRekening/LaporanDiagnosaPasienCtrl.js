@@ -166,9 +166,12 @@ define(['initialize'], function (initialize) {
                 }
                 cacheHelper.set('LaporanDiagnosaPasienCtrl', chacePeriode);
                 
-                medifirstService.get("tatarekening/get-data-diagnosa-pasienjiwa?" +
-                "tglAwal=" + tglAwal + 
-                "&tglAkhir=" + tglAkhir + 
+                medifirstService.get("tatarekening/get-data-diagnosa-pasienjiwa?" 
+                +tglAwal
+                    +
+                    tglAkhir +
+                    tglAwalmasuk +
+                    tglAkhirmasuk +
                 tempDepartemenId + tempRuanganId +
                 tempJenisDiagnosa + tempDiagnosa + 
                 tempstatusPasien).then(function (data) {
@@ -200,9 +203,12 @@ define(['initialize'], function (initialize) {
                     
                 });
 
-                medifirstService.get("tatarekening/get-data-diagnosa-perpasien?" +
-                    "tglAwal=" + tglAwal +
-                    "&tglAkhir=" + tglAkhir +
+                medifirstService.get("tatarekening/get-data-diagnosa-perpasien?" 
+                    +tglAwal
+                        +
+                        tglAkhir +
+                        tglAwalmasuk +
+                        tglAkhirmasuk +
                     tempDepartemenId +
                     tempRuanganId +
                     tempJenisDiagnosa +
@@ -325,66 +331,7 @@ define(['initialize'], function (initialize) {
                         height: 70
                     });
 
-                    var jenisdiagnosa = [{
-                        value: "Jenis Diagnosa",
-                        fontSize: 11,
-                        background: "#ffffff",
-                    }]
-
-                    sheet.rows.splice(2999, 0, {
-                        cells: jenisdiagnosa,
-                        type: "header",
-                        height: 30
-                    });
-
-                    var a = [{
-                        value: " Primary / Utama : " + $scope.a,
-                    }]
-                    sheet.rows.splice(3000,0, {
-                        cells: a,
-                        type: "header",
-                        height: 20 
-                    })
-                    var b = [{
-                        value: " Secondary : " + $scope.b,
-                    }]
-                    sheet.rows.splice(3001, 0, {
-                        cells: b,
-                        type: "header",
-                        height: 20
-                    })
-                    var c = [{
-                        value: " Diagnosa Pra Bedah : " + $scope.c,
-                    }]
-                    sheet.rows.splice(3002, 0, {
-                        cells: c,
-                        type: "header",
-                        height: 20
-                    })
-                    var d = [{
-                        value: " Diagnosa Pasca Bedah : " + $scope.d,
-                    }]
-                    sheet.rows.splice(3003, 0, {
-                        cells: d,
-                        type: "header",
-                        height: 20
-                    })
-                    var e = [{
-                        value: " Diagnosa Awal : " + $scope.e,
-                    }]
-                    sheet.rows.splice(3004, 0, {
-                        cells: e,
-                        type: "header",
-                        height: 20
-                    })
-                    var f = [{
-                        value: " - : " + $scope.f,
-                    }]
-                    sheet.rows.splice(3005, 0, {
-                        cells: f,
-                        type: "header",
-                        height: 20
-                    })
+                    
                     
                 },
                 filterable: true,
@@ -392,6 +339,7 @@ define(['initialize'], function (initialize) {
                 reorderable: true,
                 resizable: true,
                 pageable: true,
+                groupable: true,
                 // dataBound: function (e) {
                 //     $('.k-pager-wrap').append('<span style="padding-left: 50px; color:red; font-weight:bold;"> Hello world </span>');
                 // },

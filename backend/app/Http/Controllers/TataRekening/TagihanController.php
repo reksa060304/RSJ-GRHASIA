@@ -6328,7 +6328,7 @@ class TagihanController  extends ApiController
                 AND '". $tglAkhirmasuk."' ";
         }
         $paramtglkeluar = ' ';
-        if(isset($tglAkhir) && isset($tglAkhir) && ($tglAwal != "" && $tglAkhir != "")){
+        if(isset($tglAwal) && isset($tglAkhir) && ($tglAwal != "" && $tglAkhir != "")){
             $paramtglkeluar = " AND apd.tglkeluar BETWEEN '$tglAwal'
                 AND '$tglAkhir' ";
         }
@@ -6393,7 +6393,7 @@ class TagihanController  extends ApiController
         //         order by jd.jenisdiagnosa asc"));
 
                 $data = DB::select(DB::raw("
-                SELECT
+                SELECT distinct
                 apd.tglmasuk,
                 apd.tglkeluar,
                 apd.tglkeluar::date - apd.tglmasuk::date as lamahari,
@@ -6470,8 +6470,7 @@ class TagihanController  extends ApiController
                 $paramJenisDiagnosa
                 $paramDiagnosa
                 $paramstatusPasien
-                ORDER BY
-                jd.jenisdiagnosa ASC
+                
                 "));
 //         $count = DB::select(DB::Raw("SELECT
 // 		count(jd.id)filter(where jd.id = 1) a,
@@ -6505,6 +6504,8 @@ class TagihanController  extends ApiController
 //                 $paramJenisDiagnosa
 //                 $paramDiagnosa
 //                 $paramstatusPasien"));
+$totaldiagnosaawal = 0;
+
         $result = array(
             'data' => $data,
             // 'count' => $count,
@@ -6520,11 +6521,24 @@ class TagihanController  extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
+        $tglAwalmasuk = $request['tglAwalmasuk'];
+        $tglAkhirmasuk = $request['tglAkhirmasuk'];
         $deptId = $request['idDept'];
         $ruanganId = $request['idRuangan'];
         $idJenisDiagnosa = $request['idJenisDiagnosa'];
         $diagnosaId = $request['idDiagnosa'];
         $statusPasien = $request['statusPasien'];
+
+        $paramtglmasuk = ' ';
+        if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
+            $paramtglmasuk = "apd.tglmasuk BETWEEN '". $tglAwalmasuk. "'
+                AND '". $tglAkhirmasuk."' ";
+        }
+        $paramtglkeluar = ' ';
+        if(isset($tglAkhir) && isset($tglAwal) && ($tglAwal != "" && $tglAkhir != "")){
+            $paramtglkeluar = "apd.tglkeluar BETWEEN '$tglAwal'
+                AND '$tglAkhir' ";
+        }
 
         $paramDep = ' ';
         if (isset($deptId) && $deptId != "" && $deptId == 1) {
@@ -6554,7 +6568,7 @@ class TagihanController  extends ApiController
         }
 
         $data = DB::select(DB::raw(" WITH diagnosapasien AS (
-	SELECT
+	SELECT distinct
     pd.norec,
 		pd.nocmfk,
 		ps.namapasien,
@@ -6578,14 +6592,14 @@ class TagihanController  extends ApiController
 	LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
 	INNER JOIN pendidikan_m pen ON pen.ID = ps.objectpendidikanfk
 	WHERE
-		ddp.tglregistrasi BETWEEN '$tglAwal' 
-		AND '$tglAkhir'
-        and pd.kdprofile = $idProfile  
+		$paramtglmasuk
+                $paramtglkeluar
+                and pd.kdprofile = $idProfile  
                 $paramDep
                 $paramRuangan
                 $paramJenisDiagnosa
                 $paramDiagnosa
-                $paramstatusPasien 
+                $paramstatusPasien
 	GROUP BY
     pd.norec,
 		pd.nocmfk,
@@ -6597,7 +6611,7 @@ class TagihanController  extends ApiController
 		ps.namapasien ASC
 
 )
-SELECT dp.kddiagnosa, dp.namadiagnosa, count(dp.nocmfk) FROM diagnosapasien dp GROUP BY dp.kddiagnosa, dp.namadiagnosa ORDER BY count desc"));
+SELECT distinct dp.kddiagnosa, dp.namadiagnosa, count(dp.nocmfk) FROM diagnosapasien dp GROUP BY dp.kddiagnosa, dp.namadiagnosa ORDER BY count desc"));
 
         
         $result = array(
@@ -6614,12 +6628,24 @@ SELECT dp.kddiagnosa, dp.namadiagnosa, count(dp.nocmfk) FROM diagnosapasien dp G
         $filter = $request->all();
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
+        $tglAwalmasuk = $request['tglAwalmasuk'];
+        $tglAkhirmasuk = $request['tglAkhirmasuk'];
         $deptId = $request['idDept'];
         $ruanganId = $request['idRuangan'];
         $idJenisDiagnosa = $request['idJenisDiagnosa'];
         $diagnosaId = $request['idDiagnosa'];
         $statusPasien = $request['statusPasien'];
 
+        $paramtglmasuk = ' ';
+        if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
+            $paramtglmasuk = "apd.tglmasuk BETWEEN '". $tglAwalmasuk. "'
+                AND '". $tglAkhirmasuk."' ";
+        }
+        $paramtglkeluar = ' ';
+        if(isset($tglAkhir) && isset($tglAwal) && ($tglAwal != "" && $tglAkhir != "")){
+            $paramtglkeluar = "apd.tglkeluar BETWEEN '$tglAwal'
+                AND '$tglAkhir' ";
+        }
         $paramDep = ' ';
         if (isset($deptId) && $deptId != "" && $deptId == 1) {
             $paramDep = ' and ru.objectdepartemenfk = 16  ';
@@ -6673,15 +6699,15 @@ SELECT dp.kddiagnosa, dp.namadiagnosa, count(dp.nocmfk) FROM diagnosapasien dp G
 	LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
 	INNER JOIN pendidikan_m pen ON pen.ID = ps.objectpendidikanfk
 	WHERE
-		ddp.tglregistrasi BETWEEN '$tglAwal' 
-		AND '$tglAkhir' 
-		AND di.kddiagnosa ILIKE '%F%'
-		and pd.kdprofile = $idProfile  
+    $paramtglmasuk
+                $paramtglkeluar
+                and pd.kdprofile = $idProfile  
                 $paramDep
                 $paramRuangan
                 $paramJenisDiagnosa
                 $paramDiagnosa
-                $paramstatusPasien 
+                $paramstatusPasien
+		AND di.kddiagnosa ILIKE '%F%'
 	GROUP BY
 	pd.norec,
 		pd.nocmfk,
