@@ -1592,6 +1592,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     if(cacheHelper.get('cacheStatusPasien') &&  cacheHelper.get('cacheStatusPasien') =='BARU'){
                         status = '1'
                     }
+                    var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm
                     var data = {
                         "url": "antrean/add",
                         "jenis": "antrean",
@@ -1611,7 +1612,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                            "namadokter": kodeDokterBPJS.namadokter,
                            "jampraktek":  kodeDokterBPJS.jadwal,
                            "jeniskunjungan": 1,
-                           "nomorreferensi": "",
+                           "nomorreferensi": isBPJS?noref.substring(0, 19):"",
                            "nomorantrean": apd.noantrian,
                            "angkaantrean": apd.noantrian,
                            "estimasidilayani": new Date().getTime(),
