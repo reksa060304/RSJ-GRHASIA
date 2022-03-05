@@ -74,7 +74,7 @@ class RegistrasiController extends ApiController
             ->leftjoin ('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
 //            ->leftjoin ('pasiendaftar_t as pd','pd.nocmfk','=','ps.id')
             ->select('ps.nocm','ps.id as nocmfk','ps.namapasien','ps.objectjeniskelaminfk','jk.jeniskelamin','ps.tgllahir',
-                'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.noidentitas','ps.notelepon','ps.foto'
+                'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.noidentitas','ps.notelepon','ps.foto','ps.nobpjs'
 //                DB::raw('encode(foto, \'base64\') AS foto'))
             )
             ->where('ps.statusenabled', true)
