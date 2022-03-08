@@ -1434,7 +1434,7 @@ class BridgingBPJSV2Controller extends ApiController
         $dataJsonSend = null;
         $methods = 'GET';
         $url = $this->getLinkAplicare() . "aplicaresws/rest/ref/kelas";
-        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, 'Aplicaresws');
         return $this->respond($response);
     }
 
@@ -1445,7 +1445,7 @@ class BridgingBPJSV2Controller extends ApiController
         $dataJsonSend = json_encode($request['json']);
         $methods = 'POST';
         $url = $this->getLinkAplicare() . "aplicaresws/rest/bed/update/" . $kodeppk;
-        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, 'Aplicaresws');
         return $this->respond($response);
     }
 
@@ -1456,7 +1456,7 @@ class BridgingBPJSV2Controller extends ApiController
         $dataJsonSend = json_encode($request['json']);
         $methods = 'POST';
         $url = $this->getLinkAplicare() . "aplicaresws/rest/bed/create/" . $kodeppk;
-        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, 'Aplicaresws');
         return $this->respond($response);
     }
 
@@ -1468,7 +1468,7 @@ class BridgingBPJSV2Controller extends ApiController
         $dataJsonSend = null;
         $methods = 'GET';
         $url = $this->getLinkAplicare() . "aplicaresws/rest/bed/read/" . $kodeppk . "/" . $start . "/" . $limit;
-        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, 'Aplicaresws');
         return $this->respond($response);
     }
 
@@ -1479,7 +1479,7 @@ class BridgingBPJSV2Controller extends ApiController
         $dataJsonSend = json_encode($request['json']);
         $methods = 'POST';
         $url = $this->getLinkAplicare() . "aplicaresws/rest/bed/delete/" . $kodeppk;
-        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, 'Aplicaresws');
         return $this->respond($response);
     }
 
@@ -1845,7 +1845,7 @@ class BridgingBPJSV2Controller extends ApiController
             from (SELECT
                     CASE WHEN kmr.kodeexternal IS NOT NULL THEN kmr.kodeexternal ELSE kl.namaexternal END AS kodekelas,
                     ru.ID AS koderuang,
-                    CASE WHEN 	kmr.kodeexternal IS NOT NULL THEN  kmr.kodeexternal ELSE kl.namakelas END AS namakelas,
+                    CASE WHEN   kmr.kodeexternal IS NOT NULL THEN  kmr.kodeexternal ELSE kl.namakelas END AS namakelas,
                     ru.namaruangan AS namaruang,
                     0 AS tersediapria,
                     0 AS tersediawanita,
@@ -1990,7 +1990,8 @@ class BridgingBPJSV2Controller extends ApiController
                 ")
             ->where('pg.kdprofile', $kdProfile)
             ->where('pg.statusenabled', true)
-            ->where('pg.objectjenispegawaifk', 1);
+            ->where('pg.objectjenispegawaifk', 1)
+            ->wherenotNull('pg.kddokterbpjs');
 
         if (isset($request['idPegawai']) && $request['idPegawai'] != "" && $request['idPegawai'] != "undefined") {
             $data = $data->where('pg.id', '=', $request['idPegawai']);
@@ -2154,10 +2155,10 @@ class BridgingBPJSV2Controller extends ApiController
 
         if ($type == 'antreanV2') {
             $header = array(
-                // "Content-Type: Application/json",
-                "X-cons-id: " . (string)$data,
-                "X-signature: " . (string)$encodedSignature,
-                "X-timestamp: " . (string)$tStamp,
+                "Content-Type: Application/json",
+                "x-cons-id: " . (string)$data,
+                "x-signature: " . (string)$encodedSignature,
+                "x-timestamp: " . (string)$tStamp,
                 "user_key: " . $this->getUserKeyAntreanBPJSv2()
             );
         } else if ($type == 'Aplicaresws') {
@@ -2308,6 +2309,7 @@ class BridgingBPJSV2Controller extends ApiController
         $response = curl_exec($curl);
         $err = curl_error($curl);
 
+
         curl_close($curl);
 
         if ($err) {
@@ -2325,27 +2327,32 @@ class BridgingBPJSV2Controller extends ApiController
             }
         }
 
-        $versiEncrypt = $this->settingDataFixed('versiEncryptBPJS', $this->getKdProfile());
+        if($tipe !='Aplicaresws'){
 
-        if (!empty($versiEncrypt) && $versiEncrypt == 'true') {
-            if (isset($result->response) && $result->response != null) {
-                if (isset($headers['cons'])) {
-                    $consId = $headers['cons']['data'];
-                    $signature = $headers['cons']['secretKey'];
-                    $timestamp = $headers['cons']['tStamp'];
+            // $versiEncrypt = $this->settingDataFixed('versiEncryptBPJS', $this->getKdProfile());
+
+            // if (!empty($versiEncrypt) && $versiEncrypt == 'true') {
+                if (isset($result->response) && $result->response != null) {
+                    if (isset($headers['cons'])) {
+                        $consId = $headers['cons']['data'];
+                        $signature = $headers['cons']['secretKey'];
+                        $timestamp = $headers['cons']['tStamp'];
+                    } else {
+                        $consId = $this->getBPJSCons()['consId'];
+                        $signature = $this->getBPJSCons()['signature'];
+                        $timestamp = $this->getBPJSCons()['timestamp'];
+                    }
+                    $key = $consId . $signature . (string)$timestamp;
+                    return  $this->stringDecrypt2($key, $result);
                 } else {
-                    $consId = $this->getBPJSCons()['consId'];
-                    $signature = $this->getBPJSCons()['signature'];
-                    $timestamp = $this->getBPJSCons()['timestamp'];
+                    return $result;
                 }
-                $key = $consId . $signature . (string)$timestamp;
-                return  $this->stringDecrypt2($key, $result);
-            } else {
-                return $result;
-            }
-        } else {
-            return $result;
-        }
+            // } else {
+            //     return $result;
+            // }
+          }else{
+             return $result;
+          }
     }
 
 
@@ -2398,12 +2405,16 @@ class BridgingBPJSV2Controller extends ApiController
         return $header;
     }
     function stringDecrypt2($key, $string)
-    {
+    {   
 
         $bahan = $string->response;
 
-        $metadata = $string->metaData;
-
+        if(isset($string->metaData)){
+            $metadata = $string->metaData;
+        }else{
+            $metadata = $string->metadata;
+        }
+     
         $encrypt_method = 'AES-256-CBC';
 
         // hash
@@ -2423,6 +2434,78 @@ class BridgingBPJSV2Controller extends ApiController
             'metaData' => $metadata,
             'response' => $result,
         );
+        return $data2;
+    }
+    function stringDecrypt3($key, $string)
+    {   
+    
+ 
+        $bahan = $string->response;
+
+        if(isset($string->metaData)){
+            $metadata = $string->metaData;
+        }else{
+            $metadata = $string->metadata;
+        }
+     
+        $encrypt_method = 'AES-256-CBC';
+
+        // hash
+        $key_hash = hex2bin(hash('sha256', $key));
+
+        // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+        $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);
+
+        $output = openssl_decrypt(base64_decode($bahan), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
+
+        $x = \LZCompressor\LZString::decompressFromEncodedURIComponent($output);
+        $result = json_decode($x);
+        if ($metadata->code != 200) {
+            $result = null;
+        }
+        $data2 = array(
+            'metaData' => $metadata,
+            'response' => $result,
+        );
+        return $data2;
+    }
+    function stringDecryptAntrean($key, $string)
+    {
+
+        $bahan = $string->response;
+
+        $metadata = $string->metadata;
+        try{
+            $status = true;
+            $encrypt_method = 'AES-256-CBC';
+
+            // hash
+            $key_hash = hex2bin(hash('sha256', $key));
+
+            // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+            $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);
+
+            $output = openssl_decrypt(base64_decode($bahan), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
+
+            $x = \LZCompressor\LZString::decompressFromEncodedURIComponent($output);
+            $result = json_decode($x);
+            if ($metadata->code != 200) {
+                $result = null;
+            }     
+             $data2 = array(
+                    'metaData' => $metadata,
+                    'response' => $result,
+                );   
+        }catch(\Exception $e){
+            $status = false;
+            $data2 = array(
+                'metaData' => $metadata,
+                'response' => $bahan,
+            );
+        }
+      
+        
+       
         return $data2;
     }
 
@@ -2452,6 +2535,7 @@ class BridgingBPJSV2Controller extends ApiController
         $methods = 'GET';
         $tStamp = strval(time() - strtotime('1970-01-01 00:00:00'));
         $url = $this->getUrlAntreanBPJSv2() . "dashboard/waktutunggu/bulan/" . $bulan . "/tahun/" . $tahun . "/waktu/" . $waktu;
+        // dd($url);
         // return $this->respond($url);
         $response = $this->curlAPI($headers, null, $url, $methods);
         return $this->respond($response);
@@ -2535,7 +2619,7 @@ class BridgingBPJSV2Controller extends ApiController
                     ->where('noreservasi', $datareq['kodebooking'])
                     ->update([
                         'statusenabled' => false,
-                        'isbatal' => false,
+                        'isbatal' => true,
                         'keteranganbatal' => $datareq['keterangan'],
                     ]);
             }
@@ -2573,11 +2657,24 @@ class BridgingBPJSV2Controller extends ApiController
     {
         $kdProfile = $this->getDataKdProfile($request);
         $headers = $this->getHeaderBPJS('antreanV2');
-        $data = json_encode($this->saveAntrian($request, $kdProfile));
-        // return $data;
+        $result = $this->saveAntrian( $request->input(), $kdProfile);
+        // array_shift($result);
+        $norec =null;
+        if(isset($result['norec'])){
+            $norec = $result['norec'];
+            unset($result['norec']);
+           
+        }
+        // dd($result);
+        $data = json_encode($result);
+    
         $methods = 'POST';
         $url = $this->getUrlAntreanBPJSv2() . "antrean/add";
         $response = $this->curlAPI($headers, $data, $url, $methods);
+       
+        if($response->metadata->code != 200){
+            AntrianPasienRegistrasi::where('norec',$norec)->delete();
+        }
         return $this->respond($response);
     }
 
@@ -2623,11 +2720,17 @@ class BridgingBPJSV2Controller extends ApiController
             $namaDokter = "";
             $idDokter = null;
             $antrian = app('App\Http\Controllers\ReservasiOnline\ReservasiOnlineController')->GetJamKosong($data['kodepoli'], $data['tanggalperiksa'], $kdProfile, $eksek);
-            $pasien = \DB::table('pasien_m')
+            if($data["pasienbaru"] == 0){
+                $pasien = \DB::table('pasien_m')
                 ->whereRaw("nocm = '" . $data['norm'] . "'")
                 ->where('statusenabled', true)
                 ->where('kdprofile', $kdProfile)
                 ->first();
+            }else{
+                $pasien = null;
+            }
+           
+              
             $dokter = DB::table('pegawai_m')
                 ->where('statusenabled', true)
                 ->where('kdprofile', $kdProfile)
@@ -2655,13 +2758,13 @@ class BridgingBPJSV2Controller extends ApiController
             $newptp->kdprofile = $kdProfile;
             $newptp->statusenabled = true;
             $newptp->objectruanganfk = $ruang->id;
-            $newptp->objectjeniskelaminfk = $pasien->objectjeniskelaminfk;
+            $newptp->objectjeniskelaminfk = $pasien ? $pasien->objectjeniskelaminfk:0;
             $newptp->noreservasi = substr(Uuid::generate(), 0, 7);
             $newptp->tanggalreservasi = $data['tanggalperiksa'] . " " . $antrian['jamkosong'];
-            $newptp->tgllahir = $pasien->tgllahir;
+            $newptp->tgllahir = $pasien ? $pasien->tgllahir: null;
             $newptp->objectkelompokpasienfk = $tipepembayaran;
             $newptp->objectpendidikanfk = 0;
-            $newptp->namapasien = $pasien->namapasien;
+            $newptp->namapasien = $data['nama'];
             $newptp->noidentitas = $data['nik'];
             $newptp->tglinput = date('Y-m-d H:i:s');
             $newptp->nobpjs = $data['nomorkartu'];
@@ -2669,35 +2772,40 @@ class BridgingBPJSV2Controller extends ApiController
                 $newptp->jenis = "B";
             }
             $newptp->norujukan = $data['nomorreferensi'];
-            $newptp->notelepon = $pasien->nohp;
+            $newptp->notelepon = $data['nohp'];
             $newptp->objectpegawaifk = $idDokter;
             $newptp->tipepasien = "LAMA";
             $newptp->ismobilejkn = 1;
             $newptp->objectasalrujukanfk = $data['jeniskunjungan'];
             $newptp->type = "LAMA";
 
-            $newptp->objectagamafk = $pasien->objectagamafk;
-            $alamat = Alamat::where('nocmfk', $pasien->id)->first();
-            if (!empty($alamat)) {
-                $newptp->alamatlengkap = $alamat->alamatlengkap;
-                $newptp->objectdesakelurahanfk = $alamat->objectdesakelurahanfk;
-                $newptp->negara = $alamat->objectnegarafk;
-            }
-            $newptp->objectgolongandarahfk = $pasien->objectgolongandarahfk;
-            $newptp->kebangsaan = $pasien->objectkebangsaanfk;
-            $newptp->namaayah = $pasien->namaayah;
-            $newptp->namaibu = $pasien->namaibu;
-            $newptp->namasuamiistri = $pasien->namasuamiistri;
+            $newptp->objectagamafk = $pasien ? $pasien->objectagamafk : null;
+            if(!empty( $pasien)){
+                    $alamat = Alamat::where('nocmfk', $pasien->id)->first();
+                if (!empty($alamat)) {
+                    $newptp->alamatlengkap = $alamat->alamatlengkap;
+                    $newptp->objectdesakelurahanfk = $alamat->objectdesakelurahanfk;
+                    $newptp->negara = $alamat->objectnegarafk;
+                }
+                $newptp->objectgolongandarahfk = $pasien->objectgolongandarahfk;
+                $newptp->kebangsaan = $pasien->objectkebangsaanfk;
+                $newptp->namaayah = $pasien->namaayah;
+                $newptp->namaibu = $pasien->namaibu;
+                $newptp->namasuamiistri = $pasien->namasuamiistri;
 
-            $newptp->noaditional = $pasien->noaditional;
+                $newptp->noaditional = $pasien->noaditional;
+                $newptp->noidentitas = $pasien->noidentitas;
+                $newptp->nocmfk = $pasien->id;
+                $newptp->paspor = $pasien->paspor;
+                $newptp->objectpekerjaanfk = $pasien->objectpekerjaanfk;
+                $newptp->objectstatusperkawinanfk = $pasien->objectstatusperkawinanfk;
+                $newptp->tempatlahir = $pasien->tempatlahir;
+            }
+            
             $newptp->noantrian = $antrian['antrian'];
-            $newptp->noidentitas = $pasien->noidentitas;
-            $newptp->nocmfk = $pasien->id;
-            $newptp->paspor = $pasien->paspor;
-            $newptp->objectpekerjaanfk = $pasien->objectpekerjaanfk;
-            $newptp->objectpendidikanfk = $pasien->objectpendidikanfk != null ? $pasien->objectpendidikanfk : 0;
-            $newptp->objectstatusperkawinanfk = $pasien->objectstatusperkawinanfk;
-            $newptp->tempatlahir = $pasien->tempatlahir;
+          
+            $newptp->objectpendidikanfk = $pasien != null && $pasien->objectpendidikanfk !=null ?$pasien->objectpendidikanfk  : 0;
+      
 
             $newptp->save();
             $nomorAntrian = strlen((string)$newptp->noantrian);
@@ -2748,10 +2856,12 @@ class BridgingBPJSV2Controller extends ApiController
             $transStatus = 'false';
         }
 
+
         if ($transStatus == 'true') {
             DB::commit();
             $estimasidilayani = strtotime($newptp->tanggalreservasi) * 1000;
             $result = array(
+                "norec" => $newptp->norec,
                 "kodebooking" => $newptp->noreservasi,
                 "jenispasien" => $data['jenispasien'],
                 "nomorkartu" => $data['nomorkartu'],
@@ -2776,9 +2886,12 @@ class BridgingBPJSV2Controller extends ApiController
                 "kuotanonjkn" => $getLisAntrean[0]->koutanonjkn,
                 "keterangan" => $data['keterangan']
             );
+           
         } else {
             DB::rollBack();
-            $result = [];
+            $result = [$e->getMessage().' '.$e->getLine()];
+         
+        
         }
         return $result;
     }
@@ -2800,7 +2913,7 @@ class BridgingBPJSV2Controller extends ApiController
                 from (SELECT
                         CASE WHEN kmr.kodeexternal IS NOT NULL THEN kmr.kodeexternal ELSE kl.namaexternal END AS kodekelas,
                         ru.ID AS koderuang,
-                        CASE WHEN 	kmr.kodeexternal IS NOT NULL THEN  kmr.kodeexternal ELSE kl.namakelas END AS namakelas,
+                        CASE WHEN   kmr.kodeexternal IS NOT NULL THEN  kmr.kodeexternal ELSE kl.namakelas END AS namakelas,
                         ru.namaruangan AS namaruang,
                         0 AS tersediapria,
                         0 AS tersediawanita,
@@ -2838,10 +2951,10 @@ class BridgingBPJSV2Controller extends ApiController
 
             $url = $this->getLinkAplicare() . "aplicaresws/rest/bed/update/" . $kodeppk;
 
-            $response = $this->curlAPI($headers, json_encode($json), $url, $methods, $this->getPortBrigdingBPJS());
+            $response = $this->curlAPI($headers, json_encode($json), $url, $methods, 'Aplicaresws');
             if ($response->metadata->code == 0) {
                 $url = $this->getLinkAplicare() . "aplicaresws/rest/bed/create/" . $kodeppk;
-                $response = $this->curlAPI($headers, json_encode($json), $url, $methods, $this->getPortBrigdingBPJS());
+                $response = $this->curlAPI($headers, json_encode($json), $url, $methods, 'Aplicaresws');
             }
         } else {
             $response = [];
@@ -2899,6 +3012,7 @@ class BridgingBPJSV2Controller extends ApiController
             'secretKey' => $secretKey,
             'signature' => $encodedSignature,
             'tStamp' => $tStamp,
+            'user_key' =>  $this->userKeyBPJS(),
         );
         return $header;
     }
@@ -2906,35 +3020,69 @@ class BridgingBPJSV2Controller extends ApiController
     {
         try {
 
-            $kdProfile = $this->getDataKdProfile($request);
+            // $kdProfile = $this->getDataKdProfile($request);
             $headers = $this->getHeaderBPJSV2();
+
             $dataJsonSend = null;
 
             if ($request['data'] != null) {
                 $dataJsonSend = json_encode($request['data']);
             }
+           
             $methods = $request['method'];
             $baseURL = $this->getUrlBrigdingBPJS();
             if (isset($request['jenis']) && $request['jenis'] == 'antrean') {
+
                 $baseURL =  $this->getUrlAntreanBPJSv2();
-                $headers[4]  = 'user_key: ' . $this->getUserKeyAntreanBPJSv2();
+                $headers['headers'][0]  = 'Content-Type: application/json';
+                $headers['headers'][1]  = 'x-cons-id:' .$headers['cons']['data'];
+                $headers['headers'][2]  = 'x-timestamp:' . $headers['cons']['tStamp'];
+                $headers['headers'][3]  = 'x-signature:' .$headers['cons']['signature'];
+                $headers['headers'][4]  = 'user_key:' . $this->getUserKeyAntreanBPJSv2();
+
             }
 
             $url =   $baseURL . $request['url'];
-
+  
             $response = $this->curlAPI2($headers['headers'], $dataJsonSend, $url, $methods, null);
+
             $cekData = array(
                 'request' => array(
                     'url' => $url,
-                    'X-cons-id' =>  $headers['cons']['data'],
-                    'X-timestamp' => $headers['cons']['tStamp'],
-                    'X-signature' => $headers['cons']['signature'],
+                    'headers' =>  $headers['headers'],
+                    'payload' =>$dataJsonSend,
                     'secretKey' => $headers['cons']['secretKey'],
-                    'user_key' => $url,
                 ), 'response' => $response
             );
-            // dd($cekData);
-            if (isset($response->metaData)) {
+         
+            if (isset($request['jenis']) && $request['jenis'] == 'antrean') {
+                $consId = $headers['cons']['data'];
+                $signature = $headers['cons']['secretKey'];
+                $timestamp = $headers['cons']['tStamp'];
+                $key = $consId . $signature . (string)$timestamp;
+                if(isset($response->response)){
+                    return $this->stringDecryptAntrean($key, $response); 
+                }else{
+                   
+                    if(isset( $response->metadata)){
+                        $data2 = array(
+                            'metaData' => $response->metadata,
+                            'response' => null,
+                        );
+                    }else{
+                        $data2 = array(
+                            'metaData' => array(
+                                'code'=> 201,
+                                'message' => 'BPJS : '.$response
+                            ) ,
+                            'response' => null,
+                        );
+                    }
+                   
+                    return $this->respond($data2);
+                }
+                
+            }else if (isset($response->metaData)) {
                 $consId = $headers['cons']['data'];
                 $signature = $headers['cons']['secretKey'];
                 $timestamp = $headers['cons']['tStamp'];
@@ -2957,8 +3105,10 @@ class BridgingBPJSV2Controller extends ApiController
                     "code" => "404",
                     "message" => "Transaksi tidak dapat di proses, Gagal dicoba kembali (BPJS Kesehatan)!"
                 ),
-                "response" => null
+                "response" => null,
+                "e"=> $e->getMessage(). ' '.$e->getLine()
             );
+    
             return $this->respond($response);
         }
         // return $this->respond($response);
@@ -3008,6 +3158,7 @@ class BridgingBPJSV2Controller extends ApiController
                 ),
             );
         } else {
+         
             if ($this->isJson($response)) {
                 $result = json_decode($response);
             } else {

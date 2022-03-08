@@ -134,11 +134,20 @@ class ReservasiOnlineController extends ApiController
                 $pasien  = Pasien::where('nocm',$request['noCm'])->first();
             }
 
+            $jenis  = 'B';
+            if ($request['tipePembayaran']['id'] != 2){
+                $jenis  = 'A';
+            }
+            $nontrian = AntrianPasienRegistrasi::where('jenis',$jenis)
+            ->whereBetween('tanggalreservasi', [date('Y-m-d 00:00',strtotime($tgl)), date('Y-m-d 23:59',strtotime($tgl))])
+            ->max('noantrian') + 1;
+
             $newptp = new AntrianPasienRegistrasi();
-            $nontrian=AntrianPasienRegistrasi::max('noantrian')+ 1;
+            // $nontrian=AntrianPasienRegistrasi::max('noantrian')+ 1;
             $newptp->norec = $newptp->generateNewId();;
             $newptp->kdprofile = (int) $kdProfile ;
             $newptp->statusenabled = true;
+            $newptp->noantrian = $nontrian;
             $newptp->objectruanganfk =$request['poliKlinik']['id'];
             $newptp->objectjeniskelaminfk =$request['jenisKelamin']['id'];
             $newptp->noreservasi =substr(Uuid::generate(), 0, 7);
@@ -216,6 +225,7 @@ class ReservasiOnlineController extends ApiController
                 "status" => 201,
                 "message" => $transMessage,
                 "data"=>$newptp,
+                "antrol" => $this->saveAntrolV2($newptp),
                 "as" => 'ramdan@epic',
             );
         } else {
@@ -901,7 +911,7 @@ class ReservasiOnlineController extends ApiController
                $tglLahir =$request['tglLahir'];
                $dataReservasi = \DB::table('antrianpasienregistrasi_t as apr')
                     ->select('apr.norec','apr.tanggalreservasi')
-                    ->whereRaw("format(apr.tanggalreservasi,'yyyy-MM-dd' )= '$tgl'")
+                    ->whereRaw("to_char(apr.tanggalreservasi,'yyyy-MM-dd' )= '$tgl'")
 //                    ->where('apr.objectruanganfk', $request['ruanganId'])
                     ->where('apr.noreservasi','!=','-')
                     ->where('apr.namapasien',$request['namaPasien'])
@@ -915,7 +925,7 @@ class ReservasiOnlineController extends ApiController
              $dataReservasi = \DB::table('antrianpasienregistrasi_t as apr')
                     ->join('pasien_m as ps','ps.id','=','apr.nocmfk')
                     ->select('apr.norec','apr.tanggalreservasi','ps.nocm')
-                    ->whereRaw("format(apr.tanggalreservasi,'yyyy-MM-dd') = '$tgl'")
+                    ->whereRaw("to_char(apr.tanggalreservasi,'yyyy-MM-dd') = '$tgl'")
 //                    ->where('apr.objectruanganfk', $request['ruanganId'])
                     ->where('apr.noreservasi','!=','-')
                     ->where('ps.nocm',$request['noCm'])
@@ -1340,60 +1350,60 @@ class ReservasiOnlineController extends ApiController
     }
 
     public function GetNoAntrianMobileJKN(Request $request)
-{
-    $kdProfile = $this->getDataKdProfile($request);
+    {
+        $kdProfile = $this->getDataKdProfile($request);
 
-//       $request =  array(
-//           "nomorkartu" => "0000172381691",
-//           "nik" => "3372051109800010",
-//           "notelp" => "085642649135",
-//           "tanggalperiksa" => "2020-10-09",
-//           "kodepoli" => "JIW",
-//           "nomorreferensi" => "0001R0040116A000001",
-//           "jenisreferensi" => "1",
-//           "jenisrequest" => "2",
-//           "polieksekutif" => "0"
-//       );
+      // $request =  array(
+      //     "nomorkartu" => "0000172381691",
+      //     "nik" => "3372051109800010",
+      //     "notelp" => "085642649135",
+      //     "tanggalperiksa" => "2021-04-05",
+      //     "kodepoli" => "JIW",
+      //     "nomorreferensi" => "0001R0040116A000001",
+      //     "jenisreferensi" => "1",
+      //     "jenisrequest" => "2",
+      //     "polieksekutif" => "0"
+      // );
 
-    $request = $request->json()->all();
+        $request = $request->json()->all();
 //        print_r($request);
 //        exit();
 
-    if(empty($request['nomorkartu']) ) {
-        $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Nomor Kartu BPJS tidak boleh kosong"));
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }
+        if(empty($request['nomorkartu']) ) {
+            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Nomor Kartu BPJS tidak boleh kosong"));
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }
 
-    if(empty($request['tanggalperiksa'])) {
-        $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Tanggal Periksa tidak boleh kosong"));
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }
+        if(empty($request['tanggalperiksa'])) {
+            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Tanggal Periksa tidak boleh kosong"));
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }
 
-    if (!preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$request['tanggalperiksa'])) {
-        $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Format Tanggal Periksa salah"));
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }
+        if (!preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$request['tanggalperiksa'])) {
+            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Format Tanggal Periksa salah"));
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }
 
-    if($request['tanggalperiksa'] >= date('Y-m-d',strtotime('+90 days',strtotime(date('Y-m-d'))))){
-        $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Tanggal periksa maksimal 90 hari dari hari ini"));
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }
-    if($request['tanggalperiksa'] == date('Y-m-d')){
-        $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Tanggal periksa minimal besok"));
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }
-    if($request['tanggalperiksa'] < date('Y-m-d')){
-        $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Tanggal periksa minimal besok"));
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }
+        if($request['tanggalperiksa'] >= date('Y-m-d',strtotime('+90 days',strtotime(date('Y-m-d'))))){
+            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Tanggal periksa maksimal 90 hari dari hari ini"));
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }
+        if($request['tanggalperiksa'] == date('Y-m-d')){
+            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Tanggal periksa minimal besok"));
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }
+        if($request['tanggalperiksa'] < date('Y-m-d')){
+            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Tanggal periksa minimal besok"));
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }
 //        return date('w',strtotime( $request['tanggalperiksa'] ) );
-    if(date('w',strtotime( $request['tanggalperiksa'] )) == 0 ){
-        $result = array("response"=>null,
-            "metadata"=>array("code" => "400",
-                "message" => "Tidak ada jadwal Poli di hari Minggu")
-        );
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }
+        if(date('w',strtotime( $request['tanggalperiksa'] )) == 0 ){
+            $result = array("response"=>null,
+                "metadata"=>array("code" => "400",
+                    "message" => "Tidak ada jadwal Poli di hari Minggu")
+            );
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }
 //        return  date('w',strtotime( $request['tanggalperiksa'] ));
 //
 //        function isWeekend($date) {
@@ -1402,166 +1412,167 @@ class ReservasiOnlineController extends ApiController
 ////                || $weekDay == 6
 //            );
 //        }
-    if(empty($request['nik']) ) {
-        $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "NIK tidak boleh kosong"));
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }
-    if(empty($request['kodepoli']) ) {
-        $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Kodepoli tidak boleh kosong"));
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }else{
+        if(empty($request['nik']) ) {
+            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "NIK tidak boleh kosong"));
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }
+        if(empty($request['kodepoli']) ) {
+            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Kodepoli tidak boleh kosong"));
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }else{
 //            if($request['kodepoli'] != "JIW" ) {
 //                $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Kodepoli tidak sesuai"));
 //                return $this->setStatusCode($result['metadata']['code'])->respond($result);
 //            }
-    }
-
-    if(empty($request['jenisreferensi']) ) {
-        $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Jenis Referensi tidak boleh kosong"));
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }else{
-        if($request['jenisreferensi'] < "1" || $request['jenisreferensi'] > "2") {
-            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Jenis Referensi tidak sesuai"));
-            return $this->setStatusCode($result['metadata']['code'])->respond($result);
         }
-    }
 
-    if(empty($request['jenisrequest']) ) {
-        $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Jenis Request tidak boleh kosong"));
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }else{
-        if($request['jenisrequest'] < "1" || $request['jenisrequest'] > "2") {
-            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Jenis Request tidak sesuai"));
+        if(empty($request['jenisreferensi']) ) {
+            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Jenis Referensi tidak boleh kosong"));
             return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }else{
+            if($request['jenisreferensi'] < "1" || $request['jenisreferensi'] > "2") {
+                $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Jenis Referensi tidak sesuai"));
+                return $this->setStatusCode($result['metadata']['code'])->respond($result);
+            }
         }
-    }
 
-    if(empty($request['polieksekutif']) && $request['polieksekutif'] != "0") {
-        $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Poli Eksekutif tidak boleh kosong"));
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-    }else{
-        if($request['polieksekutif'] < "0" || $request['polieksekutif'] > "1") {
-            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Poli Eksekutif tidak sesuai"));
+        if(empty($request['jenisrequest']) ) {
+            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Jenis Request tidak boleh kosong"));
             return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }else{
+            if($request['jenisrequest'] < "1" || $request['jenisrequest'] > "2") {
+                $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Jenis Request tidak sesuai"));
+                return $this->setStatusCode($result['metadata']['code'])->respond($result);
+            }
         }
-    }
+
+        if(empty($request['polieksekutif']) && $request['polieksekutif'] != "0") {
+            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Poli Eksekutif tidak boleh kosong"));
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }else{
+            if($request['polieksekutif'] < "0" || $request['polieksekutif'] > "1") {
+                $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Poli Eksekutif tidak sesuai"));
+                return $this->setStatusCode($result['metadata']['code'])->respond($result);
+            }
+        }
 
 
 //        return $antrian;
-    $eksek = false;
-    if($request['polieksekutif'] == 1){
-        $eksek = true;
-    }
-    if($request['jenisrequest']  == '2') {//POLI
-        DB::beginTransaction();
-        try {
-
-            $antrian = $this->GetJamKosong($request['kodepoli'], $request['tanggalperiksa'], $kdProfile,$eksek);
-            $pasien = \DB::table('pasien_m')
-                ->whereRaw("nobpjs = '" . $request['nomorkartu'] . "'")
-                ->where('statusenabled', true)
-                ->where('kdprofile', $kdProfile)
-                ->first();
-
-            $ruang = Ruangan::where('kdinternal', $request['kodepoli'])
-                ->where('statusenabled', true)
-                ->where('iseksekutif',$eksek)
-                ->where('kdprofile', $kdProfile)->first();
-            if (empty($ruang)) {
-                $result = array("response" => null, "metadata" => array("code" => "400", "message" => "Kodepoli tidak sesuai"));
-                return $this->setStatusCode($result['metadata']['code'])->respond($result);
+            $eksek = false;
+            if($request['polieksekutif'] == 1){
+                $eksek = true;
             }
-            if (empty($pasien)) {
+            if($request['jenisrequest']  == '2') {//POLI
+                DB::beginTransaction();
+                try {
+
+                $antrian = $this->GetJamKosong($request['kodepoli'], $request['tanggalperiksa'], $kdProfile,$eksek);
+                $pasien = \DB::table('pasien_m')
+                    ->whereRaw("nobpjs = '" . $request['nomorkartu'] . "'")
+                    ->where('statusenabled', true)
+                    ->where('kdprofile', $kdProfile)
+                    ->first();
+
+
+                $ruang = Ruangan::where('kdinternal', $request['kodepoli'])
+                    ->where('statusenabled', true)
+                    ->where('iseksekutif',$eksek)
+                    ->where('kdprofile', $kdProfile)->first();
+                if (empty($ruang)) {
+                    $result = array("response" => null, "metadata" => array("code" => "400", "message" => "Kodepoli tidak sesuai"));
+                    return $this->setStatusCode($result['metadata']['code'])->respond($result);
+                }
+                if (empty($pasien)) {
 //                    return $this->respond($pasien);
-                $request['jenisrequest']  ='1';
-                DB::commit();
-                return  $this->postPendaftaranJKN($request,$kdProfile);
+                      $request['jenisrequest']  ='1';
+                       DB::commit();
+                      return  $this->postPendaftaranJKN($request,$kdProfile);
 //                    $pro = Profile::where('id', $kdProfile)->first();
 //                    $result = array(
 //                        "response" => null,
 //                        "metadata" => array("code" => "400", "message" => "Belum terdaftar sebagai pasien " . $pro->namaexternal)
 //                    );
 //                    return $this->setStatusCode($result['metadata']['code'])->respond($result);
-            }
+                }
 
-            $tipepembayaran = '2';
-            $tgl = $request['tanggalperiksa'];
+                    $tipepembayaran = '2';
+                    $tgl = $request['tanggalperiksa'];
 
-            $dataReservasi = \DB::table('antrianpasienregistrasi_t as apr')
-                ->select('apr.noantrian', 'apr.noreservasi', 'ru.namaexternal', 'apr.tanggalreservasi')
-                ->join('ruangan_m as ru', 'ru.id', '=', 'apr.objectruanganfk')
+                    $dataReservasi = \DB::table('antrianpasienregistrasi_t as apr')
+                        ->select('apr.noantrian', 'apr.noreservasi', 'ru.namaexternal', 'apr.tanggalreservasi')
+                        ->join('ruangan_m as ru', 'ru.id', '=', 'apr.objectruanganfk')
 //                        ->whereRaw("apr.tanggalreservasi BETWEEN '$tgl' AND '" . date('Y-m-d', strtotime('+1 day', strtotime($tgl))) . "'")
-                ->whereRaw("to_char(apr.tanggalreservasi,'yyyy-MM-dd')= '$tgl'")
-                ->where('apr.objectruanganfk', '=', $ruang->id)
-                ->where('apr.noreservasi', '!=', '-')
-                ->where('apr.noidentitas', '=', $request['nik'])
-                ->where('apr.nobpjs', '=', $request['nomorkartu'])
-                ->whereNotNull('apr.noreservasi')
-                ->where('apr.statusenabled', true)
-                ->first();
+                        ->whereRaw("to_char(apr.tanggalreservasi,'yyyy-MM-dd')= '$tgl'")
+                        ->where('apr.objectruanganfk', '=', $ruang->id)
+                        ->where('apr.noreservasi', '!=', '-')
+                        ->where('apr.noidentitas', '=', $request['nik'])
+                        ->where('apr.nobpjs', '=', $request['nomorkartu'])
+                        ->whereNotNull('apr.noreservasi')
+                        ->where('apr.statusenabled', true)
+                        ->first();
 //                return $this->respond($dataReservasi);
-            if (isset($dataReservasi) && !empty($dataReservasi)) {
-                $result = array("response" => null, "metadata" => array("code" => "400", "message" => "Mohon maaf anda sudah mendaftar pada tanggal " . $tgl));
-                return $this->setStatusCode($result['metadata']['code'])->respond($result);
-            }
+                    if (isset($dataReservasi) && !empty($dataReservasi)) {
+                        $result = array("response" => null, "metadata" => array("code" => "400", "message" => "Mohon maaf anda sudah mendaftar pada tanggal " . $tgl));
+                        return $this->setStatusCode($result['metadata']['code'])->respond($result);
+                    }
 
-            $newptp = new AntrianPasienRegistrasi();
-            $nontrian = AntrianPasienRegistrasi::max('noantrian') + 1;
-            $newptp->norec = $newptp->generateNewId();;
-            $newptp->kdprofile = $kdProfile;
-            $newptp->statusenabled = true;
-            $newptp->objectruanganfk = $ruang->id;
-            $newptp->objectjeniskelaminfk = $pasien->objectjeniskelaminfk;
-            $newptp->noreservasi = substr(Uuid::generate(), 0, 7);
-            $newptp->tanggalreservasi = $request['tanggalperiksa'] . " " . $antrian['jamkosong'];
-            $newptp->tgllahir = $pasien->tgllahir;
-            $newptp->objectkelompokpasienfk = $tipepembayaran;
-            $newptp->objectpendidikanfk = 0;
-            $newptp->namapasien = $pasien->namapasien;
-            $newptp->noidentitas = $request['nik'];
-            $newptp->tglinput = date('Y-m-d H:i:s');
-            $newptp->nobpjs = $request['nomorkartu'];
-            $newptp->norujukan = $request['nomorreferensi'];
-            $newptp->notelepon = $pasien->nohp;
-            $newptp->objectpegawaifk = null;
-            $newptp->tipepasien = "LAMA";
-            $newptp->ismobilejkn = 1;
-            $newptp->type = "LAMA";
+                    $newptp = new AntrianPasienRegistrasi();
+                    $nontrian = AntrianPasienRegistrasi::max('noantrian') + 1;
+                    $newptp->norec = $newptp->generateNewId();;
+                    $newptp->kdprofile = $kdProfile;
+                    $newptp->statusenabled = true;
+                    $newptp->objectruanganfk = $ruang->id;
+                    $newptp->objectjeniskelaminfk = $pasien->objectjeniskelaminfk;
+                    $newptp->noreservasi = substr(Uuid::generate(), 0, 7);
+                    $newptp->tanggalreservasi = $request['tanggalperiksa'] . " " . $antrian['jamkosong'];
+                    $newptp->tgllahir = $pasien->tgllahir;
+                    $newptp->objectkelompokpasienfk = $tipepembayaran;
+                    $newptp->objectpendidikanfk = 0;
+                    $newptp->namapasien = $pasien->namapasien;
+                    $newptp->noidentitas = $request['nik'];
+                    $newptp->tglinput = date('Y-m-d H:i:s');
+                    $newptp->nobpjs = $request['nomorkartu'];
+                    $newptp->norujukan = $request['nomorreferensi'];
+                    $newptp->notelepon = $pasien->nohp;
+                    $newptp->objectpegawaifk = null;
+                    $newptp->tipepasien = "LAMA";
+                    $newptp->ismobilejkn = 1;
+                    $newptp->type = "LAMA";
 
-            $newptp->objectagamafk = $pasien->objectagamafk;
-            $alamat = Alamat::where('nocmfk', $pasien->id)->first();
-            if (!empty($alamat)) {
-                $newptp->alamatlengkap = $alamat->alamatlengkap;
-                $newptp->objectdesakelurahanfk = $alamat->objectdesakelurahanfk;
-                $newptp->negara = $alamat->objectnegarafk;
-            }
-            $newptp->objectgolongandarahfk = $pasien->objectgolongandarahfk;
-            $newptp->kebangsaan = $pasien->objectkebangsaanfk;
-            $newptp->namaayah = $pasien->namaayah;
-            $newptp->namaibu = $pasien->namaibu;
-            $newptp->namasuamiistri = $pasien->namasuamiistri;
+                    $newptp->objectagamafk = $pasien->objectagamafk;
+                    $alamat = Alamat::where('nocmfk', $pasien->id)->first();
+                    if (!empty($alamat)) {
+                        $newptp->alamatlengkap = $alamat->alamatlengkap;
+                        $newptp->objectdesakelurahanfk = $alamat->objectdesakelurahanfk;
+                        $newptp->negara = $alamat->objectnegarafk;
+                    }
+                    $newptp->objectgolongandarahfk = $pasien->objectgolongandarahfk;
+                    $newptp->kebangsaan = $pasien->objectkebangsaanfk;
+                    $newptp->namaayah = $pasien->namaayah;
+                    $newptp->namaibu = $pasien->namaibu;
+                    $newptp->namasuamiistri = $pasien->namasuamiistri;
 
-            $newptp->noaditional = $pasien->noaditional;
-            $newptp->noantrian = $antrian['antrian'];
-            $newptp->noidentitas = $pasien->noidentitas;
-            $newptp->nocmfk = $pasien->id;
-            $newptp->paspor = $pasien->paspor;
-            $newptp->objectpekerjaanfk = $pasien->objectpekerjaanfk;
-            $newptp->objectpendidikanfk = $pasien->objectpendidikanfk != null ? $pasien->objectpendidikanfk : 0;
-            $newptp->objectstatusperkawinanfk = $pasien->objectstatusperkawinanfk;
-            $newptp->tempatlahir = $pasien->tempatlahir;
+                    $newptp->noaditional = $pasien->noaditional;
+                    $newptp->noantrian = $antrian['antrian'];
+                    $newptp->noidentitas = $pasien->noidentitas;
+                    $newptp->nocmfk = $pasien->id;
+                    $newptp->paspor = $pasien->paspor;
+                    $newptp->objectpekerjaanfk = $pasien->objectpekerjaanfk;
+                    $newptp->objectpendidikanfk = $pasien->objectpendidikanfk != null ? $pasien->objectpendidikanfk : 0;
+                    $newptp->objectstatusperkawinanfk = $pasien->objectstatusperkawinanfk;
+                    $newptp->tempatlahir = $pasien->tempatlahir;
 
-            $newptp->save();
-            $transStatus = 'true';
+                    $newptp->save();
+                    $transStatus = 'true';
 
-            $transMessage = "Ok";
-        } catch (Exception $e) {
-            $transMessage = "Gagal Reservasi";
-            $transStatus = 'false';
-        }
+                    $transMessage = "Ok";
+                } catch (Exception $e) {
+                    $transMessage = "Gagal Reservasi";
+                    $transStatus = 'false';
+                }
 
-        if ($transStatus != 'false') {
-            DB::commit();
+                if ($transStatus != 'false') {
+                    DB::commit();
 //                        $dataHasil = \DB::table('antrianpasienregistrasi_t as apr')
 //                            ->select('apr.noantrian', 'apr.noreservasi', 'ru.namaexternal', 'apr.tanggalreservasi')
 //                            ->join('ruangan_m as ru', 'ru.id', '=', 'apr.objectruanganfk')
@@ -1574,41 +1585,41 @@ class ReservasiOnlineController extends ApiController
 //                            ->where('apr.statusenabled', true)
 //                            ->first();
 
-            $estimasidilayani = strtotime($newptp->tanggalreservasi) * 1000;
-            $result = array(
-                "response" => array(
-                    "nomorantrean" => $newptp->noantrian,
-                    "kodebooking" => $newptp->noreservasi,
-                    "jenisantrean" => '2',
-                    "estimasidilayani" => $estimasidilayani,
-                    "namapoli" => $ruang->namaexternal,
-                    "namadokter" => '',
+                    $estimasidilayani = strtotime($newptp->tanggalreservasi) * 1000;
+                    $result = array(
+                        "response" => array(
+                            "nomorantrean" => $newptp->noantrian,
+                            "kodebooking" => $newptp->noreservasi,
+                            "jenisantrean" => '2',
+                            "estimasidilayani" => $estimasidilayani,
+                            "namapoli" => $ruang->namaexternal,
+                            "namadokter" => '',
 
-                ),
-                "metadata" => array(
-                    "code" => "200",
-                    "message" => $transMessage)
-            );
-        }else{
-            DB::rollBack();
-            $result = array(
-                "response" => null,
-                "metadata" => array(
-                    "code" => "200",
-                    "message" => $transMessage)
-            );
+                        ),
+                        "metadata" => array(
+                            "code" => "200",
+                            "message" => $transMessage)
+                    );
+                }else{
+                    DB::rollBack();
+                    $result = array(
+                        "response" => null,
+                        "metadata" => array(
+                            "code" => "200",
+                            "message" => $transMessage)
+                    );
+
+                }
+                return $this->setStatusCode($result['metadata']['code'])->respond($result);
+
+            }else{
+                /*
+                 * jenis reqeust 1 //PENDAFTARAN
+                 */
+                return $this->postPendaftaranJKN($request,$kdProfile);
 
         }
-        return $this->setStatusCode($result['metadata']['code'])->respond($result);
-
-    }else{
-        /*
-         * jenis reqeust 1 //PENDAFTARAN
-         */
-        return $this->postPendaftaranJKN($request,$kdProfile);
-
     }
-}
     public function  postPendaftaranJKN($request,$kdProfile){
         $eksek = false;
         if($request['polieksekutif'] == 1){
@@ -1731,7 +1742,6 @@ class ReservasiOnlineController extends ApiController
             ->where('statusenabled',true)
             ->whereRaw(" ( iseksekutif=false or iseksekutif is null ) ")
             ->where('kdprofile',$kdProfile)->first();
-       
        if(empty($ruang)){
            $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Kodepoli tidak sesuai"));
            return $this->setStatusCode($result['metadata']['code'])->respond($result);
@@ -1744,9 +1754,9 @@ class ReservasiOnlineController extends ApiController
             ->whereNotNull('apr.noreservasi')
             ->where('apr.statusenabled',true)
             ->where('apr.kdprofile',$kdProfile)
+             ->whereRaw(" (apr.isbatal != false or apr.isbatal is null)")
             ->orderBy('apr.tanggalreservasi')
             ->get();
-    
 
         $ruangan = \DB::table('ruangan_m as ru')
             ->join('slottingonline_m as slot', 'slot.objectruanganfk', '=', 'ru.id')
@@ -1758,7 +1768,7 @@ class ReservasiOnlineController extends ApiController
             ->where('ru.kdprofile',$kdProfile)
             ->where('slot.statusenabled', true)
             ->first();
-
+//        return $this->respond($ruangan);
         if(empty($ruangan)){
             $result = array("response"=>null,"metadata"=>array("code" => "400","message" => "Jadwal penuh"));
             return $this->setStatusCode($result['metadata']['code'])->respond($result);
@@ -1810,7 +1820,6 @@ class ReservasiOnlineController extends ApiController
         $begin = new \DateTime($jamBuka);
         $end = new \DateTime($jamTutup);
         $interval = \DateInterval::createFromDateString(floor($waktuPerorang).' minutes');
-    
         $period = new \DatePeriod($begin, $interval, $end);
         foreach ($period as $dt) {
             $intervals[] = array(
@@ -1823,7 +1832,6 @@ class ReservasiOnlineController extends ApiController
         if(count($intervals) == 0){
             return array("antrian"=> 0,"jamkosong"=>"00:00");
         }
-      
         if (count($reservasi) > 0) {
             for ( $j = count($reservasi) - 1; $j >= 0; $j--) {
                 for ( $k =count($intervals)- 1; $k >= 0; $k--) {
@@ -1834,9 +1842,7 @@ class ReservasiOnlineController extends ApiController
                 }
             }
         }
-      
         if(count($intervals) > 0){
-
             $antrian = 1;
             for ($x = 0; $x <= count($intervalsAwal); $x++) {
                 if($intervals[0]['jam']== $intervalsAwal[$x]['jam']){
@@ -1845,7 +1851,6 @@ class ReservasiOnlineController extends ApiController
                     break;
                 }
             }
-
             return array("antrian"=> $antrian+1,"jamkosong"=>$intervals[0]['jam']);
         }else{
             return array("antrian"=> 0,"jamkosong"=>"00:00");
@@ -1982,12 +1987,11 @@ class ReservasiOnlineController extends ApiController
     {
         $kdProfile = $this->getDataKdProfile($request);
         $request = $request->json()->all();
-        if (empty($request['nopeserta'])) {
+        if(empty($request['nopeserta']) ) {
             $result = array("metadata" => array("message" => "Nomor Kartu Belum Diisi", "code" => 201));
             return $this->setStatusCode($result['metadata']['code'])->respond($result);
         }
-    
-        if (!is_numeric($request['nopeserta']) || strlen($request['nopeserta']) < 13) {
+        if(!is_numeric($request['nopeserta']) || strlen($request['nopeserta']) < 13) {
             $result = array("metadata" => array("message" => "Format Nomor Kartu Tidak Sesuai", "code" => 201));
             return $this->setStatusCode($result['metadata']['code'])->respond($result);
         }
@@ -2216,13 +2220,14 @@ class ReservasiOnlineController extends ApiController
                             CASE WHEN CAST(apr.statuspanggil AS INTEGER) = 2 THEN 0 ELSE 0 END AS sudahdipanggil,
                             sk.quota AS koutajkn,sk.quota AS koutanonjkn
                 FROM antrianpasienregistrasi_t AS apr
-                INNER JOIN slottingkiosk_m AS sk ON sk.objectruanganfk = apr.objectruanganfk 
+                INNER JOIN slottingonline_m AS sk ON sk.objectruanganfk = apr.objectruanganfk 
                 INNER JOIN ruangan_m AS ru ON ru.id = apr.objectruanganfk
                 LEFT JOIN pegawai_m AS pg ON pg.id = apr.objectpegawaifk
                 WHERE apr.kdprofile = $kdProfile
                 AND apr.tanggalreservasi between '$tglAwal' and '$tglAkhir'
                 AND ru.kdinternal = '$kdInternalRuangan'            
                 AND pg.kddokterbpjs = $kodeDokter
+                and ( apr.isbatal != false or apr.isbatal is null)
                 GROUP BY apr.norec,ru.namaruangan,pg.namalengkap,apr.statuspanggil,
                          sk.quota
                 ) AS x
@@ -2243,6 +2248,7 @@ class ReservasiOnlineController extends ApiController
                 AND ru.kdinternal = '$kdInternalRuangan' 
                 AND pg.kddokterbpjs = $kodeDokter
                 AND statuspanggil = '0'
+                and ( apr.isbatal != false or apr.isbatal is null)
                 ORDER BY apr.tanggalreservasi DESC
                 LIMIT 1
             "));
@@ -2297,7 +2303,9 @@ class ReservasiOnlineController extends ApiController
         return $this->respond($result);
     }
 
+
     public function GetAntrean(Request $request){
+
         $kdProfile = $this->getDataKdProfile($request);
         $request = $request->json()->all();
 
@@ -2380,6 +2388,49 @@ class ReservasiOnlineController extends ApiController
 //            }
         }
 
+        // cekJadwalHFIS
+        $objetoRequest = new \Illuminate\Http\Request();
+        $objetoRequest ['url']= "jadwaldokter/kodepoli/". $request['kodepoli']."/tanggal/". $request['tanggalperiksa'];
+        $objetoRequest ['jenis']= "antrean";
+        $objetoRequest ['method']= "GET";
+        $objetoRequest ['data']=null;
+  
+
+        $cek = app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($objetoRequest);
+     
+        if(is_array($cek)){
+            $code = $cek['metaData']->code;
+        }else{
+            $cek = json_decode($cek->content(), true);
+            $code = $cek['metaData']['code'];
+        }
+  
+        if($code != '200'){
+            $result = array("metadata"=>array("message" => "Pendaftaran ke Poli Ini Sedang Tutup", "code" => 201));
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }else{
+            $ada = false;
+            if(count($cek['response']) > 0){
+                foreach($cek['response'] as $item){
+                    // dd($item);
+                    if($request['kodedokter'] == $item->kodedokter){
+                        $ada = true;
+                        break;
+                    }
+                }
+            }
+            if($ada == false){
+                $dokter = DB::table('pegawai_m')
+                ->where('statusenabled', true)
+                ->where('kdprofile', $kdProfile)
+                ->where('kddokterbpjs', $request['kodedokter'])
+                ->first();
+                $result = array("metadata"=>array("message" => "Jadwal Dokter ".$dokter->namalengkap." Tersebut Belum Tersedia, Silahkan Reschedule Tanggal dan Jam Praktek Lainnya", "code" => 201));
+                return $this->setStatusCode($result['metadata']['code'])->respond($result);
+            }
+        }
+     
+
         $eksek = false;
 
         $jenisrequest = 0;
@@ -2455,8 +2506,10 @@ class ReservasiOnlineController extends ApiController
                     ->where('apr.noidentitas', '=', $request['nik'])
                     ->where('apr.nobpjs', '=', $request['nomorkartu'])
                     ->whereNotNull('apr.noreservasi')
+                    ->whereRaw(" (apr.isbatal != false or apr.isbatal is null)")
                     ->where('apr.statusenabled', true)
                     ->first();
+                
                
 
                 if (isset($dataReservasi) && !empty($dataReservasi)) {
@@ -2546,7 +2599,7 @@ class ReservasiOnlineController extends ApiController
 //                                    CASE WHEN CAST(apr.statuspanggil AS INTEGER) = 2 THEN 0 ELSE 0 END AS sudahdipanggil,
 //                                    sk.quota AS koutajkn,sk.quota AS koutanonjkn
 //                        FROM antrianpasienregistrasi_t AS aprs
-//                        INNER JOIN slottingkiosk_m AS sk ON sk.objectruanganfk = apr.objectruanganfk
+//                        INNER JOIN slottingonline_m AS sk ON sk.objectruanganfk = apr.objectruanganfk
 //                        INNER JOIN ruangan_m AS ru ON ru.id = apr.objectruanganfk
 //                        LEFT JOIN pegawai_m AS pg ON pg.id = apr.objectpegawaifk
 //                        WHERE apr.kdprofile = $kdProfile
@@ -2573,9 +2626,10 @@ class ReservasiOnlineController extends ApiController
                 CASE WHEN CAST(apr.statuspanggil AS INTEGER) = 1 THEN 0 ELSE 0 END AS dipanggil,
                 CASE WHEN CAST(apr.statuspanggil AS INTEGER) = 2 THEN 0 ELSE 0 END AS sudahdipanggil,
                 sk.quota AS koutajkn,sk.quota AS koutanonjkn
-                FROM slottingkiosk_m as sk 
+                FROM slottingonline_m as sk 
                 INNER JOIN antrianpasienregistrasi_t AS apr ON sk.objectruanganfk = apr.objectruanganfk AND apr.tanggalreservasi between '$tglAwal' and '$tglAkhir'
                 and apr.kdprofile = $kdProfile
+                 and ( apr.isbatal != false or apr.isbatal is null)
                 INNER JOIN ruangan_m AS ru ON ru.id = apr.objectruanganfk
                 LEFT JOIN pegawai_m AS pg ON pg.id = apr.objectpegawaifk AND pg.kddokterbpjs = '$kodeDokter'
                 WHERE 
@@ -2598,8 +2652,9 @@ class ReservasiOnlineController extends ApiController
 
             if ($transStatus == 'true') {
                 DB::commit();
+                date_default_timezone_set('Asia/Jakarta'); // set timezone
                 if ($pasienBaru == 0){
-                    $estimasidilayani = strtotime($newptp->tanggalreservasi) * 1000;
+                    $estimasidilayani = strtotime(date($newptp->tanggalreservasi)) * 1000;
                     $result = array(
                         "response" => array(
                             "nomorantrean" =>  $newptp->jenis . '-' . $nomorAntrian,
@@ -2622,7 +2677,7 @@ class ReservasiOnlineController extends ApiController
                         )
                     );
                 }else{
-                    $estimasidilayani = strtotime($newptp->tanggalreservasi) * 1000;
+                    $estimasidilayani = strtotime(date($newptp->tanggalreservasi)) * 1000;
                     $result = array(
                         "response" => array(
                             "nomorantrean" =>  $newptp->jenis . '-' . $nomorAntrian,
@@ -2707,7 +2762,7 @@ class ReservasiOnlineController extends ApiController
                                         CASE WHEN CAST(apr.statuspanggil AS INTEGER) = 2 THEN 0 ELSE 0 END AS sudahdipanggil,
                                         sk.quota AS koutajkn,sk.quota AS koutanonjkn
                             FROM antrianpasienregistrasi_t AS apr
-                            INNER JOIN slottingkiosk_m AS sk ON sk.objectruanganfk = apr.objectruanganfk 
+                            INNER JOIN slottingonline_m AS sk ON sk.objectruanganfk = apr.objectruanganfk 
                             INNER JOIN ruangan_m AS ru ON ru.id = apr.objectruanganfk
                             LEFT JOIN pegawai_m AS pg ON pg.id = apr.objectpegawaifk
                             WHERE apr.kdprofile = $kdProfile
@@ -2889,10 +2944,11 @@ class ReservasiOnlineController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $request = $request->json()->all();
         $t =  $request['waktu'];
-        $micro = sprintf("%06d",($t - floor($t)) * 1000000);
-        $d = new \DateTime( date('Y-m-d H:i:s.'.$micro, $t) );
-        $tglRegis = $d->format('Y-m-d H:i:s');
-        $tglRegBulan = $d->format('Y-m-d');
+        // $micro = sprintf("%06d",($t - floor($t)) * 1000000);
+        // $d = new \DateTime( date('Y-m-d H:i:s.'.$micro, $t) );
+        // $tglRegis = $d->format('Y-m-d H:i:s');
+        $tglRegis = date('Y-m-d H:i:s', $t / 1000);
+        $tglRegBulan = date('Y-m-d', $t / 1000);;
         if (empty($request['kodebooking'])) {
             $result = array("metadata" => array("message" => "Kode Booking Belum Diisi", "code" => 201));
             return $this->setStatusCode($result['metadata']['code'])->respond($result);
@@ -2983,6 +3039,7 @@ class ReservasiOnlineController extends ApiController
         }
         return $this->setStatusCode($result['metadata']['code'])->respond($result);
     }
+
 
     public function getPropinsiBpjs (){
         $data = $this->getIdConsumerBPJS();
@@ -3184,7 +3241,7 @@ class ReservasiOnlineController extends ApiController
              ->select('id','namapropinsi')
              ->where('kodebpjs',$request['kodeprop'])
              ->first();
-        $jk = JenisKelamin::where('reportdisplay', $request['jeniskelamin'])
+        $jk = JenisKelamin::where('reportdisplay', strtoupper($request['jeniskelamin']))
               ->select('id','jeniskelamin','reportdisplay')
               ->first();
         $pasien = array(
@@ -3478,5 +3535,121 @@ class ReservasiOnlineController extends ApiController
             );
         }
         return $this->respond($result);
+    }
+    public function saveAntrolV2( $request){
+        try{
+            $ruangan = DB::table('ruangan_m')->where('id',$request['objectruanganfk'])->first()->kdinternal;
+            if($ruangan== null || $ruangan== ''){
+                $result = array("metadata"=>array("message" => "Kode Poli tidak valid", "code" => 201));
+                return $result;
+            }
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['url']= "jadwaldokter/kodepoli/". $ruangan."/tanggal/". date('Y-m-d',strtotime($request->tanggalreservasi));
+            $objetoRequest ['jenis']= "antrean";
+            $objetoRequest ['method']= "GET";
+            $objetoRequest ['data']=null;
+    
+            $cek = app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($objetoRequest);
+      
+
+            if(is_array($cek)){
+                $code = $cek['metaData']->code;
+            }else{
+                $cek = json_decode($cek->content(), true);
+                $code = $cek['metaData']['code'];
+            }
+
+            if($code != '200'){
+                $result = array("metadata"=>array("message" => "Pendaftaran ke Poli Ini Sedang Tutup", "code" => 201));
+                return $result;
+            }else{
+                $ada = false;
+                if(count($cek['response']) > 0){
+                    $dokter['jadwal'] = $cek['response'][0]->jadwal;
+                    $dokter['namadokter'] = $cek['response'][0]->namadokter;
+                    $dokter['kodedokter'] = $cek['response'][0]->kodedokter;
+                    $ada = true;
+                    // foreach($cek['response'] as $item){
+                    //     if($request['kodedokter'] == $item->kodedokter){
+                    //         $ada = true;
+                    //         break;
+                    //     }
+                    // }
+                }
+                if($ada == false){
+                    $result = array("metadata"=>array("message" => "Jadwal Dokter  Tersebut Belum Tersedia, Silahkan Reschedule Tanggal dan Jam Praktek Lainnya", "code" => 201));
+                    return $result;
+                }
+            }
+        
+          
+            $norm = '';
+            if($request->tipepasien == 'LAMA' ){
+                $norm = \DB::table('pasien_m')->where('id',$request->nocmfk)->first()->nocm;
+            }
+            $estimasidilayani = strtotime($request->tanggalreservasi) * 1000;
+            $nomor = str_pad($request->noantrian, 3, '0', STR_PAD_LEFT);
+            $json = array(
+                "kodebooking" => $request->noreservasi,
+                "jenispasien" => $request->objectkelompokpasienfk == '2' ? "JKN": "NON JKN",
+                "nomorkartu" =>isset($request->nobpjs)? $request->nobpjs:'',
+                "nik" => $request->noidentitas?$request->noidentitas:"",
+                "nohp" => $request->notelepon?$request->notelepon:"",
+                "kodepoli" => $ruangan,
+                "namapoli" => $request->namaruangan,
+                "pasienbaru" => $request->tipepasien == 'LAMA' ? 0:1,
+                "norm" => $norm,
+                "tanggalperiksa" => date('Y-m-d',strtotime($request->tanggalreservasi)),
+                "kodedokter" => $dokter['kodedokter'],
+                "namadokter" => $dokter['namadokter'],
+                "jampraktek" => $dokter['jadwal'],
+                "jeniskunjungan" => 1,
+                "nomorreferensi" =>  $request->objectkelompokpasienfk == '2' ? ($request->norujukan?$request->norujukan:""):"",
+                "nomorantrean" => $request->jenis . '-' . $nomor,
+                "angkaantrean" => 0,
+                "estimasidilayani" => $estimasidilayani,
+                "sisakuotajkn" => 0,
+                "kuotajkn" => 0,
+                "sisakuotanonjkn" => 0,
+                "kuotanonjkn" => 0,
+                "keterangan" => 'Peserta harap 30 menit lebih awal guna pencatatan administrasi.'
+            );
+          
+      
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['url']= "antrean/add";
+            $objetoRequest ['jenis']= "antrean";
+            $objetoRequest ['method']= "POST";
+            $objetoRequest ['data']= $json;
+  
+
+            $post = app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($objetoRequest);
+            if(is_array($post)){
+                $code = $post['metaData']->code;
+                $message = $post['metaData']->message;
+            }else{
+                $cek = json_decode($post->content(), true);
+                $code = $cek['metaData']['code'];
+                $message = $cek['metaData']['message'];
+            }
+
+            if($code != '200'){
+                $result = array("metadata"=>array("message" => "Add antrol gagal : ".$message, "code" => 201));
+                return $result;
+            }else{
+                $result = array("metadata"=>array("message" =>$message, "code" => 200));
+                return $result;
+            }
+        
+        } catch (\Exception $e) {
+            $result = array("metadata"=>array("message" =>$e->getMessage().' ' .$e->getLine(), "code" => 201));
+            return $result;
+        }
+
+    }
+    function isJson($string)
+    {
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
     }
 }

@@ -75,8 +75,8 @@ define(['initialize'], function (initialize) {
             function loadData() {
 
                 $scope.isRouteLoading = true;
-                var tglAwal = moment($scope.item.periodeAwal).format('DD-MMM-YYYY HH:mm');
-                var tglAkhir = moment($scope.item.periodeAkhir).format('DD-MMM-YYYY HH:mm');
+                var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm');
+                var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm');
 
                 var rm = ""
                 if ($scope.item.noRM != undefined) {
@@ -122,6 +122,13 @@ define(['initialize'], function (initialize) {
                             // data.data.data[i].sudahbayar = "Rp. "
 
                         }
+                        for (var i = 0; i < data.data.v2.length; i++) {
+                            data.data.v2[i].no = i + 1
+                        }
+                        for (var i = 0; i < data.data.ranap.length; i++) {
+                            data.data.ranap[i].noranap = i + 1
+                        }
+
                         $scope.dataSourceGrid = new kendo.data.DataSource({
                             data: data.data.data,
                             group: $scope.group,
@@ -133,6 +140,33 @@ define(['initialize'], function (initialize) {
                                 model: {
                                     fields: {
                                     }
+                                }
+                            }
+
+                        });
+                        
+                        $scope.dataSourceGridv2 = new kendo.data.DataSource({
+                            data: data.data.v2,
+                            pageSize: 50,
+                            total: data.data.v2.length,
+
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            }
+                        });
+                        $scope.dataSourceGridranap = new kendo.data.DataSource({
+                            data: data.data.ranap,
+                            pageSize: 50,
+                            total: data.data.data.length,
+
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {}
                                 }
                             }
 
@@ -158,6 +192,84 @@ define(['initialize'], function (initialize) {
             //     field: "pemeriksaan.detailjenisproduk",
             //     aggregate: "count"
             // }]
+
+            $scope.columnGridv2 = {
+                toolbar: [
+                    "excel",
+                    
+                ],
+                excel: {
+                    fileName: "Laporan Pengunjung Pemeriksaan.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+
+                    sheet.mergedCells = ["A1:I1"];
+                    
+                    var myHeaders = [
+                        {
+                            value: "Laporan Rekap Data Kunjungan Rawat Jalan",
+                            fontSize: 20,
+                            textAlign: "center",
+                            background: "#ffffff",
+                            // color:"#ffffff"
+                        }
+                    ];
+                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+                },
+                selectable: "row",
+                pageable: true,
+                columns: [
+                    {
+                        "field": "no",
+                        "title": "NO",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "nocm",
+                        "title": "NO RM",
+                        "width": "70px",
+                    },
+                    {
+                        "field": "namapasien",
+                        "title": "NAMA PASIEN",
+                        "width": "280px",
+                    },
+                    {
+                        "field": "namaruangan",
+                        "title": "POLIKLINIK",
+                        "width": "230px",
+                    },
+                    {
+                        "field": "tglmasuk",
+                        "title": "TGL KUNJUNGAN",
+                        "width": "150px",
+                    },
+                    {
+                        "field": "statuspasien",
+                        "title": "KET PASIEN",
+                        "width": "60px",
+                    },
+                    {
+                        field: "asalrujukan",
+                        "title":"CARA MASUK",
+                        "width": "120px",
+                    },
+                    {
+                        "field": "kelompokpasien",
+                        "title": "CARA BAYAR",
+                        "width": "210px",
+                    },
+                    {
+                        "field": "namakotakabupaten",
+                        "title": "KABUPATEN",
+                        "width": "170px",
+                    }
+                ]
+            }
+
             $scope.columnGrid = {
                 toolbar: [
                     "excel",
@@ -272,6 +384,98 @@ define(['initialize'], function (initialize) {
                 ]
             };
 
+            $scope.columnGridranap = {
+                toolbar: [
+                    "excel"
+                ],
+                excel: {
+                    fileName: "DaftarKunjunganRANAP.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+                    sheet.mergedCells = ["A1:L1"];
+                    sheet.name = "Orders";
+                    var myHeaders = [{
+                        value: "Laporan Rekap Data Kunjungan Rawat Inap",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                    }]
+                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+                },
+                selectable: 'row',
+                pageable: true,
+                columns: [
+                    {
+                        "field": "noranap",
+                        "title" : "NO",
+                        "width": "30px",
+                    },
+                    {
+                        field: "nocm",
+                        title : "NO RM",
+                        width: "70px",
+                    },
+                    {
+                        field: "namapasien",
+                        title : "NAMA PASIEN",
+                        width: "160px",
+                    },
+                    {
+                        field: "alamatlengkap",
+                        title : "ALAMAT",
+                        width: "280px",
+                    },
+                    {
+                        field: "jenisjiwa",
+                        title : "JENIS",
+                        width: "50px",
+                    },
+                    {
+                        field: "namaruangan",
+                        title : "BANGSAL",
+                        width: "100px",
+                    },
+                    {
+                        field: "namakelas",
+                        title : "KELAS",
+                        width: "70px",
+                    },
+                    {
+                        field: "tglmasuk",
+                        title : "TGL MASUK",
+                        width: "50px",
+                    },
+                    {
+                        field: "tglkeluar",
+                        title : "TGL KELUAR",
+                        width: "125px",
+                    },
+                    {
+                        field: "lamahari",
+                        title: "LAMA HARI",
+                        width: "125px",
+                    },
+                    {
+                        "field": "statuskeluar",
+                        title : "CARA KELUAR",
+                        width: "125px",
+                    },
+                    {
+                        "field": "kondisipasien",
+                        title : "KEADAAN",
+                        width: "140px",
+                    },
+                    {
+                        "field": "kelompokpasien",
+                        title : "CARA BAYAR",
+                        width: "200px",
+                    }
+                ]
+
+            }
             $scope.klikGrid = function (dataPasienSelected) {
                 if (dataPasienSelected != undefined) {
                     $scope.nocm = dataPasienSelected.nocm;

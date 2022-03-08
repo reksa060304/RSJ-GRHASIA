@@ -1775,6 +1775,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/get-datacombo-sensus', 'SensusHarianRawatJalanController@getDataCombo');
               
               Route::get('registrasi/laporan/get-combo-box-laporan-summary','Registrasi\RegistrasiController@getDataComboSummary');
+              Route::get('registrasi/laporan/get-data-lap-summary-hambatan-komunikasi','Registrasi\RegistrasiController@getLaporanSummaryHambatanKomunikasi');
               Route::get('registrasi/laporan/get-data-lap-summary-kunjungan','Registrasi\RegistrasiController@getLaporanSummaryKunjungan');
               Route::get('registrasi/laporan/get-data-lap-summary-pendidikan','Registrasi\RegistrasiController@getLaporanSummaryPendidikan');
               Route::get('registrasi/laporan/get-data-lap-summary-daerah','Registrasi\RegistrasiController@getLaporanSummaryDaerah');
@@ -1818,7 +1819,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('registrasi/save-skrining-awal-pasien','Registrasi\RegistrasiController@saveSkringAwalPasien');
               Route::get('registrasi/get-data-skrining-awal-pasien','Registrasi\RegistrasiController@getDataSkringAwalPasien');
               Route::post('registrasi/hapus-skrining-awal-pasien','Registrasi\RegistrasiController@deleteSkringAwalPasien');
-
+              Route::get('registrasi/cek-sep-by-regis', 'Registrasi\RegistrasiController@getSEPByNoreg');
 
         // });
         // Route::group(['prefix' => 'remunerasi'], function () {
@@ -2687,13 +2688,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('get-rekap-antrean','ReservasiOnline\ReservasiOnlineController@GetRekapMobileJKN');
         Route::post('get-kode-booking-operasi','ReservasiOnline\ReservasiOnlineController@getKodeBokingOperasi');
         Route::post('get-jadwal-operasi','ReservasiOnline\ReservasiOnlineController@getJadwalOperasi');
-        //** BPJS V.2.0 */
+        Route::post('save-pasien-baru','ReservasiOnline\ReservasiOnlineController@savePasienBaru');
+  //        Route::post('get-token', 'Auth\LoginController@getTokens');
         Route::post('get-status-antrean','ReservasiOnline\ReservasiOnlineController@GetStatusAntrianMobileJKN');
         Route::post('get-antrean','ReservasiOnline\ReservasiOnlineController@GetAntrean');
         Route::post('get-sisa-antrean','ReservasiOnline\ReservasiOnlineController@GetSisaAntrean');
         Route::post('save-batal-antrean','ReservasiOnline\ReservasiOnlineController@saveBatalAntrean');
         Route::post('save-checkin','ReservasiOnline\ReservasiOnlineController@saveCheckInAntrean');
-        Route::post('save-pasien-baru','ReservasiOnline\ReservasiOnlineController@savePasienBaru');
         //** END BPJS V.2.0 */
 //        Route::post('get-token', 'Auth\LoginController@getTokens');
     });
