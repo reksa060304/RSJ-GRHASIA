@@ -247,7 +247,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("tatarekening/get-data-diagnosa-pasien?"
                     + tglAwal
                     + tglAkhir
-                    +tglAwalmasuk
+                    + tglAwalmasuk
                     +tglAkhirmasuk
                     + tempDepartemenId + tempRuanganId + tempJenisDiagnosa + tempDiagnosa + tempstatusPasien).then(function (data) {
                         

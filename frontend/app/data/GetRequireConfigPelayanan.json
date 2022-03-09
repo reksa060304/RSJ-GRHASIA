@@ -3053,6 +3053,10 @@
         {
             "nameDep": "FormulirEdukasiPasienDanKeluargaTerintegrasiCtrl",
             "urlDep": "module/EMR/FormulirEdukasiPasienDanKeluargaTerintegrasiCtrl"
+        }, 
+        {
+            "nameDep": "LaporanMorbiditasCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanMorbiditasCtrl"
         }
     ]
 }

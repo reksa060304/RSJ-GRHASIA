@@ -6324,12 +6324,12 @@ class TagihanController  extends ApiController
 
         $paramtglmasuk = ' ';
         if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
-            $paramtglmasuk = " AND apd.tglmasuk BETWEEN '". $tglAwalmasuk. "'
+            $paramtglmasuk = " AND apd.tglmasuk::date BETWEEN '". $tglAwalmasuk. "'
                 AND '". $tglAkhirmasuk."' ";
         }
         $paramtglkeluar = ' ';
         if(isset($tglAwal) && isset($tglAkhir) && ($tglAwal != "" && $tglAkhir != "")){
-            $paramtglkeluar = " AND apd.tglkeluar BETWEEN '$tglAwal'
+            $paramtglkeluar = " AND apd.tglkeluar::date BETWEEN '$tglAwal'
                 AND '$tglAkhir' ";
         }
         $paramDep = ' ';
