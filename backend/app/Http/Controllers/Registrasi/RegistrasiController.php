@@ -74,7 +74,7 @@ class RegistrasiController extends ApiController
             ->leftjoin ('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
 //            ->leftjoin ('pasiendaftar_t as pd','pd.nocmfk','=','ps.id')
             ->select('ps.nocm','ps.id as nocmfk','ps.namapasien','ps.objectjeniskelaminfk','jk.jeniskelamin','ps.tgllahir',
-                'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.noidentitas','ps.notelepon','ps.foto'
+                'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.noidentitas','ps.notelepon','ps.foto','ps.nobpjs'
 //                DB::raw('encode(foto, \'base64\') AS foto'))
             )
             ->where('ps.statusenabled', true)
@@ -341,6 +341,7 @@ class RegistrasiController extends ApiController
         DB::beginTransaction();
         $cekUdahDaftar=PasienDaftar::where('nocmfk', $r_NewPD['nocmfk'])
             ->wherenull('tglpulang')
+            ->where('statusenabled',true)
             ->count();
         if($cekUdahDaftar > 0 && $r_NewPD['norec_pd']=='') {
             $transStatus='belumdipulangkan';
@@ -385,8 +386,8 @@ class RegistrasiController extends ApiController
                 }
 
                 $dataPD->objectruanganlastfk = $r_NewPD['objectruanganfk'];
-                $dataPD->objectdokterpemeriksafk =  $r_NewPD['objectpegawaifk'];
-                $dataPD->objectpegawaifk = $r_NewPD['objectpegawaifk'];
+                $dataPD->objectdokterpemeriksafk =  isset($r_NewPD['objectpegawaifk']) ? $r_NewPD['objectpegawaifk'] : null;
+                $dataPD->objectpegawaifk = isset($r_NewPD['objectpegawaifk']) ? $r_NewPD['objectpegawaifk'] : null;
                 $dataPD->iskajianawal = false;
                 $dataPD->isonsiteservice = 0;
                 $dataPD->isregistrasilengkap = 0;
@@ -510,7 +511,7 @@ class RegistrasiController extends ApiController
                     $dataAPD->nobed = $r_NewAPD['nobed'];
                 }
                 $dataAPD->noregistrasifk = $dataPDnorec;
-                $dataAPD->objectpegawaifk = $r_NewAPD['objectpegawaifk'] == null ? $r_NewPD['objectpegawaifk'] :  $r_NewAPD['objectpegawaifk'] ;
+                $dataAPD->objectpegawaifk = isset($r_NewAPD['objectpegawaifk']) && $r_NewAPD['objectpegawaifk'] != null ? $r_NewAPD['objectpegawaifk'] : (isset( $r_NewPD['objectpegawaifk'])? $r_NewPD['objectpegawaifk']:null) ;
                 $dataAPD->statusantrian = 0;
                 $dataAPD->statuskunjungan =$dataStatusPasien;
                 $dataAPD->statuspasien = 1;
@@ -559,7 +560,9 @@ class RegistrasiController extends ApiController
                     $dataRPP->noregistrasifk = $dataPDnorec;
                     $dataRPP->objectruanganfk = $r_NewAPD['objectruanganfk'];
                     $dataRPP->objectstatuskeluarfk = null;
-                    $dataRPP->objecttempattidurfk = $r_NewAPD['nobed'];
+                    if (isset($r_NewAPD['nobed'])){
+                        $dataAPD->objecttempattidurfk = $r_NewAPD['nobed'];
+                    }
                     $dataRPP->tglmasuk = $r_NewAPD['tglregistrasi'];
                     //region Dibuang Sayang Deui
                     //            $dataRPP->objectkasuspenyakitfk = null;
@@ -631,12 +634,18 @@ class RegistrasiController extends ApiController
                 return $this->setStatusCode(200)->respond($result, $transMessage);
             }else{
                 DB::commit();
+                $antrol = '';
+                if($r_NewPD['norec_pd'] == '' && $r_NewPD['statusschedule'] != '' && $r_NewPD['statusschedule'] != 'Kios-K'){
+                    $antrol = $this->saveAntrolV2($r_NewPD['statusschedule']);
+                }
+              
                 $transMessage = 'SUKSES';
                 $result = array(
                     'status' => 201,
                     'message'=>$transMessage,
                     'dataPD' => $dataPD,
                     'dataAPD' => $dataAPD,
+                    'antrol'=>$antrol,
                     'as' => 'ramdanegie',
                 );
             }
@@ -750,21 +759,21 @@ class RegistrasiController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         DB::beginTransaction();
         try{
-            $cekSEP = PemakaianAsuransi::where('noregistrasifk','!=',$request['pemakaianasuransi']['noregistrasifk'])
-                ->where('nosep', $request['pemakaianasuransi']['nosep'])
-                ->where('kdprofile',$kdProfile)
-                ->first();
-//            return $this->respond($cekSEP);
-            if ($request['pemakaianasuransi']['nosep']!= '' &&!empty($cekSEP)){
-                $transMessage = "No SEP sudah ada di pasien lain dengan no Kartu ".$cekSEP->nokepesertaan;
-                DB::rollBack();
-                $result = array(
-                    "status" => 400,
-                    "message"  => $transMessage,
-                    "as" => 'as@epic',
-                );
-                return $this->setStatusCode($result['status'])->respond($result, $transMessage);
-            }
+//             $cekSEP = PemakaianAsuransi::where('noregistrasifk','!=',$request['pemakaianasuransi']['noregistrasifk'])
+//                 ->where('nosep', $request['pemakaianasuransi']['nosep'])
+//                 ->where('kdprofile',$kdProfile)
+//                 ->first();
+// //            return $this->respond($cekSEP);
+//             if ($request['pemakaianasuransi']['nosep']!= '' &&!empty($cekSEP)){
+//                 $transMessage = "No SEP sudah ada di pasien lain dengan no Kartu ".$cekSEP->nokepesertaan;
+//                 DB::rollBack();
+//                 $result = array(
+//                     "status" => 400,
+//                     "message"  => $transMessage,
+//                     "as" => 'as@epic',
+//                 );
+//                 return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+//             }
             if ($request['asuransipasien']['kelompokpasien'] != 'null' || $request['asuransipasien']['kelompokpasien'] != 'undefined') {
                 $updateKPS = PasienDaftar::where('noregistrasi', $request['asuransipasien']['noregistrasi'])
                     ->update([
@@ -872,6 +881,7 @@ class RegistrasiController extends ApiController
                 $dataPA->norec = $dataPA->generateNewId();;
                 $dataPA->kdprofile = (int)$kdProfile;
                 $dataPA->statusenabled = true;
+                $dataPA->tglcreate = date('Y-m-d');
             }else{
                 $dataPA = $cekPemakaian;
             }
@@ -950,6 +960,16 @@ class RegistrasiController extends ApiController
             if(isset($pemA['assesmentpel'])) {   
                 $dataPA->assesmentpel = $pemA['assesmentpel'];
             }
+            if(isset($pemA['statuskunjungan'])) {   
+                $dataPA->statuskunjungan = $pemA['statuskunjungan'];
+            }
+            if(isset($pemA['poliasalkode'])) {   
+                $dataPA->poliasalkode = $pemA['poliasalkode'];
+            }
+            if(isset($pemA['politujuankode'])) {   
+                $dataPA->politujuankode = $pemA['politujuankode'];
+            }
+          
           
             /*** end nu anyar */
             $dataPA->save();
@@ -2994,7 +3014,7 @@ class RegistrasiController extends ApiController
                 'pa.namakabupaten','pa.kdkecamatan','pa.namakecamatan','pa.nosuratskdp','pa.kodedpjp','pa.namadpjp',
                 'pa.asalrujukanfk','asl.asalrujukan','pa.kodedpjpmelayani','pa.namadjpjpmelayanni',
                 'pa.klsrawatnaik', 'pa.pembiayaan', 'pa.penanggungjawab','pa.tujuankunj','pa.flagprocedure','pa.kdpenunjang',
-                'pa.assesmentpel'
+                'pa.assesmentpel','pa.tglcreate','pa.statuskunjungan','pa.poliasalkode','pa.politujuankode'
                 )
             ->whereRaw(" ( pa.norec='$request[noregistrasi]' or pd.noregistrasi='$request[noregistrasi]')")
 //               ->orWhere('pd.noregistrasi', $request['noregistrasi'])
@@ -4826,7 +4846,7 @@ class RegistrasiController extends ApiController
             ->orderBy('ru.namaruangan')
             ->get();
         $dataRuanganJalan = \DB::table('ruangan_m as ru')
-            ->select('ru.id','ru.namaruangan','ru.objectdepartemenfk')
+            ->select('ru.id','ru.namaruangan','ru.objectdepartemenfk','ru.kdinternal as kodebpjs')
             ->where('ru.statusenabled', true)
             ->wherein('ru.objectdepartemenfk', $kdDepartemenRawatJalan)
             ->where('ru.kdprofile',(int)$kdProfile)
@@ -4898,7 +4918,7 @@ class RegistrasiController extends ApiController
         $kdJenisPegawaiDokter = $this->settingDataFixed('kdJenisPegawaiDokter',$kdProfile);
         $req = $request->all();
         $data = \DB::table('pegawai_m')
-            ->select('*')
+            ->select('*','kddokterbpjs as kodebpjs')
             ->where('statusenabled', true)
             // ->where('objectjenispegawaifk',$kdJenisPegawaiDokter)
             ->where('kdprofile', (int)$kdProfile)
@@ -5575,6 +5595,9 @@ class RegistrasiController extends ApiController
             'kelas' => $dataKelas,
             'asalrujukan' => $dataAsalRujukan,
             'hubunganpeserta' => $dataHubunganPeserta,
+            'kodePPKRujukan' => $this->settingDataFixed('kodePPKRujukan',$kdProfile),
+            'namaPPKRujukan' => $this->settingDataFixed('namaPPKRujukan',$kdProfile),
+            'statusBridgingTemporary' => $this->settingDataFixed('statusBridgingTemporary',$kdProfile),
             'message' => 'ramdanegie',
         );
 
@@ -5605,7 +5628,7 @@ class RegistrasiController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $req=$request->all();
         $dataPenulis = \DB::table('pegawai_m as st')
-            ->select('st.id','st.namalengkap','st.nip_pns')
+            ->select('st.id','st.namalengkap','st.nip_pns','st.kddokterbpjs as kodebpjs')
             ->where('st.statusenabled',true)
             ->where('st.kdprofile',(int)$kdProfile)
             ->orderBy('st.namalengkap');
@@ -5624,6 +5647,7 @@ class RegistrasiController extends ApiController
                 'id' => $item->id,
                 'namalengkap' => $item->namalengkap,
                 'nip_pns' => $item->nip_pns,
+                'kodebpjs' => $item->kodebpjs,
             );
         }
         return $this->respond($dataPenulis2);
@@ -6651,7 +6675,8 @@ class RegistrasiController extends ApiController
                 'pa.norec as norec_pa', 'pa.objectasuransipasienfk', 'pd.objectpegawaifk as pgid', 'pd.objectruanganlastfk',
                 'pa.nosep as nosep', 'br.norec as norec_br', 'pd.nostruklastfk','klstg.namakelas as kelasditanggung','kls.namakelas',
                 'ps.tgllahir','ru.objectdepartemenfk', 'pd.objectkelasfk','dept.id as deptid','pa.ppkrujukan','ddt.objectdiagnosafk',
-                'jpl.jenispelayanan','pa.objectdiagnosafk as iddiagnosabpjs','ps.nobpjs','jks.jeniskelamin')
+                'jpl.jenispelayanan','pa.objectdiagnosafk as iddiagnosabpjs','ps.nobpjs','jks.jeniskelamin',
+                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider')
             ->whereNull('br.norec')
             ->where('pd.statusenabled', true)
             ->where('pd.kdprofile', (int)$kdProfile);
@@ -8220,6 +8245,447 @@ class RegistrasiController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getLaporanSummaryHambatanKomunikasi(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = [];
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $ruanganId = $request['ruanganId'];
+        $kelompokId = $request['kelompokPasien'];
+        $jenispelayananId = $request['jenisPelayanan'];
+
+        $paramRuangan = ' ';
+        if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined") {
+            $paramRuangan = ' and pd.objectruanganlastfk = ' . $ruanganId;
+        }
+
+        $paramKelompok = ' ';
+        if (isset($kelompokId) && $kelompokId != "" && $kelompokId != "undefined") {
+            $paramKelompok = ' and pd.objectkelompokpasienlastfk = ' . $kelompokId;
+        }
+
+        $paramJenisPelayanan = ' ';
+        if (isset($jenispelayananId) && $jenispelayananId != "" && $jenispelayananId != "undefined") {
+            if($jenispelayananId == 1){
+                $paramJenisPelayanan = ' and ru.iseksekutif = false' ;
+            }else{
+                $paramJenisPelayanan = ' and ru.iseksekutif = true';
+            }
+        }
+
+        $deptRawatJalan = $this->settingDataFixed('kdDepartemenRawatJalanFix',$kdProfile);
+
+        $ruangan = DB::select(DB::raw("
+            SELECT * FROM ruangan_m where id in(752,753,755,756,757,758,759,761,762,764,765,29,767,768,
+            769,770,771,772,773,774,777,782,785,786,576,575)
+        "));
+        
+        $hambatan = DB::select(DB::raw("
+        WITH nonlab AS (
+        SELECT distinct
+        ru.id,
+        pd.norec,
+        pd.nocmfk,
+        apd.tglmasuk,
+        ps.namapasien,
+        ru.namaruangan,
+        apd.objectruanganfk,
+        ps.hambatankomunikasifk,
+        ru.objectdepartemenfk
+        FROM
+        pasiendaftar_t pd
+        INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+        INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+        INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+        WHERE
+        apd.tglmasuk BETWEEN '$tglAwal'
+        AND '$tglAkhir'
+        $paramKelompok
+        AND pd.statusenabled = TRUE
+        AND apd.statusenabled = TRUE
+        AND ps.statusenabled = TRUE
+        AND ru.objectdepartemenfk NOT IN ( 27, 3 )
+        and apd.kdprofile=$idProfile
+        ORDER BY
+        pd.nocmfk,
+        apd.tglmasuk ASC
+        ),
+        lab AS (
+        SELECT DISTINCT
+        ru.id,
+        pp.norec,
+        pd.nocmfk,
+        pp.tglpelayanan,
+        ps.namapasien,
+        ru.namaruangan,
+        apd.objectruanganfk,
+        ps.hambatankomunikasifk,
+        ru.objectdepartemenfk
+        FROM
+        pasiendaftar_t pd
+        INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+        INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+        INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+        INNER JOIN pelayananpasien_t pp ON apd.norec = pp.noregistrasifk
+        WHERE
+        pp.tglpelayanan BETWEEN '$tglAwal'
+        AND '$tglAkhir'
+        $paramKelompok
+        AND pd.statusenabled = TRUE
+        AND apd.statusenabled = TRUE
+        AND ps.statusenabled = TRUE
+        AND ru.objectdepartemenfk IN ( 27, 3 )
+        and pp.kdprofile=$idProfile
+        ORDER BY
+        pd.nocmfk,
+        pp.tglpelayanan ASC
+        )
+        SELECT
+        nl.id,
+        nl.namaruangan,
+        COUNT ( nl.hambatankomunikasifk ) FILTER(where nl.hambatankomunikasifk = 1) gangguanbicara,
+        COUNT ( nl.hambatankomunikasifk ) FILTER(where nl.hambatankomunikasifk = 2) gangguanlainnya,
+        COUNT ( nl.hambatankomunikasifk ) FILTER(where nl.hambatankomunikasifk = 3) gangguanpendengaran,
+        COUNT ( nl.hambatankomunikasifk ) FILTER(where nl.hambatankomunikasifk = 4) gangguanpenglihatan,
+        COUNT ( nl.hambatankomunikasifk ) FILTER(where nl.hambatankomunikasifk = 5) tidakada
+
+        FROM
+        nonlab nl
+        INNER JOIN hambatankomunikasi_m hk ON hk.ID = nl.hambatankomunikasifk
+        WHERE
+        nl.objectdepartemenfk <> 16
+            GROUP BY
+            nl.namaruangan ,nl.id
+            UNION ALL
+            SELECT
+            l.id,
+            l.namaruangan,
+            COUNT ( l.hambatankomunikasifk ) FILTER(where l.hambatankomunikasifk = 1) gangguanbicara,
+            COUNT ( l.hambatankomunikasifk ) FILTER(where l.hambatankomunikasifk = 2) gangguanlainnya,
+            COUNT ( l.hambatankomunikasifk ) FILTER(where l.hambatankomunikasifk = 3) gangguanpendengaran,
+            COUNT ( l.hambatankomunikasifk ) FILTER(where l.hambatankomunikasifk = 4) gangguanpenglihatan,
+            COUNT ( l.hambatankomunikasifk ) FILTER(where l.hambatankomunikasifk = 5) tidakada
+            FROM
+            lab l
+            INNER JOIN hambatankomunikasi_m hk ON hk.ID = l.hambatankomunikasifk
+            WHERE
+            l.objectdepartemenfk <> 16
+                GROUP BY
+                l.namaruangan,l.id
+                "));
+
+            $bahasa = DB::select(DB::raw("
+
+            with nonlab as (
+            SELECT
+            ru.id,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.bahasafk,
+            ru.objectdepartemenfk
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+            INNER JOIN bahasa_m ba on ba.id = ps.bahasafk
+            WHERE
+            apd.tglmasuk BETWEEN '$tglAwal'
+            AND '$tglAkhir'
+            $paramKelompok
+            AND pd.statusenabled = TRUE
+            AND apd.statusenabled = TRUE
+            AND ps.statusenabled = TRUE
+            AND ru.objectdepartemenfk NOT IN ( 27, 3 )
+            and apd.kdprofile=$idProfile
+            GROUP BY
+            ru.id,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.bahasafk,
+            ru.objectdepartemenfk
+            ORDER BY
+            ru.namaruangan ASC
+
+            ), lab as(
+            SELECT
+            ru.id,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.bahasafk,
+            ru.objectdepartemenfk
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN pelayananpasien_t pp on apd.norec = pp.noregistrasifk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+            INNER JOIN bahasa_m ba on ba.id = ps.bahasafk
+            WHERE
+            pp.tglpelayanan BETWEEN '$tglAwal'
+            AND '$tglAkhir'
+            $paramKelompok
+            AND pd.statusenabled = TRUE
+            AND pp.statusenabled = TRUE
+            AND ps.statusenabled = TRUE
+            AND ru.objectdepartemenfk IN ( 27, 3 )
+            and pp.kdprofile=$idProfile
+            GROUP BY
+            ru.id,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.bahasafk,
+            ru.objectdepartemenfk
+            ORDER BY
+            pd.nocmfk ASC
+
+            )
+            SELECT
+            nl.id,
+            nl.namaruangan,
+            COUNT(nl.bahasafk) filter(where nl.bahasafk = 1) asing,
+            COUNT(nl.bahasafk) filter(where nl.bahasafk = 2) indonesia,
+            COUNT(nl.bahasafk) filter(where nl.bahasafk = 3) daerah,
+            COUNT(nl.bahasafk) filter(where nl.bahasafk = 4) isyarat,
+            COUNT(nl.bahasafk) filter(where nl.bahasafk not in(1,2,3,4)) lainnya
+
+            FROM nonlab nl
+            where
+            nl.objectdepartemenfk <>16
+                GROUP BY nl.id,nl.namaruangan
+
+                union ALL
+                SELECT
+                nl.id,
+                nl.namaruangan,
+                COUNT(nl.bahasafk) filter(where nl.bahasafk = 1) asing,
+                COUNT(nl.bahasafk) filter(where nl.bahasafk = 2) indonesia,
+                COUNT(nl.bahasafk) filter(where nl.bahasafk = 3) daerah,
+                COUNT(nl.bahasafk) filter(where nl.bahasafk = 4) isyarat,
+                COUNT(nl.bahasafk) filter(where nl.bahasafk not in(1,2,3,4)) lainnya
+
+                FROM lab nl
+                where
+                nl.objectdepartemenfk <>16
+                    GROUP BY nl.id,nl.namaruangan
+
+                    "));
+        
+            $etnis = DB::Select(DB::raw("
+            with nonlabrad as (
+            SELECT distinct
+            ru.id,
+            pd.norec,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.objectsukufk,
+            ru.objectdepartemenfk
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+            INNER JOIN suku_m su on su.id = ps.objectsukufk
+            WHERE
+            apd.tglmasuk BETWEEN '$tglAwal'
+            AND '$tglAkhir'
+            $paramKelompok
+            AND pd.statusenabled = TRUE
+            AND apd.statusenabled = TRUE
+            AND ps.statusenabled = TRUE
+            AND ru.objectdepartemenfk NOT IN ( 27, 3 )
+            and apd.kdprofile=$idProfile
+            ORDER BY
+            pd.nocmfk ASC
+            ), labrad as (
+            SELECT distinct
+            ru.id,
+            pd.norec,
+            pd.nocmfk,
+            ru.namaruangan,
+            apd.objectruanganfk,
+            ps.objectsukufk,
+            ru.objectdepartemenfk
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+            INNER JOIN suku_m su on su.id = ps.objectsukufk
+            		inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+            WHERE
+            pp.tglpelayanan BETWEEN '$tglAwal'
+            AND '$tglAkhir'
+            $paramKelompok
+            AND pd.statusenabled = TRUE
+            AND apd.statusenabled = TRUE
+            AND ps.statusenabled = TRUE
+            AND ru.objectdepartemenfk IN ( 27, 3 )
+
+            and apd.kdprofile=$idProfile
+            ORDER BY
+            pd.nocmfk ASC
+            )
+
+            SELECT nl.id, nl.namaruangan, count(nl.objectsukufk) filter(where nl.objectsukufk = 1) as jawa,
+            count(nl.objectsukufk) filter(where nl.objectsukufk = 2) as sunda, count(nl.objectsukufk) filter(where
+            nl.objectsukufk = 21) as batak, count(nl.objectsukufk) filter(where nl.objectsukufk = 16) as tionhoa,
+            count(nl.objectsukufk) filter(where nl.objectsukufk = 9) as papua, count(nl.objectsukufk) filter(where
+            nl.objectsukufk not in(1,2,21,16,9)) as lainnya FROM nonlabrad nl where nl.objectdepartemenfk <>16 GROUP BY
+                nl.id, nl.namaruangan
+                union ALL
+                SELECT nl.id, nl.namaruangan, count(nl.objectsukufk) filter(where nl.objectsukufk = 1) as jawa,
+                count(nl.objectsukufk) filter(where nl.objectsukufk = 2) as sunda, count(nl.objectsukufk) filter(where
+                nl.objectsukufk = 21) as batak, count(nl.objectsukufk) filter(where nl.objectsukufk = 16) as tionhoa,
+                count(nl.objectsukufk) filter(where nl.objectsukufk = 9) as papua, count(nl.objectsukufk) filter(where
+                nl.objectsukufk not in(1,2,21,16,9)) as lainnya FROM labrad nl where nl.objectdepartemenfk <>16 GROUP BY
+                    nl.id, nl.namaruangan
+                    "));
+        $detail = [];
+        //jmlhambatan
+        $gangguanbicara = 0;
+        $gangguanlainnya = 0;
+        $gangguanpendengaran = 0;
+        $gangguanpenglihatan = 0;
+        $tidakada = 0;
+        //bahasa
+        $indonesia = 0;
+        $daerah = 0;
+        $isyarat = 0;
+        $lainnya1 = 0;
+        $asing = 0;
+
+        //etnis
+        $jawa = 0;
+        $sunda = 0;
+        $batak = 0;
+        $tionhoa = 0;
+        $papua = 0;
+        $lainnya2 = 0;
+        //total
+        $totalbahasa = 0;
+        $totaletnis = 0;
+        $totalhambatan = 0;
+
+        foreach ($ruangan as $ru) {
+            $gangguanbicara = 0;
+            $gangguanlainnya = 0;
+            $gangguanpendengaran = 0;
+            $gangguanpenglihatan = 0;
+            $tidakada = 0;
+
+            $indonesia = 0;
+            $daerah = 0;
+            $isyarat = 0;
+            $lainnya1 = 0;
+            $asing = 0;
+
+            $jawa = 0;
+            $sunda = 0;
+            $batak = 0;
+            $tionhoa = 0;
+            $papua = 0;
+            $lainnya2 = 0;
+            $totalbahasa = 0;
+            $totaletnis = 0;
+            $totalhambatan = 0;
+
+            foreach($hambatan as $hb){
+                if($ru->id == $hb->id){
+                    $gangguanbicara = $hb->gangguanbicara;
+                    $gangguanlainnya = $hb->gangguanlainnya;
+                    $gangguanpendengaran = $hb->gangguanpendengaran;
+                    $gangguanpenglihatan = $hb->gangguanpenglihatan;
+                    $tidakada = $hb->tidakada;
+                    break;
+                }else{
+                    $gangguanbicara = 0;
+                    $gangguanlainnya = 0;
+                    $gangguanpendengaran = 0;
+                    $gangguanpenglihatan = 0;
+                    $tidakada = 0;
+                }
+            }
+
+            foreach($bahasa as $ba){
+                if($ru->id == $ba->id){
+                    $indonesia = $ba->indonesia;
+                    $asing = $ba->asing;
+                    $daerah = $ba->daerah;
+                    $isyarat = $ba->isyarat;
+                    $lainnya1 = $ba->lainnya;
+                    break;
+                }else{
+                    $indonesia = 0;
+                    $daerah = 0;
+                    $isyarat = 0;
+                    $lainnya1 = 0;
+                    $asing = 0;
+                }
+            }
+
+            foreach($etnis as $et){
+                if($ru->id == $et->id){
+                    $jawa = $et->jawa;
+                    $sunda = $et->sunda;
+                    $batak = $et->batak;
+                    $tionhoa = $et->tionhoa;
+                    $papua = $et->papua;
+                    $lainnya2 = $et->lainnya;
+                    break;
+                }else{
+                    $jawa = 0;
+                    $sunda = 0;
+                    $batak = 0;
+                    $tionhoa = 0;
+                    $papua = 0;
+                    $lainnya2 = 0;
+                }
+            }
+
+            $totalhambatan = $gangguanbicara + $gangguanlainnya+ $gangguanpendengaran+$gangguanpenglihatan+$tidakada;
+            $totalbahasa = $indonesia+$asing+$daerah+$isyarat+$lainnya1;
+            $totaletnis = $jawa+$sunda+$papua+$batak+$lainnya2+$tionhoa;
+
+            $detail[] = array(
+                'namaruangan' => $ru->namaruangan,
+                'gangguanbicara' => $gangguanbicara,
+                'gangguanlainnya' => $gangguanlainnya,
+                'gangguanpendengaran' => $gangguanpendengaran,
+                'gangguanpenglihatan' => $gangguanpenglihatan,
+                'tidakada' => $tidakada,
+                'indonesia' => $indonesia,
+                'daerah' => $daerah,
+                'isyarat' => $isyarat,
+                'lainnya1' => $lainnya1,
+                'asing' => $asing,
+                'jawa' => $jawa,
+                'sunda' => $sunda,
+                'batak' => $batak,
+                'tionhoa' => $tionhoa,
+                'papua' => $papua,
+                'lainnya2' => $lainnya2,
+                'totalhambatan' => $totalhambatan,
+                'totalbahasa' =>$totalbahasa,
+                'totaletnis' => $totaletnis,
+
+            );
+        }
+        $result = array(
+                'detail' => $detail,
+            );
+        
+        return $this->respond($result);
+    }
+
+
     public function getLaporanSummaryKunjungan(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -11698,5 +12164,111 @@ GROUP BY y.KET
         );
         return $this->respond($result);
     }
+    public function saveAntrolV2($noreservasi){
+        try{
+            $json = array(
+                "kodebooking" => $noreservasi,
+                "taskid" => 3, //pasien lama langsung task 3 //(akhir waktu layan admisi/mulai waktu tunggu poli)
+                "waktu" => strtotime(date('Y-m-d H:i:s')) * 1000,
+            );
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['url']= "antrean/updatewaktu";
+            $objetoRequest ['jenis']= "antrean";
+            $objetoRequest ['method']= "POST";
+            $objetoRequest ['data']= $json;
+         
+            $post = app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($objetoRequest);
+       
+            if(is_array($post)){
+                $code = $post['metaData']->code;
+                $message = $post['metaData']->message;
+            }else{
+                $cek = json_decode($post->content(), true);
+                $code = $cek['metaData']['code'];
+                $message = isset($cek['metaData']['message']) ? $cek['metaData']['message']: "";
+            }
+            if($code != '200'){
+                $json2 = array(
+                    "kodebooking" => $noreservasi,
+                    "taskid" => 1, 
+                    "waktu" => strtotime(date('Y-m-d H:i:s')) * 1000,
+                );
+                $objetoRequest2 = new \Illuminate\Http\Request();
+                $objetoRequest2 ['url']= "antrean/updatewaktu";
+                $objetoRequest2 ['jenis']= "antrean";
+                $objetoRequest2 ['method']= "POST";
+                $objetoRequest2 ['data']= $json2;
+             
+                $post2 = app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($objetoRequest2);
 
+                $json3 = array(
+                    "kodebooking" => $noreservasi,
+                    "taskid" => 2, 
+                    "waktu" => (strtotime(date('Y-m-d H:i:s')) * 1000 )-240000 ,
+                );
+                $objetoRequest3 = new \Illuminate\Http\Request();
+                $objetoRequest3 ['url']= "antrean/updatewaktu";
+                $objetoRequest3 ['jenis']= "antrean";
+                $objetoRequest3 ['method']= "POST";
+                $objetoRequest3 ['data']= $json3;
+             
+                $post3 = app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($objetoRequest3);
+
+                $json4 = array(
+                    "kodebooking" => $noreservasi,
+                    "taskid" => 3, 
+                    "waktu" =>  (strtotime(date('Y-m-d H:i:s')) * 1000 )-120000 ,
+                );
+                $objetoRequest4 = new \Illuminate\Http\Request();
+                $objetoRequest4 ['url']= "antrean/updatewaktu";
+                $objetoRequest4 ['jenis']= "antrean";
+                $objetoRequest4 ['method']= "POST";
+                $objetoRequest4 ['data']= $json4;
+             
+                $post5= app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($objetoRequest4);
+                if(is_array($post5)){
+                    $code = $post5['metaData']->code;
+                    $message = $post5['metaData']->message;
+                }else{
+                    $cek = json_decode($post5->content(), true);
+                    $code = $cek['metaData']['code'];
+                    $message = isset($cek['metaData']['message']) ? $cek['metaData']['message']: "";
+                }
+                if($code != '200'){
+                    $result = array("metadata"=>array("message" => "Add antrol gagal : ".$message, "code" => 201));
+                    return $result;
+                }else{
+                    $result = array("metadata"=>array("message" =>$message, "code" => 200));
+                    return $result;
+                }
+                $result = array("metadata"=>array("message" => "Add antrol gagal : ".$message, "code" => 201));
+                return $result;
+            }else{
+                $result = array("metadata"=>array("message" =>$message, "code" => 200));
+                return $result;
+            }
+        } catch (\Exception $e) {
+            $result = array("metadata"=>array("message" =>$e->getMessage().' ' .$e->getLine(), "code" => 201));
+            return $result;
+        }
+
+    }
+    public function getSEPByNoreg(Request $request)
+    {
+      
+        $dataz = \DB::table('pasiendaftar_t as pd')
+            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
+            ->join('pemakaianasuransi_t as pa', 'pa.noregistrasifk', '=', 'pd.norec')
+            ->join('asuransipasien_m as asu', 'pa.objectasuransipasienfk', '=', 'asu.id')
+            ->select('ps.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'pa.nosep',
+                 'pa.ppkrujukan','ps.nobpjs',
+                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider'
+            )
+            ->where('pd.noregistrasi',$request['noreg'])
+            ->first();
+        $data['namaPPKRujukan'] = $this->settingDataFixed('namaPPKRujukan',0);
+        $data['data']  =$dataz;
+        return $this->respond($data);
+    }
 }

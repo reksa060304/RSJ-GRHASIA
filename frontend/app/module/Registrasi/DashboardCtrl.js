@@ -96,19 +96,32 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                if ($scope.waktu === undefined) {
-                    toastr.error('Jenis Waktu belum diset')
-                    return
-                }
+                // if ($scope.waktu === undefined) {
+                //     toastr.error('Jenis Waktu belum diset')
+                //     return
+                // }
 
                 var tanggal = new moment($scope.now).format('YYYY-MM-DD')
-                var waktu = $scope.waktu.id
-                medifirstService.get(`bridging/bpjs/antrean/v2/get-dashboard-per-tanggal?tanggal=${tanggal}&waktu=${waktu}`, false).then(function (data) {
+                // var waktu = $scope.waktu.id
+                var json ={
+                    "url": "dashboard/waktutunggu/tanggal/"+tanggal+"/waktu/server",
+                    "jenis": "antrean",
+                    "method": "GET",
+                    "data": null
+                }
+                medifirstService.postNonMessage('bridging/bpjs/tools',json).then(function (data) {
+                  
+                // medifirstService.get(`bridging/bpjs/antrean/v2/get-dashboard-per-tanggal?tanggal=${tanggal}&waktu=${waktu}`, false).then(function (data) {
                     // console.log(data)
 
                     var result = []
-                    if (data.data.metadata.code == 200)
-                        result = data.data.response.list
+                    if (data.data.metaData.code == 200){
+                         for (var i = data.data.response.length - 1; i >= 0; i--) {
+                              data.data.response.list[i].insertdate =  moment(new Date( data.data.response.list[i].insertdate )).format('YYYY-MM-DD')
+                         }
+                         result = data.data.response.list
+                        
+                    }
 
                     $scope.daftarPerTanggal = new kendo.data.DataSource({ data: result })
                 })
@@ -118,99 +131,101 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 columns: [
                     {
                         "field": "kdppk",
-                        "title": "kdppk",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "waktu_task1",
-                        "title": "waktu_task1",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "avg_waktu_task4",
-                        "title": "avg_waktu_task4",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "jumlah_antrean",
-                        "title": "jumlah_antrean",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "avg_waktu_task3",
-                        "title": "avg_waktu_task3",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "namapoli",
-                        "title": "namapoli",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "avg_waktu_task6",
-                        "title": "avg_waktu_task6",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "avg_waktu_task5",
-                        "title": "avg_waktu_task5",
-                        "width": "30%"
+                        "title": "Kode Faskes",
+                        "width": "80px"
                     },
                     {
                         "field": "nmppk",
-                        "title": "nmppk",
-                        "width": "30%"
+                        "title": "Faskes",
+                        "width": "200px"
+                    },
+                     {
+                        "field": "tanggal",
+                        "title": "Tanggal",
+                        "width": "100px"
                     },
                     {
-                        "field": "avg_waktu_task2",
-                        "title": "avg_waktu_task2",
-                        "width": "30%"
+                        "field": "jumlah_antrean",
+                        "title": "Jumlah Antrean",
+                        "width": "100px"
                     },
+
                     {
+                        "field": "namapoli",
+                        "title": "Poli",
+                        "width": "200px"
+                    },
+                   
+                    {
+                        "field": "waktu_task1",
+                        "title": "Waktu tunggu admisi",
+                        "width": "100px"
+                    },
+                     {
                         "field": "avg_waktu_task1",
-                        "title": "avg_waktu_task1",
-                        "width": "30%"
+                        "title": "Rata2 Waktu tunggu admisi",
+                        "width": "100px"
                     },
-                    {
-                        "field": "kodepoli",
-                        "title": "kodepoli",
-                        "width": "30%"
+                      {
+                        "field": "waktu_task2",
+                        "title": "Waktu layan admisi",
+                        "width": "100px"
                     },
-                    {
-                        "field": "waktu_task5",
-                        "title": "waktu_task5",
-                        "width": "30%"
+                      {
+                        "field": "avg_waktu_task2",
+                        "title": "Rata2 Waktu layan admisi",
+                        "width": "100px"
                     },
+                   
+                     {
+                        "field": "waktu_task3",
+                        "title": "Waktu tunggu poli",
+                        "width": "100px"
+                    },
+                     {
+                        "field": "avg_waktu_task3",
+                        "title": "Rata2 Waktu tunggu poli",
+                        "width": "100px"
+                    },
+               
                     {
                         "field": "waktu_task4",
-                        "title": "waktu_task4",
-                        "width": "30%"
+                        "title": "Waktu layan poli",
+                        "width": "100px"
                     },
-                    {
-                        "field": "waktu_task3",
-                        "title": "waktu_task3",
-                        "width": "30%"
+                         {
+                        "field": "avg_waktu_task4",
+                        "title": "Rata2 Waktu layan Poli",
+                        "width": "100px"
                     },
+
+                        {
+                        "field": "waktu_task5",
+                        "title": "Waktu layan poli",
+                        "width": "100px"
+                    },
+                     {
+                        "field": "avg_waktu_task5",
+                        "title": "Rata2 Waktu tunggu farmasi",
+                        "width": "100px"
+                    },
+                     {
+                        "field": "waktu_task6",
+                        "title": "Waktu layan farmasi",
+                        "width": "100px"
+                    },
+                     {
+                        "field": "avg_waktu_task6",
+                        "title": "Rata2 Waktu layan farmasi",
+                        "width": "100px"
+                    },
+                      
                     {
                         "field": "insertdate",
-                        "title": "insertdate",
-                        "width": "30%"
+                        "title": "Update",
+                        "width": "100px"
                     },
-                    {
-                        "field": "tanggal",
-                        "title": "tanggal",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "waktu_task2",
-                        "title": "waktu_task2",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "waktu_task6",
-                        "title": "Kode waktu_task6",
-                        "width": "30%"
-                    }
+                   
                 ]
             }
 
@@ -238,20 +253,32 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                if ($scope.waktuPerBulan === undefined) {
-                    toastr.error('Jenis Waktu belum diset')
-                    return
-                }
+                // if ($scope.waktuPerBulan === undefined) {
+                //     toastr.error('Jenis Waktu belum diset')
+                //     return
+                // }
 
                 var bulan = new moment($scope.bulan).format('MM')
                 var tahun = new moment($scope.bulan).format('YYYY')
-                var waktu2 = $scope.waktuPerBulan.id
-                medifirstService.get(`bridging/bpjs/antrean/v2/get-dashboard-per-bulan?bulan=${bulan}&waktu=${waktu2}&tahun=${tahun}`, false).then(function (data) {
+                // var waktu2 = $scope.waktuPerBulan.id
+
+                  var json ={
+                    "url": "dashboard/waktutunggu/bulan/"+bulan+"/tahun/"+tahun+"/waktu/server",
+                    "jenis": "antrean",
+                    "method": "GET",
+                    "data": null
+                }
+                medifirstService.postNonMessage('bridging/bpjs/tools',json).then(function (data) {
+                // medifirstService.get(`bridging/bpjs/antrean/v2/get-dashboard-per-bulan?bulan=${bulan}&waktu=${waktu2}&tahun=${tahun}`, false).then(function (data) {
                         // console.log(data)
 
                     var result = []
-                    if (data.data.metadata.code == 200)
+                    if (data.data.metaData.code == 200){
+                         for (var i = data.data.response.length - 1; i >= 0; i--) {
+                              data.data.response.list[i].insertdate =  moment(new Date( data.data.response.list[i].insertdate )).format('YYYY-MM-DD')
+                         }
                         result = data.data.response.list
+                    }
 
                     $scope.daftarPerBulan = new kendo.data.DataSource({ data: result })
                 })
@@ -261,99 +288,101 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 columns: [
                     {
                         "field": "kdppk",
-                        "title": "kdppk",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "waktu_task1",
-                        "title": "waktu_task1",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "avg_waktu_task4",
-                        "title": "avg_waktu_task4",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "jumlah_antrean",
-                        "title": "jumlah_antrean",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "avg_waktu_task3",
-                        "title": "avg_waktu_task3",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "namapoli",
-                        "title": "namapoli",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "avg_waktu_task6",
-                        "title": "avg_waktu_task6",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "avg_waktu_task5",
-                        "title": "avg_waktu_task5",
-                        "width": "30%"
+                        "title": "Kode Faskes",
+                        "width": "80px"
                     },
                     {
                         "field": "nmppk",
-                        "title": "nmppk",
-                        "width": "30%"
+                        "title": "Faskes",
+                        "width": "200px"
+                    },
+                     {
+                        "field": "tanggal",
+                        "title": "Tanggal",
+                        "width": "100px"
                     },
                     {
-                        "field": "avg_waktu_task2",
-                        "title": "avg_waktu_task2",
-                        "width": "30%"
+                        "field": "jumlah_antrean",
+                        "title": "Jumlah Antrean",
+                        "width": "100px"
                     },
+
                     {
+                        "field": "namapoli",
+                        "title": "Poli",
+                        "width": "200px"
+                    },
+                   
+                    {
+                        "field": "waktu_task1",
+                        "title": "Waktu tunggu admisi",
+                        "width": "100px"
+                    },
+                     {
                         "field": "avg_waktu_task1",
-                        "title": "avg_waktu_task1",
-                        "width": "30%"
+                        "title": "Rata2 Waktu tunggu admisi",
+                        "width": "100px"
                     },
-                    {
-                        "field": "kodepoli",
-                        "title": "kodepoli",
-                        "width": "30%"
+                      {
+                        "field": "waktu_task2",
+                        "title": "Waktu layan admisi",
+                        "width": "100px"
                     },
-                    {
-                        "field": "waktu_task5",
-                        "title": "waktu_task5",
-                        "width": "30%"
+                      {
+                        "field": "avg_waktu_task2",
+                        "title": "Rata2 Waktu layan admisi",
+                        "width": "100px"
                     },
+                   
+                     {
+                        "field": "waktu_task3",
+                        "title": "Waktu tunggu poli",
+                        "width": "100px"
+                    },
+                     {
+                        "field": "avg_waktu_task3",
+                        "title": "Rata2 Waktu tunggu poli",
+                        "width": "100px"
+                    },
+               
                     {
                         "field": "waktu_task4",
-                        "title": "waktu_task4",
-                        "width": "30%"
+                        "title": "Waktu layan poli",
+                        "width": "100px"
                     },
-                    {
-                        "field": "waktu_task3",
-                        "title": "waktu_task3",
-                        "width": "30%"
+                         {
+                        "field": "avg_waktu_task4",
+                        "title": "Rata2 Waktu layan Poli",
+                        "width": "100px"
                     },
+
+                        {
+                        "field": "waktu_task5",
+                        "title": "Waktu layan poli",
+                        "width": "100px"
+                    },
+                     {
+                        "field": "avg_waktu_task5",
+                        "title": "Rata2 Waktu tunggu farmasi",
+                        "width": "100px"
+                    },
+                     {
+                        "field": "waktu_task6",
+                        "title": "Waktu layan farmasi",
+                        "width": "100px"
+                    },
+                     {
+                        "field": "avg_waktu_task6",
+                        "title": "Rata2 Waktu layan farmasi",
+                        "width": "100px"
+                    },
+                      
                     {
                         "field": "insertdate",
-                        "title": "insertdate",
-                        "width": "30%"
+                        "title": "Update",
+                        "width": "100px"
                     },
-                    {
-                        "field": "tanggal",
-                        "title": "tanggal",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "waktu_task2",
-                        "title": "waktu_task2",
-                        "width": "30%"
-                    },
-                    {
-                        "field": "waktu_task6",
-                        "title": "Kode waktu_task6",
-                        "width": "30%"
-                    }
+                  
                 ]
             }
 

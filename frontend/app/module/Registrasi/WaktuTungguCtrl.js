@@ -69,22 +69,40 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
                 $scope.isRouteLoading = true
-
-                var obj = {
-                    data: {
-                        kodebooking: $scope.kodebookingUpdate,
-                        taskid: $scope.waktu,
-                        waktu: new Date().getTime()
+                var json =  {
+                    "url": "antrean/updatewaktu",
+                    "jenis": "antrean",
+                    "method": "POST",
+                    "data": {
+                        "kodebooking": $scope.kodebookingUpdate,
+                        "taskid": $scope.waktu.id,
+                        "waktu":  new Date().getTime()
                     }
                 }
-
-                medifirstService.post(`bridging/bpjs/antrean/v2/update-waktu`, obj).then(function (data) {
-                    
-                    toastr.info(`${data.data.metadata.code}: ${data.data.metadata.message}`)
+                medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
+                    if (e.data.metaData.code === 200) {
+                        toastr.success(e.data.metaData.message)
+                    } else {
+                        toastr.error(e.data.metaData.message)
+                    }
                     $scope.isRouteLoading = false
-
                 })
-                $scope.isRouteLoading = false
+                
+                // var obj = {
+                //     data: {
+                //         kodebooking: $scope.kodebookingUpdate,
+                //         taskid: $scope.waktu,
+                //         waktu: new Date().getTime()
+                //     }
+                // }
+
+                // medifirstService.post(`bridging/bpjs/antrean/v2/update-waktu`, obj).then(function (data) {
+                    
+                //     toastr.info(`${data.data.metadata.code}: ${data.data.metadata.message}`)
+                //     $scope.isRouteLoading = false
+
+                // })
+                // $scope.isRouteLoading = false
             }
 
 
@@ -99,25 +117,45 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
 
                 $scope.isRouteLoading = true
-
-                var obj = {
-                    data: {
-                        kodebooking: $scope.kodebooking
+                var json =  {
+                    "url": "antrean/getlisttask",
+                    "jenis": "antrean",
+                    "method": "POST",
+                    "data": {
+                        "kodebooking": $scope.kodebooking
                     }
                 }
+                medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
+                    if (e.data.metaData.code === 200) {
+                        toastr.success(e.data.metaData.message)
 
-                medifirstService.post(`bridging/bpjs/antrean/v2/waktu-task-id`, obj).then(function (data) {
-                    
-                    toastr.info(`${data.data.metadata.code}: ${data.data.metadata.message}`)
-
-                    var result = []
-                    if (data.data.metadata.code == 200)
-                        result = data.data.response.list
-
-                    $scope.daftarWaktuTaskId = new kendo.data.DataSource({ data: result })
+                        var result = []
+                        result = e.data.response
+                        $scope.daftarWaktuTaskId = new kendo.data.DataSource({ data: result })
+                    } else {
+                        $scope.daftarWaktuTaskId = new kendo.data.DataSource({ data: null })
+                        toastr.error(e.data.metaData.message)
+                    }
                     $scope.isRouteLoading = false
                 })
-                $scope.isRouteLoading = false
+                // var obj = {
+                //     data: {
+                //         kodebooking: $scope.kodebooking
+                //     }
+                // }
+
+                // medifirstService.post(`bridging/bpjs/antrean/v2/waktu-task-id`, obj).then(function (data) {
+                    
+                //     toastr.info(`${data.data.metadata.code}: ${data.data.metadata.message}`)
+
+                //     var result = []
+                //     if (data.data.metadata.code == 200)
+                //         result = data.data.response.list
+
+                //     $scope.daftarWaktuTaskId = new kendo.data.DataSource({ data: result })
+                //     $scope.isRouteLoading = false
+                // })
+                // $scope.isRouteLoading = false
             }
 
             $scope.columnWaktuTaskId = {

@@ -1455,7 +1455,7 @@ class EMRController  extends ApiController
                 'rk.namarekanan', 'kls.namakelas', 'pd.nocmfk', 'pd.objectkelompokpasienlastfk', 'apd.objectruanganfk', 'apd.objectpegawaifk',
                 'ps.objectjeniskelaminfk', 'apd.objectkelasfk', 'ps.objectgolongandarahfk', 'gd.golongandarah','ps.foto',
 //                DB::raw('encode(foto, \'base64\') AS foto'),
-                'pg1.namalengkap as dokterdpjp', 'pg1.id as iddpjp','ps.objectjeniskelaminfk')
+                'pg1.namalengkap as dokterdpjp', 'pg1.id as iddpjp','ps.objectjeniskelaminfk', 'pd.statusschedule as noreservasi')
             ->where('apd.kdprofile',$idProfile)
             ->where('apd.norec', $norecAPD);
 

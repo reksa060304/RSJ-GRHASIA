@@ -62,20 +62,46 @@
                             </span> &nbsp;Pencarian</h2> </a>
                     </legend>
                     <div class="grid_12" id="contentPencarian">
-                        <div class="grid_11">
+                        <div class="grid_12">
                             <div class="grid_3">
-                                <div class="grid_6">
-                                    <label c-label item="item" c-label-text="Tanggal awal"></label>
-                                    <input style="width: 100%" k-ng-model="item.tglawal" kendo-datetimepicker placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'"
+                                <div class="grid_2">
+                                    <input type="checkbox" class="k-checkbox" id="tglmasukss"
+                                        ng-model="item.cbxtanggalmasuk" value="true"
+                                        ng-click="tanggalmasuk(item.cbxtanggalmasuk)">
+                                    <label class="k-checkbox-label" for="tglmasukss"></label>
+                                </div>
+                                <div class="grid_5">
+                                    <label c-label item="item" c-label-text="Tanggal Masuk Awal" ></label>
+                                    <input disabled="true" id= "tglmasukawal" style="width: 100%" k-ng-model="item.tglawalmasuk" kendo-datetimepicker placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'"
                                     />
                                 </div>
-                                <div class="grid_6">
-                                    <label c-label item="item" c-label-text="Tanggal Akhir"></label>
-                                    <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datetimepicker placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'"
+                                <div class="grid_5">
+                                    <label c-label item="item" c-label-text="Tanggal Masuk Akhir"></label>
+                                    <input disabled="true" id="tglmasukakhir" style="width: 100%"
+                                        k-ng-model="item.tglakhirmasuk" kendo-datetimepicker placeholer="yyyy-mm-dd"
+                                        k-format="'yyyy-MM-dd'"
                                     />
+                                </div>
+                                <div class="grid_2">
+                                    <input type="checkbox" class="k-checkbox" id="tglpulangss"
+                                        ng-model="item.cbxtanggalpulang" value="true"
+                                        ng-click="tanggalpulang(item.cbxtanggalpulang)">
+                                    <label class="k-checkbox-label" for="tglpulangss"></label>
+                                </div>
+                                <div class="grid_5">
+                                    <label c-label item="item" c-label-text="Tanggal Pulang Awal"></label>
+                                    <input disabled="true" id="tglpulgawal" style="width: 100%" k-ng-model="item.tglawal" kendo-datetimepicker
+                                        placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
+                                </div>
+                                <div class="grid_5">
+                                    <label c-label item="item" c-label-text="Tanggal Pulang Akhir"></label>
+                                    <input disabled="true" id="tglpulgakhir" style="width: 100%"
+                                        k-ng-model="item.tglakhir" kendo-datetimepicker
+                                        placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
                                 </div>
                             </div>
-                            <div class="grid_4">
+                            
+                            <div class="grid_2">
                                 <div class="grid_6">
                                     <label c-label item="item" c-label-text="Jenis Laporan"></label>
                                     <input  style="width: 100%;" kendo-combo-box k-ng-model="item.departement" k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartemen"  k-on-change="getIsiComboRuangan()"/>
@@ -93,8 +119,8 @@
                                         k-data-source="StatusPasien" />
                                 </div>
                             </div>
-                            <div class="grid_5">
-                                <div class="grid_4">
+                            <div class="grid_7">
+                                <div class="grid_2">
                                     <label c-label item="item" c-label-text="Jenis Diagnosa"></label>
                                     <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.JenisDiagnosa" k-data-text-field="'jenisdiagnosa'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisDiagnosa"/>
                                 </div>
@@ -106,35 +132,27 @@
                                     <label c-label item="item" c-label-text="Nama Diagnosa"></label>
                                     <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.Diagnosa" k-data-text-field="'namadiagnosa'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa"/>
                                 </div>
-                                
+                                <div class="grid_1" style="margin-top: 10px;">
+                                    <label c-label c-label-text=""></label>
+                                    <em style="margin-top:-6px;" ng-click='SearchData()' id="iconButton"
+                                        data-role="button" class="k-button k-button-icon k-primary" role="button"
+                                        aria-disabled="false" tabindex="0"><span
+                                            class="k-sprite k-icon k-i-search">Refresh</span></em>
+                                    <em style="margin-top:-6px;" ng-click='ClearData()' id="iconButton"
+                                        data-role="button" class="k-button k-button-icon k-primary" role="button"
+                                        aria-disabled="false" tabindex="0"><span
+                                            class="k-sprite k-icon k-i-cancel">Reset</span></em>
+                                </div>
                             </div>
                         </div>
-                        <div class="grid_1" style="margin-top: 10px;">
-                            <label c-label c-label-text=""></label>
-                            <em style="margin-top:6px;" ng-click='SearchData()' id="iconButton" data-role="button" class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span class="k-sprite k-icon k-i-search">Refresh</span></em>
-                            <em style="margin-top:6px;" ng-click='ClearData()' id="iconButton" data-role="button" class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span class="k-sprite k-icon k-i-cancel">Reset</span></em>
-                        </div>
+                        
                         <!-- <div class="grid_2" style="margin-top:28px">       
                             <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="SearchData()"  style="width:100px"  ><span class="k-sprite k-icon k-i-search"></span>Cari </button>
                             <button class="k-button  k-button-icontext" ng-click="ClearData()"  style="width:100px" ><span class="k-sprite k-icon k-delete"></span>Clear</button>
                         </div> -->
                     </div>
                 </fieldset>
-                <!-- class="max-height" -->
-                <!-- <div class="grid_12" style="margin-top: 10px;">
-                    <div class="grid_12 borderBox">
-                        <kendo-grid  id="kGrid2"  
-                            data-source="sourceLaporan" 
-                            options="columnLaporan"                            
-                            k-selectable="'row'" 
-                            k-sortable="'true'"
-                            class="max-height"
-                            k-resizable="'true'"
-                            k-ng-model="dataSelected"
-                            ng-click="klik(dataSelected)">
-                        </kendo-grid>
-                    </div>
-                </div> -->
+               
                 <div class="grid_12">
                     
                     <md-content>
@@ -160,6 +178,19 @@
                                             <kendo-grid id="kGrid" data-source="dataSourceGridDiagnosapasien" options="columnGridDiagnosapasien"
                                                 k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
                                                 k-ng-model="dataPasienSelected" ng-click="klikGrid(dataPasienSelected)">
+                                            </kendo-grid>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="jumlah Pasien Jiwa">
+                                <md-content class="md-padding">
+                                    <div class="grid_12" style="margin-top: 10px;">
+                                        <div class="grid_12 borderBox">
+                                            <kendo-grid id="kGrid" data-source="dataSourceGridDiagnosapasienjiwa"
+                                                options="columnGridDiagnosapasienjiwa" k-selectable="'row'"
+                                                k-sortable="'true'" k-resizable="'true'" k-ng-model="dataPasienSelected"
+                                                ng-click="klikGrid(dataPasienSelected)">
                                             </kendo-grid>
                                         </div>
                                     </div>

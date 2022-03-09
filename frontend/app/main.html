@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html manifest="example.appcache">
+<!-- <html manifest="example.appcache"> -->
+<html>
 
 <head>
 
@@ -126,41 +127,41 @@
                 ]);
             }());
         });
-        var appCache = window.applicationCache;
-        switch (appCache.status) {
-            case appCache.UNCACHED: // UNCACHED == 0
-                console.log('UNCACHED');
-                break;
-            case appCache.IDLE: // IDLE == 1
-                console.log('IDLE');
-                break;
-            case appCache.CHECKING: // CHECKING == 2
-                console.log('CHECKING');
-                break;
-            case appCache.DOWNLOADING: // DOWNLOADING == 3
-                console.log('DOWNLOADING');
-                break;
-            case appCache.UPDATEREADY: // UPDATEREADY == 4
-                console.log('UPDATEREADY');
-                break;
-            case appCache.OBSOLETE: // OBSOLETE == 5
-                console.log('OBSOLETE');
-                break;
-            default:
-                console.log('UKNOWN CACHE STATUS');
+        // var appCache = window.applicationCache;
+        // switch (appCache.status) {
+        //     case appCache.UNCACHED: // UNCACHED == 0
+        //         console.log('UNCACHED');
+        //         break;
+        //     case appCache.IDLE: // IDLE == 1
+        //         console.log('IDLE');
+        //         break;
+        //     case appCache.CHECKING: // CHECKING == 2
+        //         console.log('CHECKING');
+        //         break;
+        //     case appCache.DOWNLOADING: // DOWNLOADING == 3
+        //         console.log('DOWNLOADING');
+        //         break;
+        //     case appCache.UPDATEREADY: // UPDATEREADY == 4
+        //         console.log('UPDATEREADY');
+        //         break;
+        //     case appCache.OBSOLETE: // OBSOLETE == 5
+        //         console.log('OBSOLETE');
+        //         break;
+        //     default:
+        //         console.log('UKNOWN CACHE STATUS');
 
 
-                break;
-        };
-        // Check if a new cache is available on page load.
-        window.addEventListener('load', function (e) {
-            window.applicationCache.addEventListener('updateready', function (e) {
-                if (appCache.status == window.applicationCache.UPDATEREADY) {
-                    appCache.swapCache(); // The fetch was successful, swap in the new cache.
-                }
-            }, false);
+        //         break;
+        // };
+        // // Check if a new cache is available on page load.
+        // window.addEventListener('load', function (e) {
+        //     window.applicationCache.addEventListener('updateready', function (e) {
+        //         if (appCache.status == window.applicationCache.UPDATEREADY) {
+        //             appCache.swapCache(); // The fetch was successful, swap in the new cache.
+        //         }
+        //     }, false);
 
-        }, false);
+        // }, false);
     </script>
     <script>
         var timoutWarning = 10800000 // 3 jam

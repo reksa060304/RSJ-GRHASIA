@@ -90,7 +90,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     19: $scope.header.objectdepartemenfk,
                     20: $scope.header.jenispelayanan,
                     21: $scope.header.objectkelompokpasienlastfk,
-                    22: $scope.header.objectjeniskelaminfk
+                    22: $scope.header.objectjeniskelaminfk,
+                    30: $scope.header.noreservasi,
                 }
                 cacheHelper.set('CacheInputDiagnosaDokter', arrStr);
                 cacheHelper.set('InputResepApotikOrderRevCtrl', arrStr);

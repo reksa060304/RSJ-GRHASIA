@@ -3037,6 +3037,26 @@
         {
             "nameDep": "LaporanJasaPelayananObatCtrl",
             "urlDep": "module/Farmasi/LaporanFarmasi/LaporanJasaPelayananObatCtrl"
+        },
+        {
+            "nameDep": "FormulirTriaseIGDCtrl",
+            "urlDep": "module/EMR/FormulirTriaseCtrl"
+        },
+        {
+            "nameDep": "AssesmenPasienKlienFisioterapiCtrl",
+            "urlDep": "module/EMR/AssesmenPasienKlienFisioterapiCtrl"
+        },
+        {
+            "nameDep": "FormulirTransferPasienAntarRuanganIGDCtrl",
+            "urlDep": "module/EMR/FormulirTransferPasienAntarRuanganIGDCtrl"
+        },
+        {
+            "nameDep": "FormulirEdukasiPasienDanKeluargaTerintegrasiCtrl",
+            "urlDep": "module/EMR/FormulirEdukasiPasienDanKeluargaTerintegrasiCtrl"
+        }, 
+        {
+            "nameDep": "LaporanMorbiditasCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanMorbiditasCtrl"
         }
     ]
 }

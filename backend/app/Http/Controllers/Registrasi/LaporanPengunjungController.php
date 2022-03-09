@@ -6955,7 +6955,8 @@ class LaporanPengunjungController extends ApiController
             ->where('pd.statusenabled', true)
             ->where('pd.kdprofile', $kdProfile);
             
-
+            $tglAwal = $request['tglAwal'];
+            $tglAkhir = $request['tglAkhir'];
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
             //$data = $data->where('apd.tglregistrasi', '>=', $request['tglAwal']);
             $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
@@ -6985,63 +6986,138 @@ class LaporanPengunjungController extends ApiController
         $data = $data->distinct();
         $data =  $data ->get();
 
-        $diagnosa = \DB::table('antrianpasiendiperiksa_t AS apd')
-                    ->join('detaildiagnosapasien_t AS ddp','ddp.noregistrasifk','=','apd.norec')
-                    ->join('diagnosapasien_t AS dp','dp.norec','=','ddp.objectdiagnosapasienfk')
-                    ->join ('diagnosa_m as dg','ddp.objectdiagnosafk','=','dg.id')
-                    ->select(DB::raw("apd.noregistrasifk,ddp.objectjenisdiagnosafk,dg.kddiagnosa AS diagnosa,
-                                     CASE WHEN dp.iskasusbaru = true AND dp.iskasuslama = false THEN 'BARU'
-                                     WHEN dp.iskasuslama = true AND dp.iskasusbaru = false THEN 'LAMA' ELSE '' END kasus"))
-                    ->where('apd.kdprofile', $kdProfile)
-                    ->where('apd.statusenabled', true)
-                    ->where('apd.tglregistrasi', '>=', $request['tglAwal'])
-                    ->where('apd.tglregistrasi', '<=', $request['tglAkhir'])
-                    ->get();
-        $bayar = \DB::table('antrianpasiendiperiksa_t AS apd')
-                ->join('pelayananpasien_t AS pp','pp.noregistrasifk','=', 'apd.norec')
-                ->leftJoin('strukpelayanan_t AS sp','sp.norec','=','pp.strukfk')
-                ->leftJoin ('strukbuktipenerimaan_t AS sbm','sbm.nostrukfk','=','sp.norec')
-                ->select(DB::raw("apd.noregistrasifk,apd.objectruanganfk,CASE WHEN pp.strukfk IS NOT NULL AND sbm.norec IS NOT NULL THEN pp.jumlah*pp.hargajual ELSE 0 END total"))
-                ->where('apd.kdprofile', $kdProfile)
-                ->where('apd.statusenabled', true)
-                ->where('apd.tglregistrasi', '>=', $request['tglAwal'])
-                ->where('apd.tglregistrasi', '<=', $request['tglAkhir'])
-                ->get();
-        $i=0;
-        $dataDiagnosa = '';
-        foreach ($data as $items){
-            foreach ($diagnosa as $dg){
-                if ($data[$i]->norec == $dg->noregistrasifk){
-                    if ($dataDiagnosa == ''){
-                        $dataDiagnosa = $dg->diagnosa;
-                    }else{
-                        $dataDiagnosa = $dataDiagnosa . ',' . $dg->diagnosa;
-                    }
-                    $data[$i]->diagnosa = $dataDiagnosa;
-                    $data[$i]->kasus = $dg->kasus;
-                }else{
-                    $data[$i]->diagnosa = '';
-                    $data[$i]->kasus = '';
-                }
-            }
-            $i = $i + 1;
-        }
+        // $diagnosa = \DB::table('antrianpasiendiperiksa_t AS apd')
+        //             ->join('detaildiagnosapasien_t AS ddp','ddp.noregistrasifk','=','apd.norec')
+        //             ->join('diagnosapasien_t AS dp','dp.norec','=','ddp.objectdiagnosapasienfk')
+        //             ->join ('diagnosa_m as dg','ddp.objectdiagnosafk','=','dg.id')
+        //             ->select(DB::raw("apd.noregistrasifk,ddp.objectjenisdiagnosafk,dg.kddiagnosa AS diagnosa,
+        //                              CASE WHEN dp.iskasusbaru = true AND dp.iskasuslama = false THEN 'BARU'
+        //                              WHEN dp.iskasuslama = true AND dp.iskasusbaru = false THEN 'LAMA' ELSE '' END kasus"))
+        //             ->where('apd.kdprofile', $kdProfile)
+        //             ->where('apd.statusenabled', true)
+        //             ->where('apd.tglregistrasi', '>=', $request['tglAwal'])
+        //             ->where('apd.tglregistrasi', '<=', $request['tglAkhir'])
+        //             ->get();
+        // $bayar = \DB::table('antrianpasiendiperiksa_t AS apd')
+        //         ->join('pelayananpasien_t AS pp','pp.noregistrasifk','=', 'apd.norec')
+        //         ->leftJoin('strukpelayanan_t AS sp','sp.norec','=','pp.strukfk')
+        //         ->leftJoin ('strukbuktipenerimaan_t AS sbm','sbm.nostrukfk','=','sp.norec')
+        //         ->select(DB::raw("apd.noregistrasifk,apd.objectruanganfk,CASE WHEN pp.strukfk IS NOT NULL AND sbm.norec IS NOT NULL THEN pp.jumlah*pp.hargajual ELSE 0 END total"))
+        //         ->where('apd.kdprofile', $kdProfile)
+        //         ->where('apd.statusenabled', true)
+        //         ->where('apd.tglregistrasi', '>=', $request['tglAwal'])
+        //         ->where('apd.tglregistrasi', '<=', $request['tglAkhir'])
+        //         ->get();
+        // $i=0;
+        // $dataDiagnosa = '';
+        // foreach ($data as $items){
+        //     foreach ($diagnosa as $dg){
+        //         if ($data[$i]->norec == $dg->noregistrasifk){
+        //             if ($dataDiagnosa == ''){
+        //                 $dataDiagnosa = $dg->diagnosa;
+        //             }else{
+        //                 $dataDiagnosa = $dataDiagnosa . ',' . $dg->diagnosa;
+        //             }
+        //             $data[$i]->diagnosa = $dataDiagnosa;
+        //             $data[$i]->kasus = $dg->kasus;
+        //         }else{
+        //             $data[$i]->diagnosa = '';
+        //             $data[$i]->kasus = '';
+        //         }
+        //     }
+        //     $i = $i + 1;
+        // }
 
-        $d=0;
-        foreach ($data as $itemss){
-            foreach ($bayar as $dataBayar){
-                if ($data[$d]->norec == $dataBayar->noregistrasifk && $data[$d]->objectruanganfk == $dataBayar->objectruanganfk){
-                    $data[$d]->bayar = $dataBayar->total;
-                }else{
-                    $data[$d]->bayar = 0;
-                }
-            }
-            $d = $d + 1;
-        }
+        // $d=0;
+        // foreach ($data as $itemss){
+        //     foreach ($bayar as $dataBayar){
+        //         if ($data[$d]->norec == $dataBayar->noregistrasifk && $data[$d]->objectruanganfk == $dataBayar->objectruanganfk){
+        //             $data[$d]->bayar = $dataBayar->total;
+        //         }else{
+        //             $data[$d]->bayar = 0;
+        //         }
+        //     }
+        //     $d = $d + 1;
+        // }
 
+        $paramRuangan = ' ';
+        if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
+            $paramRuangan = 'and ru.id = '. $request['ruanganId'];
+        }
+        //laporan kunjungan v2
+        $v2 = DB::select(DB::raw(
+        "
+        SELECT
+        ps.nocm,
+        ps.namapasien,
+        ru.namaruangan,
+        apd.tglmasuk,
+        pd.statuspasien,
+        aj.asalrujukan,
+        kp.kelompokpasien,
+        kk.namakotakabupaten
+
+        FROM
+        antrianpasiendiperiksa_t apd
+        INNER JOIN pasiendaftar_t pd on pd.norec=apd.noregistrasifk
+        INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
+        INNER join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+        INNER JOIN alamat_m al on ps.id = al.nocmfk
+        inner join kotakabupaten_m kk on kk.id= al.objectkotakabupatenfk
+        WHERE apd.tglmasuk BETWEEN '$tglAwal' and '$tglAkhir'
+        and apd.kdprofile = $kdProfile
+        and apd.statusenabled = true
+        $paramRuangan
+        
+        ;
+        "
+        ));
+
+        $ranap= DB::select(DB::raw("
+        SELECT DISTINCT
+        ps.nocm,
+        ps.namapasien,
+        al.alamatlengkap,
+        CASE 
+        WHEN ru.id not in(799,800) THEN
+            'Jiwa'
+        when ru.id = 799 then 
+            'Napza'
+        when ru.id = 800 THEN
+		'Umum' end as jenisjiwa,
+        /*jenis jiwa*/
+        ru.namaruangan,
+        ke.namakelas,
+        apd.tglmasuk,
+        apd.tglkeluar,
+        apd.tglkeluar::date - apd.tglmasuk::date as lamahari,
+        sk.statuskeluar,
+        kp.kondisipasien,
+        kep.kelompokpasien
+        FROM
+        pelayananpasien_t pp
+        INNER JOIN antrianpasiendiperiksa_t apd on apd.norec=pp.noregistrasifk
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        INNER JOIN pasien_m ps on ps.id = pd.nocmfk
+        INNER JOIN alamat_m al on ps.id=al.nocmfk
+        INNER JOIN ruangan_m ru on ru.id = apd.objectruanganfk
+        INNER JOIN kelas_m ke on ke.id = apd.objectkelasfk
+        INNER JOIN statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        INNER JOIN kondisipasien_m kp on kp.id=pd.objectkondisipasienfk
+        inner join kelompokpasien_m kep on kep.id= pd.objectkelompokpasienlastfk
+        where ru.objectdepartemenfk = 16
+        and apd.tglmasuk BETWEEN '$tglAwal' and '$tglAkhir'
+        and apd.kdprofile = $kdProfile
+        $paramRuangan
+        "));
         $result = array(
             'data'=> $data,
+            'v2'=> $v2,
+            'ranap'=> $ranap,
             'message' => 'ea@epic',
+            'message_v2' => 'fazri@epic'
         );
         return $this->respond($result);
     }
