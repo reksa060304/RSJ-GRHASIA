@@ -21,8 +21,12 @@ use App\Transaksi\StrukHistori;
 use App\Transaksi\TempBeritaAcaraKasBank;
 use App\Transaksi\TempBukuKasUmum;
 use App\Transaksi\TempLampiranBeritaAcaraKasBank;
-use Illuminate\Http\Request;
+use App\Transaksi\StrukOrder;
+use App\Transaksi\SuratTandaSetoran;
+use App\Transaksi\SuratTandaSetoranDetail;
+use App\Transaksi\STStoSCK;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class BendaharaPenerimaanController extends ApiController {
 
@@ -2402,5 +2406,197 @@ class BendaharaPenerimaanController extends ApiController {
             'message' => 'ea@epic',
         );
         return $this->respond($result);
+    }
+
+    public function getSTS(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal= $request['tglAwal'];
+        $tglAkhir= $request['tglAkhir'];
+        $status = '';
+        $carabayar= '';
+
+        if (isset($request['status']) && $request['status'] != "" && $request['status'] != "undefined" && $request['status']==1) {
+            $status = ' and sts.nosts is not null';
+        } else{
+            $status = ' and sts.nosts is null';
+        }
+
+        if (isset($request['status']) && $request['status'] != "" && $request['status'] != "undefined" && $request['status']==2) {
+            $status = ' and sts.nosts is null';
+        }
+
+        if(isset($request['idCaraBayar']) && $request['idCaraBayar'] != "" && $request['idCaraBayar'] != "undefined") {
+            $carabayar = ' AND sck.objectcarasetorfk = ' . $request['idCaraBayar'];
+        }
+
+        $detail = DB::select(DB::raw("select sc.noclosing as nopenerimaan, sc.tglclosing as tglpenerimaan, sck.totaldibayar as totalpenerimaan, sts.nosts, sc.objectpegawaidiclosefk as pegawai, sc.norec as scfk, sck.norec as sckfk 
+        from strukclosing_t sc
+        inner join strukclosingkasir_t sck on sck.noclosingfk = sc.norec
+        left join ststosck_t ssc on ssc.objectsckfk = sck.norec 
+        left join surattandasetoran_t sts on sts.norec = ssc.objectstsfk
+		where sc.tglclosing::date between '$tglAwal' and '$tglAkhir'
+        $carabayar
+        $status
+        and sc.kdprofile = 30
+        and sc.statusenabled is null or sc.statusenabled=true
+        order by sc.tglclosing desc"));
+
+        
+
+        
+
+        $result = array(
+            'detail' => $detail,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
+    public function saveSTS(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        // $sts = '';
+        $setor = $request['setoran'];
+        
+
+        $noclosing = [];
+        for($i=0; $i<count($setor); $i++){
+            $noclosing[$i] = $setor[$i]['nopenerimaan'];
+        }
+
+        // var_dump($noclosing);
+
+        // for($i=0; $i<count($setor); $i++){
+
+        //     $STS = new SuratTandaSetoran();
+        //     $STS->norec  = $STS->generateNewId();
+        //     $STS->kdprofile = $idProfile;
+        //     $STS->statusenabled = true;
+        //     $STS->nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, $this->getDateTime()->format('ymd'),$idProfile);
+        //     $STS->tglpenerimaan = $setor[$i]['tglpenerimaan'];
+        //     $STS->objectpegawaifk = $setor[$i]['pegawai'];
+        //     $STS->totalsetoran = $setor[$i]['totalpenerimaan'];
+        //     $STS->totalsetoranpembulatan = ceil($setor[$i]['totalpenerimaan']);
+        //     $STS->save();
+
+        //     $STSK = new STStoSCK();
+        //     $STSK->norec  = $STSK->generateNewId();
+        //     $STSK->kdprofile = $idProfile;
+        //     $STSK->statusenabled = true;
+        //     $STSK->objectstsfk = $STS->norec;
+        //     $STSK->objectscfk = $setor[$i]['scfk'];
+        //     $STSK->objectsckfk = $setor[$i]['sckfk'];
+        //     $STSK->save();
+            
+        //     if($STSK->save() && $STS->save()){
+        //         $transMsg = 'Simpan STS Berhasil';
+        //     }else{
+        //         $transMsg = 'Simpan STS Gagal';
+        //     }     
+        // }
+
+        // konten STS Detail
+
+        $data = DB::select(DB::raw("select ru.namaruangan, pr.namaproduk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
+        sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, sts.norec, pr.id as idproduk, ru.id as idruangan
+        from strukclosingkasir_t as sck
+        inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
+        inner join strukbuktipenerimaan_t as sbm on sbm.noclosingfk = sc.norec
+        inner join strukpelayanan_t as sp on sbm.nostrukfk = sp.norec
+        inner join pasiendaftar_t as pd on sp.noregistrasifk = pd.norec
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner join produk_m pr on pr.id=pp.produkfk
+        inner join pasien_m as ps on ps.id=sp.nocmfk
+        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        inner join carabayar_m as cb on cb.id = sck.carabayarfk
+        left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
+        left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
+        where pd.statusenabled = true
+        and pd.kdprofile = 30
+        and sc.noclosing IN('".implode("','",$noclosing)."') 
+
+        union all
+
+        select ru.namaruangan, pr.namaproduk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
+        sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, sts.norec, pr.id as idproduk, ru.id as idruangan
+        from strukclosingkasir_t as sck
+        inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
+        inner join strukbuktipenerimaan_t as sbm on sbm.noclosingfk = sc.norec
+        inner join strukpelayanan_t as sp on sbm.nostrukfk = sp.norec
+                    inner join strukpelayanandetail_t as spd on sp.norec = spd.nostrukfk
+        inner join produk_m pr on pr.id=spd.objectprodukfk
+        left join ruangan_m as ru on ru.id = spd.objectruanganasalfk
+        inner join carabayar_m as cb on cb.id = sck.carabayarfk
+        left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
+        left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
+                    where sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan'
+        and sc.noclosing IN('".implode("','",$noclosing)."')"));
+
+        //simpan STS Detail
+
+        // $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+        // $STSD = new SuratTandaSetoranDetail();
+        // $STSD->norec  = $STSD->generateNewId();
+        // $STSD->kdprofile = $idProfile;
+        // $STSD->nourut = $newId;
+        // $STSD->jenisdata = 'konten';
+        // $STSD->kdrekening = '4.1.4.16.01';
+        // $STSD->uraian = 'PENDAPATAN USAHA BLUD';
+        // $STSD->statusenabled = true;
+        // $STSD->save();
+
+        // $STSD = new SuratTandaSetoranDetail();
+        // $STSD->norec  = $STSD->generateNewId();
+        // $STSD->kdprofile = $idProfile;
+        // $STSD->nourut = $newId;
+        // $STSD->jenisdata = 'konten';
+        // $STSD->kdrekening = '4.1.4.16.01';
+        // $STSD->nomer = '01';
+        // $STSD->uraian = 'JASA LAYANAN RUMAH SAKIT';
+        // $STSD->statusenabled = true;
+        // $STSD->save();
+
+        // $jumlahperiksapolijiwa = 0;
+
+        // foreach($data as $konten){
+        //     if($konten->idruangan = 752 && $konten->idproduk = 5006382){
+        //         $jumlahperiksapolijiwa += $konten->totaldibayarsbm;
+        //     }
+        // }
+
+
+        // for($i=0; $i<count($data); $i++){
+        //     $STSD = new SuratTandaSetoranDetail();
+        //     $STSD->norec  = $STSD->generateNewId();
+        //     $STSD->kdprofile = $idProfile;
+        //     $STSD->nourut = $newId;
+        //     $STSD->jenisdata = 'konten';
+        //     $STSD->kdrekening = '4.1.4.16.01';
+        //     $STSD->statusenabled = true;
+        //     $STSD->objectstsfk = $data[$i]->norec;
+            //fisiotehrapy = 762 
+
+
+        //     $STSD->nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, $this->getDateTime()->format('ymd'),$idProfile);
+        //     $STSD->tglpenerimaan = $setor[$i]['tglpenerimaan'];
+        //     $STSD->objectpegawaifk = $setor[$i]['pegawai'];
+        //     $STSD->totalsetoran = $setor[$i]['totalpenerimaan'];
+        //     $STSD->totalsetoranpembulatan = ceil($setor[$i]['totalpenerimaan']);
+        //     $STSD->save();
+        // }
+
+        // var_dump($data[0]->namapasien);
+        $result = array(
+            "status" => 201,
+            "message" => 'STS Dalam Proses',
+            "data" => $data,
+            "as" => 'as@epic',
+        );
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMsg);
+
     }
 }

@@ -291,7 +291,7 @@ define(['initialize'], function (initialize) {
                             datas[7].kategori = 'Pelayanan Resep Racik Salep';
                             datas[8].kategori = 'Pelayanan Resep Racik Sirup';
                             datas[9].kategori = 'Konseling / Konsultasi Obat';
-                            datas[10].kategori = 'Petunjutk Informasi Obat';
+                            datas[10].kategori = 'Petunjuk Informasi Obat';
                             datas[11].kategori = 'Visite Apoteker';
                             datas[12].kategori = 'Pemantauan Terapi Obat';
                             datas[13].kategori = 'Embalace';
@@ -907,7 +907,7 @@ define(['initialize'], function (initialize) {
                                 datas[16].jumlahtotalrkejunefix = datas[i].jumlahtotalrekonjune;
                             }
                             if(datas[i].jumlahtotalrekonjuly != 0){
-                                datas[16].jumlahtotalrkejulyfix = datas[i].jumlahtotarekonjuly;
+                                datas[16].jumlahtotalrkejulyfix = datas[i].jumlahtotalrekonjuly;
                             }
                             if(datas[i].jumlahtotalrekonaugust != 0){
                                 datas[16].jumlahtotalrkeaugustfix = datas[i].jumlahtotalrekonaugust;

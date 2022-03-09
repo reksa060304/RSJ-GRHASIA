@@ -130,6 +130,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-data-rekapitulasi-pendapatan-daerah', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataRekapitulasiPendapatanDaerah');
           Route::get('bendaharapenerimaan/get-data-rekapitulasi-pendapatan-daerahtahun', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataRekapitulasiPendapatanDaerahTahunan');
           Route::get('bendaharapenerimaan/get-data-pendapatan-bendahara', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataPendapatanBP');
+          Route::get('bendaharapenerimaan/get-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTS');
+         
           //**GET**//
 
           //**POST**//
@@ -140,6 +142,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('bendaharapenerimaan/save-temp-beritaacara', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveBeritaAcara');
           Route::post('bendaharapenerimaan/save-lampiran-beritaacara', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveTempLampiranBA');
           Route::post('bendaharapenerimaan/hapus-bku', 'BendaharaPenerimaan\BendaharaPenerimaanController@hapusBKU');
+          Route::post('bendaharapenerimaan/save-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveSTS');
           //**POST**//
         // });
         // Route::group(['prefix' => 'bendaharapengeluaran'], function () {
