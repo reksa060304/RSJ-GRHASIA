@@ -48,6 +48,18 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.ruangan != undefined) {
                     var rg = "&ruid=" + $scope.item.ruangan.id
                 }
+                $scope.dataGrid = new kendo.data.DataSource({
+                    data: [],
+                    pageSize: 10,
+                    total: 0,
+                    serverPaging: false,
+                    schema: {
+                        model: {
+                            fields: {
+                            }
+                        }
+                    }
+                });
                 // var Jra =""
                 // if ($scope.item.jenisRacikan != undefined){
                 //     var Jra ="&jenisobatfk=" +$scope.item.jenisRacikan.id
