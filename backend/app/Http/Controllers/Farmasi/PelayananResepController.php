@@ -4408,7 +4408,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $totalraciksalep+=$jumlahtotalraciksalepjanuary;
                 }
                 if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
-                    $jumlahtotalracisalepfebruary = $layanan->jumlah;
+                    $jumlahtotalraciksalepfebruary = $layanan->jumlah;
                     $totalraciksalep+=$jumlahtotalraciksalepfebruary;
                 }
                 if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
@@ -4510,7 +4510,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $totalkonseling+=$jumlahtotalkonselingjanuary;
                 }
                 if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
-                    $jumlahtotakonselingfebruary = $layanan->jumlah;
+                    $jumlahtotalkonselingfebruary = $layanan->jumlah;
                     $totalkonseling+=$jumlahtotalkonselingfebruary;
                 }
                 if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Konseling / Konsultasi Obat'){
@@ -4556,53 +4556,53 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $totalkonseling+=$jumlahtotalkonselingdecember;
                 }
 
-                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Petunjuk Informasi Obat'){
                     $jumlahtotalpetunjukjanuary = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjukjanuary;
                 }
-                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
-                    $jumlahtotapetunjukfebruary = $layanan->jumlah;
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Petunjuk Informasi Obat'){
+                    $jumlahtotalpetunjukfebruary = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjukfebruary;
                 }
-                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Petunjuk Informasi Obat'){
                     $jumlahtotalpetunjukmarch = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjukmarch;
                 }
-                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Petunjuk Informasi Obat'){
                     $jumlahtotalpetunjukapril = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjukapril;
                 }
-                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Petunjuk Informasi Obat'){
                     $jumlahtotalpetunjukmay = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjukmay;
                 }
-                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Petunjuk Informasi Obat'){
                     $jumlahtotalpetunjukjune = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjukjune;
                 }
-                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Petunjuk Informasi Obat'){
                     $jumlahtotalpetunjukjuly = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjukjuly;
                 }
-                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Petunjuk Informasi Obat'){
                     $jumlahtotalpetunjukaugust = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjukaugust;
                 }
-                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Petunjuk Informasi Obat'){
                     $jumlahtotalpetunjukseptember = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjukseptember;
 
                 }
-                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Petunjuk Informasi Obat'){
                     $jumlahtotalpetunjukoctober = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjukoctober;
 
                 }
-                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Petunjuk Informasi Obat'){
                     $jumlahtotalpetunjuknovember = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjuknovember;
                 }
-                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Petunjutk Informasi Obat'){
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Petunjuk Informasi Obat'){
                     $jumlahtotalpetunjukdecember = $layanan->jumlah;
                     $totalpetunjuk+=$jumlahtotalpetunjukdecember;
                 }
@@ -4663,7 +4663,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $totalpemantauan+=$jumlahtotalpemantauanjanuary;
                 }
                 if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
-                    $jumlahtotapemantauanfebruary = $layanan->jumlah;
+                    $jumlahtotalpemantauanfebruary = $layanan->jumlah;
                     $totalpemantauan+=$jumlahtotalpemantauanfebruary;
                 }
                 if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pemantauan Terapi Obat'){
@@ -4714,7 +4714,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $totalembalace+=$jumlahtotalembalacejanuary;
                 }
                 if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Embalace'){
-                    $jumlahtotaembalacefebruary = $layanan->jumlah;
+                    $jumlahtotalembalacefebruary = $layanan->jumlah;
                     $totalembalace+=$jumlahtotalembalacefebruary;
                 }
                 if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Embalace'){
@@ -4765,7 +4765,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $totalinjeksi+=$jumlahtotalinjeksijanuary;
                 }
                 if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
-                    $jumlahtotainjeksifebruary = $layanan->jumlah;
+                    $jumlahtotalinjeksifebruary = $layanan->jumlah;
                     $totalinjeksi+=$jumlahtotalinjeksifebruary;
                 }
                 if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Steril (Injeksi)'){
@@ -4816,7 +4816,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $totalinfus+=$jumlahtotalinfusjanuary;
                 }
                 if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
-                    $jumlahtotainfusfebruary = $layanan->jumlah;
+                    $jumlahtotalinfusfebruary = $layanan->jumlah;
                     $totalinfus+=$jumlahtotalinfusfebruary;
                 }
                 if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Steril (Infus)'){
@@ -4867,7 +4867,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $totalrekon+=$jumlahtotalrekonjanuary;
                 }
                 if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
-                    $jumlahtotarekonfebruary = $layanan->jumlah;
+                    $jumlahtotalrekonfebruary = $layanan->jumlah;
                     $totalrekon+=$jumlahtotalrekonfebruary;
                 }
                 if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
@@ -5107,18 +5107,18 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 'jumlahtotalinfusoctober' =>   $jumlahtotalinfusoctober,
                 'jumlahtotalinfusnovember' =>   $jumlahtotalinfusnovember,
                 'jumlahtotalinfusdecember' =>   $jumlahtotalinfusdecember,
-                'jumlahtotarekonjanuary' =>   $jumlahtotalrekonjanuary,
-                'jumlahtotarekonfebruary' =>   $jumlahtotalrekonfebruary,
-                'jumlahtotarekonmarch' =>   $jumlahtotalrekonmarch,
-                'jumlahtotarekonapril' =>   $jumlahtotalrekonapril,
-                'jumlahtotarekonmay' =>   $jumlahtotalrekonmay,
-                'jumlahtotarekonjune' =>   $jumlahtotalrekonjune,
-                'jumlahtotarekonjuly' =>   $jumlahtotalrekonjuly,
-                'jumlahtotarekonaugust' =>   $jumlahtotalrekonaugust,
-                'jumlahtotarekonseptember' =>   $jumlahtotalrekonseptember,
-                'jumlahtotarekonoctober' =>   $jumlahtotalrekonoctober,
-                'jumlahtotarekonnovember' =>   $jumlahtotalrekonnovember,
-                'jumlahtotarekondecember' =>   $jumlahtotalrekondecember,
+                'jumlahtotalrekonjanuary' =>   $jumlahtotalrekonjanuary,
+                'jumlahtotalrekonfebruary' =>   $jumlahtotalrekonfebruary,
+                'jumlahtotalrekonmarch' =>   $jumlahtotalrekonmarch,
+                'jumlahtotalrekonapril' =>   $jumlahtotalrekonapril,
+                'jumlahtotalrekonmay' =>   $jumlahtotalrekonmay,
+                'jumlahtotalrekonjune' =>   $jumlahtotalrekonjune,
+                'jumlahtotalrekonjuly' =>   $jumlahtotalrekonjuly,
+                'jumlahtotalrekonaugust' =>   $jumlahtotalrekonaugust,
+                'jumlahtotalrekonseptember' =>   $jumlahtotalrekonseptember,
+                'jumlahtotalrekonoctober' =>   $jumlahtotalrekonoctober,
+                'jumlahtotalrekonnovember' =>   $jumlahtotalrekonnovember,
+                'jumlahtotalrekondecember' =>   $jumlahtotalrekondecember,
                 'totalkapsullebih' =>   $totalkapsullebih,
                 'totalkapsulkurang' =>   $totalkapsulkurang,
                 'totalracikkurang' =>   $totalracikkurang,

@@ -383,6 +383,10 @@
         {
             "nameDep": "DaftarGajiBulananCtrl",
             "urlDep": "module/TataRekening/DaftarGajiBulananCtrl"
+        },
+        {
+            "nameDep": "SuratTandaSetoranCtrl",
+            "urlDep": "module/BendaharaPenerimaan/SuratTandaSetoranCtrl"
         }
     ]
 }

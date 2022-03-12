@@ -1898,5 +1898,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "SuratTandaSetoran",
+    "url": "/U3VyYXRUYW5kYVNldG9yYW4=",
+    "templateurl": "module/BendaharaPenerimaan/SuratTandaSetoran.html",
+    "controller": "SuratTandaSetoranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
