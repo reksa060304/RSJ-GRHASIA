@@ -3588,7 +3588,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
 
         $pelayanan = DB::select(DB::raw("
         select rtrim(x.bulan, ' ') as bulan, x.namaproduk, x.jumlah from (select 
-        to_char(pp.tglpelayanan, 'Month') as bulan, pr.namaproduk, count(pr.namaproduk) as jumlah 
+        to_char(pp.tglpelayanan, 'Month') as bulan, pr.namaproduk, sum(pp.jumlah) as jumlah 
         from
             pasien_m ps 
         inner join pasiendaftar_t pd on ps.id=pd.nocmfk 
