@@ -6307,239 +6307,19 @@ class TagihanController  extends ApiController
         return $this->respond($result);
     }
 
-    public function getDataLaporanDiagnosaPasien(Request $request) {
-        $kdProfile = $this->getDataKdProfile($request);
-        $idProfile = (int) $kdProfile;
-        $data = [];
-        $kdProfile = $this->getDataKdProfile($request);
-        $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
-        $tglAwalmasuk = $request['tglAwalmasuk'];
-        $tglAkhirmasuk = $request['tglAkhirmasuk'];
-        $deptId = $request['idDept'];
-        $ruanganId = $request['idRuangan'];
-        $idJenisDiagnosa = $request['idJenisDiagnosa'];
-        $diagnosaId = $request['idDiagnosa'];
-        $statusPasien = $request['statusPasien'];
-
-        $paramtglmasuk = ' ';
-        if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
-            $paramtglmasuk = " AND apd.tglmasuk::date BETWEEN '". $tglAwalmasuk. "'
-                AND '". $tglAkhirmasuk."' ";
-        }
-        $paramtglkeluar = ' ';
-        if(isset($tglAwal) && isset($tglAkhir) && ($tglAwal != "" && $tglAkhir != "")){
-            $paramtglkeluar = " AND apd.tglkeluar::date BETWEEN '$tglAwal'
-                AND '$tglAkhir' ";
-        }
-        $paramDep = ' ';
-        if (isset($deptId) && $deptId != "" && $deptId == 1) {
-            $paramDep = ' and ru.objectdepartemenfk = 16  ';
-        }
-        if (isset($deptId) && $deptId != "" && $deptId == 2) {
-            $paramDep = ' and ru.objectdepartemenfk <> 16  ';
-        }
-
-        $paramRuangan = ' ';
-        if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined") {
-            $paramRuangan = ' and ru.id = ' . $ruanganId;
-        }
-
-        $paramJenisDiagnosa = ' ';
-        if (isset($idJenisDiagnosa) && $idJenisDiagnosa != "" && $idJenisDiagnosa != "undefined") {
-            $paramJenisDiagnosa = ' and jd.id = '.$idJenisDiagnosa;
-        }
-
-        $paramDiagnosa = ' ';
-        if (isset($diagnosaId) && $diagnosaId != "" && $diagnosaId != "undefined") {
-            $paramDiagnosa = ' and dm.id = '.$diagnosaId;
-        }
-        $paramstatusPasien = ' ';
-        if (isset($statusPasien) && $statusPasien != "" && $statusPasien != "undefined") {
-            $paramstatusPasien = ' and pd.statuspasien ILIKE'. "'%". $statusPasien . "%'";
-        }
-
-        // $data1 = DB::select(DB::raw("select pen.pendidikan, date_part('year', pd.tglregistrasi) - date_part('year', pm.tgllahir) as umurs,dm.kddiagnosa, pd.tglregistrasi,pd.tglpulang,pm.nocm,pd.noregistrasi,pm.namapasien,pm.tgllahir,pd.statuspasien,
-        //         jk.reportdisplay as jeniskelamin,case when sk.statuskeluar is null then '-' else sk.statuskeluar end as statuskeluar,ru.namaruangan as namaruangan,
-		// 	    case when sp.statuspulang is null then '-' else sp.statuspulang end as statuspulang,ru.namaruangan,
-		// 	    (case when pg.namalengkap is not null then pg.namalengkap when pg1.namalengkap is not null then pg1.namalengkap else '-' end) as namadokter,
-		// 	    case when jd.jenisdiagnosa is null then '-' else jd.jenisdiagnosa end as jenisdiagnosa,
-        //         	case when pm.tgllahir = null then '-, ' || pm.tgllahir else pm.tempatlahir || ', ' || pm.tgllahir::date end as ttl,
-		// 	    case when dm.namadiagnosa = '-' then '-, ' || ddp.keterangan else dm.namadiagnosa end as namadiagnosa,
-		// 	    case when alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamatlengkap,pm.notelepon || '/' || pm.nohp as notelepon
-        //         from pasiendaftar_t as pd
-        //         INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-        //         LEFT JOIN detaildiagnosapasien_t as ddp on ddp.noregistrasifk = apd.norec
-        //         LEFT JOIN diagnosapasien_t as dp on dp.norec = ddp.objectdiagnosapasienfk
-        //         INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-        //         LEFT JOIN alamat_m as alm on alm.nocmfk = pm.id
-        //         LEFT JOIN jeniskelamin_m as jk on jk.id = pm.objectjeniskelaminfk
-        //         INNER JOIN diagnosa_m as dm on dm.id = ddp.objectdiagnosafk
-        //         LEFT JOIN jenisdiagnosa_m as jd on jd.id = ddp.objectjenisdiagnosafk
-        //         LEFT JOIN pegawai_m as pg on pg.id = apd.objectpegawaifk
-        //         LEFT JOIN pegawai_m as pg1 on pg1.id = pd.objectpegawaifk
-        //         INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk
-        //         LEFT JOIN statuskeluar_m as sk on sk.id = pd.objectstatuskeluarfk
-        //         LEFT JOIN statuspulang_m as sp on sp.id = pd.objectstatuspulangfk
-        //         LEFT JOIN batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
-        //         inner join pendidikan_m pen on pen.id = pm.objectpendidikanfk
-        //         WHERE br.pasiendaftarfk is null and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
-        //         and pd.kdprofile = $idProfile  
-        //         $paramDep
-        //         $paramRuangan
-        //         $paramJenisDiagnosa
-        //         $paramDiagnosa
-        //         $paramstatusPasien
-        //         order by jd.jenisdiagnosa asc"));
-
-                $data = DB::select(DB::raw("
-                SELECT distinct
-                apd.tglmasuk,
-                apd.tglkeluar,
-                apd.tglkeluar::date - apd.tglmasuk::date as lamahari,
-                pen.pendidikan,
-                date_part( 'year', pd.tglregistrasi ) - date_part( 'year', pm.tgllahir ) AS umurs,
-                dm.kddiagnosa,
-                pd.tglregistrasi,
-                pd.tglpulang,
-                pm.nocm,
-                pd.noregistrasi,
-                pm.namapasien,
-                pm.tgllahir,
-                pd.statuspasien,
-                jk.reportdisplay AS jeniskelamin,
-                CASE
-
-                WHEN sk.statuskeluar IS NULL THEN
-                '-' ELSE sk.statuskeluar
-                END AS statuskeluar,
-                ru.namaruangan AS namaruangan,
-                CASE
-
-                WHEN sp.statuspulang IS NULL THEN
-                '-' ELSE sp.statuspulang
-                END AS statuspulang,
-                ru.namaruangan,
-                ( CASE WHEN pg.namalengkap IS NOT NULL THEN pg.namalengkap WHEN pg1.namalengkap IS NOT NULL THEN
-                pg1.namalengkap ELSE'-' END ) AS namadokter,
-                CASE
-
-                WHEN jd.jenisdiagnosa IS NULL THEN
-                '-' ELSE jd.jenisdiagnosa
-                END AS jenisdiagnosa,
-                CASE
-
-                WHEN pm.tgllahir = NULL THEN
-                '-, ' || pm.tgllahir ELSE pm.tempatlahir || ', ' || pm.tgllahir :: DATE
-                END AS ttl,
-                CASE
-
-                WHEN dm.namadiagnosa = '-' THEN
-                '-, ' || ddp.keterangan ELSE dm.namadiagnosa
-                END AS namadiagnosa,
-                CASE
-
-                WHEN alm.alamatlengkap IS NULL THEN
-                '-' ELSE alm.alamatlengkap
-                END AS alamatlengkap,
-                pm.notelepon || '/' || pm.nohp AS notelepon
-                FROM
-                pasiendaftar_t AS pd
-                INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
-                LEFT JOIN detaildiagnosapasien_t AS ddp ON ddp.noregistrasifk = apd.norec
-                LEFT JOIN diagnosapasien_t AS dp ON dp.norec = ddp.objectdiagnosapasienfk
-                INNER JOIN pasien_m AS pm ON pm.ID = pd.nocmfk
-                LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.
-                ID LEFT JOIN jeniskelamin_m AS jk ON jk.ID = pm.objectjeniskelaminfk
-                INNER JOIN diagnosa_m AS dm ON dm.ID = ddp.objectdiagnosafk
-                LEFT JOIN jenisdiagnosa_m AS jd ON jd.ID = ddp.objectjenisdiagnosafk
-                LEFT JOIN pegawai_m AS pg ON pg.ID = apd.objectpegawaifk
-                LEFT JOIN pegawai_m AS pg1 ON pg1.ID = pd.objectpegawaifk
-                INNER JOIN ruangan_m AS ru ON ru.ID = apd.objectruanganfk
-                LEFT JOIN statuskeluar_m AS sk ON sk.ID = pd.objectstatuskeluarfk
-                LEFT JOIN statuspulang_m AS sp ON sp.ID = pd.objectstatuspulangfk
-                LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
-                INNER JOIN pendidikan_m pen ON pen.ID = pm.objectpendidikanfk
-                WHERE
-                br.pasiendaftarfk IS NULL
-                $paramtglmasuk
-                $paramtglkeluar
-                and pd.kdprofile = $idProfile  
-                $paramDep
-                $paramRuangan
-                $paramJenisDiagnosa
-                $paramDiagnosa
-                $paramstatusPasien
-                
-                "));
-//         $count = DB::select(DB::Raw("SELECT
-// 		count(jd.id)filter(where jd.id = 1) a,
-// 		count(jd.id)filter(where jd.id = 2) b,
-// 		count(jd.id)filter(where jd.id = 3) c,
-// 		count(jd.id)filter(where jd.id = 4) d,
-// 		count(jd.id)filter(where jd.id = 5) e,
-// 		count(jd.id)filter(where jd.id = 6) f
-// FROM
-// 	pasiendaftar_t AS pd
-// 	INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
-// 	LEFT JOIN detaildiagnosapasien_t AS ddp ON ddp.noregistrasifk = apd.norec
-// 	LEFT JOIN diagnosapasien_t AS dp ON dp.norec = ddp.objectdiagnosapasienfk
-// 	INNER JOIN pasien_m AS pm ON pm.ID = pd.nocmfk
-// 	LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.
-// 	ID LEFT JOIN jeniskelamin_m AS jk ON jk.ID = pm.objectjeniskelaminfk
-// 	INNER JOIN diagnosa_m AS dm ON dm.ID = ddp.objectdiagnosafk
-// 	LEFT JOIN jenisdiagnosa_m AS jd ON jd.ID = ddp.objectjenisdiagnosafk
-// 	LEFT JOIN pegawai_m AS pg ON pg.ID = apd.objectpegawaifk
-// 	LEFT JOIN pegawai_m AS pg1 ON pg1.ID = pd.objectpegawaifk
-// 	INNER JOIN ruangan_m AS ru ON ru.ID = apd.objectruanganfk
-// 		inner join pendidikan_m pen on pen.id = pm.objectpendidikanfk
-// 	LEFT JOIN statuskeluar_m AS sk ON sk.ID = pd.objectstatuskeluarfk
-// 	LEFT JOIN statuspulang_m AS sp ON sp.ID = pd.objectstatuspulangfk
-// 	LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec 
-// 	INNER JOIN departemen_m dep on dep.id=ru.objectdepartemenfk
-//     WHERE br.pasiendaftarfk is null and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
-//                 and pd.kdprofile = $idProfile  
-//                 $paramDep
-//                 $paramRuangan
-//                 $paramJenisDiagnosa
-//                 $paramDiagnosa
-//                 $paramstatusPasien"));
-$totaldiagnosaawal = 0;
-
-        $result = array(
-            'data' => $data,
-            // 'count' => $count,
-            'message' => 'fazri@epic',
-        );
-        return $this->respond($result);
-    }
-    public function getDataLaporanDiagnosaPerPasien(Request $request)
+    public function getDataLaporanMorbiditasPasien(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $data = [];
-        $kdProfile = $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
-        $tglAwalmasuk = $request['tglAwalmasuk'];
-        $tglAkhirmasuk = $request['tglAkhirmasuk'];
-        $deptId = $request['idDept'];
-        $ruanganId = $request['idRuangan'];
         $idJenisDiagnosa = $request['idJenisDiagnosa'];
-        $diagnosaId = $request['idDiagnosa'];
-        $statusPasien = $request['statusPasien'];
+        $deptId = $request['idDept'];
 
-        $paramtglmasuk = ' ';
-        if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
-            $paramtglmasuk = "apd.tglmasuk BETWEEN '". $tglAwalmasuk. "'
-                AND '". $tglAkhirmasuk."' ";
+        $paramJenisDiagnosa = ' ';
+        if (isset($idJenisDiagnosa) && $idJenisDiagnosa != "" && $idJenisDiagnosa != "undefined") {
+            $paramJenisDiagnosa = ' where jd.id = '.$idJenisDiagnosa;
         }
-        $paramtglkeluar = ' ';
-        if(isset($tglAkhir) && isset($tglAwal) && ($tglAwal != "" && $tglAkhir != "")){
-            $paramtglkeluar = "apd.tglkeluar BETWEEN '$tglAwal'
-                AND '$tglAkhir' ";
-        }
-
         $paramDep = ' ';
         if (isset($deptId) && $deptId != "" && $deptId == 1) {
             $paramDep = ' and ru.objectdepartemenfk = 16  ';
@@ -6547,79 +6327,404 @@ $totaldiagnosaawal = 0;
         if (isset($deptId) && $deptId != "" && $deptId == 2) {
             $paramDep = ' and ru.objectdepartemenfk <> 16  ';
         }
+        $data = DB::select(DB::raw(
+        "
+        WITH diagnosa AS (
+        SELECT
+        ddp.objectjenisdiagnosafk,
+        di.ID,
+        jk.ID jkid,
+        ddp.norec,
+        ps.nocm,
+        pd.noregistrasi,
+        EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+        ps.tgllahir,
+        di.namadiagnosa,
+        jk.jeniskelamin,
+        di.kddiagnosa,
+        apd.tglregistrasi,
+        kasus.jumlahkasus,
+        CASE
+
+        WHEN kasus.jumlahkasus = 0 THEN
+        'BARU' ELSE'LAMA'
+        END kasuspenyakit
+        FROM
+        pasiendaftar_t pd
+        INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+        INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+        INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+        INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+        INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+        INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+        INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+        INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+        LEFT JOIN LATERAL (
+        SELECT COUNT
+        ( * ) AS jumlahkasus
+        FROM
+        pasiendaftar_t pd2
+        INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+        INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+        INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+        WHERE
+        pd2.statusenabled = TRUE
+        AND pd2.nocmfk = pd.nocmfk
+        AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk ) kasus
+            ON 1=1 
+            WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and pd.kdprofile = $idProfile 
+            $paramDep
+             ) 
+            SELECT di.ID, di.kddiagnosa,
+            di.namadiagnosa, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 0 AND 4 ) lk1, COUNT (
+            di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 0 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE
+            di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN
+            5 AND 14 ) pr2, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT (
+            di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE
+            di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+            BETWEEN 25 AND 44 ) pr4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5,
+            COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER (
+            WHERE di.jkid=1 AND di.umur> 64 ) lk6,
+            COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+            COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+            COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+            (
+            COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+            di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+            ) AS totalkasusbaru,
+            (
+            COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur BETWEEN 0 AND 4 ) + COUNT ( di.umur ) FILTER (
+            WHERE di.jkid = 2 AND di.umur BETWEEN 0 AND 4 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur
+            BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur BETWEEN 5 AND 14 ) + COUNT (
+            di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur BETWEEN 15 AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE
+            di.jkid = 2 AND di.umur BETWEEN 15 AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur
+            BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur BETWEEN 25 AND 44 ) + COUNT (
+            di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE
+            di.jkid = 2 AND di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur > 64
+            ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+            ) AS totalkunjungan
+            FROM
+            diagnosa di
+            INNER JOIN jenisdiagnosa_m jd ON jd.ID = di.objectjenisdiagnosafk
+            
+            $paramJenisDiagnosa 
+            GROUP BY
+            di.ID,
+            di.kddiagnosa,
+            di.namadiagnosa
+            ORDER BY
+            di.kddiagnosa ASC
+            "
+            ));
+            $result = array(
+            'data' => $data,
+            'message' => 'fazrian@epic',
+        );
+        return $this->respond($result);
+
+    }
+
+    public function getDataLaporanDiagnosaPasien(Request $request) {
+    $kdProfile = $this->getDataKdProfile($request);
+    $idProfile = (int) $kdProfile;
+    $data = [];
+    $kdProfile = $this->getDataKdProfile($request);
+    $tglAwal = $request['tglAwal'];
+    $tglAkhir = $request['tglAkhir'];
+    $tglAwalmasuk = $request['tglAwalmasuk'];
+    $tglAkhirmasuk = $request['tglAkhirmasuk'];
+    $deptId = $request['idDept'];
+    $ruanganId = $request['idRuangan'];
+    $idJenisDiagnosa = $request['idJenisDiagnosa'];
+    $diagnosaId = $request['idDiagnosa'];
+    $statusPasien = $request['statusPasien'];
+
+    $paramtglmasuk = ' ';
+    if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
+    $paramtglmasuk = " AND apd.tglmasuk::date BETWEEN '". $tglAwalmasuk. "'
+    AND '". $tglAkhirmasuk."' ";
+    }
+    $paramtglkeluar = ' ';
+    if(isset($tglAwal) && isset($tglAkhir) && ($tglAwal != "" && $tglAkhir != "")){
+    $paramtglkeluar = " AND apd.tglkeluar::date BETWEEN '$tglAwal'
+    AND '$tglAkhir' ";
+    }
+    $paramDep = ' ';
+    if (isset($deptId) && $deptId != "" && $deptId == 1) {
+    $paramDep = ' and ru.objectdepartemenfk = 16 ';
+    }
+    if (isset($deptId) && $deptId != "" && $deptId == 2) {
+    $paramDep = ' and ru.objectdepartemenfk <> 16 ';
+        }
 
         $paramRuangan = ' ';
         if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined") {
-            $paramRuangan = ' and ru.id = ' . $ruanganId;
+        $paramRuangan = ' and ru.id = ' . $ruanganId;
         }
 
         $paramJenisDiagnosa = ' ';
         if (isset($idJenisDiagnosa) && $idJenisDiagnosa != "" && $idJenisDiagnosa != "undefined") {
-            $paramJenisDiagnosa = ' and jd.id = '.$idJenisDiagnosa;
+        $paramJenisDiagnosa = ' and jd.id = '.$idJenisDiagnosa;
         }
 
         $paramDiagnosa = ' ';
         if (isset($diagnosaId) && $diagnosaId != "" && $diagnosaId != "undefined") {
-            $paramDiagnosa = ' and dm.id = '.$diagnosaId;
+        $paramDiagnosa = ' and di.id = '.$diagnosaId;
         }
         $paramstatusPasien = ' ';
         if (isset($statusPasien) && $statusPasien != "" && $statusPasien != "undefined") {
-            $paramstatusPasien = ' and pd.statuspasien ILIKE'. "'%". $statusPasien . "%'";
+        $paramstatusPasien = ' and pd.statuspasien ILIKE'. "'%". $statusPasien . "%'";
         }
 
-        $data = DB::select(DB::raw(" WITH diagnosapasien AS (
-	SELECT distinct
-    pd.norec,
-		pd.nocmfk,
-		ps.namapasien,
-		di.kddiagnosa,
-		di.namadiagnosa,ru.objectdepartemenfk
-		FROM
-	pasiendaftar_t AS pd
-	INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
-	LEFT JOIN detaildiagnosapasien_t AS ddp ON ddp.noregistrasifk = apd.norec
-	LEFT JOIN diagnosapasien_t AS dp ON dp.norec = ddp.objectdiagnosapasienfk
-	INNER JOIN pasien_m AS ps ON ps.ID = pd.nocmfk
-	LEFT JOIN alamat_m AS alm ON alm.nocmfk = ps.ID 
-	LEFT JOIN jeniskelamin_m AS jk ON jk.ID = ps.objectjeniskelaminfk
-	INNER JOIN diagnosa_m AS di ON di.ID = ddp.objectdiagnosafk
-	LEFT JOIN jenisdiagnosa_m AS jd ON jd.ID = ddp.objectjenisdiagnosafk
-	LEFT JOIN pegawai_m AS pg ON pg.ID = apd.objectpegawaifk
-	LEFT JOIN pegawai_m AS pg1 ON pg1.ID = pd.objectpegawaifk
-	INNER JOIN ruangan_m AS ru ON ru.ID = apd.objectruanganfk
-	LEFT JOIN statuskeluar_m AS sk ON sk.ID = pd.objectstatuskeluarfk
-	LEFT JOIN statuspulang_m AS sp ON sp.ID = pd.objectstatuspulangfk
-	LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
-	INNER JOIN pendidikan_m pen ON pen.ID = ps.objectpendidikanfk
-	WHERE
-		$paramtglmasuk
-                $paramtglkeluar
-                and pd.kdprofile = $idProfile  
-                $paramDep
-                $paramRuangan
-                $paramJenisDiagnosa
-                $paramDiagnosa
-                $paramstatusPasien
-	GROUP BY
-    pd.norec,
-		pd.nocmfk,
-		di.kddiagnosa,
-		di.namadiagnosa,
-		ps.namapasien,
-		ru.objectdepartemenfk
-	ORDER BY
-		ps.namapasien ASC
+        // // $data1 = DB::select(DB::raw("select pen.pendidikan, date_part('year', pd.tglregistrasi) - date_part('year',
+        // pm.tgllahir) as umurs,dm.kddiagnosa,
+        // pd.tglregistrasi,pd.tglpulang,pm.nocm,pd.noregistrasi,pm.namapasien,pm.tgllahir,pd.statuspasien,
+        // // jk.reportdisplay as jeniskelamin,case when sk.statuskeluar is null then '-' else sk.statuskeluar end as
+        // statuskeluar,ru.namaruangan as namaruangan,
+        // // case when sp.statuspulang is null then '-' else sp.statuspulang end as statuspulang,ru.namaruangan,
+        // // (case when pg.namalengkap is not null then pg.namalengkap when pg1.namalengkap is not null then
+        // pg1.namalengkap else '-' end) as namadokter,
+        // // case when jd.jenisdiagnosa is null then '-' else jd.jenisdiagnosa end as jenisdiagnosa,
+        // // case when pm.tgllahir = null then '-, ' || pm.tgllahir else pm.tempatlahir || ', ' || pm.tgllahir::date end
+        // as ttl,
+        // // case when dm.namadiagnosa = '-' then '-, ' || ddp.keterangan else dm.namadiagnosa end as namadiagnosa,
+        // // case when alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamatlengkap,pm.notelepon || '/'
+        // || pm.nohp as notelepon
+        // // from pasiendaftar_t as pd
+        // // INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+        // // LEFT JOIN detaildiagnosapasien_t as ddp on ddp.noregistrasifk = apd.norec
+        // // LEFT JOIN diagnosapasien_t as dp on dp.norec = ddp.objectdiagnosapasienfk
+        // // INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+        // // LEFT JOIN alamat_m as alm on alm.nocmfk = pm.id
+        // // LEFT JOIN jeniskelamin_m as jk on jk.id = pm.objectjeniskelaminfk
+        // // INNER JOIN diagnosa_m as dm on dm.id = ddp.objectdiagnosafk
+        // // LEFT JOIN jenisdiagnosa_m as jd on jd.id = ddp.objectjenisdiagnosafk
+        // // LEFT JOIN pegawai_m as pg on pg.id = apd.objectpegawaifk
+        // // LEFT JOIN pegawai_m as pg1 on pg1.id = pd.objectpegawaifk
+        // // INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk
+        // // LEFT JOIN statuskeluar_m as sk on sk.id = pd.objectstatuskeluarfk
+        // // LEFT JOIN statuspulang_m as sp on sp.id = pd.objectstatuspulangfk
+        // // LEFT JOIN batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
+        // // inner join pendidikan_m pen on pen.id = pm.objectpendidikanfk
+        // // WHERE br.pasiendaftarfk is null and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        // // and pd.kdprofile = $idProfile
+        // // $paramDep
+        // // $paramRuangan
+        // // $paramJenisDiagnosa
+        // // $paramDiagnosa
+        // // $paramstatusPasien
+        // // order by jd.jenisdiagnosa asc"));
 
-)
-SELECT distinct dp.kddiagnosa, dp.namadiagnosa, count(dp.nocmfk) FROM diagnosapasien dp GROUP BY dp.kddiagnosa, dp.namadiagnosa ORDER BY count desc"));
+        $data = DB::select(DB::raw("
+        SELECT
+        pd.tglregistrasi,
+        ddp.norec,
+        apd.tglmasuk,
+        apd.tglkeluar,
+        apd.tglkeluar :: DATE - apd.tglmasuk :: DATE AS lamahari,
+        pen.pendidikan,
+        EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umurs,
+        di.kddiagnosa,
+        ps.nocm,
+        pd.noregistrasi,
+        ps.namapasien,
+        ps.tgllahir,
+        pd.statuspasien,
+        jk.jeniskelamin AS jeniskelamin,
+        ru.namaruangan,
+        CASE
+        WHEN jd.jenisdiagnosa IS NULL THEN
+        '-' ELSE jd.jenisdiagnosa
+        END AS jenisdiagnosa,
+        CASE
+        WHEN ps.tgllahir = NULL THEN
+        '-, ' || ps.tgllahir ELSE ps.tempatlahir || ', ' || ps.tgllahir :: DATE
+        END AS ttl,
+        CASE
+        WHEN di.namadiagnosa = '-' THEN
+        '-, ' || ddp.keterangan ELSE di.namadiagnosa
+        END AS namadiagnosa
+        ,
+        CASE
+        WHEN alm.alamatlengkap IS NULL THEN
+        '-' ELSE alm.alamatlengkap
+        END AS alamatlengkap
+        FROM
+        pasiendaftar_t pd
+        INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+        INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+        INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+        INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+        INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+        INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+        INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+        INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+        INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+        left JOIN pendidikan_m pen ON pen.ID = ps.objectpendidikanfk
+        left JOIN alamat_m AS alm ON ps.ID = alm.nocmfk
+        WHERE
+        pd.kdprofile = $idProfile
+        $paramtglmasuk
+        $paramtglkeluar
+        $paramDep
+        $paramRuangan
+        $paramJenisDiagnosa
+        $paramDiagnosa
+        $paramstatusPasien
 
-        
+        "));
+        // $count = DB::select(DB::Raw("SELECT
+        // count(jd.id)filter(where jd.id = 1) a,
+        // count(jd.id)filter(where jd.id = 2) b,
+        // count(jd.id)filter(where jd.id = 3) c,
+        // count(jd.id)filter(where jd.id = 4) d,
+        // count(jd.id)filter(where jd.id = 5) e,
+        // count(jd.id)filter(where jd.id = 6) f
+        // FROM
+        // pasiendaftar_t AS pd
+        // INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
+        // LEFT JOIN detaildiagnosapasien_t AS ddp ON ddp.noregistrasifk = apd.norec
+        // LEFT JOIN diagnosapasien_t AS dp ON dp.norec = ddp.objectdiagnosapasienfk
+        // INNER JOIN pasien_m AS pm ON pm.ID = pd.nocmfk
+        // LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.
+        // ID LEFT JOIN jeniskelamin_m AS jk ON jk.ID = pm.objectjeniskelaminfk
+        // INNER JOIN diagnosa_m AS dm ON dm.ID = ddp.objectdiagnosafk
+        // LEFT JOIN jenisdiagnosa_m AS jd ON jd.ID = ddp.objectjenisdiagnosafk
+        // LEFT JOIN pegawai_m AS pg ON pg.ID = apd.objectpegawaifk
+        // LEFT JOIN pegawai_m AS pg1 ON pg1.ID = pd.objectpegawaifk
+        // INNER JOIN ruangan_m AS ru ON ru.ID = apd.objectruanganfk
+        // inner join pendidikan_m pen on pen.id = pm.objectpendidikanfk
+        // LEFT JOIN statuskeluar_m AS sk ON sk.ID = pd.objectstatuskeluarfk
+        // LEFT JOIN statuspulang_m AS sp ON sp.ID = pd.objectstatuspulangfk
+        // LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
+        // INNER JOIN departemen_m dep on dep.id=ru.objectdepartemenfk
+        // WHERE br.pasiendaftarfk is null and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        // and pd.kdprofile = $idProfile
+        // $paramDep
+        // $paramRuangan
+        // $paramJenisDiagnosa
+        // $paramDiagnosa
+        // $paramstatusPasien"));
+        $totaldiagnosaawal = 0;
+
         $result = array(
-            'data' => $data,
-            'message' => 'fazri@epic',
+        'data' => $data,
+        // 'count' => $count,
+        'message' => 'fazri@epic',
         );
         return $this->respond($result);
-    }
+        }
+        public function getDataLaporanDiagnosaPerPasien(Request $request)
+        {
+            $kdProfile = $this->getDataKdProfile($request);
+            $idProfile = (int) $kdProfile;
+            $data = [];
+            $kdProfile = $this->getDataKdProfile($request);
+            $tglAwal = $request['tglAwal'];
+            $tglAkhir = $request['tglAkhir'];
+            $tglAwalmasuk = $request['tglAwalmasuk'];
+            $tglAkhirmasuk = $request['tglAkhirmasuk'];
+            $deptId = $request['idDept'];
+            $ruanganId = $request['idRuangan'];
+            $idJenisDiagnosa = $request['idJenisDiagnosa'];
+            $diagnosaId = $request['idDiagnosa'];
+            $statusPasien = $request['statusPasien'];
+
+            $paramtglmasuk = ' ';
+            if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
+            $paramtglmasuk = "apd.tglmasuk::date BETWEEN '". $tglAwalmasuk. "'
+            AND '". $tglAkhirmasuk."' ";
+            }
+            $paramtglkeluar = ' ';
+            if(isset($tglAkhir) && isset($tglAwal) && ($tglAwal != "" && $tglAkhir != "")){
+            $paramtglkeluar = "apd.tglkeluar::date BETWEEN '$tglAwal'
+            AND '$tglAkhir' ";
+            }
+
+            $paramDep = ' ';
+            if (isset($deptId) && $deptId != "" && $deptId == 1) {
+            $paramDep = ' and ru.objectdepartemenfk = 16 ';
+            }
+            if (isset($deptId) && $deptId != "" && $deptId == 2) {
+            $paramDep = ' and ru.objectdepartemenfk <> 16 ';
+                }
+
+            $paramRuangan = ' ';
+            if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined") {
+            $paramRuangan = ' and ru.id = ' . $ruanganId;
+            }
+
+            $paramJenisDiagnosa = ' ';
+            if (isset($idJenisDiagnosa) && $idJenisDiagnosa != "" && $idJenisDiagnosa != "undefined") {
+            $paramJenisDiagnosa = ' and jd.id = '.$idJenisDiagnosa;
+            }
+
+            $paramDiagnosa = ' ';
+            if (isset($diagnosaId) && $diagnosaId != "" && $diagnosaId != "undefined") {
+            $paramDiagnosa = ' and dm.id = '.$diagnosaId;
+            }
+            $paramstatusPasien = ' ';
+            if (isset($statusPasien) && $statusPasien != "" && $statusPasien != "undefined") {
+            $paramstatusPasien = ' and pd.statuspasien ILIKE'. "'%". $statusPasien . "%'";
+            }
+
+            $data = DB::select(DB::raw("
+            WITH diagnosapasien AS (
+            SELECT DISTINCT
+            ps.nocm,
+            ps.namapasien,
+            di.kddiagnosa,
+            di.namadiagnosa,
+            ru.objectdepartemenfk
+            FROM
+            pasiendaftar_t AS pd
+            INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
+            INNER JOIN pasien_m AS ps ON ps.ID = pd.nocmfk
+            INNER JOIN jeniskelamin_m AS jk ON jk.ID = ps.objectjeniskelaminfk
+            INNER JOIN detaildiagnosapasien_t AS ddp ON ddp.noregistrasifk = apd.norec
+            INNER JOIN diagnosapasien_t AS dp ON dp.norec = ddp.objectdiagnosapasienfk
+            INNER JOIN diagnosa_m AS di ON di.ID = ddp.objectdiagnosafk
+            INNER JOIN ruangan_m AS ru ON ru.ID = apd.objectruanganfk
+            INNER JOIN jenisdiagnosa_m AS jd ON jd.ID = ddp.objectjenisdiagnosafk
+            LEFT JOIN pegawai_m AS pg ON pg.ID = apd.objectpegawaifk
+            left JOIN pendidikan_m pen ON pen.ID = ps.objectpendidikanfk
+            LEFT JOIN alamat_m AS alm ON alm.nocmfk = ps.ID
+            WHERE
+            $paramtglmasuk
+            $paramtglkeluar
+            and pd.kdprofile = $idProfile
+            $paramDep
+            $paramRuangan
+            $paramJenisDiagnosa
+            $paramDiagnosa
+            $paramstatusPasien
+            GROUP BY
+            ps.nocm,
+            di.kddiagnosa,
+            di.namadiagnosa,
+            ps.namapasien,
+            ru.objectdepartemenfk
+
+            ) SELECT
+            dp.kddiagnosa,
+            dp.namadiagnosa,
+            COUNT ( dp.nocm )
+            FROM
+            diagnosapasien dp
+            GROUP BY
+            dp.kddiagnosa,
+            dp.namadiagnosa
+            ORDER BY
+            COUNT DESC
+            "));
+
+
+                $result = array(
+                'data' => $data,
+                'message' => 'fazri@epic',
+                );
+                return $this->respond($result);
+            }
 
     public function getDataLaporanDiagnosaPasienjiwa(Request $request)
     {
@@ -6638,12 +6743,12 @@ SELECT distinct dp.kddiagnosa, dp.namadiagnosa, count(dp.nocmfk) FROM diagnosapa
 
         $paramtglmasuk = ' ';
         if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
-            $paramtglmasuk = "apd.tglmasuk BETWEEN '". $tglAwalmasuk. "'
+            $paramtglmasuk = "and apd.tglmasuk::date BETWEEN '". $tglAwalmasuk. "'
                 AND '". $tglAkhirmasuk."' ";
         }
         $paramtglkeluar = ' ';
         if(isset($tglAkhir) && isset($tglAwal) && ($tglAwal != "" && $tglAkhir != "")){
-            $paramtglkeluar = "apd.tglkeluar BETWEEN '$tglAwal'
+            $paramtglkeluar = "and apd.tglkeluar::date BETWEEN '$tglAwal'
                 AND '$tglAkhir' ";
         }
         $paramDep = ' ';
@@ -6675,33 +6780,30 @@ SELECT distinct dp.kddiagnosa, dp.namadiagnosa, count(dp.nocmfk) FROM diagnosapa
 
         $data = DB::select(DB::raw("
         WITH diagnosapasien AS (
-	SELECT
-		pd.norec,
-		pd.nocmfk,
+	SELECT DISTINCT
+		ps.nocm,
+		ps.namapasien,
 		di.kddiagnosa,
 		di.namadiagnosa,
+		ru.objectdepartemenfk,
 		ps.objectjeniskelaminfk
 	FROM
-	pasiendaftar_t AS pd
-	INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
-	LEFT JOIN detaildiagnosapasien_t AS ddp ON ddp.noregistrasifk = apd.norec
-	LEFT JOIN diagnosapasien_t AS dp ON dp.norec = ddp.objectdiagnosapasienfk
-	INNER JOIN pasien_m AS ps ON ps.ID = pd.nocmfk
-	LEFT JOIN alamat_m AS alm ON alm.nocmfk = ps.ID 
-	LEFT JOIN jeniskelamin_m AS jk ON jk.ID = ps.objectjeniskelaminfk
-	INNER JOIN diagnosa_m AS di ON di.ID = ddp.objectdiagnosafk
-	LEFT JOIN jenisdiagnosa_m AS jd ON jd.ID = ddp.objectjenisdiagnosafk
-	LEFT JOIN pegawai_m AS pg ON pg.ID = apd.objectpegawaifk
-	LEFT JOIN pegawai_m AS pg1 ON pg1.ID = pd.objectpegawaifk
-	INNER JOIN ruangan_m AS ru ON ru.ID = apd.objectruanganfk
-	LEFT JOIN statuskeluar_m AS sk ON sk.ID = pd.objectstatuskeluarfk
-	LEFT JOIN statuspulang_m AS sp ON sp.ID = pd.objectstatuspulangfk
-	LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
-	INNER JOIN pendidikan_m pen ON pen.ID = ps.objectpendidikanfk
+		pasiendaftar_t AS pd
+		INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
+		INNER JOIN pasien_m AS ps ON ps.ID = pd.nocmfk
+		INNER JOIN jeniskelamin_m AS jk ON jk.ID = ps.objectjeniskelaminfk
+		INNER JOIN detaildiagnosapasien_t AS ddp ON ddp.noregistrasifk = apd.norec
+		INNER JOIN diagnosapasien_t AS dp ON dp.norec = ddp.objectdiagnosapasienfk
+		INNER JOIN diagnosa_m AS di ON di.ID = ddp.objectdiagnosafk
+		INNER JOIN ruangan_m AS ru ON ru.ID = apd.objectruanganfk
+		INNER JOIN jenisdiagnosa_m AS jd ON jd.ID = ddp.objectjenisdiagnosafk
+		LEFT JOIN pegawai_m AS pg ON pg.ID = apd.objectpegawaifk
+		left JOIN pendidikan_m pen ON pen.ID = ps.objectpendidikanfk 
+		LEFT JOIN alamat_m AS alm ON alm.nocmfk = ps.ID 
 	WHERE
-    $paramtglmasuk
+                pd.kdprofile = $idProfile  
+		$paramtglmasuk
                 $paramtglkeluar
-                and pd.kdprofile = $idProfile  
                 $paramDep
                 $paramRuangan
                 $paramJenisDiagnosa
@@ -6709,17 +6811,27 @@ SELECT distinct dp.kddiagnosa, dp.namadiagnosa, count(dp.nocmfk) FROM diagnosapa
                 $paramstatusPasien
 		AND di.kddiagnosa ILIKE '%F%'
 	GROUP BY
-	pd.norec,
-		pd.nocmfk,
+		ps.nocm,
 		di.kddiagnosa,
 		di.namadiagnosa,
-		ps.objectjeniskelaminfk
-
-)
-SELECT dp.kddiagnosa, dp.namadiagnosa, count(dp.objectjeniskelaminfk) FILTER(where dp.objectjeniskelaminfk = 1) lk,count(dp.objectjeniskelaminfk) FILTER(where dp.objectjeniskelaminfk = 2) pr 
-FROM diagnosapasien dp GROUP BY dp.kddiagnosa, dp.namadiagnosa ORDER BY lk desc
-        
-        
+		ps.namapasien,
+		ru.objectdepartemenfk,
+		ps.objectjeniskelaminfk 
+	ORDER BY
+		ps.nocm asc
+	) SELECT
+	dp.kddiagnosa,
+	dp.namadiagnosa,
+	COUNT ( dp.objectjeniskelaminfk ) FILTER ( WHERE dp.objectjeniskelaminfk = 1 ) lk,
+	COUNT ( dp.objectjeniskelaminfk ) FILTER ( WHERE dp.objectjeniskelaminfk = 2 ) pr 
+FROM
+	diagnosapasien dp 
+	
+GROUP BY
+	dp.kddiagnosa,
+	dp.namadiagnosa 
+ORDER BY
+	lk DESC
         "));
 $result = array(
             'data' => $data,
