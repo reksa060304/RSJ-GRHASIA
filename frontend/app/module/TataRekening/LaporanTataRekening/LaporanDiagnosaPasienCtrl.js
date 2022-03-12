@@ -66,7 +66,7 @@ define(['initialize'], function (initialize) {
                 LoadDataGrid()             
             }
             $scope.tanggalmasuk = function (data) {
-                console.log(data);
+                
                 if (data == true) {
                     document.getElementById("tglmasukawal").disabled = false;
                     document.getElementById("tglmasukakhir").disabled = false;
@@ -80,7 +80,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.tanggalpulang = function (data) {
-                console.log(data);
+                
                 if (data == true) {
                     document.getElementById("tglpulgawal").disabled = false;
                     document.getElementById("tglpulgakhir").disabled = false;
@@ -177,7 +177,7 @@ define(['initialize'], function (initialize) {
                 tempstatusPasien).then(function (data) {
                     var data2 = data.data.data;
                     $scope.isRouteLoading = false;
-                    console.log(data)
+                    
                     for (var i = 0; i < data2.length; i++) {
                         data.data.data[i].no = i + 1
                     }
@@ -247,7 +247,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("tatarekening/get-data-diagnosa-pasien?"
                     + tglAwal
                     + tglAkhir
-                    + tglAwalmasuk
+                    +tglAwalmasuk
                     +tglAkhirmasuk
                     + tempDepartemenId + tempRuanganId + tempJenisDiagnosa + tempDiagnosa + tempstatusPasien).then(function (data) {
                         
