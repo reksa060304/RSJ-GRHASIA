@@ -60,6 +60,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
         }
       }
 
+      $scope.isLoadOtomatisProduk=true;
+      function loadOtomatisProduk(){
+        if($scope.item.pasien.namaruangan == "Poliklinik Jiwa" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+          $scope.isLoadOtomatisProduk = true;
+          
+          $scope.item.namaProduk={
+            id: 5006382,
+            namaproduk: "Pemeriksaan Dokter Spesialis Jiwa",
+            objectruanganfk: 752
+          };
+
+
+          
+          $scope.getHargaTindakan();
+          //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
+        }
+        
+      }
+
       function loadPertama() {
         $scope.isRouteLoading = true;
         medifirstService.get("sysadmin/general/get-tgl-posting", true).then(function (dat) {
@@ -155,6 +174,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.hargaTindakan = dat.data.data2[0].hargasatuan //$scope.item.namaProduk.hargasatuan;
             $scope.item.hargaDijamin = dat.data.data2[0].hargadijamin
             $scope.item.jumlah = 1;
+            if($scope.isLoadOtomatisProduk == true){
+              $scope.isLoadOtomatisProduk = false;
+              $scope.tambahTindakans();
+              $scope.item.namaProduk = undefined;
+            }
             $scope.isSearchingHarga=false;
             $scope.isRouteLoading = false;
           })
@@ -211,6 +235,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
       })
       function getPegawaiById(id, input, output) {
+        console.log($scope.selectedPegawai);
         var selectedData = $parse(output);
         selectedData.assign($scope, []);
         var model = $parse(input);
@@ -224,8 +249,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           var cookie = document.cookie.split(';');
           cookie = cookie[0].split('=');
           // if (cookie[1] == 'dokter')
-          $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]
-
+          $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]          
+          if ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && $scope.isLoadOtomatisProduk == true ){
+            loadOtomatisProduk();
+          }
+          
         });
       }
 

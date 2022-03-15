@@ -5124,6 +5124,28 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         }
 
+        $periode = '';
+        if(isset($request['isTglSBM']) && $request['isTglSBM'] != "" && $request['isTglSBM'] != "undefined") {
+            if ($request['isTglSBM'] == "true"){
+                $periode = "AND sbm.tglsbm BETWEEN '$tglAwal' and '$tglAkhir'";
+            }else{
+                $periode = "AND sp.tglstruk  BETWEEN '$tglAwal' and '$tglAkhir'";
+            }
+        }
+
+        if(isset($request['periodeBerdasarkan']) && $request['periodeBerdasarkan'] != "" && $request['periodeBerdasarkan'] != "undefined") {
+            if ($request['periodeBerdasarkan'] == "tglsbm"){
+                $periode = "AND sbm.tglsbm BETWEEN '$tglAwal' and '$tglAkhir'";
+            }elseif ($request['periodeBerdasarkan'] == "tglverifikasi"){
+                $periode = "AND sp.tglstruk  BETWEEN '$tglAwal' and '$tglAkhir'";
+            }else{
+                $periode = "AND pd.tglpulang  BETWEEN '$tglAwal' and '$tglAkhir'";
+            }
+        }
+
+        
+        
+
 
 
         $data = \DB::select(DB::raw("
@@ -5142,16 +5164,19 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
                 INNER JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
                 LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true  
-                INNER JOIN strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
-                INNER JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
+                LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
+                LEFT JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
                 LEFT JOIN loginuser_s AS lu ON lu.id = sbm.objectpegawaipenerimafk  
                 LEFT JOIN pegawai_m AS pg ON pg.id = lu.objectpegawaifk  
                 LEFT JOIN pegawai_m AS pgdpjp ON pgdpjp.id = pd.objectpegawaifk
                 LEFT JOIN produk_m AS pr ON pr.id = pp.produkfk  
                 LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
 
-                WHERE pp.kdprofile = $kdProfile AND sbm.tglsbm BETWEEN '$tglAwal' and '$tglAkhir'
-                AND pd.objectkelompokpasienlastfk <> 2
+                WHERE pp.kdprofile = $kdProfile 
+                $periode
+                /*AND sp.tglstruk  BETWEEN '$tglAwal' and '$tglAkhir' */
+                /*AND sbm.tglsbm BETWEEN '$tglAwal' and '$tglAkhir'*/
+                /*AND pd.objectkelompokpasienlastfk <> 2*/
                 $noreg
                 $norm 
                 $namaPasien

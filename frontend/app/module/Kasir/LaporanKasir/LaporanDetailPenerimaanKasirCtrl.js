@@ -10,7 +10,20 @@ define(['initialize'], function (initialize) {
             $scope.isRouteLoading = false;
             $scope.item.listKasirMulti = [];
             $scope.item.listKasirMultis = [];
+            // $scope.item.isTglSBM = true;
+            // $("#isTglSBM").load(function(){
+            //     $(this).checked = true;
+            // });
+            //document.getElementById("isTglSBM").checked = true;
+            //$("#grid tbody input:checkbox").prop("checked", true);
+            //$("#isTglSBM").kendoCheckBox();
+            // $("#isTglSBM").prop("checked",true);
             Combo()
+            $scope.listTglPeriode = [
+            { "id": 1, "nama": "Periode Berdasarkan", "detail": [{ "id": 1, "nama": "Tgl SBM" }, { "id": 2, "nama": "Tgl Verifikasi" }, { "id": 3, "nama": "Tgl Pulang" }] }
+            ];
+            $scope.item.periodeBerdasarkan = 1;
+
 
             function Combo() {
                 var chacePeriode = cacheHelper.get('LaporanDetailPenerimaanKasirCtrl');
@@ -144,6 +157,26 @@ define(['initialize'], function (initialize) {
                     tempCarabayar = "&carabayar=" + $scope.item.caraBayar.id;
                 }
 
+                var tempisTglSBM = "";
+                if($scope.item.isTglSBM != undefined){
+                    if($scope.item.isTglSBM){
+                        tempisTglSBM = "&isTglSBM=true";
+                    }else{
+                        tempisTglSBM = "&isTglSBM=false";
+                    }
+                }
+
+                var tempPeriodeBerdasarkan = "";
+                if($scope.item.periodeBerdasarkan != undefined){
+                    if($scope.item.periodeBerdasarkan == 1){
+                        tempPeriodeBerdasarkan = "&periodeBerdasarkan=tglsbm";
+                    }else if($scope.item.periodeBerdasarkan == 2){
+                        tempPeriodeBerdasarkan = "&periodeBerdasarkan=tglverifikasi";
+                    }else{
+                        tempPeriodeBerdasarkan = "&periodeBerdasarkan=tglpulang";
+                    }
+                }
+
                 var chacePeriode = {
                     0: tglAwal,
                     1: tglAkhir
@@ -159,6 +192,8 @@ define(['initialize'], function (initialize) {
                     + tempKelDokter
                     + tempCarabayar
                     + tempKelPasienId + tempNama + tempNoReg + tempNoRm + tempKelLayanan + tempsbm + tempproduk
+                    + tempisTglSBM
+                    + tempPeriodeBerdasarkan
                     + "&KasirArr=" + listKasir).then(function (data) {
                         $scope.isRouteLoading = false
                         $scope.dataPendapatanRuangan = new kendo.data.DataSource({

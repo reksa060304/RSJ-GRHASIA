@@ -1,7 +1,7 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
-    initialize.controller('RegistrasiPasienBaruCtrl', ['$q', '$scope', '$state', 'CacheHelper', 'MedifirstService', 'DateHelper', 'ModelItem',
-        function ($q, $scope, $state, cacheHelper, medifirstService, dateHelper, ModelItem) {
+    initialize.controller('RegistrasiPasienBaruCtrl', ['$q', '$scope', '$state', 'CacheHelper', 'MedifirstService', 'DateHelper', 'ModelItem', '$mdDialog',
+        function ($q, $scope, $state, cacheHelper, medifirstService, dateHelper, ModelItem, $mdDialog) {
             $scope.title = 'Pendaftaran Pasien';
             $scope.item = {};
             $scope.now = new Date();
@@ -11,6 +11,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isRouteLoading = false
             $scope.item.hakKelas = "";
             $scope.item.jenisPeserta = "";
+            $scope.disableCekKepesertaan = false; /* disable ketika pertama load edit pasien */
             $scope.reservasi = {}
             $scope.item.image = "../app/images/avatar.jpg"
             loadCombo()
@@ -66,24 +67,41 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             $scope.$watch('item.noBpjs', function (e) { 
                 
-                debugger;
+                //debugger;
                     if ($scope.item.noBpjs == undefined){
                         return;
                     }
                     if ($scope.item.noBpjs.length != 13){
                         return;
                     }
+                    
                     medifirstService.get("registrasi/cek-nobpjs?nobpjs=" + $scope.item.noBpjs)
                         .then(function (data) {
                             $scope.ceks = data.data;
-                            if ($scope.ceks.data.length >= 1) {
-                                checkKepesertan()
+                            if ($scope.ceks.data.length >= 1) {  
+                                if(!$scope.disableCekKepesertaan){
+                                    checkKepesertan()
+                                }else{
+                                    $scope.disableCekKepesertaan = false;
+                                }
+                                
                                 var nocm = $scope.ceks.data[0].nocm;
                                 var nama = $scope.ceks.data[0].namapasien;
-                                toastr.error("NO BPJS ini sudah di pakai oleh pasien RM : " + nocm + " (" + nama + ") <br>Hak Kelas " +  $scope.item.hakKelas  + " <br>Jenis Peserta " + $scope.item.jenisPeserta + "!", "Peringatan")
+                                //toastr.error("NO BPJS ini sudah di pakai oleh pasien RM : " + nocm + " (" + nama + ") <br>Hak Kelas " +  $scope.item.hakKelas  + " <br>Jenis Peserta " + $scope.item.jenisPeserta + "!", "Peringatan")
+                                var confirm = $mdDialog.confirm()
+                                .title('Informasi')
+                                .htmlContent("NO BPJS ini sudah di pakai oleh pasien RM : " + nocm + " (" + nama + ") <br>Hak Kelas " +  $scope.item.hakKelas  + " <br>Jenis Peserta " + $scope.item.jenisPeserta + "!<br>Apakah anda ingin menggunakan pasien RM : " + nocm + " ini?<br>Klik <b>Ok</b> untuk menggunakan, Klik <b>Cancel</b> untuk tidak menggunakan dan melanjutkan", "Peringatan")
+                                .ariaLabel('Lucky day')
+                                .cancel('Batal')
+                                .ok('Ok');
+                                $mdDialog.show(confirm).then(function () {
+                                    $state.params.idPasien = $scope.ceks.data[0].id;
+                                    editPasien();
+                                });
                                 // ceknobpjsdouble = true
-                                $state.params.idPasien = $scope.ceks.data[0].id;
-                                editPasien();
+                                //disable supaya harus manual cari pasien lainnya, jangan sampe ngasih kesan user lg input pasien baru
+                                //$state.params.idPasien = $scope.ceks.data[0].id;
+                                //editPasien();
                                 // return;
                                
                             } else {
@@ -355,6 +373,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isRouteLoading = true;
                 medifirstService.get("registrasi/get-bynocm?idPasien=" + $state.params.idPasien).then(function (e) {
                     $scope.isRouteLoading = false
+                    $scope.disableCekKepesertaan = true;
                     var result = e.data.data                    
                     if (result.foto)// && result.foto != 'data:image/jpeg;base64,')
                         $scope.item.image = result.foto
@@ -928,7 +947,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             // });
 
             $scope.getNik = function (bool) {
-                if (bool) {
+                if (bool) {                    
                     if ($scope.item.noIdentitas === '' || $scope.item.noIdentitas === undefined) return;
                     $scope.isLoadingNik = true;
                     // var json = {

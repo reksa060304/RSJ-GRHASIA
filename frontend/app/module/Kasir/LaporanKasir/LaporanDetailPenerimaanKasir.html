@@ -14,6 +14,21 @@
                                 <legend>
                                     <h2>Pencarian</h2>
                                 </legend>
+                                <!-- <div class="grid_12">
+                                    <div class="grid_12"  style="margin-top:20px;"  >
+                                        <input type="checkbox" class="k-checkbox" id="isTglSBM" ng-model="item.isTglSBM" >
+                                        <label class="k-checkbox-label" for="isTglSBM">Ceklis untuk pencarian berdasarkan Tgl SBM (khusus yang bayar ke Kasa), UnCeklis untuk pencarian berdasarkan Tgl Verifikasi(Umum dan Jaminan)</label>
+                                  </div>
+                                </div> -->
+                                <div class="grid_12">
+                                    <label c-label item="item" c-label-text="Periode Berdasarkan"></label>
+                                    <div class="grid_12" ng-repeat="list in listTglPeriode">
+                                        <div ng-repeat="opsi in list.detail | orderBy:'id'" class="grid_1">
+                                            <input type="radio" name="{{opsi.nama}}" id="{{opsi.nama}}" class="k-radio" ng-model="item.periodeBerdasarkan" value="{{opsi.id}}">
+                                            <label class="k-radio-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="grid_12">
                                     <div class="grid_4">
                                         <div class="grid_12">
