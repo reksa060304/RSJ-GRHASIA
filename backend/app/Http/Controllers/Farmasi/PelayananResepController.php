@@ -3500,12 +3500,12 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         
         if(isset( $request['rajalRanap'])&& $request['rajalRanap']!="" && $request['rajalRanap']!="undefined" &&  $request['rajalRanap']=='1'){//rajal
             $rajalRanap = "and ru.objectdepartemenfk <> 16";
-            $rajalRanapAsal = "and ruasal.objectdepartemenfk <> 16";
+            $rajalRanapAsal = "and ruapdsr.objectdepartemenfk <> 16";
         }
 
         if(isset( $request['rajalRanap'])&& $request['rajalRanap']!="" && $request['rajalRanap']!="undefined" && $request['rajalRanap']=='2'){//ranap
             $rajalRanap = "and ru.objectdepartemenfk = 16";//ini ga mungkin terjadi
-            $rajalRanapAsal = "and ruasal.objectdepartemenfk = 16";//ini ga mungkin terjadi
+            $rajalRanapAsal = "and ruapdsr.objectdepartemenfk = 16";//ini ga mungkin terjadi
         }
 
         if(isset($request['kpid']) && $request['kpid']!="" && $request['kpid']!="undefined"){
@@ -3588,7 +3588,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
 
         $pelayanan = DB::select(DB::raw("
         select rtrim(x.bulan, ' ') as bulan, x.namaproduk, x.jumlah from (select 
-        to_char(pp.tglpelayanan, 'Month') as bulan, pr.namaproduk, count(pr.namaproduk) as jumlah 
+        to_char(pp.tglpelayanan, 'Month') as bulan, pr.namaproduk, sum(pp.jumlah) as jumlah 
         from
             pasien_m ps 
         inner join pasiendaftar_t pd on ps.id=pd.nocmfk 
@@ -3597,6 +3597,11 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         inner join produk_m pr on pr.id=pp.produkfk
         inner join ruangan_m ru on ru.id = apd.objectruanganfk
 		inner join ruangan_m ruasal on ruasal.id = apd.objectruanganasalfk
+        left join strukresep_t sr on sr.norec = pp.strukresepfk
+        left join antrianpasiendiperiksa_t apdsr on apdsr.norec=sr.pasienfk
+        left join ruangan_m ruresep on ruresep.id = sr.ruanganfk
+        left join ruangan_m ruapdsr on ruapdsr.id=apdsr.objectruanganfk
+        left join ruangan_m ruapdsrasal on ruapdsrasal.id=apdsr.objectruanganasalfk
 			where ru.objectdepartemenfk = 14
 			and pp.isobat is null
 			and pp.tglpelayanan::date between '$arrmin[0]' and '$arrmax[0]'
