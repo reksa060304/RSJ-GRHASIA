@@ -103,8 +103,8 @@
                             
                             <div class="grid_2">
                                 <div class="grid_6">
-                                    <label c-label item="item" c-label-text="Jenis Laporan"></label>
-                                    <input  style="width: 100%;" kendo-combo-box k-ng-model="item.departement" k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartemen"  k-on-change="getIsiComboRuangan()"/>
+                                    <label c-label item="item" c-label-text="Jenis <br>Laporan"></label>
+                                    <input  style="width: 100%;" kendo-combo-box k-ng-model="item.departement" k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartemen"  />
                                 </div>
                                 <!-- <div class="grid_6">
                                     <label c-label item="item" c-label-text="Ruangan"></label>
@@ -112,7 +112,7 @@
                                     
                                 </div> -->
                                 <div class="grid_6">
-                                    <label c-label item="item" c-label-text="Status Pasien"></label>
+                                    <label c-label item="item" c-label-text="Status <br>Pasien"></label>
                                     <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
                                         k-ng-model="item.StatuspasieN" k-data-text-field="'statuspasien'"
                                         k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
@@ -132,6 +132,7 @@
                                     <label c-label item="item" c-label-text="Nama <br>Diagnosa"></label>
                                     <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.Diagnosa" k-data-text-field="'namadiagnosa'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa"/>
                                 </div>
+                                
                                 <div class="grid_2" style="margin-top: 10px;">
                                     <label c-label c-label-text=""></label>
                                     <br>
@@ -145,6 +146,28 @@
                                             class="k-sprite k-icon k-i-cancel">Reset</span></em>
                                 </div>
                             </div>
+                            <div class="grid_6">
+                                <div class="grid_5">
+                                    <label c-label item="item" c-label-text="Departement"></label>
+                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.departemen"
+                                        k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'"
+                                        k-auto-bind="false" k-data-source="listDepartement"
+                                        k-on-change="getIsiComboRuangan()" />
+                                </div>
+                                <div class="grid_4">
+                                    <label c-label item="item" c-label-text="Ruangan"></label>
+                                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
+                                        k-ng-model="item.ruangan" k-data-text-field="'ruangan'"
+                                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                                        k-data-source="listRuangan" />
+                                </div>
+                                <div class="grid_3" style="margin-top:5px">
+                                    <label c-label real>Kode Diagnosa</label>
+                                    <input c-text-box type="input" filter="'char'" class="k-textbox"
+                                        placeholder="Kode Awal..." ng-model="item.kodeawal" />
+                                </div>
+                            </div>
+                            
                         </div>
                         
                         <!-- <div class="grid_2" style="margin-top:28px">       

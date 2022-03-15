@@ -6629,15 +6629,20 @@ class TagihanController  extends ApiController
             $idJenisDiagnosa = $request['idJenisDiagnosa'];
             $diagnosaId = $request['idDiagnosa'];
             $statusPasien = $request['statusPasien'];
+            $kodeawal = $request['kodeawal'];
 
+            $paramkodeawal = ' ';
+            if (isset($kodeawal) && $kodeawal != "" && $kodeawal != "undefined") {
+            $paramkodeawal = " and di.kddiagnosa ilike '$kodeawal%'";
+            }
             $paramtglmasuk = ' ';
             if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
-            $paramtglmasuk = "apd.tglmasuk::date BETWEEN '". $tglAwalmasuk. "'
+            $paramtglmasuk = "and apd.tglmasuk::date BETWEEN '". $tglAwalmasuk. "'
             AND '". $tglAkhirmasuk."' ";
             }
             $paramtglkeluar = ' ';
             if(isset($tglAkhir) && isset($tglAwal) && ($tglAwal != "" && $tglAkhir != "")){
-            $paramtglkeluar = "apd.tglkeluar::date BETWEEN '$tglAwal'
+            $paramtglkeluar = "and apd.tglkeluar::date BETWEEN '$tglAwal'
             AND '$tglAkhir' ";
             }
 
@@ -6659,10 +6664,10 @@ class TagihanController  extends ApiController
             $paramJenisDiagnosa = ' and jd.id = '.$idJenisDiagnosa;
             }
 
-            $paramDiagnosa = ' ';
-            if (isset($diagnosaId) && $diagnosaId != "" && $diagnosaId != "undefined") {
-            $paramDiagnosa = ' and dm.id = '.$diagnosaId;
-            }
+            // $paramDiagnosa = ' ';
+            // if (isset($diagnosaId) && $diagnosaId != "" && $diagnosaId != "undefined") {
+            // $paramDiagnosa = ' and di.id = '.$diagnosaId;
+            // }
             $paramstatusPasien = ' ';
             if (isset($statusPasien) && $statusPasien != "" && $statusPasien != "undefined") {
             $paramstatusPasien = ' and pd.statuspasien ILIKE'. "'%". $statusPasien . "%'";
@@ -6690,14 +6695,15 @@ class TagihanController  extends ApiController
             left JOIN pendidikan_m pen ON pen.ID = ps.objectpendidikanfk
             LEFT JOIN alamat_m AS alm ON alm.nocmfk = ps.ID
             WHERE
+            pd.kdprofile = $idProfile
             $paramtglmasuk
             $paramtglkeluar
-            and pd.kdprofile = $idProfile
             $paramDep
             $paramRuangan
             $paramJenisDiagnosa
-            $paramDiagnosa
+            
             $paramstatusPasien
+            $paramkodeawal
             GROUP BY
             ps.nocm,
             di.kddiagnosa,
