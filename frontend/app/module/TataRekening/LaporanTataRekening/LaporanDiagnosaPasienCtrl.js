@@ -46,27 +46,42 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("sysadmin/general/get-datacombo-icd10", true, true, 10).then(function(data) {
                     $scope.listDiagnosa = data;
                 }); 
+                
             }
+               medifirstService.get("registrasi/laporan/get-data-combo-laporan").then(function (dat) {
+
+                   // $scope.listPegawai = dat.data.dokter;
+                   $scope.listDepartement = dat.data.departemen;
+                   // $scope.listPegawaiKasir = dat.data.kasir;
+                   //$scope.dataLogin = dat.data.datalogin[0];
+                   $scope.listPasien = dat.data.kelompokpasien;
+                   // $scope.listJenisLap = [{ id: 1, names: "Laporan Penerimaan Kasir Harian" },
+                   // { id: 2, names: "Laporan Penerimaan Kasir Perusahaan" }];
+               });
+               $scope.getIsiComboRuangan = function () {
+                   $scope.listRuangan = $scope.item.departemen.ruangan
+               }
+
             
-            
-            $scope.getIsiComboRuangan = function () {
-                var getruangan = "";
-                if ($scope.item.departement.id != undefined) {
-                    getruangan = "getruangan=" + $scope.item.departement.id;
-                }
-                medifirstService.get("tatarekening/get-data-combo-daftarregpasienruangan?" + getruangan).then(function (dat) {
+            // $scope.getIsiComboRuangan = function () {
+            //     var getruangan = "";
+            //     if ($scope.item.departemen.id != undefined) {
+            //         getruangan = "getruangan=" + $scope.item.departemen.id;
+            //     }
+            //     medifirstService.get("tatarekening/get-data-combo-daftarregpasienruangan?" + getruangan).then(function (dat) {
                     
-                    $scope.listRuangan = dat.data.ruangan;
+            //         $scope.listRuangan = dat.data.ruangan;
+            //         console.log($scope.listRuangan)
 
-                });
+            //     });
 
-            }
+            // }
                               
             $scope.SearchData = function () {            
                 LoadDataGrid()             
             }
             $scope.tanggalmasuk = function (data) {
-                console.log(data);
+                
                 if (data == true) {
                     document.getElementById("tglmasukawal").disabled = false;
                     document.getElementById("tglmasukakhir").disabled = false;
@@ -80,7 +95,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.tanggalpulang = function (data) {
-                console.log(data);
+                
                 if (data == true) {
                     document.getElementById("tglpulgawal").disabled = false;
                     document.getElementById("tglpulgakhir").disabled = false;
@@ -104,6 +119,7 @@ define(['initialize'], function (initialize) {
 
             function LoadDataGrid() {                 
                 $scope.isRouteLoading = true;
+               
                 var tglAwal = "";
                 if($scope.item.tglawal != undefined){
                 tglAwal = "tglAwal=" + moment($scope.item.tglawal).format('YYYY-MM-DD');
@@ -154,7 +170,11 @@ define(['initialize'], function (initialize) {
                 var tempstatusPasien = ""
                 if ($scope.item.StatuspasieN != undefined) {
                     tempstatusPasien = "&statusPasien=" + $scope.item.StatuspasieN.statuspasien;
-                }                                                        
+                }
+                var tempkodeawal = "";
+                if ($scope.item.kodeawal != undefined) {
+                    tempkodeawal = "&kodeawal=" + $scope.item.kodeawal;
+                }
                 var chacePeriode = {
                     0: '',
                     1: '',
@@ -177,7 +197,7 @@ define(['initialize'], function (initialize) {
                 tempstatusPasien).then(function (data) {
                     var data2 = data.data.data;
                     $scope.isRouteLoading = false;
-                    console.log(data)
+                    
                     for (var i = 0; i < data2.length; i++) {
                         data.data.data[i].no = i + 1
                     }
@@ -213,7 +233,7 @@ define(['initialize'], function (initialize) {
                     tempRuanganId +
                     tempJenisDiagnosa +
                     tempDiagnosa +
-                    tempstatusPasien
+                    tempstatusPasien + tempkodeawal 
                 ).then(function (data) {
             // $scope.departemens = $scope.item.departement.departemen;
 
