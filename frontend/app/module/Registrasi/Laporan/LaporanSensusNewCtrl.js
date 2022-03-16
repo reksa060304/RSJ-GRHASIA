@@ -1090,6 +1090,7 @@ define(['initialize'], function (initialize) {
                         var jumlahharipulang = 0;
                         var jumlahmeninggallebihdari = 0;
                         var jumlahmeninggal = 0;
+                        var jumlahlamadirawat = 0;
                         var persenbor = 0;
                         var persenlos = 0;
                         var persentoi = 0;
@@ -1111,6 +1112,9 @@ define(['initialize'], function (initialize) {
                             if(datas[i].jumlahhariperawatan != null){
                                 jumlahhariperawatantt += datas[i].jumlahhariperawatan;
                             }
+                            if(datas[i].jumlahharidirawat != null){
+                                jumlahlamadirawat += datas[i].jumlahharidirawat;
+                            }
                             if(datas[i].jumlahpulang != null){
                                 jumlahharipulang += datas[i].jumlahpulang;
                             }
@@ -1126,7 +1130,7 @@ define(['initialize'], function (initialize) {
                         }
 
                         persenbor = jumlahhariperawatantt/(jumlahtt*datas.length)*100;
-                        persenlos = jumlahhariperawatantt/jumlahharipulang;
+                        persenlos = jumlahlamadirawat/jumlahharipulang;
                         persentoi = ((jumlahtt*datas.length)-jumlahhariperawatantt)/jumlahharipulang;
                         persenbto = jumlahharipulang/jumlahtt;
                         persenndr = jumlahmeninggallebihdari/jumlahharipulang*1000;
@@ -1171,6 +1175,7 @@ define(['initialize'], function (initialize) {
                                         jumlahhariperawatan: {type: 'number'},
                                         jumlahpulang: {type: 'number'},
                                         jumlahsisa: {type: 'number'},
+                                        jumlahlamadirawat: {type: 'number'},
                                     }
                                 }
                             },
@@ -1254,6 +1259,10 @@ define(['initialize'], function (initialize) {
                                     },
                                     {
                                         field: 'jumlahsisa',
+                                        aggregate: 'sum'
+                                    },
+                                    {
+                                        field: 'jumlahlamadirawat',
                                         aggregate: 'sum'
                                     },
                                 ]
