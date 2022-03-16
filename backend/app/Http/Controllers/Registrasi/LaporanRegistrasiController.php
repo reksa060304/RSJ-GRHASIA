@@ -2804,7 +2804,7 @@ select '-' as smf,* from  (
             
             $paramRuangan
             $paramKelas
-            group by pd.tglpulang::date
+            group by pd.tglpulang
             ) as x"));
 
             $dataPulangAPS = DB::select(DB::raw("select tanggal, jumlah from (
@@ -3068,6 +3068,39 @@ select '-' as smf,* from  (
             $paramKelasRM
             group by rm.tanggalawal"));
 
+            $lamadirawat = DB::select(DB::raw("select x.tanggalpulang, sum(x.lamadirawat) as total from(
+                with cte as (
+                    select pdt.norec, min(apdt.tglmasuk::date) tglmasuk from pasiendaftar_t as pdt
+                    inner join antrianpasiendiperiksa_t as apdt on apdt.noregistrasifk = pdt.norec
+                    inner join ruangan_m as rum on rum.id = apdt.objectruanganfk
+                    where rum.objectdepartemenfk = 16
+                    and pdt.statusenabled = TRUE
+                    and pdt.kdprofile = 30
+                    and pdt.tglpulang::date between '2022-03-01' and '2022-03-31'
+                    group by pdt.norec
+                )
+                
+                select pm.namapasien, pd.tglpulang::date as tanggalpulang, cte.tglmasuk as tanggalmasuk,
+                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  pd.tglpulang::date-cte.tglmasuk end as lamadirawat
+                            FROM pasiendaftar_t as pd
+                            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+                                and apd.objectruanganfk = rpp.objectruanganfk
+                                and apd.tglmasuk = rpp.tglpindah
+                                and rpp.objectstatuskeluarfk = 1
+                                        INNER JOIN cte on cte.norec = pd.norec
+                            LEFT  JOIN detaildiagnosapasien_t as ddp on ddp.noregistrasifk = apd.norec and ddp.objectjenisdiagnosafk = 1
+                            LEFT  JOIN diagnosapasien_t as dp on dp.norec = ddp.objectdiagnosapasienfk
+                            LEFT  JOIN batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
+                            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+                            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+                            INNER JOIN kelas_m as kls on kls.id = rpp.objectkelasfk
+                            LEFT JOIN diagnosa_m as dm on dm.id = ddp.objectdiagnosafk
+                            LEFT JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+                            WHERE pd.kdprofile = 30 and pd.tglpulang is not null and cast(pd.tglpulang as date) between '2022-03-01' and '2022-03-31' and br.pasiendaftarfk is null
+                                        group by pd.tglpulang::date, pm.namapasien, cte.tglmasuk 
+                                        order by pd.tglpulang::date) as x group by x.tanggalpulang"));
+
             $ruangan = DB::select(DB::raw("select namaruangan as ruangan from ruangan_m where id = $ruanganId"));
 
 
@@ -3119,6 +3152,7 @@ select '-' as smf,* from  (
                 $jumlahpasienkelasuppi = 0;
                 $jumlahpasienkelasinfeksi = 0;
                 $jumlahpindah = 0;
+                $jumlahharidirawat = 0;
                 $jumlahmasuk = 0;
                 $jumlahhariperawatan = 0;
                 $jumlahpulang = 0;
@@ -3163,6 +3197,12 @@ select '-' as smf,* from  (
                 foreach ($dataPulang  as $pasienpulang){
                     if ($tglmain->tgl == $pasienpulang->tanggal){
                         $jumlahpasienpulang = $pasienpulang->jumlah;
+                        break;
+                    }
+                }
+                foreach ($lamadirawat  as $lama){
+                    if ($tglmain->tgl == $lama->tanggalpulang){
+                        $jumlahharidirawat = $lama->total;
                         break;
                     }
                 }
@@ -3274,6 +3314,7 @@ select '-' as smf,* from  (
                     'jumlahsisa' =>   $jumlahsisa,
                     'jumlahtt' =>   $jumlahtttotal,
                     'jumlahttruangan' =>   $jumlahttruangan,
+                    'jumlahharidirawat' =>   $jumlahharidirawat,
                 );
             }
                 
