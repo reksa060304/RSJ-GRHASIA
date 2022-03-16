@@ -59,8 +59,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           }
         }
       }
+      
 
-      $scope.isLoadOtomatisProduk=true;
+      $scope.isLoadOtomatisProduk=false;
       function loadOtomatisProduk(){
         if($scope.item.pasien.namaruangan == "Poliklinik Jiwa" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
           $scope.isLoadOtomatisProduk = true;
@@ -75,6 +76,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           
           $scope.getHargaTindakan();
           //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
+        }else{
+          $scope.isLoadOtomatisProduk = false;
+
         }
         
       }
@@ -235,7 +239,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
       })
       function getPegawaiById(id, input, output) {
-        console.log($scope.selectedPegawai);
+        //console.log($scope.selectedPegawai);
         var selectedData = $parse(output);
         selectedData.assign($scope, []);
         var model = $parse(input);
@@ -250,7 +254,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           cookie = cookie[0].split('=');
           // if (cookie[1] == 'dokter')
           $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]          
-          if ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && $scope.isLoadOtomatisProduk == true ){
+          if($scope.item.pasien.namaruangan == "Poliklinik Jiwa" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
             loadOtomatisProduk();
           }
           
