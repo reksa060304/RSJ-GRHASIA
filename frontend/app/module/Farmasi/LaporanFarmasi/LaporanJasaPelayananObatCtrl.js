@@ -73,10 +73,16 @@ define(['initialize'], function (initialize) {
                             schema: {
                                 model: {
                                     fields: {
+                                        jumlahhargasarana: { type: "number" },
+                                        jumlahhargapelayanan: { type: "number" },
+                                        jumlahpertanggal: { type: "number" },
                                     }
                                 }
                             },
                             aggregate: [
+                                { field: 'jumlahhargasarana', aggregate: 'sum' },
+                                { field: 'jumlahhargapelayanan', aggregate: 'sum' },
+                                { field: 'jumlahpertanggal', aggregate: 'sum' },
                             ]
                         });   
                         
@@ -223,27 +229,44 @@ define(['initialize'], function (initialize) {
                         "field": "jumlah",
                         "title": "Qty",
                         "width": "100px",
+                        footerTemplate: "Total"
                     },
                     {
                         
                         "field": "jumlahhargasarana",
                         "title": "Total Sarana",
                         "width": "100px",
-                        template: "{{formatRupiah('#: jumlahhargasarana #', '')}}"
+                        
+                        aggregates: ["sum"],
+                        template: "{{formatRupiah('#: jumlahhargasarana #', '')}}",
+                        groupFooterTemplate: "#: data.jumlahhargasarana.sum  #",
+                        footerTemplate: "#: data.jumlahhargasarana.sum  #"
                     },
                     {
                         
                         "field": "jumlahhargapelayanan",
                         "title": "Total Pelayanan",
                         "width": "100px",
-                        template: "{{formatRupiah('#: jumlahhargapelayanan #', '')}}"
+                        aggregates: ["sum"],
+                        template: "{{formatRupiah('#: jumlahhargapelayanan #', '')}}",
+                        groupFooterTemplate: "#: data.jumlahhargapelayanan.sum  #",
+                        footerTemplate: "#: data.jumlahhargapelayanan.sum  #"
                     },
                     {
                         
                         // "field": "totalpertanggal",
                         "title": "Total / Tanggal",
                         "width": "100px",
-                        template: "{{formatRupiah('#: totalpertanggal #', '')}}"
+                        aggregates: ["sum"],
+                        template: "{{formatRupiah('#: jumlahpertanggal #', '')}}",
+                        groupFooterTemplate: "#: data.jumlahpertanggal.sum  #",
+                        footerTemplate: "#: data.jumlahpertanggal.sum  #"
+                    },
+                    {
+                        
+                        "field": "pegawaiinput",
+                        "title": "Penginput",
+                        "width": "100px",
                     }
                 ]
             };

@@ -5258,7 +5258,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
     }
 
     public function getLaporanJasaPelayanan(Request $request) {
-        ini_set('max_execution_time', 1000);
+        ini_set('max_execution_time', 6000);
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $tglAwal= $request['tglAwal'];
@@ -5278,85 +5278,113 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             $deptid = ' AND ru.objectdepartemenfk = ' . $request['idDept'];
         }
 
-        $totalpertanggal = DB::select(DB::raw("select x.tanggal, (sum(coalesce(x.totalsarana, 0)) + sum(coalesce(x.totalpelayanan, 0))) as grandtotal from(select 
-        pp.tglpelayanan::date as tanggal,
-        (((CASE WHEN ppd.hargajual IS NULL and ppd.komponenhargafk = 94 THEN	0  WHEN ppd.hargajual IS NOT NULL and ppd.komponenhargafk = 94 THEN ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL and ppd.komponenhargafk = 94 THEN
-        0 WHEN ppd.hargadiscount IS NOT NULL and ppd.komponenhargafk = 94 THEN ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL and ppd.komponenhargafk = 94 THEN	0 WHEN ppd.jasa IS NOT NULL and ppd.komponenhargafk = 94 THEN	ppd.jasa	END	) as totalpelayanan,
-        (((CASE WHEN ppd.hargajual IS NULL and ppd.komponenhargafk = 93 THEN	0  WHEN ppd.hargajual IS NOT NULL and ppd.komponenhargafk = 93 THEN ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL and ppd.komponenhargafk = 93 THEN
-        0 WHEN ppd.hargadiscount IS NOT NULL and ppd.komponenhargafk = 93 THEN ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL and ppd.komponenhargafk = 93 THEN	0 WHEN ppd.jasa IS NOT NULL and ppd.komponenhargafk = 93 THEN	ppd.jasa	END	) AS totalsarana
-            
-        from
-            pasien_m ps 
-        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
-        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-		left join pegawai_m pg on pg.id = pd.objectpegawaifk
-        inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-        inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
-        left  join produk_m pr on pr.id=pp.produkfk
-        inner join ruangan_m ru on ru.id = apd.objectruanganfk
-        inner join departemen_m dp on dp.id = ru.objectdepartemenfk
-        where pp.isobat is null
-        and ppd.komponenhargafk = 93 or ppd.komponenhargafk = 94
-        and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
-        and pp.kdprofile = $kdProfile
-        $dokid
-        $ruid
-        $deptid
-        group by pp.tglpelayanan::date, ppd.hargajual, ppd.hargadiscount, ppd.jasa, ppd.komponenhargafk
-        order by pp.tglpelayanan::date) as x group by x.tanggal"));
-    
-        $datasarana = DB::select(DB::raw("select 
-        pp.tglpelayanan::date, pr.namaproduk, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(ppd.jumlah) as totaljumlah,
-        (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
-        0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
-            
-        from
-            pasien_m ps 
-        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
-        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-        left join pegawai_m pg on pg.id = pd.objectpegawaifk
-        inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-        inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
-        left  join produk_m pr on pr.id=pp.produkfk
-        inner join ruangan_m ru on ru.id = apd.objectruanganfk
-        inner join departemen_m dp on dp.id = ru.objectdepartemenfk
-        where pp.isobat is null
-        and ppd.komponenhargafk = 93
-        and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
-        and pp.kdprofile = $kdProfile
-        $dokid
-        $ruid
-        $deptid
-        group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap
-        order by pp.tglpelayanan::date"));
+        $totalpertanggal = DB::select(DB::raw("
+        select x.tanggal, (sum(coalesce(x.totalsarana, 0)) + sum(coalesce(x.totalpelayanan, 0))) as grandtotal from(
 
-        $datapelayanan = DB::select(DB::raw("select 
-        pp.tglpelayanan::date, pr.namaproduk, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(ppd.jumlah) as totaljumlah,
-        (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
-        0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
             
-        from
-            pasien_m ps 
-        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
-        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-        left join pegawai_m pg on pg.id = pd.objectpegawaifk
-        inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-        inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
-        left  join produk_m pr on pr.id=pp.produkfk
-        inner join ruangan_m ru on ru.id = apd.objectruanganfk
-        inner join departemen_m dp on dp.id = ru.objectdepartemenfk
-        where pp.isobat is null
-        and ppd.komponenhargafk = 94
-        and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
-        and pp.kdprofile = $kdProfile
-        $dokid
-        $ruid
-        $deptid
-        group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap
-        order by pp.tglpelayanan::date"));
+            
+            select 
+                    pp.tglpelayanan::date as tanggal,
+                    (((CASE WHEN ppd.hargajual IS NULL and ppd.komponenhargafk = 94 THEN	0  WHEN ppd.hargajual IS NOT NULL and ppd.komponenhargafk = 94 THEN ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL and ppd.komponenhargafk = 94 THEN
+                    0 WHEN ppd.hargadiscount IS NOT NULL and ppd.komponenhargafk = 94 THEN ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL and ppd.komponenhargafk = 94 THEN	0 WHEN ppd.jasa IS NOT NULL and ppd.komponenhargafk = 94 THEN	ppd.jasa	END	) as totalpelayanan,
+                    (((CASE WHEN ppd.hargajual IS NULL and ppd.komponenhargafk = 93 THEN	0  WHEN ppd.hargajual IS NOT NULL and ppd.komponenhargafk = 93 THEN ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL and ppd.komponenhargafk = 93 THEN
+                    0 WHEN ppd.hargadiscount IS NOT NULL and ppd.komponenhargafk = 93 THEN ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL and ppd.komponenhargafk = 93 THEN	0 WHEN ppd.jasa IS NOT NULL and ppd.komponenhargafk = 93 THEN	ppd.jasa	END	) AS totalsarana
+                        
+                    from
+                        pasien_m ps 
+                    inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                    inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                    inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                    left join pegawai_m pg on pg.id = pd.objectpegawaifk
+                    inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                    inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
+                    left  join produk_m pr on pr.id=pp.produkfk
+                    inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                    inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+                    where pp.isobat is null
+                    and (ppd.komponenhargafk = 93 or ppd.komponenhargafk = 94)
+                    and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+                    and pp.kdprofile = $kdProfile
+                    $dokid
+                    $ruid
+                    $deptid
+                    group by pp.tglpelayanan::date, ppd.hargajual, ppd.hargadiscount, ppd.jasa, ppd.komponenhargafk
+                    order by pp.tglpelayanan::date) as x group by x.tanggal
+            "));
+    
+        $datasarana = DB::select(DB::raw("with lt as (
+            select DISTINCT lt.noreff,lt.jenislog,lt.objectloginuserfk
+            from logginguser_t lt
+            where lt.jenislog = 'Input Tindakan'
+            ), cte as (
+            select lt.noreff,lt.jenislog,pg.id idpegawai, pg.namalengkap namapegawaiinput 
+            from lt
+            inner join loginuser_s lu on lu.id=lt.objectloginuserfk
+            left join pegawai_m pg on pg.id=lu.objectpegawaifk
+            where lt.jenislog = 'Input Tindakan'
+            )
+            select 
+                    pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(ppd.jumlah) as totaljumlah,
+                    (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
+                    0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
+                        
+                    from
+                        pasien_m ps 
+                    inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                    inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                    inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                    left join pegawai_m pg on pg.id = pd.objectpegawaifk
+                    inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                    inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
+                    left  join produk_m pr on pr.id=pp.produkfk
+                    inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                    inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+                    left join  cte on cte.noreff = pp.norec
+                    where pp.isobat is null
+                    and ppd.komponenhargafk = 93
+                    and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+                    and pp.kdprofile = $kdProfile
+                    $dokid
+                    $ruid
+                    $deptid
+                    group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.jenislog, cte.namapegawaiinput"));
+
+        $datapelayanan = DB::select(DB::raw("with lt as (
+            select DISTINCT lt.noreff,lt.jenislog,lt.objectloginuserfk
+            from logginguser_t lt
+            where lt.jenislog = 'Input Tindakan'
+            ), cte as (
+            select lt.noreff,lt.jenislog,pg.id idpegawai, pg.namalengkap namapegawaiinput 
+            from lt
+            inner join loginuser_s lu on lu.id=lt.objectloginuserfk
+            left join pegawai_m pg on pg.id=lu.objectpegawaifk
+            where lt.jenislog = 'Input Tindakan'
+            )
+            select 
+                    pp.tglpelayanan::date, pr.namaproduk, cte.namapegawaiinput, cte.jenislog, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(ppd.jumlah) as totaljumlah,
+                    (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
+                    0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
+                        
+                    from
+                        pasien_m ps 
+                    inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                    inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                    inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                    left join pegawai_m pg on pg.id = pd.objectpegawaifk
+                    inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                    inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
+                    left  join produk_m pr on pr.id=pp.produkfk
+                    inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                    inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+                    left join  cte on cte.noreff = pp.norec
+                    where pp.isobat is null
+                    and ppd.komponenhargafk = 94
+                    and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+                    and pp.kdprofile = $kdProfile
+                    $dokid
+                    $ruid
+                    $deptid
+                    group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.namapegawaiinput, cte.jenislog"));
 
         $jumlahhargapelayanan = 0;
         $hargapelayanan = 0;
@@ -5374,6 +5402,8 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             $hargasarana = $sarana->hargajual;
             $instalasi = $sarana->ruangan;
             $namalengkap = $sarana->nama;
+            $pegawaiinput = $sarana->namapegawaiinput;
+            $jenislog = $sarana->jenislog;
             $jumlahhargapelayanan = 0;
             $hargapelayanan = 0;
             $jumlahpertanggal = 0;
@@ -5403,13 +5433,16 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 'hargasarana' => $hargasarana,
                 'hargapelayanan' => $hargapelayanan,
                 'instalasi' => $instalasi,
-                'totalpertanggal' => $jumlahpertanggal,
+                'pegawaiinput' => $pegawaiinput,
+                'jenislog' => $jenislog,
+                'jumlahpertanggal' => $jumlahpertanggal,
                 'namalengkap' => $namalengkap,
             );
         }
         
         $result = array(
             'detail' => $detail,
+            'totalpertanggal' => $totalpertanggal,
         );
         
         return $this->setStatusCode(201)->respond($result, 'tes msg');

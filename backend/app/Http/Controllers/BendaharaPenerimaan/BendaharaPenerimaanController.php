@@ -2465,36 +2465,38 @@ class BendaharaPenerimaanController extends ApiController {
             $noclosing[$i] = $setor[$i]['nopenerimaan'];
         }
 
+        $nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, $this->getDateTime()->format('ymd'),$idProfile);
+
         // var_dump($noclosing);
 
-        // for($i=0; $i<count($setor); $i++){
+        for($i=0; $i<count($setor); $i++){
 
-        //     $STS = new SuratTandaSetoran();
-        //     $STS->norec  = $STS->generateNewId();
-        //     $STS->kdprofile = $idProfile;
-        //     $STS->statusenabled = true;
-        //     $STS->nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, $this->getDateTime()->format('ymd'),$idProfile);
-        //     $STS->tglpenerimaan = $setor[$i]['tglpenerimaan'];
-        //     $STS->objectpegawaifk = $setor[$i]['pegawai'];
-        //     $STS->totalsetoran = $setor[$i]['totalpenerimaan'];
-        //     $STS->totalsetoranpembulatan = ceil($setor[$i]['totalpenerimaan']);
-        //     $STS->save();
+            $STS = new SuratTandaSetoran();
+            $STS->norec  = $STS->generateNewId();
+            $STS->kdprofile = $idProfile;
+            $STS->statusenabled = true;
+            $STS->nosts = $nosts;
+            $STS->tglpenerimaan = $setor[$i]['tglpenerimaan'];
+            $STS->objectpegawaifk = $setor[$i]['pegawai'];
+            $STS->totalsetoran = $setor[$i]['totalpenerimaan'];
+            $STS->totalsetoranpembulatan = ceil($setor[$i]['totalpenerimaan']);
+            $STS->save();
 
-        //     $STSK = new STStoSCK();
-        //     $STSK->norec  = $STSK->generateNewId();
-        //     $STSK->kdprofile = $idProfile;
-        //     $STSK->statusenabled = true;
-        //     $STSK->objectstsfk = $STS->norec;
-        //     $STSK->objectscfk = $setor[$i]['scfk'];
-        //     $STSK->objectsckfk = $setor[$i]['sckfk'];
-        //     $STSK->save();
+            $STSK = new STStoSCK();
+            $STSK->norec  = $STSK->generateNewId();
+            $STSK->kdprofile = $idProfile;
+            $STSK->statusenabled = true;
+            $STSK->objectstsfk = $STS->norec;
+            $STSK->objectscfk = $setor[$i]['scfk'];
+            $STSK->objectsckfk = $setor[$i]['sckfk'];
+            $STSK->save();
             
-        //     if($STSK->save() && $STS->save()){
-        //         $transMsg = 'Simpan STS Berhasil';
-        //     }else{
-        //         $transMsg = 'Simpan STS Gagal';
-        //     }     
-        // }
+            if($STSK->save() && $STS->save()){
+                $transMsg = 'Simpan STS Berhasil';
+            }else{
+                $transMsg = 'Simpan STS Gagal';
+            }     
+        }
 
         // konten STS Detail
 
@@ -2534,30 +2536,39 @@ class BendaharaPenerimaanController extends ApiController {
                     where sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan'
         and sc.noclosing IN('".implode("','",$noclosing)."')"));
 
+        // var_dump($data);
+        // var_dump(count($data));
+
         //simpan STS Detail
 
-        // $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+        $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
 
-        // $STSD = new SuratTandaSetoranDetail();
-        // $STSD->norec  = $STSD->generateNewId();
-        // $STSD->kdprofile = $idProfile;
-        // $STSD->nourut = $newId;
-        // $STSD->jenisdata = 'konten';
-        // $STSD->kdrekening = '4.1.4.16.01';
-        // $STSD->uraian = 'PENDAPATAN USAHA BLUD';
-        // $STSD->statusenabled = true;
-        // $STSD->save();
+        $STSD = new SuratTandaSetoranDetail();
+        $STSD->norec  = $STSD->generateNewId();
+        $STSD->kdprofile = $idProfile;
+        $STSD->nourut = $newId;
+        $STSD->jenisdata = 'konten';
+        $STSD->kdrekening = '4.1.4.16.01';
+        $STSD->uraian = 'PENDAPATAN USAHA BLUD';
+        $STSD->statusenabled = true;
+        $STSD->objectstsfk = $nosts;
+        $STSD->save();
 
-        // $STSD = new SuratTandaSetoranDetail();
-        // $STSD->norec  = $STSD->generateNewId();
-        // $STSD->kdprofile = $idProfile;
-        // $STSD->nourut = $newId;
-        // $STSD->jenisdata = 'konten';
-        // $STSD->kdrekening = '4.1.4.16.01';
-        // $STSD->nomer = '01';
-        // $STSD->uraian = 'JASA LAYANAN RUMAH SAKIT';
-        // $STSD->statusenabled = true;
-        // $STSD->save();
+        $STSD = new SuratTandaSetoranDetail();
+        $STSD->norec  = $STSD->generateNewId();
+        $STSD->kdprofile = $idProfile;
+        $STSD->nourut = $newId;
+        $STSD->jenisdata = 'konten';
+        $STSD->kdrekening = '4.1.4.16.01';
+        $STSD->nomer = '01';
+        $STSD->uraian = 'JASA LAYANAN RUMAH SAKIT';
+        $STSD->statusenabled = true;
+        $STSD->objectstsfk = $nosts;
+        $STSD->save();
+
+        if($STSD->save()){
+            $transMsg = 'Simpan STS Berhasil';
+        }
 
         // $jumlahperiksapolijiwa = 0;
 
@@ -2576,22 +2587,15 @@ class BendaharaPenerimaanController extends ApiController {
         //     $STSD->jenisdata = 'konten';
         //     $STSD->kdrekening = '4.1.4.16.01';
         //     $STSD->statusenabled = true;
-        //     $STSD->objectstsfk = $data[$i]->norec;
-            //fisiotehrapy = 762 
-
-
-        //     $STSD->nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, $this->getDateTime()->format('ymd'),$idProfile);
-        //     $STSD->tglpenerimaan = $setor[$i]['tglpenerimaan'];
-        //     $STSD->objectpegawaifk = $setor[$i]['pegawai'];
-        //     $STSD->totalsetoran = $setor[$i]['totalpenerimaan'];
-        //     $STSD->totalsetoranpembulatan = ceil($setor[$i]['totalpenerimaan']);
+        //     $STSD->objectstsfk = $nosts;
+        //     // fisiotehrapy = 762 
         //     $STSD->save();
         // }
 
         // var_dump($data[0]->namapasien);
         $result = array(
             "status" => 201,
-            "message" => 'STS Dalam Proses',
+            "message" => $transMsg,
             "data" => $data,
             "as" => 'as@epic',
         );
