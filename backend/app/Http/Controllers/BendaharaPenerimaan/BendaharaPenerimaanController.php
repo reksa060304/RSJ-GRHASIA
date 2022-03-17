@@ -2500,7 +2500,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         // konten STS Detail
 
-        $data = DB::select(DB::raw("select ru.namaruangan, pr.namaproduk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
+        $data = DB::select(DB::raw("select ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
         sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, sts.norec, pr.id as idproduk, ru.id as idruangan
         from strukclosingkasir_t as sck
         inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
@@ -2521,7 +2521,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         union all
 
-        select ru.namaruangan, pr.namaproduk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
+        select ru.namaruangan, ru.id idruangan, pr.namaproduk idproduk, pr.id, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
         sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, sts.norec, pr.id as idproduk, ru.id as idruangan
         from strukclosingkasir_t as sck
         inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
@@ -2566,20 +2566,37 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->objectstsfk = $nosts;
         $STSD->save();
 
-        if($STSD->save()){
-            $transMsg = 'Simpan STS Berhasil';
+        $jumlahperiksajiwa = 0;
+        $jumlahperiksanapza = 0;
+        $jumlahperiksaumum = 0;
+        $jumlahperiksagigi = 0;
+        $jumlahperiksadalam = 0;
+        $jumlahdipam = 0;
+
+        foreach($data as $konten){
+            if($konten->idproduk = 5008636 || $konten->idproduk = 5008644 || $konten->idproduk = 5008637 || $konten->idproduk = 5008635 || $konten->idproduk = 5008645 || $konten->idproduk = 5008647 || $konten->idproduk = 5008649){
+                $jumlahdipam += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan = 752 && $konten->idproduk = 5006382){
+                $jumlahperiksajiwa += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan = 768 && $konten->idproduk = 5006382 || $konten->idruangan = 789 && $konten->idproduk = 5006382){
+                $jumlahperiksanapza += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan = 758 && $konten->idproduk = 5006453){
+                $jumlahperiksaumum += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan = 759 && $konten->idproduk = 5006463){
+                $jumlahperiksagigi += $konten->totaldibayarclosing;
+            }
         }
 
-        // $jumlahperiksapolijiwa = 0;
 
-        // foreach($data as $konten){
-        //     if($konten->idruangan = 752 && $konten->idproduk = 5006382){
-        //         $jumlahperiksapolijiwa += $konten->totaldibayarsbm;
-        //     }
-        // }
-
-
-        // for($i=0; $i<count($data); $i++){
+        // for($i=0; $i<count($data); $i++){ shave ternyata gak dilooping
         //     $STSD = new SuratTandaSetoranDetail();
         //     $STSD->norec  = $STSD->generateNewId();
         //     $STSD->kdprofile = $idProfile;
@@ -2591,6 +2608,10 @@ class BendaharaPenerimaanController extends ApiController {
         //     // fisiotehrapy = 762 
         //     $STSD->save();
         // }
+
+        if($STSD->save()){
+            $transMsg = 'Simpan STS Berhasil';
+        }
 
         // var_dump($data[0]->namapasien);
         $result = array(
