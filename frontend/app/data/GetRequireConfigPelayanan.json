@@ -3039,10 +3039,6 @@
             "urlDep": "module/Farmasi/LaporanFarmasi/LaporanJasaPelayananObatCtrl"
         },
         {
-            "nameDep": "FormulirTriaseIGDCtrl",
-            "urlDep": "module/EMR/FormulirTriaseCtrl"
-        },
-        {
             "nameDep": "AssesmenPasienKlienFisioterapiCtrl",
             "urlDep": "module/EMR/AssesmenPasienKlienFisioterapiCtrl"
         },
@@ -3057,6 +3053,10 @@
         {
             "nameDep": "LaporanMorbiditasCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanMorbiditasCtrl"
+        },
+        {
+            "nameDep": "FormulirTriaseIGD2Ctrl",
+            "urlDep": "module/EMR/FormulirTriaseIGD2Ctrl"
         }
     ]
 }

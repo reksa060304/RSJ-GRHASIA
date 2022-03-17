@@ -16947,28 +16947,6 @@
     ]
   },
   {
-    "name": "RekamMedis.AsesmenMedis.FormulirTriaseIGD",
-    "url": "/FormulirTriaseIGD",
-    "templateurl": "module/EMR/FormulirTriaseIGD.html",
-    "controller": "FormulirTriaseIGDCtrl",
-    "deps": [{
-        "module": "Services",
-        "define": "Service"
-      },
-      {
-        "module": "LoginServices",
-        "define": "LoginService"
-      },
-      {
-        "module": "MedifirstService",
-        "define": "MedifirstService"
-      },
-      {
-        "define": "RekamMedisCtrl"
-      }
-    ]
-  },
-  {
   "name": "RekamMedis.AsesmenMedis.AsesmenPasienKlienFisioterapi",
   "url": "/AsesmenPasienKlienFisioterapi",
   "templateurl": "module/EMR/AssesmenPasienKlienFisioterapi.html",
@@ -17053,6 +17031,28 @@
     {
       "module": "MedifirstService",
       "define": "MedifirstService"
+    }
+  ]
+},
+{
+  "name": "RekamMedis.AsesmenMedis.FormulirTriaseIGD2",
+  "url": "/FormulirTriaseIGD2",
+  "templateurl": "module/EMR/FormulirTriaseIGD2.html",
+  "controller": "FormulirTriaseIGD2Ctrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    },
+    {
+      "define": "RekamMedisCtrl"
     }
   ]
 }
