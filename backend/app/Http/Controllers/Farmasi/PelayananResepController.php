@@ -5315,7 +5315,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             "));
     
         $datasarana = DB::select(DB::raw("with lt as (
-            select  lt.noreff,lt.jenislog,lt.objectloginuserfk
+            select distinct  lt.noreff,lt.jenislog,lt.objectloginuserfk
             from logginguser_t lt
             where lt.jenislog = 'Input Tindakan'
             ), cte as (
@@ -5358,7 +5358,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     "));
 
         $datapelayanan = DB::select(DB::raw("with lt as (
-            select  lt.noreff,lt.jenislog,lt.objectloginuserfk
+            select distinct lt.noreff,lt.jenislog,lt.objectloginuserfk
             from logginguser_t lt
             where lt.jenislog = 'Input Tindakan'
             ), cte as (
