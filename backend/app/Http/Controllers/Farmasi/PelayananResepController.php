@@ -5326,9 +5326,9 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             where lt.jenislog = 'Input Tindakan'
             )
             select 
-                    pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(ppd.jumlah) as totaljumlah,
+                    pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(pp.jumlah) as totaljumlah,
                     (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
-                    0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
+                    0 ELSE ppd.hargadiscount END) * sum(pp.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
                         
                     from
                         pasien_m ps 
@@ -5367,9 +5367,9 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             where lt.jenislog = 'Input Tindakan'
             )
             select 
-                    pp.tglpelayanan::date, pr.namaproduk, cte.namapegawaiinput, cte.jenislog, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(ppd.jumlah) as totaljumlah,
+                    pp.tglpelayanan::date, pr.namaproduk, cte.namapegawaiinput, cte.jenislog, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(pp.jumlah) as totaljumlah,
                     (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
-                    0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
+                    0 ELSE ppd.hargadiscount END) * sum(pp.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
                         
                     from
                         pasien_m ps 
