@@ -1090,7 +1090,7 @@ define(['initialize'], function (initialize) {
                         var jumlahharipulang = 0;
                         var jumlahmeninggallebihdari = 0;
                         var jumlahmeninggal = 0;
-                        var jumlahlamadirawat = 0;
+                        var jumlahlamadirawat = datas[0].jumlahharidirawat;
                         var persenbor = 0;
                         var persenlos = 0;
                         var persentoi = 0;
@@ -1100,6 +1100,7 @@ define(['initialize'], function (initialize) {
                         var tglperiodeawal = '';
                         var tglperiodeakhir = '';
                         var jumlahttruangan = '';
+                        console.log(jumlahlamadirawat);
                         
                         for (var i = 0; i < datas.length; i++) {
                             datas[i].no = i + 1;
@@ -1111,9 +1112,6 @@ define(['initialize'], function (initialize) {
                             }
                             if(datas[i].jumlahhariperawatan != null){
                                 jumlahhariperawatantt += datas[i].jumlahhariperawatan;
-                            }
-                            if(datas[i].jumlahharidirawat != null){
-                                jumlahlamadirawat += datas[i].jumlahharidirawat;
                             }
                             if(datas[i].jumlahpulang != null){
                                 jumlahharipulang += datas[i].jumlahpulang;

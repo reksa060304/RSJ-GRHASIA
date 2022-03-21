@@ -17,6 +17,7 @@ define(['initialize'], function (initialize) {
 			var status = ""
 			var ttlSsetor = 0;
 			var objKasir = {}
+			var result =[];
 			loadCombo();
 			//loadData();
 
@@ -51,6 +52,14 @@ define(['initialize'], function (initialize) {
                         autoBind: false,
                        
                     };
+					$scope.listStatusSTS = [
+						{ id: 1, names: "Sudah STS" },
+						{ id: 2, names: "Belum STS"}
+					];
+					$scope.listBayar = [
+						{ id: 1, carabayar: "TUNAI" },
+						{ id: 3, carabayar: "TRANSFER BANK"}
+					];
 				});				
 				$scope.listStatus = [{ "id": "1", "namaExternal": "Semua" }, { "id": "2", "namaExternal": "Verifikasi" }, { "id": "3", "namaExternal": "Closing" }]
 			}
@@ -80,6 +89,10 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.KetSetor != undefined) {
 					Setor = "&KetSetor=" + $scope.item.KetSetor.id
 				}
+				var carabayar = ""
+				if ($scope.item.Bayar != undefined) {
+					carabayar = "&idCaraBayar=" + $scope.item.Bayar.id
+				}
 
 				var listKasir = ""        
                 if ($scope.item.listKasirMulti.length != 0) {
@@ -98,12 +111,12 @@ define(['initialize'], function (initialize) {
 					medifirstService.get("bendaharapenerimaan/get-daftar-sbm?"
 						+ "dateStartTglSbm=" + tglAwal
 						+ "&dateEndTglSbm=" + tglAkhir
-						+ "" + Skasir + Setor
+						+ "" + Skasir + Setor + carabayar
 						+ "&KasirArr="+listKasir)
 				]).then(function (data) {
 					if (data[0].statResponse) {
 						$scope.isRouteLoading = false;
-						var result = data[0].data.data;
+						result = data[0].data.data;
 						var ttlPasien = 0;
 						var ttlKlaim = 0;
 						for (var x = 0; x < result.length; x++) {
@@ -147,274 +160,180 @@ define(['initialize'], function (initialize) {
 							$scope.item.totalSubTotal2 = "Rp. " + parseFloat(ttlKlaim).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 						}
 					};
-					Total();
+					$scope.item.caraBayar = $scope.item.Bayar.carabayar;
 				});
 			}
 
-			$scope.add = function () {
-				if ($scope.item.jumlah == 0 || $scope.item.jumlah == '') {
-					toastr.error('Jumlah tidak boleh kosong')
-					return
-				}
+			$scope.datachecklist = []
+			$scope.checkboxClicked = function (dat) {
+				let jml723 = 0
+				if (dat) {
 
-				var nomor = 0
-				if (addDataDetail.length == 0) {
-					nomor = 1
+					for (var i = 0; i < result.length; i++) {
+						$scope.datachecklist[i] = result[i];
+					}
+
+					for (var i = 0; i < $scope.datachecklist.length; i++) {
+						jml723 += (parseFloat($scope.datachecklist[i].totalPenerimaan));
+					}
+					$scope.item.totalSetor = jml723;
 				} else {
-					nomor = addDataDetail.length + 1
+					$scope.datachecklist = []
+					$scope.item.totalSetor = 0
 				}
-				var arrayS = {};
-				arrayS = {
-					no: nomor,
-					idCaraBayar: $scope.item.caraBayar.id,
-					caraBayar: $scope.item.caraBayar.namaLengkap,
-					idCaraSetor: $scope.item.caraSetor.id,
-					caraSetor: $scope.item.caraSetor.carasetor,
-					// idBankAccount:$scope.item.bankAccount.id,
-					// bankAccount:$scope.item.bankAccount.bankAccountNama,
-					jumlah: $scope.item.jumlah
-				};
-				addDataDetail.push(arrayS);
-				Total();
-				$scope.item.cekSetorAll = false;
-				$scope.item.caraSetor = undefined;
-				$scope.item.caraBayar = undefined;
-			};
 
-			$scope.delete = function () {				
-				if ($scope.dataDetailSelect != undefined) {
-					if (addDataDetail.length > 0) {
-						for (var i = addDataDetail.length - 1; i >= 0; i--) {
-							if (addDataDetail[i].no == $scope.dataDetailSelect.no) {
-								addDataDetail.splice(i, 1);
-							}
-						}
+				$scope.item.dataDipilih = $scope.datachecklist.length;
+			}
+
+			//console.log($scope.datachecklist);
+
+			$scope.selectedData2 = [];
+			$scope.onClickSatu = function (e, param) {
+
+				var tol = 0;
+				var element = $(e.currentTarget);
+				var checked = element.is(':checked')
+				var row = element.closest('tr')
+				var grid = $("#grid").data("kendoGrid")
+				var dataItem = grid.dataItem(row);
+
+				if (checked) {
+					var result = $.grep($scope.selectedData2, function (e) {
+						return e.noSbm == dataItem.noSbm;
+					});
+					if (result.length == 0) {
+						$scope.selectedData2.push(dataItem);
 					} else {
-						toastr.error('Data sudah di CLosing')
+						for (var i = 0; i < $scope.selectedData2.length; i++)
+							if ($scope.selectedData2[i].noSbm === dataItem.noSbm) {
+								$scope.selectedData2.splice(i, 1);
+								break;
+							}
+						$scope.selectedData2.push(dataItem);
 					}
+					row.addClass("k-state-selected");
 				} else {
-					toastr.error('Pilih data detail dulu')
-				}
-				Total();
-
-			}
-
-			$scope.$watch('item.jumlah', function (newValue, oldValue) {
-				if (newValue != oldValue) {
-					if ($scope.item.jumlah < 0) {
-						$scope.item.jumlah = "";
-					}
-				}
-			})
-
-			$scope.$watch('item.cekSetorAll', function (newValue, oldValue) {
-				if (newValue != oldValue) {
-					if ($scope.item.cekSetorAll) {
-						if ($scope.item.caraBayar != undefined) {
-							for (var i = 0; i < $scope.dataCaraBayar.length; i++) {
-								if ($scope.dataCaraBayar[i].caraBayar == $scope.item.caraBayar.namaLengkap) {
-									$scope.item.jumlah = parseFloat($scope.dataCaraBayar[i].totalPenerimaan)
-								}
-							}
-						} else {
-							toastr.error('Pilih cara bayar dulu');
-							$scope.item.cekSetorAll = false;
-
+					for (var i = 0; i < $scope.selectedData2.length; i++)
+						if ($scope.selectedData2[i].noSbm === dataItem.noSbm) {
+							$scope.selectedData2.splice(i, 1);
+							break;
 						}
-					} else {
-						$scope.item.jumlah = '';
-					}
+					row.removeClass("k-state-selected");
 				}
-			})
 
-			$scope.$watch('item.cekSetor100', function (newValue, oldValue) {
-				if (newValue != oldValue) {
-					if ($scope.item.cekSetor100) {
-						$scope.disabledCaraBayar = true;
-						if ($scope.item.caraSetor != undefined) {
-							var jumlah = 0;
-							for (var i = 0; i < $scope.dataCaraBayar.length; i++) {
-								var total = $scope.dataCaraBayar[i].totalPenerimaan
-								jumlah = jumlah + total
-
-							}
-							$scope.item.jumlah = jumlah;
-						} else {
-							toastr.error('Pilih cara setor dulu');
-							$scope.item.cekSetor100 = false;
-							$scope.disabledCaraBayar = false;
-
-						}
-					} else {
-						$scope.item.jumlah = '';
+				if ($scope.selectedData2.length != 0) {
+					for (var i = 0; i < $scope.selectedData2.length; i++) {
+						tol += parseFloat($scope.selectedData2[i].totalPenerimaan);
 					}
-				}
-			})
+                    $scope.item.totalSetor = tol;
+				} else{
+                    $scope.item.totalSetor = tol;
+                }
 
-			$scope.klikDetail = function (dataSelectedCaraBayar2) {
-				$scope.dataDetailSelect = dataSelectedCaraBayar2;
-			}
-
-			$scope.klikGridHead = function(dataSelectedCaraBayar) {				
-				if (dataSelectedCaraBayar != undefined) {					
-					$scope.dataSelectedCaraBayar = dataSelectedCaraBayar
-					$scope.item.caraBayar = {id: $scope.dataSelectedCaraBayar.idCaraBayar, namaLengkap: $scope.dataSelectedCaraBayar.caraBayar}
-					$scope.item.caraSetor = {id: $scope.dataSelectedCaraBayar.idCaraSetor, carasetor: $scope.dataSelectedCaraBayar.caraSetor}
-					$scope.item.jumlah = $scope.dataSelectedCaraBayar.totalPenerimaan;					
-				}
-			}
-
-			function Total() {
-				var ttlPasien = 0;
-				var ttlKlaim = 0;
-				ttlSsetor = 0;
-				var dataDetail = [];
-				var dataDetail2 = [];
-				var caraBayararr = [];
-				var caraBayararr1 = [];
-				var adaDetail = 0;
-				var jmlSetor = 0;
-				var dataResult = []				
-				if ($scope.dataSetoranKasir != undefined) {
-					for (let k = 0; k <  $scope.dataSetoranKasir.data.length; k++) {
-						const element =  $scope.dataSetoranKasir.data[k];
-						dataResult.push(element)
-					}
+				$scope.item.dataDipilih = $scope.selectedData2.length;
 				
-					for (var x = dataResult.length - 1; x >= 0; x--) {
-						if(dataResult[x].status == 'Setor'){
-							dataResult.splice([x],1)
-						}
-					}
-				
-					for (var i = 0; i < dataResult.length; i++) {
-					
-						ttlPasien = ttlPasien + 1;
-						adaDetail = 0
+			}
 
-						for (var x = 0; x < dataDetail2.length; x++) {
-							if (dataDetail2[x].caraBayar == dataResult[i].caraBayar) {
-								dataDetail2[x].totalPenerimaan = parseFloat(dataDetail2[x].totalPenerimaan) + parseFloat(dataResult[i].totalPenerimaan)
-								adaDetail = 1;
-							}
-						};
-						if (adaDetail == 0) {
-							jmlSetor = 0;
-							caraBayararr = { id: dataResult[i].idCaraBayar, namaLengkap: dataResult[i].caraBayar };
-							var dataDetail0 = [];
-							for (var f = 0; f < addDataDetail.length; f++) {
-								if (dataResult[i].caraBayar == addDataDetail[f].caraBayar) {
-									dataDetail0.push(addDataDetail[f]);
-									jmlSetor += parseFloat(addDataDetail[f].jumlah);
-								};
-							}
-							if (dataDetail0.length > 0) {
-								dataDetail = {
-									caraBayar: dataResult[i].caraBayar,
-									idCaraBayar: dataResult[i].idCaraBayar,
-									totalPenerimaan: dataResult[i].totalPenerimaan,
-									totalSetor: jmlSetor,
-									sisa: dataResult[i].totalPenerimaan,
-									detail: dataDetail0
-								};
-							} else {
-								/*get dari serive*/
-								var detailSetorans = [];
-								for (var z = 0; z < dataResult[i].details.length; z++) {
-									if (dataResult[i].caraBayar == dataResult[i].details[z].carabayar) {
-										dataResult[i].details[z].caraBayar = dataResult[i].details[z].carabayar;
-										dataResult[i].details[z].caraSetor = dataResult[i].details[z].carasetor;
-										detailSetorans.push(dataResult[i].details[z]);
-										jmlSetor += parseFloat(dataResult[i].details[z].jumlah);
-									};
-								}
-								dataDetail = {
-									caraBayar: dataResult[i].caraBayar,									
-									idCaraBayar: dataResult[i].idCaraBayar,
-									totalPenerimaan: dataResult[i].totalPenerimaan,
-									totalSetor: jmlSetor,
-									sisa: dataResult[i].totalPenerimaan,
-									detail: detailSetorans
-								};
-								/*end*/
-							}
-
-							dataDetail2.push(dataDetail);
-							caraBayararr1.push(caraBayararr);
-						}
-					};
-
-					for (var i = 0; i < dataDetail2.length; i++) {
-						dataDetail2[i].sisa = parseFloat(dataDetail2[i].totalPenerimaan) - parseFloat(dataDetail2[i].totalSetor)
-						ttlKlaim += parseInt(dataDetail2[i].totalPenerimaan);
-						ttlSsetor += parseInt(dataDetail2[i].totalSetor);
-					}
-					$scope.dataCaraBayar = dataDetail2
-					$scope.listCaraBayar = caraBayararr1;
-				};
-				$scope.item.totalSubTotal = "Rp. " + parseFloat(ttlKlaim).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-				$scope.item.totalSetoran = "Rp. " + parseFloat(ttlSsetor).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-				$scope.item.sisa = "Rp. " + parseFloat(ttlKlaim - ttlSsetor).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-
-				$scope.item.jumlah = '';
-			};
+			
+			//console.log($scope.selectedData2);
 
 			$scope.Simpan = function () {
-				var objSave = [];
-				var objData = [];
-				var objStr = {};
-				for (var i = 0; i < $scope.dataCaraBayar.length; i++) {
-					for (var j = 0; j < $scope.dataCaraBayar[i].detail.length; j++) {
-						objStr = {
-							"kdCaraBayar": $scope.dataCaraBayar[i].detail[j].idCaraBayar,
-							"totalPenerimaan": $scope.dataCaraBayar[i].detail[j].jumlah,
-							"kdAccountBank": $scope.dataCaraBayar[i].detail[j].idBankAccount,
-							"idCaraSetor": $scope.dataCaraBayar[i].detail[j].idCaraSetor,
-						
-						}
-						objData.push(objStr)
-					}
+				$scope.objData = [];
+				$scope.objStr = {};
+				$scope.objSave = [];
+				$scope.objSBM =[];
 
+				$scope.objStr = {
+					"kdCaraBayar": $scope.item.Bayar.id,
+					"totalPenerimaan": $scope.item.totalSetor,
+					// "kdAccountBank": $scope.selectedData2[i][j].idBankAccount,
+					"idCaraSetor": $scope.item.caraSetor.id,
+						
 				}
-				var objSBM =[]
-				for (let j = 0; j < objData.length; j++) {
-					const Datas = objData[j];
-					for (let x = 0; x < $scope.dataSetoranKasir.data.length; x++) {
-						const element = $scope.dataSetoranKasir.data[x];
-						if (element.idCaraBayar == Datas.kdCaraBayar) {
-							objSBM.push({'norec_sbm' :element.noRec})
-						}
+
+				$scope.objData.push($scope.objStr);
+				//console.log($scope.objData);
+
+				if($scope.datachecklist.length == 0){
+					for (let i = 0; i < $scope.selectedData2.length; i++) {
+						$scope.objSBM.push({'norec_sbm' :$scope.selectedData2[i].noRec})
+						
+						
 					}
 				}
+
 				
+
+				//console.log($scope.selectedData2);
+
+				//console.log($scope.datachecklist[0].noRec);
+				if($scope.selectedData2.length == 0){
+					for (let i = 0; i < $scope.datachecklist.length; i++) {
+						$scope.objSBM.push({'norec_sbm' :$scope.datachecklist[i].noRec});
+						console.log($scope.datachecklist[0].noRec);
+					}
+				}
+
+				//console.log($scope.datachecklist[0].noRec);
+				
+
+				//console.log($scope.objSBM);
+
 				var tgl = moment($scope.item.tanggalAwal).format('YYYY-MM-DD')
 				var tglAwal = moment($scope.item.tanggalAwal).format('YYYY-MM-DD HH:mm')
 				var tglAkhir = moment($scope.item.tanggalAkhir).format('YYYY-MM-DD HH:mm')
 				var tglSetor = moment($scope.item.tglsetor).format('YYYY-MM-DD HH:mm')
-				objSave = {
+				$scope.objSave = {
 					"tglPenerimaan": tgl,
 					"tglAwal": tglAwal,
 					"tglAkhir": tglAkhir,
 					"tglsetor": tglSetor,
 					"kdPegawai": $scope.item.namaKasir != undefined ? $scope.item.namaKasir.id : $scope.dataLogin.id,
 					"kdPegawaiLu": $scope.item.namaKasir != undefined ? $scope.item.namaKasir.luid : $scope.dataLogin.id,
-					"totalSetoran": ttlSsetor,
-					"detailSetoran": objData,
-					"detailSBM" : objSBM
+					"totalSetoran": $scope.item.totalSetor,
+					"detailSetoran": $scope.objData,
+					"detailSBM" : $scope.objSBM
 				}
-				medifirstService.post('bendaharapenerimaan/setoran-kasir',objSave).then(function () {
-					var data = {
-						'tglAwal': tglAwal,
-						'tglAkhir': tglAkhir,
-						'idKasir': $scope.item.namaKasir? $scope.item.namaKasir.id : $scope.dataLogin.id,
+
+				//console.log($scope.objSave);
+
+				var cek = 789;
+				for (let i = 0; i < $scope.selectedData2.length; i++) {
+					if($scope.selectedData2[i].status == 'Setor'){
+						cek = 8910;
 					}
-					// medifirstService.post('sysadmin/general/save-jurnal-setorankasir', data).then(function (e) {})
-					loadData();
-				})
+				}
+
+				for (let i = 0; i < $scope.datachecklist.length; i++) {
+					if($scope.datachecklist[i].status == 'Setor'){
+						cek = 8910;
+					}
+				}
+				
+				if(cek == 789){
+					medifirstService.post('bendaharapenerimaan/setoran-kasir',$scope.objSave).then(function () {
+						var data = {
+							'tglAwal': tglAwal,
+							'tglAkhir': tglAkhir,
+							'idKasir': $scope.item.namaKasir? $scope.item.namaKasir.id : $scope.dataLogin.id,
+						}
+						// medifirstService.post('sysadmin/general/save-jurnal-setorankasir', data).then(function (e) {})
+						loadData();
+					})
+				}
+
+				if(cek == 8910){
+					toastr.error('Data sudah ada yang di closing');
+				}
+				
 			};
 
 			$scope.columnSetoranKasir = {
 				columns: [
+					{
+						"template": "<input type='checkbox' class='checkbox style-center' ng-click='onClickSatu($event,2)' />",
+						"width": "30px"
+					},
 					{
 						"field": "noSbm",
 						"title": "NoSbm",
@@ -478,6 +397,12 @@ define(['initialize'], function (initialize) {
 						"field": "status",
 						"title": "Status",
 						"template": "<span class='style-center'>#: status #</span>",
+						"width": "50px"
+					},
+					{
+						"field": "noClosing",
+						"title": "No Closing",
+						"template": "<span class='style-center'>#: noClosing #</span>",
 						"width": "50px"
 					},
 					// {

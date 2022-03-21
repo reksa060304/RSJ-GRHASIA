@@ -217,7 +217,7 @@ class BendaharaPenerimaanController extends ApiController {
                     left join pegawai_m as pg on pg.id=sh.objectpegawaiterimafk
                     where sck.kdprofile = $idProfile and sck.noclosingfk ='$noclosingfk'
                    -- and sc.objectkelompoktransaksifk=60
-                   -- and cb.carabayar ='$caraBayar'
+                    and cb.carabayar ='$caraBayar'
                     GROUP BY cs.carasetor,sck.objectcarasetorfk,cb.id,
                     sck.totaldibayar, sc.totaldibayar,sck.noclosingfk, sh.noclosing,
                     sh.objectpegawaiterimafk, pg.namalengkap,sck.totaldibayar,cb.carabayar
@@ -2414,7 +2414,6 @@ class BendaharaPenerimaanController extends ApiController {
         $tglAwal= $request['tglAwal'];
         $tglAkhir= $request['tglAkhir'];
         $status = '';
-        $carabayar= '';
 
         if (isset($request['status']) && $request['status'] != "" && $request['status'] != "undefined" && $request['status']==1) {
             $status = ' and sts.nosts is not null';
@@ -2426,24 +2425,21 @@ class BendaharaPenerimaanController extends ApiController {
             $status = ' and sts.nosts is null';
         }
 
-        if(isset($request['idCaraBayar']) && $request['idCaraBayar'] != "" && $request['idCaraBayar'] != "undefined") {
+        if(isset($request['idCaraBayar']) && $request['idCaraBayar'] != "" && $request['idCaraBayar'] != "undefined" && $request['idCaraBayar'] != 1) {
             $carabayar = ' AND sck.objectcarasetorfk = ' . $request['idCaraBayar'];
         }
 
         $detail = DB::select(DB::raw("select sc.noclosing as nopenerimaan, sc.tglclosing as tglpenerimaan, sck.totaldibayar as totalpenerimaan, sts.nosts, sc.objectpegawaidiclosefk as pegawai, sc.norec as scfk, sck.norec as sckfk 
-        from strukclosing_t sc
-        inner join strukclosingkasir_t sck on sck.noclosingfk = sc.norec
-        left join ststosck_t ssc on ssc.objectsckfk = sck.norec 
-        left join surattandasetoran_t sts on sts.norec = ssc.objectstsfk
-		where sc.tglclosing::date between '$tglAwal' and '$tglAkhir'
-        $carabayar
-        $status
-        and sc.kdprofile = 30
-        and sc.statusenabled is null or sc.statusenabled=true
-        order by sc.tglclosing desc"));
-
-        
-
+            from strukclosing_t sc
+            inner join strukclosingkasir_t sck on sck.noclosingfk = sc.norec
+            left join ststosck_t ssc on ssc.objectsckfk = sck.norec 
+            left join surattandasetoran_t sts on sts.norec = ssc.objectstsfk
+            where sc.tglclosing::date between '$tglAwal' and '$tglAkhir'
+            $status
+            
+            and sc.kdprofile = 30
+            and sc.statusenabled is null or sc.statusenabled=true
+            order by sc.tglclosing desc"));
         
 
         $result = array(
@@ -2500,7 +2496,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         // konten STS Detail
 
-        $data = DB::select(DB::raw("select ru.namaruangan, pr.namaproduk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
+        $data = DB::select(DB::raw("select ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat, ru.objectdepartemenfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
         sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, sts.norec, pr.id as idproduk, ru.id as idruangan
         from strukclosingkasir_t as sck
         inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
@@ -2521,7 +2517,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         union all
 
-        select ru.namaruangan, pr.namaproduk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
+        select ru.namaruangan, ru.id idruangan, pr.namaproduk idproduk, pp.isobat, ru.objectdepartemenfk, pr.id, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
         sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, sts.norec, pr.id as idproduk, ru.id as idruangan
         from strukclosingkasir_t as sck
         inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
@@ -2566,20 +2562,182 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->objectstsfk = $nosts;
         $STSD->save();
 
-        if($STSD->save()){
-            $transMsg = 'Simpan STS Berhasil';
+        $jumlahpoliklinik = 0;
+        $jumlahperiksajiwa = 0;
+        $jumlahperiksanapza = 0;
+        $jumlahperiksaumum = 0;
+        $jumlahperiksagigi = 0;
+        $jumlahperiksadalam = 0;
+        $jumlahperiksaanak = 0;
+        $jumlahperiksasyaraf = 0;
+        $jumlahperiksaelektromedik = 0;
+        $jumlahperiksaigd = 0;
+        $jumlahperiksaigdjiwa = 0;
+        $jumlahperiksaigdnonjiwa = 0;
+        $jumlahdipam = 0;
+        $jumlahtindakanpolirajal = 0;
+        $jumlahtindakanigd = 0;
+        $jumlahtindakangigi = 0;
+        $jumlahobatobatrajal = 0;
+        $jumlahobatrajal = 0;
+        $jumlahkir = 0;
+        $jumlahpsikologi = 0;
+        $jumlahgizi = 0;
+        $jumlahpenunjang = 0;
+        $jumlahlaboratorium = 0;
+        $jumlahelektromedik = 0;
+        $jumlahfisioterapi = 0;
+        $jumlahradiologi = 0;
+        $jumlahdiklat = 0;
+        $jumlahkelassatu = 0;
+        $jumlahkelasdua = 0;
+        $jumlahkelastiga = 0;
+        $jumlahkelasvip = 0;
+        $jumlahkelasuppi = 0;
+        $jumlahperawatanpasienranap = 0;
+        $jumlahobatobatranap = 0;
+        $jumlahobatranap = 0;
+        $jumlahtindakanpoliranap = 0;
+        $jumlahvisite = 0;
+        $jumlahrehabmental = 0;
+        $jumlahperawatanjenazah =0;
+        $jumlahugdranap = 0;
+        $jumlahjiwaranap = 0;
+        $jumlahnapzaranap = 0;
+
+        foreach($data as $konten){
+
+            if($konten->idruangan == 752 && $konten->idproduk == 5006382){
+                $jumlahperiksajiwa += $konten->totaldibayarclosing;
+            }
+
+            if(($konten->idruangan == 768 && $konten->idproduk == 5006382) || ($konten->idruangan == 789 && $konten->idproduk == 5006382)){
+                $jumlahperiksanapza += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan == 758 && $konten->idproduk == 5006453){
+                $jumlahperiksaumum += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan == 759 && $konten->idproduk == 5006463){
+                $jumlahperiksagigi += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan == 759 && $konten->idproduk == 5006463){
+                $jumlahperiksadalam += $konten->totaldibayarclosing;
+            }
+
+            if(($konten->idruangan == 753 && $konten->idproduk == 5006463) || ($konten->idruangan == 775 && $konten->idproduk == 5006463) || ($konten->idruangan == 785 && $konten->idproduk == 5006463)){
+                $jumlahperiksaanak += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan == 755 && $konten->idproduk == 5006463){
+                $jumlahperiksasyaraf += $konten->totaldibayarclosing;
+            }
+
+            if(($konten->idruangan == 786 && $konten->idproduk == 5006463) || ($konten->idruangan == 761 && $konten->idproduk == 5006463)){
+                $jumlahperiksaelektromedik += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan == 765 && $konten->idproduk == 5007076){
+                $jumlahperiksaigdjiwa += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan == 29 && $konten->idproduk == 5007076){
+                $jumlahperiksaigdnnonjiwa += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idproduk == 5008636 || $konten->idproduk == 5008644 || $konten->idproduk == 5008637 || $konten->idproduk == 5008635 || $konten->idproduk == 5008645 || $konten->idproduk == 5008647 || $konten->idproduk == 5008649){
+                $jumlahdipam += $konten->totaldibayarclosing;
+            }
+
+            if($konten->objectdepartemenfk != 16 && $konten->idruangan != 765 && $konten->idruangan != 29 && $konten->idruangan != 759 && $konten->idruangan != 767 && ($konten->idproduk != 5008636 || $konten->idproduk != 5008644 || $konten->idproduk != 5008637 || $konten->idproduk != 5008635 || $konten->idproduk != 5008645 || $konten->idproduk != 5008647 || $konten->idproduk != 5008649 || $konten->idproduk != 5006382 || $konten->idproduk != 5006453 || $konten->idproduk = 5006463 || $konten->idproduk != 5007076 || $konten->isobat != 't' || $konten->idproduk != 5008651 || $konten->idproduk != 5008652 || $konten->idproduk != 5008650 || $konten->idproduk != 5008653 || $konten->idproduk != 5006759 || $konten->idproduk != 5006763 || $konten->idproduk != 5006758 || $konten->idproduk != 5006764 || $konten->idproduk != 5006761 || $konten->idproduk != 5006762 || $konten->idproduk != 5006760 || $konten->idproduk != 5006765 || $konten->idproduk != 5006757 || $konten->idproduk != 5006766 || $konten->idproduk != 4041191)){
+                $jumlahtindakanpolirajal += $konten->totaldibayarclosing;
+            }
+
+            if(($konten->idruangan == 765 && ($konten->idproduk != 5008636 || $konten->idproduk != 5008645 || $konten->idproduk != 5008651 || $konten->idproduk != 5008652 || $konten->idproduk != 5008650 || $konten->idproduk != 5008653 || $konten->idproduk != 5006759 || $konten->idproduk != 5006763 || $konten->idproduk != 5006758 || $konten->idproduk != 5006764 || $konten->idproduk != 5006761 || $konten->idproduk != 5006762 || $konten->idproduk != 5006760 || $konten->idproduk != 5006765 || $konten->idproduk != 5006757 || $konten->idproduk != 5006766 || $konten->idproduk != 4041191) && $konten->isobat != 't') || ($konten->idruangan == 29 && ($konten->idproduk != 5008636 || $konten->idproduk != 5008645 || $konten->idproduk != 5008651 || $konten->idproduk != 5008652 || $konten->idproduk != 5008650 || $konten->idproduk != 5008653 || $konten->idproduk != 5006759 || $konten->idproduk != 5006763 || $konten->idproduk != 5006758 || $konten->idproduk != 5006764 || $konten->idproduk != 5006761 || $konten->idproduk != 5006762 || $konten->idproduk != 5006760 || $konten->idproduk != 5006765 || $konten->idproduk != 5006757 || $konten->idproduk != 5006766 || $konten->idproduk != 4041191) && $konten->isobat != 't')){
+                $jumlahtindakanigd += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan == 759 && ($konten->idproduk != 5008635 || $konten->idproduk != 5008644 || $konten->idproduk != 5008651 || $konten->idproduk != 5008652 || $konten->idproduk != 5008650 || $konten->idproduk != 5008653 || $konten->idproduk != 5006759 || $konten->idproduk != 5006763 || $konten->idproduk != 5006758 || $konten->idproduk != 5006764 || $konten->idproduk != 5006761 || $konten->idproduk != 5006762 || $konten->idproduk != 5006760 || $konten->idproduk != 5006765 || $konten->idproduk != 5006757 || $konten->idproduk != 5006766 || $konten->idproduk != 4041191) && $konten->isobat != 't'){
+                $jumlahtindakangigi += $konten->totaldibayarclosing;
+            }
+
+            if($konten->objectdepartemenfk != 16 && ($konten->isobat == 't' || $konten->idproduk != 5008651 || $konten->idproduk != 5008652 || $konten->idproduk != 5008650 || $konten->idproduk != 5008653 || $konten->idproduk != 5006759 || $konten->idproduk != 5006763 || $konten->idproduk != 5006758 || $konten->idproduk != 5006764 || $konten->idproduk != 5006761 || $konten->idproduk != 5006762 || $konten->idproduk != 5006760 || $konten->idproduk != 5006765 || $konten->idproduk != 5006757 || $konten->idproduk != 5006766 || $konten->idproduk != 4041191)){
+                $jumlahobatrajal += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan == 767 && ($konten->idproduk != 5008635 || $konten->idproduk != 5008644 || $konten->idproduk != 5008651 || $konten->idproduk != 5008652 || $konten->idproduk != 5008650 || $konten->idproduk != 5008653 || $konten->idproduk != 5006759 || $konten->idproduk != 5006763 || $konten->idproduk != 5006758 || $konten->idproduk != 5006764 || $konten->idproduk != 5006761 || $konten->idproduk != 5006762 || $konten->idproduk != 5006760 || $konten->idproduk != 5006765 || $konten->idproduk != 5006757 || $konten->idproduk != 5006766 || $konten->idproduk != 4041191) && $konten->isobat != 't'){
+                $jumlahpsikologi += $konten->totaldibayarclosing;
+            }
+
+            if(($konten->idruangan == 784 && $konten->idproduk == 5006767) || ($konten->idruangan == 784 && $konten->idproduk == 5006180)){
+                $jumlahgizi += $konten->totaldibayarclosing;
+            }
+            
+            if($konten->idruangan == 575 && ($konten->idproduk != 5008644 || $konten->idproduk != 5008635)){
+                $jumlahlaboratorium += $konten->totaldibayarclosing;
+            }
+
+            if(($konten->idruangan == 786 && $konten->idproduk != 5006463 && ($konten->idproduk != 5008644 || $konten->idproduk != 5008635)) || ($konten->idruangan == 761 && $konten->idproduk != 5006463 && ($konten->idproduk != 5008644 || $konten->idproduk != 5008635))){
+                $jumlahelektromedik += $konten->totaldibayarclosing;
+            }
+
+            if(($konten->idruangan == 762 && ($konten->idproduk != 5008644 || $konten->idproduk != 5008635))){
+                $jumlahfisioterapi += $konten->totaldibayarclosing;
+            }
+
+            if(($konten->idruangan == 762 && ($konten->idproduk != 5008644 || $konten->idproduk != 5008635))){
+                $jumlahfisioterapi += $konten->totaldibayarclosing;
+            }
+
+            if(($konten->idruangan == 576 && ($konten->idproduk != 5008644 || $konten->idproduk != 5008635))){
+                $jumlahradiologi += $konten->totaldibayarclosing;
+            }
+
+            if($konten->objectdepartemenfk == 16 && $konten->idproduk == 5008639){
+                $jumlahkelassatu += $konten->totaldibayarclosing;
+            }
+
+            if($konten->objectdepartemenfk == 16 && $konten->idproduk == 5008640){
+                $jumlahkelasdua += $konten->totaldibayarclosing;
+            }
+
+            if($konten->objectdepartemenfk == 16 && $konten->idproduk == 5008641){
+                $jumlahkelastiga += $konten->totaldibayarclosing;
+            }
+
+            if($konten->objectdepartemenfk == 16 && $konten->idproduk == 5008638){
+                $jumlahkelasvip += $konten->totaldibayarclosing;
+            }
+
+            if($konten->objectdepartemenfk == 16 && ($konten->isobat == 't' || $konten->idproduk != 5008651 || $konten->idproduk != 5008652 || $konten->idproduk != 5008650 || $konten->idproduk != 5008653 || $konten->idproduk != 5006759 || $konten->idproduk != 5006763 || $konten->idproduk != 5006758 || $konten->idproduk != 5006764 || $konten->idproduk != 5006761 || $konten->idproduk != 5006762 || $konten->idproduk != 5006760 || $konten->idproduk != 5006765 || $konten->idproduk != 5006757 || $konten->idproduk != 5006766)){
+                $jumlahobatranap += $konten->totaldibayarclosing;
+            }
+
+            if($konten->objectdepartemenfk == 16 && ($konten->idproduk != 5008636 || $konten->idproduk != 5008644 || $konten->idproduk != 5008637 || $konten->idproduk != 5008635 || $konten->idproduk != 5008645 || $konten->idproduk != 5008647 || $konten->idproduk != 5008649 || $konten->idproduk != 5006382 || $konten->idproduk != 5006453 || $konten->idproduk = 5006463 || $konten->idproduk != 5007076 || $konten->isobat != 't' || $konten->idproduk != 5008651 || $konten->idproduk != 5008652 || $konten->idproduk != 5008650 || $konten->idproduk != 5008653 || $konten->idproduk != 5006759 || $konten->idproduk != 5006763 || $konten->idproduk != 5006758 || $konten->idproduk != 5006764 || $konten->idproduk != 5006761 || $konten->idproduk != 5006762 || $konten->idproduk != 5006760 || $konten->idproduk != 5006765 || $konten->idproduk != 5006757 || $konten->idproduk != 5006766 || $konten->idproduk != 4041191 || $konten->idproduk != 4041191 || $konten->idproduk != 5008638 || $konten->idproduk != 5008639 || $konten->idproduk != 5008640 || $konten->idproduk != 5008641       || $konten->idproduk != 5006029 || $konten->idproduk != 5006028 || $konten->idproduk != 5006027 || $konten->idproduk != 5006574 || $konten->idproduk != 5006030 || $konten->idproduk != 5006033 || $konten->idproduk != 5006191 || $konten->idproduk != 5006192 || $konten->idproduk != 5006573 || $konten->idproduk != 5006572 || $konten->idproduk != 5007108  || $konten->idproduk != 5006194 || $konten->idproduk != 5006193)){
+                $jumlahtindakanpoliranap += $konten->totaldibayarclosing;
+            }
+
+            if($konten->objectdepartemenfk == 16 && ($konten->idproduk == 5006029 || $konten->idproduk == 5006028 || $konten->idproduk == 5006027 || $konten->idproduk == 5006574 || $konten->idproduk == 5006030 || $konten->idproduk == 5006033 || $konten->idproduk == 5006191 || $konten->idproduk == 5006192 || $konten->idproduk == 5006573 || $konten->idproduk == 5006572 || $konten->idproduk == 5007108  || $konten->idproduk == 5006194 || $konten->idproduk == 5006193)){
+                $jumlahvisite += $konten->totaldibayarclosing;
+            }
+
+            if($konten->idruangan == 779 && ($konten->idproduk != 5008635 || $konten->idproduk != 5008644) || $konten->idruangan == 780 && ($konten->idproduk != 5008635 || $konten->idproduk != 5008644)){
+                $jumlahrehabmental += $konten->totaldibayarclosing;
+            }
         }
 
-        // $jumlahperiksapolijiwa = 0;
 
-        // foreach($data as $konten){
-        //     if($konten->idruangan = 752 && $konten->idproduk = 5006382){
-        //         $jumlahperiksapolijiwa += $konten->totaldibayarsbm;
-        //     }
-        // }
+        $jumlahperiksaigd = $jumlahperiksaigdjiwa + $jumlahperiksaigdnonjiwa;
+        $jumlahpoliklinik = $jumlahperiksajiwa + $jumlahperiksaumum + $jumlahperiksanapza + $jumlahperiksagigi + $jumlahperiksadalam + $jumlahperiksaanak + $jumlahperiksasyaraf + $jumlahperiksaigd;
+        $jumlahobatobatrajal = $jumlahobatrajal;
+        $jumlahobatobatranap = $jumlahobatranap;
+        $jumlahpenunjang = $jumlahlaboratorium + $jumlahelektromedik + $jumlahfisioterapi + $jumlahradiologi + $jumlahdiklat;
+        $jumlahperawatanpasienranap = $jumlahkelassatu + $jumlahkelasdua + $jumlahkelastiga + $jumlahkelasvip + $jumlahkelasuppi;
+        $jumlahobatobatranap =  $jumlahobatranap;
 
-
-        // for($i=0; $i<count($data); $i++){
+        // for($i=0; $i<count($data); $i++){ shave ternyata gak dilooping
         //     $STSD = new SuratTandaSetoranDetail();
         //     $STSD->norec  = $STSD->generateNewId();
         //     $STSD->kdprofile = $idProfile;
@@ -2591,6 +2749,10 @@ class BendaharaPenerimaanController extends ApiController {
         //     // fisiotehrapy = 762 
         //     $STSD->save();
         // }
+
+        if($STSD->save()){
+            $transMsg = 'Simpan STS Berhasil';
+        }
 
         // var_dump($data[0]->namapasien);
         $result = array(
