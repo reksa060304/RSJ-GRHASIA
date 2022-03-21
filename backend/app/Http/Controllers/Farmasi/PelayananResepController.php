@@ -5350,9 +5350,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $ruid
                     $deptid
                     --group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.jenislog, cte.namapegawaiinput
-                    group by
-                    pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual 
-                    
+                    group by pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual,ppd.hargadiscount,ppd.jasa
                     "));
 
         $datapelayanan = DB::select(DB::raw("with lt as (
@@ -5391,8 +5389,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $ruid
                     $deptid
                     --group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.namapegawaiinput, cte.jenislog
-                    group by
-                    pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual 
+                    group by pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual,ppd.hargadiscount,ppd.jasa
                     
                     
                     "));
