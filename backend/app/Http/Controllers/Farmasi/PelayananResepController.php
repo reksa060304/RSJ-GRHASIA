@@ -5313,7 +5313,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             "));
     
         $datasarana = DB::select(DB::raw("with lt as (
-            select DISTINCT lt.noreff,lt.jenislog,lt.objectloginuserfk
+            select  lt.noreff,lt.jenislog,lt.objectloginuserfk
             from logginguser_t lt
             where lt.jenislog = 'Input Tindakan'
             ), cte as (
@@ -5347,10 +5347,10 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $dokid
                     $ruid
                     $deptid
-                    group by pp.norec,pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.jenislog, cte.namapegawaiinput"));
+                    group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.jenislog, cte.namapegawaiinput"));
 
         $datapelayanan = DB::select(DB::raw("with lt as (
-            select DISTINCT lt.noreff,lt.jenislog,lt.objectloginuserfk
+            select  lt.noreff,lt.jenislog,lt.objectloginuserfk
             from logginguser_t lt
             where lt.jenislog = 'Input Tindakan'
             ), cte as (
@@ -5384,7 +5384,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $dokid
                     $ruid
                     $deptid
-                    group by pp.norec,pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.namapegawaiinput, cte.jenislog"));
+                    group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.namapegawaiinput, cte.jenislog"));
 
         $jumlahhargapelayanan = 0;
         $hargapelayanan = 0;
