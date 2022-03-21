@@ -5308,7 +5308,9 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $dokid
                     $ruid
                     $deptid
-                    group by pp.tglpelayanan::date, ppd.hargajual, ppd.hargadiscount, ppd.jasa, ppd.komponenhargafk
+                    group by 
+                    pp.tglpelayanan::date, ppd.hargajual, ppd.hargadiscount, ppd.jasa, ppd.komponenhargafk
+
                     order by pp.tglpelayanan::date) as x group by x.tanggal
             "));
     
@@ -5347,7 +5349,13 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $dokid
                     $ruid
                     $deptid
-                    group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.jenislog, cte.namapegawaiinput"));
+                    --group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.jenislog, cte.namapegawaiinput
+                    group by
+                    pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual ,
+                    (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
+                    0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) 
+                    
+                    "));
 
         $datapelayanan = DB::select(DB::raw("with lt as (
             select  lt.noreff,lt.jenislog,lt.objectloginuserfk
@@ -5384,7 +5392,13 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $dokid
                     $ruid
                     $deptid
-                    group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.namapegawaiinput, cte.jenislog"));
+                    --group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.namapegawaiinput, cte.jenislog
+                    group by
+                    pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual ,
+                    (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
+                    0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) 
+                    
+                    "));
 
         $jumlahhargapelayanan = 0;
         $hargapelayanan = 0;
