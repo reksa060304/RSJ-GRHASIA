@@ -216,6 +216,18 @@ define(['initialize'], function (initialize) {
                         "width": "30px",
                     },
                     {
+                        "field": "nofaktur",
+                        "title": "NO FAKTUR",
+                        "width": "80px",
+                        "template": "# if(row_number == 1) {##: nofaktur ##} else {##}#"
+                    },
+                    {
+                        "field": "namarekanan",
+                        "title": "SUPPLIER",
+                        "width": "90px",
+                        "template": "# if(row_number == 1) {##: namarekanan ##} else {##}#"
+                    },
+                    {
                         "field": "kdproduk",
                         "title": "Kode Produk",
                         "width": "80px"
@@ -227,30 +239,14 @@ define(['initialize'], function (initialize) {
                     // },
                     {
                         "field": "namaproduk",
-                        "title": "Nama Produk",
+                        "title": "NAMA OBAT / BARANG",
                         "width": "100px",
                     },
                     {
-                        "field": "nofaktur",
-                        "title": "No Penerimaan",
-                        "width": "80px",
-                    },
-                    {
                         "field": "tglfaktur",
-                        "title": "Tanggal",
+                        "title": "TGL BELI",
                         "width": "60px",
                         "template": "<span class='style-right'>{{formatTanggal('#: tglfaktur #', '')}}</span>"
-                    },
-                    {
-                        "field": "nosppb",
-                        "title": "No PO",
-                        "width": "80px",
-                        "template": "#if (nosppb) {# #= nosppb # #} else {# - #} #",
-                    },
-                    {
-                        "field": "satuanstandar",
-                        "title": "Satuan",
-                        "width": "80px",
                     },
                     {
                         "field": "qtyproduk",
@@ -259,44 +255,74 @@ define(['initialize'], function (initialize) {
                         "template": "<span class='style-right'>#= kendo.toString(qtyproduk) #</span>",
                     },
                     {
+                        "field": "satuanstandar",
+                        "title": "SATUAN",
+                        "width": "80px",
+                    },
+                    {
                         "field": "hargasatuan",
-                        "title": "Harga Satuan",
+                        "title": "HARGA SATUAN",
                         "width": "90px",
                         "template": "<span class='style-right'>{{formatRupiah('#: hargasatuan #', '')}}</span>"
                     },
                     {
+                        "field": "persenppn",
+                        "title": "PPN",
+                        "width": "55px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: persenppn #', '')}}%</span>",
+                    },
+                    {
+                        "field": "persendiscount",
+                        "title": "DISC / ITEM",
+                        "width": "55px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: persendiscount #', '')}}%</span>",
+                    },
+                    {
+                        "field": "harganetto",
+                        "title": "HARGA SATUAN SETELAH PPN&DISC",
+                        "width": "55px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: harganetto #', '')}}</span>",
+                    },
+                    {
                         "field": "subtotal",
-                        "title": "SubTotal",
+                        "title": "SUB TOTAL",
                         "width": "90px",
                         "template": "<span class='style-right'>{{formatRupiah('#: subtotal #', '')}}</span>"
                     },
                     {
-                        "field": "hargadiscount",
-                        "title": "Diskon",
+                        "field": "totalharusdibayar",
+                        "title": "TOTAL HARGA",
                         "width": "90px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: hargadiscount #', '')}}</span>"
+                        "template": "# if(row_number == 1) {#<span class='style-right'>{{formatRupiah('#: totalharusdibayar #', '')}}</span>#} else {#<span class='style-right'></span>#}#"
                     },
                     {
-                        "field": "hargappn",
-                        "title": "PPn",
-                        "width": "90px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: hargappn #', '')}}</span>"
+                        "field": "nosppb",
+                        "title": "No PO",
+                        "width": "80px",
+                        "template": "#if (nosppb) {# #= nosppb # #} else {# - #} #",
                     },
-                    {
-                        "field": "total",
-                        "title": "Nilai",
-                        "width": "120px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: total #', '')}}</span>"
-                    },
+                    // {
+                    //     "field": "hargadiscount",
+                    //     "title": "Diskon PER ITEM",
+                    //     "width": "90px",
+                    //     "template": "<span class='style-right'>{{formatRupiah('#: hargadiscount #', '')}}</span>"
+                    // },
+                    // {
+                    //     "field": "hargappn",
+                    //     "title": "PPn",
+                    //     "width": "90px",
+                    //     "template": "<span class='style-right'>{{formatRupiah('#: hargappn #', '')}}</span>"
+                    // },
+                    // {
+                    //     "field": "total",
+                    //     "title": "Nilai",
+                    //     "width": "120px",
+                    //     "template": "<span class='style-right'>{{formatRupiah('#: total #', '')}}</span>"
+                    // },
                     {
                         "field": "asalproduk",
                         "title": "Sumber Dana",
                         "width": "80px",
-                    },
-                    {
-                        "field": "namarekanan",
-                        "title": "Nama Rekanan",
-                        "width": "90px",
                     },
                     {
                         "field": "tglkadaluarsa",
