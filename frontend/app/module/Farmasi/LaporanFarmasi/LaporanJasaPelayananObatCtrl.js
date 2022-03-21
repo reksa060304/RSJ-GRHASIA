@@ -213,14 +213,14 @@ define(['initialize'], function (initialize) {
                     {
                         
                         "field": "hargasarana",
-                        "title": "Jumlah Sarana",
+                        "title": "Jasa Sarana",
                         "width": "100px",
                         template: "{{formatRupiah('#: hargasarana #', '')}}"
                     },
                     {
                         
                         "field": "hargapelayanan",
-                        "title": "Jumlah Pelayanan",
+                        "title": "Jasa Pelayanan",
                         "width": "100px",
                         template: "{{formatRupiah('#: hargapelayanan #', '')}}"
                     },

@@ -17,17 +17,17 @@ define(['initialize'], function (initialize) {
                 $('#contentPencarian').fadeToggle("fast", "linear");
             }
 
+            medifirstService.get("kasir/get-data-combo-kasir").then(function (dat) {
+                $scope.listCaraBayar = dat.data.dataCB;
+                $scope.listStatusSTS = [
+                    { id: 1, names: "Sudah STS" },
+                    { id: 2, names: "Belum STS"}
+                ];
+            });
+
             function init() {
                 $scope.isRouteLoading = true;
-
-                medifirstService.get("kasir/get-data-combo-kasir").then(function (dat) {
-					$scope.listCaraBayar = dat.data.dataCB;
-                    $scope.listStatusSTS = [
-                        { id: 1, names: "Sudah STS" },
-                        { id: 2, names: "Belum STS"}
-                    ];
-				});
-
+                
                 var ScaraBayar = "";
 				if ($scope.item.caraBayar != undefined) {
 					ScaraBayar = $scope.item.caraBayar.id;
@@ -160,12 +160,14 @@ define(['initialize'], function (initialize) {
 				
 			}
 
-            console.log($scope.selectedData2);
+            
 
             var objSave =
             {
                 setoran: $scope.selectedData2
             }
+
+            console.log(objSave.setoran.length);
 
             $scope.simpan = function () {
                 medifirstService.post('bendaharapenerimaan/save-sts', objSave).then(function (e) {
