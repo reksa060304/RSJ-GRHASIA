@@ -524,10 +524,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         strukresep: strukresep
                     }
                     medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                        let params = $scope.item.noregistrasi    
+                        if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                            params = $scope.item.noreservasi
+                        }
+                        saveAntrol(params,5)
                         medifirstService.postLogging('Rubah Status Produksi Order Resep Elektronik', 'No Order Struk Order',
                             $scope.item.noorder, 'Rubah Status Produksi Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
                                 $scope.refresh();
                             })
+                            
                     });
                 } else {
                     toastr.error("Status Data Belum Diverifikasi !!")

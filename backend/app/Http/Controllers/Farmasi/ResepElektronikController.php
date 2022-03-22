@@ -814,7 +814,7 @@ class ResepElektronikController extends ApiController
             ->leftjoin('statuspulang_m AS sp','sp.id','=','pd.objectstatuspulangfk')
             ->select(DB::raw("ps.nocm,alm.alamatlengkap,kp.kelompokpasien,to_char(ps.tgllahir, 'YYYY-MM-DD') AS tgllahir,ru.namaruangan as ruangrawat,
                                     ru1.namaruangan as ruanginput,apd.objectpegawaifk,pg.namalengkap,pd.tglpulang,pd.tglmeninggal,
-                                    sk.statuskeluar,sp.statuspulang,ru1.objectdepartemenfk,kp.id as kpid"))
+                                    sk.statuskeluar,sp.statuspulang,ru1.objectdepartemenfk,kp.id as kpid, pd.statusschedule  noreservasi "))
             ->where('pd.kdprofile', $idProfile);
         if(isset($request['noregistrasi']) && $request['noregistrasi']!="" && $request['noregistrasi']!="undefined"){
             $data = $data->where('pd.noregistrasi',$request['noregistrasi']);

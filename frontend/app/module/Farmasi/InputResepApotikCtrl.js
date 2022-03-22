@@ -316,6 +316,11 @@ define(['initialize'], function (initialize) {
                     $scope.item.TglMeninggal = e.data.tglmeninggal;
                     $scope.item.StatKeluar = e.data.statuskeluar;
                     $scope.item.StatPulang = e.data.statuspulang;
+                    if (e.data.noreservasi != ''){
+                        $scope.item.noreservasi = e.data.noreservasi;
+                        
+
+                    }
                     $scope.item.kpid = e.data.kpid;
                     $scope.dpjp = { id: e.data.objectpegawaifk, namalengkap: e.data.namalengkap }
                     $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
@@ -342,6 +347,34 @@ define(['initialize'], function (initialize) {
                     }
                     init();
                 })
+            }
+            function saveAntrol(param){
+                var data = {
+                   "url": "antrean/updatewaktu",
+                   "jenis": "antrean",
+                   "method": "POST",
+                   "data":                                                 
+                   {
+                      "kodebooking": param,
+                      "taskid": 5,//Waktu mulai farmasi
+                      "waktu": new Date().getTime() - 900000 
+                   }
+               }
+               medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
+            }
+            function saveAntrol2(param,waktu){
+                var data = {
+                   "url": "antrean/updatewaktu",
+                   "jenis": "antrean",
+                   "method": "POST",
+                   "data":                                                 
+                   {
+                      "kodebooking": param,
+                      "taskid": waktu,//Waktu akhir farmasi/mulai buat obat
+                      "waktu": new Date().getTime()  
+                   }
+               }
+               medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
             }
 
             function loadDefaultSkrining() {
@@ -1796,7 +1829,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 medifirstService.post('farmasi/save-pelayananobat', objSave).then(function (e) {
                     $scope.tombolSimpanVis = true;
                     $scope.item.resep = e.data.noresep.norec;
-                    if (dataOK.length > 0) {
+                    if (dataOK.length > 0) {                        
                         var objSaveKronis = {
                             strukresep: strukresep,
                             norecresep: $scope.item.resep,
@@ -1804,6 +1837,13 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         }
                         medifirstService.post('farmasi/save-pelayanan-obat-kronis', objSaveKronis).then(function (e) { });
                     }
+                    let params = $scope.item.noRegistrasi;    
+                    if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                        params = $scope.item.noreservasi;
+                    } 
+                    //saveAntrol(params)
+                    saveAntrol(params);
+                    saveAntrol2(params,6);
 
 
                     // //Bridging Consis
