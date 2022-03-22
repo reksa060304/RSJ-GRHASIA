@@ -391,7 +391,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.isAsuransi = false;
                         $scope.model.generateNoSEP = false;
                     }
-                    if ($scope.item.kelompokPasien.kelompokpasien.indexOf('BPJS') > -1) {
+                    if ($scope.item.kelompokPasien.kelompokpasien.indexOf('BPJS') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('JKN') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('KEMENKES') > -1) {
                         if (norecPD == '') {
 
                             $scope.inputPemakaianAsuransi();

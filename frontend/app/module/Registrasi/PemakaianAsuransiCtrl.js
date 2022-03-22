@@ -384,7 +384,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("registrasi/get-penjaminbykelompokpasien?kdKelompokPasien=" + e.id)
                     .then(function (z) {
                         $scope.sourceRekanan = z.data.rekanan;
-                        if (e.kelompokpasien.indexOf('BPJS') >= -1) {
+                        if (e.kelompokpasien.indexOf('BPJS') >= -1 || e.kelompokpasien.toUpperCase().indexOf('JKN') >= -1 || e.kelompokpasien.toUpperCase().indexOf('KEMENKES') >= -1) {
                             $scope.model.institusiAsalPasien = { id: $scope.sourceRekanan[0].id, namarekanan: $scope.sourceRekanan[0].namarekanan };
                             $scope.isCheckSEP = true;
                             $scope.noBPJS = true;

@@ -341,7 +341,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.nonUmum = false;
                             $scope.item.jenisPasien = { id: $scope.listJenisPelayanan[1].id, jenispelayanan: $scope.listJenisPelayanan[1].jenispelayanan }
                         }
-                        else if (e.kelompokpasien.indexOf('BPJS') > -1) {
+                        else if (e.kelompokpasien.indexOf('BPJS') > -1 || e.kelompokpasien.toUpperCase().indexOf('JKN') > -1 || e.kelompokpasien.toUpperCase().indexOf('KEMENKES') > -1) {
                             $scope.item.rekanan = { id: $scope.listRekanan[0].id, namarekanan: $scope.listRekanan[0].namarekanan };
                             $scope.nonUmum = true;
                             $scope.item.jenisPasien = { id: $scope.listJenisPelayanan[1].id, jenispelayanan: $scope.listJenisPelayanan[1].jenispelayanan }
@@ -1558,7 +1558,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             function saveAntrol(noregistrasi,apd){
                 var isBPJS = false
-                if($scope.item.kelompokPasien.kelompokpasien.indexOf('BPJS') > -1)
+                if($scope.item.kelompokPasien.kelompokpasien.indexOf('BPJS') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('JKN') > -1)
                      isBPJS = true
 
                 if($scope.item.ruangan.kodebpjs == undefined || $scope.item.ruangan.kodebpjs == null){
