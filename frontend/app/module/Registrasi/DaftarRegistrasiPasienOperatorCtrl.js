@@ -2355,7 +2355,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 								for (let x = 0; x < data.data.response.length; x++) {
 									const element = data.data.response[x]
 									element.kode = element.kodedokter
-									element.nama = element.namanokter
+									element.nama = element.namadokter
 								}
 								$scope.listDPJP = data.data.response
 							}
