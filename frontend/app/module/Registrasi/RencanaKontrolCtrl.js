@@ -175,10 +175,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							}
 
 						}
-					).then(function () {
-                        toastr.info('Dokter DPJP tidak ada', 'Info')
-                        $scope.isRouteLoading = false;
-                    });
+                    )
+					// .then(function () {
+                    //     toastr.info('Dokter DPJP tidak ada', 'Info')
+                    //     //$scope.isRouteLoading = false;
+                    // });
 
                 }
             })
@@ -470,10 +471,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }
 
                     }
-                ).then(function () {
-                    toastr.info('Dokter DPJP tidak ada', 'Info')
-                    $scope.isRouteLoading = false;
-                });
+                )
                 // medifirstService.get("bridging/bpjs/get-ref-dokter-dpjp?jenisPelayanan=" + $scope.item.jenisPelayanan.idjenispelayanan
                 //     + "&tglPelayanan=" + moment(new Date()).format('YYYY-MM-DD') + "&kodeSpesialis=" + ruang.kdinternal).then(function (e) {
                 //         if (e.data.metaData.code == 200) {
@@ -597,7 +595,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     }
                 ).then(function () {
-                    toastr.info('Dokter DPJP tidak ada', 'Info')
+                    //toastr.info('Dokter DPJP tidak ada', 'Info')
                     $scope.isRouteLoading = false;
                 });
             }

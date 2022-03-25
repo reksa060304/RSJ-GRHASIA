@@ -2365,10 +2365,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 							}
 
 						}
-					).then(function () {
-                        toastr.info('Dokter DPJP tidak ada', 'Info')
-                        //$scope.isRouteLoading = false;
-                    });
+					)
+					// .then(function () {
+                    //     toastr.info('Dokter DPJP tidak ada', 'Info')
+                    //     //$scope.isRouteLoading = false;
+                    // });
 
                 }
             })
@@ -2662,10 +2663,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 						}
 
 					}
-				).then(function () {
-                    toastr.info('Dokter DPJP tidak ada', 'Info')
-                    //$scope.isRouteLoading = false;
-                });
+				)
             
             }
 			let namappkRumahSakit =''
