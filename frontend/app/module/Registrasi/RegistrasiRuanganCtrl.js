@@ -1563,36 +1563,147 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 if($scope.item.ruangan.kodebpjs == undefined || $scope.item.ruangan.kodebpjs == null){
                     return
-                } 
-                var json  = {
-                    "url": "jadwaldokter/kodepoli/"+ $scope.item.ruangan.kodebpjs+"/tanggal/"+ moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
-                    "jenis": "antrean",
-                    "method": "GET",
-                    "data": null
                 }
-                medifirstService.postNonMessage('bridging/bpjs/tools', json).then(function (z) {
+                
+                // var json  = {
+                //     "url": "jadwaldokter/kodepoli/"+ $scope.item.ruangan.kodebpjs+"/tanggal/"+ moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
+                //     "jenis": "antrean",
+                //     "method": "GET",
+                //     "data": null
+                // }
+                // medifirstService.postNonMessage('bridging/bpjs/tools', json).then(function (z) {
+                //     if(z.data.metaData.code == 201) return
+                //     if(z.data.response == null)return
+                //     if(z.data.response.length == 0)return
+                //     if(!$scope.item.dokter && !$scope.item.dokter.kodebpjs)return    
+                //     var kodeDokterBPJS = ''
+                //     for (var i = z.data.response.length - 1; i >= 0; i--) {
+                //         const element = z.data.response[i]
+                //         if(element.kodedokter == $scope.item.dokter.kodebpjs){
+                //             kodeDokterBPJS = {
+                //                 "jadwal" : element.jadwal,
+                //                 "namadokter" : element.namadokter,
+                //                 "kodedokter" : element.kodedokter,
+                //             }
+                //             break;
+                //         }
+                //     }
+                //     if(kodeDokterBPJS == '')return
+                //     var status = '0'
+                //     if(cacheHelper.get('cacheStatusPasien') &&  cacheHelper.get('cacheStatusPasien') =='BARU'){
+                //         status = '1'
+                //     }
+                //     var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm
+                //     var data = {
+                //         "url": "antrean/add",
+                //         "jenis": "antrean",
+                //         "method": "POST",
+                //         "data": {
+                //            "kodebooking": noregistrasi,
+                //            "jenispasien": isBPJS ? 'JKN' : 'NON JKN',
+                //            "nomorkartu": isBPJS ? ($scope.item.pasien.nobpjs ? $scope.item.pasien.nobpjs : ""):"",
+                //            "nik": $scope.item.pasien.noidentitas ? $scope.item.pasien.noidentitas : "",
+                //            "nohp": $scope.item.pasien.notelepon ? $scope.item.pasien.notelepon : "",
+                //            "kodepoli": $scope.item.ruangan.kodebpjs ,
+                //            "namapoli": $scope.item.ruangan.namaruangan ,
+                //            "pasienbaru": status,
+                //            "norm": $scope.item.pasien.nocm,
+                //            "tanggalperiksa": moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
+                //            "kodedokter": kodeDokterBPJS.kodedokter,
+                //            "namadokter": kodeDokterBPJS.namadokter,
+                //            "jampraktek":  kodeDokterBPJS.jadwal,
+                //            "jeniskunjungan": 1,
+                //            "nomorreferensi": isBPJS?noref.substring(0, 19):"",
+                //            "nomorantrean": apd.noantrian,
+                //            "angkaantrean": apd.noantrian,
+                //            "estimasidilayani": new Date().getTime(),
+                //            "sisakuotajkn": 0,
+                //            "kuotajkn": 0,
+                //            "sisakuotanonjkn": 0,
+                //            "kuotanonjkn": 0,
+                //            "keterangan": ""
+                //         }
+                //     }
+                //     medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                //         if(e.data.metaData.code == 201)return
+                //          var data = {
+                //             "url": "antrean/updatewaktu",
+                //             "jenis": "antrean",
+                //             "method": "POST",
+                //             "data":                                                 
+                //             {
+                //                "kodebooking": noregistrasi,
+                //                "taskid": 1,//waktu admisi
+                //                "waktu": new Date().getTime()  - 300000//kurangi 8 menit
+                //             }
+                //         }
+                //         medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                //             var data = {
+                //                 "url": "antrean/updatewaktu",
+                //                 "jenis": "antrean",
+                //                 "method": "POST",
+                //                 "data":                                                 
+                //                 {
+                //                    "kodebooking": noregistrasi,
+                //                    "taskid": 2,//akhir waktu tunggu admisi/mulai waktu layan admisi
+                //                    "waktu": new Date().getTime()  - 180000 //kurangi 5 menit
+                //                 }
+                //             }
+                //             medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                //                  var data = {
+                //                         "url": "antrean/updatewaktu",
+                //                         "jenis": "antrean",
+                //                         "method": "POST",
+                //                         "data":                                                 
+                //                         {
+                //                            "kodebooking": noregistrasi,
+                //                            "taskid": 3,//(akhir waktu layan admisi/mulai waktu tunggu poli), 
+                //                            "waktu": new Date().getTime()
+                //                         }
+                //                     }
+                //                     medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                                        
+                //                  })
+                //             })
+                //         })
+                   
+
+                       
+                //     })
+                // })
+                medifirstService.get("bridging/bpjs/antrean/v2/get-jadwal-dokter?kodepoli=" + $scope.item.ruangan.kodebpjs + "&tanggal=" + moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'), false).then(function (z) {
                     if(z.data.metaData.code == 201) return
                     if(z.data.response == null)return
                     if(z.data.response.length == 0)return
-                    if(!$scope.item.dokter && !$scope.item.dokter.kodebpjs)return    
-                    var kodeDokterBPJS = ''
-                    for (var i = z.data.response.length - 1; i >= 0; i--) {
-                        const element = z.data.response[i]
-                        if(element.kodedokter == $scope.item.dokter.kodebpjs){
-                            kodeDokterBPJS = {
-                                "jadwal" : element.jadwal,
-                                "namadokter" : element.namadokter,
-                                "kodedokter" : element.kodedokter,
-                            }
-                            break;
+                    if($scope.item.ruangan.kodebpjs != "JIW"){
+                        if(!$scope.item.dokter && !$scope.item.dokter.kodebpjs)return
+                    }else{
+                        const element = z.data.response[0]
+                        kodeDokterBPJS = {
+                            "jadwal" : element.jadwal,
+                            "namadokter" : element.namadokter,
+                            "kodedokter" : element.kodedokter,
                         }
                     }
+                    // var kodeDokterBPJS = ''
+                    // for (var i = z.data.response.length - 1; i >= 0; i--) {
+                    //     const element = z.data.response[i]
+                    //     if(element.kodedokter == $scope.item.dokter.kodebpjs){
+                    //         kodeDokterBPJS = {
+                    //             "jadwal" : element.jadwal,
+                    //             "namadokter" : element.namadokter,
+                    //             "kodedokter" : element.kodedokter,
+                    //         }
+                    //         break;
+                    //     }
+                    // }
                     if(kodeDokterBPJS == '')return
                     var status = '0'
                     if(cacheHelper.get('cacheStatusPasien') &&  cacheHelper.get('cacheStatusPasien') =='BARU'){
                         status = '1'
                     }
-                    var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm
+                    //var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm
+                    var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm+noregistrasi+noregistrasi
                     var data = {
                         "url": "antrean/add",
                         "jenis": "antrean",
@@ -1669,7 +1780,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                        
                     })
-                })
+                }) 
             }
             $scope.listPenjaminLaka = [
                 { "id": 12, "name": "Jasa Raharja PT", "value": 1 },
