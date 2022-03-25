@@ -2328,6 +2328,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if (newValue.kdinternal == null) {
                         newValue.kdinternal = ""
                     }
+					/* grhasia ga bisa pake fitur dibawah jadi diganti pakai ws bpjs antrian */
                     // let json = {
                     //     "url": "RencanaKontrol/JadwalPraktekDokter/JnsKontrol/" + $scope.kontrol.jenisPelayanan.id
                     //         + "/KdPoli/" + newValue.kdinternal + "/TglRencanaKontrol/" + moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'),
