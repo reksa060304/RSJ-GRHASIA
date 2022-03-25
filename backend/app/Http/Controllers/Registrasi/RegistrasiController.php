@@ -5737,8 +5737,10 @@ class RegistrasiController extends ApiController
         $pasienDaftar = PasienDaftar::where('norec', $request['norec_pd'])->first();
         $tglregAwal = date('Y-m-d 00:00:00',strtotime($pasienDaftar->tglregistrasi));
         $tglregAkhir = date('Y-m-d 23:59:59',strtotime($pasienDaftar->tglregistrasi));            
+        $qtytracer = $request['qtytracer'];
         DB::beginTransaction();
         try{
+            
 
             if($pasien == ''){
                 $notracer = $this->generateCodeBySeqTable(new IdentifikasiPasien, 'notracer', 5, date('d'),$kdProfile);
@@ -5765,6 +5767,7 @@ class RegistrasiController extends ApiController
                 $ip->noantriantracer = $notracer;
                 $ip->tglregistrasi = $pasienDaftar->tglregistrasi;
                 $ip->noantrian = $noAntrian;
+                $ip->qtytracer = $qtytracer;
                 $ip->save();
             }else{
                 $pasienUp = IdentifikasiPasien::where('noregistrasifk', $request['norec_pd'])->first();
@@ -5786,14 +5789,17 @@ class RegistrasiController extends ApiController
                     ->update([
                         'noantrian' => $noAntrian,
                         'istracer' => true,
+                        'qtytracer' => $pasienUp->qtytracer + $qtytracer,
                     ]);
                 }else{
                     $ip = IdentifikasiPasien::where('noregistrasifk', $request['norec_pd'])
                     ->update([
                         'istracer' => true,
+                        'qtytracer' => $pasienUp->qtytracer + $qtytracer,
                     ]);
                 }                
             }
+            $pasienout = IdentifikasiPasien::where('noregistrasifk', $request['norec_pd'])->first();
 
          $transStatus = 'true';
         } catch (\Exception $e) {
@@ -5805,13 +5811,15 @@ class RegistrasiController extends ApiController
             DB::commit();
             $result = array(
                 "status" => 201,
-                "message" => 'er@epic'
+                "message" => 'er@epic',
+                "identifikasi" => $pasienout
             );
         } else {
             DB::rollBack();
             $result = array(
                 "status" => 400,
-                "message" => 'er@epic'
+                "message" => 'er@epic',
+                "identifikasi" => $pasienout
             );
         }
         return $this->respond($result);
@@ -6669,6 +6677,7 @@ class RegistrasiController extends ApiController
                         DB::raw('cast(jpl.id as text)'))
             // ->leftjoin('jenispelayanan_m as jpl', 'jpl.id', '=', 'pd.jenispelayanan')
             ->leftJOIN('jeniskelamin_m as jks', 'jks.id', '=', 'ps.objectjeniskelaminfk')
+            ->leftjoin('identifikasipasien_t as it','pd.norec','=','it.noregistrasifk')
             ->distinct()
             ->select('pd.norec', 'pd.statusenabled', 'pd.tglregistrasi', 'ps.nocm', 'pd.nocmfk', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien',
                 'kp.kelompokpasien', 'rek.namarekanan', 'pg.namalengkap as namadokter', 'pd.tglpulang', 'pd.statuspasien',
@@ -6676,7 +6685,7 @@ class RegistrasiController extends ApiController
                 'pa.nosep as nosep', 'br.norec as norec_br', 'pd.nostruklastfk','klstg.namakelas as kelasditanggung','kls.namakelas',
                 'ps.tgllahir','ru.objectdepartemenfk', 'pd.objectkelasfk','dept.id as deptid','pa.ppkrujukan','ddt.objectdiagnosafk',
                 'jpl.jenispelayanan','pa.objectdiagnosafk as iddiagnosabpjs','ps.nobpjs','jks.jeniskelamin',
-                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider')
+                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider',DB::raw('coalesce(it.qtytracer,0) as qtytracer'))
             ->whereNull('br.norec')
             ->where('pd.statusenabled', true)
             ->where('pd.kdprofile', (int)$kdProfile);

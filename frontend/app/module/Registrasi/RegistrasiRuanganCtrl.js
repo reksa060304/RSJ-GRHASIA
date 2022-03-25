@@ -697,6 +697,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                                 if (norecPD == '' && isRegisOnline == '') {
                                    saveAntrol($scope.Noregistrasi,$scope.resultAPD)
+                                   saveAntrol($scope.Noregistrasi,$scope.resultAPD)
                                 }
 
                             }
@@ -983,14 +984,35 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.isRouteLoading = true;
                     //##save identifikasi tracer
                     medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-                        + $scope.model.norec_pd
+                        + $scope.model.norec_pd + "&qtytracer=1"
                     ).then(function (data) {
                         $scope.isRouteLoading = false;
                         var datas = data.data;
-                        var client = new HttpClient();
-                        client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
-                            // do something with response
-                        });
+                        if(data.data.identifikasi.qtytracer - 1 > 0){
+							var confirm = $mdDialog.confirm()						
+							.title('Informasi')
+							.htmlContent("Pasien ini telah dicetak tracer sebanyak " + (data.data.identifikasi.qtytracer - 1) + " kali <br>apakah ingin cetak ulang?", "Peringatan")
+							.ariaLabel('Lucky day')
+							.cancel('Batal')
+							.ok('Ok');
+							$mdDialog.show(confirm).then(function () {
+								var client = new HttpClient();
+                                client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
+                                    // do something with response
+                                });
+							}, function () {
+                                medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
+                                    + $scope.model.norec_pd + "&qtytracer=-1"
+                                ).then(function (data) {})
+                            });
+						}else{
+                            var client = new HttpClient();
+                            client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
+                                // do something with response
+                            });
+                        }
+
+                        
                     })
                     //##end
 
@@ -1002,6 +1024,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     //     // do something with response
                     // });                   
                 }
+                if (norecPD == '' && isRegisOnline == '') {
+                    saveAntrol($scope.Noregistrasi,$scope.resultAPD)                  
+                 }
             }
 
             $scope.cetakKartu = function () {
@@ -1018,11 +1043,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // var fixUrlLaporan = cetakHelper.open("registrasi-pelayanan/kartuPasien?id=" + $scope.item.pasien.id);
                     // window.open(fixUrlLaporan, '', 'width=800,height=600')
                     //cetakan langsung service VB 6 by grh   
-                    var client = new HttpClient();
+                    // var client = new HttpClient();
                     // //debugger;             
-                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-kartupasien=1&norec=' + $scope.item.pasien.nocmfk + '&view=false', function (response) {
-                        // do something with response
-                    });
+                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-kartupasien=1&norec=' + $scope.item.pasien.nocmfk + '&view=false', function (response) {
+                    //     // do something with response
+                    // });
+                    var client = new HttpClient();
+					client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-gelangpasien=1&norec=' + $scope.item.pasien.nocmfk + '&view=false' + '&qty=1', function (response) {
+						// do something with response
+					});
 
                 }
             }

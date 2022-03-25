@@ -193,6 +193,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					"template": "<span class='style-left'>#: namapasien #</span>"
 				},
 				{
+					"field": "qtytracer",
+					"title": "Cetakan Tracer",
+					"width":"150px",
+					"template": "<span class='style-left'>#: qtytracer #</span>"
+				},
+				{
 					"field": "namaruangan",
 					"title": "Nama Ruangan",
 					"width":"150px",
@@ -875,14 +881,40 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					//##save identifikasi tracer
 					$scope.isRouteLoading = true;
 					medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-						+ $scope.dataPasienSelected.norec
+						+ $scope.dataPasienSelected.norec + "&qtytracer=1"
 					).then(function (data) {
 						var datas = data.data;
 						$scope.isRouteLoading = false;
-						var client = new HttpClient();
-						client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&noCm=' + $scope.dataPasienSelected.nocm +  '&view=false' , function (response) {
-							// do something with response
-						});
+						if(data.data.identifikasi.qtytracer - 1 > 0){
+							var confirm = $mdDialog.confirm()						
+							.title('Informasi')
+							.htmlContent("Pasien ini telah dicetak tracer sebanyak " + (data.data.identifikasi.qtytracer - 1) + " kali <br>apakah ingin cetak ulang?", "Peringatan")
+							.ariaLabel('Lucky day')
+							.cancel('Batal')
+							.ok('Ok');
+							$mdDialog.show(confirm).then(function () {
+								loadData()
+								var client = new HttpClient();
+								client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&noCm=' + $scope.dataPasienSelected.nocm +  '&view=false' , function (response) {
+									// do something with response
+								});
+								
+							}, function () {
+								medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
+									+ $scope.dataPasienSelected.norec + "&qtytracer=-1"
+								).then(function (data) {									
+								});
+							});
+						}else{
+							loadData()
+                            var client = new HttpClient();
+								client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&noCm=' + $scope.dataPasienSelected.nocm +  '&view=false' , function (response) {
+									// do something with response
+								});
+								
+                        }
+
+						
 					})
 					//##end
 
