@@ -16994,7 +16994,7 @@
 },
 {
   "name": "RekamMedis.AsesmenMedis.FormulirEdukasiPasienDanKeluargaTerintegrasi",
-  "url": "/FormulirEdukasiPasienDanKeluargaTerintegrasiCtrl",
+  "url": "/FormulirEdukasiPasienDanKeluargaTerintegrasi",
   "templateurl": "module/EMR/FormulirEdukasiPasienDanKeluargaTerintegrasi.html",
   "controller": "FormulirEdukasiPasienDanKeluargaTerintegrasiCtrl",
   "deps": [

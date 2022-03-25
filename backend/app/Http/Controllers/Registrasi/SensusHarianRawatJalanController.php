@@ -1096,4 +1096,120 @@ GROUP BY pd.namaruangan, pd.id"));
 
         return $this->respond($result);
     }
+
+    public function Grafikrajal(Request $request)
+    {
+        $data= DB::select(DB::raw(
+            "
+            WITH grafik AS (
+            SELECT DISTINCT
+            apd.tglregistrasi,
+            pd.tglregistrasi,
+            pd.norec AS norec_pd,
+            apd.norec AS norec_apd,
+            pd.nocmfk,
+            ps.nocm,
+            pd.statuspasien,
+            ru.namaruangan,
+            apd.tglkeluar :: DATE ,
+            pd.tglpulang
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+            WHERE
+            pd.kdprofile = 30
+            AND pd.statusenabled = TRUE
+            AND apd.kdprofile = 30
+            AND apd.statusenabled = TRUE
+            /*AND date_part('year', apd.tglkeluar:: DATE) = '2022'
+            and ru.objectdepartemenfk <> 16*/
+                ) SELECT distinct
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 1 )as januari,
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 2 )as februari,
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 3 )as maret,
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 4 )as april,
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 5 )as mei,
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 6 )as juni,
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 7 )as juli,
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 8 )as agustus,
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 9 )as september,
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 10 )as oktober,
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 11 )as november,
+                COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 12 )as desember
+                FROM
+                grafik pd
+            "
+        ));
+        $januari= 0;
+        $februari= 0;
+        $maret= 0;
+        $april= 0;
+        $mei= 0;
+        $juni= 0;
+        $juli= 0;
+        $agustus= 0;
+        $september= 0;
+        $oktober= 0;
+        $november= 0;
+        $desember= 0;
+        $detail = [];
+        foreach ($data as $dt) {
+            if ($dt->januari != 0) {
+                $januari = $dt->januari;
+            }
+            if ($dt->februari != 0) {
+                $februari = $dt->februari;
+            }
+            if ($dt->maret != 0) {
+                $maret = $dt->maret;
+            }
+            if ($dt->april != 0) {
+                $april = $dt->april;
+            }
+            if ($dt->mei != 0) {
+                $mei = $dt->mei;
+            }
+            if ($dt->juni != 0) {
+                $juni = $dt->juni;
+            }
+            if ($dt->juli != 0) {
+                $juli = $dt->juli;
+            }
+            if ($dt->agustus != 0) {
+                $agustus = $dt->agustus;
+            }
+            if ($dt->september != 0) {
+                $september = $dt->september;
+            }
+            if ($dt->oktober != 0) {
+                $oktober = $dt->oktober;
+            }
+            if ($dt->november != 0) {
+                $november = $dt->november;
+            }
+            if ($dt->desember != 0) {
+                $desember = $dt->desember;
+            }
+            
+        }
+        $detail[] = array(
+                'januari' => $januari,
+                'februari' => $februari,
+                'maret' => $maret,
+                'april' => $april,
+                'mei' => $mei,
+                'juni' => $juni,
+                'juli' => $juli,
+                'agustus' => $agustus,
+                'september' => $september,
+                'oktober' => $oktober,
+                'november' => $november,
+                'desember' => $desember
+            );
+            $result = array('data' => $detail);
+            return $this->respond($result);
+
+    }
 }

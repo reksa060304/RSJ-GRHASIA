@@ -1668,6 +1668,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('registrasi/get-ruanganbykodebpjs/{kode}','Registrasi\RegistrasiController@getRuanganByKodeInternal');
             Route::post('registrasi/update-rujukan-transdata','Registrasi\RegistrasiController@updateRujukanTransdata');
             Route::post('registrasi/save-adminsitrasi', 'Registrasi\RegistrasiController@saveAdministrasi');
+            Route::post('registrasi/save-adminsitrasi-mutasi', 'Registrasi\RegistrasiController@saveAdministrasiMutasi');
+            Route::get('registrasi/get-data-grafik', 'Registrasi\SensusHarianRawatJalanController@Grafikrajal');
+            Route::get('registrasi/laporan/get-data-lap-jumlah-pasien-cara-v2','Registrasi\RegistrasiController@getLaporanJumlahPasienDanCaraBayarv2');
             Route::get('registrasi/get-detail-registrasi-pasien', 'Registrasi\RegistrasiController@getDetailRegistrasiPasien');
             Route::get('registrasi/cek-nobpjs', 'Registrasi\RegistrasiController@cekNoBPJSpasienBaru');
             // Route::group(['prefix' => 'daftar-registrasi'], function () {
@@ -2506,6 +2509,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
           // Route::group(['prefix' => 'tatarekening'], function () {
           Route::post('tatarekening/save-akomodasi-tea', 'TataRekening\TagihanController@saveAkomodasiOtomatis');
+          Route::get('tatarekening/get-data-surveilans-pasien', 'TataRekening\TagihanController@getDataLaporanSurveilansPasien');
           Route::get('tatarekening/get-detail_apd', 'TataRekening\TagihanController@getDetailpasien');
           Route::get('tatarekening/get-combo-detail-regis', 'TataRekening\TagihanController@getDataComboDetailRegis');
           Route::get('tatarekening/get-detail-pasien', 'TataRekening\TagihanController@getAPD');
