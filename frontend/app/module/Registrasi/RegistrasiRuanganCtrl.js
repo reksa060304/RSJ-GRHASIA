@@ -1703,6 +1703,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     if(cacheHelper.get('cacheStatusPasien') &&  cacheHelper.get('cacheStatusPasien') =='BARU'){
                         status = '1'
                     }
+                    if($scope.item.pasien.nobpjs == "" || $scope.item.pasien.nobpjs == undefined || $scope.item.pasien.nobpjs == null){
+                        isBPJS = false
+                    }
                     //var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm
                     var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm+noregistrasi+noregistrasi
                     var data = {
@@ -1712,9 +1715,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "data": {
                            "kodebooking": noregistrasi,
                            "jenispasien": isBPJS ? 'JKN' : 'NON JKN',
-                           "nomorkartu": isBPJS ? ($scope.item.pasien.nobpjs ? $scope.item.pasien.nobpjs : ""):"",
-                           "nik": $scope.item.pasien.noidentitas ? $scope.item.pasien.noidentitas : "",
-                           "nohp": $scope.item.pasien.notelepon ? $scope.item.pasien.notelepon : "",
+                           "nomorkartu": isBPJS ? (!isNaN($scope.item.pasien.nobpjs) ? $scope.item.pasien.nobpjs : "0000650541464"):"",
+                           "nik": !isNaN($scope.item.pasien.noidentitas) ? $scope.item.pasien.noidentitas : "327327141285002",
+                           "nohp": !isNaN($scope.item.pasien.notelepon) ? $scope.item.pasien.notelepon : "082092000202",
                            "kodepoli": $scope.item.ruangan.kodebpjs ,
                            "namapoli": $scope.item.ruangan.namaruangan ,
                            "pasienbaru": status,
