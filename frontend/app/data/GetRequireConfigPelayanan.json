@@ -3057,6 +3057,13 @@
         {
             "nameDep": "FormulirTriaseIGD2Ctrl",
             "urlDep": "module/EMR/FormulirTriaseIGD2Ctrl"
+        },
+        {
+            "nameDep": "LaporanSurveilansptmCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanSurveilansptmCtrl"
+        }, {
+            "nameDep": "GrafikaCtrl",
+            "urlDep": "module/Registrasi/Laporan/GrafikaCtrl"
         }
     ]
 }

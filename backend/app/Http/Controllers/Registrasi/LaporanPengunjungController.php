@@ -7062,13 +7062,14 @@ class LaporanPengunjungController extends ApiController
         INNER JOIN pasiendaftar_t pd on pd.norec=apd.noregistrasifk
         INNER JOIN pasien_m ps on ps.id=pd.nocmfk
         inner join ruangan_m ru on ru.id = apd.objectruanganfk
-        inner join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
         INNER join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
         INNER JOIN alamat_m al on ps.id = al.nocmfk
-        inner join kotakabupaten_m kk on kk.id= al.objectkotakabupatenfk
-        WHERE apd.tglmasuk BETWEEN '$tglAwal' and '$tglAkhir'
+        left join kotakabupaten_m kk on kk.id= al.objectkotakabupatenfk
+        left join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
+        WHERE apd.tglregistrasi BETWEEN '$tglAwal' and '$tglAkhir'
         and apd.kdprofile = $kdProfile
         and apd.statusenabled = true
+        and ru.objectdepartemenfk <> 16
         $paramRuangan
         
         ;
@@ -7076,7 +7077,8 @@ class LaporanPengunjungController extends ApiController
         ));
 
         $ranap= DB::select(DB::raw("
-        SELECT DISTINCT
+        SELECT distinct
+        apd.norec,
         ps.nocm,
         ps.namapasien,
         al.alamatlengkap,
@@ -7098,21 +7100,25 @@ class LaporanPengunjungController extends ApiController
             ELSE
                 apd.tglkeluar::date - apd.tglmasuk::date 
         END as lamahari,
-        sk.statuskeluar,
+        CASE 
+        WHEN sk.id is null THEN
+            'Pindah'
+        ELSE
+            sk.statuskeluar
+        END as statuskeluar,
         kp.kondisipasien,
         peg.namalengkap,
         kep.kelompokpasien
         FROM
-        pelayananpasien_t pp
-        INNER JOIN antrianpasiendiperiksa_t apd on apd.norec=pp.noregistrasifk
+        antrianpasiendiperiksa_t apd
         inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
         INNER JOIN pasien_m ps on ps.id = pd.nocmfk
         INNER JOIN alamat_m al on ps.id=al.nocmfk
         INNER JOIN ruangan_m ru on ru.id = apd.objectruanganfk
-        INNER JOIN kelas_m ke on ke.id = apd.objectkelasfk
-        INNER JOIN statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        INNER JOIN kondisipasien_m kp on kp.id=pd.objectkondisipasienfk
+        left JOIN statuskeluar_m sk on sk.kdstatuskeluar = pd.objectstatuskeluarfk
         inner join kelompokpasien_m kep on kep.id= pd.objectkelompokpasienlastfk
+        left JOIN kondisipasien_m kp on kp.id=pd.objectkondisipasienfk
+        left JOIN kelas_m ke on ke.id = apd.objectkelasfk
         LEFT JOIN pegawai_m peg on peg.id=apd.objectpegawaifk 
         where ru.objectdepartemenfk = 16
         and apd.tglkeluar::date BETWEEN '$tglAwal' and '$tglAkhir'
