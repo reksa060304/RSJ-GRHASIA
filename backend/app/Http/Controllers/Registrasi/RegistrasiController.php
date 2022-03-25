@@ -12271,4 +12271,213 @@ GROUP BY y.KET
         $data['data']  =$dataz;
         return $this->respond($data);
     }
+
+    public function getLaporanJumlahPasienDanCaraBayarv2(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $tahun = $request['tahun'];
+        $ranap = $request['ranap'];
+        $rajal = $request['rajal'];
+        
+        switch ($ranap) {
+            case 1:
+                $paramRanap = 'AND ru.ID NOT IN ( 799, 800 ) /*jiwa*/ AND de.ID = 16';
+                break;
+            case 2:
+                $paramRanap = 'and ru.id = 799 /*napza 799*/ and de.id=16';
+                break;
+            case 3:
+                $paramRanap = 'and ru.id = 800 /*umum*/ and de.id=16';
+                break;
+
+            default:
+                $paramRanap = ' ';
+                break;
+        }
+        $data = DB::select(DB::raw("
+            WITH jumlahpasien AS (
+        SELECT DISTINCT
+            date_part( 'year', apd.tglkeluar :: DATE ) tahun,
+            ps.nocm,
+            ps.namapasien,
+            de.namadepartemen 
+        FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN pelayananpasien_t pp ON apd.norec = pp.noregistrasifk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+            INNER JOIN departemen_m de ON de.ID = ru.objectdepartemenfk 
+        WHERE
+            pd.kdprofile = $kdProfile
+        -- 	and date_part('year', apd.tglkeluar::date ) = '2022'
+        -- 		and apd.tglkeluar::date BETWEEN '2022-01-01' and '2022-01-31'
+            $paramRanap
+            
+        ORDER BY
+            nocm ASC 
+        ) SELECT
+            jp.tahun,
+            COUNT ( jp.nocm ) 
+        FROM
+            jumlahpasien jp 
+        GROUP BY
+            jp.tahun 
+        ORDER BY
+            jp.tahun ASC
+        
+        
+        
+        "));
+
+        $result = array(
+            'data' => $data,
+            'message' => 'fazrian@epic'
+        );
+        return $this->respond($result);
+    }
+    public function saveAdministrasiMutasi(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+            $antrian = AntrianPasienDiperiksa::where('norec',$request['norec_apd'])
+                ->update([
+                    'ispelayananpasien' => true
+                ]);
+                $pasiendaftar =PasienDaftar::where('norec',$request['norec'])->first();
+                $data = DB::select(DB::raw("select pp.tglpelayanan,pd.objectkelasfk,
+                    pd.objectruanganlastfk
+                    from pasiendaftar_t as pd
+                    INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec
+                    INNER JOIN pelayananpasien_t as pp on pp.noregistrasifk=apd.norec
+                    INNER JOIN produk_m as pr on pr.id=pp.produkfk
+                    INNER JOIN ruangan_m as ru_pd on ru_pd.id=pd.objectruanganlastfk
+                    where apd.norec='$request[norec_apd]' and pd.norec='$request[norec]'
+                    and pd.kdprofile=$kdProfile
+                    and pp.status='admin otomatis'
+                "));
+
+                if (count($data) == 0) {
+                    $status = "";
+                    if($pasiendaftar->statuspasien != null ){
+                        $status = $pasiendaftar->statuspasien;
+                    }
+                    $sirahMacan = DB::select(DB::raw("select hett.* from mapruangantoadministrasi_t as map
+                                INNER JOIN harganettoprodukbykelas_m as hett on hett.objectprodukfk=map.objectprodukfk
+                                and hett.objectjenispelayananfk =map.jenispelayananfk
+                                where map.objectruanganfk=:ruanganid and hett.objectkelasfk=:kelasid
+                                and map.jenispelayananfk=:jenispelayanan
+                                and map.kdprofile=:kdprofile
+                                and map.statuspasien=:statuspasien
+                                and hett.statusenabled=true
+                                and hett.objectpenjaminfk is null"),
+                        array(
+                            'ruanganid' => $pasiendaftar->objectruanganlastfk,
+                            'kelasid' => $pasiendaftar->objectkelasfk,
+                            'jenispelayanan' => $pasiendaftar->jenispelayanan,
+                            'kdprofile' =>$kdProfile,
+                            'statuspasien' =>$status,
+                            
+
+                        )
+                    );
+
+                    $buntutMacan = DB::select(DB::raw("select hett.* from mapruangantoadministrasi_t as map
+                                        INNER JOIN harganettoprodukbykelasd_m as hett on hett.objectprodukfk=map.objectprodukfk
+                                        and hett.objectjenispelayananfk =map.jenispelayananfk
+                                        where map.objectruanganfk=:ruanganid and hett.objectkelasfk=:kelasid 
+                                        and map.jenispelayananfk=:jenispelayanan
+                                        and map.kdprofile=:kdprofile
+                                        and map.statuspasien=:statuspasien
+                                        and hett.statusenabled=true
+                                        and hett.objectpenjaminfk is null"),
+                        array(
+                            'ruanganid' => $pasiendaftar->objectruanganlastfk,
+                            'kelasid' => $pasiendaftar->objectkelasfk,
+                            'jenispelayanan' => $pasiendaftar->jenispelayanan,
+                            'kdprofile' =>$kdProfile,
+                            'statuspasien' =>$status,
+                        )
+                    );
+                //          return $this->respond($buntutMacan);
+                    foreach ($sirahMacan as $k) {
+                        $PelPasien = new PelayananPasien();
+                        $PelPasien->norec = $PelPasien->generateNewId();
+                        $PelPasien->kdprofile = $kdProfile;
+                        $PelPasien->statusenabled = true;
+                        $PelPasien->noregistrasifk = $request['norec_apd'];//$dataDong[0]->norec_apd;
+                        $PelPasien->tglregistrasi = $pasiendaftar->tglregistrasi;
+                        $PelPasien->hargadiscount = 0;//0;
+                        $PelPasien->hargajual = $k->hargasatuan;
+                        $PelPasien->hargasatuan = $k->hargasatuan;
+                        $PelPasien->jumlah = 1;
+                        $PelPasien->kelasfk = $pasiendaftar->objectkelasfk;
+                        $PelPasien->kdkelompoktransaksi = 1;
+                        $PelPasien->piutangpenjamin = 0;
+                        $PelPasien->piutangrumahsakit = 0;
+                        $PelPasien->produkfk = $k->objectprodukfk;
+                        $PelPasien->stock = 1;
+                        $PelPasien->tglpelayanan = date('Y-m-d H:i:s');
+                        $PelPasien->harganetto = $k->harganetto1;
+                        $PelPasien->status = 'admin otomatis';
+                        $PelPasien->save();
+                        $PPnorec = $PelPasien->norec;
+                        foreach ($buntutMacan as $itemKomponen) {
+                            if($itemKomponen->objectprodukfk == $k->objectprodukfk) {
+                                $PelPasienDetail = new PelayananPasienDetail();
+                                $PelPasienDetail->norec = $PelPasienDetail->generateNewId();
+                                $PelPasienDetail->kdprofile = $kdProfile;
+                                $PelPasienDetail->statusenabled = true;
+                                $PelPasienDetail->noregistrasifk = $request['norec_apd'];
+                                $PelPasienDetail->aturanpakai = '-';
+                                $PelPasienDetail->hargadiscount = 0;
+                                $PelPasienDetail->hargajual = $itemKomponen->hargasatuan;
+                                $PelPasienDetail->hargasatuan = $itemKomponen->hargasatuan;
+                                $PelPasienDetail->jumlah = 1;
+                                $PelPasienDetail->keteranganlain = 'admin otomatis';
+                                $PelPasienDetail->keteranganpakai2 = '-';
+                                $PelPasienDetail->komponenhargafk = $itemKomponen->objectkomponenhargafk;
+                                $PelPasienDetail->pelayananpasien = $PPnorec;
+                                $PelPasienDetail->piutangpenjamin = 0;
+                                $PelPasienDetail->piutangrumahsakit = 0;
+                                $PelPasienDetail->produkfk = $itemKomponen->objectprodukfk;
+                                $PelPasienDetail->stock = 1;
+                                $PelPasienDetail->tglpelayanan = date('Y-m-d H:i:s');
+                                $PelPasienDetail->harganetto = $itemKomponen->harganetto1;
+                                $PelPasienDetail->save();
+                            }
+
+                        }
+                    }
+
+                }
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "Administrasi Otomatis";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . "";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+            //                "data" => $selisihjam,
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 201,
+            //                "data" => $data2,
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

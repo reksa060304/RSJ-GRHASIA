@@ -6970,7 +6970,7 @@ class LaporanPengunjungController extends ApiController
         }
         if (isset($request['nocm']) && $request['nocm'] != "" && $request['nocm'] != "undefined") {
             $data = $data->where('ps.nocm', 'ilike', '%'.$request['nocm'].'%');
-//				->orWhere('ps.namapasien', 'ilike', '%'.$filter['noRmNama'].'%')	;
+        //				->orWhere('ps.namapasien', 'ilike', '%'.$filter['noRmNama'].'%')	;
         }
         if (isset($request['nama']) && $request['nama'] != "" && $request['nama'] != "undefined") {
             $data = $data->Where('ps.namapasien', 'ilike', '%'.$request['nama'].'%')	;
@@ -6981,7 +6981,7 @@ class LaporanPengunjungController extends ApiController
         if (isset($request['kotaKab']) && $request['kotaKab'] != "" && $request['kotaKab'] != "undefined") {
             $data = $data->Where('kkb.id', '=', $request['kotaKab'])	;
         }
-//  
+        //  
         $data = $data->orderBy('ps.namapasien');
         $data = $data->distinct();
         $data =  $data ->get();
@@ -7092,9 +7092,15 @@ class LaporanPengunjungController extends ApiController
         ke.namakelas,
         apd.tglmasuk,
         apd.tglkeluar,
-        apd.tglkeluar::date - apd.tglmasuk::date as lamahari,
+        CASE 
+            WHEN apd.tglkeluar::date - apd.tglmasuk::date = 0 THEN
+                1
+            ELSE
+                apd.tglkeluar::date - apd.tglmasuk::date 
+        END as lamahari,
         sk.statuskeluar,
         kp.kondisipasien,
+        peg.namalengkap,
         kep.kelompokpasien
         FROM
         pelayananpasien_t pp
@@ -7107,8 +7113,9 @@ class LaporanPengunjungController extends ApiController
         INNER JOIN statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
         INNER JOIN kondisipasien_m kp on kp.id=pd.objectkondisipasienfk
         inner join kelompokpasien_m kep on kep.id= pd.objectkelompokpasienlastfk
+        LEFT JOIN pegawai_m peg on peg.id=apd.objectpegawaifk 
         where ru.objectdepartemenfk = 16
-        and apd.tglmasuk BETWEEN '$tglAwal' and '$tglAkhir'
+        and apd.tglkeluar::date BETWEEN '$tglAwal' and '$tglAkhir'
         and apd.kdprofile = $kdProfile
         $paramRuangan
         "));
