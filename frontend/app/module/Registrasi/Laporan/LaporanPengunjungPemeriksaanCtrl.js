@@ -397,6 +397,7 @@ define(['initialize'], function (initialize) {
                     sheet.frozenRows = 2;
                     sheet.mergedCells = ["A1:L1"];
                     sheet.name = "Orders";
+                    // sheet.rows[0].cells[0].background = "#ffffff";
                     var myHeaders = [{
                         value: "Laporan Rekap Data Kunjungan Rawat Inap",
                         fontSize: 20,
@@ -443,6 +444,11 @@ define(['initialize'], function (initialize) {
                         title : "KELAS",
                         width: "70px",
                     },
+                    // {
+                    //     field:"namalengkap",
+                    //     title : "DOKTER",
+                    //     width: "70px",
+                    // },
                     {
                         field: "tglmasuk",
                         title : "TGL MASUK",
@@ -459,7 +465,7 @@ define(['initialize'], function (initialize) {
                         width: "125px",
                     },
                     {
-                        "field": "statuskeluar",
+                        field: "statuskeluar",
                         title : "CARA KELUAR",
                         width: "125px",
                     },
