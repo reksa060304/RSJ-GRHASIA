@@ -2619,29 +2619,47 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 }
                 $scope.kontrol.poliKontrol = ruang
-                let json = {
-                    "url": "RencanaKontrol/JadwalPraktekDokter/JnsKontrol/" + $scope.kontrol.jenisPelayanan.id
-                        + "/KdPoli/" + ruang.kdinternal + "/TglRencanaKontrol/" + moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'),
-                    "method": "GET",
-                    "data": null
-                }
+                // let json = {
+                //     "url": "RencanaKontrol/JadwalPraktekDokter/JnsKontrol/" + $scope.kontrol.jenisPelayanan.id
+                //         + "/KdPoli/" + ruang.kdinternal + "/TglRencanaKontrol/" + moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'),
+                //     "method": "GET",
+                //     "data": null
+                // }
                 $scope.myVar = 1
-                medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
-                    if (e.data.metaData.code == 200) {
-                        for (let x = 0; x < e.data.response.list.length; x++) {
-                            const element = e.data.response.list[x];
-                            element.kode = element.kodeDokter
-                            element.nama = element.namaDokter
-                        }
-                        $scope.kontrol.kodeDokter = { kode: $scope.dataSelected2.kodeDokter, nama: $scope.dataSelected2.namaDokter }
+                // medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
+                //     if (e.data.metaData.code == 200) {
+                //         for (let x = 0; x < e.data.response.list.length; x++) {
+                //             const element = e.data.response.list[x];
+                //             element.kode = element.kodeDokter
+                //             element.nama = element.namaDokter
+                //         }
+                //         $scope.kontrol.kodeDokter = { kode: $scope.dataSelected2.kodeDokter, nama: $scope.dataSelected2.namaDokter }
                    
-                        $scope.listDPJP = e.data.response.list;
-                    }
-                    else {
-                        toastr.info('Dokter DPJP tidak ada', 'Info')
-                    }
+                //         $scope.listDPJP = e.data.response.list;
+                //     }
+                //     else {
+                //         toastr.info('Dokter DPJP tidak ada', 'Info')
+                //     }
 
-                })
+                // })
+
+				medifirstService.get("bridging/bpjs/antrean/v2/get-jadwal-dokter?kodepoli=" + ruang.kdinternal + "&tanggal=" + moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'), false).then(
+					function (data) {
+						if (data.data.metaData.code == 200) {
+							for (let x = 0; x < data.data.response.length; x++) {
+								const element = data.data.response[x]
+								element.kode = element.kodedokter
+								element.nama = element.namadokter
+							}
+							$scope.kontrol.kodeDokter = { kode: $scope.dataSelected2.kodeDokter, nama: $scope.dataSelected2.namaDokter }
+							$scope.listDPJP = data.data.response
+						}
+						else {
+							toastr.info('Dokter DPJP tidak ada', 'Info')
+						}
+
+					}
+				)
             
             }
 			let namappkRumahSakit =''
