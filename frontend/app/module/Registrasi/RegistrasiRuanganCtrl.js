@@ -1672,6 +1672,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     })
                 // })
                 medifirstService.get("bridging/bpjs/antrean/v2/get-jadwal-dokter?kodepoli=" + $scope.item.ruangan.kodebpjs + "&tanggal=" + moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'), false).then(function (z) {
+                    var kodeDokterBPJS = ''
                     if(z.data.metaData.code == 201) return
                     if(z.data.response == null)return
                     if(z.data.response.length == 0)return
