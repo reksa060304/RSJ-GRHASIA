@@ -63,7 +63,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
       $scope.isLoadOtomatisProduk=false;
       function loadOtomatisProduk(){
-        if($scope.item.pasien.namaruangan == "Poliklinik Jiwa" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+        if($scope.item.pasien.kdinternal  == "JIW" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
           $scope.isLoadOtomatisProduk = true;
           
           $scope.item.namaProduk={
@@ -81,6 +81,35 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
         }
         
+      }
+      function saveAntrol(param,waktu){
+        var data = {
+           "url": "antrean/updatewaktu",
+           "jenis": "antrean",
+           "method": "POST",
+           "data":                                                 
+           {
+              "kodebooking": param,
+              "taskid": waktu,//Waktu akhir farmasi/mulai buat obat
+              "waktu": new Date().getTime()  
+           }
+       }
+       
+       medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
+      }
+      function saveAntrol4(param,waktu){
+        var data = {
+           "url": "antrean/updatewaktu",
+           "jenis": "antrean",
+           "method": "POST",
+           "data":                                                 
+           {
+              "kodebooking": param,
+              "taskid": waktu,//Waktu akhir farmasi/mulai buat obat
+              "waktu": new Date().getTime() - 900000//kurangi 15 menit 
+           }
+       }
+       medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
       }
 
       function loadPertama() {
@@ -108,6 +137,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           .then(function (e) {
             $scope.isRouteLoading = false;
             $scope.item.pasien = e.data[0];
+
 
             //  ** cek status closing
             medifirstService.get("sysadmin/general/get-status-close/" + $scope.item.pasien.noregistrasi, false).then(function (rese) {
@@ -254,7 +284,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           cookie = cookie[0].split('=');
           // if (cookie[1] == 'dokter')
           $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]          
-          if($scope.item.pasien.namaruangan == "Poliklinik Jiwa" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+          if($scope.item.pasien.kdinternal  == "JIW" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+            let params = $scope.item.pasien.noregistrasi;    
+            if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
+                params = $scope.item.pasien.noreservasi;
+            }
+            saveAntrol4(params,4);
+            saveAntrol(params,5); 
             loadOtomatisProduk();
           }
           

@@ -5197,7 +5197,21 @@ class LogistikController extends ApiController{
                               'rkn.namarekanan', 'pg.namalengkap as namapenerima', 'ru.namaruangan', 'spd.hargasatuan', 'sbk.nosbk','sp.nosppb', 'asp.asalproduk',
                 \DB::raw("CAST(spd.qtyproduk AS FLOAT) AS qtyproduk,CAST(spd.qtyprodukretur AS FLOAT) AS qtyprodukretur,CAST (spd.hargasatuan AS FLOAT) AS hargasatuan,
                                 CAST (spd.qtyproduk*spd.hargasatuan AS FLOAT) AS subtotal,CAST (spd.hargadiscount AS FLOAT) AS hargadiscount,CAST (spd.hargappn AS FLOAT) AS hargappn,
-                                CAST (((spd.hargasatuan*spd.qtyproduk) - spd.hargadiscount) + spd.hargappn AS FLOAT) AS total,CAST(spd.tglkadaluarsa as varchar) as  tglkadaluarsa")
+                                CAST (((spd.hargasatuan*spd.qtyproduk) - spd.hargadiscount) + spd.hargappn AS FLOAT) AS total,CAST(spd.tglkadaluarsa as varchar) as  tglkadaluarsa,
+                                cast ( coalesce(spd.hargadiscount/NULLIF(spd.hargasatuan,0),0) * 100 as float) as persendiscount,
+                                cast 
+                                ( 
+                                    coalesce
+                                    (
+                                        ( spd.hargappn / nullif(spd.qtyproduk,0) ) /nullif(spd.hargasatuan - spd.hargadiscount,0)
+                                    ,0) * 100 as float
+                                ) as persenppn,
+                                CAST 
+                                ( 
+                                    spd.hargasatuan - spd.hargadiscount + coalesce(spd.hargappn/nullif(spd.qtyproduk,0),0) 
+                                    AS FLOAT 
+                                ) AS harganetto,sp.totalharusdibayar,
+                                row_number() over (partition by sp.norec order by sp.tglfaktur asc) as row_number")
             )
             ->where('sp.kdprofile', $idProfile);
 
@@ -5233,7 +5247,8 @@ class LogistikController extends ApiController{
         $data = $data->where('sp.statusenabled', true);
         $data = $data->where('sp.objectkelompoktransaksifk', 35);
 //        $data = $data->whereRaw($kdSirs1 . ' ' . $kdSirs2);
-        $data = $data->orderBy('pr.kdproduk','asc');
+        //$data = $data->orderBy('pr.kdproduk','asc');
+        //$data = $data->orderBy('sp.tglfaktur','asc');
         $data = $data->get();
         $result = array(
             'datalogin' => $dataLogin,

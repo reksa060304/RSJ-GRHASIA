@@ -56,6 +56,7 @@ class ResepElektronikController extends ApiController
         $statusIdResep = '';
         $checkSOPasienRanap='';
         $checkSOPasienRajal='';
+        
         if(isset($request['nocm']) && $request['nocm']!="" && $request['nocm']!="undefined"){
             $nocmOrder =  "and ps.nocm ilike '%".$request['nocm']."%'";
         }
@@ -125,7 +126,7 @@ class ResepElektronikController extends ApiController
                         kp.kelompokpasien,apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,so.tglambilorder,
                         sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,sr.norec AS norecresep,sr.noresep,so.nourutruangan AS noruangan,
                         so.isreseppulang as checkreseppulang,so.isambilobat,so.no_hp as nohp,so.alamat_kirim AS alamatlengkap,so.isordergrab,
-                        so.iskurir , pd.statusschedule as noreservasi
+                        so.iskurir , pd.statusschedule as noreservasi,case when sp.norec is not null then true else false end as isbayar
                  FROM strukorder_t AS so
                  INNER JOIN pasien_m AS ps ON ps.id = so.nocmfk
                  INNER JOIN alamat_m AS alm ON ps.id = alm.nocmfk
@@ -139,6 +140,15 @@ class ResepElektronikController extends ApiController
                  INNER JOIN kelas_m AS kl ON kl.id = pd.objectkelasfk
                  LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec AND apd.objectruanganfk = so.objectruanganfk
                  LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+                 left join LATERAL (
+                    select sp.norec 
+                    from 
+                    pelayananpasien_t pp
+                    inner join strukpelayanan_t sp on sp.norec=pp.strukfk
+                    inner join strukbuktipenerimaan_t sbm 
+                        on sp.norec=sbm.nostrukfk WHERE pp.strukresepfk=sr.norec limit 1
+                ) sp on true
+
                  WHERE so.kdprofile = $kdProfile AND so.tglorder >= '$tglAwal' AND so.tglorder <= '$tglAkhir'
                  AND so.keteranganorder = 'Order Farmasi' AND so.objectkelompoktransaksifk = 4 AND so.statusenabled = 't'
                  $nocmOrder
@@ -159,7 +169,7 @@ class ResepElektronikController extends ApiController
                          apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,sr.tglambilresep AS tglambilorder,
                          sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,sr.norec AS norecresep,sr.noresep,NULL AS noruangan,
                          sr.isreseppulang as checkreseppulang,null as isambilobat,ps.nohp,alm.alamatlengkap, null as isordergrab,
-                         null as iskurir, '' as noreservasi
+                         null as iskurir, '' as noreservasi,case when sp.norec is not null then true else false end as isbayar
                 FROM strukresep_t AS sr
                 INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = sr.pasienfk
                 INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
@@ -173,6 +183,14 @@ class ResepElektronikController extends ApiController
                 LEFT JOIN antrianapotik_t AS aa ON aa.noresep = sr.noresep
                 INNER JOIN kelas_m AS kl ON kl.id = pd.objectkelasfk
                 LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+                left join LATERAL (
+                    select sp.norec 
+                    from 
+                    pelayananpasien_t pp
+                    inner join strukpelayanan_t sp on sp.norec=pp.strukfk
+                    inner join strukbuktipenerimaan_t sbm 
+                        on sp.norec=sbm.nostrukfk WHERE pp.strukresepfk=sr.norec limit 1
+                ) sp on true 
                 WHERE sr.kdprofile = $kdProfile AND sr.tglresep  >= '$tglAwal' AND sr.tglresep <= '$tglAkhir'
                 AND sr.statusenabled = 't' AND sr.orderfk IS NULL
                 $nocmOrder
@@ -229,7 +247,8 @@ class ResepElektronikController extends ApiController
                 'alamatlengkap' => $item->alamatlengkap,
                 'isordergrab' => $item->isordergrab,
                 'iskurir' => $item->iskurir,
-                'noreservasi' => $item->noreservasi
+                'noreservasi' => $item->noreservasi,
+                'isbayar' => $item->isbayar,
             );
         }
 
@@ -814,7 +833,7 @@ class ResepElektronikController extends ApiController
             ->leftjoin('statuspulang_m AS sp','sp.id','=','pd.objectstatuspulangfk')
             ->select(DB::raw("ps.nocm,alm.alamatlengkap,kp.kelompokpasien,to_char(ps.tgllahir, 'YYYY-MM-DD') AS tgllahir,ru.namaruangan as ruangrawat,
                                     ru1.namaruangan as ruanginput,apd.objectpegawaifk,pg.namalengkap,pd.tglpulang,pd.tglmeninggal,
-                                    sk.statuskeluar,sp.statuspulang,ru1.objectdepartemenfk,kp.id as kpid"))
+                                    sk.statuskeluar,sp.statuspulang,ru1.objectdepartemenfk,kp.id as kpid, pd.statusschedule  noreservasi "))
             ->where('pd.kdprofile', $idProfile);
         if(isset($request['noregistrasi']) && $request['noregistrasi']!="" && $request['noregistrasi']!="undefined"){
             $data = $data->where('pd.noregistrasi',$request['noregistrasi']);

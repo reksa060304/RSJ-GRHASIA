@@ -341,7 +341,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.nonUmum = false;
                             $scope.item.jenisPasien = { id: $scope.listJenisPelayanan[1].id, jenispelayanan: $scope.listJenisPelayanan[1].jenispelayanan }
                         }
-                        else if (e.kelompokpasien.indexOf('BPJS') > -1) {
+                        else if (e.kelompokpasien.indexOf('BPJS') > -1 || e.kelompokpasien.toUpperCase().indexOf('JKN') > -1 || e.kelompokpasien.toUpperCase().indexOf('KEMENKES') > -1) {
                             $scope.item.rekanan = { id: $scope.listRekanan[0].id, namarekanan: $scope.listRekanan[0].namarekanan };
                             $scope.nonUmum = true;
                             $scope.item.jenisPasien = { id: $scope.listJenisPelayanan[1].id, jenispelayanan: $scope.listJenisPelayanan[1].jenispelayanan }
@@ -646,6 +646,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         + "~" + $scope.model.noRegistrasi
                         + "~" + $scope.resultAPD.norec;
 
+                    //variable untuk validasi pada tracerbon dan pengambilan norec_pd 
+                    $scope.tracernocmfk = e.data.dataPD.nocmfk;
+                    $scope.arr = {
+                        norec_pd: $scope.model.norec_pd,
+                        nocmfk: $scope.tracernocmfk
+                    };
+                    cacheHelper.set('norectracer', $scope.arr)
+                    // END variable untuk validasi pada tracerbon dan pengambilan norec_pd 
+
                     cacheHelper.set('CacheRegistrasiPasien', cachePasienDaftar);
                     if (e.data.status == 201) {
                         // update rujukan transdata
@@ -696,6 +705,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 // save Antrol
 
                                 if (norecPD == '' && isRegisOnline == '') {
+                                   saveAntrol($scope.Noregistrasi,$scope.resultAPD)
                                    saveAntrol($scope.Noregistrasi,$scope.resultAPD)
                                 }
 
@@ -750,6 +760,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.isBatal = false;
                 })
             }
+            
 
             function updateTriage() {
 
@@ -977,31 +988,64 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return;
                 }
             }
-
+            
             $scope.tracerBon = function () {
-                if ($scope.item != undefined) {
-                    $scope.isRouteLoading = true;
-                    //##save identifikasi tracer
-                    medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-                        + $scope.model.norec_pd
-                    ).then(function (data) {
-                        $scope.isRouteLoading = false;
-                        var datas = data.data;
-                        var client = new HttpClient();
-                        client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
-                            // do something with response
-                        });
-                    })
-                    //##end
+            
+            if (norecPD == '' && isRegisOnline == '') {
+                saveAntrol($scope.Noregistrasi, $scope.resultAPD)
+            }
+                //VALIDASI MENGGUNAKAN NOCMFK DAN NOREC_PD, UNTUK MENGECEK TIDAK ADA NILAI NOREC_PD YG SALAH SAAT DIMASUKAN KEDALAM BACKEND/QUERY NANTI
+                if (($scope.item.nocmfk == cacheHelper.get('norectracer').nocmfk) && ((cacheHelper.get('norectracer').norec_pd))) {
+                    if ($scope.item != undefined) {
+                        $scope.isRouteLoading = true;
+                        //##save identifikasi tracer
+                        medifirstService.get("registrasi/identifikasi-tracer?norec_pd=" +
+                            cacheHelper.get('norectracer').norec_pd + "&qtytracer=1"
+                        ).then(function (data) {
+                            $scope.isRouteLoading = false;
+                            var datas = data.data;
+                            if (data.data.identifikasi.qtytracer - 1 > 0) {
+                                var confirm = $mdDialog.confirm()
+                                    .title('Informasi')
+                                    .htmlContent("Pasien ini telah dicetak tracer sebanyak " + (data.data.identifikasi.qtytracer - 1) + " kali <br>apakah ingin cetak ulang?", "Peringatan")
+                                    .ariaLabel('Lucky day')
+                                    .cancel('Batal')
+                                    .ok('Ok');
+                                $mdDialog.show(confirm).then(function () {
+                                    var client = new HttpClient();
+                                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
+                                        // do something with response
+                                    });
+                                }, function () {
+                                    medifirstService.get("registrasi/identifikasi-tracer?norec_pd=" +
+                                        cacheHelper.get('norectracer').norec_pd + "&qtytracer=-1"
+                                    ).then(function (data) {})
+                                });
+                            } else {
+                                var client = new HttpClient();
+                                client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
+                                    // do something with response
+                                });
+                            }
 
-                    // var fixUrlLaporan = cetakHelper.open("reporting/lapTracer?noRegistrasi=" + $state.params.noRegistrasi);
-                    // window.open(fixUrlLaporan, '', 'width=800,height=600')
 
-                    //cetakan langsung service VB6 by grh                        
-                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
-                    //     // do something with response
-                    // });                   
+                        })
+                        //##end
+
+                        // var fixUrlLaporan = cetakHelper.open("reporting/lapTracer?noRegistrasi=" + $state.params.noRegistrasi);
+                        // window.open(fixUrlLaporan, '', 'width=800,height=600')
+
+                        //cetakan langsung service VB6 by grh                        
+                        // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
+                        //     // do something with response
+                        // });                   
+                    }
+                }else{
+                    window.messageContainer.error("Mohon untuk tidak membuka 2 tab pada saat registrasi pasien, silahkan cetak tracer di daftar registrasi pasien");
+                    return
                 }
+                
+                
             }
 
             $scope.cetakKartu = function () {
@@ -1018,11 +1062,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // var fixUrlLaporan = cetakHelper.open("registrasi-pelayanan/kartuPasien?id=" + $scope.item.pasien.id);
                     // window.open(fixUrlLaporan, '', 'width=800,height=600')
                     //cetakan langsung service VB 6 by grh   
-                    var client = new HttpClient();
+                    // var client = new HttpClient();
                     // //debugger;             
-                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-kartupasien=1&norec=' + $scope.item.pasien.nocmfk + '&view=false', function (response) {
-                        // do something with response
-                    });
+                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-kartupasien=1&norec=' + $scope.item.pasien.nocmfk + '&view=false', function (response) {
+                    //     // do something with response
+                    // });
+                    var client = new HttpClient();
+					client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-gelangpasien=1&norec=' + $scope.item.pasien.nocmfk + '&view=false' + '&qty=1', function (response) {
+						// do something with response
+					});
 
                 }
             }
@@ -1558,41 +1606,156 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             function saveAntrol(noregistrasi,apd){
                 var isBPJS = false
-                if($scope.item.kelompokPasien.kelompokpasien.indexOf('BPJS') > -1)
+                if($scope.item.kelompokPasien.kelompokpasien.indexOf('BPJS') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('JKN') > -1)
                      isBPJS = true
 
                 if($scope.item.ruangan.kodebpjs == undefined || $scope.item.ruangan.kodebpjs == null){
                     return
-                } 
-                var json  = {
-                    "url": "jadwaldokter/kodepoli/"+ $scope.item.ruangan.kodebpjs+"/tanggal/"+ moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
-                    "jenis": "antrean",
-                    "method": "GET",
-                    "data": null
                 }
-                medifirstService.postNonMessage('bridging/bpjs/tools', json).then(function (z) {
+                
+                // var json  = {
+                //     "url": "jadwaldokter/kodepoli/"+ $scope.item.ruangan.kodebpjs+"/tanggal/"+ moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
+                //     "jenis": "antrean",
+                //     "method": "GET",
+                //     "data": null
+                // }
+                // medifirstService.postNonMessage('bridging/bpjs/tools', json).then(function (z) {
+                //     if(z.data.metaData.code == 201) return
+                //     if(z.data.response == null)return
+                //     if(z.data.response.length == 0)return
+                //     if(!$scope.item.dokter && !$scope.item.dokter.kodebpjs)return    
+                //     var kodeDokterBPJS = ''
+                //     for (var i = z.data.response.length - 1; i >= 0; i--) {
+                //         const element = z.data.response[i]
+                //         if(element.kodedokter == $scope.item.dokter.kodebpjs){
+                //             kodeDokterBPJS = {
+                //                 "jadwal" : element.jadwal,
+                //                 "namadokter" : element.namadokter,
+                //                 "kodedokter" : element.kodedokter,
+                //             }
+                //             break;
+                //         }
+                //     }
+                //     if(kodeDokterBPJS == '')return
+                //     var status = '0'
+                //     if(cacheHelper.get('cacheStatusPasien') &&  cacheHelper.get('cacheStatusPasien') =='BARU'){
+                //         status = '1'
+                //     }
+                //     var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm
+                //     var data = {
+                //         "url": "antrean/add",
+                //         "jenis": "antrean",
+                //         "method": "POST",
+                //         "data": {
+                //            "kodebooking": noregistrasi,
+                //            "jenispasien": isBPJS ? 'JKN' : 'NON JKN',
+                //            "nomorkartu": isBPJS ? ($scope.item.pasien.nobpjs ? $scope.item.pasien.nobpjs : ""):"",
+                //            "nik": $scope.item.pasien.noidentitas ? $scope.item.pasien.noidentitas : "",
+                //            "nohp": $scope.item.pasien.notelepon ? $scope.item.pasien.notelepon : "",
+                //            "kodepoli": $scope.item.ruangan.kodebpjs ,
+                //            "namapoli": $scope.item.ruangan.namaruangan ,
+                //            "pasienbaru": status,
+                //            "norm": $scope.item.pasien.nocm,
+                //            "tanggalperiksa": moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
+                //            "kodedokter": kodeDokterBPJS.kodedokter,
+                //            "namadokter": kodeDokterBPJS.namadokter,
+                //            "jampraktek":  kodeDokterBPJS.jadwal,
+                //            "jeniskunjungan": 1,
+                //            "nomorreferensi": isBPJS?noref.substring(0, 19):"",
+                //            "nomorantrean": apd.noantrian,
+                //            "angkaantrean": apd.noantrian,
+                //            "estimasidilayani": new Date().getTime(),
+                //            "sisakuotajkn": 0,
+                //            "kuotajkn": 0,
+                //            "sisakuotanonjkn": 0,
+                //            "kuotanonjkn": 0,
+                //            "keterangan": ""
+                //         }
+                //     }
+                //     medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                //         if(e.data.metaData.code == 201)return
+                //          var data = {
+                //             "url": "antrean/updatewaktu",
+                //             "jenis": "antrean",
+                //             "method": "POST",
+                //             "data":                                                 
+                //             {
+                //                "kodebooking": noregistrasi,
+                //                "taskid": 1,//waktu admisi
+                //                "waktu": new Date().getTime()  - 300000//kurangi 8 menit
+                //             }
+                //         }
+                //         medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                //             var data = {
+                //                 "url": "antrean/updatewaktu",
+                //                 "jenis": "antrean",
+                //                 "method": "POST",
+                //                 "data":                                                 
+                //                 {
+                //                    "kodebooking": noregistrasi,
+                //                    "taskid": 2,//akhir waktu tunggu admisi/mulai waktu layan admisi
+                //                    "waktu": new Date().getTime()  - 180000 //kurangi 5 menit
+                //                 }
+                //             }
+                //             medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                //                  var data = {
+                //                         "url": "antrean/updatewaktu",
+                //                         "jenis": "antrean",
+                //                         "method": "POST",
+                //                         "data":                                                 
+                //                         {
+                //                            "kodebooking": noregistrasi,
+                //                            "taskid": 3,//(akhir waktu layan admisi/mulai waktu tunggu poli), 
+                //                            "waktu": new Date().getTime()
+                //                         }
+                //                     }
+                //                     medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                                        
+                //                  })
+                //             })
+                //         })
+                   
+
+                       
+                //     })
+                // })
+                medifirstService.get("bridging/bpjs/antrean/v2/get-jadwal-dokter?kodepoli=" + $scope.item.ruangan.kodebpjs + "&tanggal=" + moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'), false).then(function (z) {
+                    var kodeDokterBPJS = ''
                     if(z.data.metaData.code == 201) return
                     if(z.data.response == null)return
                     if(z.data.response.length == 0)return
-                    if(!$scope.item.dokter && !$scope.item.dokter.kodebpjs)return    
-                    var kodeDokterBPJS = ''
-                    for (var i = z.data.response.length - 1; i >= 0; i--) {
-                        const element = z.data.response[i]
-                        if(element.kodedokter == $scope.item.dokter.kodebpjs){
-                            kodeDokterBPJS = {
-                                "jadwal" : element.jadwal,
-                                "namadokter" : element.namadokter,
-                                "kodedokter" : element.kodedokter,
-                            }
-                            break;
+                    if($scope.item.ruangan.kodebpjs != "JIW"){
+                        if(!$scope.item.dokter && !$scope.item.dokter.kodebpjs)return
+                    }else{
+                        const element = z.data.response[0]
+                        kodeDokterBPJS = {
+                            "jadwal" : element.jadwal,
+                            "namadokter" : element.namadokter,
+                            "kodedokter" : element.kodedokter,
                         }
                     }
+                    // var kodeDokterBPJS = ''
+                    // for (var i = z.data.response.length - 1; i >= 0; i--) {
+                    //     const element = z.data.response[i]
+                    //     if(element.kodedokter == $scope.item.dokter.kodebpjs){
+                    //         kodeDokterBPJS = {
+                    //             "jadwal" : element.jadwal,
+                    //             "namadokter" : element.namadokter,
+                    //             "kodedokter" : element.kodedokter,
+                    //         }
+                    //         break;
+                    //     }
+                    // }
                     if(kodeDokterBPJS == '')return
                     var status = '0'
                     if(cacheHelper.get('cacheStatusPasien') &&  cacheHelper.get('cacheStatusPasien') =='BARU'){
                         status = '1'
                     }
-                    var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm
+                    if($scope.item.pasien.nobpjs == "" || $scope.item.pasien.nobpjs == undefined || $scope.item.pasien.nobpjs == null){
+                        isBPJS = false
+                    }
+                    //var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm
+                    var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm+noregistrasi+noregistrasi
                     var data = {
                         "url": "antrean/add",
                         "jenis": "antrean",
@@ -1600,9 +1763,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "data": {
                            "kodebooking": noregistrasi,
                            "jenispasien": isBPJS ? 'JKN' : 'NON JKN',
-                           "nomorkartu": isBPJS ? ($scope.item.pasien.nobpjs ? $scope.item.pasien.nobpjs : ""):"",
-                           "nik": $scope.item.pasien.noidentitas ? $scope.item.pasien.noidentitas : "",
-                           "nohp": $scope.item.pasien.notelepon ? $scope.item.pasien.notelepon : "",
+                           "nomorkartu": isBPJS ? (!isNaN($scope.item.pasien.nobpjs) ? $scope.item.pasien.nobpjs : "0000650541464"):"",
+                           "nik": !isNaN($scope.item.pasien.noidentitas) ? $scope.item.pasien.noidentitas : "327327141285002",
+                           "nohp": !isNaN($scope.item.pasien.notelepon) ? $scope.item.pasien.notelepon : "082092000202",
                            "kodepoli": $scope.item.ruangan.kodebpjs ,
                            "namapoli": $scope.item.ruangan.namaruangan ,
                            "pasienbaru": status,
@@ -1669,7 +1832,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                        
                     })
-                })
+                }) 
             }
             $scope.listPenjaminLaka = [
                 { "id": 12, "name": "Jasa Raharja PT", "value": 1 },

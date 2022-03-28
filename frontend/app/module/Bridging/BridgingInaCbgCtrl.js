@@ -66,7 +66,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					var kelompok =[]
 					for (let i = 0; i < $scope.listKelompokPasien.length; i++) {
 						const element = $scope.listKelompokPasien[i];
-						if(element.kelompokpasien.indexOf('BPJS')> -1 || element.kelompokpasien.toUpperCase().indexOf('KEMENKES')> -1)
+						if(element.kelompokpasien.indexOf('BPJS')> -1 || element.kelompokpasien.toUpperCase().indexOf('KEMENKES') > -1 || element.kelompokpasien.toUpperCase().indexOf('JKN') > -1 )
 						kelompok.push(element)
 					}
 					$scope.item.kelompokpasien = kelompok

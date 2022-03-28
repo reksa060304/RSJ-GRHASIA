@@ -935,7 +935,7 @@ class PelayananResepController extends ApiController
             ->JOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->JOIN('satuanstandar_m as ss2','ss2.id','=','pp.satuanviewfk')
             ->LeftJOIN('satuanresep_m as sn','sn.id','=','pp.satuanresepfk')
-            ->select('sr.noresep','pp.hargasatuan','pp.stock','apd.objectruanganfk','ru.namaruangan',
+            ->select('sr.noresep','pp.hargasatuan','pp.stock','pp.stock as jmlstok','apd.objectruanganfk','ru.namaruangan',
                 'pp.rke','pp.jeniskemasanfk','jk.id as jkid','jk.jeniskemasan','pp.aturanpakai','pp.routefk','rt.name as namaroute',
                 'pp.produkfk','pr.namaproduk','pp.nilaikonversi',
                 'pr.objectsatuanstandarfk','ss.satuanstandar','pp.satuanviewfk','ss2.satuanstandar as ssview',
@@ -5308,12 +5308,14 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $dokid
                     $ruid
                     $deptid
-                    group by pp.tglpelayanan::date, ppd.hargajual, ppd.hargadiscount, ppd.jasa, ppd.komponenhargafk
+                    group by 
+                    pp.tglpelayanan::date, ppd.hargajual, ppd.hargadiscount, ppd.jasa, ppd.komponenhargafk
+
                     order by pp.tglpelayanan::date) as x group by x.tanggal
             "));
     
         $datasarana = DB::select(DB::raw("with lt as (
-            select DISTINCT lt.noreff,lt.jenislog,lt.objectloginuserfk
+            select distinct  lt.noreff,lt.jenislog,lt.objectloginuserfk
             from logginguser_t lt
             where lt.jenislog = 'Input Tindakan'
             ), cte as (
@@ -5324,9 +5326,9 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             where lt.jenislog = 'Input Tindakan'
             )
             select 
-                    pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(ppd.jumlah) as totaljumlah,
+                    pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(pp.jumlah) as totaljumlah,
                     (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
-                    0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
+                    0 ELSE ppd.hargadiscount END) * sum(pp.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
                         
                     from
                         pasien_m ps 
@@ -5347,10 +5349,12 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $dokid
                     $ruid
                     $deptid
-                    group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.jenislog, cte.namapegawaiinput"));
+                    --group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.jenislog, cte.namapegawaiinput
+                    group by pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual,ppd.hargadiscount,ppd.jasa
+                    "));
 
         $datapelayanan = DB::select(DB::raw("with lt as (
-            select DISTINCT lt.noreff,lt.jenislog,lt.objectloginuserfk
+            select distinct lt.noreff,lt.jenislog,lt.objectloginuserfk
             from logginguser_t lt
             where lt.jenislog = 'Input Tindakan'
             ), cte as (
@@ -5361,9 +5365,9 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             where lt.jenislog = 'Input Tindakan'
             )
             select 
-                    pp.tglpelayanan::date, pr.namaproduk, cte.namapegawaiinput, cte.jenislog, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(ppd.jumlah) as totaljumlah,
+                    pp.tglpelayanan::date, pr.namaproduk, cte.namapegawaiinput, cte.jenislog, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(pp.jumlah) as totaljumlah,
                     (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
-                    0 ELSE ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
+                    0 ELSE ppd.hargadiscount END) * sum(pp.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
                         
                     from
                         pasien_m ps 
@@ -5384,7 +5388,11 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $dokid
                     $ruid
                     $deptid
-                    group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.namapegawaiinput, cte.jenislog"));
+                    --group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.namapegawaiinput, cte.jenislog
+                    group by pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual,ppd.hargadiscount,ppd.jasa
+                    
+                    
+                    "));
 
         $jumlahhargapelayanan = 0;
         $hargapelayanan = 0;

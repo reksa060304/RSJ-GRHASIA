@@ -1314,7 +1314,7 @@ class TindakanController extends ApiController
                 'rk.namarekanan','pd.objectruanganlastfk','jpl.jenispelayanan','apd.objectasalrujukanfk',
                 'ru.kdinternal','jpl.kodeinternal as objectjenispelayananfk','pd.objectpegawaifk','pd.statuspasien',
                 'ps.nobpjs','pd.statuspasien',
-                DB::raw('case when ru.objectdepartemenfk in (16,35,17) then \'true\' else \'false\' end as israwatinap')
+                DB::raw('case when ru.objectdepartemenfk in (16,35,17) then \'true\' else \'false\' end as israwatinap, pd.statusschedule as noreservasi')
             )
             ->where('pd.kdprofile', $idProfile)
             ->where('pd.norec','=',$norec_pd)

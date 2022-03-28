@@ -146,6 +146,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 },
                 {
+                    "field": "isbayar",
+                    "title": "Sudah dibayar",
+                    "width": "80px",
+
+                },
+                {
                     "field": "isambilobat",
                     "title": "Resep Di Ambil Di RS",
                     "width": "80px",
@@ -373,7 +379,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             e.data[i].isambilobat = "✔"                            
                         }else{
                             e.data[i].isambilobat = "✘"
-                        }
+                        }                        
                         if (e.data[i].isordergrab == true) {
                             e.data[i].statusgrab = "Sudah Order"                            
                         }else{
@@ -383,6 +389,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             e.data[i].iskurir = "✔"                            
                         }else{
                             e.data[i].iskurir = "✘"
+                        }
+                        if (e.data[i].isbayar == true) {
+                            e.data[i].isbayar = "✔"                            
+                        }else{
+                            e.data[i].isbayar = "✘"
                         }
 
                     }
@@ -524,10 +535,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         strukresep: strukresep
                     }
                     medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                        let params = $scope.item.noregistrasi    
+                        if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                            params = $scope.item.noreservasi
+                        }
+                        saveAntrol(params,5)
                         medifirstService.postLogging('Rubah Status Produksi Order Resep Elektronik', 'No Order Struk Order',
                             $scope.item.noorder, 'Rubah Status Produksi Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
                                 $scope.refresh();
                             })
+                            
                     });
                 } else {
                     toastr.error("Status Data Belum Diverifikasi !!")

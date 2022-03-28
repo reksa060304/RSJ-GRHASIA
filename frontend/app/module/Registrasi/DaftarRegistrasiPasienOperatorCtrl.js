@@ -193,6 +193,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					"template": "<span class='style-left'>#: namapasien #</span>"
 				},
 				{
+					"field": "qtytracer",
+					"title": "Cetakan Tracer",
+					"width":"150px",
+					"template": "<span class='style-left'>#: qtytracer #</span>"
+				},
+				{
 					"field": "namaruangan",
 					"title": "Nama Ruangan",
 					"width":"150px",
@@ -875,14 +881,40 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					//##save identifikasi tracer
 					$scope.isRouteLoading = true;
 					medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-						+ $scope.dataPasienSelected.norec
+						+ $scope.dataPasienSelected.norec + "&qtytracer=1"
 					).then(function (data) {
 						var datas = data.data;
 						$scope.isRouteLoading = false;
-						var client = new HttpClient();
-						client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&noCm=' + $scope.dataPasienSelected.nocm +  '&view=false' , function (response) {
-							// do something with response
-						});
+						if(data.data.identifikasi.qtytracer - 1 > 0){
+							var confirm = $mdDialog.confirm()						
+							.title('Informasi')
+							.htmlContent("Pasien ini telah dicetak tracer sebanyak " + (data.data.identifikasi.qtytracer - 1) + " kali <br>apakah ingin cetak ulang?", "Peringatan")
+							.ariaLabel('Lucky day')
+							.cancel('Batal')
+							.ok('Ok');
+							$mdDialog.show(confirm).then(function () {
+								loadData()
+								var client = new HttpClient();
+								client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&noCm=' + $scope.dataPasienSelected.nocm +  '&view=false' , function (response) {
+									// do something with response
+								});
+								
+							}, function () {
+								medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
+									+ $scope.dataPasienSelected.norec + "&qtytracer=-1"
+								).then(function (data) {									
+								});
+							});
+						}else{
+							loadData()
+                            var client = new HttpClient();
+								client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.dataPasienSelected.noregistrasi + '&noCm=' + $scope.dataPasienSelected.nocm +  '&view=false' , function (response) {
+									// do something with response
+								});
+								
+                        }
+
+						
 					})
 					//##end
 
@@ -2328,26 +2360,48 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if (newValue.kdinternal == null) {
                         newValue.kdinternal = ""
                     }
-                    let json = {
-                        "url": "RencanaKontrol/JadwalPraktekDokter/JnsKontrol/" + $scope.kontrol.jenisPelayanan.id
-                            + "/KdPoli/" + newValue.kdinternal + "/TglRencanaKontrol/" + moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'),
-                        "method": "GET",
-                        "data": null
-                    }
-                    medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
-                        if (e.data.metaData.code == 200) {
-                            for (let x = 0; x < e.data.response.list.length; x++) {
-                                const element = e.data.response.list[x];
-                                element.kode = element.kodeDokter
-                                element.nama = element.namaDokter
-                            }
-                            $scope.listDPJP = e.data.response.list;
-                        }
-                        else {
-                            toastr.info('Dokter DPJP tidak ada', 'Info')
-                        }
+					/* grhasia ga bisa pake fitur dibawah jadi diganti pakai ws bpjs antrian */
+                    // let json = {
+                    //     "url": "RencanaKontrol/JadwalPraktekDokter/JnsKontrol/" + $scope.kontrol.jenisPelayanan.id
+                    //         + "/KdPoli/" + newValue.kdinternal + "/TglRencanaKontrol/" + moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'),
+                    //     "method": "GET",
+                    //     "data": null
+                    // }
+					
+                    // medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
+                    //     if (e.data.metaData.code == 200) {
+                    //         for (let x = 0; x < e.data.response.list.length; x++) {
+                    //             const element = e.data.response.list[x];
+                    //             element.kode = element.kodeDokter
+                    //             element.nama = element.namaDokter
+                    //         }
+                    //         $scope.listDPJP = e.data.response.list;
+                    //     }
+                    //     else {
+                    //         toastr.info('Dokter DPJP tidak ada', 'Info')
+                    //     }
 
-                    })
+                    // })
+					medifirstService.get("bridging/bpjs/antrean/v2/get-jadwal-dokter?kodepoli=" + newValue.kdinternal + "&tanggal=" + moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'), false).then(
+						function (data) {
+							if (data.data.metaData.code == 200) {
+								for (let x = 0; x < data.data.response.length; x++) {
+									const element = data.data.response[x]
+									element.kode = element.kodedokter
+									element.nama = element.namadokter
+								}
+								$scope.listDPJP = data.data.response
+							}
+							else {
+								toastr.info('Dokter DPJP tidak ada', 'Info')
+							}
+
+						}
+					)
+					// .then(function () {
+                    //     toastr.info('Dokter DPJP tidak ada', 'Info')
+                    //     //$scope.isRouteLoading = false;
+                    // });
 
                 }
             })
@@ -2601,29 +2655,47 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 }
                 $scope.kontrol.poliKontrol = ruang
-                let json = {
-                    "url": "RencanaKontrol/JadwalPraktekDokter/JnsKontrol/" + $scope.kontrol.jenisPelayanan.id
-                        + "/KdPoli/" + ruang.kdinternal + "/TglRencanaKontrol/" + moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'),
-                    "method": "GET",
-                    "data": null
-                }
+                // let json = {
+                //     "url": "RencanaKontrol/JadwalPraktekDokter/JnsKontrol/" + $scope.kontrol.jenisPelayanan.id
+                //         + "/KdPoli/" + ruang.kdinternal + "/TglRencanaKontrol/" + moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'),
+                //     "method": "GET",
+                //     "data": null
+                // }
                 $scope.myVar = 1
-                medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
-                    if (e.data.metaData.code == 200) {
-                        for (let x = 0; x < e.data.response.list.length; x++) {
-                            const element = e.data.response.list[x];
-                            element.kode = element.kodeDokter
-                            element.nama = element.namaDokter
-                        }
-                        $scope.kontrol.kodeDokter = { kode: $scope.dataSelected2.kodeDokter, nama: $scope.dataSelected2.namaDokter }
+                // medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
+                //     if (e.data.metaData.code == 200) {
+                //         for (let x = 0; x < e.data.response.list.length; x++) {
+                //             const element = e.data.response.list[x];
+                //             element.kode = element.kodeDokter
+                //             element.nama = element.namaDokter
+                //         }
+                //         $scope.kontrol.kodeDokter = { kode: $scope.dataSelected2.kodeDokter, nama: $scope.dataSelected2.namaDokter }
                    
-                        $scope.listDPJP = e.data.response.list;
-                    }
-                    else {
-                        toastr.info('Dokter DPJP tidak ada', 'Info')
-                    }
+                //         $scope.listDPJP = e.data.response.list;
+                //     }
+                //     else {
+                //         toastr.info('Dokter DPJP tidak ada', 'Info')
+                //     }
 
-                })
+                // })
+
+				medifirstService.get("bridging/bpjs/antrean/v2/get-jadwal-dokter?kodepoli=" + ruang.kdinternal + "&tanggal=" + moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'), false).then(
+					function (data) {
+						if (data.data.metaData.code == 200) {
+							for (let x = 0; x < data.data.response.length; x++) {
+								const element = data.data.response[x]
+								element.kode = element.kodedokter
+								element.nama = element.namadokter
+							}
+							$scope.kontrol.kodeDokter = { kode: $scope.dataSelected2.kodeDokter, nama: $scope.dataSelected2.namaDokter }
+							$scope.listDPJP = data.data.response
+						}
+						else {
+							toastr.info('Dokter DPJP tidak ada', 'Info')
+						}
+
+					}
+				)
             
             }
 			let namappkRumahSakit =''
