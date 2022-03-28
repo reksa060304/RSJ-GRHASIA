@@ -9380,7 +9380,20 @@ $result = array(
         $idProfile = (int) $kdProfile;
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
+        $idJenisDiagnosa = $request['idJenisDiagnosa'];
+        $idDept = $request['idDept'];
 
+        $tempjenisdiagnosa = '';
+        if($idJenisDiagnosa != '' || isset($idJenisDiagnosa)){
+            $tempjenisdiagnosa = 'and jd.id = '.$idJenisDiagnosa;
+        }
+        $tempDept = '';
+        if($idDept != '' && $idDept == 1){
+            $tempDept = ' and ru.objectdepartemenfk = 16';
+        } 
+        if($idDept != '' && $idDept == 2){
+            $tempDept = ' and ru.objectdepartemenfk <> 16';
+        }
         $data = DB::select(DB::raw("
             WITH diagnosa AS (
             SELECT
@@ -9427,7 +9440,7 @@ $result = array(
             AND pd2.nocmfk = pd.nocmfk
             AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk ) kasus
             ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa ILIKE 'I10' and
-            pd.kdprofile=$idProfile ) 
+            pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) 
             SELECT 1 as no, 'Hipertensi' as penyakit, 'I10' AS kode,
             count(di.tglmeninggal) as meninggal, 
             COUNT ( di.umur ) FILTER ( WHERE
@@ -9516,7 +9529,7 @@ $result = array(
             AND pd2.nocmfk = pd.nocmfk
             AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk ) kasus
             ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa ='I25.1' or di.kddiagnosa ILIKE 'I24%' and
-            pd.kdprofile=$idProfile ) 
+            pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) 
             SELECT 'I24.0' AS kode, 
             COUNT ( di.umur ) FILTER ( WHERE
             di.jkid=1 AND di.umur < 1 ) lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT (
@@ -9654,7 +9667,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ILIKE 'E10%' and pd.kdprofile=$idProfile ) SELECT 'E10' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur
+                    ILIKE 'E10%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'E10' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur
                     < 1 ) lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER (
                     WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
                     di.umur BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 )
@@ -9757,7 +9770,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ILIKE 'E11%' and pd.kdprofile=$idProfile ) SELECT 'E11' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ILIKE 'E11%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'E11' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -9863,7 +9876,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ILIKE 'O24%' and pd.kdprofile=$idProfile ) SELECT 'O24' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ILIKE 'O24%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'O24' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -9968,7 +9981,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ILIKE 'E66%' and pd.kdprofile=$idProfile ) SELECT 'E66' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ILIKE 'E66%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'E66' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -10080,7 +10093,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ILIKE 'E05%' and pd.kdprofile=$idProfile ) SELECT 'E05' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ILIKE 'E05%' and pd.kdprofile=$idProfile  $tempjenisdiagnosa $tempDept) SELECT 'E05' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -10186,7 +10199,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ILIKE 'E03%' and pd.kdprofile=$idProfile ) SELECT 'E03' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ILIKE 'E03%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'E03' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -10301,7 +10314,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    between 'I60' and 'I62%' and pd.kdprofile=$idProfile ) SELECT 'I60-I62' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    between 'I60' and 'I62%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'I60-I62' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -10407,7 +10420,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ilike 'I63%' and pd.kdprofile=$idProfile ) SELECT 'I63' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ilike 'I63%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'I63' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -10509,7 +10522,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ilike 'J45%' and pd.kdprofile=$idProfile ) SELECT 'J45' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ilike 'J45%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'J45' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -10613,7 +10626,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ilike 'J44%' and pd.kdprofile=$idProfile ) SELECT 'J44' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ilike 'J44%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'J44' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -10715,7 +10728,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ilike 'M81%' and pd.kdprofile=$idProfile ) SELECT 'M81' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ilike 'M81%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'M81' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -10819,7 +10832,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa between 
-                    'N00' and 'N19%' and pd.kdprofile=$idProfile ) SELECT 'N00-N19' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    'N00' and 'N19%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'N00-N19' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -10927,7 +10940,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ilike 'C50%' and pd.kdprofile=$idProfile ) SELECT 'C50' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ilike 'C50%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C50' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -11032,7 +11045,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ilike 'C69%' and pd.kdprofile=$idProfile ) SELECT 'C69' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ilike 'C69%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C69' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -11137,7 +11150,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ilike 'C53%' and pd.kdprofile=$idProfile ) SELECT 'C53' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ilike 'C53%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C53' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -11242,7 +11255,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ilike 'C34%' and pd.kdprofile=$idProfile ) SELECT 'C34' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ilike 'C34%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C34' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -11347,7 +11360,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    between 'C18' and 'C20%' and pd.kdprofile=$idProfile ) SELECT 'C18-C20' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    between 'C18' and 'C20%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C18-C20' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -11453,7 +11466,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    between 'C91' and 'C95%' and pd.kdprofile=$idProfile ) SELECT 'C91-C95' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    between 'C91' and 'C95%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C91-C95' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -11559,7 +11572,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ilike 'C61%' and pd.kdprofile=$idProfile ) SELECT 'C61' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ilike 'C61%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C61' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -11665,7 +11678,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ilike 'C11%' and pd.kdprofile=$idProfile ) SELECT 'C11' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ilike 'C11%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C11' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -11770,7 +11783,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    between 'C43' and 'C44%' and pd.kdprofile=$idProfile ) SELECT 'C43-C44' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    between 'C43' and 'C44%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C43-C44' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -11877,7 +11890,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    ilike 'C22%' and pd.kdprofile=$idProfile ) SELECT 'C22' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    ilike 'C22%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'C22' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -11983,7 +11996,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    between 'V01' and 'V99%' and pd.kdprofile=$idProfile ) SELECT 'V01-V99' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    between 'V01' and 'V99%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'V01-V99' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -12089,7 +12102,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    between 'X60' and 'Y09%' and pd.kdprofile=$idProfile ) SELECT 'X60-Y09' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    between 'X60' and 'Y09%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'X60-Y09' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
@@ -12195,7 +12208,7 @@ $result = array(
                 AND pd2.nocmfk = pd.nocmfk
                 AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
                     kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
-                    between 'W00' and 'X59%' and pd.kdprofile=$idProfile ) SELECT 'W00-X59' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    between 'W00' and 'X59%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'W00-X59' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
                     lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
                     di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
                     BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
