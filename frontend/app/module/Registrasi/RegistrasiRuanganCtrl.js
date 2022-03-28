@@ -646,6 +646,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         + "~" + $scope.model.noRegistrasi
                         + "~" + $scope.resultAPD.norec;
 
+                    //variable untuk validasi pada tracerbon dan pengambilan norec_pd 
+                    $scope.tracernocmfk = e.data.dataPD.nocmfk;
+                    $scope.arr = {
+                        norec_pd: $scope.model.norec_pd,
+                        nocmfk: $scope.tracernocmfk
+                    };
+                    cacheHelper.set('norectracer', $scope.arr)
+                    // END variable untuk validasi pada tracerbon dan pengambilan norec_pd 
+
                     cacheHelper.set('CacheRegistrasiPasien', cachePasienDaftar);
                     if (e.data.status == 201) {
                         // update rujukan transdata
@@ -751,6 +760,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.isBatal = false;
                 })
             }
+            
 
             function updateTriage() {
 
@@ -978,55 +988,64 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return;
                 }
             }
-
+            
             $scope.tracerBon = function () {
-                if ($scope.item != undefined) {
-                    $scope.isRouteLoading = true;
-                    //##save identifikasi tracer
-                    medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-                        + $scope.model.norec_pd + "&qtytracer=1"
-                    ).then(function (data) {
-                        $scope.isRouteLoading = false;
-                        var datas = data.data;
-                        if(data.data.identifikasi.qtytracer - 1 > 0){
-							var confirm = $mdDialog.confirm()						
-							.title('Informasi')
-							.htmlContent("Pasien ini telah dicetak tracer sebanyak " + (data.data.identifikasi.qtytracer - 1) + " kali <br>apakah ingin cetak ulang?", "Peringatan")
-							.ariaLabel('Lucky day')
-							.cancel('Batal')
-							.ok('Ok');
-							$mdDialog.show(confirm).then(function () {
-								var client = new HttpClient();
+            
+            if (norecPD == '' && isRegisOnline == '') {
+                saveAntrol($scope.Noregistrasi, $scope.resultAPD)
+            }
+                //VALIDASI MENGGUNAKAN NOCMFK DAN NOREC_PD, UNTUK MENGECEK TIDAK ADA NILAI NOREC_PD YG SALAH SAAT DIMASUKAN KEDALAM BACKEND/QUERY NANTI
+                if (($scope.item.nocmfk == cacheHelper.get('norectracer').nocmfk) && ((cacheHelper.get('norectracer').norec_pd))) {
+                    if ($scope.item != undefined) {
+                        $scope.isRouteLoading = true;
+                        //##save identifikasi tracer
+                        medifirstService.get("registrasi/identifikasi-tracer?norec_pd=" +
+                            cacheHelper.get('norectracer').norec_pd + "&qtytracer=1"
+                        ).then(function (data) {
+                            $scope.isRouteLoading = false;
+                            var datas = data.data;
+                            if (data.data.identifikasi.qtytracer - 1 > 0) {
+                                var confirm = $mdDialog.confirm()
+                                    .title('Informasi')
+                                    .htmlContent("Pasien ini telah dicetak tracer sebanyak " + (data.data.identifikasi.qtytracer - 1) + " kali <br>apakah ingin cetak ulang?", "Peringatan")
+                                    .ariaLabel('Lucky day')
+                                    .cancel('Batal')
+                                    .ok('Ok');
+                                $mdDialog.show(confirm).then(function () {
+                                    var client = new HttpClient();
+                                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
+                                        // do something with response
+                                    });
+                                }, function () {
+                                    medifirstService.get("registrasi/identifikasi-tracer?norec_pd=" +
+                                        cacheHelper.get('norectracer').norec_pd + "&qtytracer=-1"
+                                    ).then(function (data) {})
+                                });
+                            } else {
+                                var client = new HttpClient();
                                 client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
                                     // do something with response
                                 });
-							}, function () {
-                                medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-                                    + $scope.model.norec_pd + "&qtytracer=-1"
-                                ).then(function (data) {})
-                            });
-						}else{
-                            var client = new HttpClient();
-                            client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
-                                // do something with response
-                            });
-                        }
+                            }
 
-                        
-                    })
-                    //##end
 
-                    // var fixUrlLaporan = cetakHelper.open("reporting/lapTracer?noRegistrasi=" + $state.params.noRegistrasi);
-                    // window.open(fixUrlLaporan, '', 'width=800,height=600')
+                        })
+                        //##end
 
-                    //cetakan langsung service VB6 by grh                        
-                    // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
-                    //     // do something with response
-                    // });                   
+                        // var fixUrlLaporan = cetakHelper.open("reporting/lapTracer?noRegistrasi=" + $state.params.noRegistrasi);
+                        // window.open(fixUrlLaporan, '', 'width=800,height=600')
+
+                        //cetakan langsung service VB6 by grh                        
+                        // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.cacheNoRegistrasi + '&noCm=' + $scope.item.pasien.nocm + '&view=false', function (response) {
+                        //     // do something with response
+                        // });                   
+                    }
+                }else{
+                    window.messageContainer.error("Mohon untuk tidak membuka 2 tab pada saat registrasi pasien, silahkan cetak tracer di daftar registrasi pasien");
+                    return
                 }
-                if (norecPD == '' && isRegisOnline == '') {
-                    saveAntrol($scope.Noregistrasi,$scope.resultAPD)                  
-                 }
+                
+                
             }
 
             $scope.cetakKartu = function () {
