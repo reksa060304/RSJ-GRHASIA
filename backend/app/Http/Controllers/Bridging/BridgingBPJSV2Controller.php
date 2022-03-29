@@ -2552,6 +2552,7 @@ class BridgingBPJSV2Controller extends ApiController
         $url = $this->getUrlAntreanBPJSv2() . "jadwaldokter/kodepoli/" . $kodepoli . "/tanggal/" . $tanggal;
         // return $url;
         $response = $this->curlAPI($headers, null, $url, $methods);
+        //var_dump($response);
         return $this->respond($response);
     }
 
@@ -3053,7 +3054,9 @@ class BridgingBPJSV2Controller extends ApiController
                     'payload' =>$dataJsonSend,
                     'secretKey' => $headers['cons']['secretKey'],
                 ), 'response' => $response
+                ,'method' => $methods
             );
+            //return $cekData;
          
             if (isset($request['jenis']) && $request['jenis'] == 'antrean') {
                 $consId = $headers['cons']['data'];

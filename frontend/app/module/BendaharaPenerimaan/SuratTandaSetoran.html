@@ -90,14 +90,14 @@
                                 placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
                         </div>
                     </div>
-                    <div class="grid_6">
-                        <div class="grid_4">
+                    <div class="grid_8">
+                        <div class="grid_2">
                             <label c-label item="item" c-label-text="Status STS"></label>
                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusSTS"
                                 k-data-text-field="'names'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listStatusSTS" />
                         </div>
-                        <div class="grid_4">
+                        <div class="grid_2">
                             <div class="grid_12">
                                 <label c-label item="item" c-label-text="Cara Bayar"></label>
                             </div>
@@ -108,6 +108,16 @@
                                     k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listCaraBayar" />
                             </div>
                         </div>
+                        <div class="grid_3">
+                            <label c-label item="item" c-label-text="No Closing"></label>
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.Noclosing"
+                                 />
+                        </div>
+                        <div class="grid_3">
+                            <label c-label item="item" c-label-text="No STS"></label>
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.Nosts"
+                                 />
+                        </div>
                         <div class="grid_2" style="margin-top: 20px;">
                             <button class="c-button" ng-click="cariFilter()">Cari</button>
                         </div>
@@ -117,7 +127,7 @@
         </fieldset>
 
         <!-- Tabel Hasil Pencarian -->
-        <div class="grid_12">
+        <div class="grid_12" style="margin-top:50px;">
             <div class="grid_12 borderBox">
                 <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
                     k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'"
@@ -125,6 +135,91 @@
                 </kendo-grid>
             </div>
         </div>
+
+
+
+
+        <!-- Ini Coba Detail Yang Bisa Diexpand -->
+
+
+
+
+        <div class="grid_12">
+            <div kendo-window="popUpDaftarPenerimaan" k-title="'Detail Penerimaan Closing'" k-width="1000" k-visible="false"
+                k-on-open="win2visible = true" k-on-close="win2visible = false">
+                <div class="panel panel-default container_12" style="padding: 0px 10px;">
+                    <div class="grid_11">
+                        <!-- <div class="grid_2" style="margin-top:5px">
+                            <label c-label real>No SBM </label>
+                            <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="itemD.noSBM"
+                                ng-keypress="($event.which == 13)? SearchEnterDetail():itemD.noSBM" disabled />
+                        </div>
+                        <div class="grid_3" style="margin-top:5px">
+                            <label c-label real>Nama Pasien </label>
+                            <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="itemD.namaPasien"
+                                ng-keypress="($event.which == 13)? SearchEnterDetail():itemD.namaPasien" disabled />
+                        </div>
+                        <div class="grid_2" style="margin-top:5px">
+                            <label c-label real>No RM</label>
+                            <input style="width: 100%" kendo-date-picker placeholer="dd-mm-yyyy" k-ng-model="itemD.nocm"
+                                k-format="'dd-MM-yyyy'"
+                                ng-keypress="($event.which == 13)? SearchEnterDetail():itemD.nocm" disabled />
+                        </div>
+                        <div class="grid_2" style="margin-top:5px">
+                            <label c-label real>No Registrasi </label>
+                            <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="itemD.noRegistrasi"
+                                ng-keypress="($event.which == 13)? SearchEnterDetail():itemD.noRegistrasi" />
+                        </div>
+                        <div class="grid_3" style="margin-top:5px">
+                            <label c-label real>Total Penerimaan</label>
+                            <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="itemD.totalPenerimaan"
+                                disabled />
+                        </div> -->
+
+                        <kendo-grid id="grid" data-source="dataPenerimaan" options="columnPenerimaan" k-pageable="'true'"
+                            k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'"
+                            k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                        </kendo-grid>
+                        <div class="grid_12">
+                            <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                                <button class="k-button  k-button-icontext" ng-click="tutupPhoto()"><i
+                                        class="fa fa-times-circle"></i>&nbsp;Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!-- <div class="grid_12">
+            <div class="grid_12 borderBox">
+                <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                    <div k-detail-template>
+                        <kendo-tabstrip>
+                            <div>
+                                <div id="kGridDetail" kendo-grid k-options="data2(dataItem)" k-sortable="'true'"
+                                    k-selectable="'row'" k-ng-model="dataSelected2">
+                                </div>
+                            </div>
+                        </kendo-tabstrip>
+                    </div>
+                </kendo-grid>
+            </div>
+        </div> -->
+
+        <!-- Ini Coba Detail Yang Bisa Diexpand -->
+
+
+
+
+
+
+
         <div class="grid_2" style="margin-top: 15px;">
 			<div class="grid_12">
 				<label c-label item="item" c-label-text="Total Setor"></label>
@@ -136,11 +231,84 @@
 			</div>
 
 		</div>
+        <div class="grid_3" style="margin-top: 15px;">
+			<div class="grid_12">
+				<label c-label item="item" c-label-text="Terbilang"></label>
+			</div>
+			<div class="clear"></div>
+
+			<div class="grid_12">
+				<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.terbilang" />
+			</div>
+		</div>
+        <div class="grid_2" style="margin-top: 15px;">
+			<div class="grid_12">
+				<label c-label item="item" c-label-text="Data Dipilih"></label>
+			</div>
+			<div class="clear"></div>
+
+			<div class="grid_12">
+				<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.dipilih" />
+			</div>
+		</div>
         <div class="grid_12">
-            <div class="grid_11" ng-include='"../app/template/Shared/TemplateLoading"'></div>
-            <div class="grid_1" style="float:right;">
-                <button class="c-button" ng-click="simpan()">Simpan</button>
+            <div class="grid_8" ng-include='"../app/template/Shared/TemplateLoading"'></div>
+            <div class="grid_4" style="float:right;">
+                <div class="grid_4">
+                    <button class="c-button" ng-click="detailpenerimaan()">Detail Penerimann</button>
+                </div>
+                <div class="grid_3">
+                    <button class="c-button" ng-click="detail()">Detail STS</button>
+                </div>
+                <div class="grid_3">
+                    <button class="c-button" ng-click="batal()">Batal STS</button>
+                </div>
+                <div class="grid_2">
+                    <button class="c-button" ng-click="simpan()">Simpan</button>
+                </div>
             </div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 150px;">
+            <div class="grid_12 borderBox">
+                <kendo-grid id="gridsts" data-source="dataSTS" options="columnSTS" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                </kendo-grid>
+            </div>
+        </div>
+
+        <div class="grid_12" hidden="">
+            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.terbilangsts" />
+        </div>
+        <div class="grid_12" hidden="">
+            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.totalsts" />
+        </div>
+        <div class="grid_12" hidden="">
+            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nosts" />
+        </div>
+        <div class="grid_12" hidden="">
+            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.tglpenerimaansts" />
+        </div>
+        <div class="grid_12" hidden="">
+            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.carabayarsts" />
+        </div>
+        <div class="grid_12" hidden="">
+            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namasts" />
         </div>
     </div>
 </div>
+<script id="status-template" type="text/kendo-templ">
+    # if (kolom1 !== null) { #
+        <span>{{formatRupiah('#: kolom1 #', '')}}</span>
+    # } else{ #
+        <span></span>
+    # } #
+</script>
+<script id="kolom-template" type="text/kendo-templ">
+    # if (kolom2 !== null) { #
+        <span>{{formatRupiah('#: kolom2 #', '')}}</span>
+    # } else{ #
+        <span></span>
+    # } #
+</script>

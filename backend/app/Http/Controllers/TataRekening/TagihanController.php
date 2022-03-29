@@ -9374,5 +9374,2905 @@ $result = array(
 
         return $this->respond($result);
     }
-    
+    public function getDataLaporanSurveilansPasien(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $idJenisDiagnosa = $request['idJenisDiagnosa'];
+        $idDept = $request['idDept'];
+
+        $tempjenisdiagnosa = '';
+        if($idJenisDiagnosa != '' || isset($idJenisDiagnosa)){
+            $tempjenisdiagnosa = 'and jd.id = '.$idJenisDiagnosa;
+        }
+        $tempDept = '';
+        if($idDept != '' && $idDept == 1){
+            $tempDept = ' and ru.objectdepartemenfk = 16';
+        } 
+        if($idDept != '' && $idDept == 2){
+            $tempDept = ' and ru.objectdepartemenfk <> 16';
+        }
+        $data = DB::select(DB::raw("
+            WITH diagnosa AS (
+            SELECT
+            ddp.objectjenisdiagnosafk,
+            di.ID,
+            jk.ID jkid,
+            ddp.norec,
+            ps.nocm,
+            pd.noregistrasi,
+            EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+            ps.tgllahir,
+            di.namadiagnosa,
+            jk.jeniskelamin,
+            di.kddiagnosa,
+            apd.tglregistrasi,
+            pd.tglmeninggal,
+            kasus.jumlahkasus,
+            CASE
+
+            WHEN kasus.jumlahkasus = 0 THEN
+            'BARU' ELSE'LAMA'
+            END kasuspenyakit
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+            INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+            INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+            INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+            INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+            INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+            INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+            LEFT JOIN LATERAL (
+            SELECT COUNT
+            ( * ) AS jumlahkasus
+            FROM
+            pasiendaftar_t pd2
+            INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+            INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+            INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+            WHERE
+            pd2.statusenabled = TRUE
+            AND pd2.nocmfk = pd.nocmfk
+            AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk ) kasus
+            ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa ILIKE 'I10' and
+            pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) 
+            SELECT 1 as no, 'Hipertensi' as penyakit, 'I10' AS kode,
+            count(di.tglmeninggal) as meninggal, 
+            COUNT ( di.umur ) FILTER ( WHERE
+            di.jkid=1 AND di.umur < 1 ) lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT (
+            di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE
+            di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN
+            5 AND 14 ) lk2, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT (
+            di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE
+            di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur
+            BETWEEN 25 AND 44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4,
+            COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER (
+            WHERE di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+            64 ) lk6,
+            COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+            COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+            COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+            (
+            COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+            di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+            ) AS totalkasusbaru,
+            (
+            COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) + COUNT (
+                di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur ) FILTER ( WHERE
+                di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) + COUNT
+                ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE
+                di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) + COUNT
+                ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE
+                di.jkid=1 AND di.umur> 64 ) +
+                COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                ) AS totalkunjungan
+                FROM
+                diagnosa di
+
+                GROUP BY
+                di.kddiagnosa
+                ORDER BY
+                di.kddiagnosa ASC
+        "));
+
+        $data1 = DB::select(DB::raw("
+            WITH diagnosa AS (
+            SELECT
+            ddp.objectjenisdiagnosafk,
+            di.ID,
+            jk.ID jkid,
+            ddp.norec,
+            ps.nocm,
+            pd.noregistrasi,
+            EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+            ps.tgllahir,
+            di.namadiagnosa,
+            jk.jeniskelamin,
+            di.kddiagnosa,
+            apd.tglregistrasi,
+            pd.tglmeninggal,
+            kasus.jumlahkasus,
+            CASE
+
+            WHEN kasus.jumlahkasus = 0 THEN
+            'BARU' ELSE'LAMA'
+            END kasuspenyakit
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+            INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+            INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+            INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+            INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+            INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+            INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+            INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+            LEFT JOIN LATERAL (
+            SELECT COUNT
+            ( * ) AS jumlahkasus
+            FROM
+            pasiendaftar_t pd2
+            INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+            INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+            INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+            WHERE
+            pd2.statusenabled = TRUE
+            AND pd2.nocmfk = pd.nocmfk
+            AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk ) kasus
+            ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa ='I25.1' or di.kddiagnosa ILIKE 'I24%' and
+            pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) 
+            SELECT 'I24.0' AS kode, 
+            COUNT ( di.umur ) FILTER ( WHERE
+            di.jkid=1 AND di.umur < 1 ) lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT (
+            di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE
+            di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN
+            5 AND 14 ) lk2, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT (
+            di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE
+            di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur
+            BETWEEN 25 AND 44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4,
+            COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER (
+            WHERE di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+            64 ) lk6,
+            COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+            COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+            COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+            (
+            COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+            di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+            ) AS totalkasusbaru,
+            count(di.tglmeninggal) as meninggal,
+            (
+            COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) + COUNT (
+                di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur ) FILTER ( WHERE
+                di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) + COUNT
+                ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE
+                di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) + COUNT
+                ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE
+                di.jkid=1 AND di.umur> 64 ) +
+                COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                ) AS totalkunjungan
+                FROM
+                diagnosa di
+
+                GROUP BY
+                di.kddiagnosa
+                ORDER BY
+                di.kddiagnosa ASC
+        "));
+            $detail= [];
+
+        // baris 1
+            $namapenyakit = 'Hipertensi'; $no = 1; $icdx = 'I10'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            $meninggal = 0;
+            foreach ($data as $dt) {
+                $lk0 += $dt->lk0;$pr0 += $dt->pr0;$lk1 += $dt->lk1;$pr1 += $dt->pr1;$lk2 += $dt->lk2;$pr2 += $dt->pr2;$lk3 +=
+                $dt->lk3;$pr3 += $dt->pr3;
+                $lk4 += $dt->lk4;$pr4 += $dt->pr4;$lk5 += $dt->lk5;$pr5 += $dt->pr5;$lk6 += $dt->lk6;$pr6 += $dt->pr6;$lkbr +=
+                $dt->lkbr;$prbr += $dt->prbr;$totalkasusbaru += $dt->totalkasusbaru;$totalkunjungan += $dt->totalkunjungan;
+                $meninggal += $dt->meninggal;
+            }
+            $detail[] = array('no' => $no, 'namapenyakit' => $namapenyakit, 'icdx' => $icdx,
+                'lk0' => $lk0, 'pr0' => $pr0, 'lk1' => $lk1, 'pr1' => $pr1, 'lk2' => $lk2, 'pr2' => $pr2,
+                'lk3' => $lk3, 'pr3' => $pr3, 'lk4' => $lk4, 'pr4' => $pr4, 'lk5' => $lk5, 'pr5' => $pr5,
+                'lk6' => $lk6, 'pr6' => $pr6, 'lkbr' => $lkbr, 'prbr' => $prbr, 'totalkasusbaru' => $totalkasusbaru,
+                'totalkunjungan' => $totalkunjungan, 'meninggal' => $meninggal,
+            );
+        //end baris 1
+
+        // baris2
+            $namapenyakit = 'Penyakit Jantung Koroner'; $no = 2; $icdx = 'I24.0'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            $meninggal = 0;
+            foreach ($data1 as $dt1) {
+                        $lk0 += $dt1->lk0;$pr0 += $dt1->pr0;$lk1 += $dt1->lk1;$pr1 += $dt1->pr1;$lk2 +=  $dt1->lk2;$pr2 += $dt1->pr2;$lk3 += $dt1->lk3;$pr3 += $dt1->pr3;
+                        $lk4 += $dt1->lk4;$pr4 += $dt1->pr4;$lk5 += $dt1->lk5;$pr5 += $dt1->pr5;$lk6 += $dt1->lk6;$pr6 += $dt1->pr6;$lkbr += $dt1->lkbr;$prbr += $dt1->prbr;$totalkasusbaru += $dt1->totalkasusbaru;$totalkunjungan += $dt1->totalkunjungan;
+                        $meninggal += $dt1->meninggal;
+            }
+        
+            $detail[]= array('no'=> $no,'namapenyakit' => $namapenyakit,'icdx' => $icdx,'lk0' => $lk0,
+                'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,'lk4' => $lk4,
+                'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,
+                'prbr' => $prbr,'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan, 'meninggal'=> $meninggal,
+            );
+        //end baris2
+
+        // baris 3
+            $namapenyakit = 'Diabetes Melitus (Kencing Manis)'; $no = 3; $icdx = ''; $lk0= null; $pr0= null; $lk1= null; $pr1= null; $lk2= null; $pr2= null; $lk3= null; $pr3= null; $lk4= null; $pr4= null; $lk5= null; $pr5= null; $lk6= null; $pr6= null; $lkbr= null; $prbr= null; $totalkasusbaru= null; $totalkunjungan= null; $meninggal=null;
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan, 'meninggal'=> $meninggal,
+        );
+        //end baris 3
+
+        //baris4
+            $baris4 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                pd.tglmeninggal,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ILIKE 'E10%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'E10' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur
+                    < 1 ) lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER (
+                    WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 )
+                    lk2, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur )
+                    FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                    AND di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25
+                    AND 44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,
+                    count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'a. DM Tipe I'; $no = null; $icdx = 'E10'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0; $meninggal = 0;
+            foreach ($baris4 as $brs4) {
+                $lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;$pr1 += $brs4->pr1;$lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $meninggal += $brs4->meninggal; $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;$pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;$totalkunjungan += $brs4->totalkunjungan;
+
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan, 'meninggal'=> $meninggal,
+            );
+        //endbaris 4
+
+        //baris5
+            $baris5 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                pd.tglmeninggal,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ILIKE 'E11%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'E11' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,
+                    count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'b. DM Tipe II'; $no = null; $icdx = 'E11'; $lk0 = 0; $pr0 = 0; $lk1 = 0; $meninggal = 0;
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris5 as $brs5) {
+                        $meninggal += $brs5->meninggal;$lk0 += $brs5->lk0;$pr0 += $brs5->pr0;
+                        $lk1 += $brs5->lk1;$pr1 += $brs5->pr1;$lk2 +=  $brs5->lk2;$pr2 += $brs5->pr2;$lk3 += $brs5->lk3;$pr3 += $brs5->pr3;
+                        $lk4 += $brs5->lk4;$pr4 += $brs5->pr4;$lk5 += $brs5->lk5;$pr5 += $brs5->pr5;
+                        $lk6 += $brs5->lk6;$pr6 += $brs5->pr6;$lkbr += $brs5->lkbr;$prbr += $brs5->prbr;
+                        $totalkasusbaru += $brs5->totalkasusbaru;$totalkunjungan += $brs5->totalkunjungan;
+                        
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan, 'meninggal'=> $meninggal,
+            );
+        //endbaris5
+
+        //baris6
+            $baris6 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ILIKE 'O24%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'O24' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,
+                    count(di.tglmeninggal)as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'c. DM Tipe II'; $no = null; $icdx = 'O24'; $lk0 = 0; $pr0 = 0; $lk1 = 0; $meninggal = 0;
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris6 as $brs4) {
+                $meninggal+=$brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;
+                $pr1 += $brs4->pr1;$lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;
+                $totalkunjungan += $brs4->totalkunjungan;
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,'meninggal'=>$meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris6
+
+        //baris7
+            $baris7 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ILIKE 'E66%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'E66' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    count(di.tglmeninggal) as meninggal,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Obesitas'; $no = 4; $icdx = 'E66'; $lk0 = 0; $pr0 = 0; $lk1 = 0; $meninggal=0;
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris7 as $brs4) {
+                        $meninggal= $brs4->meninggal;$lk0 = $brs4->lk0;$pr0 = $brs4->pr0;$lk1 = $brs4->lk1;$pr1 = $brs4->pr1;$lk2 =  $brs4->lk2;$pr2 = $brs4->pr2;$lk3 = $brs4->lk3;$pr3 = $brs4->pr3;
+                        $lk4 = $brs4->lk4;$pr4 = $brs4->pr4;$lk5 = $brs4->lk5;$pr5 = $brs4->pr5;$lk6 = $brs4->lk6;$pr6 = $brs4->pr6;$lkbr = $brs4->lkbr;$prbr = $brs4->prbr;$totalkasusbaru = $brs4->totalkasusbaru;$totalkunjungan = $brs4->totalkunjungan;
+
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris7
+
+        // baris8
+            $namapenyakit = 'Penyakit Tiroid'; $no = 5; $icdx = ''; $lk0= null; $pr0= null; $lk1= null; $pr1= null; $lk2= null; $pr2= null; $lk3= null; $pr3= null; $lk4= null; $pr4= null; $lk5= null; $pr5= null; $lk6= null; $pr6= null; $lkbr= null; $prbr= null; $totalkasusbaru= null; $totalkunjungan= null; $meninggal=null;
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan, 'meninggal' => $meninggal,
+            );
+        //endbaris8
+
+        //baris9
+            $baris9 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ILIKE 'E05%' and pd.kdprofile=$idProfile  $tempjenisdiagnosa $tempDept) SELECT 'E05' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,
+                    count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'a. Hipotiroid'; $no = null; $icdx = 'E05'; $lk0 = 0; $pr0 = 0; $lk1 = 0; $meninggal= 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris9 as $brs4) {
+                $meninggal+= $brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;
+                $pr1 += $brs4->pr1;$lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;
+                $totalkunjungan += $brs4->totalkunjungan;
+                
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris9
+
+        //baris10
+            $baris10 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ILIKE 'E03%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'E03' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,
+                    count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'b. Hipertiroid'; $no = null; $icdx = 'E03'; $lk0 = 0; $pr0 = 0; $lk1 = 0; $meninggal = 0;
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris10 as $brs4) {
+                $meninggal+=$brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;
+                $pr1 += $brs4->pr1;$lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;
+                $totalkasusbaru += $brs4->totalkasusbaru;$totalkunjungan += $brs4->totalkunjungan;
+                
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris10
+
+        //baris11
+            $namapenyakit = 'Stroke'; $no = 6; $icdx = ''; $lk0= null; $pr0= null; $lk1= null; $pr1= null; $lk2= null; $pr2= null; $lk3= null; $pr3= null; $lk4= null; $pr4= null; $lk5= null; $pr5= null; $lk6= null; $pr6= null; $lkbr= null; $prbr= null; $totalkasusbaru= null; $totalkunjungan= null; $meninggal=null;
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan, 'meninggal'=> $meninggal,
+            );
+        //endbaris11
+
+        //baris12
+            $baris12 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    between 'I60' and 'I62%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'I60-I62' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'a. Stroke Haemorragik'; $no = null; $icdx = 'I60-I62'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0; $meninggal= 0;
+            foreach ($baris12 as $brs4) {
+                $meninggal = $meninggal+ $brs4->meninggal;$lk0 = $lk0+ $brs4->lk0; $pr0 = $pr0+ $brs4->pr0; 
+                $lk1 = $lk1+$brs4->lk1;
+                $pr1 = $pr1 + $brs4->pr1; $lk2 = $lk2+$brs4->lk2; $pr2 = $pr2+$brs4->pr2;$lk3 = $lk3+ $brs4->lk3; 
+                $pr3 = $pr3+ $brs4->pr3; $lk4 = $lk4+ $brs4->lk4; $pr4 = $pr4+$brs4->pr4;$lk5 = $lk5+ $brs4->lk5; 
+                $pr5 = $pr5+ $brs4->pr5; $lk6 = $lk6+ $brs4->lk6; $pr6 = $pr6+ $brs4->pr6; $lkbr = $lkbr+$brs4->lkbr; 
+                $prbr =$prbr+ $brs4->prbr; $totalkunjungan =$totalkunjungan+ $brs4->totalkunjungan; 
+                $totalkasusbaru = $totalkasusbaru + $brs4->totalkasusbaru;
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris12
+
+        //baris13
+            $baris13 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ilike 'I63%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'I63' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru, count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'b. Stroke Non Haemorragik'; $no = null; $icdx = 'I63'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0; $meninggal = 0;
+            foreach ($baris13 as $brs4) {
+                $meninggal+= $brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;$pr1 += $brs4->pr1;$lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;$pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;$totalkunjungan += $brs4->totalkunjungan;
+                
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris13
+
+        //baris14
+            $baris14 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ilike 'J45%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'J45' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru, count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Asma Bronkiale'; $no = 7; $icdx = 'J45'; $lk0 = 0; $pr0 = 0; $lk1 = 0; $meninggal = 0;
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris14 as $brs4) {
+                $meninggal+=$brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;$pr1 += $brs4->pr1;$lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;
+                $totalkunjungan += $brs4->totalkunjungan;
+               
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan, 'meninggal'=> $meninggal,
+            );
+        //endbaris14
+
+        //baris15
+            $baris15 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ilike 'J44%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'J44' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru, count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'PPOK'; $no = 8; $icdx = 'J44'; $lk0 = 0; $pr0 = 0; $lk1 = 0; $meninggal=0;
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris15 as $brs4) {
+                $meninggal+=$brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;$pr1 += $brs4->pr1;$lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;$pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;$totalkunjungan += $brs4->totalkunjungan;
+        
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris15
+
+        //baris16
+            $baris16 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ilike 'M81%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'M81' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Osteoporosis'; $no = 9; $icdx = 'M81'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0; $meninggal= 0;
+            foreach ($baris16 as $brs4) {
+                $meninggal+=$brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;$pr1 += $brs4->pr1;
+                $lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;
+                $totalkunjungan += $brs4->totalkunjungan;
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris16
+
+        //baris17
+            $baris17 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa between 
+                    'N00' and 'N19%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'N00-N19' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Penyakit Ginjal Kronik'; $no = 10; $icdx = 'N00-N19'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0; $meninggal=0;
+
+            foreach ($baris17 as $brs4) {
+                $meninggal = $meninggal+ $brs4->meninggal;$lk0 = $lk0+ $brs4->lk0; $pr0 = $pr0+ $brs4->pr0; 
+                $lk1 = $lk1+$brs4->lk1;
+                $pr1 = $pr1 + $brs4->pr1; $lk2 = $lk2+$brs4->lk2; $pr2 = $pr2+$brs4->pr2;$lk3 = $lk3+ $brs4->lk3; 
+                $pr3 = $pr3+ $brs4->pr3; $lk4 = $lk4+ $brs4->lk4; $pr4 = $pr4+$brs4->pr4;$lk5 = $lk5+ $brs4->lk5; 
+                $pr5 = $pr5+ $brs4->pr5; $lk6 = $lk6+ $brs4->lk6; $pr6 = $pr6+ $brs4->pr6; $lkbr = $lkbr+$brs4->lkbr; 
+                $prbr =$prbr+ $brs4->prbr; $totalkunjungan =$totalkunjungan+ $brs4->totalkunjungan; 
+                $totalkasusbaru = $totalkasusbaru + $brs4->totalkasusbaru;
+            }
+            
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris17
+
+        //baris18
+            $baris18 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ilike 'C50%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C50' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru, count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Kanker Payudara (Ca Mammae)'; $no = 11; $icdx = 'C50'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;$meninggal=0;
+            foreach ($baris18 as $brs4) {
+                $meninggal+=$brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;
+                $pr1 += $brs4->pr1;$lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;
+                $totalkunjungan += $brs4->totalkunjungan;
+                
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris18
+
+        //baris19
+            $baris19 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ilike 'C69%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C69' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6, count(di.tglmeninggal) as meninggal,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Kanker Retina Mata (Retinoblastoma)'; $no = 12; $icdx = 'C69'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0; $meninggal = 0;
+            foreach ($baris19 as $brs4) {
+                $meninggal+= $brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;$pr1 += $brs4->pr1;
+                $lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;
+                $totalkunjungan += $brs4->totalkunjungan;
+            
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris19
+
+        //baris20
+            $baris20 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ilike 'C53%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C53' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru, count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Kanker Serviks (Ca Cervix)'; $no = 13; $icdx = 'C53'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0; $meninggal=0;
+            foreach ($baris20 as $brs4) {
+                $meninggal+= $brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;$pr1 += $brs4->pr1;
+                $lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;
+                $totalkunjungan += $brs4->totalkunjungan;
+                     
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris20
+
+        //baris21
+            $baris21 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ilike 'C34%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C34' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Kanker Paru'; $no = 14; $icdx = 'C34'; $lk0 = 0; $pr0 = 0; $lk1 = 0; $meninggal = 0;
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris21 as $brs4) {
+                $meninggal+=$brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;
+                $pr1 += $brs4->pr1;$lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;
+                $totalkunjungan += $brs4->totalkunjungan;
+                
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris21
+
+        //baris22
+            $baris22 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal, 
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    between 'C18' and 'C20%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C18-C20' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Kanker Kolorektal'; $no = 15; $icdx = 'C18-C20'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0; $meninggal=0;
+            foreach ($baris22 as $brs4) {
+                $meninggal = $meninggal+ $brs4->meninggal;$lk0 = $lk0+ $brs4->lk0; $pr0 = $pr0+ $brs4->pr0; 
+                $lk1 = $lk1+$brs4->lk1;
+                $pr1 = $pr1 + $brs4->pr1; $lk2 = $lk2+$brs4->lk2; $pr2 = $pr2+$brs4->pr2;$lk3 = $lk3+ $brs4->lk3; 
+                $pr3 = $pr3+ $brs4->pr3; $lk4 = $lk4+ $brs4->lk4; $pr4 = $pr4+$brs4->pr4;$lk5 = $lk5+ $brs4->lk5; 
+                $pr5 = $pr5+ $brs4->pr5; $lk6 = $lk6+ $brs4->lk6; $pr6 = $pr6+ $brs4->pr6; $lkbr = $lkbr+$brs4->lkbr; 
+                $prbr =$prbr+ $brs4->prbr; $totalkunjungan =$totalkunjungan+ $brs4->totalkunjungan; 
+                $totalkasusbaru = $totalkasusbaru + $brs4->totalkasusbaru;    
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris22
+
+        //baris23
+            $baris23 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    between 'C91' and 'C95%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C91-C95' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru, count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Leukimia'; $no = 16; $icdx = 'C91-C95'; $lk0 = 0; $pr0 = 0; $lk1 = 0; $meninggal = 0;
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris23 as $brs4) {
+                $meninggal = $meninggal+ $brs4->meninggal;$lk0 = $lk0+ $brs4->lk0; $pr0 = $pr0+ $brs4->pr0; 
+                $lk1 = $lk1+$brs4->lk1;
+                $pr1 = $pr1 + $brs4->pr1; $lk2 = $lk2+$brs4->lk2; $pr2 = $pr2+$brs4->pr2;$lk3 = $lk3+ $brs4->lk3; 
+                $pr3 = $pr3+ $brs4->pr3; $lk4 = $lk4+ $brs4->lk4; $pr4 = $pr4+$brs4->pr4;$lk5 = $lk5+ $brs4->lk5; 
+                $pr5 = $pr5+ $brs4->pr5; $lk6 = $lk6+ $brs4->lk6; $pr6 = $pr6+ $brs4->pr6; $lkbr = $lkbr+$brs4->lkbr; 
+                $prbr =$prbr+ $brs4->prbr; $totalkunjungan =$totalkunjungan+ $brs4->totalkunjungan; 
+                $totalkasusbaru = $totalkasusbaru + $brs4->totalkasusbaru;    
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan, 'meninggal'=> $meninggal,
+            );
+        //endbaris23
+
+        //baris24
+            $baris24 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ilike 'C61%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C61' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    count(di.tglmeninggal) as meninggal,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Kanker Prostat'; $no = 17; $icdx = 'C61'; $lk0 = 0; $pr0 = 0; $lk1 = 0; $meninggal=0;
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris24 as $brs4) {
+                $meninggal+=$brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;$pr1 += $brs4->pr1;
+                $lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;
+                $totalkunjungan += $brs4->totalkunjungan;
+                
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan, 'meninggal'=> $meninggal,
+            );
+        //endbaris24
+
+        //baris25
+            $baris25 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ilike 'C11%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C11' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru, count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Kanker Nasopharink'; $no = 18; $icdx = 'C11'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0; $meninggal = 0;
+            foreach ($baris25 as $brs4) {
+                $meninggal+=$brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;$pr1 += $brs4->pr1;
+                $lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;
+                $totalkunjungan += $brs4->totalkunjungan;
+                
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris25
+
+        //baris26
+            $baris26 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    between 'C43' and 'C44%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept) SELECT 'C43-C44' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    count(di.tglmeninggal) as meninggal,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Kanker Kulit'; $no = 19; $icdx = 'C43-C44'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0; $meninggal = 0;
+            foreach ($baris26 as $brs4) {
+                $meninggal = $meninggal+ $brs4->meninggal;$lk0 = $lk0+ $brs4->lk0; $pr0 = $pr0+ $brs4->pr0; 
+                $lk1 = $lk1+$brs4->lk1;
+                $pr1 = $pr1 + $brs4->pr1; $lk2 = $lk2+$brs4->lk2; $pr2 = $pr2+$brs4->pr2;$lk3 = $lk3+ $brs4->lk3; 
+                $pr3 = $pr3+ $brs4->pr3; $lk4 = $lk4+ $brs4->lk4; $pr4 = $pr4+$brs4->pr4;$lk5 = $lk5+ $brs4->lk5; 
+                $pr5 = $pr5+ $brs4->pr5; $lk6 = $lk6+ $brs4->lk6; $pr6 = $pr6+ $brs4->pr6; $lkbr = $lkbr+$brs4->lkbr; 
+                $prbr =$prbr+ $brs4->prbr; $totalkunjungan =$totalkunjungan+ $brs4->totalkunjungan; 
+                $totalkasusbaru = $totalkasusbaru + $brs4->totalkasusbaru;
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,'meninggal'=> $meninggal,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris26
+
+        //baris27
+            $baris27 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                pd.tglmeninggal,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    ilike 'C22%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'C22' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    count(di.tglmeninggal) as meninggal,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Kanker Hati'; $no = 20; $icdx = 'C22'; $lk0 = 0; $pr0 = 0; $lk1 = 0; $meninggal = 0;
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; 
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris27 as $brs4) {
+                $meninggal+=$brs4->meninggal;$lk0 += $brs4->lk0;$pr0 += $brs4->pr0;$lk1 += $brs4->lk1;$pr1 += $brs4->pr1;
+                $lk2 +=  $brs4->lk2;$pr2 += $brs4->pr2;$lk3 += $brs4->lk3;$pr3 += $brs4->pr3;
+                $lk4 += $brs4->lk4;$pr4 += $brs4->pr4;$lk5 += $brs4->lk5;$pr5 += $brs4->pr5;$lk6 += $brs4->lk6;
+                $pr6 += $brs4->pr6;$lkbr += $brs4->lkbr;$prbr += $brs4->prbr;$totalkasusbaru += $brs4->totalkasusbaru;
+                $totalkunjungan += $brs4->totalkunjungan;
+            
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx, 'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris27
+
+        //baris28
+            $baris28 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    between 'V01' and 'V99%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'V01-V99' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Cedera akibat kecelakaan lalu lintas'; $no = 21; $icdx = 'V01-V99'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; $meninggal = 0;
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris28 as $brs4) {
+                  $meninggal = $meninggal+ $brs4->meninggal;$lk0 = $lk0+ $brs4->lk0; $pr0 = $pr0+ $brs4->pr0; 
+                $lk1 = $lk1+$brs4->lk1;
+                $pr1 = $pr1 + $brs4->pr1; $lk2 = $lk2+$brs4->lk2; $pr2 = $pr2+$brs4->pr2;$lk3 = $lk3+ $brs4->lk3; 
+                $pr3 = $pr3+ $brs4->pr3; $lk4 = $lk4+ $brs4->lk4; $pr4 = $pr4+$brs4->pr4;$lk5 = $lk5+ $brs4->lk5; 
+                $pr5 = $pr5+ $brs4->pr5; $lk6 = $lk6+ $brs4->lk6; $pr6 = $pr6+ $brs4->pr6; $lkbr = $lkbr+$brs4->lkbr; 
+                $prbr =$prbr+ $brs4->prbr; $totalkunjungan =$totalkunjungan+ $brs4->totalkunjungan; 
+                $totalkasusbaru = $totalkasusbaru + $brs4->totalkasusbaru;
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,'meninggal'=> $meninggal,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan
+            );
+        //endbaris28
+        
+        //baris29
+            $baris29 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    between 'X60' and 'Y09%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'X60-Y09' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,count(di.tglmeninggal) as meninggal,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Cedera akibat kekerasan dalam rumah tangga'; $no = 22; $icdx = 'X60-Y09'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; $meninggal = 0;
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris29 as $brs4) {
+                $meninggal = $meninggal+ $brs4->meninggal;$lk0 = $lk0+ $brs4->lk0; $pr0 = $pr0+ $brs4->pr0; 
+                $lk1 = $lk1+$brs4->lk1;
+                $pr1 = $pr1 + $brs4->pr1; $lk2 = $lk2+$brs4->lk2; $pr2 = $pr2+$brs4->pr2;$lk3 = $lk3+ $brs4->lk3; 
+                $pr3 = $pr3+ $brs4->pr3; $lk4 = $lk4+ $brs4->lk4; $pr4 = $pr4+$brs4->pr4;$lk5 = $lk5+ $brs4->lk5; 
+                $pr5 = $pr5+ $brs4->pr5; $lk6 = $lk6+ $brs4->lk6; $pr6 = $pr6+ $brs4->pr6; $lkbr = $lkbr+$brs4->lkbr; 
+                $prbr =$prbr+ $brs4->prbr; $totalkunjungan =$totalkunjungan+ $brs4->totalkunjungan; 
+                $totalkasusbaru = $totalkasusbaru + $brs4->totalkasusbaru;
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan,'meninggal'=> $meninggal
+            );
+        //endbaris29
+        
+        //baris30
+            $baris30 = DB::select(DB::raw("
+                WITH diagnosa AS (
+                SELECT
+                pd.tglmeninggal,
+                ddp.objectjenisdiagnosafk,
+                di.ID,
+                jk.ID jkid,
+                ddp.norec,
+                ps.nocm,
+                pd.noregistrasi,
+                EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umur,
+                ps.tgllahir,
+                di.namadiagnosa,
+                jk.jeniskelamin,
+                di.kddiagnosa,
+                apd.tglregistrasi,
+                kasus.jumlahkasus,
+                CASE
+
+                WHEN kasus.jumlahkasus = 0 THEN
+                'BARU' ELSE'LAMA'
+                END kasuspenyakit
+                FROM
+                pasiendaftar_t pd
+                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+                INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+                INNER JOIN jeniskelamin_m jk ON jk.ID = ps.objectjeniskelaminfk
+                INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+                INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
+                INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
+                LEFT JOIN LATERAL (
+                SELECT COUNT
+                ( * ) AS jumlahkasus
+                FROM
+                pasiendaftar_t pd2
+                INNER JOIN antrianpasiendiperiksa_t apd2 ON pd2.norec = apd2.noregistrasifk
+                INNER JOIN diagnosapasien_t di2 ON apd2.norec = di2.noregistrasifk
+                INNER JOIN detaildiagnosapasien_t ddp2 ON di2.norec = ddp2.objectdiagnosapasienfk
+                WHERE
+                pd2.statusenabled = TRUE
+                AND pd2.nocmfk = pd.nocmfk
+                AND pd2.tglregistrasi :: DATE < pd.tglregistrasi :: DATE AND ddp2.objectdiagnosafk=ddp.objectdiagnosafk )
+                    kasus ON 1=1 WHERE apd.tglkeluar :: DATE BETWEEN '$tglAwal' AND '$tglAkhir' and di.kddiagnosa
+                    between 'W00' and 'X59%' and pd.kdprofile=$idProfile $tempjenisdiagnosa $tempDept ) SELECT 'W00-X59' as kode, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur < 1 )
+                    lk0, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur < 1 ) pr0, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=1 AND di.umur BETWEEN 1 AND 4 ) lk1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur
+                    BETWEEN 1 AND 4 ) pr1, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) lk2,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 5 AND 14 ) pr2, COUNT ( di.umur ) FILTER
+                    ( WHERE di.jkid=1 AND di.umur BETWEEN 15 AND 24 ) lk3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND
+                    di.umur BETWEEN 15 AND 24 ) pr3, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND
+                    44 ) lk4, COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) pr4, COUNT (
+                    di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 45 AND 64 ) lk5, COUNT ( di.umur ) FILTER ( WHERE
+                    di.jkid=2 AND di.umur BETWEEN 45 AND 64 ) pr5, COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur>
+                    64 ) lk6,
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 ) pr6,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) AS lkbr,
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' ) AS prbr,
+                    (
+                    COUNT ( di.kasuspenyakit ) FILTER ( WHERE di.jkid = 1 AND di.kasuspenyakit ILIKE'BARU' ) + COUNT (
+                    di.kasuspenyakit ) FILTER ( WHERE di.jkid = 2 AND di.kasuspenyakit ILIKE'BARU' )
+                    ) AS totalkasusbaru, count(di.tglmeninggal) as meninggal,
+                    (
+                    COUNT ( di.umur ) FILTER ( WHERE di.jkid = 1 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE
+                        di.jkid=2 AND di.umur < 1 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 1 AND 4
+                        ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 1 AND 4 ) + COUNT ( di.umur )
+                        FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2
+                        AND di.umur BETWEEN 5 AND 14 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 15
+                        AND 24 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 15 AND 24 ) + COUNT (
+                        di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER (
+                        WHERE di.jkid=2 AND di.umur BETWEEN 25 AND 44 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND
+                        di.umur BETWEEN 45 AND 64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=2 AND di.umur BETWEEN 45 AND
+                        64 ) + COUNT ( di.umur ) FILTER ( WHERE di.jkid=1 AND di.umur> 64 ) +
+                        COUNT ( di.umur ) FILTER ( WHERE di.jkid = 2 AND di.umur > 64 )
+                        ) AS totalkunjungan
+                        FROM
+                        diagnosa di
+
+                        GROUP BY
+                        di.id,
+                        di.kddiagnosa
+                        ORDER BY
+                        di.kddiagnosa ASC
+            "));
+            $namapenyakit = 'Cedera akibat lain'; $no = 23; $icdx = 'W00-X59'; $lk0 = 0; $pr0 = 0; $lk1 = 0; 
+            $pr1 = 0; $lk2 = 0; $pr2 = 0; $lk3 = 0; $pr3 = 0; $lk4 = 0; $pr4 = 0; $lk5 = 0; $meninggal=0;
+            $pr5 = 0; $lk6 = 0; $pr6 = 0; $lkbr = 0; $prbr = 0; $totalkasusbaru = 0; $totalkunjungan = 0;
+            foreach ($baris30 as $brs4) {
+                $meninggal = $meninggal+ $brs4->meninggal;$lk0 = $lk0+ $brs4->lk0; $pr0 = $pr0+ $brs4->pr0; 
+                $lk1 = $lk1+$brs4->lk1;
+                $pr1 = $pr1 + $brs4->pr1; $lk2 = $lk2+$brs4->lk2; $pr2 = $pr2+$brs4->pr2;$lk3 = $lk3+ $brs4->lk3; 
+                $pr3 = $pr3+ $brs4->pr3; $lk4 = $lk4+ $brs4->lk4; $pr4 = $pr4+$brs4->pr4;$lk5 = $lk5+ $brs4->lk5; 
+                $pr5 = $pr5+ $brs4->pr5; $lk6 = $lk6+ $brs4->lk6; $pr6 = $pr6+ $brs4->pr6; $lkbr = $lkbr+$brs4->lkbr; 
+                $prbr =$prbr+ $brs4->prbr; $totalkunjungan =$totalkunjungan+ $brs4->totalkunjungan; 
+                $totalkasusbaru = $totalkasusbaru + $brs4->totalkasusbaru;
+            }
+            $detail[] = array('no'=>$no, 'namapenyakit' => $namapenyakit, 'icdx'=> $icdx,
+                'lk0' => $lk0,'pr0' => $pr0,'lk1' => $lk1,'pr1' => $pr1,'lk2' => $lk2,'pr2' => $pr2,'lk3' => $lk3,'pr3' => $pr3,
+                'lk4' => $lk4,'pr4' => $pr4,'lk5' => $lk5,'pr5' => $pr5,'lk6' => $lk6,'pr6' => $pr6,'lkbr' => $lkbr,'prbr' => $prbr,
+                'totalkasusbaru' => $totalkasusbaru,'totalkunjungan' => $totalkunjungan, 'meninggal'=> $meninggal,
+            );
+        //endbaris30
+        
+        $result = array(
+            'detail' => $detail,
+            'message'=>'success',
+            'baris5' =>$baris5,
+        );
+        return $this->respond($result);
+    }
+
 }

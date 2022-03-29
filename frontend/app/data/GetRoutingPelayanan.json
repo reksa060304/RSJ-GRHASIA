@@ -17055,5 +17055,42 @@
       "define": "RekamMedisCtrl"
     }
   ]
+},
+{
+  "name": "LaporanSurveilansptm",
+  "url": "/LaporanSurveilans",
+  "templateurl": "module/Registrasi/Laporan/LaporanSurveilansptm.html",
+  "controller": "LaporanSurveilansptmCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    }
+  ]
+}, {
+  "name": "Grafika",
+  "url": "/Grafika",
+  "templateurl": "module/Registrasi/Laporan/Grafika.html",
+  "controller": "GrafikaCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    }
+  ]
 }
 ] 

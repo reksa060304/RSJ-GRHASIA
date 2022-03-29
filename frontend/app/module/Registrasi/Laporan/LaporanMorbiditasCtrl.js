@@ -42,9 +42,12 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("sysadmin/general/get-datacombo-icd10", true, true, 10).then(function (data) {
                     $scope.listDiagnosa = data;
                 });
+
+                init();
             }
 
             function init() {
+                $scope.isRouteLoading = true;
                 var tempJenisDiagnosa = ""
                 if ($scope.item.JenisDiagnosa != undefined) {
                     tempJenisDiagnosa = "&idJenisDiagnosa=" + $scope.item.JenisDiagnosa.id;
@@ -53,15 +56,13 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.departement != undefined) {
                     tempDepartemenId = "&idDept=" + $scope.item.departement.id;
                 }
-                $scope.isRouteLoading = true;
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
-
                 medifirstService.get("tatarekening/get-data-morbiditas-pasien?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir + tempJenisDiagnosa + tempDepartemenId, true).then(function (dat) {
+                $scope.isRouteLoading = false;
 
-                    $scope.isRouteLoading = true;
                     var data2 = dat.data.data;
                     
                     for (var i = 0; i < data2.length; i++) {
@@ -111,7 +112,6 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.cariFilter = function () {
-
                 init();
             }
 

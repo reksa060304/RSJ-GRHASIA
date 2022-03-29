@@ -131,6 +131,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-data-rekapitulasi-pendapatan-daerahtahun', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataRekapitulasiPendapatanDaerahTahunan');
           Route::get('bendaharapenerimaan/get-data-pendapatan-bendahara', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataPendapatanBP');
           Route::get('bendaharapenerimaan/get-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTS');
+          Route::get('bendaharapenerimaan/get-sts-popup', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPopup');
+          Route::get('bendaharapenerimaan/detail-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@detailSTS');
          
           //**GET**//
 
@@ -2217,6 +2219,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('sysadmin/logging/save-log-verifikasi-tarek', 'SysAdmin\LoggingController@saveLoggingVerifTarek');
               Route::get('sysadmin/logging/save-log-unverifikasi-tarek', 'SysAdmin\LoggingController@saveLoggingUnverifTarek');
               Route::post('sysadmin/logging/save-log-input-tindakan', 'SysAdmin\LoggingController@saveLoggingInputTindakan');
+              Route::post('sysadmin/logging/save-log-batal-sts', 'SysAdmin\LoggingController@saveLoggingBatalSts');
               Route::post('sysadmin/logging/save-log-hapus-tindakan', 'SysAdmin\LoggingController@saveLogHapusTindakan');
               Route::get('sysadmin/logging/save-log-konsul', 'SysAdmin\LoggingController@saveLoggingKonsulRuangan');
               Route::get('sysadmin/logging/save-log-input-resep', 'SysAdmin\LoggingController@saveLogInputResep');

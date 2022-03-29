@@ -106,12 +106,32 @@ define(['initialize'], function (initialize) {
                     }
                     listKasir = a.slice(1, a.length)
                 }
+				
+				var namaPasien="";
+                if ($scope.item.namaPasien != undefined) {
+					namaPasien = "&nama=" + $scope.item.namaPasien;
+                }
+
+				var nocm="";
+                if ($scope.item.Norm != undefined) {
+					nocm = "&nocm=" + $scope.item.Norm;
+                }
+
+				var noclosing="";
+                if ($scope.item.Noclosing != undefined) {
+					noclosing = "&noclosing=" + $scope.item.Noclosing;
+                }
+
+				var noregistrasi="";
+                if ($scope.item.Noregistrasi != undefined) {
+					noregistrasi = "&noregistrasi=" + $scope.item.Noregistrasi;
+                }
 
 				$q.all([
 					medifirstService.get("bendaharapenerimaan/get-daftar-sbm?"
 						+ "dateStartTglSbm=" + tglAwal
 						+ "&dateEndTglSbm=" + tglAkhir
-						+ "" + Skasir + Setor + carabayar
+						+ "" + Skasir + Setor + carabayar + namaPasien + nocm + noclosing + noregistrasi
 						+ "&KasirArr="+listKasir)
 				]).then(function (data) {
 					if (data[0].statResponse) {
@@ -356,6 +376,12 @@ define(['initialize'], function (initialize) {
 						"field": "namapasien",
 						"title": "Nama",
 						"template": "<span class='style-left'>#: namapasien #</span>",
+						"width": "80px"
+					},
+					{
+						"field": "noregistrasi",
+						"title": "No Registrasi",
+						"template": "<span class='style-left'> #: noregistrasi != null ? noregistrasi : '-' # </span>",
 						"width": "80px"
 					},
 					{

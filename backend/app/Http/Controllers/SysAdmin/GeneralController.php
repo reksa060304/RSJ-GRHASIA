@@ -4114,11 +4114,18 @@ class GeneralController extends ApiController
         foreach ($dpGD as $item){
             $kdDepartemenRawatJalan []=  (int)$item;
         }
+        $idDepRawatInap = explode(',', $this->settingDataFixed('idDepRawatInap', $kdProfile));
+        foreach ($idDepRawatInap as $item) {
+            $kdDepartemenRawatJalan []=  (int)$item;
+        }
         $ruangan = DB::table('ruangan_m')
-            ->select('id','namaruangan','objectdepartemenfk')
-            ->where('kdprofile', $kdProfile)
-            ->where('statusenabled',true)
-            ->whereIn('objectdepartemenfk',$kdDepartemenRawatJalan);
+            ->select('id','namaruangan','objectdepartemenfk','kdprofile', 'statusenabled')
+            ->whereIn('objectdepartemenfk',$kdDepartemenRawatJalan)
+            ->where('kdprofile', 30)
+            ->where('statusenabled', '=','true')
+            
+            ;
+            
 //        if(isset($request['departemenfk']) && $request['departemenfk']!=''){
 //            $ruangan = $ruangan->where('objectdepartemenfk',$request['departemenfk']);
 //        }
@@ -4127,6 +4134,7 @@ class GeneralController extends ApiController
 
         return $this->respond($ruangan);
     }
+
     public function getComboAkomodasi(Request $request) {
         $dataLogin = $request->all();
         $kdProfile = (int) $this->getDataKdProfile($request);
