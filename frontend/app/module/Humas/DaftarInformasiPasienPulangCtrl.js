@@ -125,6 +125,12 @@ define(['initialize'], function (initialize) {
           "template": "<span class='style-left'>{{formatTanggalJam('#: tanggalPulang #')}}</span>"
         },
         {
+          "field": "lamahari",
+          "title": "LOS",
+          "width": "30px",
+          "template": "<span class='style-center'>#: lamahari == 0 ? '' : lamahari #</span>"
+        },
+        {
           "field": "status",
           "title": "Status",
           "width": "70px",
