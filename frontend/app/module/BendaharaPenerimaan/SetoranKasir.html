@@ -88,6 +88,26 @@
 					k-auto-bind="false" k-data-source="listBayar" />
 			</div>
 		</div>
+		<div class="grid_2">
+			<label c-label item="item" c-label-text="Nama Pasien"></label>
+			<input c-text-box type="input" class="k-textbox" ng-model="item.namaPasien"
+				 />
+		</div>
+		<div class="grid_2">
+			<label c-label item="item" c-label-text="No RM"></label>
+			<input c-text-box type="input" class="k-textbox" ng-model="item.Norm"
+				 />
+		</div>
+		<div class="grid_2">
+			<label c-label item="item" c-label-text="No Closing"></label>
+			<input c-text-box type="input" class="k-textbox" ng-model="item.Noclosing"
+				 />
+		</div>
+		<div class="grid_2">
+			<label c-label item="item" c-label-text="No Registrasi"></label>
+			<input c-text-box type="input" class="k-textbox" ng-model="item.Noregistrasi"
+				 />
+		</div>
 		<div class="grid_1 k-edit-buttons  k-state-default " style="margin-top:20px">
 			<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="SearchData1()"
 				style="width:100px"><span class="k-sprite k-icon k-i-search"></span>Cari </button>

@@ -3064,6 +3064,14 @@
         }, {
             "nameDep": "GrafikaCtrl",
             "urlDep": "module/Registrasi/Laporan/GrafikaCtrl"
+        },
+        {
+            "nameDep": "PerencanaanImplementasiEvaluasiKeperawatanIGDCtrl",
+            "urlDep": "module/EMR/PerencanaanImplementasiEvaluasiKeperawatanIGDCtrl"
+        },
+        {
+            "nameDep": "AsesmenKeperawatanIGDCtrl",
+            "urlDep": "module/EMR/AsesmenKeperawatanIGDCtrl"
         }
     ]
 }
