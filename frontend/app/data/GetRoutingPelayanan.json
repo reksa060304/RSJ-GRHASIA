@@ -17136,5 +17136,24 @@
       "define": "RekamMedisCtrl"
     }
   ]
+},
+{
+  "name": "LaporanKunjunganTindakan",
+  "url": "/LaporanKunjunganTindakan",
+  "templateurl": "module/RawatJalan/LaporanKunjunganTindakan.html",
+  "controller": "LaporanKunjunganTindakanCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    }
+  ]
 }
 ] 
