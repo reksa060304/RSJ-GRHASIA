@@ -17074,7 +17074,8 @@
       "define": "MedifirstService"
     }
   ]
-}, {
+}, 
+{
   "name": "Grafika",
   "url": "/Grafika",
   "templateurl": "module/Registrasi/Laporan/Grafika.html",
@@ -17094,11 +17095,12 @@
   ]
 },
 {
-  "name": "RekamMedis.AsesmenMedis.PerencanaanImplementasiEvaluasiKeperawatanIGD",
-  "url": "/PerencanaanImplementasiEvaluasiKeperawatanIGD",
-  "templateurl": "module/EMR/PerencanaanImplementasiEvaluasiKeperawatanIGD.html",
-  "controller": "PerencanaanImplementasiEvaluasiKeperawatanIGDCtrl",
-  "deps": [{
+  "name": "RL4aPenyakitRawatInapSebabLuar",
+  "url": "/Ukw0YSBQZW55YWtpciBSYXdhdCBJbmFwIChTZWJhYiBMdWFyKQ==",
+  "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL4aPenyakitRawatInapSebabLuar.html",
+  "controller": "RL4aPenyakitRawatInapSebabLuarCtrl",
+  "deps": [
+    {
       "module": "Services",
       "define": "Service"
     },
@@ -17109,40 +17111,16 @@
     {
       "module": "MedifirstService",
       "define": "MedifirstService"
-    },
-    {
-      "define": "RekamMedisCtrl"
     }
   ]
 },
 {
-  "name": "RekamMedis.AsesmenMedis.AsesmenKeperawatanIGD",
-  "url": "/AsesmenKeperawatanIGD",
-  "templateurl": "module/EMR/AsesmenKeperawatanIGD.html",
-  "controller": "AsesmenKeperawatanIGDCtrl",
-  "deps": [{
-      "module": "Services",
-      "define": "Service"
-    },
+  "name": "RL4bPenyakitRawatJalanSebabLuar",
+  "url": "/Ukw0YiBQZW55YWtpdCBSYXdhdCBKYWxhbiAoU2ViYWIgTHVhcik=",
+  "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL4bPenyakitRawatJalanSebabLuar.html",
+  "controller": "RL4bPenyakitRawatJalanSebabLuarCtrl",
+  "deps": [
     {
-      "module": "LoginServices",
-      "define": "LoginService"
-    },
-    {
-      "module": "MedifirstService",
-      "define": "MedifirstService"
-    },
-    {
-      "define": "RekamMedisCtrl"
-    }
-  ]
-},
-{
-  "name": "LaporanKunjunganTindakan",
-  "url": "/LaporanKunjunganTindakan",
-  "templateurl": "module/RawatJalan/LaporanKunjunganTindakan.html",
-  "controller": "LaporanKunjunganTindakanCtrl",
-  "deps": [{
       "module": "Services",
       "define": "Service"
     },
