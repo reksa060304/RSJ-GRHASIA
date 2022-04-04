@@ -17092,5 +17092,68 @@
       "define": "MedifirstService"
     }
   ]
+},
+{
+  "name": "RekamMedis.AsesmenMedis.PerencanaanImplementasiEvaluasiKeperawatanIGD",
+  "url": "/PerencanaanImplementasiEvaluasiKeperawatanIGD",
+  "templateurl": "module/EMR/PerencanaanImplementasiEvaluasiKeperawatanIGD.html",
+  "controller": "PerencanaanImplementasiEvaluasiKeperawatanIGDCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    },
+    {
+      "define": "RekamMedisCtrl"
+    }
+  ]
+},
+{
+  "name": "RekamMedis.AsesmenMedis.AsesmenKeperawatanIGD",
+  "url": "/AsesmenKeperawatanIGD",
+  "templateurl": "module/EMR/AsesmenKeperawatanIGD.html",
+  "controller": "AsesmenKeperawatanIGDCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    },
+    {
+      "define": "RekamMedisCtrl"
+    }
+  ]
+},
+{
+  "name": "LaporanKunjunganTindakan",
+  "url": "/LaporanKunjunganTindakan",
+  "templateurl": "module/RawatJalan/LaporanKunjunganTindakan.html",
+  "controller": "LaporanKunjunganTindakanCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    }
+  ]
 }
 ] 

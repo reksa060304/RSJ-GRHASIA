@@ -1486,11 +1486,21 @@ class HumasController extends ApiController
             ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
             ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
+            ->leftjoin('registrasipelayananpasien_t as rpp', 'rpp.noregistrasifk', '=', 'pd.norec')
             ->select('pd.norec','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-                     'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk','dept.id as deptid','pd.tglclosing')
+                     'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk','dept.id as deptid','pd.tglclosing',DB::raw("CASE
+				WHEN max(pd.tglpulang::date)- min(rpp.tglmasuk::date)>= '0' and dept.id= '16' THEN
+				max(pd.tglpulang::date)- min(rpp.tglmasuk::date)
+				when max(pd.tglpulang::date)- min(rpp.tglmasuk::date) = '0' and dept.id='16' THEN
+				'1'
+				ELSE 
+				'0'
+			END  as lamahari"))
             ->where('pd.kdprofile', $idProfile)
             ->where('pd.statusenabled',true)
-            ->whereNotNull('pd.tglpulang');
+            ->whereNotNull('pd.tglpulang')
+            ->groupBy('pd.norec','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
+                     'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk','dept.id','pd.tglclosing');
 
         if(isset($filter['tglAwal']) && $filter['tglAwal']!="" && $filter['tglAwal']!="undefined"){
             $data = $data->where('pd.tglpulang','>=', $filter['tglAwal']);
@@ -1551,6 +1561,7 @@ class HumasController extends ApiController
                 'status'    =>  $status,
                 'deptid' => $pasienD->deptid,
                 'tglclosing' => $pasienD->tglclosing,
+                'lamahari'=>$pasienD->lamahari,
             );
         }
         return $this->respond($result);
