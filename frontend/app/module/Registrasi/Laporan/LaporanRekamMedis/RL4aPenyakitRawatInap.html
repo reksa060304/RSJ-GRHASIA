@@ -13,7 +13,7 @@
         text-align: center;
     }
 </style>
-<div ng-show="dataVOloaded">
+<div ng-show="dataVOloaded" style="overflow-x: hidden;">
     <!-- <c-panel item="item" header="'Daftar Tagihan Rekanan'" disabled> -->
     <div class="grid_12 headerBox">
         <h2 style="color: white;">
@@ -27,7 +27,7 @@
                     <md-tabs md-dynamic-height md-border-bottom>
                                                  <md-tab label="RL 4A" > -->
 
-    <div class="grid_12">
+    <div class="grid_12" style="margin-top: 50px;">
 
         <div class="grid_3">
             <label c-label item="item" c-label-text="Tanggal awal"></label>
@@ -71,13 +71,13 @@
     <div class="grid_12">
         <div class="grid_12" style="margin-top:10px">
             <div class="grid_12 headerBox">
-                <p>Data Kematian </p>
+                <p></p>
             </div>
             <div class="clear"></div>
             <div class="grid_12 borderBox">
                 <div id="kGrid" kendo-grid k-groupable="'true'" k-aggregate='aggregate' k-data-source="sourceLaporan"
                     k-selectable="'row'" k-columns="columnLaporan" k-pageable="'true'" k-sortable="'true'"
-                    k-ng-model="dataPasienSelected" ng-click="click(dataPasienSelected)">
+                    k-ng-model="dataPasienSelected" ng-click="click(dataPasienSelected)" style="min-height: 0px; max-height: 1000px; ">
                 </div>
             </div>
         </div>

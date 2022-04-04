@@ -40,17 +40,20 @@ define(['initialize'], function (initialize) {
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir
                     + tempRuanganId
-                ).then(function (data) {
-                    var data = data.data
+                ).then(function (dat) {
+                    var datas = dat.data.data
                     $scope.isRouteLoading = false;
-
+                    for (var i = 0; i < datas.length; i++) {
+                        datas[i].no = i + 1;
+                        datas[i].kdprov = '0023';
+                    }
                     //   debugger
-                    $scope.ambildataexcel = data.data;
+                    $scope.ambildataexcel = datas;
                     $scope.panggil($scope.ambildataexcel);
                     $scope.dataRL54 = new kendo.data.DataSource({
-                        data: data.data,
+                        data: datas,
                         pageSize: 10,
-                        total: data.length,
+                        total: datas.length,
                         serverPaging: false,
                         schema: {
                             model: {
@@ -68,9 +71,8 @@ define(['initialize'], function (initialize) {
                 $("#kGrid").kendoGrid({
                     toolbar: ["excel"],
                     excel: {
-                        fileName: "RL54.xlsx",
-                        filterable: true,
-                        allPages: true,
+                        fileName: "LaporanRL5410BesarPenyakitRawatjalan.xlsx",
+                        allPages: true
                     },
                     dataSource: $scope.ambildataexcel,
                     filterable: true,
@@ -79,85 +81,116 @@ define(['initialize'], function (initialize) {
                     // reorderable: true,
                     // filterable: true,
                     pageable: true,
+                    excelExport: function (e) {
+                        var rows = e.workbook.sheets[0].rows;
+                        var sheet = e.workbook.sheets[0];
+                        // rows.unshift({
+                        //     cells: [{ value: "DATA KEADAAN MORBIDITAS PASIEN RAWAT INAP", background: "#fffff" }]
+                        // });
+                        var columns = e.workbook.sheets[0].columns;
+                        delete columns[0].width;
+                        columns[0].width = 10;  //0 1 2 4 5 6 
+                        delete columns[1].width;
+                        columns[1].width = 15;
+                        delete columns[2].width;
+                        columns[2].width = 10;
+                        delete columns[3].width;
+                        columns[3].width = 10;
+                        delete columns[4].width;
+                        columns[4].width = 10;
+                        delete columns[5].width;
+                        columns[5].width = 10;
+                        delete columns[6].width;
+                        columns[6].width = 5;
+                        delete columns[7].width;
+                        columns[7].width = 10;
+                        delete columns[8].width;
+                        columns[8].width = 10;
+                        delete columns[9].width;
+                        columns[9].width = 50;
+                        delete columns[10].width;
+                        columns[10].width = 50;
+                        delete columns[11].width;
+                        columns[11].width = 50;
+                        delete columns[12].width;
+                        columns[12].width = 50;
+
+                        for(let i = 0; i < 1; i++){
+                            for(let j = 0; j <= 12; j++){
+                                sheet.rows[i].cells[j].background = '#ffffff';
+                                sheet.rows[i].cells[j].color = '#000000';
+                                sheet.rows[i].cells[j].textAlign = 'center';
+                            }
+                            sheet.rows[0].height = 50;
+                        }
+    
+                        for (var i = 0; i < e.workbook.sheets[0].rows.length; i++) {
+                            var $row = e.workbook.sheets[0].rows[i];
+                            for (var j = 0; j < $row.cells.length; j++) {
+                                var $cell = $row.cells[j];
+                                $cell["borderTop"] = { color: "#000000", size: 1 };
+                                $cell["borderRight"] = { color: "#000000", size: 1 };
+                                $cell["borderBottom"] = { color: "#000000", size: 1 };
+                                $cell["borderLeft"] = { color: "#000000", size: 1 };
+                            }
+                        }
+                       
+                    },
                     // groupable: true,
                     // columnMenu: true,
                     // resizable: true,
                     columns: [
-
                         {
-                            field: "kddiagnosa",
-                            title: "KODE ICD 10",
-                            width: "120px",
-                            template: "<span class='style-center'>#: kddiagnosa #</span>",
-                            headerAttributes: { style: "text-align : center" },
-                            rows: [
-                                {
-                                    cells: [
-                                        {
-                                            value: "Border",
-                                            borderTop: { color: "#ff0000", size: 3 }
-                                        }]
-                                }
-                            ]
-
+                            field: "kdprov",
+                            title: "KODE PROPINSI"
                         },
                         {
-                            field: "namadiagnosa",
-                            title: "DESKRIPSI",
-                            width: "120px",
-                            headerAttributes: { style: "text-align : center" },
+                            field: "namakota",
+                            title: "KAB / KOTA"
                         },
                         {
-                            title: "KASUS BARU MENURUT JENIS KELAMIN",
-                            headerAttributes: { style: "text-align : center" },
-                            columns: [
-                                {
-                                    "field": "jumlahLKH",
-                                    "title": "Laki-laki",
-                                    width: "80px",
-                                },
-                                {
-                                    "field": "jumlahPRH",
-                                    "title": "Perempuan",
-                                    width: "80px",
-                                }
-                            ]
-
+                            field: "idprofile",
+                            title: "KODE RS"
                         },
                         {
-                            field: "totalbaru",
-                            title: "JUMLAH KASUS BARU (4+5)",
-                            width: "80px",
-                            headerAttributes: { style: "text-align : center" },
+                            field: "namalengkap",
+                            title: "NAMA RS"
                         },
                         {
-                            title: "KASUS LAMA MENURUT JENIS KELAMIN",
-                            headerAttributes: { style: "text-align : center" },
-                            columns: [
-                                {
-                                    "field": "jumlahLKL",
-                                    "title": "Laki-laki",
-                                    width: "80px",
-                                },
-                                {
-                                    "field": "jumlahPRL",
-                                    "title": "Perempuan",
-                                    width: "80px",
-                                }
-                            ]
-
+                            field: "month",
+                            title: "BULAN"
                         },
                         {
-                            field: "totallama",
-                            title: "JUMLAH KASUS LAMA (7+8)",
-                            width: "80px",
-                            headerAttributes: { style: "text-align : center" },
+                            field: "year",
+                            title: "TAHUN"
                         },
                         {
-                            field: "jumlah",
-                            title: "Jumlah Kunjungan",
-                            width: "120px",
-                            headerAttributes: { style: "text-align : center" },
+                            field: "no",
+                            title: "NO. URUT"
+                        },
+                        {
+                            field: "nodaftarterperinci",
+                            title: "KODE ICD 10"
+                        },
+                        {
+                            field: "golongansebabpenyakit",
+                            title: "DESKRIPSI"
+                        },
+                        {
+                            field: "jumlahbarul",
+                            title: "KASUS BARU MENURUT JENIS KELAMIN LK"
+                        },
+                        {
+                            field: "jumlahbarup",
+                            title: "KASUS BARU MENURUT JENIS KELAMIN PR"
+                        },
+                        {
+                            field: "totalall",
+                            title: "JUMLAH KASUS BARU (4 + 5)"
+                        },
+                        {
+                            field: "jumlahkunjungan",
+                            title: "JUMLAH KUNJUNGAN"
                         }
                     ]
                 })

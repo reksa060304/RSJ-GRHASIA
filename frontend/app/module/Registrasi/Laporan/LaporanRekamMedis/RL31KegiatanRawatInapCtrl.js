@@ -34,24 +34,21 @@ define(['initialize'], function (initialize) {
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir
 
-                ).then(function (data) {
-                    var data = data.data
-                    for (var i = 0; i < data.data.length; i++) {
-                        data.data[i].no = i + 1
-                        var tanggal = $scope.now;
-                        var tanggalLahir = new Date(data.data[i].tglLahir);
-                        var umurzz = DateHelper.CountAge(tanggalLahir, tanggal);
-                        data.data[i].umurzz = umurzz.year + ' thn ' + umurzz.month + ' bln ' + umurzz.day + ' hari'
-
+                ).then(function (dat) {
+                    var datas = dat.data.data
+                    for (var i = 0; i < datas.length; i++) {
+                        datas[i].no = i + 1;
+                        datas[i].kdprov = '0023';
+                        datas[i].year = new Date(tglAwal).getFullYear();
                     }
                     $scope.isRouteLoading = false;
 
                     $scope.sourceLaporan = new kendo.data.DataSource({
 
-                        data: data.data,
+                        data: datas,
                         group: $scope.group,
                         pageSize: 10,
-                        total: data.length,
+                        total: datas.length,
                         serverPaging: false,
                         schema: {
                             model: {
@@ -61,7 +58,7 @@ define(['initialize'], function (initialize) {
                         }
                     });
 
-                    $scope.dataExcel = data.data;
+                    $scope.dataExcel = datas;
                 })
             }
 
@@ -121,131 +118,134 @@ define(['initialize'], function (initialize) {
                 // resizable: true,
                 excelExport: function (e) {
                     var rows = e.workbook.sheets[0].rows;
-                    rows.unshift({
-                        cells: [{ value: "RAWAT INAP", background: "#fffff" }]
-                    });
+                    var sheet = e.workbook.sheets[0];
+                    // rows.unshift({
+                    //     cells: [{ value: "DATA KEADAAN MORBIDITAS PASIEN RAWAT INAP", background: "#fffff" }]
+                    // });
+                    var columns = e.workbook.sheets[0].columns;
+                    delete columns[0].width;
+                    columns[0].width = 10;  //0 1 2 4 5 6 
+                    delete columns[1].width;
+                    columns[1].width = 15;
+                    delete columns[2].width;
+                    columns[2].width = 15;
+                    delete columns[3].width;
+                    columns[3].width = 15;
+                    delete columns[4].width;
+                    columns[4].width = 10;
+                    delete columns[5].width;
+                    columns[5].width = 5;
+
+                    for(let i = 6; i <= 20; i++){
+                        delete columns[i].width;
+                        columns[i].width = 30;
+                    }
+
+                    for(let i = 0; i < 1; i++){
+                        for(let j = 0; j <= 20; j++){
+                            sheet.rows[i].cells[j].background = '#ffffff';
+                            sheet.rows[i].cells[j].color = '#000000';
+                            sheet.rows[i].cells[j].textAlign = 'center';
+                        }
+                        sheet.rows[0].height = 50;
+                    }
+
+                    for (var i = 0; i < e.workbook.sheets[0].rows.length; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 0; j < $row.cells.length; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderTop"] = { color: "#000000", size: 1 };
+                            $cell["borderRight"] = { color: "#000000", size: 1 };
+                            $cell["borderBottom"] = { color: "#000000", size: 1 };
+                            $cell["borderLeft"] = { color: "#000000", size: 1 };
+                        }
+                    }
+                   
                 },
                 columns: [
                     {
+                        field: "koders",
+                        title: "KODE RS",
+                    },
+                    {
+                        field: "kdprov",
+                        title: "KODE PROPINSI",
+                    },
+                    {
+                        field: "namakota",
+                        title: "KAB / KOTA",
+                    },
+                    {
+                        field: "namars",
+                        title: "NAMA RS",
+                    },
+                    {
+                        field: "year",
+                        title: "TAHUN",
+                    },
+                    {
                         field: "no",
                         title: "NO",
-                        Template: "<span class='style-center'>#: no #</span>",
-                        width: "40px"
                     },
                     {
-                        field: "jenis_spesialisasi",
+                        field: "pelayanan",
                         title: "JENIS PELAYANAN",
-                        width: "120px",
-                        template: "<span class='style-center'>#: jenis_spesialisasi #</span>",
-                        headerAttributes: { style: "text-align : center" },
-                        rows: [
-                            {
-                                cells: [
-                                    {
-                                        value: "Border",
-                                        borderTop: { color: "#ff0000", size: 3 }
-                                    }]
-                            }
-                        ]
-
                     },
                     {
-                        field: "pasienawaltahun",
+                        field: "jumlahpasienawal",
                         title: "PASIEN AWAL TAHUN",
-                        width: "80px",
-                        headerAttributes: { style: "text-align : center" },
                     },
                     {
-                        field: "pasienmasuk",
+                        field: "jumlahpasienmasuk",
                         title: "PASIEN MASUK",
-                        width: "80px",
-                        headerAttributes: { style: "text-align : center" },
                     },
                     {
-                        field: "pasienkeluarhidup",
+                        field: "jumlahpasienhidup",
                         title: "PASIEN KELUAR HIDUP",
-                        width: "80px",
-                        headerAttributes: { style: "text-align : center" },
                     },
                     {
-                        title: "PASIEN KELUAR MATI",
-                        headerAttributes: { style: "text-align : center" },
-                        columns: [
-                            {
-                                field: "matikurang48jam",
-                                title: "< 48 jam",
-                                width: "100px",
-                                headerAttributes: { style: "text-align : center" }
-                            },
-                            {
-                                field: "matilebih48jam",
-                                title: ">= 48 jam",
-                                width: "80px",
-                                headerAttributes: { style: "text-align : center" },
-                            }
-
-                        ]
+                        field: "jumlahpasienkurang",
+                        title: "< 48 JAM",
                     },
                     {
-                        field: "lamadirawat",
+                        field: "jumlahpasienlebih",
+                        title: ">= 48 JAM",
+                    },
+                    {
+                        field: "jumlahlamadirawat",
                         title: "JUMLAH LAMA DIRAWAT",
-                        width: "80px",
-                        headerAttributes: { style: "text-align : center" },
                     },
                     {
-                        field: "pasienakhirtahun",
+                        field: "jumlahpasienakhir",
                         title: "PASIEN AKHIR TAHUN",
-                        width: "80px",
-                        headerAttributes: { style: "text-align : center" },
                     },
                     {
-                        field: "lamadirawat",
+                        field: "jumlahhariperawatan",
                         title: "JUMLAH HARI PERAWATAN",
-                        width: "80px",
-                        headerAttributes: { style: "text-align : center" },
                     },
                     {
-                        title: "RINCIAN HARI PERAWATAN PERKELAS",
-                        headerAttributes: { style: "text-align : center" },
-                        columns: [
-                            {
-                                field: "rincianvipb",
-                                title: "VIP B",
-                                width: "60px",
-                                headerAttributes: { style: "text-align : center" }
-                            },
-                            {
-                                field: "rincianvipa",
-                                title: "VIP A",
-                                width: "60px",
-                                headerAttributes: { style: "text-align : center" },
-                            },
-                            {
-                                field: "rinciankel1",
-                                title: "I",
-                                width: "60px",
-                                headerAttributes: { style: "text-align : center" },
-                            },
-                            {
-                                field: "rinciankel2",
-                                title: "II",
-                                width: "60px",
-                                headerAttributes: { style: "text-align : center" },
-                            },
-                            {
-                                field: "rinciankel3",
-                                title: "III",
-                                width: "60px",
-                                headerAttributes: { style: "text-align : center" },
-                            },
-                            {
-                                field: "rinciannonkelas",
-                                title: "NON KELAS",
-                                width: "60px",
-                                headerAttributes: { style: "text-align : center" },
-                            },
-
-                        ]
+                        field: "jumlahvvip",
+                        title: "VVIP",
+                    },
+                    {
+                        field: "jumlahvip",
+                        title: "VIP",
+                    },
+                    {
+                        field: "jumlahsatu",
+                        title: "I",
+                    },
+                    {
+                        field: "jumlahdua",
+                        title: "II",
+                    },
+                    {
+                        field: "jumlahtiga",
+                        title: "III",
+                    },
+                    {
+                        field: "jumlahkhusus",
+                        title: "KELAS KHUSUS",
                     }
 
                 ]

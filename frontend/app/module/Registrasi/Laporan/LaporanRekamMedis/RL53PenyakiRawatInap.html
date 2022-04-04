@@ -2,10 +2,13 @@
 <div ng-show="dataVOloaded">
     <!-- <c-panel item="item" header="'Daftar Tagihan Rekanan'" disabled> -->
     <div class="grid_12 headerBox">
-        <h1 style="color: white;"><b>Formulir RL 5.3</b></h1>
+        <h2 style="color: white;">
+            <p>Formulir RL 5.3</p>
+            <p>10 BESAR PENYAKIT RAWAT INAP</p>
+        </h2>
     </div>
 
-    <div class="grid_12">
+    <div class="grid_12" style="margin-top: 50px;">
 
         <div class="grid_3">
             <label c-label item="item" c-label-text="Tanggal awal"></label>
@@ -22,10 +25,7 @@
 				<label c-label item="item" c-label-text="Departement"></label>
 				<input  style="width: 100%;" kendo-combo-box k-ng-model="item.departement" k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartemen"  k-on-change="getIsiComboRuangan()"/>
 			</div>-->
-			<div class="grid_3">
-				<label c-label item="item" c-label-text="Ruangan"></label>
-				<input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listRuangan"/>
-            </div> 
+			
         <div class="grid_1">
             <div class="grid_12">
                 <label>&nbsp;</label>
@@ -64,7 +64,7 @@
     <!-- </div> -->
     <div class="grid_12" style="margin-top:10px">
         <div class="grid_12 headerBox">
-            <p>Data Laporan</p>
+            <p></p>
         </div>
         <div class="clear"></div>
 

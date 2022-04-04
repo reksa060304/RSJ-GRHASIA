@@ -252,391 +252,485 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataRL31RawatInap(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $deptId = explode (',',$this->settingDataFixed('KdListDepartemen',$idProfile));
-        $KdJenisLaporan = (int) $this->settingDataFixed('KdJenisLapRanap', $idProfile);
-        $kdDepartemenRawatPelayanan = [];
-        foreach ($deptId as $items){
-            $kdDepartemenRawatPelayanan []=  (int)$items;
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $tanggal = DB::select(DB::raw("
+            select d::date as tgl
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
+        "));
+
+        $tanggalmin = DB::select(DB::raw("
+            select min(d::date) as tglmin
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
+        "));
+
+        $tanggalmax = DB::select(DB::raw("
+            select max(d::date) as tglmax
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
+        "));
+        
+
+        $arr = [];
+        foreach($tanggal as $row)
+        {
+            $arr[] =  $row->tgl;
         }
-        $data = \DB::table('antrianpasiendiperiksa_t as app')
-            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'app.noregistrasifk')
-            ->join('asalrujukan_m as ar', 'ar.id', '=', 'app.objectasalrujukanfk')
-            ->join('pasien_m as pm', 'pm.id', '=', 'pd.nocmfk')
-            ->join('ruangan_m as ru', 'ru.id', '=', 'app.objectruanganfk')
-            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
-            ->join('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'app.norec')
-            ->join('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
-            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','pp.produkfk')
-            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
-            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
-            ->join('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
-            ->join ('kelas_m as kls','kls.id','=','app.objectkelasfk')
-            ->leftjoin ('statuskeluar_m as sk','sk.id','=','pd.objectstatuskeluarfk')
-            ->join('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
-            ->select('pd.tglregistrasi', 'pm.nocm', 'pd.noregistrasi', 'pm.namapasien', 'app.objectasalrujukanfk',
-                'ar.asalrujukan', 'ru.namaruangan', 'dpm.namadepartemen', 'pg.namalengkap', 'pm.objectjeniskelaminfk',
-                'ru.objectdepartemenfk','pd.objectstatuskeluarfk as objectstatuskeluarfk','pd.objectkelasfk as objectkelasfk',
-                'kl.kelompoklaporan as jenis_spesialisasi',
-//                DB::raw('
-//                            case when pd.tglpulang is null then  EXTRACT(Day FROM CURRENT_DATE) - EXTRACT(day FROM pd.tglregistrasi)
-//                            else EXTRACT(Day FROM pd.tglpulang) - EXTRACT(day FROM pd.tglregistrasi) end as lamadirawat,
-//                             EXTRACT(MONTH FROM pd.tglregistrasi) as bulanregistrasi'
-//                )
+        $arrmin = [];
+        foreach($tanggalmin as $rowmin)
+        {
+            $arrmin[] =  $rowmin->tglmin;
+        }
+        $arrmax = [];
+        foreach($tanggalmax as $rowmax)
+        {
+            $arrmax[] =  $rowmax->tglmax;
+        }   
 
-                DB::raw("
-                CASE
-                    WHEN pd.tglpulang IS NULL THEN
-                    DATE_PART('day', now() - pd.tglregistrasi::timestamp)
-                    ELSE
-                    DATE_PART('day', pd.tglpulang::TIMESTAMP - pd.tglregistrasi::timestamp)
-                    END AS lamadirawat,
-                    to_char( pd.tglregistrasi,'MM') as bulanregistrasi"
-                )
+        $main = array("Penyakit Dalam", "Kesehatan Anak", "Obstetri", "Ginekologi", "Bedah", "Bedah Ortopedhi", "Bedah Saraf", "Luka Bakar", "Saraf", "Jiwa", "Psikologi", "Penatalaksanaan Penyalahgunaan NAPZA", "THT", "Mata", "Kulit dan Kelamin", "Kardiologi", "Paru-paru", "Geriatri", "Radioterapi", "Kedokteran Nuklir", "Kusta", "Rehabilitasi Medik", "Isolasi", "ICU", "ICCU", "NICU / PICU", "Umum", "Gigi & Mulut", "Pelayanan Rawat Darurat", "Perinatologi");
 
+
+        
+        $pasienawalperhari = DB::select(DB::raw("select tanggal, ruangan, ruanganasal, sum(jumlah) as total, namalengkap, namapemerintahan, namakota, idprofile from (
+            select tanggal, ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+            FROM pasiendaftar_t as pd
+            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                            inner join profile_m p on p.id = pd.kdprofile
+            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+            and rpp.objectruanganfk = apd.objectruanganfk
+            and rpp.tglmasuk = apd.tglmasuk
+            and rpp.objectstatuskeluarfk is null
+            and rpp.objectruanganasalfk is null
+            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
+            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+            where pd.statusenabled = TRUE 
+            and pd.kdprofile = $kdProfile 
+            and cast(rpp.tglmasuk as date) between '$arrmin[0]'::date - interval '1 day' and '$arrmax[0]'::date - interval '1 day'
+                                        and rpp.tglmasuk::date != pd.tglpulang::date
+            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            ) as x
+
+            UNION ALL
+
+            select tanggal,ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+            FROM pasiendaftar_t as pd
+            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                            inner join profile_m p on p.id = pd.kdprofile
+            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+            and rpp.objectruanganfk = apd.objectruanganfk
+            and rpp.tglmasuk = apd.tglmasuk
+            and rpp.objectstatuskeluarfk <> 2
+            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
+            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+            where pd.statusenabled = TRUE 
+            and pd.kdprofile = $kdProfile 
+            and cast(rpp.tglmasuk as date) between '$arrmin[0]'::date - interval '1 day' and '$arrmax[0]'::date - interval '1 day'
+                                        and rpp.tglmasuk::date != pd.tglpulang::date
+            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            ) as x
+            ) as y 
+            group by tanggal, ruangan, ruanganasal, namalengkap, namapemerintahan, namakota, idprofile"));
+
+        $pasienmasuk = DB::select(DB::raw("select tanggal, ruangan, ruanganasal, sum(jumlah) as total, namalengkap, namapemerintahan, namakota, idprofile from (
+            select tanggal, ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+            FROM pasiendaftar_t as pd
+            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                            inner join profile_m p on p.id = pd.kdprofile
+            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+            and rpp.objectruanganfk = apd.objectruanganfk
+            and rpp.tglmasuk = apd.tglmasuk
+            and rpp.objectstatuskeluarfk is null
+            and rpp.objectruanganasalfk is null
+            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
+            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+            where pd.statusenabled = TRUE 
+            
+                            and pd.kdprofile = $kdProfile  
+                            and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
+                            --and ru1.namaruangan is not null
+            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            ) as x
+
+            UNION ALL
+
+            select tanggal,ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+            FROM pasiendaftar_t as pd
+            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                            inner join profile_m p on p.id = pd.kdprofile
+            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+            and rpp.objectruanganfk = apd.objectruanganfk
+            and rpp.tglmasuk = apd.tglmasuk
+            and rpp.objectstatuskeluarfk <> 2
+            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
+            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+            where pd.statusenabled = TRUE 
+                            and pd.kdprofile = $kdProfile 
+                            and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
+                            --and ru1.namaruangan is not null
+            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            ) as x
+            ) as y 
+            group by tanggal, ruangan, ruanganasal, namalengkap, namapemerintahan, namakota, idprofile"));
+
+        
+            
+        $pasienawal = DB::select(DB::raw("select tanggal, ruangan, ruanganasal, sum(jumlah) as total, namalengkap, namapemerintahan, namakota, idprofile from (
+            select tanggal, ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+            FROM pasiendaftar_t as pd
+            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                            inner join profile_m p on p.id = pd.kdprofile
+            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+            and rpp.objectruanganfk = apd.objectruanganfk
+            and rpp.tglmasuk = apd.tglmasuk
+            and rpp.objectstatuskeluarfk is null
+            and rpp.objectruanganasalfk is null
+            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
+            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+            where pd.statusenabled = TRUE 
+            and pd.kdprofile = $kdProfile 
+            and cast(apd.tglmasuk as date) = '$arrmin[0]'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$arrmin[0]'::date
+            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            ) as x
+
+            UNION ALL
+
+            select tanggal,ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+            FROM pasiendaftar_t as pd
+            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                            inner join profile_m p on p.id = pd.kdprofile
+            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+            and rpp.objectruanganfk = apd.objectruanganfk
+            and rpp.tglmasuk = apd.tglmasuk
+            and rpp.objectstatuskeluarfk <> 2
+            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
+            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+            where pd.statusenabled = TRUE 
+            and pd.kdprofile = $kdProfile 
+            and cast(apd.tglmasuk as date) = '$arrmin[0]'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$arrmin[0]'::date
+            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            ) as x
+            ) as y 
+            group by tanggal, ruangan, ruanganasal, namalengkap, namapemerintahan, namakota, idprofile"));
+
+
+            
+        $pasienakhir = DB::select(DB::raw("select tanggal, ruangan, ruanganasal, sum(jumlah) as total, namalengkap, namapemerintahan, namakota, idprofile from (
+            select tanggal, ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+            FROM pasiendaftar_t as pd
+            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                            inner join profile_m p on p.id = pd.kdprofile
+            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+            and rpp.objectruanganfk = apd.objectruanganfk
+            and rpp.tglmasuk = apd.tglmasuk
+            and rpp.objectstatuskeluarfk is null
+            and rpp.objectruanganasalfk is null
+            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
+            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+            where pd.statusenabled = TRUE 
+            and pd.kdprofile = $kdProfile 
+                            and cast(apd.tglmasuk as date) = '$arrmax[0]'::date
+            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            ) as x
+
+            UNION ALL
+
+            select tanggal,ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+            FROM pasiendaftar_t as pd
+            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                            inner join profile_m p on p.id = pd.kdprofile
+            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+            and rpp.objectruanganfk = apd.objectruanganfk
+            and rpp.tglmasuk = apd.tglmasuk
+            and rpp.objectstatuskeluarfk <> 2
+            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
+            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+            where pd.statusenabled = TRUE 
+            and pd.kdprofile = $kdProfile 
+                            and cast(apd.tglmasuk as date) = '$arrmax[0]'::date
+            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            ) as x
+            ) as y 
+            group by tanggal, ruangan, ruanganasal, namalengkap, namapemerintahan, namakota, idprofile"));
+
+
+        $lamahari = DB::select(DB::raw("select sum(y.totallama) as total, y.ruangan, y.ruanganasal from(
+            select x.tanggalpulang, sum(x.lamadirawat) as totallama, x.ruangan, x.ruanganasal from(
+            with cte as (
+                select pdt.norec, min(apdt.tglmasuk::date) tglmasuk from pasiendaftar_t as pdt
+                inner join antrianpasiendiperiksa_t as apdt on apdt.noregistrasifk = pdt.norec
+                inner join ruangan_m as rum on rum.id = apdt.objectruanganfk
+                where rum.objectdepartemenfk = 16
+                and pdt.statusenabled = TRUE
+                and pdt.kdprofile = $kdProfile
+                and pdt.tglpulang::date between '$arrmin[0]' and '$arrmax[0]'
+                group by pdt.norec
             )
-            ->where('app.kdprofile', $idProfile)
-            ->whereIn('dpm.id',$kdDepartemenRawatPelayanan)
-            ->where('jl.id',$KdJenisLaporan);
-
-        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
-        }
-        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $tgl = $request['tglAkhir'];
-            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
-        }
-
-        $data = $data->get();
-
-        $data10 = [];
-        $jml = 0;
-        $sama = false;
-
-        $pasienAwalTahun = 0;
-        $pasienMasuk = 0;
-        $pasienKeluarHidup = 0;
-        $matilebih48jam = 0;
-        $matikurang48jam=0;
-        $jumlahLamaDirawat=0;
-        $pasienAkhirTahun=0;
-        $jumlahHariDirawat=0;
-        $rincianVipB=0;
-        $rincianVipA=0;
-        $rincianKel1=0;
-        $rincianKel2=0;
-        $rincianKel3=0;
-        $rincianKelNonKelas=0;
-        $DiTerimaKembali = 0;
+            
+            select pm.namapasien, pd.tglpulang::date as tanggalpulang, cte.tglmasuk as tanggalmasuk, ru.namaruangan ruangan, ru1.namaruangan ruanganasal,
+            case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  pd.tglpulang::date-cte.tglmasuk end as lamadirawat
+                        FROM pasiendaftar_t as pd
+                        INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                        INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+                            and apd.objectruanganfk = rpp.objectruanganfk
+                            and apd.tglmasuk = rpp.tglpindah
+                            and rpp.objectstatuskeluarfk = 1
+                                    INNER JOIN cte on cte.norec = pd.norec
+                        INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+                        INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+                        INNER JOIN kelas_m as kls on kls.id = rpp.objectkelasfk
+                        inner JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+                                                    inner JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk
+                        WHERE pd.kdprofile = $kdProfile and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
+                                    group by pd.tglpulang::date, pm.namapasien, cte.tglmasuk, ru.namaruangan, ru1.namaruangan 
+                                    order by pd.tglpulang::date) 
+                            as x group by x.tanggalpulang, x.ruangan, x.ruanganasal) 
+                            as y group by y.ruangan, y.ruanganasal"));
 
 
-        foreach ($data as $item) {
-            $sama = false;
-            $i = 0;
-            foreach ($data10 as $hideung) {
-                if ($item->jenis_spesialisasi == $data10[$i]['jenis_spesialisasi']) {
-                    $sama = true;
-                    $jml = (float)$hideung['jumlah'] + 1;
-                    $data10[$i]['jumlah'] = $jml;
+            $hidup = DB::select(DB::raw("select pd.tglpulang::date as tanggal, count(pm.namapasien) total, ru.namaruangan ruangan, ru1.namaruangan ruanganasal
+            FROM pasiendaftar_t as pd
+            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+            INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
+						INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec and rpp.objectruanganfk = pd.objectruanganlastfk
+						inner join ruangan_m ru1 on ru1.id = rpp.objectruanganasalfk
+            where pd.kdprofile = $kdProfile and pd.statusenabled = true and ru1.statusenabled = true
+						and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
+						and ru.objectdepartemenfk = 16
+						and pd.objectstatuskeluarfk = 1
+                        and pd.tglpulang is not null
+						group by pd.tglpulang::date, ru.namaruangan, ru.namaruangan, ru1.namaruangan"));
 
-                    if ($item->bulanregistrasi==1 )
-                    {
-                        $data10[$i]['pasienawaltahun'] = (float)$hideung['pasienawaltahun'] + 1;
-                    }
-                    else if ($item->bulanregistrasi==12 )
-                    {
-                        $data10[$i]['pasienakhirtahun'] = (float)$hideung['pasienakhirtahun'] + 1;
-                    }
-                    else if ($item->objectdepartemenfk==16 ||$item->objectdepartemenfk==25)
-                    {
-                        $data10[$i]['pasienmasuk'] = (float)$hideung['pasienmasuk'] + 1;
-                    }
-                    elseif ($item->objectstatuskeluarfk != 5)
-                    {
-                        $data10[$i]['pasienkeluarhidup'] = (float)$hideung['pasienkeluarhidup'] + 1;
-                    }
-                    elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat < 48 )
-                    {
-                        $data10[$i]['matikurang48jam'] = (float)$hideung['matikurang48jam'] + 1;
-                    }
-                    elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat > 48 )
-                    {
-                        $data10[$i]['matilebih48jam'] = (float)$hideung['matilebih48jam'] + 1;
-                    }
 
-                    if ($item->objectkelasfk == 8 )
-                    {
-                        $data10[$i]['rincianvipb'] = (float)$hideung['rincianvipb'] + 1;
-                    }
-                    elseif ($item->objectkelasfk == 5 )
-                    {
-                        $data10[$i]['rincianvipa'] = (float)$hideung['rincianvipa'] + 1;
-                    }
-                    elseif ($item->objectkelasfk == 3 )
-                    {
-                        $data10[$i]['rinciankel1'] = (float)$hideung['rinciankel1'] + 1;
-                    }
-                    elseif ($item->objectkelasfk == 2 )
-                    {
-                        $data10[$i]['rinciankel2'] = (float)$hideung['rinciankel2'] + 1;
-                    }
-                    elseif ($item->objectkelasfk == 1 )
-                    {
-                        $data10[$i]['rinciankel3'] = (float)$hideung['rinciankel3'] + 1;
-                    }
-                    elseif ($item->objectkelasfk == 6 )
-                    {
-                        $data10[$i]['rinciannonkelas'] = (float)$hideung['rinciannonkelas'] + 1;
-                    }
-//                    $data10[$i]['total'] = $data10[$i]['jmlBaruL'] + $data10[$i]['jmlBaruP'];
-                }
-                $i = $i + 1;
-            }
+            $meninggal = DB::select(DB::raw("select pd.tglmeninggal::date as tanggal, count(pm.namapasien) jumlah, ru.namaruangan ruangan, ru1.namaruangan ruanganasal
+            FROM pasiendaftar_t as pd
+            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+            INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
+						INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec and rpp.objectruanganfk = pd.objectruanganlastfk
+						inner join ruangan_m ru1 on ru1.id = rpp.objectruanganasalfk
+						inner join kondisipasien_m kps on kps.id = pd.objectkondisipasienfk
+            where pd.kdprofile = $kdProfile and pd.statusenabled = true and ru1.statusenabled = true
+						and cast(pd.tglmeninggal as date) between '$arrmin[0]' and '$arrmax[0]'
+						and ru.objectdepartemenfk = 16
+						group by pd.tglmeninggal::date, ru.namaruangan, ru1.namaruangan"));
 
-            if ($sama == false) {
-                if ($item->bulanregistrasi==1)
-                {
-                    $pasienAwalTahun = 1;
-                    $pasienMasuk = 0;
-                    $pasienKeluarHidup = 0;
-                    $matilebih48jam = 0;
-                    $matikurang48jam=0;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=0;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=0;
-                    $rincianVipA=0;
-                    $rincianKel1=0;
-                    $rincianKel2=0;
-                    $rincianKel3=0;
-                    $rincianKelNonKelas=0;
-                    $DiTerimaKembali = 0;
+
+            $kelas = DB::select(DB::raw("select tanggal, ruangan, idruangan, ruanganasal, objectkelasfk, sum(jumlah) as total from (
+                select tanggal, ruangan, ruanganasal, objectkelasfk, idruangan, jumlah from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, rpp.objectkelasfk, ru1.namaruangan ruanganasal, ru.id idruangan, count(apd.tglmasuk) as jumlah
+                FROM pasiendaftar_t as pd
+                INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+                and rpp.objectruanganfk = apd.objectruanganfk
+                and rpp.tglmasuk = apd.tglmasuk
+                and rpp.objectstatuskeluarfk is null
+                and rpp.objectruanganasalfk is null
+                INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+                INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+                INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
+                INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+                LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+                where pd.statusenabled = TRUE 
+								and pd.kdprofile = $kdProfile  
+								and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
+                group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan,rpp.objectkelasfk, ru.id
+                ) as x
+
+                UNION ALL
+
+                select tanggal, ruangan, ruanganasal, objectkelasfk, idruangan, jumlah from (select apd.tglmasuk::date as tanggal, rpp.objectkelasfk, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, ru.id idruangan, count(apd.tglmasuk) as jumlah
+                FROM pasiendaftar_t as pd
+                INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+								inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+								inner  join produk_m pr on pr.id=pp.produkfk
+                INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+                and rpp.objectruanganfk = apd.objectruanganfk
+                and rpp.tglmasuk = apd.tglmasuk
+                and rpp.objectstatuskeluarfk <> 2
+                INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+                INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+                INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
+                INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
+                LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+                where pd.statusenabled = TRUE 
+								and pd.kdprofile = $kdProfile 
+								and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
+                group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, rpp.objectkelasfk, ru.id
+                ) as x
+            ) as y 
+            group by tanggal, ruangan, ruanganasal, objectkelasfk, idruangan"));
+
+        $profile = DB::select(DB::raw("select namakota, namalengkap, namapemerintahan, id idprofile
+        from profile_m where id = $kdProfile"));
+
+
+        $main = array("Penyakit Dalam", "Kesehatan Anak", "Obstetri", "Ginekologi", "Bedah", "Bedah Ortopedhi", "Bedah Saraf", "Luka Bakar", "Saraf", "Jiwa", "Psikologi", "Penatalaksanaan Penyalahgunaan NAPZA", "THT", "Mata", "Kulit dan Kelamin", "Kardiologi", "Paru-paru", "Geriatri", "Radioterapi", "Kedokteran Nuklir", "Kusta", "Rehabilitasi Medik", "Isolasi", "ICU", "ICCU", "NICU / PICU", "Umum", "Gigi & Mulut", "Pelayanan Rawat Darurat", "Perinatologi");
+        $currentmain = "Larasatizka";
+
+        $jumlahpasienawal = 0;
+        $jumlahpasienmasuk = 0;
+        $jumlahpasienhidup = 0;
+        $jumlahpasienkurang = 0;
+        $jumlahpasienlebih = 0;
+        $jumlahlamadirawat = 0;
+        $jumlahpasienakhir = 0;
+        $jumlahhariperawatan = 0;
+        $jumlahvvip = 0;
+        $jumlahvip = 0;
+        $jumlahsatu = 0;
+        $jumlahdua = 0;
+        $jumlahtiga = 0;
+        $jumlahkhusus = 0;
+        $jumlahpasienawalperhari = 0;
+
+        foreach($main as $row){
+            $jumlahpasienawal = 0;
+            $jumlahpasienmasuk = 0;
+            $jumlahpasienhidup = 0;
+            $jumlahpasienkurang = 0;
+            $jumlahpasienlebih = 0;
+            $jumlahlamadirawat = 0;
+            $jumlahpasienakhir = 0;
+            $jumlahhariperawatan = 0;
+            $jumlahpasienawalperhari = 0;
+            $jumlahvvip = 0;
+            $jumlahvip = 0;
+            $jumlahsatu = 0;
+            $jumlahdua = 0;
+            $jumlahtiga = 0;
+            $jumlahkhusus = 0;
+            if($row != $currentmain){
+
+                foreach($profile as $pr){
+                    $koders = $pr->idprofile;
+                    $namakota = $pr->namakota;
+                    $namars = $pr->namalengkap;
                 }
-                else if ($item->bulanregistrasi==12)
-                {
-                    $pasienAwalTahun = 0;
-                    $pasienMasuk = 0;
-                    $pasienKeluarHidup = 0;
-                    $matilebih48jam = 0;
-                    $matikurang48jam=0;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=1;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=0;
-                    $rincianVipA=0;
-                    $rincianKel1=0;
-                    $rincianKel2=0;
-                    $rincianKel3=0;
-                    $rincianKelNonKelas=0;
-                    $DiTerimaKembali = 0;
+                foreach($pasienawal as $pa){
+                    if($row == "Jiwa" && $pa->ruanganasal == "UGD (Pasien Jiwa)"){
+                        $jumlahpasienawal += $pa->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $pa->ruanganasal == "NAPZA"){
+                        $jumlahpasienawal += $pa->total;
+                    }
                 }
-                else if ($item->objectdepartemenfk==16 ||$item->objectdepartemenfk==25)
-                {
-                    $pasienAwalTahun = 0;
-                    $pasienMasuk = 1;
-                    $pasienKeluarHidup = 0;
-                    $matilebih48jam = 0;
-                    $matikurang48jam=0;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=0;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=0;
-                    $rincianVipA=0;
-                    $rincianKel1=0;
-                    $rincianKel2=0;
-                    $rincianKel3=0;
-                    $rincianKelNonKelas=0;
-                    $DiTerimaKembali = 0;
+                foreach($pasienmasuk as $pm){
+                    if($row == "Jiwa" && $pm->ruanganasal == "UGD (Pasien Jiwa)"){
+                        $jumlahpasienmasuk += $pm->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $pm->ruanganasal == "NAPZA"){
+                        $jumlahpasienmasuk += $pm->total;
+                    }
                 }
-                elseif ($item->objectstatuskeluarfk != 5)
-                {
-                    $pasienAwalTahun = 0;
-                    $pasienMasuk = 0;
-                    $pasienKeluarHidup = 1;
-                    $matilebih48jam = 0;
-                    $matikurang48jam=0;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=0;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=0;
-                    $rincianVipA=0;
-                    $rincianKel1=0;
-                    $rincianKel2=0;
-                    $rincianKel3=0;
-                    $rincianKelNonKelas=0;
-                    $DiTerimaKembali = 0;
+                foreach($hidup as $hd){
+                    if($row == "Jiwa" && $hd->ruanganasal == "UGD (Pasien Jiwa)"){
+                        $jumlahpasienhidup += $hd->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $hd->ruanganasal == "NAPZA"){
+                        $jumlahpasienhidup += $hd->total;
+                    }
                 }
-                elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat < 48 )
-                {
-                    $pasienAwalTahun = 0;
-                    $pasienMasuk = 0;
-                    $pasienKeluarHidup = 0;
-                    $matilebih48jam = 0;
-                    $matikurang48jam=1;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=0;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=0;
-                    $rincianVipA=0;
-                    $rincianKel1=0;
-                    $rincianKel2=0;
-                    $rincianKel3=0;
-                    $rincianKelNonKelas=0;
-                    $DiTerimaKembali = 0;
+                foreach($meninggal as $mg){
+                    if($row == "Jiwa" && $mg->ruanganasal == "UGD (Pasien Jiwa)" && $mg->id == 5){
+                        $jumlahpasienkurang += $mg->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $mg->ruanganasal == "NAPZA" && $mg->id == 5){
+                        $jumlahpasienkurang += $mg->total;
+                    } else if($row == "Jiwa" && $mg->ruanganasal == "UGD (Pasien Jiwa)" && $mg->id == 6){
+                        $jumlahpasienlebih += $mg->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $mg->ruanganasal == "NAPZA" && $mg->id == 6){
+                        $jumlahpasienlebih += $mg->total;
+                    }
                 }
-                elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat > 48 )
-                {
-                    $pasienAwalTahun = 0;
-                    $pasienMasuk = 0;
-                    $pasienKeluarHidup = 0;
-                    $matilebih48jam = 1;
-                    $matikurang48jam=0;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=0;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=0;
-                    $rincianVipA=0;
-                    $rincianKel1=0;
-                    $rincianKel2=0;
-                    $rincianKel3=0;
-                    $rincianKelNonKelas=0;
-                    $DiTerimaKembali = 0;
+                foreach($lamahari as $lh){
+                    if($row == "Jiwa" && $lh->ruanganasal == "UGD (Pasien Jiwa)"){
+                        $jumlahlamadirawat += $lh->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $lh->ruanganasal == "NAPZA"){
+                        $jumlahlamadirawat += $lh->total;
+                    }
                 }
-                if ($item->objectkelasfk == 8 )
-                {
-                    $pasienAwalTahun = 0;
-                    $pasienMasuk = 0;
-                    $pasienKeluarHidup = 0;
-                    $matilebih48jam = 0;
-                    $matikurang48jam=0;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=0;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=1;
-                    $rincianVipA=0;
-                    $rincianKel1=0;
-                    $rincianKel2=0;
-                    $rincianKel3=0;
-                    $rincianKelNonKelas=0;
-                    $DiTerimaKembali = 0;
+                foreach($pasienakhir as $pa){
+                    if($row == "Jiwa" && $pa->ruanganasal == "UGD (Pasien Jiwa)"){
+                        $jumlahpasienakhir += $pa->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $pa->ruanganasal == "NAPZA"){
+                        $jumlahpasienakhir += $pa->total;
+                    }
                 }
-                elseif ($item->objectkelasfk == 5)
-                {
-                    $pasienAwalTahun = 0;
-                    $pasienMasuk = 0;
-                    $pasienKeluarHidup = 0;
-                    $matilebih48jam = 0;
-                    $matikurang48jam=0;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=0;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=0;
-                    $rincianVipA=1;
-                    $rincianKel1=0;
-                    $rincianKel2=0;
-                    $rincianKel3=0;
-                    $rincianKelNonKelas=0;
-                    $DiTerimaKembali = 0;
+                foreach($kelas as $kl){
+                    if($row == "Jiwa" && $kl->ruanganasal == "UGD (Pasien Jiwa)" && $kl->objectkelasfk == 4){
+                        $jumlahvip += $kl->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $kl->ruanganasal == "NAPZA" && $kl->objectkelasfk == 4){
+                        $jumlahvip += $kl->total;
+                    } else if($row == "Jiwa" && $kl->ruanganasal == "UGD (Pasien Jiwa)" && $kl->objectkelasfk == 3){
+                        $jumlahsatu += $kl->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $kl->ruanganasal == "NAPZA" && $kl->objectkelasfk == 3){
+                        $jumlahsatu += $kl->total;
+                    } else if($row == "Jiwa" && $kl->ruanganasal == "UGD (Pasien Jiwa)" && $kl->objectkelasfk == 2){
+                        $jumlahdua += $kl->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $kl->ruanganasal == "NAPZA" && $kl->objectkelasfk == 2){
+                        $jumlahdua += $kl->total;
+                    } else if($row == "Jiwa" && $kl->ruanganasal == "UGD (Pasien Jiwa)" && $kl->objectkelasfk == 1){
+                        $jumlahsatu += $kl->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $kl->ruanganasal == "NAPZA" && $kl->objectkelasfk == 1){
+                        $jumlahsatu += $kl->total;
+                    } else if($row == "Jiwa" && $kl->ruanganasal == "UGD (Pasien Jiwa)" && ($kl->ruangan == "WISMA BIMA" || $kl->ruangan == "WISMA ARIMBI" || $kl->ruangan == "WISMA DRUPADI")){
+                        $jumlahkhusus += $kl->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $kl->ruanganasal == "NAPZA" && ($kl->ruangan == "WISMA BIMA" || $kl->ruangan == "WISMA ARIMBI" || $kl->ruangan == "WISMA DRUPADI")){
+                        $jumlahkhusus += $kl->total;
+                    }
                 }
-                elseif ($item->objectkelasfk == 3 )
-                {
-                    $pasienAwalTahun = 0;
-                    $pasienMasuk = 0;
-                    $pasienKeluarHidup = 0;
-                    $matilebih48jam = 0;
-                    $matikurang48jam=0;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=0;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=0;
-                    $rincianVipA=0;
-                    $rincianKel1=1;
-                    $rincianKel2=0;
-                    $rincianKel3=0;
-                    $rincianKelNonKelas=0;
-                    $DiTerimaKembali = 0;
+                foreach($pasienawalperhari as $pap){
+                    if($row == "Jiwa" && $pap->ruanganasal == "UGD (Pasien Jiwa)"){
+                        $jumlahpasienawalperhari += $pap->total;
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $pap->ruanganasal == "NAPZA"){
+                        $jumlahpasienawalperhari += $pap->total;
+                    }
                 }
-                elseif ($item->objectkelasfk == 2 )
-                {
-                    $pasienAwalTahun = 0;
-                    $pasienMasuk = 0;
-                    $pasienKeluarHidup = 0;
-                    $matilebih48jam = 0;
-                    $matikurang48jam=0;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=0;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=0;
-                    $rincianVipA=0;
-                    $rincianKel1=0;
-                    $rincianKel2=1;
-                    $rincianKel3=0;
-                    $rincianKelNonKelas=0;
-                    $DiTerimaKembali = 0;
-                }
-                elseif ($item->objectkelasfk == 1 )
-                {
-                    $pasienAwalTahun = 0;
-                    $pasienMasuk = 0;
-                    $pasienKeluarHidup = 0;
-                    $matilebih48jam = 0;
-                    $matikurang48jam=0;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=0;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=0;
-                    $rincianVipA=0;
-                    $rincianKel1=0;
-                    $rincianKel2=0;
-                    $rincianKel3=1;
-                    $rincianKelNonKelas=0;
-                    $DiTerimaKembali = 0;
-                }
-                elseif ($item->objectkelasfk == 6 )
-                {
-                    $pasienAwalTahun = 0;
-                    $pasienMasuk = 0;
-                    $pasienKeluarHidup = 0;
-                    $matilebih48jam = 0;
-                    $matikurang48jam=0;
-                    $jumlahLamaDirawat=0;
-                    $pasienAkhirTahun=0;
-                    $jumlahHariDirawat=0;
-                    $rincianVipB=0;
-                    $rincianVipA=0;
-                    $rincianKel1=0;
-                    $rincianKel2=0;
-                    $rincianKel3=0;
-                    $rincianKelNonKelas=1;
-                    $DiTerimaKembali = 0;
-                }
+
+                $jumlahhariperawatan = $jumlahpasienmasuk + $jumlahpasienawalperhari;
 
                 $data10[] = array(
-                    'jenis_spesialisasi' => $item->jenis_spesialisasi,
-                    'pasienmasuk' => $pasienMasuk,
-                    'lamadirawat'=>$item->lamadirawat,
-                    'pasienawaltahun'=>$pasienAwalTahun,
-                    'pasienakhirtahun'=>$pasienAkhirTahun,
-                    'pasienkeluarhidup'=> $pasienKeluarHidup,
-                    'matilebih48jam' => $matilebih48jam,
-                    'matikurang48jam' => $matikurang48jam,
-                    'jumlahlamadirawat' => $jumlahLamaDirawat,
-                    'pasienakhirtahun' => $pasienAkhirTahun,
-                    'jumlahharidirawat' => $jumlahHariDirawat,
-                    'rincianvipb' => $rincianVipB,
-                    'rincianvipa' => $rincianVipA,
-                    'rinciankel1' => $rincianKel1,
-                    'rinciankel2' => $rincianKel2,
-                    'rinciankel3' => $rincianKel3,
-                    'rinciannonkelas' => $rincianKelNonKelas,
-                    'jumlah' => 1,
+                    'pelayanan' => $row,
+                    'koders' => $koders,
+                    'namakota' => $namakota,
+                    'namars' => $namars,
+                    'jumlahpasienawal' => $jumlahpasienawal,
+                    'jumlahpasienmasuk' => $jumlahpasienmasuk,
+                    'jumlahpasienhidup' => $jumlahpasienhidup,
+                    'jumlahpasienkurang' => $jumlahpasienkurang,
+                    'jumlahpasienlebih' => $jumlahpasienlebih,
+                    'jumlahlamadirawat' => $jumlahlamadirawat,
+                    'jumlahpasienakhir' => $jumlahpasienakhir,
+                    'jumlahhariperawatan' => $jumlahhariperawatan,
+                    'jumlahvvip' => $jumlahvvip,
+                    'jumlahvip' => $jumlahvip,
+                    'jumlahsatu' => $jumlahsatu,
+                    'jumlahdua' => $jumlahdua,
+                    'jumlahtiga' => $jumlahtiga,
+                    'jumlahkhusus' => $jumlahkhusus,
                 );
-            }
 
-            foreach ($data10 as $key => $row) {
-                $count[$key] = $row['jumlah'];
-            }
 
-            array_multisort($count, SORT_DESC, $data10);
+            }
+            $currentmain = $row;
         }
 
         $result = array(
@@ -3261,1336 +3355,1224 @@ class LaporanRekamMedisController extends   ApiController
     }
     public function getLaporanRL4aRawatInap(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $kdDeptRanapAll = explode(',',$this->settingDataFixed('KdDepartemenRIAll',$kdProfile));
-        $kdDepartemenRanapAll = [];
-        foreach ($kdDeptRanapAll as $items){
-            $kdDepartemenRanapAll []=  (int)$items;
-        }
-        $data = \DB::table('pasiendaftar_t as pd ')
-            ->join('antrianpasiendiperiksa_t as app', 'app.noregistrasifk', '=', 'pd.norec')
-            ->leftjoin('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'app.norec')
-            ->leftjoin('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
-            ->leftjoin('diagnosa_m as dm', 'ddp.objectdiagnosafk', '=', 'dm.id')
-            ->leftjoin('diagnosabantuan_m as dbn','dbn.kddiagnosa','=','dm.kddiagnosa')
-            ->leftjoin ('diagnosadtd_m as ddtd','ddtd.nodtd','=','dbn.nodtd')
-            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
-            ->join('jeniskelamin_m as jk', 'ps.objectjeniskelaminfk', '=', 'jk.id')
-            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
-            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
-//            ->join ('diagnosabantu as db','db.kddiagnosa','=','dm.kddiagnosa')
-            ->leftjoin ('mappingrlmorbiditas_m as mpr','mpr.kddiagnosa','=','dm.kddiagnosa')
-            ->select('pd.tglregistrasi','app.statuspenyakit','dbn.nodtd','dm.kddiagnosa',
-                'ps.tgllahir as tglLahir','ps.objectjeniskelaminfk','pd.objectstatuskeluarfk',
-                DB::raw('EXTRACT(YEAR from AGE(pd.tglregistrasi, ps.tgllahir)) as umuryear,
-                                EXTRACT(MONTH from AGE(pd.tglregistrasi, ps.tgllahir)) as umurmonth,
-                                EXTRACT(DAY from AGE(pd.tglregistrasi, ps.tgllahir)) as umurday,
-                                lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit
-                       ')
-            )
-            //departemen inap
-            ->wherein('dpm.id', $kdDepartemenRanapAll)
-            ->distinct();
-
-        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
-        }
-        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $tgl = $request['tglAkhir'];
-            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
-        }
-        $data = $data->orderBy('dm.kddiagnosa');
-        $data = $data->get();
-
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
         $data10 = [];
-        $sama = false;
-        $jml = 0;
-        $jml6HariL = 0;
-        $jml6HariP = 0;
-        $jml28HariL = 0;
-        $jml28HariP = 0;
-        $jml1ThnL = 0;
-        $jml1ThnP = 0;
-        $jml4ThnL = 0;
-        $jml4ThnP = 0;
-        $jml14ThnL = 0;
-        $jml14ThnP = 0;
-        $jml24ThnL = 0;
-        $jml24ThnP = 0;
-        $jml44ThnL = 0;
-        $jml44ThnP = 0;
-        $jml64ThnL = 0;
-        $jml64ThnP = 0;
-        $jml65ThnL = 0;
-        $jml65ThnP = 0;
-        $totalMenurutL = 0;
-        $totalMenurutP = 0;
-        $totalKasusBaru = 0;
-        $totalKunjungan = 0;
-        $jmlPL=0;
 
-        $totalMenurutP=0;
-        $totalMenurutL=0;
-        $jmlKeluarMati=0;
-        $jmlKeluarHidup=0;
-        $statusKd=true;
+        $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
+        ps.tgllahir as tglLahir,
+        EXTRACT(YEAR from AGE(pd.tglregistrasi, ps.tgllahir)) as umuryear,
+        DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
+        ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
+        from pasiendaftar_t as pd
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
+        inner join pasien_m as ps on ps.id = pd.nocmfk
+        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
+        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
+        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
+        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+        inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
+        inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
+        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
+        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
+        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        where pd.statusenabled = true 
+        and pd.kdprofile = $kdProfile 
+        and ru.objectdepartemenfk = 16
+        --and (jd.id = 1 or jd.id = 7)
+        and ddtd.id between 1 and 507
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        order by ddtd.id"));
 
-        foreach ($data as $item) {
-            $sama = false;
-            $i = 0;
-            $o = 0;
+        $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
+        inner join profile_m pr on pr.id = ddtd.kdprofile
+        where ddtd.id between 1 and 507 and pr.id = $kdProfile order by ddtd.id"));
 
-            foreach ($data10 as $hideung) {
-                if ($item->nodtd == $data10[$i]['nodtd']) {
-                    $sama = true;
-                    $jml = (float)$hideung['totalAll'] + 1;
-                    $data10[$i]['totalAll'] = $jml;
-                    $statusKd=false;
+        
+        $jumlahumur0hs6hl = 0;
+        $jumlahumur0hs6hp = 0;
+        $jumlahumur7hs28hl = 0;
+        $jumlahumur7hs28hp = 0;
+        $jumlahumur29hs1tl = 0;
+        $jumlahumur29hs1tp = 0;
+        $jumlahumur2ts4tl = 0;
+        $jumlahumur2ts4tp = 0;
+        $jumlahumur5ts14tl = 0;
+        $jumlahumur5ts14tp = 0;
+        $jumlahumur15ts24tl = 0;
+        $jumlahumur15ts24tp = 0;
+        $jumlahumur25ts44tl = 0;
+        $jumlahumur25ts44tp = 0;
+        $jumlahumur45ts64tl = 0;
+        $jumlahumur45ts64tp = 0;
+        $jumlahumurlebih64l = 0;
+        $jumlahumurlebih64p = 0;
+        $jumlahpasienkeluarhml = 0;
+        $jumlahpasienkeluarhmp = 0;
+        $totalpasienkeluarhm = 0;
+        $jumlahpasienkeluarmati = 0;
 
-                    if (str_contains($data10[$i]['kddiagnosa'],$item->kddiagnosa)){
-                        $statusKd=true;
+        $currentid = 99999;
+
+        foreach($id as $row){
+            $namakota = $row->namakota;
+            $namalengkap = $row->namalengkap;
+            $namapemerintahan = $row->namapemerintahan;
+            $kode = $row->idprofile;
+            $nodaftarterperinci = $row->nodaftarterperinci;
+            $golongansebabpenyakit = $row->golongansebabpenyakit;
+            $nodtd = $row->nodtd;
+
+            $jumlahumur0hs6hl = 0;
+                    $jumlahumur0hs6hp = 0;
+                    $jumlahumur7hs28hl = 0;
+                    $jumlahumur7hs28hp = 0;
+                    $jumlahumur29hs1tl = 0;
+                    $jumlahumur29hs1tp = 0;
+                    $jumlahumur2ts4tl = 0;
+                    $jumlahumur2ts4tp = 0;
+                    $jumlahumur5ts14tl = 0;
+                    $jumlahumur5ts14tp = 0;
+                    $jumlahumur15ts24tl = 0;
+                    $jumlahumur15ts24tp = 0;
+                    $jumlahumur25ts44tl = 0;
+                    $jumlahumur25ts44tp = 0;
+                    $jumlahumur45ts64tl = 0;
+                    $jumlahumur45ts64tp = 0;
+                    $jumlahumurlebih64l = 0;
+                    $jumlahumurlebih64p = 0;
+                    $jumlahpasienkeluarhml = 0;
+                    $jumlahpasienkeluarhmp = 0;
+                    $jumlahpasienkeluarmati = 0;
+                    $totalpasienkeluarhm = 0;
+
+            if($row->id != $currentid){
+                foreach ($data as $item) {
+                    if($row->id == $item->id){
+                        if($item->umurday <= 6){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur0hs6hl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur0hs6hp++;
+                            }
+                        }
+                        else if($item->umurday >= 7 && $item->umurday <= 28){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur7hs28hl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur7hs28hp++;
+                            }
+                        }
+                        else if($item->umurday >= 29 && $item->umuryear <= 1){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur29hs1tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur29hs1tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 2 && $item->umuryear <= 4){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur2ts4tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur2ts4tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 5 && $item->umuryear <= 14){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur15ts24tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur15ts24tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 15 && $item->umuryear <= 24){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur15ts24tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur15ts24tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 25 && $item->umuryear <= 44){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur25ts44tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur25ts44tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 45 && $item->umuryear <= 64){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur45ts64tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur45ts64tp++;
+                            }
+                        }
+                        else if($item->umuryear > 64){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumurlebih64l++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumurlebih64p++;
+                            }
+                        }
+        
+                        if($item->tglpulang != null && $item->objectjeniskelaminfk == 1){
+                            $jumlahpasienkeluarhml++;
+                        } else if($item->tglpulang != null && $item->objectjeniskelaminfk == 2){
+                            $jumlahpasienkeluarhmp++;
+                        }
+        
+                        if($item->tglpulang != null && $item->objectstatuskeluarfk == 5){
+                            $jumlahpasienkeluarmati++;
+                        }
+
+                        $totalpasienkeluarhm = $jumlahpasienkeluarhmp + $jumlahpasienkeluarhml;
+                        
                     }
-                    if ($statusKd == false){
-                        $data10[$i]['kddiagnosa'] = $data10[$i]['kddiagnosa'] . ',' . $item->kddiagnosa;
-                    }
-
-                    //Laki =1 && Perempuan=2
-                    if ($item->umurday <= 6 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml6HariL'] = (float)$hideung['jml6HariL'] + 1;
-                    }else if ($item->umurday <= 6 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml6HariP'] = (float)$hideung['jml6HariP'] + 1;
-
-                    }else if ($item->umurday >= 7 && $item->umurday <= 28 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml28HariL'] = (float)$hideung['jml28HariL'] + 1;
-                    }else if ($item->umurday >= 7 && $item->umurday <= 28 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml28HariP'] = (float)$hideung['jml28HariP'] + 1;
-
-                    }else if ($item->umurday > 28 && $item->umuryear < 1 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml1ThnL'] = (float)$hideung['jml1ThnL'] + 1;
-                    }else if ($item->umurday > 28 && $item->umuryear < 1 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml1ThnP'] = (float)$hideung['jml1ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 1 && $item->umuryear <= 4 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml4ThnL'] = (float)$hideung['jml4ThnL'] + 1;
-                    }else if ($item->umuryear >= 1 && $item->umuryear <= 4 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml4ThnP'] = (float)$hideung['jml4ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 5 && $item->umuryear <= 14 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml14ThnL'] = (float)$hideung['jml14ThnL'] + 1;
-                    }else if ($item->umuryear >= 5 && $item->umuryear <= 14 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml14ThnP'] = (float)$hideung['jml14ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 15 && $item->umuryear <= 24 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml24ThnL'] = (float)$hideung['jml24ThnL'] + 1;
-                    }else if ($item->umuryear >= 15 && $item->umuryear <= 24 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml24ThnP'] = (float)$hideung['jml24ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 25 && $item->umuryear <= 44 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml44ThnL'] = (float)$hideung['jml44ThnL'] + 1;
-                    }else if ($item->umuryear >= 25 && $item->umuryear <= 44 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml44ThnP'] = (float)$hideung['jml44ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 45 && $item->umuryear <= 64 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml64ThnL'] = (float)$hideung['jml64ThnL'] + 1;
-                    }else if ($item->umuryear >= 45 && $item->umuryear <= 64 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml64ThnP'] = (float)$hideung['jml64ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 65  && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml65ThnL'] = (float)$hideung['jml65ThnL'] + 1;
-                    }else if ($item->umuryear >= 65 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml65ThnP'] = (float)$hideung['jml65ThnP'] + 1;
-
-                    }
-//                   else if ($item->statuspenyakit == 'BARU'  && $item->objectjeniskelaminfk == 1  ) {
-//                        $data10[$i]['jmlKasusBaruL'] = (float)$hideung['jmlKasusBaruL'] + 1;
-//                    }else if ($item->statuspenyakit == 'BARU' && $item->objectjeniskelaminfk == 2  ) {
-//                        $data10[$i]['jmlKasusBaruP'] = (float)$hideung['jmlKasusBaruP'] + 1;
-//                    }
-
-                    if ($item->objectstatuskeluarfk==5)
-                    {
-                        $data10[$i]['jmlKeluarMati']=(float)$hideung['jmlKeluarMati']+1;
-                    }
-                    if ($item->objectstatuskeluarfk!=5)
-                    {
-                        $data10[$i]['jmlKeluarHidup']=(float)$hideung['jmlKeluarHidup']+1;
-                    }
-
-//                    $data10[$i]['totalKasusBaru'] = $data10[$i]['jmlKasusBaruP'] + $data10[$i]['jmlKasusBaruL'];
-                    $data10[$i]['jmlPL'] = $data10[$i]['jml6HariL'] + $data10[$i]['jml6HariP']
-                        +$data10[$i]['jml28HariL'] + $data10[$i]['jml28HariP']
-                        +$data10[$i]['jml1ThnL'] + $data10[$i]['jml1ThnP']
-                        +$data10[$i]['jml4ThnL'] + $data10[$i]['jml4ThnP']
-                        +$data10[$i]['jml14ThnL'] + $data10[$i]['jml14ThnP']
-                        +$data10[$i]['jml24ThnL'] + $data10[$i]['jml24ThnP']
-                        +$data10[$i]['jml44ThnL'] + $data10[$i]['jml44ThnP']
-                        +$data10[$i]['jml64ThnL'] + $data10[$i]['jml64ThnP']
-                        +$data10[$i]['jml65ThnL'] + $data10[$i]['jml65ThnP'];
-                    $data10[$i]['totalMenurutL'] = $data10[$i]['jml6HariL']
-                        +$data10[$i]['jml28HariL']
-                        +$data10[$i]['jml1ThnL']
-                        +$data10[$i]['jml4ThnL']
-                        +$data10[$i]['jml14ThnL']
-                        +$data10[$i]['jml24ThnL']
-                        +$data10[$i]['jml44ThnL']
-                        +$data10[$i]['jml64ThnL']
-                        +$data10[$i]['jml65ThnL'] ;
-                    $data10[$i]['totalMenurutP'] = $data10[$i]['jml6HariP']
-                        +$data10[$i]['jml28HariP']
-                        +$data10[$i]['jml1ThnP']
-                        +$data10[$i]['jml4ThnP']
-                        +$data10[$i]['jml14ThnP']
-                        +$data10[$i]['jml24ThnP']
-                        +$data10[$i]['jml44ThnP']
-                        +$data10[$i]['jml64ThnP']
-                        +$data10[$i]['jml65ThnP'] ;
-
-                }
-                $i = $i + 1;
-            }
-
-            //jika false
-            if ($sama == false) {
-                if ($item->umurday <= 6 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 1;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umurday <= 6 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;$jml6HariP = 1;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umurday >= 7 && $item->umurday <= 28 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml28HariL = 1;
-                    $jml6HariL = 1;$jml6HariP = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umurday >= 7 && $item->umurday <= 28 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 1;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umurday > 28 && $item->umuryear < 1 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 1;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umurday > 28 && $item->umuryear < 1 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 1;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umuryear >= 1 && $item->umuryear <= 4 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 1;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umuryear >= 1 && $item->umuryear <= 4 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 1;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umuryear >= 5 && $item->umuryear <= 14 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 1;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umuryear >= 5 && $item->umuryear <= 14 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 1;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;$jmlKeluarMati=0; $jmlKeluarHidup=0;
-
-                }else if ($item->umuryear >= 15 && $item->umuryear <= 24 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 1;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umuryear >= 15 && $item->umuryear <= 24 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 1;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-
-                }else if ($item->umuryear >= 25 && $item->umuryear <= 44 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 1;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umuryear >= 25 && $item->umuryear <= 44 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 1;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-
-                }else if ($item->umuryear >= 45 && $item->umuryear <= 64 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 1;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umuryear >= 45 && $item->umuryear <= 64 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 1;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umuryear >= 65  && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 1;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }else if ($item->umuryear >= 65 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 1;  $jmlKeluarMati=0; $jmlKeluarHidup=0;
-                }
-                if($item->objectstatuskeluarfk==5)
-                {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=1; $jmlKeluarHidup=0;
-                }
-                if($item->objectstatuskeluarfk!=5)
-                {
-                    $jml6HariL = 0;$jml6HariP = 0;$jml28HariL = 0;$jml28HariP = 0;$jml1ThnL = 0;
-                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;  $jmlKeluarMati=0; $jmlKeluarHidup=1;
+                    
                 }
 
-//                if ($item->statuspenyakit == 'BARU'  && $item->objectjeniskelaminfk == 1  ) {
-//                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-//                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-//                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;$jmlKasusBaruL = 1;$jmlKasusBaruP = 0;
-//                }else if ($item->statuspenyakit == 'BARU' && $item->objectjeniskelaminfk == 2  ) {
-//                    $jml1ThnP = 0;$jml4ThnL = 0;$jml4ThnP = 0;$jml14ThnL = 0;$jml14ThnP = 0;
-//                    $jml24ThnL = 0;$jml24ThnP = 0;$jml44ThnL = 0;$jml44ThnP = 0;$jml64ThnL = 0;
-//                    $jml64ThnP = 0;$jml65ThnL = 0;$jml65ThnP = 0;$jmlKasusBaruL = 0;$jmlKasusBaruP = 1;
-//                }
+                $currentid= $row->id;
 
                 $data10[] = array(
-                    'kddiagnosa'=> $item->kddiagnosa,
-                    'nodtd' => $item->nodtd,
-                    'golongansebabpenyakit'=> $item->golongansebabpenyakit,
-                    'tglregistrasi' => $item->tglregistrasi,
-                    'statuspenyakit' => $item->statuspenyakit,
-                    'tglLahir' => $item->tglLahir,
-                    'objectstatuskeluarfk'=>$item->objectstatuskeluarfk,
-                    'umuryear' => $item->umuryear,
-                    'umurmonth' => $item->umurmonth,
-                    'umurday' => $item->umurday,
-                    'totalAll' => 1,
-                    'jml6HariL'=>  $jml6HariL,
-                    'jml6HariP'=>  $jml6HariP,
-                    'jml28HariL'=>  $jml28HariL,
-                    'jml28HariP'=>  $jml28HariP,
-                    'jml1ThnL'=>  $jml1ThnL,
-                    'jml1ThnP'=>  $jml1ThnP,
-                    'jml4ThnL'=>  $jml4ThnL,
-                    'jml4ThnP'=>  $jml4ThnP,
-                    'jml14ThnL'=>  $jml14ThnL,
-                    'jml14ThnP'=>  $jml14ThnP,
-                    'jml24ThnL'=>  $jml24ThnL,
-                    'jml24ThnP'=>  $jml24ThnP,
-                    'jml44ThnL'=>  $jml44ThnL,
-                    'jml44ThnP'=>  $jml44ThnP,
-                    'jml64ThnL'=>  $jml64ThnL,
-                    'jml64ThnP'=>  $jml64ThnP,
-                    'jml65ThnL'=>  $jml65ThnL,
-                    'jml65ThnP'=>  $jml65ThnP,
-                    'totalMenurutL' => $totalMenurutL,
-                    'jmlKeluarMati'=>$jmlKeluarMati,
-                    'jmlKeluarHidup'=>$jmlKeluarHidup,
-                    'totalMenurutP'=>$totalMenurutP,
-                    'totalHidupMati'=>$jmlKeluarHidup+$jmlKeluarMati,
-                    'jmlPL'=>$totalMenurutL+$totalMenurutP,
+                    'jumlahumur0hs6hl' => $jumlahumur0hs6hl,
+                    'jumlahumur0hs6hp' =>  $jumlahumur0hs6hp, 
+                    'jumlahumur7hs28hl' =>  $jumlahumur7hs28hl, 
+                    'jumlahumur7hs28hp' =>  $jumlahumur7hs28hp, 
+                    'jumlahumur29hs1tl' =>  $jumlahumur29hs1tl, 
+                    'jumlahumur29hs1tp' =>  $jumlahumur29hs1tp, 
+                    'jumlahumur2ts4tl' =>  $jumlahumur2ts4tl, 
+                    'jumlahumur2ts4tp' =>  $jumlahumur2ts4tp,
+                    'jumlahumur5ts14tl' =>  $jumlahumur5ts14tl, 
+                    'jumlahumur5ts14tp' =>  $jumlahumur5ts14tp, 
+                    'jumlahumur15ts24tl' =>  $jumlahumur15ts24tl, 
+                    'jumlahumur15ts24tp' =>  $jumlahumur15ts24tp, 
+                    'jumlahumur25ts44tl' =>  $jumlahumur25ts44tl, 
+                    'jumlahumur25ts44tp' =>  $jumlahumur25ts44tp, 
+                    'jumlahumur45ts64tl' =>  $jumlahumur45ts64tl, 
+                    'jumlahumur45ts64tp' =>  $jumlahumur45ts64tp, 
+                    'jumlahumurlebih64l' =>  $jumlahumurlebih64l, 
+                    'jumlahumurlebih64p' =>  $jumlahumurlebih64p, 
+                    'jumlahpasienkeluarhml' =>  $jumlahpasienkeluarhml, 
+                    'jumlahpasienkeluarhmp' =>  $jumlahpasienkeluarhmp, 
+                    'totalpasienkeluarhm' =>  $totalpasienkeluarhm, 
+                    'jumlahpasienkeluarmati' =>  $jumlahpasienkeluarmati, 
+                    'namakota' =>  $namakota, 
+                    'namalengkap' =>  $namalengkap, 
+                    'namapemerintahan' =>  $namapemerintahan, 
+                    'kode' =>  $kode,
+                    'nodtd' =>  $nodtd,
+                    'nodaftarterperinci' =>  $nodaftarterperinci, 
+                    'golongansebabpenyakit' =>  $golongansebabpenyakit,
+                    
                 );
             }
-
-            foreach ($data10 as $key => $row) {
-                $count[$key] = $row['nodtd'];
-            }
-
-            array_multisort($count, SORT_ASC, $data10);
         }
 
         $result = array(
-            'data' => $data10,
-            'message' => 'er@epic',
-
+            'detail' => $data10,
         );
-
-        return $this->respond($result);
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
+
+    public function getLaporanRL4aRawatInapSebabLuar(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $data10 = [];
+
+        $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
+        ps.tgllahir as tglLahir,
+        EXTRACT(YEAR from AGE(pd.tglregistrasi, ps.tgllahir)) as umuryear,
+        DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
+        ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
+        from pasiendaftar_t as pd
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
+        inner join pasien_m as ps on ps.id = pd.nocmfk
+        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
+        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
+        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
+        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+        inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
+        inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
+        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
+        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
+        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        where pd.statusenabled = true 
+        and pd.kdprofile = $kdProfile 
+        and ru.objectdepartemenfk = 16
+        --and (jd.id = 1 or jd.id = 7)
+        and ddtd.id between 508 and 537
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        order by ddtd.id"));
+
+        $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
+        inner join profile_m pr on pr.id = ddtd.kdprofile
+        where ddtd.id between 1 and 507 and pr.id = $kdProfile order by ddtd.id"));
+
+        
+        $jumlahumur0hs6hl = 0;
+        $jumlahumur0hs6hp = 0;
+        $jumlahumur7hs28hl = 0;
+        $jumlahumur7hs28hp = 0;
+        $jumlahumur29hs1tl = 0;
+        $jumlahumur29hs1tp = 0;
+        $jumlahumur2ts4tl = 0;
+        $jumlahumur2ts4tp = 0;
+        $jumlahumur5ts14tl = 0;
+        $jumlahumur5ts14tp = 0;
+        $jumlahumur15ts24tl = 0;
+        $jumlahumur15ts24tp = 0;
+        $jumlahumur25ts44tl = 0;
+        $jumlahumur25ts44tp = 0;
+        $jumlahumur45ts64tl = 0;
+        $jumlahumur45ts64tp = 0;
+        $jumlahumurlebih64l = 0;
+        $jumlahumurlebih64p = 0;
+        $jumlahpasienkeluarhml = 0;
+        $jumlahpasienkeluarhmp = 0;
+        $totalpasienkeluarhm = 0;
+        $jumlahpasienkeluarmati = 0;
+
+        $currentid = 99999;
+
+        foreach($id as $row){
+            $namakota = $row->namakota;
+            $namalengkap = $row->namalengkap;
+            $namapemerintahan = $row->namapemerintahan;
+            $kode = $row->idprofile;
+            $nodaftarterperinci = $row->nodaftarterperinci;
+            $golongansebabpenyakit = $row->golongansebabpenyakit;
+            $nodtd = $row->nodtd;
+
+            $jumlahumur0hs6hl = 0;
+                    $jumlahumur0hs6hp = 0;
+                    $jumlahumur7hs28hl = 0;
+                    $jumlahumur7hs28hp = 0;
+                    $jumlahumur29hs1tl = 0;
+                    $jumlahumur29hs1tp = 0;
+                    $jumlahumur2ts4tl = 0;
+                    $jumlahumur2ts4tp = 0;
+                    $jumlahumur5ts14tl = 0;
+                    $jumlahumur5ts14tp = 0;
+                    $jumlahumur15ts24tl = 0;
+                    $jumlahumur15ts24tp = 0;
+                    $jumlahumur25ts44tl = 0;
+                    $jumlahumur25ts44tp = 0;
+                    $jumlahumur45ts64tl = 0;
+                    $jumlahumur45ts64tp = 0;
+                    $jumlahumurlebih64l = 0;
+                    $jumlahumurlebih64p = 0;
+                    $jumlahpasienkeluarhml = 0;
+                    $jumlahpasienkeluarhmp = 0;
+                    $jumlahpasienkeluarmati = 0;
+                    $totalpasienkeluarhm = 0;
+
+            if($row->id != $currentid){
+                foreach ($data as $item) {
+                    if($row->id == $item->id){
+                        if($item->umurday <= 6){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur0hs6hl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur0hs6hp++;
+                            }
+                        }
+                        else if($item->umurday >= 7 && $item->umurday <= 28){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur7hs28hl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur7hs28hp++;
+                            }
+                        }
+                        else if($item->umurday >= 29 && $item->umuryear <= 1){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur29hs1tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur29hs1tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 2 && $item->umuryear <= 4){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur2ts4tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur2ts4tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 5 && $item->umuryear <= 14){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur15ts24tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur15ts24tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 15 && $item->umuryear <= 24){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur15ts24tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur15ts24tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 25 && $item->umuryear <= 44){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur25ts44tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur25ts44tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 45 && $item->umuryear <= 64){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur45ts64tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur45ts64tp++;
+                            }
+                        }
+                        else if($item->umuryear > 64){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumurlebih64l++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumurlebih64p++;
+                            }
+                        }
+        
+                        if($item->tglpulang != null && $item->objectjeniskelaminfk == 1){
+                            $jumlahpasienkeluarhml++;
+                        } else if($item->tglpulang != null && $item->objectjeniskelaminfk == 2){
+                            $jumlahpasienkeluarhmp++;
+                        }
+        
+                        if($item->tglpulang != null && $item->objectstatuskeluarfk == 5){
+                            $jumlahpasienkeluarmati++;
+                        }
+
+                        $totalpasienkeluarhm = $jumlahpasienkeluarhmp + $jumlahpasienkeluarhml;
+                        
+                    }
+                    
+                }
+
+                $currentid= $row->id;
+
+                $data10[] = array(
+                    'jumlahumur0hs6hl' => $jumlahumur0hs6hl,
+                    'jumlahumur0hs6hp' =>  $jumlahumur0hs6hp, 
+                    'jumlahumur7hs28hl' =>  $jumlahumur7hs28hl, 
+                    'jumlahumur7hs28hp' =>  $jumlahumur7hs28hp, 
+                    'jumlahumur29hs1tl' =>  $jumlahumur29hs1tl, 
+                    'jumlahumur29hs1tp' =>  $jumlahumur29hs1tp, 
+                    'jumlahumur2ts4tl' =>  $jumlahumur2ts4tl, 
+                    'jumlahumur2ts4tp' =>  $jumlahumur2ts4tp,
+                    'jumlahumur5ts14tl' =>  $jumlahumur5ts14tl, 
+                    'jumlahumur5ts14tp' =>  $jumlahumur5ts14tp, 
+                    'jumlahumur15ts24tl' =>  $jumlahumur15ts24tl, 
+                    'jumlahumur15ts24tp' =>  $jumlahumur15ts24tp, 
+                    'jumlahumur25ts44tl' =>  $jumlahumur25ts44tl, 
+                    'jumlahumur25ts44tp' =>  $jumlahumur25ts44tp, 
+                    'jumlahumur45ts64tl' =>  $jumlahumur45ts64tl, 
+                    'jumlahumur45ts64tp' =>  $jumlahumur45ts64tp, 
+                    'jumlahumurlebih64l' =>  $jumlahumurlebih64l, 
+                    'jumlahumurlebih64p' =>  $jumlahumurlebih64p, 
+                    'jumlahpasienkeluarhml' =>  $jumlahpasienkeluarhml, 
+                    'jumlahpasienkeluarhmp' =>  $jumlahpasienkeluarhmp, 
+                    'totalpasienkeluarhm' =>  $totalpasienkeluarhm, 
+                    'jumlahpasienkeluarmati' =>  $jumlahpasienkeluarmati, 
+                    'namakota' =>  $namakota, 
+                    'namalengkap' =>  $namalengkap, 
+                    'namapemerintahan' =>  $namapemerintahan, 
+                    'kode' =>  $kode,
+                    'nodtd' =>  $nodtd,
+                    'nodaftarterperinci' =>  $nodaftarterperinci, 
+                    'golongansebabpenyakit' =>  $golongansebabpenyakit,
+                    
+                );
+            }
+        }
+
+        $result = array(
+            'detail' => $data10,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
+
     public function getLaporanRL4b(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $KdDeptRajalRehab = explode (',',$this->settingDataFixed('KdDeptRajalRehab',$kdProfile));
-        $kdDepartemenRajalRehab = [];
-        foreach ($KdDeptRajalRehab as $items){
-            $kdDepartemenRajalRehab []=  (int)$items;
-        }
-        $data = \DB::table('pasiendaftar_t as pd')
-            ->join('antrianpasiendiperiksa_t as app', 'app.noregistrasifk', '=', 'pd.norec')
-            ->leftjoin('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'app.norec')
-            ->leftjoin('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
-            ->leftjoin('diagnosa_m as dm', 'ddp.objectdiagnosafk', '=', 'dm.id')
-            ->leftjoin('diagnosabantuan_m as dbn','dbn.kddiagnosa','=','dm.kddiagnosa')
-            ->leftjoin ('diagnosadtd_m as ddtd','ddtd.nodtd','=','dbn.nodtd')
-            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
-            ->join('jeniskelamin_m as jk', 'ps.objectjeniskelaminfk', '=', 'jk.id')
-            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
-            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
-//            ->join ('diagnosabantu as db','db.kddiagnosa','=','dm.kddiagnosa')
-            ->join ('mappingrlmorbiditas_m as mpr','mpr.kddiagnosa','=','dm.kddiagnosa')
-            ->select('pd.tglregistrasi','app.statuspenyakit','dbn.nodtd','dm.kddiagnosa',
-                'ps.tgllahir as tglLahir','ps.objectjeniskelaminfk',
-                DB::raw('EXTRACT(YEAR from AGE(pd.tglregistrasi, ps.tgllahir)) as umuryear,
-                                EXTRACT(MONTH from AGE(pd.tglregistrasi, ps.tgllahir)) as umurmonth,
-                                EXTRACT(DAY from AGE(pd.tglregistrasi, ps.tgllahir)) as umurday,lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit
-                       ')
-            )
-            ->where('pd.kdprofile', $kdProfile)
-            ->wherein('dpm.id', $kdDepartemenRajalRehab)
-            ->distinct();
-
-
-        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
-        }
-        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $tgl = $request['tglAkhir'];
-            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
-        }
-        $data = $data->orderBy('dm.kddiagnosa');
-        $data = $data->get();
-
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
         $data10 = [];
-        $sama = false;
-        $jml = 0;
-        $jml6HariL = 0;
-        $jml6HariP = 0;
-        $jml28HariL = 0;
-        $jml28HariP = 0;
-        $jml1ThnL = 0;
-        $jml1ThnP = 0;
-        $jml4ThnL = 0;
-        $jml4ThnP = 0;
-        $jml14ThnL = 0;
-        $jml14ThnP = 0;
-        $jml24ThnL = 0;
-        $jml24ThnP = 0;
-        $jml44ThnL = 0;
-        $jml44ThnP = 0;
-        $jml64ThnL = 0;
-        $jml64ThnP = 0;
-        $jml65ThnL = 0;
-        $jml65ThnP = 0;
-        $jmlKasusBaruL = 0;
-        $jmlKasusBaruP = 0;
-        $totalKasusBaru = 0;
-        $totalKunjungan = 0;
-        $totalMenurutUmur=0;
-        $totalMenurutL=0;
-        $totalMenurutP=0;
-        $jmlPL=0;
 
-        $statusKd=true;
+        $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
+        ps.tgllahir as tglLahir,
+        EXTRACT(YEAR from AGE(pd.tglregistrasi, ps.tgllahir)) as umuryear,
+        DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
+        ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
+        from pasiendaftar_t as pd
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
+        inner join pasien_m as ps on ps.id = pd.nocmfk
+        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
+        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
+        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
+        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+        inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
+        inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
+        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
+        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
+        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        where pd.statusenabled = true 
+        and pd.kdprofile = $kdProfile 
+        and ru.objectdepartemenfk != 16
+        --and (jd.id = 1 or jd.id = 7)
+        and ddtd.id between 1 and 507
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        order by ddtd.id"));
 
-        foreach ($data as $item) {
-            $sama = false;
-            $i = 0;
-            $o = 0;
+        $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
+        inner join profile_m pr on pr.id = ddtd.kdprofile
+        where ddtd.id between 1 and 507 and pr.id = $kdProfile order by ddtd.id"));
 
-            foreach ($data10 as $hideung) {
-                if ($item->nodtd == $data10[$i]['nodtd']) {
-                    $sama = true;
-                    $jml = (float)$hideung['totalAll'] + 1;
-                    $data10[$i]['totalAll'] = $jml;
-                    $statusKd=false;
+        
+        $jumlahumur0hs6hl = 0;
+        $jumlahumur0hs6hp = 0;
+        $jumlahumur7hs28hl = 0;
+        $jumlahumur7hs28hp = 0;
+        $jumlahumur29hs1tl = 0;
+        $jumlahumur29hs1tp = 0;
+        $jumlahumur2ts4tl = 0;
+        $jumlahumur2ts4tp = 0;
+        $jumlahumur5ts14tl = 0;
+        $jumlahumur5ts14tp = 0;
+        $jumlahumur15ts24tl = 0;
+        $jumlahumur15ts24tp = 0;
+        $jumlahumur25ts44tl = 0;
+        $jumlahumur25ts44tp = 0;
+        $jumlahumur45ts64tl = 0;
+        $jumlahumur45ts64tp = 0;
+        $jumlahumurlebih64l = 0;
+        $jumlahumurlebih64p = 0;
+        $jumlahpasienkeluarhml = 0;
+        $jumlahpasienkeluarhmp = 0;
+        $totalpasienkeluarhm = 0;
+        $jumlahpasienkeluarmati = 0;
 
-                    if (str_contains($data10[$i]['kddiagnosa'],$item->kddiagnosa)){
-                        $statusKd=true;
+        $currentid = 99999;
+
+        foreach($id as $row){
+            $namakota = $row->namakota;
+            $namalengkap = $row->namalengkap;
+            $namapemerintahan = $row->namapemerintahan;
+            $kode = $row->idprofile;
+            $nodaftarterperinci = $row->nodaftarterperinci;
+            $golongansebabpenyakit = $row->golongansebabpenyakit;
+            $nodtd = $row->nodtd;
+
+            $jumlahumur0hs6hl = 0;
+                    $jumlahumur0hs6hp = 0;
+                    $jumlahumur7hs28hl = 0;
+                    $jumlahumur7hs28hp = 0;
+                    $jumlahumur29hs1tl = 0;
+                    $jumlahumur29hs1tp = 0;
+                    $jumlahumur2ts4tl = 0;
+                    $jumlahumur2ts4tp = 0;
+                    $jumlahumur5ts14tl = 0;
+                    $jumlahumur5ts14tp = 0;
+                    $jumlahumur15ts24tl = 0;
+                    $jumlahumur15ts24tp = 0;
+                    $jumlahumur25ts44tl = 0;
+                    $jumlahumur25ts44tp = 0;
+                    $jumlahumur45ts64tl = 0;
+                    $jumlahumur45ts64tp = 0;
+                    $jumlahumurlebih64l = 0;
+                    $jumlahumurlebih64p = 0;
+                    $jumlahpasienkeluarhml = 0;
+                    $jumlahpasienkeluarhmp = 0;
+                    $jumlahpasienkeluarmati = 0;
+                    $totalpasienkeluarhm = 0;
+
+            if($row->id != $currentid){
+                foreach ($data as $item) {
+                    if($row->id == $item->id){
+                        if($item->umurday <= 6){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur0hs6hl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur0hs6hp++;
+                            }
+                        }
+                        else if($item->umurday >= 7 && $item->umurday <= 28){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur7hs28hl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur7hs28hp++;
+                            }
+                        }
+                        else if($item->umurday >= 29 && $item->umuryear <= 1){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur29hs1tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur29hs1tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 2 && $item->umuryear <= 4){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur2ts4tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur2ts4tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 5 && $item->umuryear <= 14){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur15ts24tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur15ts24tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 15 && $item->umuryear <= 24){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur15ts24tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur15ts24tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 25 && $item->umuryear <= 44){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur25ts44tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur25ts44tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 45 && $item->umuryear <= 64){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur45ts64tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur45ts64tp++;
+                            }
+                        }
+                        else if($item->umuryear > 64){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumurlebih64l++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumurlebih64p++;
+                            }
+                        }
+        
+                        if($item->tglpulang != null && $item->objectjeniskelaminfk == 1){
+                            $jumlahpasienkeluarhml++;
+                        } else if($item->tglpulang != null && $item->objectjeniskelaminfk == 2){
+                            $jumlahpasienkeluarhmp++;
+                        }
+        
+                        if($item->tglpulang != null && $item->objectstatuskeluarfk == 5){
+                            $jumlahpasienkeluarmati++;
+                        }
+
+                        $totalpasienkeluarhm = $jumlahpasienkeluarhmp + $jumlahpasienkeluarhml;
+                        
                     }
-                    if ($statusKd == false){
-                        $data10[$i]['kddiagnosa'] = $data10[$i]['kddiagnosa'] . ',' . $item->kddiagnosa;
-                    }
-
-                    //Laki =1 && Perempuan=2
-                    if ($item->umurday <= 6 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml6HariL'] = (float)$hideung['jml6HariL'] + 1;
-                    }else if ($item->umurday <= 6 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml6HariP'] = (float)$hideung['jml6HariP'] + 1;
-
-                    }else if ($item->umurday >= 7 && $item->umurday <= 28 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml28HariL'] = (float)$hideung['jml28HariL'] + 1;
-                    }else if ($item->umurday >= 7 && $item->umurday <= 28 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml28HariP'] = (float)$hideung['jml28HariP'] + 1;
-
-                    }else if ($item->umurday > 28 && $item->umuryear < 1 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml1ThnL'] = (float)$hideung['jml1ThnL'] + 1;
-                    }else if ($item->umurday > 28 && $item->umuryear < 1 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml1ThnP'] = (float)$hideung['jml1ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 1 && $item->umuryear <= 4 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml4ThnL'] = (float)$hideung['jml4ThnL'] + 1;
-                    }else if ($item->umuryear >= 1 && $item->umuryear <= 4 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml4ThnP'] = (float)$hideung['jml4ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 5 && $item->umuryear <= 14 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml14ThnL'] = (float)$hideung['jml14ThnL'] + 1;
-                    }else if ($item->umuryear >= 5 && $item->umuryear <= 14 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml14ThnP'] = (float)$hideung['jml14ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 15 && $item->umuryear <= 24 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml24ThnL'] = (float)$hideung['jml24ThnL'] + 1;
-                    }else if ($item->umuryear >= 15 && $item->umuryear <= 24 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml24ThnP'] = (float)$hideung['jml24ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 25 && $item->umuryear <= 44 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml44ThnL'] = (float)$hideung['jml44ThnL'] + 1;
-                    }else if ($item->umuryear >= 25 && $item->umuryear <= 44 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml44ThnP'] = (float)$hideung['jml44ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 45 && $item->umuryear <= 64 && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml64ThnL'] = (float)$hideung['jml64ThnL'] + 1;
-                    }else if ($item->umuryear >= 45 && $item->umuryear <= 64 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml64ThnP'] = (float)$hideung['jml64ThnP'] + 1;
-
-                    }else if ($item->umuryear >= 65  && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jml65ThnL'] = (float)$hideung['jml65ThnL'] + 1;
-                    }else if ($item->umuryear >= 65 && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jml65ThnP'] = (float)$hideung['jml65ThnP'] + 1;
-
-                    }
-                    if ($item->statuspenyakit == 'BARU'  && $item->objectjeniskelaminfk == 1  ) {
-                        $data10[$i]['jmlKasusBaruL'] = (float)$hideung['jmlKasusBaruL'] + 1;
-                    }else if ($item->statuspenyakit == 'BARU' && $item->objectjeniskelaminfk == 2  ) {
-                        $data10[$i]['jmlKasusBaruP'] = (float)$hideung['jmlKasusBaruP'] + 1;
-                    }
-                    $data10[$i]['totalKasusBaru'] = $data10[$i]['jmlKasusBaruP'] + $data10[$i]['jmlKasusBaruL'];
-
-                    $data10[$i]['jmlPL'] = $data10[$i]['jml6HariL'] + $data10[$i]['jml6HariP']
-                        +$data10[$i]['jml28HariL'] + $data10[$i]['jml28HariP']
-                        +$data10[$i]['jml1ThnL'] + $data10[$i]['jml1ThnP']
-                        +$data10[$i]['jml4ThnL'] + $data10[$i]['jml4ThnP']
-                        +$data10[$i]['jml14ThnL'] + $data10[$i]['jml14ThnP']
-                        +$data10[$i]['jml24ThnL'] + $data10[$i]['jml24ThnP']
-                        +$data10[$i]['jml44ThnL'] + $data10[$i]['jml44ThnP']
-                        +$data10[$i]['jml64ThnL'] + $data10[$i]['jml64ThnP']
-                        +$data10[$i]['jml65ThnL'] + $data10[$i]['jml65ThnP'];
-                    $data10[$i]['totalMenurutL'] = $data10[$i]['jml6HariL']
-                        +$data10[$i]['jml28HariL']
-                        +$data10[$i]['jml1ThnL']
-                        +$data10[$i]['jml4ThnL']
-                        +$data10[$i]['jml14ThnL']
-                        +$data10[$i]['jml24ThnL']
-                        +$data10[$i]['jml44ThnL']
-                        +$data10[$i]['jml64ThnL']
-                        +$data10[$i]['jml65ThnL'] ;
-                    $data10[$i]['totalMenurutP'] = $data10[$i]['jml6HariP']
-                        +$data10[$i]['jml28HariP']
-                        +$data10[$i]['jml1ThnP']
-                        +$data10[$i]['jml4ThnP']
-                        +$data10[$i]['jml14ThnP']
-                        +$data10[$i]['jml24ThnP']
-                        +$data10[$i]['jml44ThnP']
-                        +$data10[$i]['jml64ThnP']
-                        +$data10[$i]['jml65ThnP'] ;
-                    $data10[$i]['totalKasusBaru'] = $data10[$i]['jmlKasusBaruP'] + $data10[$i]['jmlKasusBaruL'];
-
-                    $data10[$i]['totalMenurutUmur'] = $data10[$i]['jml6HariL'] + $data10[$i]['jml6HariP']
-                        +$data10[$i]['jml28HariL'] + $data10[$i]['jml28HariP']
-                        +$data10[$i]['jml1ThnL'] + $data10[$i]['jml1ThnP']
-                        +$data10[$i]['jml4ThnL'] + $data10[$i]['jml4ThnP']
-                        +$data10[$i]['jml14ThnL'] + $data10[$i]['jml14ThnP']
-                        +$data10[$i]['jml24ThnL'] + $data10[$i]['jml24ThnP']
-                        +$data10[$i]['jml44ThnL'] + $data10[$i]['jml44ThnP']
-                        +$data10[$i]['jml64ThnL'] + $data10[$i]['jml64ThnP']
-                        +$data10[$i]['jml65ThnL'] + $data10[$i]['jml65ThnP'];
-
-                }
-                $i = $i + 1;
-            }
-
-            //jika false
-            if ($sama == false) {
-                if ($item->umurday <= 6 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 1; $jml6HariP = 0; $jml28HariL = 0; $jml28HariP = 0; $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-                }else if ($item->umurday <= 6 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 1;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-
-                }else if ($item->umurday >= 7 && $item->umurday <= 28 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 1;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-                }else if ($item->umurday >= 7 && $item->umurday <= 28 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 1;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-
-                }else if ($item->umurday > 28 && $item->umuryear < 1 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 1;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-                }else if ($item->umurday > 28 && $item->umuryear < 1 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;$jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 1;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-
-                }else if ($item->umuryear >= 1 && $item->umuryear <= 4 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 1;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-                }else if ($item->umuryear >= 1 && $item->umuryear <= 4 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 1;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-                }else if ($item->umuryear >= 5 && $item->umuryear <= 14 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 1;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-                }else if ($item->umuryear >= 5 && $item->umuryear <= 14 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 1;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-
-                }else if ($item->umuryear >= 15 && $item->umuryear <= 24 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 1;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-                }else if ($item->umuryear >= 15 && $item->umuryear <= 24 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 1;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-
-                }else if ($item->umuryear >= 25 && $item->umuryear <= 44 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 1;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-                }else if ($item->umuryear >= 25 && $item->umuryear <= 44 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 1;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-
-                }else if ($item->umuryear >= 45 && $item->umuryear <= 64 && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 1;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-                }else if ($item->umuryear >= 45 && $item->umuryear <= 64 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 1;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-
-                }else if ($item->umuryear >= 65  && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 1;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-                }else if ($item->umuryear >= 65 && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 1;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 0;
-
+                    
                 }
 
-                if ($item->statuspenyakit == 'BARU'  && $item->objectjeniskelaminfk == 1  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 1;
-                    $jmlKasusBaruP = 0;
-                }else if ($item->statuspenyakit == 'BARU' && $item->objectjeniskelaminfk == 2  ) {
-                    $jml6HariL = 0;
-                    $jml6HariP = 0;
-                    $jml28HariL = 0;
-                    $jml28HariP = 0;
-                    $jml1ThnL = 0;
-                    $jml1ThnP = 0;
-                    $jml4ThnL = 0;
-                    $jml4ThnP = 0;
-                    $jml14ThnL = 0;
-                    $jml14ThnP = 0;
-                    $jml24ThnL = 0;
-                    $jml24ThnP = 0;
-                    $jml44ThnL = 0;
-                    $jml44ThnP = 0;
-                    $jml64ThnL = 0;
-                    $jml64ThnP = 0;
-                    $jml65ThnL = 0;
-                    $jml65ThnP = 0;
-                    $jmlKasusBaruL = 0;
-                    $jmlKasusBaruP = 1;
-                }
+                $currentid= $row->id;
 
                 $data10[] = array(
-                    'kddiagnosa'=> $item->kddiagnosa,
-                    'nodtd' => $item->nodtd,
-                    'golongansebabpenyakit'=> $item->golongansebabpenyakit,
-                    'tglregistrasi' => $item->tglregistrasi,
-                    'statuspenyakit' => $item->statuspenyakit,
-                    'tglLahir' => $item->tglLahir,
-                    'umuryear' => $item->umuryear,
-                    'umurmonth' => $item->umurmonth,
-                    'umurday' => $item->umurday,
-                    'totalAll' => 1,
-                    'jml6HariL'=>  $jml6HariL,
-                    'jml6HariP'=>  $jml6HariP,
-                    'jml28HariL'=>  $jml28HariL,
-                    'jml28HariP'=>  $jml28HariP,
-                    'jml1ThnL'=>  $jml1ThnL,
-                    'jml1ThnP'=>  $jml1ThnP,
-                    'jml4ThnL'=>  $jml4ThnL,
-                    'jml4ThnP'=>  $jml4ThnP,
-                    'jml14ThnL'=>  $jml14ThnL,
-                    'jml14ThnP'=>  $jml14ThnP,
-                    'jml24ThnL'=>  $jml24ThnL,
-                    'jml24ThnP'=>  $jml24ThnP,
-                    'jml44ThnL'=>  $jml44ThnL,
-                    'jml44ThnP'=>  $jml44ThnP,
-                    'jml64ThnL'=>  $jml64ThnL,
-                    'jml64ThnP'=>  $jml64ThnP,
-                    'jml65ThnL'=>  $jml65ThnL,
-                    'jml65ThnP'=>  $jml65ThnP,
-                    'jmlKasusBaruL' =>$jmlKasusBaruL,
-                    'jmlKasusBaruP' =>$jmlKasusBaruP,
-                    'totalKasusBaru'=>$totalKasusBaru,
-                    'totalMenurutUmur'=>$totalMenurutUmur,
-                    'totalMenurutL'=>$totalMenurutL,
-                    'totalMenurutP'=>$totalMenurutP,
-                    'jmlPL'=>$jmlPL,
-
+                    'jumlahumur0hs6hl' => $jumlahumur0hs6hl,
+                    'jumlahumur0hs6hp' =>  $jumlahumur0hs6hp, 
+                    'jumlahumur7hs28hl' =>  $jumlahumur7hs28hl, 
+                    'jumlahumur7hs28hp' =>  $jumlahumur7hs28hp, 
+                    'jumlahumur29hs1tl' =>  $jumlahumur29hs1tl, 
+                    'jumlahumur29hs1tp' =>  $jumlahumur29hs1tp, 
+                    'jumlahumur2ts4tl' =>  $jumlahumur2ts4tl, 
+                    'jumlahumur2ts4tp' =>  $jumlahumur2ts4tp,
+                    'jumlahumur5ts14tl' =>  $jumlahumur5ts14tl, 
+                    'jumlahumur5ts14tp' =>  $jumlahumur5ts14tp, 
+                    'jumlahumur15ts24tl' =>  $jumlahumur15ts24tl, 
+                    'jumlahumur15ts24tp' =>  $jumlahumur15ts24tp, 
+                    'jumlahumur25ts44tl' =>  $jumlahumur25ts44tl, 
+                    'jumlahumur25ts44tp' =>  $jumlahumur25ts44tp, 
+                    'jumlahumur45ts64tl' =>  $jumlahumur45ts64tl, 
+                    'jumlahumur45ts64tp' =>  $jumlahumur45ts64tp, 
+                    'jumlahumurlebih64l' =>  $jumlahumurlebih64l, 
+                    'jumlahumurlebih64p' =>  $jumlahumurlebih64p, 
+                    'jumlahpasienkeluarhml' =>  $jumlahpasienkeluarhml, 
+                    'jumlahpasienkeluarhmp' =>  $jumlahpasienkeluarhmp, 
+                    'totalpasienkeluarhm' =>  $totalpasienkeluarhm, 
+                    'jumlahpasienkeluarmati' =>  $jumlahpasienkeluarmati, 
+                    'namakota' =>  $namakota, 
+                    'namalengkap' =>  $namalengkap, 
+                    'namapemerintahan' =>  $namapemerintahan, 
+                    'kode' =>  $kode,
+                    'nodtd' =>  $nodtd,
+                    'nodaftarterperinci' =>  $nodaftarterperinci, 
+                    'golongansebabpenyakit' =>  $golongansebabpenyakit,
+                    
                 );
             }
-
-            foreach ($data10 as $key => $row) {
-                $count[$key] = $row['nodtd'];
-            }
-
-            array_multisort($count, SORT_ASC, $data10);
         }
 
         $result = array(
-            'data' => $data10,
-            'message' => 'er@epic',
-
+            'detail' => $data10,
         );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
 
-        return $this->respond($result);
+    public function getLaporanRL4bSebabLuar(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $data10 = [];
+
+        $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
+        ps.tgllahir as tglLahir,
+        EXTRACT(YEAR from AGE(pd.tglregistrasi, ps.tgllahir)) as umuryear,
+        DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
+        ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
+        from pasiendaftar_t as pd
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
+        inner join pasien_m as ps on ps.id = pd.nocmfk
+        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
+        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
+        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
+        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+        inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
+        inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
+        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
+        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
+        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        where pd.statusenabled = true 
+        and pd.kdprofile = $kdProfile 
+        and ru.objectdepartemenfk != 16
+        --and (jd.id = 1 or jd.id = 7)
+        and ddtd.id between 508 and 537
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        order by ddtd.id"));
+
+        $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
+        inner join profile_m pr on pr.id = ddtd.kdprofile
+        where ddtd.id between 1 and 507 and pr.id = $kdProfile order by ddtd.id"));
+
+        
+        $jumlahumur0hs6hl = 0;
+        $jumlahumur0hs6hp = 0;
+        $jumlahumur7hs28hl = 0;
+        $jumlahumur7hs28hp = 0;
+        $jumlahumur29hs1tl = 0;
+        $jumlahumur29hs1tp = 0;
+        $jumlahumur2ts4tl = 0;
+        $jumlahumur2ts4tp = 0;
+        $jumlahumur5ts14tl = 0;
+        $jumlahumur5ts14tp = 0;
+        $jumlahumur15ts24tl = 0;
+        $jumlahumur15ts24tp = 0;
+        $jumlahumur25ts44tl = 0;
+        $jumlahumur25ts44tp = 0;
+        $jumlahumur45ts64tl = 0;
+        $jumlahumur45ts64tp = 0;
+        $jumlahumurlebih64l = 0;
+        $jumlahumurlebih64p = 0;
+        $jumlahpasienkeluarhml = 0;
+        $jumlahpasienkeluarhmp = 0;
+        $totalpasienkeluarhm = 0;
+        $jumlahpasienkeluarmati = 0;
+
+        $currentid = 99999;
+
+        foreach($id as $row){
+            $namakota = $row->namakota;
+            $namalengkap = $row->namalengkap;
+            $namapemerintahan = $row->namapemerintahan;
+            $kode = $row->idprofile;
+            $nodaftarterperinci = $row->nodaftarterperinci;
+            $golongansebabpenyakit = $row->golongansebabpenyakit;
+            $nodtd = $row->nodtd;
+
+            $jumlahumur0hs6hl = 0;
+                    $jumlahumur0hs6hp = 0;
+                    $jumlahumur7hs28hl = 0;
+                    $jumlahumur7hs28hp = 0;
+                    $jumlahumur29hs1tl = 0;
+                    $jumlahumur29hs1tp = 0;
+                    $jumlahumur2ts4tl = 0;
+                    $jumlahumur2ts4tp = 0;
+                    $jumlahumur5ts14tl = 0;
+                    $jumlahumur5ts14tp = 0;
+                    $jumlahumur15ts24tl = 0;
+                    $jumlahumur15ts24tp = 0;
+                    $jumlahumur25ts44tl = 0;
+                    $jumlahumur25ts44tp = 0;
+                    $jumlahumur45ts64tl = 0;
+                    $jumlahumur45ts64tp = 0;
+                    $jumlahumurlebih64l = 0;
+                    $jumlahumurlebih64p = 0;
+                    $jumlahpasienkeluarhml = 0;
+                    $jumlahpasienkeluarhmp = 0;
+                    $jumlahpasienkeluarmati = 0;
+                    $totalpasienkeluarhm = 0;
+
+            if($row->id != $currentid){
+                foreach ($data as $item) {
+                    if($row->id == $item->id){
+                        if($item->umurday <= 6){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur0hs6hl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur0hs6hp++;
+                            }
+                        }
+                        else if($item->umurday >= 7 && $item->umurday <= 28){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur7hs28hl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur7hs28hp++;
+                            }
+                        }
+                        else if($item->umurday >= 29 && $item->umuryear <= 1){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur29hs1tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur29hs1tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 2 && $item->umuryear <= 4){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur2ts4tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur2ts4tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 5 && $item->umuryear <= 14){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur15ts24tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur15ts24tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 15 && $item->umuryear <= 24){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur15ts24tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur15ts24tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 25 && $item->umuryear <= 44){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur25ts44tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur25ts44tp++;
+                            }
+                        }
+                        else if($item->umuryear >= 45 && $item->umuryear <= 64){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumur45ts64tl++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumur45ts64tp++;
+                            }
+                        }
+                        else if($item->umuryear > 64){
+                            if($item->objectjeniskelaminfk == 1){
+                                $jumlahumurlebih64l++;
+                            } else if($item->objectjeniskelaminfk == 2){
+                                $jumlahumurlebih64p++;
+                            }
+                        }
+        
+                        if($item->tglpulang != null && $item->objectjeniskelaminfk == 1){
+                            $jumlahpasienkeluarhml++;
+                        } else if($item->tglpulang != null && $item->objectjeniskelaminfk == 2){
+                            $jumlahpasienkeluarhmp++;
+                        }
+        
+                        if($item->tglpulang != null && $item->objectstatuskeluarfk == 5){
+                            $jumlahpasienkeluarmati++;
+                        }
+
+                        $totalpasienkeluarhm = $jumlahpasienkeluarhmp + $jumlahpasienkeluarhml;
+                        
+                    }
+                    
+                }
+
+                $currentid= $row->id;
+
+                $data10[] = array(
+                    'jumlahumur0hs6hl' => $jumlahumur0hs6hl,
+                    'jumlahumur0hs6hp' =>  $jumlahumur0hs6hp, 
+                    'jumlahumur7hs28hl' =>  $jumlahumur7hs28hl, 
+                    'jumlahumur7hs28hp' =>  $jumlahumur7hs28hp, 
+                    'jumlahumur29hs1tl' =>  $jumlahumur29hs1tl, 
+                    'jumlahumur29hs1tp' =>  $jumlahumur29hs1tp, 
+                    'jumlahumur2ts4tl' =>  $jumlahumur2ts4tl, 
+                    'jumlahumur2ts4tp' =>  $jumlahumur2ts4tp,
+                    'jumlahumur5ts14tl' =>  $jumlahumur5ts14tl, 
+                    'jumlahumur5ts14tp' =>  $jumlahumur5ts14tp, 
+                    'jumlahumur15ts24tl' =>  $jumlahumur15ts24tl, 
+                    'jumlahumur15ts24tp' =>  $jumlahumur15ts24tp, 
+                    'jumlahumur25ts44tl' =>  $jumlahumur25ts44tl, 
+                    'jumlahumur25ts44tp' =>  $jumlahumur25ts44tp, 
+                    'jumlahumur45ts64tl' =>  $jumlahumur45ts64tl, 
+                    'jumlahumur45ts64tp' =>  $jumlahumur45ts64tp, 
+                    'jumlahumurlebih64l' =>  $jumlahumurlebih64l, 
+                    'jumlahumurlebih64p' =>  $jumlahumurlebih64p, 
+                    'jumlahpasienkeluarhml' =>  $jumlahpasienkeluarhml, 
+                    'jumlahpasienkeluarhmp' =>  $jumlahpasienkeluarhmp, 
+                    'totalpasienkeluarhm' =>  $totalpasienkeluarhm, 
+                    'jumlahpasienkeluarmati' =>  $jumlahpasienkeluarmati, 
+                    'namakota' =>  $namakota, 
+                    'namalengkap' =>  $namalengkap, 
+                    'namapemerintahan' =>  $namapemerintahan, 
+                    'kode' =>  $kode,
+                    'nodtd' =>  $nodtd,
+                    'nodaftarterperinci' =>  $nodaftarterperinci, 
+                    'golongansebabpenyakit' =>  $golongansebabpenyakit,
+                    
+                );
+            }
+        }
+
+        $result = array(
+            'detail' => $data10,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
 
     public function getDataLaporanRL51(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $data = \DB::table('pasiendaftar_t as pd')
-            ->leftjoin('pasien_m as pm', 'pm.id', '=', 'pd.nocmfk')
-            ->leftjoin('alamat_m as alm ','alm.nocmfk','=','pm.id')
-            ->leftjoin('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
-            ->leftjoin('batalregistrasi_t as btl','btl.pasiendaftarfk','=','pd.norec')
-            ->select( DB::raw('count(pd.norec) as jumlah,pd.statuspasien,ru.objectdepartemenfk'))
-        ->where('pd.kdprofile', $kdProfile);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
 
-        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
-        }
-        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $data = $data->where('pd.tglregistrasi', '<=', $request['tglAkhir']);
-        }
-        if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
-            $data = $data->where('ru.objectdepartemenfk ', '=', $request['idDept']);
-        }
-        if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
-            $data = $data->where('ru.id', '=', $request['idRuangan']);
-        }
-        $data = $data->whereNull('btl.pasiendaftarfk');
-        $data = $data->groupBy('pd.statuspasien','ru.objectdepartemenfk');
-        $data = $data->get();
+
+        $data = DB::select(DB::raw("select *, (case when x.statuspasienfix = 'LAMA' THEN 'Pengunjung Lama' else 'Pengunjung Baru' end) as statuspasienfixbanget from(
+            select to_char(pd.tglregistrasi, 'Month') as month, to_char(pd.tglregistrasi, 'mm') as idmonth, to_char(pd.tglregistrasi, 'YYYY') as year,count(pd.tglregistrasi) as jumlahkunjungan,
+                    (case when pd.statuspasien is null then 'LAMA' else pd.statuspasien end) as statuspasienfix,
+                            pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id idprofile
+                    from pasiendaftar_t pd
+                    inner join profile_m pr on pr.id = pd.kdprofile
+                    inner join pasien_m as pm on pm.id = pd.nocmfk
+                    where pd.statusenabled = true and pd.kdprofile = $kdProfile
+                    and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                    group by to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'), (case when pd.statuspasien is null then 'LAMA' else pd.statuspasien end), pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
+                    order by to_char(pd.tglregistrasi, 'YYYY'), to_char(pd.tglregistrasi, 'mm')) as x"));
+
         $result = array(
             'data' => $data,
-            'message' => 'Cepot',
+            'message' => 'larasatizka',
         );
         return $this->respond($result);
     }
     public function getDataLaporanRL52(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $dataLogin = $request->all();
-        $data = \DB::table('pasiendaftar_t as pd')
-            ->JOIN('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
-            ->JOIN('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
-            ->LEFTJOIN('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
-            ->LEFTJOIN('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
-            ->LEFTJOIN('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
-            ->LEFTJOIN('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
-            ->select('ru.namaruangan',
-                DB::raw('COUNT(ru.namaruangan) as jumlahKunjungan')
-            )
-            ->where('pd.kdprofile', $kdProfile);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $bulan = [];
 
-        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
-        }
-        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $data = $data->where('pd.tglregistrasi', '<=', $request['tglAkhir']);
-        }
-        if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
-            $data = $data->where('dpm.id', '=', $request['idDept']);
-        }
-        if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
-            $data = $data->where('ru.id', '=', $request['idRuangan']);
-        }
-        $data = $data->groupBy('dept.namadepartemen', 'ru.namaruangan');
-        $data = $data->orderBy('ru.namaruangan', 'ASC');
-        $data = $data->get();
+        $data = DB::select(DB::raw("select pd.tglregistrasi::date, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ') as month, ru.namaruangan, ru.id, count(apd.objectruanganfk) jumlahkunjungan, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id as idprofile
+        from
+        pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+        inner join profile_m pr on pr.id = pd.kdprofile
+        where pd.statusenabled = true and pd.kdprofile = $kdProfile
+        and ru.objectdepartemenfk != 16
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        group by pd.tglregistrasi::date, ru.namaruangan, ru.id, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ')
+        order by pd.tglregistrasi::date"));
 
+        $querybulan = DB::select(DB::raw("select rtrim(to_char(pd.tglregistrasi, 'Month'), ' ') as month, to_char(pd.tglregistrasi, 'mm') as idmonth
+        from
+                pasien_m ps 
+                inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                where pd.statusenabled = true and pd.kdprofile = $kdProfile
+                and ru.objectdepartemenfk != 16
+                and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                        group by rtrim(to_char(pd.tglregistrasi, 'Month'), ' '), to_char(pd.tglregistrasi, 'mm')
+                order by idmonth"));
+
+        foreach($querybulan as $q){
+            array_push($bulan, $q->month);
+        }
+
+        $main = array("Penyakit Dalam", "Bedah", "Kesehatan Anak (Neonatal)", "Kesehatan Anak Lainnya", "Obstetri & Ginekologi (Ibu Hamil)", "Obstetri & Ginekologi Lainnya", "Keluarga Berencana", "Bedah Saraf", "Saraf", "Jiwa", "NAPZA", "Psikologi", "THT", "Mata", "Kulit dan Kelamin", "Gigi & Mulut", "Geriatri", "Kardiologi", "Radiologi", "Bedah Orthopedi", "Paru-paru", "Kusta", "Umum", "Rawat Darurat", "Rehabilitasi Medik", "Akupuntur Medik", "Konsultasi Gizi", "Day Care", "Lain-Lain", "TOTAL");
+        //$bulan = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        $currentnama = "Larasatizka";
+        $currentmonth = "Ayuningtyas";
+
+        $jumlah = 0;
+        $total = 0;
+        $data10 = [];
+        $totalfix = 0;
+
+        
+        foreach($bulan as $month){
+            if($month != $currentmonth){
+                $total = 0;
+                $totalfix = 0;
+                foreach($main as $row){
+                    if($row != $currentnama){
+                        $jumlah = 0;
+                        
+                        foreach($data as $item){
+                           $koders = $item->idprofile;
+                           $namars = $item->namalengkap;
+                           $namakota = $item->namakota;
+                           $idprofile = $item->idprofile;
+                            if($row == "Penyakit Dalam" && $item->id == 765 && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Bedah" && $item->id == 44 && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Kesehatan Anak (Neonatal)"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Kesehatan Anak Lainnya" && ($item->id == 753 || $item->id == 775) && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Obstetri & Ginekologi (Ibu Hamil)"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Obstetri & Ginekologi Lainnya"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Keluarga Berencana"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Bedah Saraf"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Saraf" && $item->id == 755 && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Jiwa" && ($item->id == 785 || $item->id == 752 || $item->id == 782) && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "NAPZA" && ($item->id == 768 || $item->id == 789) && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Psikologi" && ($item->id == 807 || $item->id == 767 || $item->id == 791) && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "THT"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Mata"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Kulit dan Kelamin" && $item->id == 754 && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total +=$item->jumlahkunjungan;
+                            } else if($row == "Gigi & Mulut" && $item->id == 759 && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total +=$item->jumlahkunjungan;
+                            } else if($row == "Geriatri"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total +=$item->jumlahkunjungan;
+                            } else if($row == "Kardiologi"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total +=$item->jumlahkunjungan;
+                            } else if($row == "Radiologi" && $item->id == 576 && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total +=$item->jumlahkunjungan;
+                            } else if($row == "Bedah Orthopedi"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total +=$item->jumlahkunjungan;
+                            } else if($row == "Paru-paru"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Kusta"  && $item->month == $month){
+                                $jumlah += 0;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Umum" && ($item->id == 758 || $item->id == 771) && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Rawat Darurat" && ($item->id == 765 || $item->id == 766) && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Akupuntur Medik" && $item->id == 772 && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Konsultasi Gizi" && $item->id == 784 && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Day Care" && $item->id == 779 && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } else if($row == "Lain-Lain" && $item->month == $month && $item->id != 779 && $item->id != 784 && $item->id != 772 && $item->id != 765 && $item->id != 766 && $item->id != 758 && $item->id != 576 && $item->id != 759 && $item->id != 754 && $item->id != 807 && $item->id != 767 && $item->id != 791 && $item->id != 768 && $item->id != 789 && $item->id != 785 && $item->id != 752 && $item->id != 755 && $item->id != 753 && $item->id != 775 && $item->id != 44 && $item->id != 782 && $item->id != 771){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } 
+                            
+                            
+                       }
+
+                        $totalfix += $jumlah;
+
+                        if($row == "TOTAL"){
+                            $jumlah = $totalfix;
+                        }
+
+                        $data10[] = array(
+                            // 'koders' => $koders,
+                            // 'namars' =>  $namars, 
+                            // 'namakota' =>  $namakota, 
+                            'jumlah' =>  $jumlah,
+                            'hasilbulan' =>  $month,
+                            'hasilnama' =>  $row, 
+                            'koders' =>  $koders,
+                            'namars' =>  $namars,
+                            'namakota' =>  $namakota,
+                            'idprofile' =>  $idprofile, 
+                        );
+
+                       $currentnama = $row;
+                    }
+                }
+                $currentmonth = $month;
+            }
+        }
+        
         $result = array(
-            'data' => $data,
-            'message' => '@vandrian',
+            'data' => $data10,
+            'message' => 'larasatizka',
         );
 
         return $this->respond($result);
     }
+    
+
     public function getDataLaporanRL53(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $kdDeptRanapAll = explode(',',$this->settingDataFixed('KdDepartemenRIAll',$kdProfile));
-        $kdDepartemenRanapAll = [];
-        foreach ($kdDeptRanapAll as $items){
-            $kdDepartemenRanapAll []=  (int)$items;
-        }
-//        $dataLogin = $request->all();
-        $datadiagnosa = \DB::table('antrianpasiendiperiksa_t as app')
-            ->LEFTJOIN('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'app.norec')
-            ->LEFTJOIN('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
-            ->JOIN('diagnosa_m as dm', 'ddp.objectdiagnosafk', '=', 'dm.id')
-            ->JOIN('pasiendaftar_t as pd', 'pd.norec', '=', 'app.noregistrasifk')
-            ->JOIN('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
-            ->LeftJOIN('jeniskelamin_m as jk', 'ps.objectjeniskelaminfk', '=', 'jk.id')
-            ->LeftJOIN('ruangan_m as ru', 'ru.id', '=', 'app.objectruanganfk')
-            ->LeftJOIN('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
-            ->select('dm.kddiagnosa', 'dm.namadiagnosa', 'pd.noregistrasi','pd.objectstatuskeluarfk','ps.objectjeniskelaminfk', 'jk.jeniskelamin',
-                'pd.tglregistrasi', 'pd.tglpulang', 'pd.tglmeninggal', 'ru.reportdisplay', 'app.noregistrasifk as noregistrasifk','pd.statuspasien',
-                'dpm.reportdisplay', 'dpm.id')
-            ->where('app.kdprofile',$kdProfile);
-//            ->wherein('dpm.id', $kdDepartemenRanapAll);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        // $kdDeptRanapAll = explode(',',$this->settingDataFixed('KdDepartemenRIAll',$kdProfile));
+        // $kdDepartemenRanapAll = [];
+        // foreach ($kdDeptRanapAll as $items){
+        //     $kdDepartemenRanapAll []=  (int)$items;
+        // }
 
-        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $datadiagnosa = $datadiagnosa->where('pd.tglregistrasi', '>=', $request['tglAwal']);
-        }
-        if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
-            $datadiagnosa = $datadiagnosa->where('app.objectruanganfk', '=', $request['idRuangan']);
-        }
-        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $tgl = $request['tglAkhir'];
-            $datadiagnosa = $datadiagnosa->where('pd.tglregistrasi', '<=', $tgl);
-        }
-//            $datadiagnosa = $datadiagnosa->orderBy('nomor_urut','ASC');
-        $datadiagnosa = $datadiagnosa->get();
+        $data = DB::select(DB::raw("select x.id, x.month, x.idmonth, x.year,x.nodtd,x.nodaftarterperinci, x.golongansebabpenyakit, 
+        sum(x.jumlahhml) jumlahhml, sum(x.jumlahhmp) jumlahhmp, sum(x.jumlahml) jumlahml, sum(x.jumlahmp) jumlahmp, sum(x.totalall) totalall,
+        x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile 
+        from(
+                select ddtd.id, to_char(pd.tglregistrasi, 'Month') as month, to_char(pd.tglregistrasi, 'mm') as idmonth, to_char(pd.tglregistrasi, 'YYYY') as year,ddtd.nodtd,dm.kddiagnosa as nodaftarterperinci, dm.namadiagnosa as golongansebabpenyakit,
+                (case when jk.id = 1 and sk.id != 5  then count(ddtd.nodtd) else 0 end) as jumlahhml,
+                (case when jk.id = 2 and sk.id != 5  then count(ddtd.nodtd) else 0 end) as jumlahhmp,
+                (case when jk.id = 1 and sk.id = 5 then count(ddtd.nodtd) else 0 end) as jumlahml,
+                (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end) as jumlahmp,
+                ((case when jk.id = 1 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 1 and sk.id = 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end)) as totalall,
+                pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id idprofile
+        from pasiendaftar_t as pd
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
+        inner join pasien_m as ps on ps.id = pd.nocmfk
+        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
+                inner join profile_m pr on pr.id = pd.kdprofile
+        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
+        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
+        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+        inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
+        inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
+        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
+        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
+        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        where pd.statusenabled = true 
+        and pd.kdprofile = $kdProfile 
+        and ru.objectdepartemenfk = 16
+        --and (jd.id = 1 or jd.id = 7)
+        and ddtd.id between 1 and 537
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                group by ddtd.id, to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'),ddtd.nodtd, dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
+                order by ddtd.id
+        ) as x
+        group by x.id, x.month, x.idmonth, x.year,x.nodtd,x.nodaftarterperinci, x.golongansebabpenyakit, x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile
+        order by totalall desc limit 10;"));
+        
 
-        $data10 = [];
-        $jml = 0;
-        $jmlM=0;
-        $jmlL = 0;
-        $jmlLM=0;
-        $sama = false;
-        $jmlP = 0;
-        $jmlPM=0;
-        $jmlHidupMati = 0;
-        foreach ($datadiagnosa as $item) {
-            $sama = false;
-            $i = 0;
-            $o = 0;
-            foreach ($data10 as $hideung) {
-                if ($item->kddiagnosa == $data10[$i]['kddiagnosa']) {
-                    $sama = true;
-                    $jml = (float)$hideung['jumlah'] + 1;
-                    $data10[$i]['jumlah'] = $jml;
-                    if ($item->objectjeniskelaminfk == 1 && ($item->objectstatuskeluarfk != 5 ||$item->objectstatuskeluarfk == '')) {
-                        $data10[$i]['jumlahLKH'] = (float)$hideung['jumlahLKH'] + 1;
-                    } else if ($item->objectjeniskelaminfk == 2 &&( $item->objectstatuskeluarfk != 5  ||$item->objectstatuskeluarfk == '')){
-                        $data10[$i]['jumlahPRH'] = (float)$hideung['jumlahPRH'] + 1;
-                    }
-                    else if ($item->objectjeniskelaminfk == 1 && $item->objectstatuskeluarfk == 5) {
-                        $data10[$i]['jumlahLKM'] = (float)$hideung['jumlahLKM'] + 1;
-                    } else if ($item->objectjeniskelaminfk == 2 && $item->objectstatuskeluarfk == 5) {
-                        $data10[$i]['jumlahPRM'] = (float)$hideung['jumlahPRM'] + 1;
-                    }
-                }
-                $i = $i + 1;
-            }
-
-            if ($sama == false) {
-                if ($item->objectjeniskelaminfk == 1 && $item->objectstatuskeluarfk == 1) {
-                    $jmlL = 1;
-                    $jmlP = 0;
-                    $jmlPM = 0;
-                    $jmlLM = 0;
-                } else if ($item->objectjeniskelaminfk == 2 && $item->objectstatuskeluarfk == 1){
-                    $jmlL = 0;
-                    $jmlP = 1;
-                    $jmlPM = 0;
-                    $jmlLM = 0;
-                }
-                else if ($item->objectjeniskelaminfk == 1 && $item->objectstatuskeluarfk == 5) {
-                    $jmlL = 0;
-                    $jmlP = 0;
-                    $jmlPM = 0;
-                    $jmlLM = 1;
-                } else if ($item->objectjeniskelaminfk == 2 && $item->objectstatuskeluarfk == 5){
-                    $jmlL = 0;
-                    $jmlP = 0;
-                    $jmlLM = 0;
-                    $jmlPM = 1;
-                }
-
-                $data10[] = array(
-                    'kddiagnosa' => $item->kddiagnosa,
-                    'namadiagnosa' => $item->namadiagnosa,
-                    'jumlah' => 1,
-                    'jumlahLKH' => $jmlL,
-                    'jumlahPRH' => $jmlP,
-                    'jumlahLKM' => $jmlLM,
-                    'jumlahPRM' => $jmlPM,
-                );
-            }
-
-            foreach ($data10 as $key => $row) {
-                $count[$key] = $row['jumlah'];
-            }
-
-            array_multisort($count, SORT_DESC, $data10);
-        }
         $result = array(
-
-//              'data' => $datadiagnosa,
-            'data' => $data10,
-            'message' => 'as@vandrian',
-
+            'data' => $data,
+            'message' => '@larasatizka',
         );
 
         return $this->respond($result);
     }
     public function getDataLaporanRL54(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $dataLogin = $request->all();
-        $KdDeptRajalAll = explode(',', $this->settingDataFixed('KdDeptRajalAll', $kdProfile));
-        $kdDepartemenRajalAll = [];
-        foreach ($KdDeptRajalAll as $itemPelayanan){
-            $kdDepartemenRajalAll []=  (int)$itemPelayanan;
-        }
-        $datadiagnosa = \DB::table('antrianpasiendiperiksa_t as app')
-            ->LEFTJOIN('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'app.norec')
-            ->LEFTJOIN('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
-            ->JOIN('diagnosa_m as dm', 'ddp.objectdiagnosafk', '=', 'dm.id')
-            ->JOIN('pasiendaftar_t as pd', 'pd.norec', '=', 'app.noregistrasifk')
-            ->JOIN('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
-            ->LeftJOIN('jeniskelamin_m as jk', 'ps.objectjeniskelaminfk', '=', 'jk.id')
-            ->LeftJOIN('ruangan_m as ru', 'ru.id', '=', 'app.objectruanganfk')
-            ->LeftJOIN('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
-            ->select('dm.kddiagnosa', 'dm.namadiagnosa','app.statuspenyakit', 'pd.noregistrasi', 'ps.objectjeniskelaminfk', 'jk.jeniskelamin',
-                'pd.tglregistrasi', 'pd.tglpulang', 'pd.tglmeninggal', 'ru.reportdisplay', 'app.noregistrasifk as noregistrasifk','pd.statuspasien',
-                'dpm.reportdisplay', 'dpm.id')
-            ->where('app.kdprofile', $kdProfile);
-//            ->wherein('dpm.id', $kdDepartemenRajalAll);
-
-        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $datadiagnosa = $datadiagnosa->where('pd.tglpulang', '>=', $request['tglAwal']);
-        }
-        if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
-            $datadiagnosa = $datadiagnosa->where('app.objectruanganfk', '=', $request['idRuangan']);
-        }
-        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $tgl = $request['tglAkhir'];
-            $datadiagnosa = $datadiagnosa->where('pd.tglpulang', '<=', $tgl);
-        }
-//            $datadiagnosa = $datadiagnosa->orderBy('nomor_urut','ASC');
-        $datadiagnosa = $datadiagnosa->get();
-
-        $data10 = [];
-        $sama = false;
-        $jml = 0;
-        $jmlL = 0;
-        $jmlP = 0;
-        $jmlLL = 0;
-        $jmlPL = 0;
-        $jmlHidupMati = 0;
-        foreach ($datadiagnosa as $item) {
-            $sama = false;
-            $i = 0;
-            foreach ($data10 as $hideung) {
-                if ($item->kddiagnosa == $data10[$i]['kddiagnosa']) {
-                    $sama = true;
-                    $jml = (float)$hideung['jumlah'] + 1;
-                    $data10[$i]['jumlah'] = $jml;
-//asalna statuspenyakit jadi statuspasien
-                    if ($item->objectjeniskelaminfk == 1 && $item->statuspasien == 'BARU') {
-                        $data10[$i]['jumlahLKH'] = (float)$hideung['jumlahLKH'] + 1;
-                    } else if ($item->objectjeniskelaminfk == 2 && $item->statuspasien == 'BARU')  {
-                        $data10[$i]['jumlahPRH'] = (float)$hideung['jumlahPRH'] + 1;
-                    }
-                    else if ($item->objectjeniskelaminfk == 1 && $item->statuspasien == 'LAMA') {
-                        $data10[$i]['jumlahLKL'] = (float)$hideung['jumlahLKL'] + 1;
-                    } else if ($item->objectjeniskelaminfk == 2 && $item->statuspasien == 'LAMA')  {
-                        $data10[$i]['jumlahPRL'] = (float)$hideung['jumlahPRL'] + 1;
-                    }
-                    $data10[$i]['totalbaru'] = $data10[$i]['jumlahLKH'] + $data10[$i]['jumlahPRH'];
-                    $data10[$i]['totallama'] = $data10[$i]['jumlahLKL'] + $data10[$i]['jumlahPRL'];
-                }
-                $i = $i + 1;
-            }
-            if ($sama == false) {
-                if ($item->objectjeniskelaminfk == 1 && $item-> statuspasien == 'BARU') {
-                    $jmlL = 1;
-                    $jmlP = 0;
-                } else if ($item->objectjeniskelaminfk == 2 && $item->statuspasien == 'BARU')  {
-                    $jmlL = 0;
-                    $jmlP = 1;
-                }
-
-                $data10[] = array(
-//                    'nourut'=>$item->nomor_urut,
-//                    'no'=>$i+1,
-                    'kddiagnosa' => $item->kddiagnosa,
-                    'namadiagnosa' => $item->namadiagnosa,
-                    'jumlah' => 1,
-                    'jumlahLKH' => $jmlL,
-                    'jumlahPRH' => $jmlP,
-                    'jumlahLKL' => $jmlLL,
-                    'jumlahPRL' => $jmlPL,
-                    'totalbaru' => $jmlL + $jmlP,
-                    'totallama' => $jmlLL + $jmlPL,
-                );
-            }
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
 
 
-            foreach ($data10 as $key => $row) {
-                $count[$key] = $row['jumlah'];
-            }
-            array_multisort($count, SORT_DESC, $data10);
-        }
-
+        $data = DB::select(DB::raw("select x.id, x.month, x.idmonth, x.year,x.nodtd,x.nodaftarterperinci, x.golongansebabpenyakit, 
+        sum(x.jumlahhml) jumlahhml, sum(x.jumlahhmp) jumlahhmp, sum(x.jumlahml) jumlahml, sum(x.jumlahmp) jumlahmp, sum(x.totalall) totalall,
+        x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile 
+        from(
+                select ddtd.id, to_char(pd.tglregistrasi, 'Month') as month, to_char(pd.tglregistrasi, 'mm') as idmonth, to_char(pd.tglregistrasi, 'YYYY') as year,ddtd.nodtd,dm.kddiagnosa as nodaftarterperinci, dm.namadiagnosa as golongansebabpenyakit,
+                (case when jk.id = 1 and sk.id != 5  then count(ddtd.nodtd) else 0 end) as jumlahhml,
+                (case when jk.id = 2 and sk.id != 5  then count(ddtd.nodtd) else 0 end) as jumlahhmp,
+                (case when jk.id = 1 and sk.id = 5 then count(ddtd.nodtd) else 0 end) as jumlahml,
+                (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end) as jumlahmp,
+                ((case when jk.id = 1 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 1 and sk.id = 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end)) as totalall,
+                pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id idprofile
+        from pasiendaftar_t as pd
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
+        inner join pasien_m as ps on ps.id = pd.nocmfk
+        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
+                inner join profile_m pr on pr.id = pd.kdprofile
+        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
+        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
+        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+        inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
+        inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
+        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
+        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
+        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+        where pd.statusenabled = true 
+        and pd.kdprofile = $kdProfile 
+        and ru.objectdepartemenfk != 16
+        --and (jd.id = 1 or jd.id = 7)
+        and ddtd.id between 1 and 537
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                group by ddtd.id, to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'),ddtd.nodtd, dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
+                order by ddtd.id
+        ) as x
+        group by x.id, x.month, x.idmonth, x.year,x.nodtd,x.nodaftarterperinci, x.golongansebabpenyakit, x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile
+        order by totalall desc limit 10;"));
+        
         $result = array(
-            'data' => $data10,
-            'message' => 'as@vandrian',
-
+            'data' => $data,
+            'message' => '@larasatizka',
         );
+
         return $this->respond($result);
     }
     public function getDataLaporanPasienMasuk(Request $request){

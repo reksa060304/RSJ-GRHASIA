@@ -41,18 +41,20 @@ define(['initialize'], function (initialize) {
 
                  medifirstService.get("registrasi/laporan/get-laporan-rl52?"
                     + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
-                    + tempRuanganId
-                    + tempDepartemen
-                    + tempKelPasienId).then(function (data) {
+                    + "&tglAkhir=" + tglAkhir).then(function (dat) {
                         $scope.isRouteLoading = false;
-                        var data = data.data
-                        $scope.ambildataexcel = data.data;
+                        var datas = dat.data.data
+                        for (var i = 0; i < datas.length; i++) {
+                            datas[i].no = i + 1;
+                            datas[i].kdprov = '0023';
+                            datas[i].year = new Date(tglAwal).getFullYear();
+                        }
+                        $scope.ambildataexcel = datas;
                         $scope.panggil($scope.ambildataexcel);
                         $scope.dataRL52 = new kendo.data.DataSource({
-                            data: data.data,
+                            data: datas,
                             pageSize: 10,
-                            total: data.length,
+                            total: datas.length,
                             serverPaging: false,
                             schema: {
                                 model: {
@@ -71,8 +73,7 @@ define(['initialize'], function (initialize) {
                 $("#kGrid").kendoGrid({
                     toolbar: ["excel"],
                     excel: {
-                        fileName: "Laporan Register Penomoran Pasien.xlsx",
-                        filterable: true,
+                        fileName: "LaporanRL52KunjunganRawatJalan.xlsx",
                         allPages: true
                     },
                     dataSource: $scope.ambildataexcel,
@@ -80,14 +81,89 @@ define(['initialize'], function (initialize) {
                     pageable: true,
                     resizable: true,
                     // columnMenu: true,
+                    excelExport: function (e) {
+                        var rows = e.workbook.sheets[0].rows;
+                        var sheet = e.workbook.sheets[0];
+                        // rows.unshift({
+                        //     cells: [{ value: "DATA KEADAAN MORBIDITAS PASIEN RAWAT INAP", background: "#fffff" }]
+                        // });
+                        var columns = e.workbook.sheets[0].columns;
+                        delete columns[0].width;
+                        columns[0].width = 10;  //0 1 2 4 5 6 
+                        delete columns[1].width;
+                        columns[1].width = 15;
+                        delete columns[2].width;
+                        columns[2].width = 10;
+                        delete columns[3].width;
+                        columns[3].width = 10;
+                        delete columns[4].width;
+                        columns[4].width = 10;
+                        delete columns[5].width;
+                        columns[5].width = 10;
+                        delete columns[6].width;
+                        columns[6].width = 5;
+                        delete columns[7].width;
+                        columns[7].width = 10;
+                        delete columns[8].width;
+                        columns[8].width = 10;
+    
+                        for(let i = 0; i < 1; i++){
+                            for(let j = 0; j <= 8; j++){
+                                sheet.rows[i].cells[j].background = '#ffffff';
+                                sheet.rows[i].cells[j].color = '#000000';
+                                sheet.rows[i].cells[j].textAlign = 'center';
+                            }
+                            sheet.rows[0].height = 50;
+                        }
+    
+                        for (var i = 0; i < e.workbook.sheets[0].rows.length; i++) {
+                            var $row = e.workbook.sheets[0].rows[i];
+                            for (var j = 0; j < $row.cells.length; j++) {
+                                var $cell = $row.cells[j];
+                                $cell["borderTop"] = { color: "#000000", size: 1 };
+                                $cell["borderRight"] = { color: "#000000", size: 1 };
+                                $cell["borderBottom"] = { color: "#000000", size: 1 };
+                                $cell["borderLeft"] = { color: "#000000", size: 1 };
+                            }
+                        }
+                       
+                    },
                     columns: [
                         {
-                            field: "namaruangan",
-                            title: "Jenis Kegiatan"
+                            field: "idprofile",
+                            title: "KODE RS"
                         },
                         {
-                            field: "jumlahkunjungan",
-                            title: "Jumlah"
+                            field: "namars",
+                            title: "NAMA RS"
+                        },
+                        {
+                            field: "hasilbulan",
+                            title: "BULAN"
+                        },
+                        {
+                            field: "year",
+                            title: "TAHUN"
+                        },
+                        {
+                            field: "namakota",
+                            title: "KAB / KOTA"
+                        },
+                        {
+                            field: "kdprov",
+                            title: "KODE PROVINSI"
+                        },
+                        {
+                            field: "no",
+                            title: "NO URUT"
+                        },
+                        {
+                            field: "hasilnama",
+                            title: "JENIS KEGIATAN"
+                        },
+                        {
+                            field: "jumlah",
+                            title: "JUMLAH"
                         }
                     ]
                 })
@@ -106,17 +182,64 @@ define(['initialize'], function (initialize) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
             }
 
-            $scope.columnRL52 = [
-
-                {
-                    title: "Jenis Kegiatan",
-                    field: "namaruangan"
-                },
-                {
-                    title: "Jumlah",
-                    field: "jumlahkunjungan"
-                }
-            ];
+            // $scope.columnRL52 = [
+            //     {
+            //         field: "kdprov",
+            //         title: "KODE PROPINSI"
+            //     },
+            //     {
+            //         field: "kabkota",
+            //         title: "KAB / KOTA"
+            //     },
+            //     {
+            //         field: "idprofile",
+            //         title: "KODE RS"
+            //     },
+            //     {
+            //         field: "namalengkap",
+            //         title: "NAMA RS"
+            //     },
+            //     {
+            //         field: "month",
+            //         title: "BULAN"
+            //     },
+            //     {
+            //         field: "year",
+            //         title: "TAHUN"
+            //     },
+            //     {
+            //         field: "no",
+            //         title: "NO. URUT"
+            //     },
+            //     {
+            //         field: "nodaftarterperinci",
+            //         title: "KODE ICD 10"
+            //     },
+            //     {
+            //         field: "golongansebabpenyakit",
+            //         title: "DESKRIPSI"
+            //     },
+            //     {
+            //         field: "jumlahhml",
+            //         title: "PASIEN KELUAR HIDUP MENURUT JENIS KELAMIN LK"
+            //     },
+            //     {
+            //         field: "jumlahhmp",
+            //         title: "PASIEN KELUAR HIDUP MENURUT JENIS KELAMIN PR"
+            //     },
+            //     {
+            //         field: "jumlahml",
+            //         title: "PASIEN KELUAR MATI MENURUT JK LK"
+            //     },
+            //     {
+            //         field: "jumlahmp",
+            //         title: "PASIEN KELUAR MATI MENURUT JK PR"
+            //     },
+            //     {
+            //         field: "totalall",
+            //         title: "TOTAL ALL"
+            //     }
+            // ];
 
             $scope.Perbaharui = function () {
                 $scope.ClearSearch();

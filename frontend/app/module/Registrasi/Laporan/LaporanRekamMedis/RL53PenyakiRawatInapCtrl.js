@@ -24,11 +24,7 @@ define(['initialize'], function (initialize) {
 
             function LoadData() {
                 var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');;
-                  var tempRuanganId = "";
-                  if ($scope.item.ruangan != undefined) {
-                      tempRuanganId = "&idRuangan=" + $scope.item.ruangan.id;
-                  }
+                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
                 //   var tempDepartemen = "";
                 //   if ($scope.item.departement != undefined) {
                 //       tempDepartemen = "&idDept=" + $scope.item.departement.id;
@@ -50,19 +46,22 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("registrasi/laporan/get-laporan-rl53?"
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir
-                      + tempRuanganId
                     //   + tempDepartemen
                     //   + tempKelPasienId
-                ).then(function (data) {
+                ).then(function (dat) {
 
                     $scope.isRouteLoading = false;
-                    var data = data.data
-                    $scope.ambildataexcel = data.data;
+                    var datas = dat.data.data
+                    for (var i = 0; i < datas.length; i++) {
+                        datas[i].no = i + 1;
+                        datas[i].kdprov = '0023';
+                    }
+                    $scope.ambildataexcel = datas;
                     $scope.panggil($scope.ambildataexcel);
                     $scope.dataRL53 = new kendo.data.DataSource({
-                        data: data.data,
+                        data: datas,
                         pageSize: 10,
-                        total: data.length,
+                        total: datas.length,
                         serverPaging: false,
                         schema: {
                             model: {
@@ -80,11 +79,8 @@ define(['initialize'], function (initialize) {
                 $("#kGrid").kendoGrid({
                     toolbar: ["excel"],
                     excel: {
-                        fileName: "RL53.xlsx",
-                        filterable: true,
-                        allPages: true,
+                        fileName: "LaporanRL5310BesarPenyakitRawatInap.xlsx",
                     },
-                    dataSource: $scope.ambildataexcel,
                     filterable: true,
                     resizable: true,
                     sortable: true,
@@ -94,47 +90,120 @@ define(['initialize'], function (initialize) {
                     // groupable: true,
                     // columnMenu: true,
                     // resizable: true,
+                    excelExport: function (e) {
+                        var rows = e.workbook.sheets[0].rows;
+                        var sheet = e.workbook.sheets[0];
+                        // rows.unshift({
+                        //     cells: [{ value: "DATA KEADAAN MORBIDITAS PASIEN RAWAT INAP", background: "#fffff" }]
+                        // });
+                        var columns = e.workbook.sheets[0].columns;
+                        delete columns[0].width;
+                        columns[0].width = 10;  //0 1 2 4 5 6 
+                        delete columns[1].width;
+                        columns[1].width = 15;
+                        delete columns[2].width;
+                        columns[2].width = 10;
+                        delete columns[3].width;
+                        columns[3].width = 10;
+                        delete columns[4].width;
+                        columns[4].width = 10;
+                        delete columns[5].width;
+                        columns[5].width = 10;
+                        delete columns[6].width;
+                        columns[6].width = 5;
+                        delete columns[7].width;
+                        columns[7].width = 10;
+                        delete columns[8].width;
+                        columns[8].width = 10;
+                        delete columns[9].width;
+                        columns[9].width = 50;
+                        delete columns[10].width;
+                        columns[10].width = 50;
+                        delete columns[11].width;
+                        columns[11].width = 50;
+                        delete columns[12].width;
+                        columns[12].width = 50;
+                        delete columns[13].width;
+                        columns[13].width = 10;
+
+                        for(let i = 0; i < 1; i++){
+                            for(let j = 0; j <= 13; j++){
+                                sheet.rows[i].cells[j].background = '#ffffff';
+                                sheet.rows[i].cells[j].color = '#000000';
+                                sheet.rows[i].cells[j].textAlign = 'center';
+                            }
+                            sheet.rows[0].height = 50;
+                        }
+    
+                        for (var i = 0; i < e.workbook.sheets[0].rows.length; i++) {
+                            var $row = e.workbook.sheets[0].rows[i];
+                            for (var j = 0; j < $row.cells.length; j++) {
+                                var $cell = $row.cells[j];
+                                $cell["borderTop"] = { color: "#000000", size: 1 };
+                                $cell["borderRight"] = { color: "#000000", size: 1 };
+                                $cell["borderBottom"] = { color: "#000000", size: 1 };
+                                $cell["borderLeft"] = { color: "#000000", size: 1 };
+                            }
+                        }
+                       
+                    },
 
                     columns: [
                         {
-                            field: "kddiagnosa",
-                            title: "Kode ICD 10"
+                            field: "kdprov",
+                            title: "KODE PROPINSI"
                         },
                         {
-                            field: "namadiagnosa",
-                            title: "Deskripsi"
+                            field: "namakota",
+                            title: "KAB / KOTA"
                         },
                         {
-                            title: "Pasien Keluar Hidup Menurut Jenis Kelamin",
-                            headerAttributes: { style: "text-align : center" },
-                            columns: [
-                                {
-                                    "field": "jumlahLKH",
-                                    "title": "Laki-laki"
-                                },
-                                {
-                                    "field": "jumlahPRH",
-                                    "title": "Perempuan"
-                                }
-                            ]
+                            field: "idprofile",
+                            title: "KODE RS"
                         },
                         {
-                            title: "Pasien Keluar Meninggal Menurut Jenis Kelamin",
-                            headerAttributes: { style: "text-align : center" },
-                            columns: [
-                                {
-                                    "field": "jumlahLKM",
-                                    "title": "Laki-laki"
-                                },
-                                {
-                                    "field": "jumlahPRM",
-                                    "title": "Perempuan"
-                                }
-                            ]
+                            field: "namalengkap",
+                            title: "NAMA RS"
                         },
                         {
-                            field: "jumlah",
-                            title: "Total (Hidup & Mati)"
+                            field: "month",
+                            title: "BULAN"
+                        },
+                        {
+                            field: "year",
+                            title: "TAHUN"
+                        },
+                        {
+                            field: "no",
+                            title: "NO. URUT"
+                        },
+                        {
+                            field: "nodaftarterperinci",
+                            title: "KODE ICD 10"
+                        },
+                        {
+                            field: "golongansebabpenyakit",
+                            title: "DESKRIPSI"
+                        },
+                        {
+                            field: "jumlahhml",
+                            title: "PASIEN KELUAR HIDUP MENURUT JENIS KELAMIN LK"
+                        },
+                        {
+                            field: "jumlahhmp",
+                            title: "PASIEN KELUAR HIDUP MENURUT JENIS KELAMIN PR"
+                        },
+                        {
+                            field: "jumlahml",
+                            title: "PASIEN KELUAR MATI MENURUT JK LK"
+                        },
+                        {
+                            field: "jumlahmp",
+                            title: "PASIEN KELUAR MATI MENURUT JK PR"
+                        },
+                        {
+                            field: "totalall",
+                            title: "TOTAL ALL"
                         }
                     ]
                 })
@@ -152,68 +221,11 @@ define(['initialize'], function (initialize) {
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
             }
-
-            $scope.createColumn = function () {
-                var list = [
-                    {
-                        "field": "jumlahLKH",
-                        "title": "LK"
-                    },
-                    {
-                        "field": "jumlahPRH",
-                        "title": "LP"
-                    }
-                ];
-
-                return list;
-            };
-
-            $scope.createColumn1 = function () {
-                var list = [
-                    {
-                        "field": "jumlahLKM",
-                        "title": "LK"
-                    },
-                    {
-                        "field": "jumlahPRM",
-                        "title": "LP"
-                    }
-                ];
-
-                return list;
-            };
-
-            $scope.columndataRL53 = [
-
-                {
-                    "field": "kddiagnosa",
-                    "title": "Kode ICD 10",
-                    "width": "150px",
-                    "align": "center"
-                },
-                {
-                    "field": "namadiagnosa",
-                    "title": "<center>Deskripsi</center>",
-                    "width": "150px"
-                },
-                {
-                    title: "<center>Pasien Keluar Hidup Menurut Jenis Kelamin</center>",
-                    columns: $scope.createColumn()
-                },
-                {
-                    title: "<center>Pasien Keluar Meninggal Menurut Jenis Kelamin</center>",
-                    columns: $scope.createColumn1()
-                },
-                {
-                    "field": "jumlah",
-                    "title": "<center>Total (Hidup & Mati)</center>",
-                    "width": "180px"
-                }
-            ];
-
             $scope.Perbaharui = function () {
                 $scope.ClearSearch();
             }
+
+            
 
             //fungsi clear kriteria search
             $scope.ClearSearch = function () {
@@ -250,34 +262,6 @@ define(['initialize'], function (initialize) {
             //     //$scope.dataLogin = dat.data.datalogin[0];
             //     $scope.listKelompokPasien = dat.data.datakelompokpasien;
             // });
-          
-            $scope.$watch('item.namaPenjamin', function (e) {
-                //debugger
-                if (e === undefined) return;
-                findPasien.getDataRekanan(e.id).then(function (data) {
-                    $scope.sourceDataRekanan = data.data.data.listData;
-                    $scope.item.institusiAsalPasien = $scope.sourceDataRekanan;
-                });
-                if (e.id == 5 || e.id == 3) {
-                    $scope.Perusahaan = true
-                } else {
-                    $scope.Perusahaan = false
-                    $scope.item.institusiAsalPasien = ""
-                }
-            })
-
-            $scope.tglPelayanan = $scope.item.pelayanan;
-            $scope.dokter = $scope.item.namaPegawai;
-
-            $scope.listDataFormat = [
-                {
-                    "id": 1, "format": "pdf"
-                },
-                {
-                    "id": 2, "format": "xls"
-                }
-            ];
-
 
             $scope.date = new Date();
             var tanggals = DateHelper.getDateTimeFormatted3($scope.date);
@@ -289,30 +273,6 @@ define(['initialize'], function (initialize) {
             // Tanggal Inputan
             $scope.tglawal = $scope.item.tglawal;
             $scope.tglakhir = $scope.item.tglakhir;
-            $scope.pegawai = medifirstService.getPegawai();
-
-            //excel
-            var myApp = angular.module("myApp", []);
-            myApp.factory('Excel', function ($window) {
-                var uri = 'data:application/vnd.ms-excel;base64,',
-                    template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
-                    base64 = function (s) { return $window.btoa(unescape(encodeURIComponent(s))); },
-                    format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
-                return {
-                    tableToExcel: function (tableId, worksheetName) {
-                        var table = $(tableId),
-                            ctx = { worksheet: worksheetName, table: table.html() },
-                            href = uri + base64(format(template, ctx));
-                        return href;
-                    }
-                };
-            })
-                .controller('MyCtrl', function (Excel, $timeout, $scope) {
-                    $scope.exportToExcel = function (tableId) { // ex: '#my-table'
-                        var exportHref = Excel.tableToExcel(tableId, 'WireWorkbenchDataExport');
-                        $timeout(function () { location.href = exportHref; }, 100); // trigger download
-                    }
-                });
 
 
             $scope.Cetak = function () {
