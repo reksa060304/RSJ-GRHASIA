@@ -691,9 +691,9 @@ class LaporanRekamMedisController extends   ApiController
                         $jumlahsatu += $kl->total;
                     } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $kl->ruanganasal == "NAPZA" && $kl->objectkelasfk == 1){
                         $jumlahsatu += $kl->total;
-                    } else if($row == "Jiwa" && $kl->ruanganasal == "UGD (Pasien Jiwa)" && ($kl->ruangan == "WISMA BIMA" || $kl->ruangan == "WISMA ARIMBI" || $kl->ruangan == "WISMA DRUPADI")){
+                    } else if($row == "Jiwa" && $kl->ruanganasal == "UGD (Pasien Jiwa)" && $kl->objectkelasfk == 6){
                         $jumlahkhusus += $kl->total;
-                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $kl->ruanganasal == "NAPZA" && ($kl->ruangan == "WISMA BIMA" || $kl->ruangan == "WISMA ARIMBI" || $kl->ruangan == "WISMA DRUPADI")){
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $kl->objectkelasfk == 6){
                         $jumlahkhusus += $kl->total;
                     }
                 }
