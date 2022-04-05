@@ -26,14 +26,30 @@ define(['initialize'], function(initialize) {
                 });
             }
 
+            $scope.cekOrderHariIni = function (data) {
+                if (data === true) {
+                    //$scope.cekBelumVerifs = false;
+                    $scope.item.rajal = true;
+                } else if (data === false) {
+                    //$scope.cekBelumVerifs = true;
+                    $scope.item.rajal = undefined;
+                } else {
+                    return;
+                }
+            }
             function init() {
+                console.log($scope.item.rajal);
+                var rajal = "";
+                if ($scope.item.rajal != undefined ) {
+                    rajal = "&rajal="+$scope.item.rajal;
+                }
                 $scope.isRouteLoading = true;
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 
                 medifirstService.get("registrasi/laporan/get-data-sensus-harian?" +
                     "tglAwal=" + tglAwal +
-                    "&tglAkhir=" + tglAkhir 
+                    "&tglAkhir=" + tglAkhir + rajal
                     , true).then(function (dat) {
                         var totalpasien = 0;
                         var totaljk = 0;
@@ -255,11 +271,11 @@ define(['initialize'], function(initialize) {
                         verticalAlign: "top"
                     };
                     sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 60 });
-                    sheet.rows.splice(30, 0, {
+                    sheet.rows.splice(100, 0, {
                         cells: [total, ttlpasien, ttljk,ttlumur,ttlagama,ttlamat,ttlpendidikan,ttlpekerjaan],
                         type: "data",
                     });
-                    sheet.rows.splice(31, 0, {
+                    sheet.rows.splice(106, 0, {
                         cells: [{value:" "},{value:"Keterangan : ", colSpan: 2, verticalAlign:"top", },{value:"Agama :",colSpan: 2, verticalAlign:"top", },ketagama,{value: "Alamat : ",colSpan: 2, verticalAlign:"top", },ketalamat,{value:"Pendidikan :",colSpan: 2, verticalAlign:"top", },ketpendidikan,{value:"Pekerjaan",colSpan: 2, verticalAlign:"top"},ketpekerjaan],
                         type: "data",
                         height: 150,

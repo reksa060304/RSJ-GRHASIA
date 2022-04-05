@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Master\Pegawai;
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
-
 class SensusHarianRawatJalanController extends ApiController
 {
 
@@ -17,15 +16,26 @@ class SensusHarianRawatJalanController extends ApiController
     }
     public function getSensusHarianRawatJalan(Request $request)
     {
+        $rajal = $request['rajal'];
         $tglAwal= $request['tglAwal'];
         $tglAkhir= $request['tglAkhir'];
+        $ruangan = "";
+        if($rajal == true ){
+            $ruangan = DB::select(DB::Raw("
+            SELECT ru.id, ru.namaruangan FROM ruangan_m ru 
+            where 
+            ru.objectdepartemenfk in(18, 27, 3) and ru.statusenabled=true and ru.kdprofile=30 order by ru.objectdepartemenfk asc
+            "));
 
-        $ruangan = DB::select(DB::Raw("
+        }else{
+            $ruangan = DB::select(DB::Raw("
             SELECT ru.id, ru.namaruangan FROM ruangan_m ru 
             where 
             ru.id in(752,753,755,756,757,758,759,761,762,764,765,29,767,768,769,770,771,772,773,774,777,782,575,576);
         "));
 
+        }
+        
 
         $statuspasien= DB::select(DB::raw("/*status pasien*/
             WITH periode as (
@@ -1099,6 +1109,36 @@ GROUP BY pd.namaruangan, pd.id"));
 
     public function Grafikrajal(Request $request)
     {
+        $tglawal = $request->tglawal;
+        $tglakhir = $request->tglakhir;
+        $tahun = $request->tahun;
+        $jenislaporan = $request->jenislaporan;
+        $departemen = $request->departemen;
+        $ruangan = $request->ruangan;
+        $tempTahun = '';
+        if ($tahun != '') {
+            $tempTahun = "AND date_part('year', apd.tglkeluar:: DATE) = '$tahun'";
+        }$tempTanggal = "";
+
+        if (isset($tglawal) && isset($tglakhir)) {
+            $tempTanggal="AND apd.tglkeluar:: DATE BETWEEN '$tglawal' AND '$tglakhir'";
+        }
+
+        $paramLap = '';
+        if (isset($jenislaporan) && $jenislaporan != "" && $jenislaporan == 1) {
+            $paramLap = ' and ru.objectdepartemenfk = 16  ';
+        }
+        if (isset($jenislaporan) && $jenislaporan != "" && $jenislaporan == 2) {
+            $paramLap = ' and ru.objectdepartemenfk <> 16  ';
+        }
+        $paramDep = '';
+        if (isset($departemen) && $departemen != "" ) {
+            $paramDep = ' and ru.objectdepartemenfk =' . $departemen;
+        }
+        $paramRuangan = '';
+        if (isset($ruangan) && $ruangan != "" ) {
+            $paramRuangan = ' and ru.id =' . $ruangan ;
+        }
         $data= DB::select(DB::raw(
             "
             WITH grafik AS (
@@ -1123,8 +1163,12 @@ GROUP BY pd.namaruangan, pd.id"));
             AND pd.statusenabled = TRUE
             AND apd.kdprofile = 30
             AND apd.statusenabled = TRUE
-            /*AND date_part('year', apd.tglkeluar:: DATE) = '2022'
-            and ru.objectdepartemenfk <> 16*/
+            $tempTahun
+            $tempTanggal
+            $paramLap
+            $paramDep
+            $paramRuangan
+
                 ) SELECT distinct
                 COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 1 )as januari,
                 COUNT( pd.norec_apd ) FILTER(where date_part('month', pd.tglkeluar:: DATE) = 2 )as februari,
