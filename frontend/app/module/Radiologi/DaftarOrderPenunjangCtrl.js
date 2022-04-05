@@ -571,6 +571,13 @@ define(['initialize'], function (initialize) {
                     toastr.error('Sudah di verifikasi');
                     return
                 }
+                medifirstService.get('radiologi/cekstatusorder?norec_so='+$scope.dataSelected.norec_so).then(function(e){
+                    console.log(e.data.cekstatus);
+                    $scope.cekstatusya= e.data.cekstatus[0].statusorder
+                    $scope.ceknorecso = e.data.cekstatus[0].norec
+                    $scope.userlogins= e.data.userlogin[0].namalengkap
+
+                })
                 
                 // if ($scope.dataSelected.nostruk != null) {
                 //     toastr.error('Data Sudah DiClosing Hubungi Tata Rekening');
@@ -996,6 +1003,20 @@ define(['initialize'], function (initialize) {
                     window.messageContainer.error("Pelayanan sudah diClosing oleh Kasir!. Silahkan Hubungi Kasir!");
                     return
                 }
+                if ($scope.dataSelected.norec_so == $scope.ceknorecso && $scope.cekstatusya == 1) {
+                    // $scope.cekstatusya
+                    // $scope.ceknorecso
+
+                    // $scope.userlogins
+                    window.messageContainer.error("Pasien sudah diverifikasi oleh "+$scope.userlogins+" Mohon Untuk direfresh");
+                    return
+                }
+
+                // $scope.cekstatusya= e.data.cekstatus
+                
+
+
+
                 var dataPost = [];
                 for (var i = 0; i < $scope.sourceVerif._data.length; i++) {
                     // if($scope.sourceVerif._data[i].statCheckbox){
