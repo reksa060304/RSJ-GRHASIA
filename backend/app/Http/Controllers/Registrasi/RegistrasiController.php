@@ -12290,6 +12290,20 @@ GROUP BY y.KET
         $ranap = $request['ranap'];
         $rajal = $request['rajal'];
         
+        $departemen = $request->departemen;
+        $ruangan = $request->ruangan;
+
+        $tempTahun = '';
+        if ($tahun != '') {
+            $tempTahun = "AND date_part('year', pd.tglpulang:: DATE) = '$tahun'";
+        }
+
+        $tempTanggal = "";
+
+        if (isset($tglAwal) && isset($tglAkhir)) {
+            $tempTanggal="AND pd.tglpulang:: DATE BETWEEN '$tglAwal' AND '$tglAkhir'";
+        }
+
         switch ($ranap) {
             case 1:
                 $paramRanap = 'AND ru.ID NOT IN ( 799, 800 ) /*jiwa*/ AND de.ID = 16';
@@ -12305,26 +12319,34 @@ GROUP BY y.KET
                 $paramRanap = ' ';
                 break;
         }
+        $paramDep = '';
+        if (isset($departemen) && $departemen != "" ) {
+            $paramDep = ' and ru.objectdepartemenfk =' . $departemen;
+        }
+        $paramRuangan = '';
+        if (isset($ruangan) && $ruangan != "" ) {
+            $paramRuangan = ' and ru.id =' . $ruangan ;
+        }
         $data = DB::select(DB::raw("
             WITH jumlahpasien AS (
         SELECT DISTINCT
-            date_part( 'year', apd.tglkeluar :: DATE ) tahun,
+            date_part( 'year', pd.tglpulang :: DATE ) tahun,
             ps.nocm,
             ps.namapasien,
             de.namadepartemen 
         FROM
             pasiendaftar_t pd
             INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-            INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
-            INNER JOIN pelayananpasien_t pp ON apd.norec = pp.noregistrasifk
-            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+            INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
             INNER JOIN departemen_m de ON de.ID = ru.objectdepartemenfk 
         WHERE
             pd.kdprofile = $kdProfile
-        -- 	and date_part('year', apd.tglkeluar::date ) = '2022'
-        -- 		and apd.tglkeluar::date BETWEEN '2022-01-01' and '2022-01-31'
+            and pd.tglpulang is not null
             $paramRanap
-            
+            $paramRuangan
+            $paramDep
+            $tempTanggal
+            $tempTahun
         ORDER BY
             nocm ASC 
         ) SELECT

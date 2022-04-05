@@ -1774,12 +1774,15 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-data-lap-pasien-keluar','Registrasi\LaporanRekamMedisController@getDataLaporanPasienKeluar');
               Route::get('registrasi/laporan/get-data-lap-pasien-pindahan','Registrasi\LaporanRekamMedisController@getLaporanPasienPindahan');
               Route::get('registrasi/laporan/get-data-lap-rincian-pelayanan','Registrasi\LaporanRegistrasiController@getDataLaporanRincianPelayanan');
-                  Route::get('registrasi/laporan/get-data-lap-pengunjung','Registrasi\LaporanPengunjungController@getLaporanPengunjung');
+              Route::get('registrasi/laporan/get-data-lap-pengunjung','Registrasi\LaporanPengunjungController@getLaporanPengunjung');
               Route::get('registrasi/laporan/get-combo-box-laporan-pengunjung','Registrasi\LaporanPengunjungController@getDataCombo');
               Route::get('registrasi/laporan/get-data-lap-darah','Registrasi\LaporanPengunjungController@getLapDarah');
               //sensusharianrawatjalan
               Route::get('registrasi/laporan/get-data-sensus-harian','Registrasi\SensusHarianRawatJalanController@getSensusHarianRawatJalan');
               Route::get('registrasi/get-datacombo-sensus', 'SensusHarianRawatJalanController@getDataCombo');
+              Route::get('registrasi/get-data-grafik','Registrasi\SensusHarianRawatJalanController@GrafikRajal');
+              Route::get('registrasi/laporan/get-data-lap-jumlah-pasien-cara-v2', 'Registrasi\RegistrasiController@getLaporanJumlahPasienDanCaraBayarv2'); 
+
               
               Route::get('registrasi/laporan/get-combo-box-laporan-summary','Registrasi\RegistrasiController@getDataComboSummary');
               Route::get('registrasi/laporan/get-data-lap-summary-hambatan-komunikasi','Registrasi\RegistrasiController@getLaporanSummaryHambatanKomunikasi');

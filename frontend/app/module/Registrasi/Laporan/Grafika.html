@@ -1,0 +1,152 @@
+<style>
+    html {
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .k-window-content .k-content {
+        overflow: none
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .warnaa {
+        color: black
+    }
+
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading" c-translate>Laporan Grafik</div>
+        <div class="panel-body">
+            <div class="panel panel-default panel-white" ng-hide="isMasuk">
+                <fieldset class="effect-shadow" style=" border-radius: 4px">
+                    <legend id="filterData">
+                        <a ng-click="showAndHide()">
+                            <h2><span class="fa fa-plus warnaa">
+                                </span> &nbsp;Pencarian</h2>
+                        </a>
+                    </legend>
+                    <div class="grid_12" id="contentPencarian">
+                        <div class="grid_12">
+                            <div class="grid_11">
+                                <div class="grid_1">
+                                    <label c-label item="item" c-label-text="Tahun"></label>
+                                    <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun"
+                                        kendo-date-picker placeholer="YYYY" k-format="'yyyy'" />
+                                </div>
+                                <div class="grid_2">
+                                    <label c-label item="item" c-label-text="Tanggal Awal"></label>
+                                    <input id="tglmasukakhir" style="width: 100%" k-ng-model="item.tglawal"
+                                        kendo-datetimepicker placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
+                                </div>
+                                <div class="grid_2">
+                                    <label c-label item="item" c-label-text="Tanggal Akhir"></label>
+                                    <input id="tglpulgawal" style="width: 100%" k-ng-model="item.tglakhir"
+                                        kendo-datetimepicker placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
+                                </div>
+                                <div class="grid_2">
+                                    <label c-label item="item" c-label-text="Jenis Laporan"></label>
+                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.jenislaporan"
+                                        k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'"
+                                        k-auto-bind="false" k-data-source="listDepartemen" />
+                                </div>
+                                <div class="grid_2">
+                                    <label c-label item="item" c-label-text="Departement"></label>
+                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.departemen"
+                                        k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'"
+                                        k-auto-bind="false" k-data-source="listDepartement"
+                                        k-on-change="getIsiComboRuangan()" />
+                                </div>
+                                <div class="grid_3">
+                                    <label c-label item="item" c-label-text="Ruangan"></label>
+                                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
+                                        k-ng-model="item.ruangan" k-data-text-field="'ruangan'"
+                                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                                        k-data-source="listRuangan" />
+                                </div>
+                            </div>
+                            <div class="grid_1">
+                                <div class="grid_12">
+                                    <br>
+                                    <br>
+                                    <em ng-click='SearchData()' id="iconButton" data-role="button"
+                                        class="k-button k-button-icon k-primary" role="button" aria-disabled="false"
+                                        tabindex="0"><span class="k-sprite k-icon k-i-search">Refresh</span></em>
+                                    <em ng-click='ClearData()' id="iconButton" data-role="button"
+                                        class="k-button k-button-icon k-primary" role="button" aria-disabled="false"
+                                        tabindex="0"><span class="k-sprite k-icon k-i-cancel">Reset</span></em>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+            <div id="example">
+                <div class="box-col">
+
+                    <div class="box-col">
+                        <button class='export-pdf k-button'>Export as PDF</button>
+                        <button class='export-img k-button'>Export as Image</button>
+                    </div>
+                </div>
+                <div class="demo-section k-content wide">
+                    <div id="chart"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

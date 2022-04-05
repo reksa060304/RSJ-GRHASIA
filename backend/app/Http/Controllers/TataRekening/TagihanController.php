@@ -6521,7 +6521,14 @@ class TagihanController  extends ApiController
         ddp.norec,
         apd.tglmasuk,
         apd.tglkeluar,
-        apd.tglkeluar :: DATE - apd.tglmasuk :: DATE AS lamahari,
+        CASE
+				when apd.tglkeluar::date- apd.tglmasuk::date= '0' and ru.objectdepartemenfk='16' THEN
+				'1'
+				when apd.tglkeluar::date- apd.tglmasuk::date> '0' and ru.objectdepartemenfk='16' THEN
+				apd.tglkeluar::date- apd.tglmasuk::date
+				ELSE 
+				'0'
+			END  as lamahari,
         pen.pendidikan,
         EXTRACT ( YEAR FROM AGE( apd.tglregistrasi :: DATE, ps.tgllahir :: DATE ) ) AS umurs,
         di.kddiagnosa,

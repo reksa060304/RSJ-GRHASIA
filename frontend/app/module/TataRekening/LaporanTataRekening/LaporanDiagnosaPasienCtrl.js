@@ -385,7 +385,7 @@ define(['initialize'], function (initialize) {
                         field: "lamahari",
                         title: "Lama Hari",
                         width: "50px",
-                        template: "#= lamahari # Hari"
+                        template: "#= lamahari == 0 ? '' : lamahari # Hari"
                     },
                     {
                         field: "nocm",

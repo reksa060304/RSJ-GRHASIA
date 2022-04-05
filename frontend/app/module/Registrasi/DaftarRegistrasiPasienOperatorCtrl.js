@@ -959,6 +959,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 								cetakSEP(e.data.response)
 							}
 							else toastr.info(e.data.metaData.message, 'Info')
+							console.log(e);
+
 						})
 					}else{
 						 var client = new HttpClient();
