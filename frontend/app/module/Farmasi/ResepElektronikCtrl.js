@@ -391,9 +391,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             e.data[i].iskurir = "✘"
                         }
                         if (e.data[i].isbayar == true) {
-                            e.data[i].isbayar = "✔"                            
+                            e.data[i].isbayar = "Lunas"                            
                         }else{
-                            e.data[i].isbayar = "✘"
+                            e.data[i].isbayar = "Belum dibayar"
                         }
 
                     }
