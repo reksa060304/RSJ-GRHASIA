@@ -3072,6 +3072,14 @@
         {
             "nameDep": "RL4bPenyakitRawatJalanSebabLuarCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL4bPenyakitRawatJalanSebabLuarCtrl"
+        },
+        {
+            "nameDep": "PenilaianRisikoJatuhPasienJiwaCtrl",
+            "urlDep": "module/EMR/PenilaianRisikoJatuhPasienJiwaCtrl"
+        },
+        {
+            "nameDep": "LembarPenilaianADLCtrl",
+            "urlDep": "module/EMR/LembarPenilaianADLCtrl"
         }
     ]
 }
