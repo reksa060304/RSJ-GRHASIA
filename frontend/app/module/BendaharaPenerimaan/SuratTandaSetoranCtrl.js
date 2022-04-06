@@ -537,11 +537,11 @@ define(['initialize'], function (initialize) {
 
                     var columns = e.workbook.sheets[0].columns;
                     delete columns[0].width;
-                    columns[0].width = 105;
+                    columns[0].width = 160;
                     delete columns[2].width;
                     columns[2].width = 300;
                     delete columns[3].width;
-                    columns[3].width = 35;
+                    columns[3].width = 145;
                     delete columns[4].width;
                     columns[4].width = 35;
                     delete columns[5].width;
@@ -549,7 +549,7 @@ define(['initialize'], function (initialize) {
                     delete columns[6].width;
                     columns[6].width = 35;
                     delete columns[7].width;
-                    columns[7].width = 100;
+                    columns[7].width = 175;
 
                     // var sheetbor = spreadsheet.activeSheet();
                     // sheetbor.range("A10:H70").border = "black";
@@ -641,6 +641,47 @@ define(['initialize'], function (initialize) {
                     }];
 
                     sheet.rows.splice(7, 0, { cells: myHeaders, type: "header", height: 30 });
+
+                    var myHeaders = [{
+                        value: "",
+                        fontSize: 10,
+                        fontWeight: 500,
+                        textAlign: "left",
+                        backgroundUrl: "#fffff"
+                    }];
+
+                    sheet.rows.splice(71, 0, { cells: myHeaders, type: "header", height: 50 });
+
+                    sheet.rows.splice(75, 0, {
+                        cells: [{value:"MENGETAHUI:", colSpan: 2},{value:"", colSpan: 1},{value:"TELAH DIPERIKSA",colSpan: 2},{value:"", colSpan: 1},{value:"", colSpan: 2}],
+                        type: "data",
+                        height: 20,
+                    });
+
+                    sheet.rows.splice(76, 0, {
+                        cells: [{value:"Pimpinan BLUD", colSpan: 2},{value:"", colSpan: 1},{value:"Verifikator",colSpan: 2},{value:"", colSpan: 1},{value:"Bendahara Penerima Pembantu", colSpan: 2}],
+                        type: "data",
+                        height: 20,
+                    });
+
+                    sheet.rows.splice(77, 0, {
+                        cells: [{value:"", colSpan: 2},{value:"", colSpan: 1},{value:"",colSpan: 2},{value:"", colSpan: 1},{value:"", colSpan: 2}],
+                        type: "data",
+                        height: 100,
+                    });
+
+
+                    sheet.rows.splice(78, 0, {
+                        cells: [{value:"dr. Akhmad Akhadi S, MPH", colSpan: 2},{value:"", colSpan: 1},{value:"Gamal Iskandar, SKM",colSpan: 2},{value:"", colSpan: 1},{value:"Suri Herlina Pratiwi", colSpan: 2}],
+                        type: "data",
+                        height: 20,
+                    });
+
+                    sheet.rows.splice(79, 0, {
+                        cells: [{value:"NIP. 19680714 200012 1 002", colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19650626 198902 1 001",colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19860422 201101 2 013", colSpan: 2}],
+                        type: "data",
+                        height: 20,
+                    });
                     
                 },
                 selectable: true,
