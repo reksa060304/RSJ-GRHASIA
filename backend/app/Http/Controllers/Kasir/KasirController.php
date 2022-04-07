@@ -5157,12 +5157,12 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                        (((CASE WHEN pp.hargajual IS NULL THEN	0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
                        0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN	0 ELSE	pp.jasa	END	) AS total,
                        pd.tglpulang,sp.nostruk as nomorverif,sbm.nosbm,pg.namalengkap as kasir, pgdpjp.namalengkap as dokter, cb.carabayar, sbm.nosbm
-                FROM pelayananpasien_t AS pp  
-                INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk 
-                INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
-                INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk
-                LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
-                INNER JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
+                FROM   pasien_m ps 
+                inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
+                left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
                 LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true  
                 LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
                 LEFT JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk

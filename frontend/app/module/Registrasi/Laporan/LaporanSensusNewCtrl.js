@@ -1116,23 +1116,25 @@ define(['initialize'], function (initialize) {
                             if(datas[i].jumlahpulang != null){
                                 jumlahharipulang += datas[i].jumlahpulang;
                             }
-                            if(datas[i].jumlahmeninggallebihdari != null){
-                                jumlahmeninggallebihdari = datas[i].jumlahmeninggallebihdari;
+                            if(datas[i].jumlahpasienmeninggallebihdari != null){
+                                jumlahmeninggallebihdari += datas[i].jumlahpasienmeninggallebihdari;
                             }
                             if(datas[i].jumlahpasienmeninggal != null){
-                                jumlahmeninggal = datas[i].jumlahpasienmeninggal;
+                                jumlahmeninggal += datas[i].jumlahpasienmeninggal;
                             }
                             tglperiodeawal = datas[0].tanggal;
                             tglperiodeakhir = datas[datas.length-1].tanggal;
 
                         }
-
+                        console.log(jumlahmeninggallebihdari);
+                        console.log(jumlahmeninggal);
+                        console.log(jumlahharipulang);
                         persenbor = jumlahhariperawatantt/(jumlahtt*datas.length)*100;
                         persenlos = jumlahlamadirawat/jumlahharipulang;
                         persentoi = ((jumlahtt*datas.length)-jumlahhariperawatantt)/jumlahharipulang;
                         persenbto = jumlahharipulang/jumlahtt;
-                        persenndr = jumlahmeninggallebihdari/jumlahharipulang*1000;
-                        persengdr = jumlahmeninggal/jumlahharipulang*1000;
+                        persenndr = (jumlahmeninggallebihdari/jumlahharipulang)*1000;
+                        persengdr = (jumlahmeninggal/jumlahharipulang)*1000;
                         $scope.item.ttlTempatTidur = jumlahtt;
                         $scope.item.ruangan = jumlahttruangan;
                         $scope.item.bortt = persenbor.toFixed(2) + "%";

@@ -131,6 +131,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-data-rekapitulasi-pendapatan-daerahtahun', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataRekapitulasiPendapatanDaerahTahunan');
           Route::get('bendaharapenerimaan/get-data-pendapatan-bendahara', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataPendapatanBP');
           Route::get('bendaharapenerimaan/get-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTS');
+          Route::get('bendaharapenerimaan/get-sts-bulanan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSBulanan');
           Route::get('bendaharapenerimaan/get-sts-popup', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPopup');
           Route::get('bendaharapenerimaan/detail-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@detailSTS');
          
@@ -1435,6 +1436,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('radiologi/get-order-pelayanan', 'Radiologi\RadiologiController@getOrderPelayanan');
           Route::post('radiologi/save-pelayanan-pasien', 'Radiologi\RadiologiController@savePelayananPasien');
           Route::post('radiologi/delete-order-pelayanan', 'Radiologi\RadiologiController@deleteOrderPelayanan');
+          Route::get('radiologi/cekstatusorder','Radiologi\RadiologiController@cekstatusorder');
           Route::post('radiologi/delete-order-penunjang', 'Radiologi\RadiologiController@hapusOrderPenunjang');
           Route::post('radiologi/save-hasil-radiologi', 'Radiologi\RadiologiController@saveHasilRadiologi');
           Route::get('radiologi/get-hasil-radiologi', 'Radiologi\RadiologiController@getHasilRadiologi');
