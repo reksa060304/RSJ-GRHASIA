@@ -387,6 +387,10 @@
         {
             "nameDep": "SuratTandaSetoranCtrl",
             "urlDep": "module/BendaharaPenerimaan/SuratTandaSetoranCtrl"
+        },
+        {
+            "nameDep": "STSBulananCtrl",
+            "urlDep": "module/BendaharaPenerimaan/STSBulananCtrl"
         }
     ]
 }

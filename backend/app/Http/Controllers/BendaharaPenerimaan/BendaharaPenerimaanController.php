@@ -3909,4 +3909,25 @@ class BendaharaPenerimaanController extends ApiController {
         
         return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
+
+
+    public function getSTSBulanan(Request $request) {
+
+        $bulan = $request['bulan'];
+
+        $detail = DB::select(DB::raw("select stsd.kdrekening, stsd.nomer, stsd.uraian, sum(stsd.vol) as totalvol, sum(stsd.kolom1) as totalkolom1, sum(stsd.kolom2) as totalkolom2
+        from surattandasetoran_t sts
+        inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+        where sts.statusenabled = true
+        and date_part('month', sts.tglpenerimaan::timestamp ) = '$bulan'
+        group by stsd.kdrekening, stsd.nomer, stsd.uraian
+        order by min(stsd.nourut)"));
+        
+
+        $result = array(
+            'detail' => $detail,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
 }
