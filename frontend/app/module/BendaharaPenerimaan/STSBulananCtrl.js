@@ -144,14 +144,8 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         
-                        "field": "totalkolom1",
-                        "title": "Jumlah 1",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "totalkolom2",
-                        "title": "Jumlah 2",
+                        "field": "totalfix",
+                        "title": "Total",
                         "width": "100px",
                     }
                 ]

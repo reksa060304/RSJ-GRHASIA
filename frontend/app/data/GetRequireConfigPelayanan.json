@@ -3080,6 +3080,23 @@
         {
             "nameDep": "LembarPenilaianADLCtrl",
             "urlDep": "module/EMR/LembarPenilaianADLCtrl"
+        },
+        {
+            "nameDep": "AsesmenRisikoPerilakuKekerasanCtrl",
+            "urlDep": "module/EMR/AsesmenRisikoPerilakuKekerasanCtrl"
+        },
+        {
+            "nameDep": "PerencanaanImplementasiEvaluasiKeperawatanIGDCtrl",
+            "urlDep": "module/EMR/PerencanaanImplementasiEvaluasiKeperawatanIGDCtrl"
+        },
+        {
+            "nameDep": "AsesmenKeperawatanIGDCtrl",
+            "urlDep": "module/EMR/AsesmenKeperawatanIGDCtrl"
+        },
+        {
+            "nameDep": "AsesmenMedisIGDJiwaCtrl",
+            "urlDep": "module/EMR/AsesmenMedisIGDJiwaCtrl"
         }
+        
     ]
 }
