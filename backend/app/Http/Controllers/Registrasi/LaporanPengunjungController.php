@@ -7044,6 +7044,10 @@ class LaporanPengunjungController extends ApiController
         if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
             $paramRuangan = 'and ru.id = '. $request['ruanganId'];
         }
+       $paramkp = ' ';
+        if (isset($request['kelompokpasien']) && $request['kelompokpasien'] != "" && $request['kelompokpasien'] != "undefined") {
+            $paramkp = 'and kep.id = '. $request['kelompokpasien'];
+        }
         //laporan kunjungan v2
         $v2 = DB::select(DB::raw(
         "
@@ -7054,7 +7058,7 @@ class LaporanPengunjungController extends ApiController
         apd.tglmasuk,
         pd.statuspasien,
         aj.asalrujukan,
-        kp.kelompokpasien,
+        kep.kelompokpasien,
         kk.namakotakabupaten
 
         FROM
@@ -7062,17 +7066,18 @@ class LaporanPengunjungController extends ApiController
         INNER JOIN pasiendaftar_t pd on pd.norec=apd.noregistrasifk
         INNER JOIN pasien_m ps on ps.id=pd.nocmfk
         inner join ruangan_m ru on ru.id = apd.objectruanganfk
-        INNER join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+        INNER join kelompokpasien_m kep on kep.id = pd.objectkelompokpasienlastfk
         INNER JOIN alamat_m al on ps.id = al.nocmfk
         left join kotakabupaten_m kk on kk.id= al.objectkotakabupatenfk
         left join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
-        WHERE apd.tglregistrasi BETWEEN '$tglAwal' and '$tglAkhir'
+        WHERE pd.tglregistrasi BETWEEN '$tglAwal' and '$tglAkhir'
         and apd.kdprofile = $kdProfile
         and apd.statusenabled = true
+        and pd.statusenabled=true
         and ru.objectdepartemenfk <> 16
         $paramRuangan
+        $paramkp
         
-        ;
         "
         ));
 
@@ -7121,9 +7126,12 @@ class LaporanPengunjungController extends ApiController
         left JOIN kelas_m ke on ke.id = apd.objectkelasfk
         LEFT JOIN pegawai_m peg on peg.id=apd.objectpegawaifk 
         where ru.objectdepartemenfk = 16
+        and pd.statusenabled=true
+        and apd.statusenabled=true
         and apd.tglkeluar::date BETWEEN '$tglAwal' and '$tglAkhir'
         and apd.kdprofile = $kdProfile
         $paramRuangan
+        $paramkp
         "));
         $result = array(
             'data'=> $data,

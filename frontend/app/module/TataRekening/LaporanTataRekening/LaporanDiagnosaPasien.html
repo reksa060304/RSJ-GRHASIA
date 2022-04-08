@@ -220,7 +220,20 @@
                                     </div>
                                 </md-content>
                             </md-tab>
-                            
+                            <md-tab label="Jumlah Pasien Non Jiwa">
+                                <md-content class="md-padding">
+                                    <div class="grid_12" style="margin-top: 10px;">
+                                        <div class="grid_12 borderBox">
+                                            <kendo-grid id="kGrid2" data-source="dataSourceGridDiagnosapasienNonjiwa"
+                                                options="columnGridDiagnosapasienNonjiwa"
+                                                k-selectable="'row'" k-sortable="'true'" class="max-height"
+                                                k-resizable="'true'" k-ng-model="dataSelected"
+                                                ng-click="klik(dataSelected)">
+                                            </kendo-grid>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
                             
                         </md-tabs>
                     </md-content>
