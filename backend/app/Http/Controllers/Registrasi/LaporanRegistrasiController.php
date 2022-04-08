@@ -2597,12 +2597,14 @@ select '-' as smf,* from  (
         $paramRuanganKeluar = '';
         $paramRuanganPindah = '';
         $paramRuanganDiPindah = '';
+        $paramRuanganApdt = '';
         if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined") {
             $paramRuangan = ' and apd.objectruanganfk = ' . $ruanganId;
             $paramRuanganSatu = ' and pd.objectruanganlastfk = ' . $ruanganId;
             $paramRuanganKeluar = ' and apd.objectruanganfk = ' . $ruanganId;
             $paramRuanganPindah = ' and rpp.objectruanganfk = ' . $ruanganId;
-            $paramRuanganDiPindah = ' and rpp.objectruanganasalfk = ' . $ruanganId;
+            $paramRuanganDiPindah = ' and apd.objectruanganasalfk = ' . $ruanganId;
+            $paramRuanganApdt = ' and apdt.objectruanganfk = ' . $ruanganId;
         }
 
         $paramRuanganRM = '';
@@ -2618,7 +2620,6 @@ select '-' as smf,* from  (
         $paramKelas = ' ';
         $paramKelasApd = '';
         if (isset($kelasId) && $kelasId != "" && $kelasId != "undefined") {
-            $paramKelas = ' and rpp.objectkelasfk  = ' . $kelasId;
             $paramKelasApd = ' and apd.objectkelasfk  = ' . $kelasId;
         }
 
@@ -2665,8 +2666,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]'::date - interval '1 day' and '$arrmax[0]'::date - interval '1 day'
                 and apd.tglmasuk::date != pd.tglpulang::date 
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
     
@@ -2682,8 +2682,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]'::date - interval '1 day' and '$arrmax[0]'::date - interval '1 day'
                 and apd.tglmasuk::date != pd.tglpulang::date  
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
                 ) as y 
@@ -2701,8 +2700,7 @@ select '-' as smf,* from  (
                 and pd.statusenabled = true
                 and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]' 
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x"));
 
@@ -2715,20 +2713,21 @@ select '-' as smf,* from  (
             and pd.statusenabled = true
             and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]' 
             
-            $paramRuanganPindah
-            $paramKelas
+            $paramRuangan
             group by apd.tglmasuk::date
             ) as x"));
 
-            $dataDipindahkan = DB::select(DB::raw("select tgl, jumlah from (select rpp.tglpindah::date as tgl, count(rpp.tglpindah) as jumlah
+            $dataDipindahkan = DB::select(DB::raw("select tgl, jumlah from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah
             FROM pasiendaftar_t as pd
-            inner JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-            inner JOIN statuskeluar_m as sk1 on sk1.id = rpp.objectstatuskeluarfk
-            WHERE pd.kdprofile = $idProfile  and rpp.objectstatuskeluarfk = 2 and cast(rpp.tglpindah as date) between '$arrmin[0]' and '$arrmax[0]' and pd.statusenabled = true
+            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+            INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk IN (16)
+            INNER JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk IN (16)
+            where pd.kdprofile = $idProfile 
+            and pd.statusenabled = true
+            and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]' 
             
             $paramRuanganDiPindah
-            $paramKelas
-            group by rpp.tglpindah::date
+            group by apd.tglmasuk::date
             ) as x"));
 
             $dataMinggal = DB::select(DB::raw("select pd.tglmeninggal::date as tgl, count(pm.namapasien) jumlah
@@ -2739,8 +2738,7 @@ select '-' as smf,* from  (
             where pd.kdprofile = $kdProfile and pd.statusenabled = true
 						and cast(pd.tglmeninggal as date) between '$arrmin[0]' and '$arrmax[0]'
                         and ru.objectdepartemenfk = 16
-                        $paramRuanganDiPindah
-                        $paramKelas
+                        $paramRuanganSatu
 						group by pd.tglmeninggal::date"));
 
             $dataPulang = DB::select(DB::raw("select pd.tglpulang::date as tgl, count(pm.namapasien) jumlah
@@ -2751,8 +2749,7 @@ select '-' as smf,* from  (
 						and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
 						and ru.objectdepartemenfk = 16
                         and pd.tglpulang is not null
-                        $paramRuanganDiPindah
-                        $paramKelas
+                        $paramRuanganSatu
 						group by pd.tglpulang::date"));
 
             $dataPulangAPS = DB::select(DB::raw("select pd.tglpulang::date as tgl, count(pm.namapasien) jumlah
@@ -2764,8 +2761,7 @@ select '-' as smf,* from  (
                         and pd.objectstatuspulangfk = 2
 						and ru.objectdepartemenfk = 16
                         and pd.tglpulang is not null
-                        $paramRuanganDiPindah
-                        $paramKelas
+                        $paramRuanganSatu
 						group by pd.tglpulang::date"));
 
                         
@@ -2779,8 +2775,7 @@ select '-' as smf,* from  (
                         and pd.objectstatuspulangfk = 3
 						and ru.objectdepartemenfk = 16
                         and pd.tglpulang is not null
-                        $paramRuanganDiPindah
-                        $paramKelas
+                        $paramRuanganSatu
 						group by pd.tglpulang::date"));
 
             $dataMeninggalKurangDari = DB::select(DB::raw("select pd.tglmeninggal::date as tgl, count(pm.namapasien) jumlah
@@ -2792,8 +2787,7 @@ select '-' as smf,* from  (
 						and cast(pd.tglmeninggal as date) between '$arrmin[0]' and '$arrmax[0]'
                         and pd.objectkondisipasienfk = 5
                         and ru.objectdepartemenfk = 16
-                        $paramRuanganDiPindah
-                        $paramKelas
+                        $paramRuanganSatu
 						group by pd.tglmeninggal::date"));
 
 
@@ -2806,8 +2800,7 @@ select '-' as smf,* from  (
 						and cast(pd.tglmeninggal as date) between '$arrmin[0]' and '$arrmax[0]'
                         and pd.objectkondisipasienfk = 6
                         and ru.objectdepartemenfk = 16
-                        $paramRuanganDiPindah
-                        $paramKelas
+                        $paramRuanganSatu
 						group by pd.tglmeninggal::date"));
 
             $dataMKHS = DB::select(DB::raw("select pd.tglpulang::date as tgl, count(pm.namapasien) jumlah
@@ -2820,12 +2813,12 @@ select '-' as smf,* from  (
                         and pd.tglpulang::date = apd.tglmasuk::date
 						and ru.objectdepartemenfk = 16
                         and pd.tglpulang is not null
-                        $paramRuanganDiPindah
-                        $paramKelas
+                        $paramRuanganSatu
 						group by pd.tglpulang::date"));
                         
 
-            $dataPasienKelasSatu = DB::select(DB::raw("select tgl, sum(jumlah) as jumlah from (
+            $dataPasienKelasSatu = DB::select(DB::raw("
+            select tgl, sum(jumlah) as jumlah from (
                 select tgl, jumlah from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah
                 FROM pasiendaftar_t as pd
                 INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
@@ -2836,8 +2829,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
                 and apd.objectkelasfk = 3
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
     
@@ -2853,8 +2845,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
                 and apd.objectkelasfk = 3
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
                 ) as y 
@@ -2862,7 +2853,8 @@ select '-' as smf,* from  (
 
             
 
-            $dataPasienKelasDua = DB::select(DB::raw("select tgl, sum(jumlah) as jumlah from (
+            $dataPasienKelasDua = DB::select(DB::raw("
+            select tgl, sum(jumlah) as jumlah from (
                 select tgl, jumlah from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah
                 FROM pasiendaftar_t as pd
                 INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
@@ -2873,8 +2865,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
                 and apd.objectkelasfk = 2
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
     
@@ -2890,8 +2881,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
                 and apd.objectkelasfk = 2
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
                 ) as y 
@@ -2908,8 +2898,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
                 and apd.objectkelasfk = 1
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
     
@@ -2925,8 +2914,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
                 and apd.objectkelasfk = 1
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
                 ) as y 
@@ -2943,8 +2931,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
                 and apd.objectkelasfk = 4
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
     
@@ -2960,8 +2947,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
                 and apd.objectkelasfk = 4
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
                 ) as y 
@@ -2978,8 +2964,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
                 and apd.objectkelasfk = 6
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
     
@@ -2995,8 +2980,7 @@ select '-' as smf,* from  (
                 and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
                 and apd.objectkelasfk = 6
                 
-                $paramRuanganPindah
-                $paramKelas
+                $paramRuangan
                 group by apd.tglmasuk::date
                 ) as x
                 ) as y 
@@ -3020,7 +3004,6 @@ select '-' as smf,* from  (
                 WHERE pd.kdprofile = $idProfile and pd.tglpulang is null and apd.objectkelasfk is not null and apd.objectkelasfk not in(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18) and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]' and br.pasiendaftarfk is null
                 
                 $paramRuangan
-                $paramKelas
                 group by apd.tglmasuk::date
                 ) as x"));
 
@@ -3034,7 +3017,6 @@ select '-' as smf,* from  (
             on rm.tanggalawal = x.tanggal
             where rm.kdprofile = $idProfile and rm.tanggalawal = x.tanggal
             $paramRuanganRM
-            $paramKelasRM
             group by rm.tanggalawal"));
 
             $lamadirawat = DB::select(DB::raw("select sum(y.totallama) as totalfix from(
@@ -3046,7 +3028,9 @@ select '-' as smf,* from  (
                     where rum.objectdepartemenfk = 16
                     and pdt.statusenabled = TRUE
                     and pdt.kdprofile = 30
+                    $paramRuanganApdt
                     and pdt.tglpulang::date between '$arrmin[0]' and '$arrmax[0]'
+
                     group by pdt.norec, apdt.objectruanganfk
                 )
                 
@@ -3217,12 +3201,6 @@ select '-' as smf,* from  (
                 foreach ($dataPasienKelasUPPI  as $pasienkelasuppi){
                     if ($tglmain->tgl == $pasienkelasuppi->tgl){
                         $jumlahpasienkelasuppi = $pasienkelasuppi->jumlah;
-                        break;
-                    }
-                }
-                foreach ($dataPasienKelasInfeksi  as $pasienkelasinfeksi){
-                    if ($tglmain->tgl == $pasienkelasinfeksi->tanggal){
-                        $jumlahpasienkelasinfeksi = $pasienkelasinfeksi->jumlah;
                         break;
                     }
                 }
