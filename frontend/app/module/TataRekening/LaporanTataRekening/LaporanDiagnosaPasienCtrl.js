@@ -155,6 +155,10 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.departement != undefined) {
                     tempDepartemenId = "&idDept=" + $scope.item.departement.id;
                 }
+                var dep = "";
+                if ($scope.item.departemen != undefined) {
+                    dep = "&dep=" + $scope.item.departemen.id;
+                }
                 var tempRuanganId = "";
                 if ($scope.item.ruangan != undefined) {
                     tempRuanganId = "&idRuangan=" + $scope.item.ruangan.id;
@@ -233,7 +237,7 @@ define(['initialize'], function (initialize) {
                     tempRuanganId +
                     tempJenisDiagnosa +
                     tempDiagnosa +
-                    tempstatusPasien + tempkodeawal 
+                    tempstatusPasien  
                 ).then(function (data) {
             // $scope.departemens = $scope.item.departement.departemen;
 
@@ -269,7 +273,7 @@ define(['initialize'], function (initialize) {
                     + tglAkhir
                     +tglAwalmasuk
                     +tglAkhirmasuk
-                    + tempDepartemenId + tempRuanganId + tempJenisDiagnosa + tempDiagnosa + tempstatusPasien).then(function (data) {
+                    +tempDepartemenId + tempRuanganId + tempJenisDiagnosa + tempDiagnosa + tempstatusPasien + tempkodeawal+dep).then(function (data) {
                         
 
                     $scope.isRouteLoading = false;                                    
@@ -383,9 +387,9 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         field: "lamahari",
-                        title: "Lama Hari",
+                        title: "LOS",
                         width: "50px",
-                        template: "#= lamahari == 0 ? '' : lamahari # Hari"
+                        template: "#= lamahari == 0 ? ' ' : lamahari # "
                     },
                     {
                         field: "nocm",
