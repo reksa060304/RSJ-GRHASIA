@@ -3915,7 +3915,15 @@ class BendaharaPenerimaanController extends ApiController {
 
         $bulan = $request['bulan'];
 
-        $detail = DB::select(DB::raw("select stsd.kdrekening, stsd.nomer, stsd.uraian, sum(stsd.vol) as totalvol, sum(stsd.kolom1) as totalkolom1, sum(stsd.kolom2) as totalkolom2
+        $detail = DB::select(DB::raw("select stsd.kdrekening, stsd.nomer, stsd.uraian, sum(stsd.vol) as totalvol, sum(stsd.kolom1) as totalkolom1, sum(stsd.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(stsd.kolom1) is null and sum(stsd.kolom2) is null then sum(stsd.kolom1)
+            when sum(stsd.kolom1) is null and sum(stsd.kolom2) is not null then sum(stsd.kolom2)
+            when sum(stsd.kolom1) is not null and sum(stsd.kolom2) is null then sum(stsd.kolom1)
+            else 0 
+            end
+        ) as totalfix
         from surattandasetoran_t sts
         inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
         where sts.statusenabled = true

@@ -185,7 +185,7 @@ define(['initialize'], function (initialize) {
                             title: "KASUS BARU MENURUT JENIS KELAMIN PR"
                         },
                         {
-                            field: "totalall",
+                            field: "jumlahbaru",
                             title: "JUMLAH KASUS BARU (4 + 5)"
                         },
                         {

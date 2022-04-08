@@ -3246,22 +3246,19 @@ class LaporanRekamMedisController extends   ApiController
         DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
         ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
         from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
-        inner join pasien_m as ps on ps.id = pd.nocmfk
-        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
-        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+		inner join pasien_m as ps on ps.id = pd.nocmfk
+		inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+		inner join ruangan_m ru on ru.id = app.objectruanganfk
+		inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+		inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
         inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+		inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
         inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
         inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
         inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+		left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
         and ru.objectdepartemenfk = 16
@@ -3471,22 +3468,19 @@ class LaporanRekamMedisController extends   ApiController
         DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
         ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
         from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
-        inner join pasien_m as ps on ps.id = pd.nocmfk
-        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
-        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+		inner join pasien_m as ps on ps.id = pd.nocmfk
+		inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+		inner join ruangan_m ru on ru.id = app.objectruanganfk
+		inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+		inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
         inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+		inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
         inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
         inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
         inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+		left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
         and ru.objectdepartemenfk = 16
@@ -3697,25 +3691,22 @@ class LaporanRekamMedisController extends   ApiController
         DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
         ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
         from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
-        inner join pasien_m as ps on ps.id = pd.nocmfk
-        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
-        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+		inner join pasien_m as ps on ps.id = pd.nocmfk
+		inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+		inner join ruangan_m ru on ru.id = app.objectruanganfk
+		inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+		inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
         inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+		inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
         inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
         inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
         inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+		left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
-        and ru.objectdepartemenfk != 16
+        and ru.objectdepartemenfk <> 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 1 and 507
         and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
@@ -3922,25 +3913,22 @@ class LaporanRekamMedisController extends   ApiController
         DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
         ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
         from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
-        inner join pasien_m as ps on ps.id = pd.nocmfk
-        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
-        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+		inner join pasien_m as ps on ps.id = pd.nocmfk
+		inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+		inner join ruangan_m ru on ru.id = app.objectruanganfk
+		inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+		inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
         inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+		inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
         inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
         inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
         inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+		left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
-        and ru.objectdepartemenfk != 16
+        and ru.objectdepartemenfk <> 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 508 and 537
         and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
@@ -4174,7 +4162,7 @@ class LaporanRekamMedisController extends   ApiController
         inner join departemen_m dp on dp.id = ru.objectdepartemenfk
         inner join profile_m pr on pr.id = pd.kdprofile
         where pd.statusenabled = true and pd.kdprofile = $kdProfile
-        and ru.objectdepartemenfk != 16
+        and ru.objectdepartemenfk <> 16
         and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
         group by pd.tglregistrasi::date, ru.namaruangan, ru.id, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ')
         order by pd.tglregistrasi::date"));
@@ -4186,7 +4174,7 @@ class LaporanRekamMedisController extends   ApiController
                 inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
                 inner join ruangan_m ru on ru.id = apd.objectruanganfk
                 where pd.statusenabled = true and pd.kdprofile = $kdProfile
-                and ru.objectdepartemenfk != 16
+                and ru.objectdepartemenfk <> 16
                 and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
                         group by rtrim(to_char(pd.tglregistrasi, 'Month'), ' '), to_char(pd.tglregistrasi, 'mm')
                 order by idmonth"));
@@ -4364,24 +4352,21 @@ class LaporanRekamMedisController extends   ApiController
                 (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end) as jumlahmp,
                 ((case when jk.id = 1 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 1 and sk.id = 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end)) as totalall,
                 pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id idprofile
-        from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
+                from pasiendaftar_t as pd
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
         inner join pasien_m as ps on ps.id = pd.nocmfk
         inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
-                inner join profile_m pr on pr.id = pd.kdprofile
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
+        inner join ruangan_m ru on ru.id = app.objectruanganfk
+        inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+        inner join profile_m pr on pr.id = pd.kdprofile
         inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
         inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+		inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
         inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
         inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
         inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+		left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
         and ru.objectdepartemenfk = 16
@@ -4409,45 +4394,41 @@ class LaporanRekamMedisController extends   ApiController
 
 
         $data = DB::select(DB::raw("select x.id, x.month, x.idmonth, x.year,x.nodtd,x.nodaftarterperinci, x.golongansebabpenyakit, 
-        sum(x.jumlahhml) jumlahhml, sum(x.jumlahhmp) jumlahhmp, sum(x.jumlahml) jumlahml, sum(x.jumlahmp) jumlahmp, sum(x.totalall) totalall,
+        sum(x.jumlahbarul) jumlahbarul, sum(x.jumlahbarup) jumlahbarup, sum(x.jumlahbaru) jumlahbaru, sum(x.jumlahkunjungan) jumlahkunjungan,
         x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile 
         from(
                 select ddtd.id, to_char(pd.tglregistrasi, 'Month') as month, to_char(pd.tglregistrasi, 'mm') as idmonth, to_char(pd.tglregistrasi, 'YYYY') as year,ddtd.nodtd,dm.kddiagnosa as nodaftarterperinci, dm.namadiagnosa as golongansebabpenyakit,
-                (case when jk.id = 1 and sk.id != 5  then count(ddtd.nodtd) else 0 end) as jumlahhml,
-                (case when jk.id = 2 and sk.id != 5  then count(ddtd.nodtd) else 0 end) as jumlahhmp,
-                (case when jk.id = 1 and sk.id = 5 then count(ddtd.nodtd) else 0 end) as jumlahml,
-                (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end) as jumlahmp,
-                ((case when jk.id = 1 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 1 and sk.id = 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end)) as totalall,
+                (case when jk.id = 1 and dp.iskasusbaru = true  then count(ddtd.nodtd) else 0 end) as jumlahbarul,
+                (case when jk.id = 2 and dp.iskasusbaru = true  then count(ddtd.nodtd) else 0 end) as jumlahbarup,
+                ((case when jk.id = 1 and dp.iskasusbaru = true  then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and dp.iskasusbaru = true  then count(ddtd.nodtd) else 0 end)) as jumlahbaru,
+                count(ddtd.nodtd) as jumlahkunjungan,
                 pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id idprofile
-        from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
-        inner join pasien_m as ps on ps.id = pd.nocmfk
-        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
+                from pasiendaftar_t as pd
+                inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+                inner join pasien_m as ps on ps.id = pd.nocmfk
+                inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+                inner join ruangan_m ru on ru.id = app.objectruanganfk
+                inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
                 inner join profile_m pr on pr.id = pd.kdprofile
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
-        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
-        inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
-        inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
-        inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
-        inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+                inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+                inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
+                inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+                inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
+                inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+                inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
+                left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+                left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
-        and ru.objectdepartemenfk != 16
+        and ru.objectdepartemenfk <> 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 1 and 537
         and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
-                group by ddtd.id, to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'),ddtd.nodtd, dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
+                group by ddtd.id, to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'),ddtd.nodtd, dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, dp.iskasusbaru
                 order by ddtd.id
         ) as x
         group by x.id, x.month, x.idmonth, x.year,x.nodtd,x.nodaftarterperinci, x.golongansebabpenyakit, x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile
-        order by totalall desc limit 10;"));
+        order by jumlahbaru desc limit 10;"));
         
         $result = array(
             'data' => $data,
