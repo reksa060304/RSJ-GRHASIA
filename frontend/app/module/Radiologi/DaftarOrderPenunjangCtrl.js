@@ -572,7 +572,7 @@ define(['initialize'], function (initialize) {
                     return
                 }
                 medifirstService.get('radiologi/cekstatusorder?norec_so='+$scope.dataSelected.norec_so).then(function(e){
-                    console.log(e.data.cekstatus);
+                    // console.log(e.data.cekstatus);
                     $scope.cekstatusya= e.data.cekstatus[0].statusorder
                     $scope.ceknorecso = e.data.cekstatus[0].norec
                     $scope.userlogins= e.data.userlogin[0].namalengkap

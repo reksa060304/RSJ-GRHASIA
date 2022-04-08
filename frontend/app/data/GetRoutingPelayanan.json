@@ -17157,10 +17157,10 @@
   ]
 },
 {
-  "name": "RekamMedis.AsesmenMedis.LembarPenilaianADL",
-  "url": "/LembarPenilaianADL",
-  "templateurl": "module/EMR/LembarPenilaianADL.html",
-  "controller": "LembarPenilaianADLCtrl",
+  "name": "RekamMedis.AsesmenMedis.AsesmenKeperawatanIGD",
+  "url": "/AsesmenKeperawatanIGD",
+  "templateurl": "module/EMR/AsesmenKeperawatanIGD.html",
+  "controller": "AsesmenKeperawatanIGDCtrl",
   "deps": [{
       "module": "Services",
       "define": "Service"
@@ -17169,6 +17169,30 @@
       "module": "LoginServices",
       "define": "LoginService"
     },
+    
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    },
+    {
+      "define": "RekamMedisCtrl"
+    }
+  ]
+},
+{
+  "name": "RekamMedis.AsesmenMedis.AsesmenMedisIGDJiwa",
+  "url": "/AsesmenMedisIGDJiwa",
+  "templateurl": "module/EMR/AsesmenMedisIGDJiwa.html",
+  "controller": "AsesmenMedisIGDJiwaCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    
     {
       "module": "MedifirstService",
       "define": "MedifirstService"
@@ -17178,4 +17202,5 @@
     }
   ]
 }
-] 
+]
+
