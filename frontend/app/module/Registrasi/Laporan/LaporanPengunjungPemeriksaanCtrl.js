@@ -8,6 +8,8 @@ define(['initialize'], function (initialize) {
             $scope.dataSelected = {};
             $scope.item = {};
             $scope.itemD = {};
+            $scope.item.listKasirMulti = [];
+            $scope.item.listKasirMultis = [];
             $scope.isRouteLoading = false;
 
             $scope.tglMeninggal = '';
@@ -22,6 +24,12 @@ define(['initialize'], function (initialize) {
             }
             loadCombo()
             function loadCombo() {
+                medifirstService.get("registrasi/daftar-registrasi/get-data-combo-operator", false).then(function (data) {
+                    
+                    $scope.listKelompokPasien = data.data.kelompokpasien;
+                   
+                   
+                });
                 medifirstService.get("registrasi/laporan/get-combo-box-laporan-pengunjung")
                     .then(function (data) {
                         $scope.listRuangans = data.data.ruangan
@@ -102,11 +110,14 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.kabupaten != undefined) {
                     kotaKab = "&kotaKab=" + $scope.item.kabupaten.id
                 }
-
+                var kelompokpasien = ""
+                if ($scope.item.kelompokpasien != undefined) {
+                    kelompokpasien = "&kelompokpasien=" + $scope.item.kelompokpasien.id
+                }
 
                 medifirstService.get("registrasi/laporan/get-data-lap-pengunjung-pemeriksaan?" +
                     "tglAwal=" + tglAwal +
-                    "&tglAkhir=" + tglAkhir +
+                    "&tglAkhir=" + tglAkhir + kelompokpasien +
                     rm +
                     pasien +
                     namaruangan +

@@ -200,10 +200,14 @@ define(['initialize'], function (initialize) {
                 tempJenisDiagnosa + tempDiagnosa + 
                 tempstatusPasien).then(function (data) {
                     var data2 = data.data.data;
+                    var data3 = data.data.data2;
                     $scope.isRouteLoading = false;
                     
                     for (var i = 0; i < data2.length; i++) {
                         data.data.data[i].no = i + 1
+                    }
+                    for (var i = 0; i < data3.length; i++) {
+                        data.data.data2[i].no1 = i + 1
                     }
                     $scope.dataSourceGridDiagnosapasienjiwa = new kendo.data.DataSource({
                         data: data2,
@@ -225,6 +229,24 @@ define(['initialize'], function (initialize) {
                         ]
                     });
                     
+                    $scope.dataSourceGridDiagnosapasienNonjiwa = new kendo.data.DataSource({
+                        data: data3,
+                        pageSize: 100,
+                        total: data.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {}
+                        },
+                        aggregate: [{
+                                field: "lk",
+                                aggregate: "sum"
+                            },
+                            {
+                                field: "pr",
+                                aggregate: "sum"
+                            }
+                        ]
+                    });
                 });
 
                 medifirstService.get("tatarekening/get-data-diagnosa-perpasien?" 
@@ -239,7 +261,6 @@ define(['initialize'], function (initialize) {
                     tempDiagnosa +
                     tempstatusPasien  
                 ).then(function (data) {
-            // $scope.departemens = $scope.item.departement.departemen;
 
                     $scope.isRouteLoading = false;
                     var dataa = data.data.data;
@@ -336,9 +357,15 @@ define(['initialize'], function (initialize) {
                     if ($scope.item.departement != undefined) {
                         departemens = $scope.item.departement.departemen;
                     } 
+                    if ($scope.item.departemen != undefined) {
+                        departemens = $scope.item.departemen.departemen;
+                    }
+                    if($scope.item.departement == undefined && $scope.item.departemen == undefined){
+                        departemens = "Rumah Sakit Jiwa Grhasia";
+                    }
                     var sheet = e.workbook.sheets[0];
                     sheet.frozenRows = 1;
-                    sheet.mergedCells = ["A1:J1"];
+                    sheet.mergedCells = ["A1:M1"];
                     sheet.name = "Orders";
 
                     var myHeaders = [{
@@ -453,6 +480,12 @@ define(['initialize'], function (initialize) {
                     if ($scope.item.departement != undefined) {
                         departemenss = $scope.item.departement.departemen;
                     }
+                    if ($scope.item.departemen != undefined) {
+                        departemenss = $scope.item.departemen.departemen;
+                    }
+                    if ($scope.item.departement == undefined && $scope.item.departemen == undefined) {
+                        departemenss = "Rumah Sakit Jiwa Grhasia";
+                    }
                     var sheet = e.workbook.sheets[0];
                     sheet.frozenRows = 1;
                     sheet.mergedCells = ["A1:D1"];
@@ -516,6 +549,12 @@ define(['initialize'], function (initialize) {
                     if ($scope.item.departement != undefined) {
                         departemenss = $scope.item.departement.departemen;
                     }
+                    if ($scope.item.departemen != undefined) {
+                        departemenss = $scope.item.departemen.departemen;
+                    }
+                    if ($scope.item.departement == undefined && $scope.item.departemen == undefined) {
+                        departemenss = "Rumah Sakit Jiwa Grhasia";
+                    }
                     var sheet = e.workbook.sheets[0];
                     sheet.frozenRows = 1;
                     sheet.mergedCells = ["A1:E1"];
@@ -577,6 +616,91 @@ define(['initialize'], function (initialize) {
                             template: "#: pr  #",
                             footerTemplate: "#: data.pr.sum #",
                         },
+                        ]
+                    }
+                ]
+
+            }
+            $scope.columnGridDiagnosapasienNonjiwa = {
+                toolbar: ["excel", ],
+                excel: {
+                    fileName: "Laporan Diagnosa Pasien Non Jiwa.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var departemenss = "";
+                    if ($scope.item.departement != undefined) {
+                        departemenss = $scope.item.departement.departemen;
+                    }
+                    if ($scope.item.departemen != undefined) {
+                        departemenss = $scope.item.departemen.departemen;
+                    }
+                    if ($scope.item.departemen != undefined) {
+                        departemenss = $scope.item.departemen.departemen;
+                    }
+                    if ($scope.item.departement == undefined && $scope.item.departemen == undefined) {
+                        departemenss = "Rumah Sakit Jiwa Grhasia";
+                    }
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 1;
+                    sheet.mergedCells = ["A1:E1"];
+                    sheet.name = "Orders";
+
+                    var myHeaders = [{
+                        value: "Laporan Diagnosa Pasien Non Jiwa " + departemenss,
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                        // color:"#ffffff"
+                    }];
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        type: "header",
+                        height: 70
+                    });
+                },
+                filterable: true,
+                columnMenu: true,
+                reorderable: true,
+                resizable: true,
+                sortable: true,
+                pageable: true,
+                columns: [{
+                        field: "no1",
+                        title: "No",
+                        width: "30px",
+                    },
+                    {
+                        field: "kddiagnosa",
+                        title: "Kode",
+                        width: "40px",
+                    },
+                    {
+                        field: "namadiagnosa",
+                        title: "Diagnosa",
+                        width: "570px",
+                        footerTemplate: "TOTAL: "
+                    },
+                    {
+                        // field: "count",
+                        title: "Jumlah Pasien Non Jiwa",
+                        width: "50px",
+                        columns: [{
+                                field: "lk",
+                                title: "Laki-Laki",
+                                width: "50px",
+                                aggregates: ["sum"],
+                                template: "#: lk  #",
+                                footerTemplate: "#: data.lk.sum #",
+                            },
+                            {
+                                field: "pr",
+                                title: "Perempuan",
+                                width: "50px",
+                                aggregates: ["sum"],
+                                template: "#: pr  #",
+                                footerTemplate: "#: data.pr.sum #",
+                            },
                         ]
                     }
                 ]
