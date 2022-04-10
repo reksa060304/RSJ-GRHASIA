@@ -15,17 +15,14 @@ define(['initialize'], function (initialize) {
             }
 
             function LoadData() {
-                var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+                var tglAwal = moment($scope.item.tglawal).format('YYYY');
                 var chacePeriode = {
                     0: tglAwal,
-                    1: tglAkhir
                 }
                 cacheHelper.set('LaporanRl52Ctrl', chacePeriode);
 
                  medifirstService.get("registrasi/laporan/get-laporan-rl51?"
-                    + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir).then(function (dat) {
+                    + "tglAwal=" + tglAwal).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var datas = dat.data.data
                         for (var i = 0; i < datas.length; i++) {

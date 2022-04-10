@@ -252,40 +252,7 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataRL31RawatInap(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
-
-        $tanggal = DB::select(DB::raw("
-            select d::date as tgl
-            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
-        "));
-
-        $tanggalmin = DB::select(DB::raw("
-            select min(d::date) as tglmin
-            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
-        "));
-
-        $tanggalmax = DB::select(DB::raw("
-            select max(d::date) as tglmax
-            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
-        "));
-        
-
-        $arr = [];
-        foreach($tanggal as $row)
-        {
-            $arr[] =  $row->tgl;
-        }
-        $arrmin = [];
-        foreach($tanggalmin as $rowmin)
-        {
-            $arrmin[] =  $rowmin->tglmin;
-        }
-        $arrmax = [];
-        foreach($tanggalmax as $rowmax)
-        {
-            $arrmax[] =  $rowmax->tglmax;
-        }   
+        $tglAwal = $request['tglAwal'];   
 
         $main = array("Penyakit Dalam", "Kesehatan Anak", "Obstetri", "Ginekologi", "Bedah", "Bedah Ortopedhi", "Bedah Saraf", "Luka Bakar", "Saraf", "Jiwa", "Psikologi", "Penatalaksanaan Penyalahgunaan NAPZA", "THT", "Mata", "Kulit dan Kelamin", "Kardiologi", "Paru-paru", "Geriatri", "Radioterapi", "Kedokteran Nuklir", "Kusta", "Rehabilitasi Medik", "Isolasi", "ICU", "ICCU", "NICU / PICU", "Umum", "Gigi & Mulut", "Pelayanan Rawat Darurat", "Perinatologi");
 
@@ -299,7 +266,7 @@ class LaporanRekamMedisController extends   ApiController
             LEFT JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
             where pd.kdprofile = $idProfile 
             and pd.statusenabled = true
-            and cast(apd.tglmasuk as date) between '$arrmin[0]'::date - interval '1 day' and '$arrmax[0]'::date - interval '1 day'
+            and cast(apd.tglmasuk as date) between '$tglAwal-01-01'::date - interval '1 day' and '$tglAwal-12-31'::date - interval '1 day'
             and apd.tglmasuk::date != pd.tglpulang::date 
             group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
@@ -313,7 +280,7 @@ class LaporanRekamMedisController extends   ApiController
             inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk IN (16)
             where pd.kdprofile = $idProfile 
             and pd.statusenabled = true
-            and cast(apd.tglmasuk as date) between '$arrmin[0]'::date - interval '1 day' and '$arrmax[0]'::date - interval '1 day'
+            and cast(apd.tglmasuk as date) between '$tglAwal-01-01'::date - interval '1 day' and '$tglAwal-12-31'::date - interval '1 day'
             and apd.tglmasuk::date != pd.tglpulang::date 
             group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
@@ -329,7 +296,7 @@ class LaporanRekamMedisController extends   ApiController
         LEFT JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and (ru1.objectdepartemenfk NOT IN (16) or apd.objectruanganasalfk is null)
         where pd.kdprofile = $idProfile 
         and pd.statusenabled = true
-        and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]' 
+        and cast(apd.tglmasuk as date) between '$tglAwal-01-01' and '$tglAwal-12-31' 
         group by apd.tglmasuk::date, ru1.namaruangan
         ) as x"));
 
@@ -342,7 +309,7 @@ class LaporanRekamMedisController extends   ApiController
             LEFT JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
             where pd.kdprofile = $idProfile 
             and pd.statusenabled = true
-            and cast(apd.tglmasuk as date) = '$arrmin[0]'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$arrmin[0]'::date 
+            and cast(apd.tglmasuk as date) = '$tglAwal-01-01'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$tglAwal-01-01'::date 
             group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
 
@@ -355,7 +322,7 @@ class LaporanRekamMedisController extends   ApiController
             inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk IN (16)
             where pd.kdprofile = $idProfile 
             and pd.statusenabled = true
-            and cast(apd.tglmasuk as date) = '$arrmin[0]'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$arrmin[0]'::date
+            and cast(apd.tglmasuk as date) = '$tglAwal-01-01'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$tglAwal-01-01'::date
             group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
             ) as y 
@@ -371,7 +338,7 @@ class LaporanRekamMedisController extends   ApiController
             LEFT JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
             where pd.kdprofile = $idProfile 
             and pd.statusenabled = true
-            and cast(apd.tglmasuk as date) = '$arrmax[0]'::date
+            and cast(apd.tglmasuk as date) = '$tglAwal-12-31'::date
             group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
 
@@ -384,7 +351,7 @@ class LaporanRekamMedisController extends   ApiController
             inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk IN (16)
             where pd.kdprofile = $idProfile 
             and pd.statusenabled = true
-            and cast(apd.tglmasuk as date) = '$arrmax[0]'::date
+            and cast(apd.tglmasuk as date) = '$tglAwal-12-31'::date
             group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
             ) as y 
@@ -400,7 +367,7 @@ class LaporanRekamMedisController extends   ApiController
                 where rum.objectdepartemenfk = 16
                 and pdt.statusenabled = TRUE
                 and pdt.kdprofile = 30
-                and pdt.tglpulang::date between '$arrmin[0]' and '$arrmax[0]'
+                and pdt.tglpulang::date between '$tglAwal-01-01' and '$tglAwal-12-31'
                 group by pdt.norec, apdt.objectruanganfk
             )
             
@@ -409,7 +376,7 @@ class LaporanRekamMedisController extends   ApiController
                         FROM pasiendaftar_t as pd
                         INNER JOIN cte on cte.norec = pd.norec
                         inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
-                        WHERE pd.kdprofile = 30 and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
+                        WHERE pd.kdprofile = 30 and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
                                     group by pd.tglpulang::date, cte.tglmasuk, ru.namaruangan 
                                     order by pd.tglpulang::date) as x group by x.tanggalpulang, x.ruanganasal) as y group by y.ruanganasal"));
 
@@ -419,7 +386,7 @@ class LaporanRekamMedisController extends   ApiController
             INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
             INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
             where pd.kdprofile = $kdProfile and pd.statusenabled = true
-						and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
+						and cast(pd.tglpulang as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
 						and ru.objectdepartemenfk = 16
                         and pd.tglpulang is not null
 						group by pd.tglpulang::date, ru.namaruangan"));
@@ -431,7 +398,7 @@ class LaporanRekamMedisController extends   ApiController
 			inner join kondisipasien_m kps on kps.id = pd.objectkondisipasienfk
             inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
             where pd.kdprofile = $kdProfile and pd.statusenabled = true
-						and cast(pd.tglmeninggal as date) between '$arrmin[0]' and '$arrmax[0]'
+						and cast(pd.tglmeninggal as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
                         and ru.objectdepartemenfk = 16
 						group by pd.tglmeninggal::date, ru.namaruangan"));
 
@@ -444,7 +411,7 @@ class LaporanRekamMedisController extends   ApiController
                 LEFT JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
                 where pd.kdprofile = $idProfile 
                 and pd.statusenabled = true
-                and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
+                and cast(apd.tglmasuk as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
                 group by apd.tglmasuk::date, ru1.namaruangan, apd.objectkelasfk
                 ) as x
     
@@ -457,7 +424,7 @@ class LaporanRekamMedisController extends   ApiController
                 inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk IN (16)
                 where pd.kdprofile = $idProfile 
                 and pd.statusenabled = true
-                and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
+                and cast(apd.tglmasuk as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
                 group by apd.tglmasuk::date, ru1.namaruangan, apd.objectkelasfk
                 ) as x group by tgl, ruanganasal, objectkelasfk, x.jumlah
                 ) as y 
@@ -3237,7 +3204,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getLaporanRL4aRawatInap(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         $data10 = [];
 
         $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
@@ -3264,7 +3230,7 @@ class LaporanRekamMedisController extends   ApiController
         and ru.objectdepartemenfk = 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 1 and 507
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
         order by ddtd.id"));
 
         $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
@@ -3459,7 +3425,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getLaporanRL4aRawatInapSebabLuar(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         $data10 = [];
 
         $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
@@ -3486,7 +3451,7 @@ class LaporanRekamMedisController extends   ApiController
         and ru.objectdepartemenfk = 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 508 and 537
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
         order by ddtd.id"));
 
         $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
@@ -3682,7 +3647,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getLaporanRL4b(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         $data10 = [];
 
         $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
@@ -3709,7 +3673,7 @@ class LaporanRekamMedisController extends   ApiController
         and ru.objectdepartemenfk <> 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 1 and 507
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
         order by ddtd.id"));
 
         $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
@@ -3904,7 +3868,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getLaporanRL4bSebabLuar(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         $data10 = [];
 
         $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
@@ -3931,7 +3894,7 @@ class LaporanRekamMedisController extends   ApiController
         and ru.objectdepartemenfk <> 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 508 and 537
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
         order by ddtd.id"));
 
         $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
@@ -4126,7 +4089,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataLaporanRL51(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
 
 
         $data = DB::select(DB::raw("select *, (case when x.statuspasienfix = 'LAMA' THEN 'Pengunjung Lama' else 'Pengunjung Baru' end) as statuspasienfixbanget from(
@@ -4137,7 +4099,7 @@ class LaporanRekamMedisController extends   ApiController
                     inner join profile_m pr on pr.id = pd.kdprofile
                     inner join pasien_m as pm on pm.id = pd.nocmfk
                     where pd.statusenabled = true and pd.kdprofile = $kdProfile
-                    and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                    and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
                     group by to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'), (case when pd.statuspasien is null then 'LAMA' else pd.statuspasien end), pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
                     order by to_char(pd.tglregistrasi, 'YYYY'), to_char(pd.tglregistrasi, 'mm')) as x"));
 
@@ -4150,7 +4112,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataLaporanRL52(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         $bulan = [];
 
         $data = DB::select(DB::raw("select pd.tglregistrasi::date, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ') as month, ru.namaruangan, ru.id, count(apd.objectruanganfk) jumlahkunjungan, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id as idprofile
@@ -4163,7 +4124,7 @@ class LaporanRekamMedisController extends   ApiController
         inner join profile_m pr on pr.id = pd.kdprofile
         where pd.statusenabled = true and pd.kdprofile = $kdProfile
         and ru.objectdepartemenfk <> 16
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
         group by pd.tglregistrasi::date, ru.namaruangan, ru.id, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ')
         order by pd.tglregistrasi::date"));
 
@@ -4175,7 +4136,7 @@ class LaporanRekamMedisController extends   ApiController
                 inner join ruangan_m ru on ru.id = apd.objectruanganfk
                 where pd.statusenabled = true and pd.kdprofile = $kdProfile
                 and ru.objectdepartemenfk <> 16
-                and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
                         group by rtrim(to_char(pd.tglregistrasi, 'Month'), ' '), to_char(pd.tglregistrasi, 'mm')
                 order by idmonth"));
 
@@ -4334,7 +4295,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataLaporanRL53(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         // $kdDeptRanapAll = explode(',',$this->settingDataFixed('KdDepartemenRIAll',$kdProfile));
         // $kdDepartemenRanapAll = [];
         // foreach ($kdDeptRanapAll as $items){
@@ -4372,7 +4332,7 @@ class LaporanRekamMedisController extends   ApiController
         and ru.objectdepartemenfk = 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 1 and 537
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
                 group by ddtd.id, to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'),ddtd.nodtd, dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
                 order by ddtd.id
         ) as x
@@ -4390,7 +4350,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataLaporanRL54(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
 
 
         $data = DB::select(DB::raw("select x.id, x.month, x.idmonth, x.year,x.nodtd,x.nodaftarterperinci, x.golongansebabpenyakit, 
@@ -4423,7 +4382,7 @@ class LaporanRekamMedisController extends   ApiController
         and ru.objectdepartemenfk <> 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 1 and 537
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
                 group by ddtd.id, to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'),ddtd.nodtd, dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, dp.iskasusbaru
                 order by ddtd.id
         ) as x
