@@ -23,23 +23,15 @@ define(['initialize'], function (initialize) {
 
 
             function LoadData() {
-                var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
-                var tempRuanganId = "";
-                  if ($scope.item.ruangan != undefined) {
-                      tempRuanganId = "&idRuangan=" + $scope.item.ruangan.id;
-                  }
+                var tglAwal = moment($scope.item.tglawal).format('YYYY');
 
                 var chacePeriode = {
                     0: tglAwal,
-                    1: tglAkhir
                 }
                 cacheHelper.set('LaporanRL_54Ctrl', chacePeriode);
 
                 medifirstService.get("registrasi/laporan/get-laporan-rl54?"
                     + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
-                    + tempRuanganId
                 ).then(function (dat) {
                     var datas = dat.data.data
                     $scope.isRouteLoading = false;

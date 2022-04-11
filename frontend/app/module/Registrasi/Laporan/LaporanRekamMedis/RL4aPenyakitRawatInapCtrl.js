@@ -18,13 +18,11 @@ define(['initialize'], function (initialize) {
             function LoadData() {
 
                 $scope.isRouteLoading = true;
-                var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');;
+                var tglAwal = moment($scope.item.tglawal).format('YYYY');
 
 
                 medifirstService.get("registrasi/laporan/get-laporan-rl4a?"
                     + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
 
                 ).then(function (dat) {
                     var datas = dat.data.detail

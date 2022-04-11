@@ -3010,14 +3010,13 @@ select '-' as smf,* from  (
             $jumlahtt = DB::select(DB::raw("select '$tglAwal' as tanggal, sum(rm.jumlah_tt) as totalperperiode 
             from riwayatkamar_m rm
             inner join ruangan_m ru on ru.id = rm.objectruanganfk
-            left join(
-                select max(tanggalawal) as tanggal from riwayatkamar_m 
-                where tanggalawal <= '$tglAwal'
+            inner join(
+                select objectruanganfk,objectkamarfk,max(tanggalawal) as tanggal from riwayatkamar_m 
+                where tanggalawal <= '$arrmax[0] 23:59:59'
+								group by objectruanganfk,objectkamarfk
             ) as x	
-            on rm.tanggalawal = x.tanggal
-            where rm.kdprofile = $idProfile and rm.tanggalawal = x.tanggal
-            $paramRuanganRM
-            group by rm.tanggalawal"));
+            on rm.objectruanganfk=x.objectruanganfk and rm.objectkamarfk=x.objectkamarfk and rm.tanggalawal = x.tanggal
+            where rm.kdprofile = 30 ;"));
 
             $lamadirawat = DB::select(DB::raw("select sum(y.totallama) as totalfix from(
                 select x.tanggalpulang, sum(x.lamadirawat) as totallama from(
@@ -3035,7 +3034,7 @@ select '-' as smf,* from  (
                 )
                 
                 select pd.tglpulang::date as tanggalpulang, cte.tglmasuk as tanggalmasuk,
-                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  pd.tglpulang::date-cte.tglmasuk end as lamadirawat
+                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  (pd.tglpulang::date-cte.tglmasuk) + 1 end as lamadirawat
                             FROM pasiendaftar_t as pd
                             INNER JOIN cte on cte.norec = pd.norec
                             WHERE pd.kdprofile = 30 and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'

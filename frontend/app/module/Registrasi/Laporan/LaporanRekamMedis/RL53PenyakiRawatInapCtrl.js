@@ -20,11 +20,11 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("registrasi/laporan/get-combo-mapping-rl?").then(function (data) {
                     $scope.listRuangan = data.data.ruanganranap;
                 });
+                
             }
 
             function LoadData() {
-                var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+                var tglAwal = moment($scope.item.tglawal).format('YYYY');
                 //   var tempDepartemen = "";
                 //   if ($scope.item.departement != undefined) {
                 //       tempDepartemen = "&idDept=" + $scope.item.departement.id;
@@ -39,13 +39,11 @@ define(['initialize'], function (initialize) {
                 //   }  
                 var chacePeriode = {
                     0: tglAwal,
-                    1: tglAkhir
                 }
                 cacheHelper.set('LaporanRL_53Ctrl', chacePeriode);
 
                 medifirstService.get("registrasi/laporan/get-laporan-rl53?"
                     + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
                     //   + tempDepartemen
                     //   + tempKelPasienId
                 ).then(function (dat) {
@@ -80,6 +78,7 @@ define(['initialize'], function (initialize) {
                     toolbar: ["excel"],
                     excel: {
                         fileName: "LaporanRL5310BesarPenyakitRawatInap.xlsx",
+                        allPages: true
                     },
                     filterable: true,
                     resizable: true,
@@ -225,8 +224,6 @@ define(['initialize'], function (initialize) {
                 $scope.ClearSearch();
             }
 
-            
-
             //fungsi clear kriteria search
             $scope.ClearSearch = function () {
                 $scope.item = {};
@@ -262,17 +259,6 @@ define(['initialize'], function (initialize) {
             //     //$scope.dataLogin = dat.data.datalogin[0];
             //     $scope.listKelompokPasien = dat.data.datakelompokpasien;
             // });
-
-            $scope.date = new Date();
-            var tanggals = DateHelper.getDateTimeFormatted3($scope.date);
-
-            //Tanggal Default
-            $scope.item.tglawal = tanggals + " 00:00";
-            $scope.item.tglakhir = tanggals + " 12:59";
-
-            // Tanggal Inputan
-            $scope.tglawal = $scope.item.tglawal;
-            $scope.tglakhir = $scope.item.tglakhir;
 
 
             $scope.Cetak = function () {
