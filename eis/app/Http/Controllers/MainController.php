@@ -3257,6 +3257,7 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
                 left join batalregistrasi_t br on pd.norec_pd = br.pasiendaftarfk
                 WHERE dp.id in ($dept)
                 and ru.id <> 838
+                and dp.statusenabled = true
                 and dp.kdprofile =$kdProfile
                 and br.pasiendaftarfk is null
                 GROUP BY
