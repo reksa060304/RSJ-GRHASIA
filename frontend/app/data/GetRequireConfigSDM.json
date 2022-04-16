@@ -164,6 +164,22 @@
     {
       "nameDep": "DataPelayananPegawaiCtrl",
       "urlDep": "module/SDM/DataPelayananPegawaiCtrl"
+    },
+    {
+      "nameDep": "NamaPelatihanCtrl",
+      "urlDep": "module/SDM/NamaPelatihanCtrl"
+    },
+    {
+      "nameDep": "JenisPelatihanCtrl",
+      "urlDep": "module/SDM/JenisPelatihanCtrl"
+    },
+    {
+      "nameDep": "MasterUnitPenginputCtrl",
+      "urlDep": "module/SDM/MasterUnitPenginputCtrl"
+    },
+    {
+      "nameDep": "SumberDanaCtrl",
+      "urlDep": "module/SDM/SumberDanaCtrl"
     }
   ]
 }
