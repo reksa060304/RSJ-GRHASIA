@@ -2785,7 +2785,8 @@ select '-' as smf,* from  (
             FROM pasiendaftar_t as pd
             INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
             inner JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
-            where cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
+            where pd.kdprofile = $idProfile and pd.statusenabled = true
+            and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
             and pd.tglpulang = apd.tglkeluar
             and ru.objectdepartemenfk = 16
             and (pd.objectstatuspulangfk not in (2,3) or pd.objectstatuspulangfk is null)
