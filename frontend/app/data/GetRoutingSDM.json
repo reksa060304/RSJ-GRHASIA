@@ -818,5 +818,83 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "NamaPelatihan",
+    "url": "/TmFtYVBlbGF0aWhhbg==", 
+    "templateurl": "module/SDM/NamaPelatihan.html",
+    "controller": "NamaPelatihanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "JenisPelatihan",
+    "url": "/SmVuaXNQZWxhdGloYW4=",
+    
+    "templateurl": "module/SDM/JenisPelatihan.html",
+    "controller": "JenisPelatihanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "MasterUnitPenginput",
+    "url": "/VW5pdFBlbmdpbnB1dA==",
+
+    "templateurl": "module/SDM/MasterUnitPenginput.html",
+    "controller": "MasterUnitPenginputCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "SumberDana",
+    "url": "/U3VtYmVyRGFuYQ==",
+    "templateurl": "module/SDM/SumberDana.html",
+    "controller": "SumberDanaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

@@ -60,10 +60,16 @@
 </style>
 <c-panel item="item" header="'Laporan Kunjungan'" disabled>
 </c-panel>
-<div class="grid_12">
+<div class="grid_12" >
+    <div class="grid_2" style="margin-top:5px">
+        <label c-label item="item" c-label-text="Departement"></label>
+        <input style="width: 100%;" kendo-combo-box k-ng-model="item.departemen" k-data-text-field="'departemen'"
+            k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartement"
+            k-on-change="getIsiComboRuangan()" />
+    </div>
     <div class="grid_2" style="margin-top:5px">
         <label c-label c-label-text="namaRuangan" real></label>
-        <input style="width: 100%; " kendo-combo-box k-ng-model="item.ruangan" k-data-text-field=" 'namaruangan' "
+        <input style="width: 100%; " kendo-combo-box k-ng-model="item.ruangan" k-data-text-field=" 'ruangan' "
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listRuangans " />
     </div>
     <!-- <div class="grid_2" style="margin-top:5px">

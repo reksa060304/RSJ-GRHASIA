@@ -7048,6 +7048,10 @@ class LaporanPengunjungController extends ApiController
         if (isset($request['kelompokpasien']) && $request['kelompokpasien'] != "" && $request['kelompokpasien'] != "undefined") {
             $paramkp = 'and kep.id = '. $request['kelompokpasien'];
         }
+        $dep = 'and ru.objectdepartemenfk <> 16';
+        if (isset($request['departemen']) && $request['departemen'] != "" && $request['departemen'] != "undefined") {
+            $dep = 'and ru.objectdepartemenfk = '. $request['departemen'];
+        }
         //laporan kunjungan v2
         $v2 = DB::select(DB::raw(
         "
@@ -7062,22 +7066,23 @@ class LaporanPengunjungController extends ApiController
         kk.namakotakabupaten
 
         FROM
-        antrianpasiendiperiksa_t apd
-        INNER JOIN pasiendaftar_t pd on pd.norec=apd.noregistrasifk
+        pasiendaftar_t pd
+        INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
         INNER JOIN pasien_m ps on ps.id=pd.nocmfk
         inner join ruangan_m ru on ru.id = apd.objectruanganfk
         INNER join kelompokpasien_m kep on kep.id = pd.objectkelompokpasienlastfk
-        INNER JOIN alamat_m al on ps.id = al.nocmfk
+        left JOIN alamat_m al on ps.id = al.nocmfk
         left join kotakabupaten_m kk on kk.id= al.objectkotakabupatenfk
         left join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
         WHERE pd.tglregistrasi BETWEEN '$tglAwal' and '$tglAkhir'
         and apd.kdprofile = $kdProfile
+        and pd.kdprofile = $kdProfile
         and apd.statusenabled = true
         and pd.statusenabled=true
-        and ru.objectdepartemenfk <> 16
         $paramRuangan
         $paramkp
-        
+        $dep
+        and ru.objectdepartemenfk <> 16
         "
         ));
 
@@ -7129,6 +7134,7 @@ class LaporanPengunjungController extends ApiController
         and pd.statusenabled=true
         and apd.statusenabled=true
         and apd.tglkeluar::date BETWEEN '$tglAwal' and '$tglAkhir'
+        and pd.kdprofile = $kdProfile
         and apd.kdprofile = $kdProfile
         $paramRuangan
         $paramkp

@@ -3,6 +3,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 	var baseTransaksi = configuration.baseApiBackend; 
 	initialize.controller('MasterPegawaiCtrl', ['$scope', '$state', 'ModelItem', '$mdDialog', 'MedifirstService', 'CacheHelper', 'DateHelper', 
 		function ($scope, $state, ModelItem, $mdDialog, medifirstService, cacheHelper, dateHelper) {
+			$scope.namapelatihan = false;
+			$scope.namapelatihancbx = true;
 			$scope.isRouteLoading = false;
 			$scope.item = {};
 			$scope.itemKeluarga = {};
@@ -34,10 +36,35 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			var objUpload = [];
 			var dataRiwayatPelatihan = [];
 			var jenisCache = "";
+			var penyelenggara = "";
 			$scope.loginDisabled = false;
 			FormLoad();
 			// LoadCache();
-
+			$scope.clickpenyelenggara = function () {
+				if($scope.itemPelatihan.penyelenggara.id == 1){
+					console.log('internal');
+					$scope.namapelatihan = false;
+					$scope.namapelatihancbx = true;
+					// penyelenggara = $scope.itemPelatihan.namaPelatihan2.namapelatihan
+				}else{
+					console.log('eksternal');
+					// penyelenggara = $scope.itemPelatihan.namaPelatihan
+					$scope.namapelatihan = true;
+					$scope.namapelatihancbx = false;
+					$scope.itemPelatihan.namaPelatihan = undefined;
+				}
+			}
+			
+			$scope.ListPenyelenggara = [
+				{
+					"id": 1,
+					"penyelenggara": "INTERNAL"
+				},
+				{
+					"id": 2,
+					"penyelenggara": "EKSTERNAL"
+				},
+			]
 			function ClearAll() {
 				$scope.item = {};
 			};
@@ -113,6 +140,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					$scope.ListPolaKerja = dataCombo.shiftkerja;
 					$scope.ListTanggungan = dataCombo.tanggungan;
 					$scope.ListPekerjaan = dataCombo.pekerjaan;
+					$scope.ListUnitPenginput = dataCombo.dataunitpenginput;
+					$scope.ListNamaPelatihan = dataCombo.dataNamaPelatihan;
+					$scope.ListJenisPelatihan = dataCombo.datajenispelatihan;
+					$scope.ListSumberDana = dataCombo.sumberdana;
 					$scope.ListHubunganKeluarga = dataCombo.hubungankeluarga;
 					$scope.listJenisJabatan = dataCombo.datajabatan;
 					$scope.listKelompokuser = dataCombo.kelompokuser;
@@ -188,6 +219,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							$scope.item.bankRekeningNomor = dataCachePegawai.bankrekeningnomor;
 							$scope.item.bankRekeningAtasNama = dataCachePegawai.bankrekeningatasnama;
 							$scope.item.bankRekeningNama = dataCachePegawai.bankrekeningnama;
+							$scope.item.bankRekeningNomor2 = dataCachePegawai.bankrekeningnomor2;
+							$scope.item.bankRekeningAtasNama2 = dataCachePegawai.bankrekeningatasnama2;
+							$scope.item.bankRekeningNama2 = dataCachePegawai.bankrekeningnama2;
 							// End Data Rekening
 
 							// Data Alamat
@@ -1009,6 +1043,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.itemPelatihan.durasi = parseInt(dataItem.durasi);
 				$scope.itemPelatihan.noSertifikat = dataItem.nosertifikat;
 				$scope.itemPelatihan.keterangan = dataItem.keterangan;
+				$scope.itemPelatihan.unitpenginput = dataItem.unitpenginputfk;
+				$scope.itemPelatihan.jenispelatihan = dataItem.jenispelatihanfk;
+				$scope.itemPelatihan.penyelenggara = dataItem.penyelenggara;
+				$scope.itemPelatihan.biayadiklat = parseInt(dataItem.biayadiklat);
+				$scope.itemPelatihan.biayasppd = parseInt(dataItem.biayasppd);
+				$scope.itemPelatihan.sumberdana = dataItem.sumberdanafk;
 				$scope.popUpRiwayatPelatihan.center().open();
 
 			}
@@ -1031,12 +1071,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				}
 
 				var itemDelete = {
-					"norec": dataItem.norec
+					"norec": dataItem.norec,
 				}
 
-				medifirstService.post('sdm/delete-data-pelatihan', itemDelete).then(function (e) {
+				medifirstService.post('sdm/pelatihan/delete-data-pelatihan', itemDelete).then(function (e) {
 					if (e.status === 201) {
 						grid.removeRow(row);
+					}else{
+						console.log(e.status);
 					}
 				})
 			}
@@ -1576,11 +1618,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.tambahRiwayatPelatihan = function () {
 				var listRawRequired = [
 					"itemPelatihan.namaInstitusi|ng-model|Nama Penyelenggara",
-					"itemPelatihan.namaPelatihan|k-ng-model|Nama Pelatihan",
+					// "itemPelatihan.namaPelatihan|k-ng-model|Nama Pelatihan",
 					"itemPelatihan.lokasi|ng-model|Lokasi Pelatihan",
 					"itemPelatihan.tglMulaiPel|k-ng-model|Tgl Masuk",
 					"itemPelatihan.tglSelesaiPel|k-ng-model|Tgl Lulus",
 					"itemPelatihan.durasi|ng-model|Durasi Pelatihan",
+					"itemPelatihan.unitpenginput|k-ng-model|Unit Penginput",
+					"itemPelatihan.jenispelatihan|k-ng-model|Jenis Pelatihan",
+					"itemPelatihan.penyelenggara|k-ng-model|Penyelenggara",
+					"itemPelatihan.biayadiklat|k-ng-model|Biaya Diklat",
+					"itemPelatihan.biayasppd|k-ng-model|Biaya SPPD",
+					"itemPelatihan.sumberdana|k-ng-model|Sumber Dana",
 				];
 
 
@@ -1589,6 +1637,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					noSertifikat = $scope.itemPelatihan.noSertifikat;
 				}
 
+				// var unitpenginput = "-";
+				// if ($scope.item.unitpenginput != undefined) {
+				// 	unitpenginput = $scope.itemPelatihan.unitpenginput;
+				// }
+				
 				var keterangan = "-";
 				if ($scope.itemPelatihan.keterangan != undefined) {
 					keterangan = $scope.itemPelatihan.keterangan;
@@ -1604,11 +1657,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					}
 					var data = {};
 					if ($scope.item.nomor != undefined) {
+						if ($scope.itemPelatihan.penyelenggara.id == 1) {
+							$scope.editpenyelenggara = $scope.itemPelatihan.namaPelatihan2.namapelatihan
+						} else {
+							$scope.editpenyelenggara = $scope.itemPelatihan.namaPelatihan
+						}
 						for (var i = dataRiwayatPelatihan.length - 1; i >= 0; i--) {
 							if (dataRiwayatPelatihan[i].no == $scope.item.nomor) {
 								data.no = $scope.item.nomor
 								data.instansipenyelenggara = $scope.itemPelatihan.namaInstitusi
-								data.namapelatihan = $scope.itemPelatihan.namaPelatihan
+								data.namapelatihan = $scope.editpenyelenggara
 								data.lokasipelatihan = $scope.itemPelatihan.lokasi
 								data.tglmulai = moment($scope.itemPelatihan.tglMulaiPel).format('YYYY-MM-DD HH:mm')
 								data.tglakhir = moment($scope.itemPelatihan.tglSelesaiPel).format('YYYY-MM-DD HH:mm')
@@ -1616,7 +1674,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 								data.nosertifikat = noSertifikat
 								data.keterangan = keterangan
 								data.norec = $scope.item.norecPel
-
+								data.unitpenginputfk = $scope.itemPelatihan.unitpenginput.id
+								data.jenispelatihanfk = $scope.itemPelatihan.jenispelatihan.id
+								data.penyelenggara = $scope.itemPelatihan.penyelenggara.penyelenggara
+								data.biayadiklat = $scope.itemPelatihan.biayadiklat
+								data.biayasppd = $scope.itemPelatihan.biayasppd
+								data.sumberdanafk = $scope.itemPelatihan.sumberdana.id
 								dataRiwayatPelatihan[i] = data;
 								$scope.gridRiwayatPelatihan = new kendo.data.DataSource({
 									data: dataRiwayatPelatihan
@@ -1625,18 +1688,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						}
 
 					} else {
-
+						var penyelenggara = "";
+						if ($scope.itemPelatihan.penyelenggara.id == 1) {
+							penyelenggara = $scope.itemPelatihan.namaPelatihan2.namapelatihan
+						} else {
+							penyelenggara = $scope.itemPelatihan.namaPelatihan
+						}
 						data = {
 							no: nomor,
 							instansipenyelenggara: $scope.itemPelatihan.namaInstitusi,
-							namapelatihan: $scope.itemPelatihan.namaPelatihan,
+							namapelatihan: penyelenggara,
 							lokasipelatihan: $scope.itemPelatihan.lokasi,
 							tglmulai: moment($scope.itemPelatihan.tglMulaiPel).format('YYYY-MM-DD HH:mm'),
 							tglakhir: moment($scope.itemPelatihan.tglSelesaiPel).format('YYYY-MM-DD HH:mm'),
 							durasi: $scope.itemPelatihan.durasi,
 							nosertifikat: noSertifikat,
 							keterangan: keterangan,
-							norec: $scope.item.norecPel
+							norec: $scope.item.norecPel,
+							unitpenginputfk: $scope.itemPelatihan.unitpenginput.id,
+							jenispelatihanfk: $scope.itemPelatihan.jenispelatihan.id,
+							penyelenggara: $scope.itemPelatihan.penyelenggara.penyelenggara,
+							biayadiklat: $scope.itemPelatihan.biayadiklat,
+							biayasppd: $scope.itemPelatihan.biayasppd,
+							sumberdanafk: $scope.itemPelatihan.sumberdana.id
 						}
 
 						dataRiwayatPelatihan.push(data)
@@ -2081,6 +2155,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				if ($scope.item.bankRekeningNama != undefined) {
 					NamaBank = $scope.item.bankRekeningNama
 				}
+				var bankRekeningNomor2 = "-"
+				if ($scope.item.bankRekeningNomor != undefined) {
+					bankRekeningNomor2 = $scope.item.bankRekeningNomor2
+				}
+
+				var NamaRekening2 = "-"
+				if ($scope.item.bankRekeningAtasNama2 != undefined) {
+					NamaRekening2 = $scope.item.bankRekeningAtasNama2
+				}
+
+				var NamaBank2 = "-"
+				if ($scope.item.bankRekeningNama2 != undefined) {
+					NamaBank2 = $scope.item.bankRekeningNama2
+				}
+
+				
 
 				var pensiun = null;
 				if ($scope.item.pensiun != undefined) {
@@ -2128,6 +2218,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						nomorrekening: bankRekeningNomor,
 						namarekening: NamaRekening,
 						namabank: NamaBank,
+						nomorrekening2: bankRekeningNomor2,
+						namarekening2: NamaRekening2,
+						namabank2: NamaBank2,
 						// Data Rekening Bank
 
 						// Data Alamat

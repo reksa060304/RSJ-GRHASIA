@@ -217,8 +217,32 @@ class SumberDayaManusiaController extends ApiController {
             ->where('jpp.statusenabled', true)
             ->orderBy('jpp.jenispetugaspe')
             ->get();
-
+        $dataUnitPenginput = \DB::table('unitpenginput_m as up')
+            ->select('up.id', 'up.unitpenginput')
+            ->where('up.kdprofile', $kdProfile)
+            ->where('up.statusenabled', true)
+            ->orderBy('up.unitpenginput')
+            ->get();
+        $dataNamaPelatihan = \DB::table('namapelatihan_m as np')
+            ->where('np.statusenabled', true)
+            ->where('np.kdprofile', $kdProfile)
+            ->orderBy('np.namapelatihan')
+            ->get();
+        $datajenispelatihan = \DB::table('jenispelatihan_m as jp')
+            ->where('jp.statusenabled', true)
+            ->where('jp.kdprofile', $kdProfile)
+            ->orderBy('jp.jenispelatihan')
+            ->get();
+        $sumberdana = \DB::table('sumberdana_m as sd')
+            ->where('sd.statusenabled', true)
+            ->where('sd.kdprofile', $kdProfile)
+            ->orderBy('sd.sumberdana')
+            ->get();
         $result = array(
+            'sumberdana' => $sumberdana,
+            'datajenispelatihan'=> $datajenispelatihan,
+            'dataNamaPelatihan'=> $dataNamaPelatihan,
+            'dataunitpenginput'=> $dataUnitPenginput,
             'datalogin'=> $dataLogin,
             'unitkerjapegawai' => $UnitKerja,
             'subunitkerja' => $SubUnitKerja,
@@ -636,6 +660,10 @@ class SumberDayaManusiaController extends ApiController {
             $dataSavePegawai->bankrekeningnomor = $dataPegawai['nomorrekening'];
             $dataSavePegawai->bankrekeningatasnama = $dataPegawai['namarekening'];
             $dataSavePegawai->bankrekeningnama = $dataPegawai['namabank'];
+            // bank 2
+            $dataSavePegawai->bankrekeningnomor2 = $dataPegawai['nomorrekening2'];
+            $dataSavePegawai->bankrekeningatasnama2 = $dataPegawai['namarekening2'];
+            $dataSavePegawai->bankrekeningnama2 = $dataPegawai['namabank2'];
             $dataSavePegawai->npwp = $dataPegawai['npwp'];
             if (isset($dataPegawai['kodepos'])){
                 $dataSavePegawai->kodepos = $dataPegawai['kodepos'];
@@ -765,6 +793,13 @@ class SumberDayaManusiaController extends ApiController {
                     $dataSavePelatihan->tglmulai = $itempend['tglmulai'];
                     $dataSavePelatihan->tglakhir = $itempend['tglakhir'];
                     $dataSavePelatihan->durasi = $itempend['durasi'];
+                    $dataSavePelatihan->unitpenginputfk = $itempend['unitpenginputfk'];
+                    $dataSavePelatihan->jenispelatihanfk = $itempend['jenispelatihanfk'];
+                    $dataSavePelatihan->penyelenggara = $itempend['penyelenggara'];
+                    $dataSavePelatihan->biayadiklat = $itempend['biayadiklat'];
+                    $dataSavePelatihan->biayasppd = $itempend['biayasppd'];
+                    $dataSavePelatihan->sumberdanafk = $itempend['sumberdanafk'];
+
                     if (isset($itempend['nosertifikat'])){
                         $dataSavePelatihan->nosertifikat = $itempend['nosertifikat'];
                     }
@@ -3278,6 +3313,242 @@ class SumberDayaManusiaController extends ApiController {
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
 
+    }
+
+    public function saveSDPelatihan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+            
+        try{
+            if($request['a'] == 'okee'){
+                $delete = \DB::table('sumberdana_m')->where('id',$request['id'])->where('kdprofile', $kdProfile)->delete();
+            }
+            if($request['id'] == 'xyz'){
+                $newId = \DB::table('sumberdana_m')->max('id') + 1;
+                $newMod = \DB::table('sumberdana_m')->insert([
+                    'kdprofile' => $kdProfile,
+                    'statusenabled' => true,
+                    'kodeexternal' => "GRH",
+                    'namaexternal' => $request['sumberdana'],
+                    'reportdisplay' => $request['sumberdana'],
+                    'sumberdana' => $request['sumberdana'],
+                    'id'=> $newId
+                ]);
+            }else{
+                $newMod = \DB::table('sumberdana_m')->where('id',$request['id'])->where('kdprofile', $kdProfile)->update([
+                    'namaexternal' => $request['sumberdana'],
+                    'reportdisplay' => $request['sumberdana'],
+                    'sumberdana' => $request['sumberdana'],
+                ]);
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Data Gagal Disimpan";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'er@epic',
+            );
+        }
+        // return $this->respond($result);
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+    }
+    public function saveUPPelatihan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+            
+        try{
+            if($request['a'] == 'okee'){
+                $delete = \DB::table('unitpenginput_m')->where('id',$request['id'])->where('kdprofile', $kdProfile)->delete();
+            }
+            if($request['id'] == 'xyz'){
+                $newId = \DB::table('unitpenginput_m')->max('id') + 1;
+                $newMod = \DB::table('unitpenginput_m')->insert([
+                    'kdprofile' => $kdProfile,
+                    'statusenabled' => true,
+                    'kodeexternal' => "GRH",
+                    'namaexternal' => $request['unitpenginput'],
+                    'reportdisplay' => $request['unitpenginput'],
+                    'unitpenginput' => $request['unitpenginput'],
+                    'id'=> $newId
+                ]);
+            }else{
+                $newMod = \DB::table('unitpenginput_m')->where('id',$request['id'])->where('kdprofile', $kdProfile)->update([
+                    'namaexternal' => $request['unitpenginput'],
+                    'reportdisplay' => $request['unitpenginput'],
+                    'unitpenginput' => $request['unitpenginput'],
+                ]);
+            }
+
+          
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Data Gagal Disimpan";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'er@epic',
+            );
+        }
+        // return $this->respond($result);
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+    }
+    
+    public function saveJenisPelatihan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+            
+        try{
+            if($request['a'] == 'okee'){
+                $delete = \DB::table('jenispelatihan_m')->where('id',$request['id'])->where('kdprofile', $kdProfile)->delete();
+            }
+            if($request['id'] == 'xyz'){
+                $newId = \DB::table('jenispelatihan_m')->max('id') + 1;
+                $newMod = \DB::table('jenispelatihan_m')->insert([
+                    'kdprofile' => $kdProfile,
+                    'statusenabled' => true,
+                    'kodeexternal' => "GRH",
+                    'namaexternal' => $request['jenispelatihan'],
+                    'reportdisplay' => $request['jenispelatihan'],
+                    'jenispelatihan' => $request['jenispelatihan'],
+                    'id'=> $newId
+                ]);
+            }else{
+                $newMod = \DB::table('jenispelatihan_m')->where('id',$request['id'])->where('kdprofile', $kdProfile)->update([
+                    'namaexternal' => $request['jenispelatihan'],
+                    'reportdisplay' => $request['jenispelatihan'],
+                    'jenispelatihan' => $request['jenispelatihan'],
+                ]);
+            }
+
+          
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Data Gagal Disimpan";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'er@epic',
+            );
+        }
+        // return $this->respond($result);
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+    }
+    public function saveNamaPelatihan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+            
+        try{
+            if($request['id'] == ''){
+                $newId = \DB::table('namapelatihan_m')->max('id') + 1;
+                $newMod = \DB::table('namapelatihan_m')->insert([
+                'kdprofile' => $kdProfile,
+                'statusenabled' => true,
+                'kodeexternal' => "GRH",
+                'namaexternal' => $request['namapelatihan'],
+                'reportdisplay' => $request['namapelatihan'],
+                'namapelatihan' => $request['namapelatihan'],
+                'qnamapelatihan' => $newId,
+                'kdnamapelatihan' => $newId,
+                'id'=> $newId
+                ]);
+            }else{
+                $newMod = \DB::table('namapelatihan_m')->where('id',$request['id'])->where('kdprofile', $kdProfile)->update([
+                'namaexternal' => $request['namapelatihan'],
+                'reportdisplay' => $request['namapelatihan'],
+                'namapelatihan' => $request['namapelatihan'],
+                ]);
+            }
+            if($request['statusenabled'] == 'true'){
+                $delete = \DB::table('namapelatihan_m')->where('id',$request['id'])->where('kdprofile', $kdProfile)->delete();
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Data Gagal Disimpan";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'er@epic',
+            );
+        }
+        // return $this->respond($result);
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+    }
+    public function getNamaPelatihan (Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = \DB::select(DB::raw("select * from namapelatihan_m
+                where kdprofile = $kdProfile and statusenabled=TRUE
+                "));   
+
+        $jenispelatihan = \DB::select(DB::raw("select * from jenispelatihan_m
+                where kdprofile = $kdProfile and statusenabled=TRUE
+                "));
+
+        $unitpenginput = \DB::select(DB::raw("select * from unitpenginput_m
+                where kdprofile = $kdProfile and statusenabled=TRUE
+                "));
+        $sumberdana = \DB::select(DB::raw("select * from sumberdana_m
+                where kdprofile = $kdProfile and statusenabled=TRUE
+                "));
+        $result = array(
+            'data'  => $data,
+            'jenispelatihan'=>$jenispelatihan,
+            'unitpenginput'=>$unitpenginput,
+            'sumberdana'=>$sumberdana,
+            'as' => 'er@epic',
+        );
+        return $this->respond($result);
     }
 
     public function getComboPegawai (Request $request){

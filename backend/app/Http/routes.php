@@ -2083,6 +2083,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sdm/pelatihan/hapus-evaluasi-narasumber','SDM\PelatihanController@hapusDataEvaluasiNarasumberKompetensi');
                 Route::post('sdm/pelatihan/save-data-narasumber', 'SDM\PelatihanController@saveDataNarasumber');
                 Route::post('sdm/pelatihan/hapus-data-narasumber', 'SDM\PelatihanController@hapusNarasumber');
+                Route::post('sdm/save-nama-pelatihan', 'SDM\SumberDayaManusiaController@saveNamaPelatihan');
+                Route::post('sdm/save-jenis-pelatihan', 'SDM\SumberDayaManusiaController@saveJenisPelatihan');
+                Route::post('sdm/save-up-pelatihan', 'SDM\SumberDayaManusiaController@saveUPPelatihan');
+                Route::post('sdm/save-sd-pelatihan', 'SDM\SumberDayaManusiaController@saveSDPelatihan');
+                Route::get('sdm/get-nama-pelatihan', 'SDM\SumberDayaManusiaController@getNamaPelatihan');
                 Route::get('sdm/pendidikan/get-mapkategoripendidikan-to-programpendidikan', 'SDM\PelatihanController@getMapKatPendidikanTOprogram');
                 /*END POST*/
             // });
