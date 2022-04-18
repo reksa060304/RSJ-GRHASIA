@@ -2,22 +2,18 @@ define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('MasterUnitPenginputCtrl', ['$q', '$rootScope', '$scope', '$state', '$timeout', 'ModelItem', 'MedifirstService',
         function ($q, $rootScope, $scope, $state, $timeout, modelItem, medifirstService) {
-            $scope.item = {};
-            $scope.dataVOloaded = true;
-            $scope.mainGridOptions = {
+          
+            $scope.unitpenginput = {
                 dataSource: {
                     data: []
                 },
-                toolbar: [{
-                    name: "create",
-                    text: "Tambah"
-                }],
+                
                 pageable: true,
                 columns: [{
                         "field": "unitpenginput",
-                        "title": "Unit Penginput"
+                        "title": "Unit Penginput",
+                        
                     },
-
                     {
                         "command": [{
                             name: "edit",
@@ -30,20 +26,23 @@ define(['initialize'], function (initialize) {
                         width: 160
                     }
                 ],
-                selectable: "row",
                 editable: "popup",
                 save: function (e) {
                     $scope.Save(e.model);
                 }
             };
+
+            
             $q.all([
                 medifirstService.get('sdm/get-combo-jadwal')
             ]).then(function (res) {
+                $scope.listKelompokShift = res[0].data.shiftkerja;
                 $scope.refresh();
             });
             $scope.refresh = function () {
+                $scope.item = undefined;
                 $scope.items = {};
-                var grid = $("#gridDaftarShift").data("kendoGrid"),
+                var grid = $("#unitpenginput").data("kendoGrid"),
                     listData = [];
                 medifirstService.get("sdm/get-nama-pelatihan", true).then(function (dat) {
                     //var filteredData = _.filter(dat.data.data, function(o) { 
@@ -61,7 +60,7 @@ define(['initialize'], function (initialize) {
                         data: listData,
                         schema: {
                             model: {
-
+                                
                             }
                         }
                     });
@@ -73,15 +72,27 @@ define(['initialize'], function (initialize) {
 
             }
 
+            $scope.save = function (data) {
+                var data = {
+                    "id": "xyz",
+                    "namaexternal": $scope.item.unitpenginput,
+                    "reportdisplay": $scope.item.unitpenginput,
+                    "unitpenginput": $scope.item.unitpenginput,
+
+                }
+                // return 
+                medifirstService.post("sdm/save-up-pelatihan", data).then(function (e) {
+                    $scope.refresh();
+                });
+            }
             $scope.Save = function (data) {
-                console.log(data.id);
                 var data = {
                     "id": data.id ? data.id : "xyz",
                     "namaexternal": data.unitpenginput,
                     "reportdisplay": data.unitpenginput,
                     "unitpenginput": data.unitpenginput,
+                    
                 }
-                console.log(data.jenispelatihan)
                 // return 
                 medifirstService.post("sdm/save-up-pelatihan", data).then(function (e) {
                     $scope.refresh();
@@ -90,67 +101,10 @@ define(['initialize'], function (initialize) {
             $scope.Batal = function () {
                 $scope.item = undefined;
             }
-            var timeoutPromise;
-            $scope.$watch('items.namaShift', function (newVal, oldVal) {
-                $timeout.cancel(timeoutPromise);
-                timeoutPromise = $timeout(function () {
-                    if (newVal && newVal !== oldVal) {
-                        applyFilter('namashift', newVal)
-                    }
-                }, 800)
-            });
-            $scope.$watch('items.kodeShift', function (newVal, oldVal) {
-                $timeout.cancel(timeoutPromise);
-                timeoutPromise = $timeout(function () {
-                    if (newVal && newVal !== oldVal) {
-                        applyFilter('kodeexternal', newVal)
-                    }
-                }, 800)
-            });
 
-            $scope.$watch('items.kelompokShift', function (newVal, oldVal) {
-                $timeout.cancel(timeoutPromise);
-                timeoutPromise = $timeout(function () {
-                    if (newVal && newVal !== oldVal) {
-                        applyFilter('idkelompokshift', newVal)
-                    }
-                })
-            });
-
-            function applyFilter(filterField, filterValue) {
-                var gridData = $("#gridDaftarShift").data("kendoGrid");
-                var currFilterObj = gridData.dataSource.filter();
-                var currentFilters = currFilterObj ? currFilterObj.filters : [];
-
-                if (currentFilters && currentFilters.length > 0) {
-                    for (var i = 0; i < currentFilters.length; i++) {
-                        if (currentFilters[i].field == filterField) {
-                            currentFilters.splice(i, 1);
-                            break;
-                        }
-                    }
-                }
-                if (filterValue.id) {
-                    currentFilters.push({
-                        field: filterField,
-                        operator: "eq",
-                        value: filterValue.id
-                    });
-                } else {
-                    currentFilters.push({
-                        field: filterField,
-                        operator: "contains",
-                        value: filterValue
-                    });
-                }
-
-                gridData.dataSource.filter({
-                    logic: "and",
-                    filters: currentFilters
-                })
-            }
+       
             $scope.resetFilters = function () {
-                var gridData = $("#gridDaftarShift").data("kendoGrid");
+                var gridData = $("#unitpenginput").data("kendoGrid");
                 gridData.dataSource.filter({});
                 $scope.items = {};
             }
@@ -161,7 +115,7 @@ define(['initialize'], function (initialize) {
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 var datasend = {
                     "a": 'okee',
-                    "id": dataItem.id
+                    "idd": dataItem.id
                 };
                 console.log(datasend.statusenabled);
                 medifirstService.post("sdm/save-up-pelatihan", datasend).then(function (e) {

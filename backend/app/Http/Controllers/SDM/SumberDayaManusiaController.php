@@ -3372,7 +3372,7 @@ class SumberDayaManusiaController extends ApiController {
             
         try{
             if($request['a'] == 'okee'){
-                $delete = \DB::table('unitpenginput_m')->where('id',$request['id'])->where('kdprofile', $kdProfile)->delete();
+                $delete = \DB::table('unitpenginput_m')->where('id', $request['idd'])->where('kdprofile', $kdProfile)->delete();
             }
             if($request['id'] == 'xyz'){
                 $newId = \DB::table('unitpenginput_m')->max('id') + 1;
