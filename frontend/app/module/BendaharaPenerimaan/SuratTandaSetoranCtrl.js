@@ -672,7 +672,7 @@ define(['initialize'], function (initialize) {
 
 
                     sheet.rows.splice(78, 0, {
-                        cells: [{value:"dr. Akhmad Akhadi S, MPH", colSpan: 2},{value:"", colSpan: 1},{value:"Gamal Iskandar, SKM",colSpan: 2},{value:"", colSpan: 1},{value:"Suri Herlina Pratiwi", colSpan: 2}],
+                        cells: [{value:"dr. Akhmad Akhadi S, MPH", colSpan: 2},{value:"", colSpan: 1},{value:"Gamal Iskandar, SKM",colSpan: 2},{value:"", colSpan: 1},{value:"Suri Herlina Pratiwi, S.KM, M.PH", colSpan: 2}],
                         type: "data",
                         height: 20,
                     });
