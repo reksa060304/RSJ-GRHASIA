@@ -8,10 +8,6 @@ define(['initialize'], function (initialize) {
                 dataSource: {
                     data: []
                 },
-                toolbar: [{
-                    name: "create",
-                    text: "Tambah"
-                }],
                 pageable: true,
                 columns: [
                     {
@@ -45,6 +41,7 @@ define(['initialize'], function (initialize) {
                 $scope.refresh();
             });
             $scope.refresh = function () {
+                $scope.item = undefined;
                 $scope.items = {};
                 var grid = $("#gridDaftarShift").data("kendoGrid"),
                     listData = [];
@@ -169,7 +166,19 @@ define(['initialize'], function (initialize) {
                 gridData.dataSource.filter({});
                 $scope.items = {};
             }
+            $scope.save = function (data) {
+                var data = {
+                    "id": "xyz",
+                    "namaexternal": $scope.item.unitpenginput,
+                    "reportdisplay": $scope.item.unitpenginput,
+                    "namapelatihan": $scope.item.unitpenginput,
 
+                }
+                // return 
+                medifirstService.post("sdm/save-nama    -pelatihan", data).then(function (e) {
+                    $scope.refresh();
+                });
+            }
             function deleteRow(e) {
                 e.preventDefault();
 

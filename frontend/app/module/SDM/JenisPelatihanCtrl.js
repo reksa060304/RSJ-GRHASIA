@@ -8,10 +8,6 @@ define(['initialize'], function (initialize) {
                 dataSource: {
                     data: []
                 },
-                toolbar: [{
-                    name: "create",
-                    text: "Tambah"
-                }],
                 pageable: true,
                 columns: [{
                         "field": "jenispelatihan",
@@ -41,7 +37,22 @@ define(['initialize'], function (initialize) {
             ]).then(function (res) {
                 $scope.refresh();
             });
+
+            $scope.save = function (data) {
+                var data = {
+                    "id": "xyz",
+                    "namaexternal": $scope.item.unitpenginput,
+                    "reportdisplay": $scope.item.unitpenginput,
+                    "jenispelatihan": $scope.item.unitpenginput,
+
+                }
+                // return 
+                medifirstService.post("sdm/save-jenis-pelatihan", data).then(function (e) {
+                    $scope.refresh();
+                });
+            }
             $scope.refresh = function () {
+                $scope.item = undefined
                 $scope.items = {};
                 var grid = $("#gridDaftarShift").data("kendoGrid"),
                     listData = [];
