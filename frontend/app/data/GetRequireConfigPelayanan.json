@@ -3072,6 +3072,31 @@
         {
             "nameDep": "RL4bPenyakitRawatJalanSebabLuarCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL4bPenyakitRawatJalanSebabLuarCtrl"
+        },
+        {
+            "nameDep": "PenilaianRisikoJatuhPasienJiwaCtrl",
+            "urlDep": "module/EMR/PenilaianRisikoJatuhPasienJiwaCtrl"
+        },
+        {
+            "nameDep": "LembarPenilaianADLCtrl",
+            "urlDep": "module/EMR/LembarPenilaianADLCtrl"
+        },
+        {
+            "nameDep": "AsesmenRisikoPerilakuKekerasanCtrl",
+            "urlDep": "module/EMR/AsesmenRisikoPerilakuKekerasanCtrl"
+        },
+        {
+            "nameDep": "PerencanaanImplementasiEvaluasiKeperawatanIGDCtrl",
+            "urlDep": "module/EMR/PerencanaanImplementasiEvaluasiKeperawatanIGDCtrl"
+        },
+        {
+            "nameDep": "AsesmenKeperawatanIGDCtrl",
+            "urlDep": "module/EMR/AsesmenKeperawatanIGDCtrl"
+        },
+        {
+            "nameDep": "AsesmenMedisIGDJiwaCtrl",
+            "urlDep": "module/EMR/AsesmenMedisIGDJiwaCtrl"
         }
+        
     ]
 }

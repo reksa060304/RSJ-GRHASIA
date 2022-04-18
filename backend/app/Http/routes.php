@@ -131,6 +131,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-data-rekapitulasi-pendapatan-daerahtahun', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataRekapitulasiPendapatanDaerahTahunan');
           Route::get('bendaharapenerimaan/get-data-pendapatan-bendahara', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataPendapatanBP');
           Route::get('bendaharapenerimaan/get-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTS');
+          Route::get('bendaharapenerimaan/get-sts-bulanan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSBulanan');
           Route::get('bendaharapenerimaan/get-sts-popup', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPopup');
           Route::get('bendaharapenerimaan/detail-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@detailSTS');
          
@@ -1435,6 +1436,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('radiologi/get-order-pelayanan', 'Radiologi\RadiologiController@getOrderPelayanan');
           Route::post('radiologi/save-pelayanan-pasien', 'Radiologi\RadiologiController@savePelayananPasien');
           Route::post('radiologi/delete-order-pelayanan', 'Radiologi\RadiologiController@deleteOrderPelayanan');
+          Route::get('radiologi/cekstatusorder','Radiologi\RadiologiController@cekstatusorder');
           Route::post('radiologi/delete-order-penunjang', 'Radiologi\RadiologiController@hapusOrderPenunjang');
           Route::post('radiologi/save-hasil-radiologi', 'Radiologi\RadiologiController@saveHasilRadiologi');
           Route::get('radiologi/get-hasil-radiologi', 'Radiologi\RadiologiController@getHasilRadiologi');
@@ -2081,6 +2083,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sdm/pelatihan/hapus-evaluasi-narasumber','SDM\PelatihanController@hapusDataEvaluasiNarasumberKompetensi');
                 Route::post('sdm/pelatihan/save-data-narasumber', 'SDM\PelatihanController@saveDataNarasumber');
                 Route::post('sdm/pelatihan/hapus-data-narasumber', 'SDM\PelatihanController@hapusNarasumber');
+                Route::post('sdm/save-nama-pelatihan', 'SDM\SumberDayaManusiaController@saveNamaPelatihan');
+                Route::post('sdm/save-jenis-pelatihan', 'SDM\SumberDayaManusiaController@saveJenisPelatihan');
+                Route::post('sdm/save-up-pelatihan', 'SDM\SumberDayaManusiaController@saveUPPelatihan');
+                Route::post('sdm/save-sd-pelatihan', 'SDM\SumberDayaManusiaController@saveSDPelatihan');
+                Route::get('sdm/get-nama-pelatihan', 'SDM\SumberDayaManusiaController@getNamaPelatihan');
                 Route::get('sdm/pendidikan/get-mapkategoripendidikan-to-programpendidikan', 'SDM\PelatihanController@getMapKatPendidikanTOprogram');
                 /*END POST*/
             // });

@@ -252,335 +252,183 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataRL31RawatInap(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
-
-        $tanggal = DB::select(DB::raw("
-            select d::date as tgl
-            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
-        "));
-
-        $tanggalmin = DB::select(DB::raw("
-            select min(d::date) as tglmin
-            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
-        "));
-
-        $tanggalmax = DB::select(DB::raw("
-            select max(d::date) as tglmax
-            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
-        "));
-        
-
-        $arr = [];
-        foreach($tanggal as $row)
-        {
-            $arr[] =  $row->tgl;
-        }
-        $arrmin = [];
-        foreach($tanggalmin as $rowmin)
-        {
-            $arrmin[] =  $rowmin->tglmin;
-        }
-        $arrmax = [];
-        foreach($tanggalmax as $rowmax)
-        {
-            $arrmax[] =  $rowmax->tglmax;
-        }   
+        $tglAwal = $request['tglAwal'];   
 
         $main = array("Penyakit Dalam", "Kesehatan Anak", "Obstetri", "Ginekologi", "Bedah", "Bedah Ortopedhi", "Bedah Saraf", "Luka Bakar", "Saraf", "Jiwa", "Psikologi", "Penatalaksanaan Penyalahgunaan NAPZA", "THT", "Mata", "Kulit dan Kelamin", "Kardiologi", "Paru-paru", "Geriatri", "Radioterapi", "Kedokteran Nuklir", "Kusta", "Rehabilitasi Medik", "Isolasi", "ICU", "ICCU", "NICU / PICU", "Umum", "Gigi & Mulut", "Pelayanan Rawat Darurat", "Perinatologi");
 
 
         
-        $pasienawalperhari = DB::select(DB::raw("select tanggal, ruangan, ruanganasal, sum(jumlah) as total, namalengkap, namapemerintahan, namakota, idprofile from (
-            select tanggal, ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+        $pasienawalperhari = DB::select(DB::raw("select tgl, sum(jumlah) as total, ruanganasal from (
+            select tgl, jumlah, ruanganasal from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah, ru1.namaruangan as ruanganasal
             FROM pasiendaftar_t as pd
             INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                            inner join profile_m p on p.id = pd.kdprofile
-            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-            and rpp.objectruanganfk = apd.objectruanganfk
-            and rpp.tglmasuk = apd.tglmasuk
-            and rpp.objectstatuskeluarfk is null
-            and rpp.objectruanganasalfk is null
-            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
-            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
-            where pd.statusenabled = TRUE 
-            and pd.kdprofile = $kdProfile 
-            and cast(rpp.tglmasuk as date) between '$arrmin[0]'::date - interval '1 day' and '$arrmax[0]'::date - interval '1 day'
-                                        and rpp.tglmasuk::date != pd.tglpulang::date
-            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk IN (16)
+            LEFT JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+            where pd.kdprofile = $idProfile 
+            and pd.statusenabled = true
+            and cast(apd.tglmasuk as date) between '$tglAwal-01-01'::date - interval '1 day' and '$tglAwal-12-31'::date - interval '1 day'
+            and apd.tglmasuk::date != pd.tglpulang::date 
+            group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
 
             UNION ALL
 
-            select tanggal,ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+            select tgl, jumlah, ruanganasal from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah, ru1.namaruangan as ruanganasal
             FROM pasiendaftar_t as pd
             INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                            inner join profile_m p on p.id = pd.kdprofile
-            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-            and rpp.objectruanganfk = apd.objectruanganfk
-            and rpp.tglmasuk = apd.tglmasuk
-            and rpp.objectstatuskeluarfk <> 2
-            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
-            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
-            where pd.statusenabled = TRUE 
-            and pd.kdprofile = $kdProfile 
-            and cast(rpp.tglmasuk as date) between '$arrmin[0]'::date - interval '1 day' and '$arrmax[0]'::date - interval '1 day'
-                                        and rpp.tglmasuk::date != pd.tglpulang::date
-            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk IN (16)
+            inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk IN (16)
+            where pd.kdprofile = $idProfile 
+            and pd.statusenabled = true
+            and cast(apd.tglmasuk as date) between '$tglAwal-01-01'::date - interval '1 day' and '$tglAwal-12-31'::date - interval '1 day'
+            and apd.tglmasuk::date != pd.tglpulang::date 
+            group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
             ) as y 
-            group by tanggal, ruangan, ruanganasal, namalengkap, namapemerintahan, namakota, idprofile"));
+            group by tgl, ruanganasal"));
 
-        $pasienmasuk = DB::select(DB::raw("select tanggal, ruangan, ruanganasal, sum(jumlah) as total, namalengkap, namapemerintahan, namakota, idprofile from (
-            select tanggal, ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
-            FROM pasiendaftar_t as pd
-            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                            inner join profile_m p on p.id = pd.kdprofile
-            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-            and rpp.objectruanganfk = apd.objectruanganfk
-            and rpp.tglmasuk = apd.tglmasuk
-            and rpp.objectstatuskeluarfk is null
-            and rpp.objectruanganasalfk is null
-            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
-            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
-            where pd.statusenabled = TRUE 
             
-                            and pd.kdprofile = $kdProfile  
-                            and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
-                            --and ru1.namaruangan is not null
-            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
-            ) as x
 
-            UNION ALL
-
-            select tanggal,ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
-            FROM pasiendaftar_t as pd
-            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                            inner join profile_m p on p.id = pd.kdprofile
-            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-            and rpp.objectruanganfk = apd.objectruanganfk
-            and rpp.tglmasuk = apd.tglmasuk
-            and rpp.objectstatuskeluarfk <> 2
-            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
-            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
-            where pd.statusenabled = TRUE 
-                            and pd.kdprofile = $kdProfile 
-                            and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
-                            --and ru1.namaruangan is not null
-            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
-            ) as x
-            ) as y 
-            group by tanggal, ruangan, ruanganasal, namalengkap, namapemerintahan, namakota, idprofile"));
+        $pasienmasuk = DB::select(DB::raw("select tgl, jumlah total, ruanganasal from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah, ru1.namaruangan ruanganasal
+        FROM pasiendaftar_t as pd
+        INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+        INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk IN (16)
+        LEFT JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and (ru1.objectdepartemenfk NOT IN (16) or apd.objectruanganasalfk is null)
+        where pd.kdprofile = $idProfile 
+        and pd.statusenabled = true
+        and cast(apd.tglmasuk as date) between '$tglAwal-01-01' and '$tglAwal-12-31' 
+        group by apd.tglmasuk::date, ru1.namaruangan
+        ) as x"));
 
         
-            
-        $pasienawal = DB::select(DB::raw("select tanggal, ruangan, ruanganasal, sum(jumlah) as total, namalengkap, namapemerintahan, namakota, idprofile from (
-            select tanggal, ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+        $pasienawal = DB::select(DB::raw("select tgl, sum(jumlah) as total, ruanganasal from (
+            select tgl, jumlah, ruanganasal from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah, ru1.namaruangan as ruanganasal
             FROM pasiendaftar_t as pd
             INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                            inner join profile_m p on p.id = pd.kdprofile
-            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-            and rpp.objectruanganfk = apd.objectruanganfk
-            and rpp.tglmasuk = apd.tglmasuk
-            and rpp.objectstatuskeluarfk is null
-            and rpp.objectruanganasalfk is null
-            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
-            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
-            where pd.statusenabled = TRUE 
-            and pd.kdprofile = $kdProfile 
-            and cast(apd.tglmasuk as date) = '$arrmin[0]'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$arrmin[0]'::date
-            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk IN (16)
+            LEFT JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+            where pd.kdprofile = $idProfile 
+            and pd.statusenabled = true
+            and cast(apd.tglmasuk as date) = '$tglAwal-01-01'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$tglAwal-01-01'::date 
+            group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
 
             UNION ALL
 
-            select tanggal,ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+            select tgl, jumlah, ruanganasal from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah, ru1.namaruangan as ruanganasal
             FROM pasiendaftar_t as pd
             INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                            inner join profile_m p on p.id = pd.kdprofile
-            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-            and rpp.objectruanganfk = apd.objectruanganfk
-            and rpp.tglmasuk = apd.tglmasuk
-            and rpp.objectstatuskeluarfk <> 2
-            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
-            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
-            where pd.statusenabled = TRUE 
-            and pd.kdprofile = $kdProfile 
-            and cast(apd.tglmasuk as date) = '$arrmin[0]'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$arrmin[0]'::date
-            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk IN (16)
+            inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk IN (16)
+            where pd.kdprofile = $idProfile 
+            and pd.statusenabled = true
+            and cast(apd.tglmasuk as date) = '$tglAwal-01-01'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$tglAwal-01-01'::date
+            group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
             ) as y 
-            group by tanggal, ruangan, ruanganasal, namalengkap, namapemerintahan, namakota, idprofile"));
+            group by tgl, ruanganasal"));
 
 
             
-        $pasienakhir = DB::select(DB::raw("select tanggal, ruangan, ruanganasal, sum(jumlah) as total, namalengkap, namapemerintahan, namakota, idprofile from (
-            select tanggal, ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+        $pasienakhir = DB::select(DB::raw("select tgl, sum(jumlah) as total, ruanganasal from (
+            select tgl, jumlah, ruanganasal from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah, ru1.namaruangan as ruanganasal
             FROM pasiendaftar_t as pd
             INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                            inner join profile_m p on p.id = pd.kdprofile
-            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-            and rpp.objectruanganfk = apd.objectruanganfk
-            and rpp.tglmasuk = apd.tglmasuk
-            and rpp.objectstatuskeluarfk is null
-            and rpp.objectruanganasalfk is null
-            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
-            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
-            where pd.statusenabled = TRUE 
-            and pd.kdprofile = $kdProfile 
-                            and cast(apd.tglmasuk as date) = '$arrmax[0]'::date
-            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk IN (16)
+            LEFT JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+            where pd.kdprofile = $idProfile 
+            and pd.statusenabled = true
+            and cast(apd.tglmasuk as date) = '$tglAwal-12-31'::date
+            group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
 
             UNION ALL
 
-            select tanggal,ruangan, ruanganasal, jumlah, namalengkap, namapemerintahan, namakota, idprofile from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, count(apd.tglmasuk) as jumlah, p.namalengkap, p.namapemerintahan, p.namakota, p.id as idprofile
+            select tgl, jumlah, ruanganasal from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah, ru1.namaruangan as ruanganasal
             FROM pasiendaftar_t as pd
             INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                            inner join profile_m p on p.id = pd.kdprofile
-            INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-            and rpp.objectruanganfk = apd.objectruanganfk
-            and rpp.tglmasuk = apd.tglmasuk
-            and rpp.objectstatuskeluarfk <> 2
-            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-            INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-            INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
-            INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-            LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
-            where pd.statusenabled = TRUE 
-            and pd.kdprofile = $kdProfile 
-                            and cast(apd.tglmasuk as date) = '$arrmax[0]'::date
-            group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, p.namalengkap, p.namapemerintahan, p.namakota, p.id
+            INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk IN (16)
+            inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk IN (16)
+            where pd.kdprofile = $idProfile 
+            and pd.statusenabled = true
+            and cast(apd.tglmasuk as date) = '$tglAwal-12-31'::date
+            group by apd.tglmasuk::date, ru1.namaruangan
             ) as x
             ) as y 
-            group by tanggal, ruangan, ruanganasal, namalengkap, namapemerintahan, namakota, idprofile"));
+            group by tgl, ruanganasal"));
+            
 
-
-        $lamahari = DB::select(DB::raw("select sum(y.totallama) as total, y.ruangan, y.ruanganasal from(
-            select x.tanggalpulang, sum(x.lamadirawat) as totallama, x.ruangan, x.ruanganasal from(
+        $lamahari = DB::select(DB::raw("select sum(y.totallama) as totalfix, y.ruanganasal from(
+            select x.tanggalpulang, sum(x.lamadirawat) as totallama, x.ruanganasal from(
             with cte as (
                 select pdt.norec, min(apdt.tglmasuk::date) tglmasuk from pasiendaftar_t as pdt
                 inner join antrianpasiendiperiksa_t as apdt on apdt.noregistrasifk = pdt.norec
                 inner join ruangan_m as rum on rum.id = apdt.objectruanganfk
                 where rum.objectdepartemenfk = 16
                 and pdt.statusenabled = TRUE
-                and pdt.kdprofile = $kdProfile
-                and pdt.tglpulang::date between '$arrmin[0]' and '$arrmax[0]'
-                group by pdt.norec
+                and pdt.kdprofile = 30
+                and pdt.tglpulang::date between '$tglAwal-01-01' and '$tglAwal-12-31'
+                group by pdt.norec, apdt.objectruanganfk
             )
             
-            select pm.namapasien, pd.tglpulang::date as tanggalpulang, cte.tglmasuk as tanggalmasuk, ru.namaruangan ruangan, ru1.namaruangan ruanganasal,
+            select pd.tglpulang::date as tanggalpulang, cte.tglmasuk as tanggalmasuk, ru.namaruangan as ruanganasal,
             case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  pd.tglpulang::date-cte.tglmasuk end as lamadirawat
                         FROM pasiendaftar_t as pd
-                        INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                        INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-                            and apd.objectruanganfk = rpp.objectruanganfk
-                            and apd.tglmasuk = rpp.tglpindah
-                            and rpp.objectstatuskeluarfk = 1
-                                    INNER JOIN cte on cte.norec = pd.norec
-                        INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-                        INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-                        INNER JOIN kelas_m as kls on kls.id = rpp.objectkelasfk
-                        inner JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-                                                    inner JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk
-                        WHERE pd.kdprofile = $kdProfile and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
-                                    group by pd.tglpulang::date, pm.namapasien, cte.tglmasuk, ru.namaruangan, ru1.namaruangan 
-                                    order by pd.tglpulang::date) 
-                            as x group by x.tanggalpulang, x.ruangan, x.ruanganasal) 
-                            as y group by y.ruangan, y.ruanganasal"));
+                        INNER JOIN cte on cte.norec = pd.norec
+                        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+                        WHERE pd.kdprofile = 30 and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
+                                    group by pd.tglpulang::date, cte.tglmasuk, ru.namaruangan 
+                                    order by pd.tglpulang::date) as x group by x.tanggalpulang, x.ruanganasal) as y group by y.ruanganasal"));
 
 
-            $hidup = DB::select(DB::raw("select pd.tglpulang::date as tanggal, count(pm.namapasien) total, ru.namaruangan ruangan, ru1.namaruangan ruanganasal
+            $hidup = DB::select(DB::raw("select pd.tglpulang::date as tgl, count(pm.namapasien) jumlah, ru.namaruangan as ruanganasal
             FROM pasiendaftar_t as pd
             INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
             INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
-						INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec and rpp.objectruanganfk = pd.objectruanganlastfk
-						inner join ruangan_m ru1 on ru1.id = rpp.objectruanganasalfk
-            where pd.kdprofile = $kdProfile and pd.statusenabled = true and ru1.statusenabled = true
-						and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
+            where pd.kdprofile = $kdProfile and pd.statusenabled = true
+						and cast(pd.tglpulang as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
 						and ru.objectdepartemenfk = 16
-						and pd.objectstatuskeluarfk = 1
                         and pd.tglpulang is not null
-						group by pd.tglpulang::date, ru.namaruangan, ru.namaruangan, ru1.namaruangan"));
+						group by pd.tglpulang::date, ru.namaruangan"));
 
 
-            $meninggal = DB::select(DB::raw("select pd.tglmeninggal::date as tanggal, count(pm.namapasien) jumlah, ru.namaruangan ruangan, ru1.namaruangan ruanganasal
+            $meninggal = DB::select(DB::raw("select pd.tglmeninggal::date as tgl, count(pm.namapasien) jumlah, ru.namaruangan as ruanganasal
             FROM pasiendaftar_t as pd
             INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-            INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
-						INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec and rpp.objectruanganfk = pd.objectruanganlastfk
-						inner join ruangan_m ru1 on ru1.id = rpp.objectruanganasalfk
-						inner join kondisipasien_m kps on kps.id = pd.objectkondisipasienfk
-            where pd.kdprofile = $kdProfile and pd.statusenabled = true and ru1.statusenabled = true
-						and cast(pd.tglmeninggal as date) between '$arrmin[0]' and '$arrmax[0]'
-						and ru.objectdepartemenfk = 16
-						group by pd.tglmeninggal::date, ru.namaruangan, ru1.namaruangan"));
+			inner join kondisipasien_m kps on kps.id = pd.objectkondisipasienfk
+            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+            where pd.kdprofile = $kdProfile and pd.statusenabled = true
+						and cast(pd.tglmeninggal as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
+                        and ru.objectdepartemenfk = 16
+						group by pd.tglmeninggal::date, ru.namaruangan"));
 
 
-            $kelas = DB::select(DB::raw("select tanggal, ruangan, idruangan, ruanganasal, objectkelasfk, sum(jumlah) as total from (
-                select tanggal, ruangan, ruanganasal, objectkelasfk, idruangan, jumlah from (select apd.tglmasuk::date as tanggal, ru.namaruangan ruangan, rpp.objectkelasfk, ru1.namaruangan ruanganasal, ru.id idruangan, count(apd.tglmasuk) as jumlah
+            $kelas = DB::select(DB::raw("select tgl, sum(jumlah) as total, ruanganasal, objectkelasfk from (
+                select tgl, jumlah, ruanganasal, objectkelasfk from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah, ru1.namaruangan as ruanganasal, apd.objectkelasfk
                 FROM pasiendaftar_t as pd
                 INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-                and rpp.objectruanganfk = apd.objectruanganfk
-                and rpp.tglmasuk = apd.tglmasuk
-                and rpp.objectstatuskeluarfk is null
-                and rpp.objectruanganasalfk is null
-                INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-                INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-                INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
-                INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-                LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
-                where pd.statusenabled = TRUE 
-								and pd.kdprofile = $kdProfile  
-								and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
-                group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan,rpp.objectkelasfk, ru.id
+                INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk IN (16)
+                LEFT JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
+                where pd.kdprofile = $idProfile 
+                and pd.statusenabled = true
+                and cast(apd.tglmasuk as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
+                group by apd.tglmasuk::date, ru1.namaruangan, apd.objectkelasfk
                 ) as x
-
+    
                 UNION ALL
-
-                select tanggal, ruangan, ruanganasal, objectkelasfk, idruangan, jumlah from (select apd.tglmasuk::date as tanggal, rpp.objectkelasfk, ru.namaruangan ruangan, ru1.namaruangan ruanganasal, ru.id idruangan, count(apd.tglmasuk) as jumlah
+    
+                select tgl, jumlah, ruanganasal, objectkelasfk from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah, ru1.namaruangan as ruanganasal, apd.objectkelasfk
                 FROM pasiendaftar_t as pd
                 INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-								inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-								inner  join produk_m pr on pr.id=pp.produkfk
-                INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-                and rpp.objectruanganfk = apd.objectruanganfk
-                and rpp.tglmasuk = apd.tglmasuk
-                and rpp.objectstatuskeluarfk <> 2
-                INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-                INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-                INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
-                INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-                LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
-                where pd.statusenabled = TRUE 
-								and pd.kdprofile = $kdProfile 
-								and cast(apd.tglmasuk as date) between '$arrmin[0]' and '$arrmax[0]'
-                group by apd.tglmasuk::date, ru.namaruangan, ru1.namaruangan, rpp.objectkelasfk, ru.id
-                ) as x
-            ) as y 
-            group by tanggal, ruangan, ruanganasal, objectkelasfk, idruangan"));
+                INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk IN (16)
+                inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk IN (16)
+                where pd.kdprofile = $idProfile 
+                and pd.statusenabled = true
+                and cast(apd.tglmasuk as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
+                group by apd.tglmasuk::date, ru1.namaruangan, apd.objectkelasfk
+                ) as x group by tgl, ruanganasal, objectkelasfk, x.jumlah
+                ) as y 
+                group by tgl, ruanganasal, objectkelasfk"));
 
         $profile = DB::select(DB::raw("select namakota, namalengkap, namapemerintahan, id idprofile
         from profile_m where id = $kdProfile"));
@@ -693,7 +541,7 @@ class LaporanRekamMedisController extends   ApiController
                         $jumlahsatu += $kl->total;
                     } else if($row == "Jiwa" && $kl->ruanganasal == "UGD (Pasien Jiwa)" && $kl->objectkelasfk == 6){
                         $jumlahkhusus += $kl->total;
-                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $kl->objectkelasfk == 6){
+                    } else if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $kl->objectkelasfk == 6 && $kl->ruanganasal == "NAPZA"){
                         $jumlahkhusus += $kl->total;
                     }
                 }
@@ -3356,7 +3204,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getLaporanRL4aRawatInap(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         $data10 = [];
 
         $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
@@ -3365,28 +3212,25 @@ class LaporanRekamMedisController extends   ApiController
         DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
         ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
         from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
-        inner join pasien_m as ps on ps.id = pd.nocmfk
-        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
-        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+		inner join pasien_m as ps on ps.id = pd.nocmfk
+		inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+		inner join ruangan_m ru on ru.id = app.objectruanganfk
+		inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+		inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
         inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+		inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
         inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
         inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
         inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+		left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
         and ru.objectdepartemenfk = 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 1 and 507
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
         order by ddtd.id"));
 
         $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
@@ -3581,7 +3425,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getLaporanRL4aRawatInapSebabLuar(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         $data10 = [];
 
         $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
@@ -3590,28 +3433,25 @@ class LaporanRekamMedisController extends   ApiController
         DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
         ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
         from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
-        inner join pasien_m as ps on ps.id = pd.nocmfk
-        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
-        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+		inner join pasien_m as ps on ps.id = pd.nocmfk
+		inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+		inner join ruangan_m ru on ru.id = app.objectruanganfk
+		inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+		inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
         inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+		inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
         inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
         inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
         inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+		left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
         and ru.objectdepartemenfk = 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 508 and 537
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
         order by ddtd.id"));
 
         $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
@@ -3807,7 +3647,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getLaporanRL4b(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         $data10 = [];
 
         $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
@@ -3816,28 +3655,25 @@ class LaporanRekamMedisController extends   ApiController
         DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
         ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
         from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
-        inner join pasien_m as ps on ps.id = pd.nocmfk
-        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
-        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+		inner join pasien_m as ps on ps.id = pd.nocmfk
+		inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+		inner join ruangan_m ru on ru.id = app.objectruanganfk
+		inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+		inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
         inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+		inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
         inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
         inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
         inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+		left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
-        and ru.objectdepartemenfk != 16
+        and ru.objectdepartemenfk <> 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 1 and 507
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
         order by ddtd.id"));
 
         $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
@@ -4032,7 +3868,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getLaporanRL4bSebabLuar(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         $data10 = [];
 
         $data = DB::select(DB::raw("select ddtd.id, pd.tglregistrasi,app.statuspenyakit,ddtd.nodtd,ddtd.nodaftarterperinci, lower(ddtd.golongansebabpenyakit) as golongansebabpenyakit, ddp.objectjenisdiagnosafk, jd.jenisdiagnosa, pd.tglpulang,
@@ -4041,28 +3876,25 @@ class LaporanRekamMedisController extends   ApiController
         DATE_PART('day', pd.tglregistrasi::timestamp - ps.tgllahir::timestamp) as umurday,
         ps.objectjeniskelaminfk,pd.objectstatuskeluarfk,sk.statuskeluar, sp.statuspulang
         from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
-        inner join pasien_m as ps on ps.id = pd.nocmfk
-        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
-        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+		inner join pasien_m as ps on ps.id = pd.nocmfk
+		inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+		inner join ruangan_m ru on ru.id = app.objectruanganfk
+		inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+		inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
         inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+		inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
         inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
         inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
         inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+		left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
-        and ru.objectdepartemenfk != 16
+        and ru.objectdepartemenfk <> 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 508 and 537
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
         order by ddtd.id"));
 
         $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
@@ -4257,7 +4089,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataLaporanRL51(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
 
 
         $data = DB::select(DB::raw("select *, (case when x.statuspasienfix = 'LAMA' THEN 'Pengunjung Lama' else 'Pengunjung Baru' end) as statuspasienfixbanget from(
@@ -4268,7 +4099,7 @@ class LaporanRekamMedisController extends   ApiController
                     inner join profile_m pr on pr.id = pd.kdprofile
                     inner join pasien_m as pm on pm.id = pd.nocmfk
                     where pd.statusenabled = true and pd.kdprofile = $kdProfile
-                    and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                    and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
                     group by to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'), (case when pd.statuspasien is null then 'LAMA' else pd.statuspasien end), pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
                     order by to_char(pd.tglregistrasi, 'YYYY'), to_char(pd.tglregistrasi, 'mm')) as x"));
 
@@ -4281,7 +4112,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataLaporanRL52(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         $bulan = [];
 
         $data = DB::select(DB::raw("select pd.tglregistrasi::date, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ') as month, ru.namaruangan, ru.id, count(apd.objectruanganfk) jumlahkunjungan, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id as idprofile
@@ -4293,8 +4123,8 @@ class LaporanRekamMedisController extends   ApiController
         inner join departemen_m dp on dp.id = ru.objectdepartemenfk
         inner join profile_m pr on pr.id = pd.kdprofile
         where pd.statusenabled = true and pd.kdprofile = $kdProfile
-        and ru.objectdepartemenfk != 16
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and ru.objectdepartemenfk <> 16
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
         group by pd.tglregistrasi::date, ru.namaruangan, ru.id, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ')
         order by pd.tglregistrasi::date"));
 
@@ -4305,8 +4135,8 @@ class LaporanRekamMedisController extends   ApiController
                 inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
                 inner join ruangan_m ru on ru.id = apd.objectruanganfk
                 where pd.statusenabled = true and pd.kdprofile = $kdProfile
-                and ru.objectdepartemenfk != 16
-                and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                and ru.objectdepartemenfk <> 16
+                and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
                         group by rtrim(to_char(pd.tglregistrasi, 'Month'), ' '), to_char(pd.tglregistrasi, 'mm')
                 order by idmonth"));
 
@@ -4465,7 +4295,6 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataLaporanRL53(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
         // $kdDeptRanapAll = explode(',',$this->settingDataFixed('KdDepartemenRIAll',$kdProfile));
         // $kdDepartemenRanapAll = [];
         // foreach ($kdDeptRanapAll as $items){
@@ -4483,30 +4312,27 @@ class LaporanRekamMedisController extends   ApiController
                 (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end) as jumlahmp,
                 ((case when jk.id = 1 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 1 and sk.id = 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end)) as totalall,
                 pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id idprofile
-        from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
+                from pasiendaftar_t as pd
+        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
         inner join pasien_m as ps on ps.id = pd.nocmfk
         inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
-                inner join profile_m pr on pr.id = pd.kdprofile
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
+        inner join ruangan_m ru on ru.id = app.objectruanganfk
+        inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+        inner join profile_m pr on pr.id = pd.kdprofile
         inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
         inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+		inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
         inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
         inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
         inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+		left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+        left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
         and ru.objectdepartemenfk = 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 1 and 537
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
                 group by ddtd.id, to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'),ddtd.nodtd, dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
                 order by ddtd.id
         ) as x
@@ -4524,49 +4350,44 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataLaporanRL54(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
 
 
         $data = DB::select(DB::raw("select x.id, x.month, x.idmonth, x.year,x.nodtd,x.nodaftarterperinci, x.golongansebabpenyakit, 
-        sum(x.jumlahhml) jumlahhml, sum(x.jumlahhmp) jumlahhmp, sum(x.jumlahml) jumlahml, sum(x.jumlahmp) jumlahmp, sum(x.totalall) totalall,
+        sum(x.jumlahbarul) jumlahbarul, sum(x.jumlahbarup) jumlahbarup, sum(x.jumlahbaru) jumlahbaru, sum(x.jumlahkunjungan) jumlahkunjungan,
         x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile 
         from(
                 select ddtd.id, to_char(pd.tglregistrasi, 'Month') as month, to_char(pd.tglregistrasi, 'mm') as idmonth, to_char(pd.tglregistrasi, 'YYYY') as year,ddtd.nodtd,dm.kddiagnosa as nodaftarterperinci, dm.namadiagnosa as golongansebabpenyakit,
-                (case when jk.id = 1 and sk.id != 5  then count(ddtd.nodtd) else 0 end) as jumlahhml,
-                (case when jk.id = 2 and sk.id != 5  then count(ddtd.nodtd) else 0 end) as jumlahhmp,
-                (case when jk.id = 1 and sk.id = 5 then count(ddtd.nodtd) else 0 end) as jumlahml,
-                (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end) as jumlahmp,
-                ((case when jk.id = 1 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id != 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 1 and sk.id = 5 then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and sk.id = 5 then count(ddtd.nodtd) else 0 end)) as totalall,
+                (case when jk.id = 1 and dp.iskasusbaru = true  then count(ddtd.nodtd) else 0 end) as jumlahbarul,
+                (case when jk.id = 2 and dp.iskasusbaru = true  then count(ddtd.nodtd) else 0 end) as jumlahbarup,
+                ((case when jk.id = 1 and dp.iskasusbaru = true  then count(ddtd.nodtd) else 0 end) + (case when jk.id = 2 and dp.iskasusbaru = true  then count(ddtd.nodtd) else 0 end)) as jumlahbaru,
+                count(ddtd.nodtd) as jumlahkunjungan,
                 pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id idprofile
-        from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec and pd.objectruanganlastfk=app.objectruanganfk
-        inner join pasien_m as ps on ps.id = pd.nocmfk
-        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-        inner join departemen_m as dpm on dpm.id = ru.objectdepartemenfk
+                from pasiendaftar_t as pd
+                inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+                inner join pasien_m as ps on ps.id = pd.nocmfk
+                inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+                inner join ruangan_m ru on ru.id = app.objectruanganfk
+                inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
                 inner join profile_m pr on pr.id = pd.kdprofile
-        inner join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        inner join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
-        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
-        inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-        inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
-        inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
-        inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
-        inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
-        --inner join diagnosabantuan_m as dbn on dbn.kddiagnosa = dm.kddiagnosa
-        --inner join diagnosadtd_m as ddtd on ddtd.nodtd = dbn.nodtd
-        --inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+                inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+                inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
+                inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+                inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
+                inner join mappingrlmorbiditas_m as mpr on mpr.kddiagnosa = dm.kddiagnosa
+                inner join diagnosadtd_m as ddtd on ddtd.nodtd = mpr.nodtd
+                left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+                left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
-        and ru.objectdepartemenfk != 16
+        and ru.objectdepartemenfk <> 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 1 and 537
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
-                group by ddtd.id, to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'),ddtd.nodtd, dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
+        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
+                group by ddtd.id, to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'),ddtd.nodtd, dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, dp.iskasusbaru
                 order by ddtd.id
         ) as x
         group by x.id, x.month, x.idmonth, x.year,x.nodtd,x.nodaftarterperinci, x.golongansebabpenyakit, x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile
-        order by totalall desc limit 10;"));
+        order by jumlahbaru desc limit 10;"));
         
         $result = array(
             'data' => $data,

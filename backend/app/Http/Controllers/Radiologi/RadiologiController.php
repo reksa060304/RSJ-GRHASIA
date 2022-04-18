@@ -1670,6 +1670,41 @@ class RadiologiController extends ApiController
         );
         return $this->respond($result);
     }
+    public function cekstatusorder(Request $request)
+    {
+        
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        
+        $userlogin = DB::select(DB::raw("
+            SELECT
+        lg.tanggal,
+        log.namauser,
+        pg.namalengkap,
+        lg.keterangan
+    FROM
+        logginguser_t lg
+        INNER JOIN loginuser_s log on log.id = lg.objectloginuserfk
+        INNER JOIN pegawai_m pg on pg.id= log.objectpegawaifk
+    inner join strukorder_t so on so.norec = lg.noreff
+    where so.norec ilike '". $request['norec_so']. "' and lg.kdprofile=$idProfile and log.kdprofile=$idProfile
+        "));
+
+        $cekstatus = StrukOrder::select('norec','statusorder')
+        ->where('norec', $request['norec_so'])
+        ->where('kdprofile', $idProfile)->get();
+
+
+        $result = array(
+            'cekstatus' => $cekstatus,
+            'userlogin' => $userlogin,
+            // 'jeniskelamin' => $jeniskelamin,
+            'message' => 'faz@epic',
+        );
+        return $this->respond($result);
+    }
+
+
     public function savePelayananPasien(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

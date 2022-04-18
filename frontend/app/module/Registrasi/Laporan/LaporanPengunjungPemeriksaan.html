@@ -60,19 +60,33 @@
 </style>
 <c-panel item="item" header="'Laporan Kunjungan'" disabled>
 </c-panel>
-<div class="grid_12">
+<div class="grid_12" >
     <div class="grid_2" style="margin-top:5px">
-        <label c-label c-label-text="namaRuangan" real></label>
-        <input style="width: 100%; " kendo-combo-box k-ng-model="item.ruangan" k-data-text-field=" 'namaruangan' "
-            k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listRuangans " />
+        <label c-label item="item" c-label-text="Departement"></label>
+        <input style="width: 100%;" kendo-combo-box k-ng-model="item.departemen" k-data-text-field="'departemen'"
+            k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartement"
+            k-on-change="getIsiComboRuangan()" />
     </div>
     <div class="grid_2" style="margin-top:5px">
+        <label c-label c-label-text="namaRuangan" real></label>
+        <input style="width: 100%; " kendo-combo-box k-ng-model="item.ruangan" k-data-text-field=" 'ruangan' "
+            k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listRuangans " />
+    </div>
+    <!-- <div class="grid_2" style="margin-top:5px">
         <div class="grid_12">
             <label c-label item="item" c-label-text="Dokter"></label>
         </div>
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.dokter" k-data-text-field=" 'namalengkap' "
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listDokter " />
-    </div>    
+    </div>     -->
+    <div class="grid_2" style="margin-top:5px">
+        <label c-label c-label-text="Kelompok" real></label>
+        <input style="width: 100%; " kendo-combo-box k-ng-model="item.kelompokpasien" k-data-text-field=" 'kelompokpasien' "
+            k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listKelompokPasien " />
+    </div>
+
+
+
     <div class="grid_4" style="margin-top:5px">
         <div class="grid_12">
             <label c-label item="item" c-label-text="Periode Registrasi"></label>
@@ -111,32 +125,30 @@
             <p>Daftar Pengunjung</p>
         </div>
         <div class="clear"></div> -->
-        
+
         <md-content>
             <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">
 
-                
-                <md-tab label="Laporan Kunjungan rajal" >
+
+                <md-tab label="Laporan Kunjungan rajal">
                     <md-content class="md-padding">
                         <div class="grid_12" style="margin-top: 10px;">
                             <div class="grid_12 borderBox">
                                 <kendo-grid id="kGrid" data-source="dataSourceGridv2" options="columnGridv2"
-                                    k-selectable="'row'" k-sortable="'true'"
-                                    k-resizable="'true'" k-ng-model="dataPasienSelected"
-                                    ng-click="klikGrid(dataPasienSelected)">
+                                    k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                    k-ng-model="dataPasienSelected" ng-click="klikGrid(dataPasienSelected)">
                                 </kendo-grid>
                             </div>
                         </div>
                     </md-content>
                 </md-tab>
-                <md-tab label="laporan kunjungan ranap" >
+                <md-tab label="laporan kunjungan ranap">
                     <md-content class="md-padding">
                         <div class="grid_12" style="margin-top: 10px;">
                             <div class="grid_12 borderBox">
-                                <kendo-grid id="kGrid" data-source="dataSourceGridranap"
-                                    options="columnGridranap" k-selectable="'row'" k-sortable="'true'"
-                                    k-resizable="'true'" k-ng-model="dataPasienSelected"
-                                    ng-click="klikGrid(dataPasienSelected)">
+                                <kendo-grid id="kGrid" data-source="dataSourceGridranap" options="columnGridranap"
+                                    k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                    k-ng-model="dataPasienSelected" ng-click="klikGrid(dataPasienSelected)">
                                 </kendo-grid>
                             </div>
                         </div>
@@ -146,9 +158,10 @@
                     <md-content class="md-padding">
                         <div class="grid_12" style="margin-top: 10px;">
                             <div class="grid_12 borderBox">
-                                <kendo-grid id="kGrid" k-groupable="'true'" data-source="dataSourceGrid" options="columnGrid"
-                                    k-pageable="'true'" k-sortable="'true'" k-resizable="'true'" k-selectable="'row'"
-                                    k-ng-model="dataPasienSelected" ng-click="klikGrid(dataPasienSelected)"></kendo-grid>
+                                <kendo-grid id="kGrid" k-groupable="'true'" data-source="dataSourceGrid"
+                                    options="columnGrid" k-pageable="'true'" k-sortable="'true'" k-resizable="'true'"
+                                    k-selectable="'row'" k-ng-model="dataPasienSelected"
+                                    ng-click="klikGrid(dataPasienSelected)"></kendo-grid>
                             </div>
                         </div>
                     </md-content>

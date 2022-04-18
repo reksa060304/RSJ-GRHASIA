@@ -17133,5 +17133,139 @@
       "define": "MedifirstService"
     }
   ]
+},
+{
+  "name": "RekamMedis.AsesmenMedis.PenilaianRisikoJatuhPasienJiwa",
+  "url": "/PenilaianRisikoJatuhPasienJiwa",
+  "templateurl": "module/EMR/PenilaianRisikoJatuhPasienJiwa.html",
+  "controller": "PenilaianRisikoJatuhPasienJiwaCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    },
+    {
+      "define": "RekamMedisCtrl"
+    }
+  ]
+},
+{
+  "name": "RekamMedis.AsesmenMedis.AsesmenKeperawatanIGD",
+  "url": "/AsesmenKeperawatanIGD",
+  "templateurl": "module/EMR/AsesmenKeperawatanIGD.html",
+  "controller": "AsesmenKeperawatanIGDCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    },
+    {
+      "define": "RekamMedisCtrl"
+    }
+  ]
+},
+{
+  "name": "RekamMedis.AsesmenMedis.AsesmenMedisIGDJiwa",
+  "url": "/AsesmenMedisIGDJiwa",
+  "templateurl": "module/EMR/AsesmenMedisIGDJiwa.html",
+  "controller": "AsesmenMedisIGDJiwaCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    },
+    {
+      "define": "RekamMedisCtrl"
+    }
+  ]
+},
+{
+  "name": "RekamMedis.AsesmenMedis.LembarPenilaianADL",
+  "url": "/LembarPenilaianADL",
+  "templateurl": "module/EMR/LembarPenilaianADL.html",
+  "controller": "LembarPenilaianADLCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    },
+    {
+      "define": "RekamMedisCtrl"
+    }
+  ]
+},
+{
+  "name": "RekamMedis.AsesmenMedis.PerencanaanImplementasiEvaluasiKeperawatanIGD",
+  "url": "/PerencanaanImplementasiEvaluasiKeperawatanIGD",
+  "templateurl": "module/EMR/PerencanaanImplementasiEvaluasiKeperawatanIGD.html",
+  "controller": "PerencanaanImplementasiEvaluasiKeperawatanIGDCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    },
+    {
+      "define": "RekamMedisCtrl"
+    }
+  ]
+},
+{
+  "name": "RekamMedis.AsesmenMedis.AsesmenRisikoPerilakuKekerasan",
+  "url": "/AsesmenRisikoPerilakuKekerasan",
+  "templateurl": "module/EMR/AsesmenRisikoPerilakuKekerasan.html",
+  "controller": "AsesmenRisikoPerilakuKekerasanCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    },
+    {
+      "define": "RekamMedisCtrl"
+    }
+]
 }
-] 
+]

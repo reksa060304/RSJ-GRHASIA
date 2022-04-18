@@ -1,0 +1,37 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+</style>
+<div class="panel panel-default container_12" style="background-color:transparant">
+    <div class="panel-heading"><label class='title' c-label item="item" c-label-text="Master Unit Penginput"
+            real></label>
+    </div>
+    <div class="panel-body">
+        <div class="panel-body">
+            <div class="grid_12">
+                <div class="grid_2">
+                    <label c-label item="item" c-label-text="Unit Penginput"></label>
+                    <input c-text-box type="text" filter="'varchar'" class="k-textbox" ng-model="item.unitpenginput" autocomplete="off" />
+                </div>
+                <div class="grid_1">
+                    <label c-label c-label-text=""></label>
+                    <button class="k-button"
+                        ng-click="save()"><span class="k-icon k-update"></span>Simpan</button>
+                </div>
+            </div>
+        </div>
+        <div class="grid_12">
+            <div id="unitpenginput" kendo-grid options="unitpenginput"></div>
+        </div>
+
+    </div>
+</div>

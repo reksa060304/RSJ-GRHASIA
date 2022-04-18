@@ -210,7 +210,7 @@
 				<div class="grid_6">
 					<div class="grid_12">
 						<div class="panel panel-default panel-white">
-							<div class="panel-heading-white"><span class="title" c-translate>Rekening Bank</span></div>
+							<div class="panel-heading-white"><span class="title" c-translate>Rekening Bank 1</span></div>
 							<div class="panel-body">
 								<div class="grid_6">
 									<div class="grid_12">
@@ -237,6 +237,41 @@
 									<div class="grid_12">
 										<input c-text-box type="input" placeholder="Nama Bank Rekening"
 											filter="'varchar'" class="k-textbox" ng-model="item.bankRekeningNama" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				
+					<div class="grid_12" style="margin-top: 10px;">
+						<div class="panel panel-default panel-white">
+							<div class="panel-heading-white"><span class="title" c-translate>Rekening Bank 2</span></div>
+							<div class="panel-body">
+								<div class="grid_6">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="NoRekening"></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" placeholder="No Rekening" filter="'varchar'" class="k-textbox"
+											ng-model="item.bankRekeningNomor2" />
+									</div>
+								</div>
+								<div class="grid_6">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="NamaRekening"></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" placeholder="Nama Pemilik Rekening" filter="'varchar'"
+											class="k-textbox" ng-model="item.bankRekeningAtasNama2" />
+									</div>
+								</div>
+								<div class="grid_12">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="NamaBank"></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" placeholder="Nama Bank Rekening" filter="'varchar'"
+											class="k-textbox" ng-model="item.bankRekeningNama2" />
 									</div>
 								</div>
 							</div>
@@ -775,6 +810,70 @@
 								<div class="grid_12">
 									<div class="grid_4">
 										<div class="grid_12">
+											<label c-label item="item" c-label-text="Penyelenggara"></label>
+										</div>
+										<div class="grid_12">
+											<input style="width: 100%;" kendo-combo-box k-ng-model="itemPelatihan.penyelenggara"
+												k-data-text-field="'penyelenggara'" k-data-value-field="'id'" k-filter="'contains'"
+												k-auto-bind="false" k-data-source="ListPenyelenggara" on-change="clickpenyelenggara()" />
+										</div>
+									</div>
+									<div class="grid_4" ng-show="namapelatihan">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Nama Pelatihan"></label>
+										</div>
+
+										<div class="grid_12">
+											<input ng-model="itemPelatihan.namaPelatihan" style="width: 100%;" c-text-box type="input" filter="'varchar'"
+												class="k-textbox" />
+										</div>
+									</div>
+									<div class="grid_4" ng-show="namapelatihancbx">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Nama Pelatihan"></label>
+										</div>
+										<div class="grid_12">
+											<input style="width: 100%;" kendo-combo-box k-ng-model="itemPelatihan.namaPelatihan2"
+												k-data-text-field="'namapelatihan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+												k-data-source="ListNamaPelatihan" />
+										</div>
+										
+									</div>
+									<div class="grid_4">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Jenis Pelatihan"></label>
+										</div>
+										<div class="grid_12">
+											<input style="width: 100%;" kendo-combo-box k-ng-model="itemPelatihan.jenispelatihan"
+												k-data-text-field="'jenispelatihan'" k-data-value-field="'id'" k-filter="'contains'"
+												k-auto-bind="false" k-data-source="ListJenisPelatihan" />
+										</div>
+									</div>
+									
+								</div>
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Lokasi Pelatihan"></label>
+										</div>
+
+										<div class="grid_12">
+											<input ng-model="itemPelatihan.lokasi" style="width: 100%;" c-text-box type="input" filter="'varchar'"
+												class="k-textbox" />
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Unit Penginput"></label>
+										</div>
+										<div class="grid_12">
+											<input style="width: 100%;" kendo-combo-box k-ng-model="itemPelatihan.unitpenginput"
+												k-data-text-field="'unitpenginput'" k-data-value-field="'id'" k-filter="'contains'"
+												k-auto-bind="false" k-data-source="ListUnitPenginput" />
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_12">
 											<label c-label item="item" c-label-text="Nama Penyelenggara"></label>
 										</div>
 										<div class="grid_12">
@@ -782,23 +881,8 @@
 												ng-model="itemPelatihan.namaInstitusi" />
 										</div>
 									</div>
-									<div class="grid_4">
-										<div class="grid_12">
-											<label c-label item="item" c-label-text="Lokasi Pelatihan"></label>
-										</div>
-										<div class="grid_12" style="margin-top: 6px;">
-											<textarea ng-model="itemPelatihan.lokasi" style="width: 100%;"></textarea>
-										</div>
-									</div>
-									<div class="grid_4">
-										<div class="grid_12">
-											<label c-label item="item" c-label-text="Nama Pelatihan"></label>
-										</div>
-										<div class="grid_12" style="margin-top: 6px;">
-											<textarea ng-model="itemPelatihan.namaPelatihan"
-												style="width: 100%;"></textarea>
-										</div>
-									</div>
+									
+
 								</div>
 								<div class="grid_12">
 									<div class="grid_4">
@@ -832,7 +916,6 @@
 									</div>
 								</div>
 								<div class="grid_12">
-
 									<div class="grid_4">
 										<div class="grid_12">
 											<label c-label item="item" c-label-text="No Sertifikat"></label>
@@ -851,7 +934,42 @@
 												ng-model="itemPelatihan.keterangan" />
 										</div>
 									</div>
+									
 								</div>
+								
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Biaya Diklat"></label>
+										</div>
+										
+										<div class="grid_12">
+											<input ng-model="itemPelatihan.biayadiklat" style="width: 100%;" c-text-box type="input" filter="'varchar'"
+												class="k-textbox" />
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Biaya SPPD"></label>
+										</div>
+										
+										<div class="grid_12">
+											<input ng-model="itemPelatihan.biayasppd" style="width: 100%;" c-text-box type="input" filter="'varchar'"
+												class="k-textbox" />
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Sumber Dana"></label>
+										</div>
+										<div class="grid_12">
+											<input style="width: 100%;" kendo-combo-box k-ng-model="itemPelatihan.sumberdana"
+												k-data-text-field="'sumberdana'" k-data-value-field="'id'" k-filter="'contains'"
+												k-auto-bind="false" k-data-source="ListSumberDana" />
+										</div>
+									</div>
+								</div>
+								
 								<div class="grid_12">
 									<div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
 										<button class="k-button k-button-icontext k-primary k-grid-update"
@@ -1087,7 +1205,7 @@
 						</div>
 					</md-content>
 				</md-tab>
-
+				
 				<!-- <md-tab label="Login User">
 					<md-content class="md-padding">
 						<div class="grid_12" ng-show="ShowLogin">

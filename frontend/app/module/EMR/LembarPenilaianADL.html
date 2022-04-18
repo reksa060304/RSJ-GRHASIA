@@ -1,0 +1,821 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Lembar Penilaian ADL (Activity Of Daily Living) </div>
+        </div>
+        <div style="margin-top:10px">
+
+
+            <div class="grid_12" style="margin-top: 10px;">
+        
+                <fieldset>     
+                    <div class="grid_12">
+                        <table style="border: 0px">
+    
+                            <tr >
+                                <!-- <th style="width: 3%">No</th> -->
+                                <th style="text-align: center;">NO</th>
+                                <th colspan= "2" style="width: 25%; text-align: center;">PENILAIAN</th>
+                                <th style="width: 15%"><div class="grid_12">
+                                    <div class="grid_12">
+                                        <label c-label item="item">TANGGAL</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input style="width: 100%" k-ng-model="item.obj[3001400]" kendo-datetimepicker
+                                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                            parsedate="yyyy-MM-dd HH:mm" />
+    
+                                    </div>
+                                </div></th>
+                                <th style="width: 15%"><div class="grid_12">
+                                    <div class="grid_12">
+                                        <label c-label item="item">TANGGAL</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input style="width: 100%" k-ng-model="item.obj[3001401]" kendo-datetimepicker
+                                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                            parsedate="yyyy-MM-dd HH:mm" />
+    
+                                    </div>
+                                </div></th>
+                                <th style="width: 15%"><div class="grid_12">
+                                    <div class="grid_12">
+                                        <label c-label item="item">TANGGAL</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input style="width: 100%" k-ng-model="item.obj[3001402]" kendo-datetimepicker
+                                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                            parsedate="yyyy-MM-dd HH:mm" />
+    
+                                    </div>
+                                </div></th>
+                                <th style="width: 15%"><div class="grid_12">
+                                    <div class="grid_12">
+                                        <label c-label item="item">TANGGAL</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input style="width: 100%" k-ng-model="item.obj[3001403]" kendo-datetimepicker
+                                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                            parsedate="yyyy-MM-dd HH:mm" />
+    
+                                    </div>
+                                </div></th>
+                            </tr>
+                           
+                            
+                            <tr>
+                                <td style="width: 2%">1.</td>
+                                <td style="width: 30%">Minum</td>
+                                <td>NILAI</td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001404]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001405]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001406]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001407]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 2%">2.</td>
+                                <td style="width: 30%">Makan</td>
+                                <td>NILAI</td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001408]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001409]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001410]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001411]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 2%">3.</td>
+                                <td style="width: 30%">Mandi</td>
+                                <td>NILAI</td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001412]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001413]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001414]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001415]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 2%">4.</td>
+                                <td style="width: 30%">Toileting BAB</td>
+                                <td>NILAI</td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001416]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001417]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001418]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001419]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 2%">5.</td>
+                                <td style="width: 30%">Toileting BAK</td>
+                                <td>NILAI</td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001420]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001421]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001422]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001423]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 2%">6.</td>
+                                <td style="width: 30%">Berhias</td>
+                                <td>NILAI</td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001424]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001425]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001426]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001427]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 2%">7.</td>
+                                <td style="width: 30%">Berpakaian</td>
+                                <td>NILAI</td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001428]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001429]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001430]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001431]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 2%">8.</td>
+                                <td style="width: 30%">Perilaku</td>
+                                <td>NILAI</td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001432]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001433]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001434]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001435]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 2%">9.</td>
+                                <td style="width: 30%">Mengikuti perintah kebersihan diri</td>
+                                <td>NILAI</td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001436]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001437]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001438]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001439]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 2%">10.</td>
+                                <td style="width: 30%">Minum obat</td>
+                                <td>NILAI</td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001440]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001441]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001442]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001443]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan= "3" style="width: 25%; text-align: center;"><b> JUMLAH</b></td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001445]" type="text"
+                                            placeholder="{{jawab.placeholder}}"  ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001446]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001447]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+
+                                <td>
+                                    <div>
+                                        <input class="k-textbox" style="width: 100%;margin-top: 0px"
+                                            ng-model="item.obj[3001448]" type="text"
+                                            placeholder="{{jawab.placeholder}}" ng-change="GCSKuantitatif()">
+                                           
+                                    </div> 
+                                </td>
+                            </tr>
+                    
+                            <tr>
+                                <td colspan= "3" style="width: 25%; text-align: center;"> NAMA PERAWAT PENILAI</td>
+                                <td>
+                                    <div class="grid_12">
+                                        <label c-label item="item">Nama Perawat</label>
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3001449]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="grid_12">
+                                        <label c-label item="item">Nama Perawat</label>
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3001450]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+                                    </div>
+                                </td>
+                           
+                                <td>
+                                    <div class="grid_12">
+                                        <label c-label item="item">Nama Perawat</label>
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3001451]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="grid_12">
+                                        <label c-label item="item">Nama Perawat</label>
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3001452]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan= "7" style="width: 25%;">Mandiri : Skor 30</td>
+                            </tr>
+                        </table>
+                    </div>
+                </fieldset>
+                    </div>
+         
+      
+
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <div class="grid_12 margin-top-30 text-center margin-bottom">
+                        <label c-label item="item">PENILAIAN ADL</label>
+                    </div>
+                    <div class="grid_12 margin-top-30 text-center margin-bottom">
+                        <label c-label item="item">(Activity Of Daily Living)</label>
+                    </div>
+                    <table>
+                        <tr>
+                            <th style="width: 100px">PENILAIAN</th>
+                            <th style="width: 200px">SKOR 1</th>
+                            <th style="width: 200px">SKOR 2</th>
+                            <th style="width: 200px">SKOR 3</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label c-label item="item">Makan</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Sama sekali tidak mau dan mampu melakukan perawatan diri makan </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri makan dengan bimbingan </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri makan secara mandiri
+                            </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label c-label item="item">Minum</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                    Sama sekali tidak mau dan mampu melakukan perawatan diri minum </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri minum dengan bimbingan </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri minum secara mandiri </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label c-label item="item">Mandi</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                    Sama sekali tidak mau dan mampu melakukan perawatan diri mandi </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri mandi dengan bimbingan </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri mandi secara mandiri </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label c-label item="item">Toileting BAB</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                    Sama sekali tidak mau dan mampu melakukan perawatan diri Toileting BAB </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri Toileting BAB dengan bimbingan </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri Toileting BAB secara mandiri </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label c-label item="item">Toileting BAK</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                    Sama sekali tidak mau dan mampu melakukan perawatan diri Toileting BAK </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri Toileting BAK dengan bimbingan </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri Toileting BAK secara mandiri </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label c-label item="item">Toileting BAK</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                    Sama sekali tidak mau dan mampu melakukan perawatan diri Toileting BAK </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri Toileting BAK dengan bimbingan </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri Toileting BAK secara mandiri </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label c-label item="item">Berhias</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                    Sama sekali tidak mau dan mampu melakukan perawatan diri Berhias </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri Berhias dengan bimbingan </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri Berhias secara mandiri </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label c-label item="item">Berpakaian</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                    Sama sekali tidak mau dan mampu melakukan perawatan diri berpakaian </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri berpakaian dengan bimbingan </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Mampu melakukan perawatan diri berpakaian secara mandiri </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label c-label item="item">Perilaku</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                    Perilaku kacau </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Perilaku masih bisa diarahkan </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Perilaku bisa diarahkan </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label c-label item="item">Mengikuti perintah kebersihan diri</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                    Tidak mengikuti perintah </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Praktek kebersihan diri hanya apabila diingatkan </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Melakukan kebersihan diri secara mandiri dengan rutin  </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label c-label item="item">Minum obat</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                    Tidak mau mengikuti perintah </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                    Minum obat dengan motivasi </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                  Mau minum obat </label>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="grid_12 margin-top-30 margin-bottom" ng-repeat="list in listRisikoJatuh">
+                        <div class="grid_12">
+                            <div ng-repeat="jawab in list.detail">
+                                <div ng-switch on="jawab.type">
+                                    <div class="grid_12 margin-bottom" ng-switch-when="checkbox" style="margin-top: -5px;">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                   
+           
+
+        </div>
+    </div>
+</div>
+
+
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+</div>

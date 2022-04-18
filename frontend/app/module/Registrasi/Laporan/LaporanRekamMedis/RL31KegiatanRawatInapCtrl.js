@@ -9,7 +9,6 @@ define(['initialize'], function (initialize) {
             $scope.item = {};
             $scope.isRouteLoading = false;
             $scope.item.tglawal = $scope.now;
-            $scope.item.tglakhir = $scope.now;
 
             $scope.CariData = function () {
                 LoadData()
@@ -17,8 +16,7 @@ define(['initialize'], function (initialize) {
             function LoadData() {
 
                 $scope.isRouteLoading = true;
-                var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');;
+                var tglAwal = moment($scope.item.tglawal).format('YYYY');
 
                 // var idDiagnosaAwal = "";
                 // if ($scope.item.diagnosa1 != undefined) {
@@ -32,7 +30,6 @@ define(['initialize'], function (initialize) {
 
               medifirstService.get("registrasi/laporan/get-laporan-rl31?"
                     + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
 
                 ).then(function (dat) {
                     var datas = dat.data.data

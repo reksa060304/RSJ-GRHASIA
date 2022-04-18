@@ -5157,8 +5157,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                        (((CASE WHEN pp.hargajual IS NULL THEN	0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
                        0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN	0 ELSE	pp.jasa	END	) AS total,
                        pd.tglpulang,sp.nostruk as nomorverif,sbm.nosbm,pg.namalengkap as kasir, pgdpjp.namalengkap as dokter, cb.carabayar, sbm.nosbm
-                FROM   pasien_m ps 
-                inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                FROM   pasien_m pm 
+                inner join pasiendaftar_t pd on pm.id=pd.nocmfk
                 inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
                 inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                 inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
