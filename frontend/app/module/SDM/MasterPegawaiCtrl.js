@@ -1072,12 +1072,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				var itemDelete = {
 					"norec": dataItem.norec,
-					
 				}
 
-				medifirstService.post('sdm/delete-data-pelatihan', itemDelete).then(function (e) {
+				medifirstService.post('sdm/pelatihan/delete-data-pelatihan', itemDelete).then(function (e) {
 					if (e.status === 201) {
 						grid.removeRow(row);
+					}else{
+						console.log(e.status);
 					}
 				})
 			}
