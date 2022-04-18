@@ -1100,7 +1100,7 @@ define(['initialize'], function (initialize) {
                         var tglperiodeawal = '';
                         var tglperiodeakhir = '';
                         var jumlahttruangan = '';
-                        console.log(jumlahlamadirawat);
+                        //console.log(jumlahlamadirawat);
                         
                         for (var i = 0; i < datas.length; i++) {
                             datas[i].no = i + 1;
@@ -1126,9 +1126,8 @@ define(['initialize'], function (initialize) {
                             tglperiodeakhir = datas[datas.length-1].tanggal;
 
                         }
-                        console.log(jumlahmeninggallebihdari);
-                        console.log(jumlahmeninggal);
-                        console.log(jumlahharipulang);
+                        console.log(jumlahhariperawatantt);
+                        console.log(jumlahtt*datas.length);
                         persenbor = jumlahhariperawatantt/(jumlahtt*datas.length)*100;
                         persenlos = jumlahlamadirawat/jumlahharipulang;
                         persentoi = ((jumlahtt*datas.length)-jumlahhariperawatantt)/jumlahharipulang;
@@ -1184,7 +1183,7 @@ define(['initialize'], function (initialize) {
                                     {
                                         field: 'jumlahpasienawal',
                                         aggregate: 'sum'
-                                        },
+                                    },
                                     {
                                     field: 'jumlahpasienpindah',
                                     aggregate: 'sum'
