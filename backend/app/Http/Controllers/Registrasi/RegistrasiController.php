@@ -10152,253 +10152,289 @@ CASE WHEN to_char(pd.tglregistrasi,'m') = '12' THEN 1 ELSE 0 END AS Desember
 
         $data = \DB::select(DB::raw("
                 select  x.ket,
-	sum(x.Januari) AS Januari,
-	sum(x.Februari) AS Februari,
-	sum(x.Maret) AS Maret,
-	sum(x.April) AS April,
-	sum(x.Mei) AS Mei,
-	sum(x.Juni) AS Juni,
-	sum(x.Juli) AS Juli,
-	sum(x.Agustus) AS Agustus,
-	sum(x.September) AS September,
-	sum(x.Oktober) AS Oktober,
-	sum(x.November) AS November,
-	sum(x.Desember) AS Desember
-	from(
-SELECT
-COUNT(pd.noregistrasi) as jumlah, 'JUMLAH' as ket,
-		CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
-FROM pasiendaftar_t as pd
-WHERE  pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun'
-GROUP BY pd.tglregistrasi
-)as x GROUP BY x.ket
+            sum(x.Januari) AS Januari,
+            sum(x.Februari) AS Februari,
+            sum(x.Maret) AS Maret,
+            sum(x.April) AS April,
+            sum(x.Mei) AS Mei,
+            sum(x.Juni) AS Juni,
+            sum(x.Juli) AS Juli,
+            sum(x.Agustus) AS Agustus,
+            sum(x.September) AS September,
+            sum(x.Oktober) AS Oktober,
+            sum(x.November) AS November,
+            sum(x.Desember) AS Desember
+            from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'JUMLAH' as ket,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
+        FROM pasiendaftar_t as pd
+        WHERE  pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun'
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
 
-UNION ALL
+        UNION ALL
 
-select  x.ket,
-	sum(x.Januari) AS Januari,
-	sum(x.Februari) AS Februari,
-	sum(x.Maret) AS Maret,
-	sum(x.April) AS April,
-	sum(x.Mei) AS Mei,
-	sum(x.Juni) AS Juni,
-	sum(x.Juli) AS Juli,
-	sum(x.Agustus) AS Agustus,
-	sum(x.September) AS September,
-	sum(x.Oktober) AS Oktober,
-	sum(x.November) AS November,
-	sum(x.Desember) AS Desember
-	from(
-SELECT
-COUNT(pd.noregistrasi) as jumlah, 'RI' as ket,
-				CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
-FROM pasiendaftar_t as pd
-INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
-WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND ru.objectdepartemenfk = 16
-GROUP BY pd.tglregistrasi
-)as x GROUP BY x.ket
+        select  x.ket,
+            sum(x.Januari) AS Januari,
+            sum(x.Februari) AS Februari,
+            sum(x.Maret) AS Maret,
+            sum(x.April) AS April,
+            sum(x.Mei) AS Mei,
+            sum(x.Juni) AS Juni,
+            sum(x.Juli) AS Juli,
+            sum(x.Agustus) AS Agustus,
+            sum(x.September) AS September,
+            sum(x.Oktober) AS Oktober,
+            sum(x.November) AS November,
+            sum(x.Desember) AS Desember
+            from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'RI' as ket,
+                        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
+        FROM pasiendaftar_t as pd
+        INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND ru.objectdepartemenfk = 16
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
 
-UNION ALL
+        UNION ALL
 
-select  x.ket,
-	sum(x.Januari) AS Januari,
-	sum(x.Februari) AS Februari,
-	sum(x.Maret) AS Maret,
-	sum(x.April) AS April,
-	sum(x.Mei) AS Mei,
-	sum(x.Juni) AS Juni,
-	sum(x.Juli) AS Juli,
-	sum(x.Agustus) AS Agustus,
-	sum(x.September) AS September,
-	sum(x.Oktober) AS Oktober,
-	sum(x.November) AS November,
-	sum(x.Desember) AS Desember
-	from(
-SELECT
-COUNT(pd.noregistrasi) as jumlah, 'RJ' as ket,
-				CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
-FROM pasiendaftar_t as pd
-INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
-WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND ru.objectdepartemenfk IN (18)
-GROUP BY pd.tglregistrasi
-)as x GROUP BY x.ket
+        select  x.ket,
+            sum(x.Januari) AS Januari,
+            sum(x.Februari) AS Februari,
+            sum(x.Maret) AS Maret,
+            sum(x.April) AS April,
+            sum(x.Mei) AS Mei,
+            sum(x.Juni) AS Juni,
+            sum(x.Juli) AS Juli,
+            sum(x.Agustus) AS Agustus,
+            sum(x.September) AS September,
+            sum(x.Oktober) AS Oktober,
+            sum(x.November) AS November,
+            sum(x.Desember) AS Desember
+            from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'RJ' as ket,
+                        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
+        FROM pasiendaftar_t as pd
+        INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND ru.objectdepartemenfk IN (18)
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
 
-UNION ALL
+        UNION ALL
 
-select  x.ket,
-	sum(x.Januari) AS Januari,
-	sum(x.Februari) AS Februari,
-	sum(x.Maret) AS Maret,
-	sum(x.April) AS April,
-	sum(x.Mei) AS Mei,
-	sum(x.Juni) AS Juni,
-	sum(x.Juli) AS Juli,
-	sum(x.Agustus) AS Agustus,
-	sum(x.September) AS September,
-	sum(x.Oktober) AS Oktober,
-	sum(x.November) AS November,
-	sum(x.Desember) AS Desember
-	from(
-SELECT
-COUNT(pd.noregistrasi) as jumlah, 'UMUM' as ket,
-				CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
-FROM pasiendaftar_t as pd
-INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
-WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 1
-GROUP BY pd.tglregistrasi
-)as x GROUP BY x.ket
+        select  x.ket,
+            sum(x.Januari) AS Januari,
+            sum(x.Februari) AS Februari,
+            sum(x.Maret) AS Maret,
+            sum(x.April) AS April,
+            sum(x.Mei) AS Mei,
+            sum(x.Juni) AS Juni,
+            sum(x.Juli) AS Juli,
+            sum(x.Agustus) AS Agustus,
+            sum(x.September) AS September,
+            sum(x.Oktober) AS Oktober,
+            sum(x.November) AS November,
+            sum(x.Desember) AS Desember
+            from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'UMUM' as ket,
+                        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
+        FROM pasiendaftar_t as pd
+        INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
+        WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 1
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
 
-UNION ALL
+        UNION ALL
 
-select  x.ket,
-	sum(x.Januari) AS Januari,
-	sum(x.Februari) AS Februari,
-	sum(x.Maret) AS Maret,
-	sum(x.April) AS April,
-	sum(x.Mei) AS Mei,
-	sum(x.Juni) AS Juni,
-	sum(x.Juli) AS Juli,
-	sum(x.Agustus) AS Agustus,
-	sum(x.September) AS September,
-	sum(x.Oktober) AS Oktober,
-	sum(x.November) AS November,
-	sum(x.Desember) AS Desember
-	from(
-SELECT
-COUNT(pd.noregistrasi) as jumlah, 'NON PBI' as ket,
-				CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
-FROM pasiendaftar_t as pd
-INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
-WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 24
-GROUP BY pd.tglregistrasi
-)as x GROUP BY x.ket
+        select  x.ket,
+            sum(x.Januari) AS Januari,
+            sum(x.Februari) AS Februari,
+            sum(x.Maret) AS Maret,
+            sum(x.April) AS April,
+            sum(x.Mei) AS Mei,
+            sum(x.Juni) AS Juni,
+            sum(x.Juli) AS Juli,
+            sum(x.Agustus) AS Agustus,
+            sum(x.September) AS September,
+            sum(x.Oktober) AS Oktober,
+            sum(x.November) AS November,
+            sum(x.Desember) AS Desember
+            from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'NON PBI' as ket,
+                        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
+        FROM pasiendaftar_t as pd
+        INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
+        WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 24
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
 
-UNION ALL
+        UNION ALL
 
-select  x.ket,
-	sum(x.Januari) AS Januari,
-	sum(x.Februari) AS Februari,
-	sum(x.Maret) AS Maret,
-	sum(x.April) AS April,
-	sum(x.Mei) AS Mei,
-	sum(x.Juni) AS Juni,
-	sum(x.Juli) AS Juli,
-	sum(x.Agustus) AS Agustus,
-	sum(x.September) AS September,
-	sum(x.Oktober) AS Oktober,
-	sum(x.November) AS November,
-	sum(x.Desember) AS Desember
-	from(
-SELECT
-COUNT(pd.noregistrasi) as jumlah, 'PBI' as ket,
-				CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
-FROM pasiendaftar_t as pd
-INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
-WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 10
-GROUP BY pd.tglregistrasi
-)as x GROUP BY x.ket
+        select  x.ket,
+            sum(x.Januari) AS Januari,
+            sum(x.Februari) AS Februari,
+            sum(x.Maret) AS Maret,
+            sum(x.April) AS April,
+            sum(x.Mei) AS Mei,
+            sum(x.Juni) AS Juni,
+            sum(x.Juli) AS Juli,
+            sum(x.Agustus) AS Agustus,
+            sum(x.September) AS September,
+            sum(x.Oktober) AS Oktober,
+            sum(x.November) AS November,
+            sum(x.Desember) AS Desember
+            from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'PBI' as ket,
+                        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
+        FROM pasiendaftar_t as pd
+        INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
+        WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 10
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
 
-UNION ALL
+        UNION ALL
 
-select  x.ket,
-	sum(x.Januari) AS Januari,
-	sum(x.Februari) AS Februari,
-	sum(x.Maret) AS Maret,
-	sum(x.April) AS April,
-	sum(x.Mei) AS Mei,
-	sum(x.Juni) AS Juni,
-	sum(x.Juli) AS Juli,
-	sum(x.Agustus) AS Agustus,
-	sum(x.September) AS September,
-	sum(x.Oktober) AS Oktober,
-	sum(x.November) AS November,
-	sum(x.Desember) AS Desember
-	from(
-SELECT
-COUNT(pd.noregistrasi) as jumlah, 'JAMKESDA' as ket,
-				CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
-        CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
-FROM pasiendaftar_t as pd
-INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
-WHERE pd.kdprofile = $idProfile and  date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 8
-GROUP BY pd.tglregistrasi
-)as x GROUP BY x.ket
+        select  x.ket,
+            sum(x.Januari) AS Januari,
+            sum(x.Februari) AS Februari,
+            sum(x.Maret) AS Maret,
+            sum(x.April) AS April,
+            sum(x.Mei) AS Mei,
+            sum(x.Juni) AS Juni,
+            sum(x.Juli) AS Juli,
+            sum(x.Agustus) AS Agustus,
+            sum(x.September) AS September,
+            sum(x.Oktober) AS Oktober,
+            sum(x.November) AS November,
+            sum(x.Desember) AS Desember
+            from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'JAMKESDA' as ket,
+                        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
+        FROM pasiendaftar_t as pd
+        INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
+        WHERE pd.kdprofile = $idProfile and  date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 8
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
+
+        UNION ALL
+
+        select  x.ket,
+            sum(x.Januari) AS Januari,
+            sum(x.Februari) AS Februari,
+            sum(x.Maret) AS Maret,
+            sum(x.April) AS April,
+            sum(x.Mei) AS Mei,
+            sum(x.Juni) AS Juni,
+            sum(x.Juli) AS Juli,
+            sum(x.Agustus) AS Agustus,
+            sum(x.September) AS September,
+            sum(x.Oktober) AS Oktober,
+            sum(x.November) AS November,
+            sum(x.Desember) AS Desember
+            from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'JAMKESOS' as ket,
+                        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
+                CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
+        FROM pasiendaftar_t as pd
+        INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
+        WHERE pd.kdprofile = $idProfile and  date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 18
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
 
          "));
         return $this->respond($data);
@@ -10412,22 +10448,22 @@ GROUP BY pd.tglregistrasi
 
         $data = \DB::select(DB::raw("
         select  x.ket,
-	sum(x.Januari) AS Januari,
-	sum(x.Februari) AS Februari,
-	sum(x.Maret) AS Maret,
-	sum(x.April) AS April,
-	sum(x.Mei) AS Mei,
-	sum(x.Juni) AS Juni,
-	sum(x.Juli) AS Juli,
-	sum(x.Agustus) AS Agustus,
-	sum(x.September) AS September,
-	sum(x.Oktober) AS Oktober,
-	sum(x.November) AS November,
-	sum(x.Desember) AS Desember
-	from(
-SELECT
-COUNT(pd.noregistrasi) as jumlah, 'UMUM' as ket,
-				CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+        sum(x.Januari) AS Januari,
+        sum(x.Februari) AS Februari,
+        sum(x.Maret) AS Maret,
+        sum(x.April) AS April,
+        sum(x.Mei) AS Mei,
+        sum(x.Juni) AS Juni,
+        sum(x.Juli) AS Juli,
+        sum(x.Agustus) AS Agustus,
+        sum(x.September) AS September,
+        sum(x.Oktober) AS Oktober,
+        sum(x.November) AS November,
+        sum(x.Desember) AS Desember
+        from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'UMUM' as ket,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
         CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
         CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
         CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
@@ -10439,33 +10475,33 @@ COUNT(pd.noregistrasi) as jumlah, 'UMUM' as ket,
         CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
         CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
         CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
-FROM pasiendaftar_t as pd
-INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-INNER JOIN ruangan_m as rg on rg.id = apd.objectruanganfk
-INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
-WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '2022' AND kp.id = 1 AND rg.objectdepartemenfk = 24
-GROUP BY pd.tglregistrasi
-)as x GROUP BY x.ket
+        FROM pasiendaftar_t as pd
+        INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+        INNER JOIN ruangan_m as rg on rg.id = apd.objectruanganfk
+        INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
+        WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '2022' AND kp.id = 1 AND rg.objectdepartemenfk = 24
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
 
-UNION ALL
+        UNION ALL
 
-select  x.ket,
-	sum(x.Januari) AS Januari,
-	sum(x.Februari) AS Februari,
-	sum(x.Maret) AS Maret,
-	sum(x.April) AS April,
-	sum(x.Mei) AS Mei,
-	sum(x.Juni) AS Juni,
-	sum(x.Juli) AS Juli,
-	sum(x.Agustus) AS Agustus,
-	sum(x.September) AS September,
-	sum(x.Oktober) AS Oktober,
-	sum(x.November) AS November,
-	sum(x.Desember) AS Desember
-	from(
-SELECT
-COUNT(pd.noregistrasi) as jumlah, 'NON PBI' as ket,
-				CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+        select  x.ket,
+        sum(x.Januari) AS Januari,
+        sum(x.Februari) AS Februari,
+        sum(x.Maret) AS Maret,
+        sum(x.April) AS April,
+        sum(x.Mei) AS Mei,
+        sum(x.Juni) AS Juni,
+        sum(x.Juli) AS Juli,
+        sum(x.Agustus) AS Agustus,
+        sum(x.September) AS September,
+        sum(x.Oktober) AS Oktober,
+        sum(x.November) AS November,
+        sum(x.Desember) AS Desember
+        from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'NON PBI' as ket,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
         CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
         CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
         CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
@@ -10477,33 +10513,33 @@ COUNT(pd.noregistrasi) as jumlah, 'NON PBI' as ket,
         CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
         CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
         CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
-FROM pasiendaftar_t as pd
-INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-INNER JOIN ruangan_m as rg on rg.id = apd.objectruanganfk
-INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
-WHERE pd.kdprofile = $idProfile and  date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 24 AND rg.objectdepartemenfk = 24
-GROUP BY pd.tglregistrasi
-)as x GROUP BY x.ket
+        FROM pasiendaftar_t as pd
+        INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+        INNER JOIN ruangan_m as rg on rg.id = apd.objectruanganfk
+        INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
+        WHERE pd.kdprofile = $idProfile and  date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 24 AND rg.objectdepartemenfk = 24
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
 
-UNION ALL
+        UNION ALL
 
-select  x.ket,
-	sum(x.Januari) AS Januari,
-	sum(x.Februari) AS Februari,
-	sum(x.Maret) AS Maret,
-	sum(x.April) AS April,
-	sum(x.Mei) AS Mei,
-	sum(x.Juni) AS Juni,
-	sum(x.Juli) AS Juli,
-	sum(x.Agustus) AS Agustus,
-	sum(x.September) AS September,
-	sum(x.Oktober) AS Oktober,
-	sum(x.November) AS November,
-	sum(x.Desember) AS Desember
-	from(
-SELECT
-COUNT(pd.noregistrasi) as jumlah, 'BPJS PBI' as ket,
-				CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+        select  x.ket,
+        sum(x.Januari) AS Januari,
+        sum(x.Februari) AS Februari,
+        sum(x.Maret) AS Maret,
+        sum(x.April) AS April,
+        sum(x.Mei) AS Mei,
+        sum(x.Juni) AS Juni,
+        sum(x.Juli) AS Juli,
+        sum(x.Agustus) AS Agustus,
+        sum(x.September) AS September,
+        sum(x.Oktober) AS Oktober,
+        sum(x.November) AS November,
+        sum(x.Desember) AS Desember
+        from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'BPJS PBI' as ket,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
         CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
         CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
         CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
@@ -10515,33 +10551,33 @@ COUNT(pd.noregistrasi) as jumlah, 'BPJS PBI' as ket,
         CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
         CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
         CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
-FROM pasiendaftar_t as pd
-INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-INNER JOIN ruangan_m as rg on rg.id = apd.objectruanganfk
-INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
-WHERE  pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 10 AND rg.objectdepartemenfk = 24
-GROUP BY pd.tglregistrasi
-)as x GROUP BY x.ket
+        FROM pasiendaftar_t as pd
+        INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+        INNER JOIN ruangan_m as rg on rg.id = apd.objectruanganfk
+        INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
+        WHERE  pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 10 AND rg.objectdepartemenfk = 24
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
 
-UNION ALL
+        UNION ALL
 
-select  x.ket,
-	sum(x.Januari) AS Januari,
-	sum(x.Februari) AS Februari,
-	sum(x.Maret) AS Maret,
-	sum(x.April) AS April,
-	sum(x.Mei) AS Mei,
-	sum(x.Juni) AS Juni,
-	sum(x.Juli) AS Juli,
-	sum(x.Agustus) AS Agustus,
-	sum(x.September) AS September,
-	sum(x.Oktober) AS Oktober,
-	sum(x.November) AS November,
-	sum(x.Desember) AS Desember
-	from(
-SELECT
-COUNT(pd.noregistrasi) as jumlah, 'JAMKESDA' as ket,
-				CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+        select  x.ket,
+        sum(x.Januari) AS Januari,
+        sum(x.Februari) AS Februari,
+        sum(x.Maret) AS Maret,
+        sum(x.April) AS April,
+        sum(x.Mei) AS Mei,
+        sum(x.Juni) AS Juni,
+        sum(x.Juli) AS Juli,
+        sum(x.Agustus) AS Agustus,
+        sum(x.September) AS September,
+        sum(x.Oktober) AS Oktober,
+        sum(x.November) AS November,
+        sum(x.Desember) AS Desember
+        from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'JAMKESDA' as ket,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
         CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
         CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
         CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
@@ -10553,13 +10589,51 @@ COUNT(pd.noregistrasi) as jumlah, 'JAMKESDA' as ket,
         CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
         CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
         CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
-FROM pasiendaftar_t as pd
-INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-INNER JOIN ruangan_m as rg on rg.id = apd.objectruanganfk
-INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
-WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 8 AND rg.objectdepartemenfk = 24
-GROUP BY pd.tglregistrasi
-)as x GROUP BY x.ket
+        FROM pasiendaftar_t as pd
+        INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+        INNER JOIN ruangan_m as rg on rg.id = apd.objectruanganfk
+        INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
+        WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 8 AND rg.objectdepartemenfk = 24
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
+
+        UNION ALL
+
+        select  x.ket,
+        sum(x.Januari) AS Januari,
+        sum(x.Februari) AS Februari,
+        sum(x.Maret) AS Maret,
+        sum(x.April) AS April,
+        sum(x.Mei) AS Mei,
+        sum(x.Juni) AS Juni,
+        sum(x.Juli) AS Juli,
+        sum(x.Agustus) AS Agustus,
+        sum(x.September) AS September,
+        sum(x.Oktober) AS Oktober,
+        sum(x.November) AS November,
+        sum(x.Desember) AS Desember
+        from(
+        SELECT
+        COUNT(pd.noregistrasi) as jumlah, 'JAMKESOS' as ket,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 1 THEN 1 ELSE 0 END AS Januari,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 2 THEN 1 ELSE 0 END AS Februari,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 3 THEN 1 ELSE 0 END AS Maret,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 4 THEN 1 ELSE 0 END AS April,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 5 THEN 1 ELSE 0 END AS Mei,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 6 THEN 1 ELSE 0 END AS Juni,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 7 THEN 1 ELSE 0 END AS Juli,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 8 THEN 1 ELSE 0 END AS Agustus,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 9 THEN 1 ELSE 0 END AS September,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 10 THEN 1 ELSE 0 END AS Oktober,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 11 THEN 1 ELSE 0 END AS November,
+        CASE WHEN date_part('month',pd.tglregistrasi) = 12 THEN 1 ELSE 0 END AS Desember
+        FROM pasiendaftar_t as pd
+        INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+        INNER JOIN ruangan_m as rg on rg.id = apd.objectruanganfk
+        INNER JOIN kelompokpasien_m as kp on kp.id=pd.objectkelompokpasienlastfk
+        WHERE pd.kdprofile = $idProfile and date_part('year', pd.tglregistrasi) = '$tahun' AND kp.id = 18 AND rg.objectdepartemenfk = 24
+        GROUP BY pd.tglregistrasi
+        )as x GROUP BY x.ket
 "));
         return $this->respond($data);
 
