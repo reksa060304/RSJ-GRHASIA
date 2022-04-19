@@ -2850,7 +2850,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $voljumlahpsikologi++;
             }
 
-            else if($konten->idruangan == 784 && $konten->isobat != 't'){
+            else if(($konten->idruangan == 784 && $konten->isobat != 't') || $konten->idproduk = 5006180 || $konten->idproduk = 5006767 || $konten->idproduk = 5007130 || $konten->idproduk = 5006768){
                 $jumlahgizi += $konten->totaldibayarclosing;
                 $voljumlahgizi++;
             }
