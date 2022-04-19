@@ -2470,6 +2470,8 @@ AND sp.statusenabled <> false
 
                 $hari = cal_days_in_month(CAL_GREGORIAN, $m, $year);
 
+                //var_dump($hari);
+
                 $jumlahtt = DB::select(DB::raw("select '$year-$m-$hari' as tanggal, sum(rm.jumlah_tt) as totalperperiode 
                 from riwayatkamar_m rm
                 inner join ruangan_m ru on ru.id = rm.objectruanganfk
@@ -2485,7 +2487,7 @@ AND sp.statusenabled <> false
                 $jumlahttkalihari += $hari*$jumlahtt[0]->totalperperiode;
                 $jumlahgrandtotaltt += $jumlahtt[0]->totalperperiode;
                 
-
+                //var_dump($jumlahttkalihari);
             }
             
             $bor = 0;
@@ -2557,16 +2559,24 @@ AND sp.statusenabled <> false
             $jumlahhariperawatantt = $jumlahpasienawal + $jumlahpasienmasuk + $jumlahpasienpindah;
             $jumlahpulang = $jumlahpasiendipindahkan + $jumlahpasienpulang + $jumlahpasienpulangaps + $jumlahpasienpulangmelarikandiri;
 
-            //var_dump($jumlahhariperawatantt);
+            //var_dump($jumlahpulang);
             
 
-            $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
-            $alos = $jumlahharidirawat/$jumlahpulang;
-            $toi = ($jumlahttkalihari - $jumlahhariperawatantt)/$jumlahpulang;
-            $bto = $jumlahpulang/$jumlahgrandtotaltt;
-            $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
-            $gdr = $jumlahpasienmeninggal/$jumlahpulang*1000;
-
+            if($jumlahpulang == 0){
+                $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
+                $alos = 0;
+                $toi = 0;
+                $bto = $jumlahpulang/$jumlahgrandtotaltt;
+                $ndr = 0;
+                $gdr = 0;
+            } else{
+                $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
+                $alos = $jumlahharidirawat/$jumlahpulang;
+                $toi = ($jumlahttkalihari - $jumlahhariperawatantt)/$jumlahpulang;
+                $bto = $jumlahpulang/$jumlahgrandtotaltt;
+                $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
+                $gdr = $jumlahpasienmeninggal/$jumlahpulang*1000;
+            }
 
             $data10[] = array(
                 'lamarawat'=>(int)$jumlahharidirawat,
