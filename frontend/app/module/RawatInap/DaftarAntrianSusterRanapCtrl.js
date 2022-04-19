@@ -25,6 +25,39 @@ define(['initialize'], function (initialize) {
             $scope.SearchEnter = function () {
                 loadData()
             }
+            function updateAplicare(){
+				// debugger;
+				
+				var ppkRumahSakit = ''
+				medifirstService.get('sysadmin/settingdatafixed/get/kodePPKRujukan').then(function (dat) {
+					ppkRumahSakit = dat.data
+					medifirstService.get("bridging/bpjs/aplicaresws/get-tt?").then(function (data) {						
+						for (var i = 0; i < data.data.length; i++) {										
+							let datajson = {
+								"json": {
+									"kodekelas": data.data[i].kodekelas,
+									"koderuang": data.data[i].koderuang,
+									"namaruang": data.data[i].namaruang,
+									"kapasitas": data.data[i].kapasitas,
+									"tersedia": data.data[i].tersedia,
+									"tersediapria": data.data[i].tersediapria,
+									"tersediawanita": data.data[i].tersediawanita,
+									"tersediapriawanita": data.data[i].tersediapriawanita,
+								}
+							}
+							
+							medifirstService.postNonMessage('bridging/bpjs/aplicaresws/rest/bed/update/' + ppkRumahSakit, datajson).then(function (e) {
+								if (e.data.metadata.code == 1) {
+									// toastr.success(e.data.metadata.message, 'Info')
+								} else {
+									// toastr.error(e.data.metadata.message, 'Info')
+								}								
+							}, function (error) {								
+							})
+						}
+					})
+				})
+			}
           
             function loadCombo() {
                 var chacePeriode = cacheHelper.get('DaftarAntrianSusterRanapCtrl');
@@ -47,6 +80,7 @@ define(['initialize'], function (initialize) {
             }
             function loadData() {
                 $scope.isRouteLoading = true;
+                updateAplicare();
                 // var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm:ss');
                 // var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm:ss');
 
