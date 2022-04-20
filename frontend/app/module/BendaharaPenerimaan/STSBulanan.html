@@ -79,14 +79,13 @@
             <div class="grid_12" id="contentPencarian">
                 <div class="grid_4" style="margin-top: 15px;">
                     <div class="grid_12">
-                        <label c-label item="item" c-label-text="Bulan"></label>
+                        <label c-label item="item" c-label-text="Periode"></label>
                     </div>
                     <div class="grid_12">
                         <!-- AwalPeriode -->
                         <div class="grid_4">
-                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.bulan"
-                                k-data-text-field="'namabulan'" k-data-value-field="'id'" k-filter="'contains'"
-                                k-auto-bind="false" k-data-source="listBulan" />
+                            <input style="width: 100%" k-ng-model="item.tahun" kendo-datetimepicker placeholer="yyyy"
+                            k-format="'yyyy'" />
                         </div>
                         <div class="grid_2" style="margin-top: 5px;">
                             <button class="c-button" ng-click="cariFilter()">Cari</button>

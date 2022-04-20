@@ -2850,7 +2850,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $voljumlahpsikologi++;
             }
 
-            else if(($konten->idruangan == 784 && $konten->isobat != 't') || $konten->idproduk = 5006180 || $konten->idproduk = 5006767 || $konten->idproduk = 5007130 || $konten->idproduk = 5006768){
+            else if(($konten->idruangan == 784 && $konten->isobat != 't') || $konten->idproduk == 5006180 || $konten->idproduk == 5006767 || $konten->idproduk == 5007130 || $konten->idproduk == 5006768){
                 $jumlahgizi += $konten->totaldibayarclosing;
                 $voljumlahgizi++;
             }
@@ -3913,7 +3913,7 @@ class BendaharaPenerimaanController extends ApiController {
 
     public function getSTSBulanan(Request $request) {
 
-        $bulan = $request['bulan'];
+        $tahun = $request['tahun'];
 
         $detail = DB::select(DB::raw("select stsd.kdrekening, stsd.nomer, stsd.uraian, sum(stsd.vol) as totalvol, sum(stsd.kolom1) as totalkolom1, sum(stsd.kolom2) as totalkolom2,
         (
@@ -3927,7 +3927,7 @@ class BendaharaPenerimaanController extends ApiController {
         from surattandasetoran_t sts
         inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
         where sts.statusenabled = true
-        and date_part('month', sts.tglpenerimaan::timestamp ) = '$bulan'
+        and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
         group by stsd.kdrekening, stsd.nomer, stsd.uraian
         order by min(stsd.nourut)"));
         
