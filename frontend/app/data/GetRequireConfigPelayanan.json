@@ -3096,7 +3096,10 @@
         {
             "nameDep": "AsesmenMedisIGDJiwaCtrl",
             "urlDep": "module/EMR/AsesmenMedisIGDJiwaCtrl"
+        },
+        {
+        "nameDep": "AsesmenRisikoBunuhDiriGCtrl",
+        "urlDep": "module/EMR/AsesmenRisikoBunuhDiriGCtrl"
         }
-        
-    ]
-}
+     ]
+    }
