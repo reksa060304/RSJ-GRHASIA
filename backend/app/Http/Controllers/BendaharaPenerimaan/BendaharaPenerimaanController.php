@@ -2556,7 +2556,7 @@ class BendaharaPenerimaanController extends ApiController {
         $STS->kdprofile = $idProfile;
         $STS->statusenabled = true;
         $STS->nosts = $nosts;
-        $STS->tglpenerimaan = date('Y-m-d H:i:s');
+        $STS->tglpenerimaan = $setor[0]['tanggalSTS'];
         $STS->totalsetoran = $totalpenerimaan;
         $STS->totalsetoranpembulatan = $total_penerimaan;
         $STS->terbilang = $setor[0]['terbilang'];

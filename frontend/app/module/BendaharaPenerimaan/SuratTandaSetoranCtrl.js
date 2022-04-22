@@ -9,6 +9,7 @@ define(['initialize'], function (initialize) {
             $scope.date = new Date();
             $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
             $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
+            $scope.item.tanggalSTS = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
             $scope.dataSelected = {};
             $scope.item.jmlRows = 50;
             FormLoad();
@@ -86,7 +87,7 @@ define(['initialize'], function (initialize) {
             }
 
             function FormLoad() {
-                $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
+                $scope.item.tanggalSTS = moment($scope.now).format('YYYY-MM-DD HH:mm');
                 $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
             }
 
@@ -283,6 +284,7 @@ define(['initialize'], function (initialize) {
 
             $scope.simpan = function () {
                 $scope.selectedData2[0].terbilang =  $scope.item.terbilang;
+                $scope.selectedData2[0].tanggalSTS =  $scope.item.tanggalSTS;
                 var cektunai = 789;
                 var cektransfer = 456;
                 var ceksudahsts = 1213;
@@ -298,6 +300,7 @@ define(['initialize'], function (initialize) {
 					}
 				}
 
+                console.log($scope.selectedData2);
 
                 if(cektunai == 111 && cektransfer == 123){
                     toastr.error('Cara Bayar Transfer dan Tunai Tercampur');
