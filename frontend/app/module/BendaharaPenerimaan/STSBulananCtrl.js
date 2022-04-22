@@ -34,11 +34,13 @@ define(['initialize'], function (initialize) {
                     bulan = $scope.item.bulan.id
                 }
 
+                var tahun = moment($scope.item.tahun).format('YYYY');
+
                 tglAwal = moment(tglAwal).format('YYYY-MM-DD 00:00');
                 tglAkhir = moment(tglAkhir).format('YYYY-MM-DD 00:00');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
                 medifirstService.get("bendaharapenerimaan/get-sts-bulanan?" 
-                 + "&bulan=" + bulan
+                 + "&tahun=" + tahun
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < dat.data.detail.length; i++) {
@@ -64,7 +66,7 @@ define(['initialize'], function (initialize) {
             }
 
             function FormLoad() {
-                $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
+                $scope.item.tahun = moment($scope.now).format('YYYY');
                 $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
             }
 
@@ -111,12 +113,6 @@ define(['initialize'], function (initialize) {
                         "field": "no",
                         "title": "No",
                         "width": "50px"
-                    },
-                    {
-                        
-                        "field": "tglpenerimaan",
-                        "title": "Tgl Penerimaan",
-                        "width": "100px",
                     },
                     {
                         
