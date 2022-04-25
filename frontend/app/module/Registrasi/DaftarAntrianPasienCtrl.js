@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('DaftarAntrianPasienCtrl', ['DateHelper', '$rootScope', '$scope', 'ModelItem', 'MedifirstService', '$state', '$window', 'CetakHelper', 'CacheHelper',
-        function (dateHelper, $rootScope, $scope, ModelItem, medifirstService, $state, $window, cetakHelper, cacheHelper) {
+    initialize.controller('DaftarAntrianPasienCtrl', ['DateHelper', '$rootScope', '$scope', 'ModelItem', 'MedifirstService', '$state', '$window', 'CetakHelper', 'CacheHelper', '$mdDialog',
+        function (dateHelper, $rootScope, $scope, ModelItem, medifirstService, $state, $window, cetakHelper, cacheHelper, $mdDialog) {
             $scope.isRouteLoading = true;
             $scope.title = "ini page pencarian pasien";
             $scope.kodeRuangan = $state.params.kodeRuangan;
@@ -327,15 +327,41 @@ define(['initialize'], function (initialize) {
                     //##save tracer
                     $scope.isRouteLoading = true;
                     medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
-                        + $scope.item.norec_pd
+                        +$scope.item.norec_pd + "&qtytracer=1"
                     ).then(function (data) {
                         $scope.isRouteLoading = false;
                         var datas = data.data;
-                        var client = new HttpClient();
-                        client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.item.noregistrasi 
-                            + '&noCm=' + $scope.item.nocm + '&view=false' , function (response) {
-                            // do something with response
-                        });
+                        if (data.data.identifikasi.qtytracer - 1 > 0) {
+                            var confirm = $mdDialog.confirm()
+                                .title('Informasi')
+                                .htmlContent("Pasien ini telah dicetak tracer sebanyak " + (data.data.identifikasi.qtytracer - 1) + " kali <br>apakah ingin cetak ulang?", "Peringatan")
+                                .ariaLabel('Lucky day')
+                                .cancel('Batal')
+                                .ok('Ok');
+                                $mdDialog.show(confirm).then(function () {
+                                    // loadData()
+                                    var client = new HttpClient();
+                                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.item.noregistrasi +
+                                        '&noCm=' + $scope.item.nocm + '&view=false',
+                                        function (response) {
+                                            // do something with response
+                                        });
+
+                                }, function () {
+                                    medifirstService.get("registrasi/identifikasi-tracer?norec_pd=" +
+                                        $scope.item.norec_pd + "&qtytracer=-1"
+                                    ).then(function (data) {});
+                                });
+                        } else {
+                            // loadData()
+                            var client = new HttpClient();
+                            client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' + $scope.item.noregistrasi + '&noCm=' + $scope.item.nocm + '&view=false', function (response) {
+                                // do something with response
+                            });
+
+                        }
+                        
+                        
                     })
                     //##end                    
                     // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer=1&norec=' +
