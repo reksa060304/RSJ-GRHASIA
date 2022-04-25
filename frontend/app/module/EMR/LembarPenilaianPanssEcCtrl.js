@@ -15,7 +15,7 @@ define(['initialize'], function (initialize) {
             
 
             var nomorEMR = '-'
-            $scope.cc.emrfk = 500
+            $scope.cc.emrfk = 3000414
             var dataLoad = []
             var pegawaiInputDetail = ''
             $scope.item.kasusbaru = true
@@ -27,7 +27,7 @@ define(['initialize'], function (initialize) {
             medifirstService.getPart('emr/get-datacombo-part-ruangan-pelayanan', true, true, 20).then(function (data) {
                 $scope.listRuangan = data
             })
-            medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 500).then(function (e) {
+            medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000414).then(function (e) {
 
                 var datas = e.data.kolom4
                 
@@ -727,7 +727,131 @@ $scope.getSkor = function (stat) {
 }
 
 
+$scope.GCSKuantitatif = function ()
+{
+    //jumlah1
+    let tgl1 = parseInt($scope.item.obj[3002712]) || 0;
+    let tgl2 = parseInt($scope.item.obj[3002724]) || 0;
+    let tgl3 = parseInt($scope.item.obj[3002736]) || 0;
+    let tgl4 = parseInt($scope.item.obj[3002748]) || 0;
+    let tgl5 = parseInt($scope.item.obj[3002760]) || 0;
+    let jumlah1 =  tgl1+tgl2+tgl3+tgl4+tgl5;
+    $scope.item.obj[3002772] = jumlah1;
 
+
+    //jumlah2
+
+    let tgl11 = parseInt($scope.item.obj[3002713]) || 0;
+    let tgl12 = parseInt($scope.item.obj[3002725]) || 0;
+    let tgl13 = parseInt($scope.item.obj[3002737]) || 0;
+    let tgl14 = parseInt($scope.item.obj[3002749]) || 0;
+    let tgl15 = parseInt($scope.item.obj[3002761]) || 0;
+    let jumlah2 =  tgl11+tgl12+tgl13+tgl14+tgl15;
+    $scope.item.obj[3002773] = jumlah2;
+
+     //jumlah3
+
+     let tgl21 = parseInt($scope.item.obj[3002714]) || 0;
+     let tgl22 = parseInt($scope.item.obj[3002726]) || 0;
+     let tgl23 = parseInt($scope.item.obj[3002738]) || 0;
+     let tgl24 = parseInt($scope.item.obj[3002750]) || 0;
+     let tgl25 = parseInt($scope.item.obj[3002762]) || 0;
+     let jumlah3 =  tgl21+tgl22+tgl23+tgl24+tgl25;
+     $scope.item.obj[3002774] = jumlah3;
+
+      //jumlah4
+     
+     let tgl31 = parseInt($scope.item.obj[3002715]) || 0;
+     let tgl32 = parseInt($scope.item.obj[3002727]) || 0;
+     let tgl33 = parseInt($scope.item.obj[3002739]) || 0;
+     let tgl34 = parseInt($scope.item.obj[3002751]) || 0;
+     let tgl35 = parseInt($scope.item.obj[3002763]) || 0;
+     let jumlah4 =  tgl31+tgl32+tgl33+tgl34+tgl35;
+     $scope.item.obj[3002775] = jumlah4;
+
+     //jumlah5
+
+     let tgl41 = parseInt($scope.item.obj[3002716]) || 0;
+     let tgl42 = parseInt($scope.item.obj[3002728]) || 0;
+     let tgl43 = parseInt($scope.item.obj[3002740]) || 0;
+     let tgl44 = parseInt($scope.item.obj[3002752]) || 0;
+     let tgl45 = parseInt($scope.item.obj[3002764]) || 0;
+     let jumlah5 =  tgl41+tgl42+tgl43+tgl44+tgl45;
+     $scope.item.obj[3002776] = jumlah5;
+
+    //jumlah6
+
+       let tgl51 = parseInt($scope.item.obj[3002717]) || 0;
+       let tgl52 = parseInt($scope.item.obj[3002729]) || 0;
+       let tgl53 = parseInt($scope.item.obj[3002741]) || 0;
+       let tgl54 = parseInt($scope.item.obj[3002753]) || 0;
+       let tgl55 = parseInt($scope.item.obj[3002765]) || 0;
+       let jumlah6 =  tgl51+tgl52+tgl53+tgl54+tgl55;
+       $scope.item.obj[3002777] = jumlah6;
+
+    //jumlah7
+
+        let tgl61 = parseInt($scope.item.obj[3002718]) || 0;
+        let tgl62 = parseInt($scope.item.obj[3002730]) || 0;
+        let tgl63 = parseInt($scope.item.obj[3002742]) || 0;
+        let tgl64 = parseInt($scope.item.obj[3002754]) || 0;
+        let tgl65 = parseInt($scope.item.obj[3002766]) || 0;
+         let jumlah7 =  tgl61+tgl62+tgl63+tgl64+tgl65;
+      $scope.item.obj[3002778] = jumlah7
+
+    //jumlah8
+
+       let tgl71 = parseInt($scope.item.obj[3002719]) || 0;
+       let tgl72 = parseInt($scope.item.obj[3002731]) || 0;
+       let tgl73 = parseInt($scope.item.obj[3002743]) || 0;
+       let tgl74 = parseInt($scope.item.obj[3002755]) || 0;
+       let tgl75 = parseInt($scope.item.obj[3002767]) || 0;
+        let jumlah8 =  tgl71+tgl72+tgl73+tgl74+tgl75;
+     $scope.item.obj[3002779] = jumlah8
+
+
+       //jumlah9
+    let tgl81 = parseInt($scope.item.obj[3002720]) || 0;
+    let tgl82 = parseInt($scope.item.obj[3002732]) || 0;
+    let tgl83 = parseInt($scope.item.obj[3002744]) || 0;
+    let tgl84 = parseInt($scope.item.obj[3002756]) || 0;
+    let tgl85 = parseInt($scope.item.obj[3002768]) || 0;
+    let jumlah9 =  tgl81+tgl82+tgl83+tgl84+tgl85;
+    $scope.item.obj[3002780] = jumlah9;
+
+
+    //jumlah10
+
+    let tgl91 = parseInt($scope.item.obj[3002721]) || 0;
+    let tgl92 = parseInt($scope.item.obj[3002733]) || 0;
+    let tgl93 = parseInt($scope.item.obj[3002745]) || 0;
+    let tgl94 = parseInt($scope.item.obj[3002757]) || 0;
+    let tgl95 = parseInt($scope.item.obj[3002769]) || 0;
+    let jumlah10 =  tgl91+tgl92+tgl93+tgl94+tgl95;
+    $scope.item.obj[3002781] = jumlah10;
+
+     //jumlah11
+
+     let tgl101 = parseInt($scope.item.obj[3002722]) || 0;
+     let tgl102 = parseInt($scope.item.obj[3002734]) || 0;
+     let tgl103 = parseInt($scope.item.obj[3002746]) || 0;
+     let tgl104 = parseInt($scope.item.obj[3002758]) || 0;
+     let tgl105 = parseInt($scope.item.obj[3002770]) || 0;
+     let jumlah11 =  tgl101+tgl102+tgl103+tgl104+tgl105;
+     $scope.item.obj[3002782] = jumlah11;
+
+      //jumlah12
+     
+     let tgl111 = parseInt($scope.item.obj[3002723]) || 0;
+     let tgl112 = parseInt($scope.item.obj[3002735]) || 0;
+     let tgl113 = parseInt($scope.item.obj[3002747]) || 0;
+     let tgl114 = parseInt($scope.item.obj[3002759]) || 0;
+     let tgl115 = parseInt($scope.item.obj[3002771]) || 0;
+     let jumlah12 =  tgl111+tgl112+tgl113+tgl114+tgl115;
+     $scope.item.obj[3002783] = jumlah12;
+
+     
+}
             $scope.getSkor = function (stat) {
 
                 var arrobj = Object.keys($scope.item.obj)

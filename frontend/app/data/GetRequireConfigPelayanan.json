@@ -3100,6 +3100,14 @@
         {
         "nameDep": "AsesmenRisikoBunuhDiriGCtrl",
         "urlDep": "module/EMR/AsesmenRisikoBunuhDiriGCtrl"
-        }
-     ]
+        },
+         {
+        "nameDep": "LembarResumeCtrl",
+        "urlDep": "module/EMR/LembarResumeCtrl"
+         },
+         {
+        "nameDep": "LembarKendaliCtrl",
+        "urlDep": "module/EMR/LembarKendaliCtrl"
+         }
+       ]
     }
