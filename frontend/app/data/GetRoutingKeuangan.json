@@ -1938,5 +1938,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RealisasiPerTriwulan",
+    "url": "/UmVhbGlzYXNpUGVuZXJpbWFhblBlclRyaXd1bGFu",
+    "templateurl": "module/BendaharaPenerimaan/RealisasiPerTriwulan.html",
+    "controller": "RealisasiPerTriwulanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

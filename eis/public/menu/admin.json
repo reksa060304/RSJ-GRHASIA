@@ -24,5 +24,11 @@
         "name": "Informasi Kamar",
         "url": "dashboard-tt",
         "icon": "ti-layout-slider"
+    },
+
+    {
+        "name": "Sensus Ranap",
+        "url": "dashboard-ranap",
+        "icon": "ti-user"
     }
 ]

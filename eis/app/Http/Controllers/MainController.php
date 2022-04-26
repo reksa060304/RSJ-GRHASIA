@@ -2447,6 +2447,9 @@ AND sp.statusenabled <> false
                 ) as x group by x.tanggalpulang
             ) as y"));
 
+            $jumlahdays = DB::select(DB::raw("SELECT '$tglAkhir'::date - '$tglAwal'::date + 1 as jumlahhari"));
+            //var_dump($jumlahdays[0]->jumlahhari);
+            $jumlah = $jumlahdays[0]->jumlahhari;
 
             $jumlahttkalihari = 0;
             $jumlahgrandtotaltt = 0;
@@ -2456,7 +2459,7 @@ AND sp.statusenabled <> false
             $hari = 0;
             $total_month_awal = (int) date('m', strtotime($tglAwal));
             $total_month_akhir = (int) date('m', strtotime($tglAkhir));
-
+                    
                 // var_dump($year);
                 // var_dump($total_month_awal);
                 // var_dump($total_month_akhir);
@@ -2468,7 +2471,16 @@ AND sp.statusenabled <> false
                     'year' => $year,
                 );
 
-                $hari = cal_days_in_month(CAL_GREGORIAN, $m, $year);
+                if($jumlah >= 28){
+                    $hari = cal_days_in_month(CAL_GREGORIAN, $m, $year);
+                    $jumlah -= $hari;
+                    $hari = cal_days_in_month(CAL_GREGORIAN, $m, $year);
+                } else{
+                    $hari = $jumlah;
+                }
+                
+
+                //if()
 
                 //var_dump($hari);
 

@@ -391,6 +391,10 @@
         {
             "nameDep": "STSBulananCtrl",
             "urlDep": "module/BendaharaPenerimaan/STSBulananCtrl"
+        },
+        {
+            "nameDep": "RealisasiPerTriwulanCtrl",
+            "urlDep": "module/BendaharaPenerimaan/RealisasiPerTriwulanCtrl"
         }
     ]
 }
