@@ -383,6 +383,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 'Mutasi Rawat Inap ' + ' dengan No Registrasi - ' + noRegistrasis + ' ke Ruangan '
                                 + $scope.item.ruangan.namaruangan).then(function (res) {
                                 })
+                                let json = {
+                                    norec: $scope.currentNorec,
+                                    norec_apd: $scope.resultAPD.norec
+                                }
+                                medifirstService.post("registrasi/save-adminsitrasi", json).then(function (z) {
+
+                                })
                             medifirstService.post('registrasi/update-sep-igd', { norec: $scope.currentNorec }).then(function (z) { })
                             //## end log    
     
