@@ -522,7 +522,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-6 col-md-12">
+                            <div class="col-lg-12 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-warning">
                                         <div class="panel-heading  bg-c-kuning">
@@ -584,76 +584,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-12">
-                                <div class="card">
-                                    <div class="panel panel-purple">
-                                        <div class="panel-heading bg-purple">
-                                            Data Kegiatan Pelayanan Rumah Sakit
-                                        </div>
-                                        <div class="panel-body">
-                                            @php
-                                                $bor = App\Http\Controllers\MainController::getBorLosToi(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
-                                            @endphp
-                                            <div class="row" style="padding: 10px">
-                                                <div class="col-md-12 col-xl-4">
-                                                    <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
-                                                    <div class="card-block-small">
-                                                            <i class="icofont icofont-bed bg-c-blue card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-blue f-w-600">BOR</span>
-                                                            <h4>{!! $bor[0]['bor'] !!}</h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 col-xl-4">
-                                                    <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
-                                                        <div class="card-block-small">
-                                                            <i class="icofont icofont-prescription bg-c-pink card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-pink f-w-600">ALOS</span>
-                                                            <h4>{!! $bor[0]['alos'] !!}</h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 col-xl-4">
-                                                    <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
-                                                        <div class="card-block-small">
-                                                            <i class="icofont icofont-disabled bg-c-green card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-green f-w-600">TOI</span>
-                                                            <h4>{!! $bor[0]['toi'] !!}</h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 col-xl-4">
-                                                    <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
-                                                        <div class="card-block-small">
-                                                            <i class="icofont icofont-first-aid bg-c-1 card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-kuning f-w-600">BTO</span>
-                                                            <h4>{!! $bor[0]['bto'] !!}</h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 col-xl-4">
-                                                    <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
-                                                        <div class="card-block-small">
-                                                            <i class="icofont icofont-operation-theater bg-c-merah card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-merah f-w-600">NDR</span>
-                                                            <h4>{!! $bor[0]['ndr'] !!}</h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 col-xl-4">
-                                                    <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
-                                                        <div class="card-block-small">
-                                                            <i class="icofont icofont-pulse bg-c-ungu card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-ungu f-w-600">GDR</span>
-                                                            <h4>{!! $bor[0]['gdr'] !!}</h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div >
 
                     </form>

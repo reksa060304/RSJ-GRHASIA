@@ -745,6 +745,35 @@ class MainController extends ApiController
 //                    dd($res);
                     array_push($compact,'res','r');
                     break;
+
+                case 'dashboard-ranap':
+                    
+                    $startDateFormat = substr(date('Y-m-d', strtotime(Carbon::now()->format('Y-m-d'))), 0, 10); //returns current day
+                    $firstDay = Carbon::now()->startOfYear()->format('Y-m-d');
+                    $firstDayFormat = substr(date('Y-m-d', strtotime($firstDay)), 0, 10);
+
+                    $tglawal = $firstDayFormat;
+                    $tglakhir =  $startDateFormat;
+
+                    //var_dump($firstDayFormat);
+    
+                    if (!isset($r->tglawal)&&!isset($r->tglakhir) ){
+                        return redirect()->route("show_page",
+                            ["role" => session("role"),
+                                "pages" => $r->pages,
+                                "tglawal" =>  $tglawal,
+                                "tglakhir" => $tglakhir]);
+                    } else {
+                        $tglawal = $r->tglawal;
+                        $tglakhir = $r->tglakhir;
+                    }
+                    $res['bor'] = $this->getBorLosToi($tglawal,$tglakhir,$kdProfile);
+                    // var_dump($tglawal);
+                    // var_dump($tglakhir);
+    //                    dd($res);
+                    array_push($compact,'res','r');
+                    break;
+                    
                 case 'dashboard-persediaan':
                     $tglawal = date('Y-m-d');
                     $tglakhir =  date('Y-m-d');
@@ -2214,13 +2243,15 @@ AND sp.statusenabled <> false
     public static function getBorLosToi($tglAwal,$tglAkhir,$kdProfile){
 
         $idProfile = (int) $kdProfile;
-        $tglAwal =$tglAwal.' 00:00';
+        $tglAwal = $tglAwal.' 00:00';
         $tglAkhir = $tglAkhir.' 23:59';
-        $tahun = new \DateTime($tglAkhir);
+        // var_dump($tglAwal);
+        // var_dump($tglAkhir);
+        //$tahun = new \DateTime($tglAkhir);
         $tahun = date ('Y');
-        $datetime1 = new \DateTime($tglAwal);
-        $datetime2 = new \DateTime($tglAkhir);
-        $interval = $datetime1->diff($datetime2);
+        // $datetime1 = new \DateTime(implode(" ",$tglAwal));
+        // $datetime2 = new \DateTime(implode(" ",$tglAkhir));
+        // $interval = $datetime1->diff($datetime2);
         $sehari = 1;//$interval->format('%d');
         $data10=[];
 
