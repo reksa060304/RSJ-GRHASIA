@@ -12585,4 +12585,24 @@ GROUP BY y.KET
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getPenjagaanMutasiPasien(Request $request)
+    {
+        
+        $nocm = $request['nocm'];
+
+        $dataz = DB::select(DB::raw("select ru.namaruangan, ps.nocm, pd.* from pasien_m ps
+        inner join pasiendaftar_t pd on pd.nocmfk = ps.id
+        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+        inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+        where ps.nocm = '$nocm'
+        and pd.tglpulang is NULL
+        and dp.id = 16"));
+
+
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
+
+    
 }
