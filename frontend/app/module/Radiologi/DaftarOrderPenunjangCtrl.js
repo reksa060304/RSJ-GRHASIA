@@ -793,6 +793,18 @@ define(['initialize'], function (initialize) {
                 } else {
                     nomor = data2.length + 1
                 }
+                //cekdouble
+                var isDuplikat=false;
+                for(var i=0;i<data2.length;i++){
+                    if(data2[i].prid==$scope.popUp.layanan.id && $scope.popUp.no == undefined){
+                        isDuplikat=true;
+                    }
+                }
+                if(isDuplikat){                    
+                    toastr.error("Nama Pemeriksaan sudah terpilih sebelumnya")
+                    return;
+                }
+
                 var data = {};
                 if ($scope.popUp.no != undefined) {
                     for (var i = data2.length - 1; i >= 0; i--) {
