@@ -396,11 +396,11 @@ define(['initialize'], function (initialize) {
                 // },
                 selectable: "row",
                 columns: [  
-                    // {
-                    //     field: "no",
-                    //     title: "No",
-                    //     width: "40px",
-                    // },
+                    {
+                        field: "no",
+                        title: "No",
+                        width: "40px",
+                    },
                     {
                         field: "tglmasuk",
                         title: "Tgl Masuk",
