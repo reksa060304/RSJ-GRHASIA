@@ -1641,6 +1641,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('registrasi/get-jenis-pelayanan','Registrasi\RegistrasiController@getJenisPelayananByNorecPd');
             Route::get('registrasi/get-status-close','Registrasi\RegistrasiController@getStatusClosePeriksa');
             Route::get('registrasi/tindakan/get-combo','Registrasi\RegistrasiController@getComboTindakanPendaftaran');
+            Route::get('registrasi/get-penjagaan-mutasi-pasien','Registrasi\RegistrasiController@getPenjagaanMutasiPasien');
             Route::post('registrasi/simpan-mutasi-pasien','Registrasi\RegistrasiController@saveMutasiPasien');
 
             Route::get('registrasi/get-daftar-pasienbatal','Registrasi\RegistrasiController@getDaftarPasienBatal');

@@ -168,14 +168,14 @@ define(['initialize'], function (initialize) {
             }
             $scope.save = function (data) {
                 var data = {
-                    "id": "xyz",
+                    "id": "",
                     "namaexternal": $scope.item.unitpenginput,
                     "reportdisplay": $scope.item.unitpenginput,
                     "namapelatihan": $scope.item.unitpenginput,
 
                 }
                 // return 
-                medifirstService.post("sdm/save-nama    -pelatihan", data).then(function (e) {
+                medifirstService.post("sdm/save-nama-pelatihan", data).then(function (e) {
                     $scope.refresh();
                 });
             }

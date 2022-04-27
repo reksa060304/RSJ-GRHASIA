@@ -422,7 +422,7 @@ class PelayananResepController extends ApiController
                 $newPPD = PelayananPasienDetail::where('pelayananpasien', $norec_PP)->where('kdprofile', $idProfile)->delete();
                 $newP3 = PelayananPasienPetugas::where('pelayananpasien', $norec_PP)->where('kdprofile', $idProfile)->delete();
 
-                $qtyJumlah = (float)$r_PPL['jumlah'] * (float)$r_PPL['nilaikonversi'];
+                $qtyJumlah = (float)$r_PPL['jumlah'] ;//* (float)$r_PPL['nilaikonversi'];
 
                 //## StokProdukDetail
                 $produk = $r_PPL['produkfk'];

@@ -79,14 +79,13 @@
             <div class="grid_12" id="contentPencarian">
                 <div class="grid_4" style="margin-top: 15px;">
                     <div class="grid_12">
-                        <label c-label item="item" c-label-text="Bulan"></label>
+                        <label c-label item="item" c-label-text="Periode"></label>
                     </div>
                     <div class="grid_12">
                         <!-- AwalPeriode -->
                         <div class="grid_4">
-                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.bulan"
-                                k-data-text-field="'namabulan'" k-data-value-field="'id'" k-filter="'contains'"
-                                k-auto-bind="false" k-data-source="listBulan" />
+                            <input style="width: 100%" k-ng-model="item.tahun" kendo-datetimepicker placeholer="yyyy"
+                            k-format="'yyyy'" />
                         </div>
                         <div class="grid_2" style="margin-top: 5px;">
                             <button class="c-button" ng-click="cariFilter()">Cari</button>
@@ -100,8 +99,8 @@
         <div class="grid_12" style="margin-top:50px;">
             <div class="grid_12 borderBox">
                 <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
-                    k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'"
-                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 1500px;">
                 </kendo-grid>
             </div>
         </div>

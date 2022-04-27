@@ -745,6 +745,35 @@ class MainController extends ApiController
 //                    dd($res);
                     array_push($compact,'res','r');
                     break;
+
+                case 'dashboard-ranap':
+                    
+                    $startDateFormat = substr(date('Y-m-d', strtotime(Carbon::now()->format('Y-m-d'))), 0, 10); //returns current day
+                    $firstDay = Carbon::now()->startOfYear()->format('Y-m-d');
+                    $firstDayFormat = substr(date('Y-m-d', strtotime($firstDay)), 0, 10);
+
+                    $tglawal = $firstDayFormat;
+                    $tglakhir =  $startDateFormat;
+
+                    //var_dump($firstDayFormat);
+    
+                    if (!isset($r->tglawal)&&!isset($r->tglakhir) ){
+                        return redirect()->route("show_page",
+                            ["role" => session("role"),
+                                "pages" => $r->pages,
+                                "tglawal" =>  $tglawal,
+                                "tglakhir" => $tglakhir]);
+                    } else {
+                        $tglawal = $r->tglawal;
+                        $tglakhir = $r->tglakhir;
+                    }
+                    $res['bor'] = $this->getBorLosToi($tglawal,$tglakhir,$kdProfile);
+                    // var_dump($tglawal);
+                    // var_dump($tglakhir);
+    //                    dd($res);
+                    array_push($compact,'res','r');
+                    break;
+                    
                 case 'dashboard-persediaan':
                     $tglawal = date('Y-m-d');
                     $tglakhir =  date('Y-m-d');
@@ -2214,13 +2243,15 @@ AND sp.statusenabled <> false
     public static function getBorLosToi($tglAwal,$tglAkhir,$kdProfile){
 
         $idProfile = (int) $kdProfile;
-        $tglAwal =$tglAwal.' 00:00';
+        $tglAwal = $tglAwal.' 00:00';
         $tglAkhir = $tglAkhir.' 23:59';
-        $tahun = new \DateTime($tglAkhir);
+        // var_dump($tglAwal);
+        // var_dump($tglAkhir);
+        //$tahun = new \DateTime($tglAkhir);
         $tahun = date ('Y');
-        $datetime1 = new \DateTime($tglAwal);
-        $datetime2 = new \DateTime($tglAkhir);
-        $interval = $datetime1->diff($datetime2);
+        // $datetime1 = new \DateTime(implode(" ",$tglAwal));
+        // $datetime2 = new \DateTime(implode(" ",$tglAkhir));
+        // $interval = $datetime1->diff($datetime2);
         $sehari = 1;//$interval->format('%d');
         $data10=[];
 
@@ -2447,6 +2478,9 @@ AND sp.statusenabled <> false
                 ) as x group by x.tanggalpulang
             ) as y"));
 
+            $jumlahdays = DB::select(DB::raw("SELECT '$tglAkhir'::date - '$tglAwal'::date + 1 as jumlahhari"));
+            //var_dump($jumlahdays[0]->jumlahhari);
+            $jumlah = $jumlahdays[0]->jumlahhari;
 
             $jumlahttkalihari = 0;
             $jumlahgrandtotaltt = 0;
@@ -2456,7 +2490,7 @@ AND sp.statusenabled <> false
             $hari = 0;
             $total_month_awal = (int) date('m', strtotime($tglAwal));
             $total_month_akhir = (int) date('m', strtotime($tglAkhir));
-
+                    
                 // var_dump($year);
                 // var_dump($total_month_awal);
                 // var_dump($total_month_akhir);
@@ -2468,7 +2502,18 @@ AND sp.statusenabled <> false
                     'year' => $year,
                 );
 
-                $hari = cal_days_in_month(CAL_GREGORIAN, $m, $year);
+                if($jumlah >= 28){
+                    $hari = cal_days_in_month(CAL_GREGORIAN, $m, $year);
+                    $jumlah -= $hari;
+                    $hari = cal_days_in_month(CAL_GREGORIAN, $m, $year);
+                } else{
+                    $hari = $jumlah;
+                }
+                
+
+                //if()
+
+                //var_dump($hari);
 
                 $jumlahtt = DB::select(DB::raw("select '$year-$m-$hari' as tanggal, sum(rm.jumlah_tt) as totalperperiode 
                 from riwayatkamar_m rm
@@ -2485,7 +2530,7 @@ AND sp.statusenabled <> false
                 $jumlahttkalihari += $hari*$jumlahtt[0]->totalperperiode;
                 $jumlahgrandtotaltt += $jumlahtt[0]->totalperperiode;
                 
-
+                //var_dump($jumlahttkalihari);
             }
             
             $bor = 0;
@@ -2557,16 +2602,24 @@ AND sp.statusenabled <> false
             $jumlahhariperawatantt = $jumlahpasienawal + $jumlahpasienmasuk + $jumlahpasienpindah;
             $jumlahpulang = $jumlahpasiendipindahkan + $jumlahpasienpulang + $jumlahpasienpulangaps + $jumlahpasienpulangmelarikandiri;
 
-            //var_dump($jumlahhariperawatantt);
+            //var_dump($jumlahpulang);
             
 
-            $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
-            $alos = $jumlahharidirawat/$jumlahpulang;
-            $toi = ($jumlahttkalihari - $jumlahhariperawatantt)/$jumlahpulang;
-            $bto = $jumlahpulang/$jumlahgrandtotaltt;
-            $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
-            $gdr = $jumlahpasienmeninggal/$jumlahpulang*1000;
-
+            if($jumlahpulang == 0){
+                $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
+                $alos = 0;
+                $toi = 0;
+                $bto = $jumlahpulang/$jumlahgrandtotaltt;
+                $ndr = 0;
+                $gdr = 0;
+            } else{
+                $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
+                $alos = $jumlahharidirawat/$jumlahpulang;
+                $toi = ($jumlahttkalihari - $jumlahhariperawatantt)/$jumlahpulang;
+                $bto = $jumlahpulang/$jumlahgrandtotaltt;
+                $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
+                $gdr = $jumlahpasienmeninggal/$jumlahpulang*1000;
+            }
 
             $data10[] = array(
                 'lamarawat'=>(int)$jumlahharidirawat,

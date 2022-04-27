@@ -276,7 +276,7 @@ class BendaharaPenerimaanController extends ApiController {
         \DB::beginTransaction();
         try{
             $input  = $request->all();
-
+            //var_dump($input['tglsetor']);
             $dataPegawaiUser = \DB::select(DB::raw("select pg.id,pg.namalengkap,lu.id as userId from loginuser_s as lu
                     INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
                     where lu.kdprofile = $idProfile and pg.id=:idLoginUser limit 1"),
@@ -327,7 +327,7 @@ class BendaharaPenerimaanController extends ApiController {
             $SH->kdprofile = $idProfile;
             $SH->statusenabled= true;
             $SH->totalsetortarikdeposit =$input['totalSetoran'];
-            $SH->tglsetortarikdeposit =  $input['tglsetor'];;//$this->getDateTime();
+            $SH->tglsetortarikdeposit =  $input['tglsetor'];//$this->getDateTime();
             $SH->objectpegawaitarikdepositfk = $input['kdPegawai'];
             $SH->objectpegawaiterimafk = $this->getCurrentUserID();
             $SH->objectkelompoktransaksifk = $kdKelTrans;
@@ -354,7 +354,7 @@ class BendaharaPenerimaanController extends ApiController {
             //      $strukBuktiPenerimanan->nostrukfk = $strukPelayanan->norec;
             //      $strukBuktiPenerimanan->objectkelompokpasienfk = $strukPelayanan->pasien_daftar->pasien->objectkelompokpasienfk;
             $strukBuktiPenerimanan->objectpegawaipenerimafk = $this->getCurrentLoginID();
-            $strukBuktiPenerimanan->tglsbm =  $input['tglsetor'];;//date('Y-m-d H:i:s');
+            $strukBuktiPenerimanan->tglsbm =  $input['tglsetor'];//date('Y-m-d H:i:s');
             $strukBuktiPenerimanan->totaldibayar =  $input['totalSetoran'];//$input['totalSetoran'];
             $strukBuktiPenerimanan->objectkelompoktransaksifk = $kdKelTrans;
             $strukBuktiPenerimanan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-' . $this->getDateTime()->format('ym'),$idProfile);
@@ -2556,7 +2556,7 @@ class BendaharaPenerimaanController extends ApiController {
         $STS->kdprofile = $idProfile;
         $STS->statusenabled = true;
         $STS->nosts = $nosts;
-        $STS->tglpenerimaan = date('Y-m-d H:i:s');
+        $STS->tglpenerimaan = $setor[0]['tanggalSTS'];
         $STS->totalsetoran = $totalpenerimaan;
         $STS->totalsetoranpembulatan = $total_penerimaan;
         $STS->terbilang = $setor[0]['terbilang'];
@@ -2641,11 +2641,7 @@ class BendaharaPenerimaanController extends ApiController {
         and sc.noclosing IN('".implode("','",$noclosing)."')"));
 
 
-        // var_dump($data);
-        // var_dump(count($data));
-
-        //simpan STS Detail
-
+       
         $jumlahpoliklinik = 0;
         $jumlahperiksajiwa = 0;
         $jumlahperiksanapza = 0;
@@ -2768,213 +2764,256 @@ class BendaharaPenerimaanController extends ApiController {
             if($konten->idruangan == 752 && $konten->idproduk == 5006382){
                 $jumlahperiksajiwa += $konten->totaldibayarclosing;
                 $voljumlahperiksajiwa++;
+                $cekjumlah = $konten->namaproduk;
             }
 
-            else if(($konten->idruangan == 768 && ($konten->idproduk == 5006382 || $konten->idproduk == 5006289 || $konten->idproduk == 5006504)) || ($konten->idruangan == 789 && ($konten->idproduk == 5006382 || $konten->idproduk == 5006289 || $konten->idproduk == 5006504))){
+            else if(($konten->idruangan == 768 && $konten->detailjenisproduk == 'KONSULTASI') || ($konten->idruangan == 789 && $konten->detailjenisproduk == 'KONSULTASI')){
                 $jumlahperiksanapza += $konten->totaldibayarclosing;
                 $voljumlahperiksanapza++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idruangan == 758 && $konten->idproduk == 5006453){
                 $jumlahperiksaumum += $konten->totaldibayarclosing;
                 $voljumlahperiksaumum++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idruangan == 759 && $konten->idproduk == 5006463){
                 $jumlahperiksagigi += $konten->totaldibayarclosing;
                 $voljumlahperiksagigi++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idruangan == 759 && ($konten->idproduk == 5006289 || $konten->idproduk == 5006504)){
                 $jumlahperiksadalam += $konten->totaldibayarclosing;
                 $voljumlahperiksadalam++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if(($konten->idruangan == 753 && ($konten->idproduk == 5006289 || $konten->idproduk == 5006504)) || ($konten->idruangan == 775 && ($konten->idproduk == 5006289 || $konten->idproduk == 5006504)) || ($konten->idruangan == 785 && ($konten->idproduk == 5006289 || $konten->idproduk == 5006504))){
                 $jumlahperiksaanak += $konten->totaldibayarclosing;
                 $voljumlahperiksaanak++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idruangan == 755 && ($konten->idproduk == 5006289 || $konten->idproduk == 5006504)){
                 $jumlahperiksasyaraf += $konten->totaldibayarclosing;
                 $voljumlahperiksasyaraf++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if(($konten->idruangan == 786 && ($konten->idproduk == 5006289 || $konten->idproduk == 5006504)) || ($konten->idruangan == 761 && ($konten->idproduk == 5006289 || $konten->idproduk == 5006504))){
                 $jumlahperiksaelektromedik += $konten->totaldibayarclosing;
                 $voljumlahperiksaelektromedik++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idruangan == 765 && $konten->idproduk == 5007076){
                 $jumlahperiksaigdjiwa += $konten->totaldibayarclosing;
                 $voljumlahperiksaigdjiwa++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idruangan == 29 && $konten->idproduk == 5007076){
                 $jumlahperiksaigdnonjiwa += $konten->totaldibayarclosing;
                 $voljumlahperiksaigdnonjiwa++;
+                $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idproduk == 5008636 || $konten->idproduk == 5008644 || $konten->idproduk == 5008637 || $konten->idproduk == 5008635 || $konten->idproduk == 5008645 || $konten->idproduk == 5008647 || $konten->idproduk == 5008649){
+            else if($konten->detailjenisproduk == 'Pendaftaran'){
                 $jumlahdipam += $konten->totaldibayarclosing;
                 $voljumlahdipam++;
+                $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->objectdepartemenfk != 16 && $konten->objectdepartemenfk != null && $konten->idruangan != 765 && $konten->idruangan != 759 && $konten->idruangan != 29 && $konten->isobat != 't' ){
-                $jumlahtindakanpolirajal += $konten->totaldibayarclosing;
-                $voljumlahtindakanpolirajal++;
-            }
-
-            else if(($konten->idruangan == 765 && $konten->idproduk != 5007076 && $konten->isobat != 't') || ($konten->idruangan == 29 && $konten->idproduk != 5007076 && $konten->isobat != 't')){
-                $jumlahtindakanigd += $konten->totaldibayarclosing;
-                $voljumlahtindakanigd++;
-            }
-
-            else if($konten->idruangan == 759 && $konten->idproduk != 5006463 && $konten->isobat != 't'){
-                $jumlahtindakangigi += $konten->totaldibayarclosing;
-                $voljumlahtindakangigi++;
-            }
-
-            else if($konten->objectdepartemenfk != 16 && $konten->isobat == 't'){
-                $jumlahobatrajal += $konten->totaldibayarclosing;
-                $voljumlahobatrajal++;
-            }
-
-            else if(($konten->idruangan == 764 || $konten->idruangan == 770 || $konten->idruangan == 771 || $konten->idruangan == 788) && $konten->isobat != 't'){
+            else if(($konten->idruangan == 764 || $konten->idruangan == 770 || $konten->idruangan == 771 || $konten->idruangan == 788) && $konten->isobat != 't' && ($konten->detailjenisproduk == 'PENUNJANG' || $konten->detailjenisproduk == 'Administrasi' || $konten->detailjenisproduk == 'TENAGA AHLI')){
                 $jumlahkir += $konten->totaldibayarclosing;
                 $voljumlahkir++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idruangan == 767 && $konten->isobat != 't'){
                 $jumlahpsikologi += $konten->totaldibayarclosing;
                 $voljumlahpsikologi++;
+                $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idruangan == 784 && $konten->isobat != 't'){
+            else if(($konten->idruangan == 784 && $konten->isobat != 't') || $konten->idproduk == 5006180 || $konten->idproduk == 5006767 || $konten->idproduk == 5007130 || $konten->idproduk == 5006768){
                 $jumlahgizi += $konten->totaldibayarclosing;
                 $voljumlahgizi++;
+                $cekjumlah = $konten->namaproduk;
             }
             
             else if($konten->idruangan == 575 && $konten->isobat != 't'){
                 $jumlahlaboratorium += $konten->totaldibayarclosing;
                 $voljumlahlaboratorium++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if(($konten->idruangan == 786) || ($konten->idruangan == 761) && $konten->isobat != 't'){
                 $jumlahelektromedik += $konten->totaldibayarclosing;
                 $voljumlahelektromedik++;
+                $cekjumlah = $konten->namaproduk;
             }
 
-            else if(($konten->idruangan == 762 &&  $konten->isobat != 't')){
+            else if(($konten->idruangan == 762 &&  $konten->isobat != 't') || ($konten->idruangan == 774 &&  $konten->detailjenisproduk == 'KEPERAWATAN') || ($konten->idruangan == 777 &&  $konten->detailjenisproduk == 'KEPERAWATAN')){
                 $jumlahfisioterapi += $konten->totaldibayarclosing;
                 $voljumlahfisioterapi++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if(($konten->idruangan == 576 && $konten->isobat != 't')){
                 $jumlahradiologi += $konten->totaldibayarclosing;
                 $voljumlahradiologi++;
-            }
-
-            else if($konten->detailjenisproduk == 1299){
-                $jumlahdiklat += $konten->totaldibayarclosing;
-                $voljumlahdiklat++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->objectdepartemenfk == 16 && $konten->idproduk == 5008639){
                 $jumlahkelassatu += $konten->totaldibayarclosing;
                 $voljumlahkelassatu++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->objectdepartemenfk == 16 && $konten->idproduk == 5008640){
                 $jumlahkelasdua += $konten->totaldibayarclosing;
                 $voljumlahkelasdua++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->objectdepartemenfk == 16 && $konten->idproduk == 5008641){
                 $jumlahkelastiga += $konten->totaldibayarclosing;
                 $voljumlahkelastiga++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->objectdepartemenfk == 16 && $konten->idproduk == 5008638){
                 $jumlahkelasvip += $konten->totaldibayarclosing;
                 $voljumlahkelasvip++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->objectdepartemenfk == 16 &&  ($konten->idproduk == 5008643 || $konten->idproduk == 5008642)){
                 $jumlahkelasuppi += $konten->totaldibayarclosing;
                 $voljumlahkelasuppi++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if(($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006029) || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006028) || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006027) || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006574) || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006030) || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006033) || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006191) || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006192) || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006573) || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006572) || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5007108)  || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006194) || ($konten->objectdepartemenfk == 16 && $konten->idproduk == 5006193)){
+                $jumlahvisite += $konten->totaldibayarclosing;
+                $voljumlahvisite++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if(($konten->objectdepartemenfk == 16 && $konten->isobat == 't') || ($konten->objectdepartemenfk == 16 && ($konten->idproduk == 5008651 || $konten->idproduk == 5008652 || $konten->idproduk == 5008650 || $konten->idproduk == 5008653 || $konten->idproduk == 5006759 || $konten->idproduk == 5006763 || $konten->idproduk == 5006758 || $konten->idproduk == 5006764 || $konten->idproduk == 5006761 || $konten->idproduk == 5006762 || $konten->idproduk == 5006760 || $konten->idproduk == 5006765 || $konten->idproduk == 5006757 || $konten->idproduk == 5006766 || $konten->idproduk == 4041191))){
                 $jumlahobatranap += $konten->totaldibayarclosing;
                 $voljumlahobatranap++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->objectdepartemenfk == 16 && $konten->isobat != 't'){
                 $jumlahtindakanpoliranap += $konten->totaldibayarclosing;
                 $voljumlahtindakanpoliranap++;
-            }
-
-            else if($konten->objectdepartemenfk == 16 && ($konten->idproduk == 5006029 || $konten->idproduk == 5006028 || $konten->idproduk == 5006027 || $konten->idproduk == 5006574 || $konten->idproduk == 5006030 || $konten->idproduk == 5006033 || $konten->idproduk == 5006191 || $konten->idproduk == 5006192 || $konten->idproduk == 5006573 || $konten->idproduk == 5006572 || $konten->idproduk == 5007108  || $konten->idproduk == 5006194 || $konten->idproduk == 5006193)){
-                $jumlahvisite += $konten->totaldibayarclosing;
-                $voljumlahvisite++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if(($konten->idruangan == 779) || ($konten->idruangan == 780)){
                 $jumlahrehabmental += $konten->totaldibayarclosing;
                 $voljumlahrehabmental++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idproduk == 5006041 || $konten->idproduk == 5006039 || $konten->idproduk == 5006780 || $konten->idproduk == 5006776 || $konten->idproduk == 5007118 || $konten->idproduk == 5006775 || $konten->idproduk == 5008618 || $konten->idproduk == 5008619 || $konten->idproduk == 5008614 || $konten->idproduk == 5006040 || $konten->idproduk == 5007119 || $konten->idproduk == 5005994 || $konten->idproduk == 5006774){
                 $jumlahperawatanjenazah += $konten->totaldibayarclosing;
                 $voljumlahperawatanjenazah++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idproduk == 5008622){
                 $jumlahlegalisir += $konten->totaldibayarclosing;
                 $voljumlahlegalisir++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idproduk == 5008611){
                 $jumlahsewagedungterapi += $konten->totaldibayarclosing;
                 $voljumlahsewagedungterapi++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idproduk == 5008612){
                 $jumlahsewalapangan += $konten->totaldibayarclosing;
                 $voljumlahsewalapangan++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idproduk == 5008609){
                 $jumlahsewagedungdiklat += $konten->totaldibayarclosing;
                 $voljumlahsewagedungdiklat++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idproduk == 5008623 || $konten->idproduk == 5008624){
                 $jumlahsewatempatfotocopy += $konten->totaldibayarclosing;
                 $voljumlahsewatempatfotocopy++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idproduk == 5006036 || $konten->idproduk == 5006035 || $konten->idproduk == 5007117 || $konten->idproduk == 5005995 || $konten->idproduk == 5005996){
                 $jumlahsewaambulan += $konten->totaldibayarclosing;
                 $voljumlahsewaambulan++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idproduk == 5008617){
                 $jumlahsewabus += $konten->totaldibayarclosing;
                 $voljumlahsewabus++;
+                $cekjumlah = $konten->namaproduk;
             }
 
             else if($konten->idproduk == 5008631 || $konten->idproduk == 5008632 || $konten->idproduk == 5008633){
                 $parkir += $konten->totaldibayarclosing;
                 $volparkir++;
+                $cekjumlah = $konten->namaproduk;
             }
+
+            else if(($konten->idruangan == 765 && $konten->idproduk != 5007076 && $konten->isobat != 't') || ($konten->idruangan == 29 && $konten->idproduk != 5007076 && $konten->isobat != 't')){
+                $jumlahtindakanigd += $konten->totaldibayarclosing;
+                $voljumlahtindakanigd++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idruangan == 759 && $konten->idproduk != 5006463 && $konten->isobat != 't'){
+                $jumlahtindakangigi += $konten->totaldibayarclosing;
+                $voljumlahtindakangigi++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if(($konten->objectdepartemenfk != 16 && $konten->isobat == 't') || ($konten->idruangan == 94 && $konten->detailjenisproduk == 'TENAGA AHLI')){
+                $jumlahobatrajal += $konten->totaldibayarclosing;
+                $voljumlahobatrajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->detailjenisproduk == 1299){
+                $jumlahdiklat += $konten->totaldibayarclosing;
+                $voljumlahdiklat++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->objectdepartemenfk != 16 && $konten->isobat != 't'){
+                $jumlahtindakanpolirajal += $konten->totaldibayarclosing;
+                $voljumlahtindakanpolirajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+            
         }
 
-
+        
+        
         $jumlahperiksaigd = $jumlahperiksaigdjiwa + $jumlahperiksaigdnonjiwa;
         $voljumlahperiksaigd = $voljumlahperiksaigdjiwa + $voljumlahperiksaigdnonjiwa;
-        $jumlahpoliklinik = $jumlahperiksajiwa + $jumlahperiksaumum + $jumlahperiksanapza + $jumlahperiksagigi + $jumlahperiksadalam + $jumlahperiksaanak + $jumlahperiksasyaraf + $jumlahperiksaigd;
+        $jumlahpoliklinik = $jumlahperiksajiwa + $jumlahperiksaumum + $jumlahperiksanapza + $jumlahperiksagigi + $jumlahperiksadalam + $jumlahperiksaanak + $jumlahperiksasyaraf + $jumlahperiksaigd + $jumlahperiksaelektromedik;
         $voljumlahpoliklinik = $voljumlahperiksajiwa + $voljumlahperiksaumum + $voljumlahperiksanapza + $voljumlahperiksagigi + $voljumlahperiksadalam + $voljumlahperiksaanak + $voljumlahperiksasyaraf + $voljumlahperiksaigd;
         $jumlahobatobatrajal = $jumlahobatrajal;
         $voljumlahobatobatrajal = $voljumlahobatrajal;
@@ -3797,7 +3836,7 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->objectstsfk = $nosts;
         $STSD->save();
 
-        $grandtotal = $jumlahkir + $jumlahpoliklinik + $jumlahdipam + $jumlahtindakanpolirajal + $jumlahtindakanigd + $jumlahtindakangigi + $jumlahobatobatrajal + $jumlahkir + $jumlahpsikologi + $jumlahgizi + $jumlahpenunjang + $jumlahperawatanpasienranap + $jumlahobatobatranap + $jumlahtindakanpoliranap + $jumlahvisite + $jumlahrehabmental + $jumlahperawatanjenazah + $jumlahugdranap + $jumlahjiwaranap + $jumlahnapzaranap + $jumlahlainlain;
+        $grandtotal = $jumlahpoliklinik + $jumlahdipam + $jumlahtindakanpolirajal + $jumlahtindakanigd + $jumlahtindakangigi + $jumlahobatobatrajal + $jumlahkir + $jumlahpsikologi + $jumlahgizi + $jumlahpenunjang + $jumlahperawatanpasienranap + $jumlahobatobatranap + $jumlahtindakanpoliranap + $jumlahvisite + $jumlahrehabmental + $jumlahperawatanjenazah + $jumlahugdranap + $jumlahjiwaranap + $jumlahnapzaranap + $jumlahlainlain;
 
         $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
 
@@ -3913,7 +3952,7 @@ class BendaharaPenerimaanController extends ApiController {
 
     public function getSTSBulanan(Request $request) {
 
-        $bulan = $request['bulan'];
+        $tahun = $request['tahun'];
 
         $detail = DB::select(DB::raw("select stsd.kdrekening, stsd.nomer, stsd.uraian, sum(stsd.vol) as totalvol, sum(stsd.kolom1) as totalkolom1, sum(stsd.kolom2) as totalkolom2,
         (
@@ -3927,13 +3966,824 @@ class BendaharaPenerimaanController extends ApiController {
         from surattandasetoran_t sts
         inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
         where sts.statusenabled = true
-        and date_part('month', sts.tglpenerimaan::timestamp ) = '$bulan'
+        and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
         group by stsd.kdrekening, stsd.nomer, stsd.uraian
         order by min(stsd.nourut)"));
         
+        $mainuraian = array('Pendapatan Usaha BLUD', 'Pendapatan Jasa Layanan', 'RAWAT JALAN', 'Klinik Umum', 'Klinik Jiwa',
+        'Klinik Jiwa Umum', 'Klinik Jiwa JKN', 'Klinik Jiwa Jamkesda Jks', 'TM. Poli Umum', 'TM. Poli JKN', 'TM. Poli Jamkesda Jamkesos',
+        'Klinik Gigi', 'Poli Gigi', 'TM. Gigi', 'Klinik Syaraf', 'Klinik Penyakit Dalam', 'Klinik Anak', 'Klinik Kulit dan Kelamin',
+        'Poli Kulit Kelamin', 'TM. Kulit', 'Pelayanan NAPZA', 'UGD', 'TM. UGD', 'Kunjungan UGD Umum', 'Kunjungan UGD JKN', 'Kunjungan UGD Jamkesdasos',
+        'Obat-obatan Rajal', 'Pasien Umum', 'Pasien Jamkesdasos', 'Pasien JKN', 'Test Psikologi / Konsul Psikologi', 'Surat Keterangan Dokter (KIR)',
+        'DIPAM / Addministrasi', 'PENUNJANG', 'Laboratorium', 'Laboratorium Umum', 'Laboratorium Jamkesdasos', 'Laboratorium JKN', 'Pemeriksaan Elektromedik',
+        'Fisioterapi', 'Radiologi', 'Diklat', 'RAWAT INAP', 'Perawatan Pasien', 'VIP', 'UPPI', 'Kelas I', 'Kelas II', 'Kelas III', 'JKN', 'Kelas III Jamkesda Jamkesos',
+        'Tindakan Khusus Jiwa', 'TM Pasien Umum', 'TM Pasien JKN', 'TM Pasien Jamkesda Jamkesos', 'Visite Dokter', 'Visite Dokter Pasien Umum', 'Visite Dokter Pasien JKN',
+        'Visite Dokter Pasien Jamkesdasos', 'Rehab Mental dan Work Terapi', 'RM. Pasien Umum', 'RM. Pasien JKN', 'RM. Pasien Jamkesdasos', 'Konsultasi Spesialis Lain',
+        'Obat-obatan Ranap', 'Obat Ranap Umum', 'Obat Ranap JKN', 'Obat Ranap Jamkesda Jamkesos', 'Lain-lain Pendapatan BLUD', 'Sewa Gedung Terapi', 'Sewa Kantin / Tempat Fotocopy',
+        'Pemakaian Mobil / Kendaraan', 'Legalisir', 'Diklat', 'Parkir', 'Work Terapi', 'Sewa Lapangan Sepak Bola', 'Sewa Tanah Pertanian', 'Kontribusi Akreditasi', 'Sewa Manekin',
+        'Denda BPJS', 'Pemulasaran Jenazah', 'Sewa Grhasia Inn', 'Jasa Bank', 'Lain-lain Pendapatan BLUD', 'Liquid Gas', 'Saldo slipa di rekening lain', 'Pengembalian Klaim BPJS Tenaga Kerja',
+        'Giro BTN', 'Ada Saldo Sutera BPD Sudah Diakui Sebagai Pendapatan'
+        );
+
+        $loopuraian = array('PENDAPATAN USAHA BLUD', 'JASA LAYANAN RUMAH SAKIT', 'RAWAT JALAN', 'PERIKSA DOKTER UMUM', 'PERIKSA DOKTER SPESIALIS JIWA',
+        'Klinik Jiwa Umum', 'Klinik Jiwa JKN', 'Klinik Jiwa Jamkesda Jks', 'TM. Poli Umum', 'TM. Poli JKN', 'TM. Poli Jamkesda Jamkesos',
+        'Klinik Gigi', 'PERIKSA DOKTER GIGI', 'TINDAKAN MEDIK PASIEN GIGI', 'PERIKSA DOKTER SYARAF', 'PERIKSA DOKTER PENYAKIT DALAM', 'PERIKSA DOKTER ANAK', 'Klinik Kulit dan Kelamin',
+        'Poli Kulit Kelamin', 'TM. Kulit', 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)', 'UGD', 'TINDAKAN MEDIK IGD', 'Kunjungan UGD Umum', 'Kunjungan UGD JKN', 'Kunjungan UGD Jamkesdasos',
+        'OBAT-OBATAN', 'Pasien Umum', 'Pasien Jamkesdasos', 'Pasien JKN', 'PSIKOLOGI', 'SURAT KETERANGAN (KIR)',
+        'DIPAM/PENDAFTARAN', 'PENUNJANG', 'LABORATORIUM', 'Laboratorium Umum', 'Laboratorium Jamkesdasos', 'Laboratorium JKN', 'ELEKTROMEDIK',
+        'FISIOTERAPY', 'RADIOLOGI', 'DIKLAT', 'RAWAT INAP', 'PERAWATAN PASIEN', 'VIP', 'Kelas UPPI', 'Kelas I', 'Kelas II', 'Kelas III', 'JKN', 'Kelas III Jamkesda Jamkesos',
+        'TINDAKAN MEDIK RANAP', 'TM Pasien Umum', 'TM Pasien JKN', 'TM Pasien Jamkesda Jamkesos', 'VISITE DOKTER', 'Visite Dokter Pasien Umum', 'Visite Dokter Pasien JKN',
+        'Visite Dokter Pasien Jamkesdasos', 'REHABILITASI MENTAL', 'RM. Pasien Umum', 'RM. Pasien JKN', 'RM. Pasien Jamkesdasos', 'Konsultasi Spesialis Lain',
+        'OBAT-OBATAN RANAP', 'Obat Ranap Umum', 'Obat Ranap JKN', 'Obat Ranap Jamkesda Jamkesos', 'LAIN-LAIN PENDAPATAN BLUD YANG SAH', 'SEWA GEDUNG TERAPI', 'Sewa Kantin / Tempat Fotocopy',
+        'Pemakaian Mobil / Kendaraan', 'LEGALISIR', 'SEWA GEDUNG DIKLAT', 'PARKIR', 'HASIL KETRAMPILAN PASIEN', 'SEWA LAPANGAN SEPAK BOLA', 'SEWA TANAH PERTANIAN', 'Kontribusi Akreditasi', 'SEWA MANEKIN',
+        'Denda BPJS', 'PERAWATAN JENAZAH', 'SEWA GEDUNG GRHASIA INN', 'Jasa Bank', 'Lain-lain Pendapatan BLUD', 'Liquid Gas', 'Saldo slipa di rekening lain', 'Pengembalian Klaim BPJS Tenaga Kerja',
+        'Giro BTN', 'Ada Saldo Sutera BPD Sudah Diakui Sebagai Pendapatan'
+        );
+
+        $detail = DB::select(DB::raw("select to_char(sts.tglpenerimaan, 'MM') as date, stsd.kdrekening, stsd.nomer, stsd.uraian, sum(stsd.vol) as totalvol, sum(stsd.kolom1) as totalkolom1, sum(stsd.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(stsd.kolom1) is null and sum(stsd.kolom2) is null then sum(stsd.kolom1)
+            when sum(stsd.kolom1) is null and sum(stsd.kolom2) is not null then sum(stsd.kolom2)
+            when sum(stsd.kolom1) is not null and sum(stsd.kolom2) is null then sum(stsd.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from surattandasetoran_t sts
+        inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+        where sts.statusenabled = true
+        and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+        group by stsd.kdrekening, stsd.nomer, stsd.uraian, to_char(sts.tglpenerimaan, 'MM')
+        order by min(stsd.nourut)"));
+        
+        $jumlahjanuari = 0;
+        $jumlahfebruari = 0;
+        $jumlahmaret = 0;
+        $jumlahapril = 0;
+        $jumlahmei = 0;
+        $jumlahjuni = 0;
+        $jumlahjuli = 0;
+        $jumlahagustus = 0;
+        $jumlahseptember = 0;
+        $jumlahoktober = 0;
+        $jumlahnovember = 0;
+        $jumlahdesember = 0;
+        $jumlahrealisasi = 0;
+        $data = [];
+
+        foreach($loopuraian as $main){
+            $jumlahjanuari = 0;
+            $jumlahfebruari = 0;
+            $jumlahmaret = 0;
+            $jumlahapril = 0;
+            $jumlahmei = 0;
+            $jumlahjuni = 0;
+            $jumlahjuli = 0;
+            $jumlahagustus = 0;
+            $jumlahseptember = 0;
+            $jumlahoktober = 0;
+            $jumlahnovember = 0;
+            $jumlahdesember = 0;
+            $jumlahrealisasi = 0;
+            $uraian = $main;
+            foreach($detail as $row){
+                if($row->date == '01' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $row->uraian == $main){
+                    $jumlahjanuari += $row->totalfix;
+                }
+
+                if($row->date == '02' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $row->uraian == $main){
+                    $jumlahfebruari += $row->totalfix;
+                }
+
+                if($row->date == '03' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $row->uraian == $main){
+                    $jumlahmaret += $row->totalfix;
+                }
+
+                if($row->date == '04' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $row->uraian == $main){
+                    $jumlahapril += $row->totalfix;
+                }
+
+                if($row->date == '05' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $row->uraian == $main){
+                    $jumlahmei += $row->totalfix;
+                }
+
+                if($row->date == '06' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $row->uraian == $main){
+                    $jumlahjuni += $row->totalfix;
+                }
+
+                if($row->date == '07' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $row->uraian == $main){
+                    $jumlahjuli += $row->totalfix;
+                }
+
+                if($row->date == '08' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $row->uraian == $main){
+                    $jumlahagustus += $row->totalfix;
+                }
+
+                if($row->date == '09' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $row->uraian == $main){
+                    $jumlahseptember += $row->totalfix;
+                }
+
+                if($row->date == '10' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $row->uraian == $main){
+                    $jumlahoktober += $row->totalfix;
+                }
+
+                if($row->date == '11' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $row->uraian == $main){
+                    $jumlahnovember += $row->totalfix;
+                }
+
+                if($row->date == '12' && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $row->uraian == $main){
+                    $jumlahdesember += $row->totalfix;
+                }
+
+                if($main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI')){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI')){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($row->uraian == $main){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+            }
+
+            $data[] =array(
+                'mainuraian' =>   $uraian,
+                'jumlahjanuari' =>   $jumlahjanuari,
+                'jumlahfebruari' =>   $jumlahfebruari,
+                'jumlahmaret' =>   $jumlahmaret,
+                'jumlahapril' =>   $jumlahapril,
+                'jumlahmei' =>   $jumlahmei,
+                'jumlahjuni' =>   $jumlahjuni,
+                'jumlahjuli' =>   $jumlahjuli,
+                'jumlahagustus' =>   $jumlahagustus,
+                'jumlahseptember' =>   $jumlahseptember,
+                'jumlahoktober' =>   $jumlahoktober,
+                'jumlahnovember' =>   $jumlahnovember,
+                'jumlahdesember' =>   $jumlahdesember,
+                'jumlahrealisasi' =>   $jumlahrealisasi,
+            );
+        }
+
 
         $result = array(
-            'detail' => $detail,
+            'detail' => $data,
         );
         
         return $this->setStatusCode(201)->respond($result, 'tes msg');

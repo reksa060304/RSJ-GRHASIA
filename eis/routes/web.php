@@ -75,6 +75,7 @@ Route::group(["middleware" => "login_check"], function () {
     Route::get('/get-data-flag','DashboardController@getDataDashboardFlag');
     Route::get('/get-dashboard-pegawai','DashboardController@getDashboardPegawai');
     Route::get('/get-dashboard-persediaan','DashboardController@getDashboardPersediaan');
+    Route::get('/get-dashboard-sensus-ranap','DashboardController@getDashboardSensusRanap');
     Route::get('/get-dashboard-persediaan-stok','DashboardController@getDashboardPersediaanStok');
     Route::get('/get-dashboard-kamar','DashboardController@getKetersediaanKamar');
     Route::get('/get-detail-covid-pasien','DashboardController@getDetailCovid');

@@ -239,7 +239,7 @@ define(['initialize'], function (initialize) {
                     {
                         field: "namaruangan",
                         aggregate: "count"
-                    }]
+                }]
             };
             $scope.aggregate = [
                 // {
@@ -248,6 +248,10 @@ define(['initialize'], function (initialize) {
                 // }, 
                 {
                     field: "namaruangan",
+                    aggregate: "count"
+                },
+                {
+                    field: "kelompokpasien",
                     aggregate: "count"
                 }]
             var onDataBound = function () {
@@ -346,7 +350,9 @@ define(['initialize'], function (initialize) {
                     {
                         "field": "kelompokpasien",
                         "title": "Tipe Pembayaran",
-                        "width": "80px"
+                        "width": "80px",
+                        aggregates: ["count"],
+                        groupHeaderTemplate: "Tipe Pembayaran #= value # (Jumlah: #= count#)"
                     },
 
                     {

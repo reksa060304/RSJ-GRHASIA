@@ -349,63 +349,89 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "statusPasien": $scope.item.historyPasien.statuspasien,
 
                 }
-                $scope.isSimpan = true;
-                medifirstService.post('registrasi/simpan-mutasi-pasien', tmpData).then(function (e) {
-                    $scope.resultAPD = e.data.data;
-                    responData = e.data;
-                    $scope.resultPD = e.data.data;
-                    $scope.model.noRegistrasi = e.data.data.noregistrasi;
-                    $scope.model.norec_apd = e.data.data.norec;
-
-
-                    //##log Pasien Daftar
-                    // medifirstService.get("sysadmin/logging/save-log-pendaftaran-pasien?norec_pd="
-                    //     +   $scope.resultAPD.norec ).then(function (x) {
-                    //     })
-                    medifirstService.postLogging('Mutasi Rawat Inap', 'norec pasiendaftar_t', $scope.currentNorec,
-                        'Mutasi Rawat Inap ' + ' dengan No Registrasi - ' + noRegistrasis + ' ke Ruangan '
-                        + $scope.item.ruangan.namaruangan).then(function (res) {
-                        })
-                    medifirstService.post('registrasi/update-sep-igd', { norec: $scope.currentNorec }).then(function (z) { })
-                    //## end log    
-
-                    var cachePasienDaftar = $scope.currentNorec
-                        + "~" + $scope.item.historyPasien.noregistrasi
-                        + "~" + $scope.resultAPD.norec;
-                    // + "~" + $scope.currentNoCm;
-                    cacheHelper.set('CacheRegistrasiPasien', cachePasienDaftar);
-                    if ($scope.item.asalRujukan != undefined) {
-                        var asalRujukan = { id: "2", asalrujukan: "Rumah sakit" }
-                        cacheHelper.set('cacheAsalRujukan', asalRujukan);
+                
+                medifirstService.get("registrasi/get-penjagaan-mutasi-pasien?nocm=" + $scope.item.pasien.nocm ).then(function (e) {
+                    
+                    if(e.data.detail.length > 0){
+                        var cek = e.data.detail.length;
+                        var ruangan = e.data.detail[0].namaruangan;
+                        var noregistrasi = e.data.detail[0].noregistrasi;
+                        var nocm = e.data.detail[0].nocm;
+                    } else{
+                        var cek = 0;
                     }
+                    //console.log(cek);
 
 
-                    if (e.data.status == 201) {
+                    if(cek > 0){
+                        messageContainer.error("Pasien dengan nocm " + nocm + " masih aktif dirawat di " + ruangan);
+                    } else{
                         $scope.isSimpan = true;
-                        $scope.isNext = false;
-                        $scope.isBatal = true;
-                        $scope.isReport = true;
-                        $scope.isReportPendaftaran = true;
-                        $scope.isReportRawatInap = true;
-                        $scope.isInputAsuransi = true;
-                        $scope.isAsuransi = false;
-                        $scope.model.generateNoSEP = false;
-                    }
-                    if ($scope.item.kelompokPasien.kelompokpasien.indexOf('BPJS') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('JKN') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('KEMENKES') > -1) {
-                        if (norecPD == '') {
+                        medifirstService.post('registrasi/simpan-mutasi-pasien', tmpData).then(function (e) {
+                            $scope.resultAPD = e.data.data;
+                            responData = e.data;
+                            $scope.resultPD = e.data.data;
+                            $scope.model.noRegistrasi = e.data.data.noregistrasi;
+                            $scope.model.norec_apd = e.data.data.norec;
+    
+    
+                            //##log Pasien Daftar
+                            // medifirstService.get("sysadmin/logging/save-log-pendaftaran-pasien?norec_pd="
+                            //     +   $scope.resultAPD.norec ).then(function (x) {
+                            //     })
+                            medifirstService.postLogging('Mutasi Rawat Inap', 'norec pasiendaftar_t', $scope.currentNorec,
+                                'Mutasi Rawat Inap ' + ' dengan No Registrasi - ' + noRegistrasis + ' ke Ruangan '
+                                + $scope.item.ruangan.namaruangan).then(function (res) {
+                                })
+                                let json = {
+                                    norec: $scope.currentNorec,
+                                    norec_apd: $scope.resultAPD.norec
+                                }
+                                medifirstService.post("registrasi/save-adminsitrasi", json).then(function (z) {
 
-                            $scope.inputPemakaianAsuransi();
-                        }
-                    } else {
-                        window.history.back();
+                                })
+                            medifirstService.post('registrasi/update-sep-igd', { norec: $scope.currentNorec }).then(function (z) { })
+                            //## end log    
+    
+                            var cachePasienDaftar = $scope.currentNorec
+                                + "~" + $scope.item.historyPasien.noregistrasi
+                                + "~" + $scope.resultAPD.norec;
+                            // + "~" + $scope.currentNoCm;
+                            cacheHelper.set('CacheRegistrasiPasien', cachePasienDaftar);
+                            if ($scope.item.asalRujukan != undefined) {
+                                var asalRujukan = { id: "2", asalrujukan: "Rumah sakit" }
+                                cacheHelper.set('cacheAsalRujukan', asalRujukan);
+                            }
+    
+    
+                            if (e.data.status == 201) {
+                                $scope.isSimpan = true;
+                                $scope.isNext = false;
+                                $scope.isBatal = true;
+                                $scope.isReport = true;
+                                $scope.isReportPendaftaran = true;
+                                $scope.isReportRawatInap = true;
+                                $scope.isInputAsuransi = true;
+                                $scope.isAsuransi = false;
+                                $scope.model.generateNoSEP = false;
+                            }
+                            if ($scope.item.kelompokPasien.kelompokpasien.indexOf('BPJS') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('JKN') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('KEMENKES') > -1) {
+                                if (norecPD == '') {
+    
+                                    $scope.inputPemakaianAsuransi();
+                                }
+                            } else {
+                                window.history.back();
+                            }
+                            medifirstService.postNonMessage('bridging/bpjs/aplicaresws/update-tt-by-ruangan' ,{'idruangan':$scope.item.ruangan.id,'idkelas':kelasId}).then(function(xx){})
+    
+                        }, function (error) {
+                            // throw error;
+                            $scope.isSimpan = false;
+                            $scope.isBatal = false;
+                        })
                     }
-                      medifirstService.postNonMessage('bridging/bpjs/aplicaresws/update-tt-by-ruangan' ,{'idruangan':$scope.item.ruangan.id,'idkelas':kelasId}).then(function(xx){})
-
-                }, function (error) {
-                    // throw error;
-                    $scope.isSimpan = false;
-                    $scope.isBatal = false;
-                })
+                });
             }
 
             $scope.model.generateNoSEP = false;

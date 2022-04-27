@@ -231,7 +231,7 @@
 			</div>
 
 		</div>
-        <div class="grid_3" style="margin-top: 15px;">
+        <div class="grid_2" style="margin-top: 15px;">
 			<div class="grid_12">
 				<label c-label item="item" c-label-text="Terbilang"></label>
 			</div>
@@ -241,7 +241,7 @@
 				<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.terbilang" />
 			</div>
 		</div>
-        <div class="grid_2" style="margin-top: 15px;">
+        <div class="grid_1" style="margin-top: 15px;">
 			<div class="grid_12">
 				<label c-label item="item" c-label-text="Data Dipilih"></label>
 			</div>
@@ -249,6 +249,17 @@
 
 			<div class="grid_12">
 				<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.dipilih" />
+			</div>
+		</div>
+        <div class="grid_2" style="margin-top: 15px;">
+			<div class="grid_12">
+				<label c-label item="item" c-label-text="Tanggal STS"></label>
+			</div>
+			<div class="clear"></div>
+
+			<div class="grid_12">
+				<input style="width: 100%" k-ng-model="item.tanggalSTS" kendo-datetimepicker
+						placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
 			</div>
 		</div>
         <div class="grid_12">
