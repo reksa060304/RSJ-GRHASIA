@@ -293,7 +293,10 @@ class BridgingPenunjangController extends ApiController
                     'statusorder' => 1
                 ]
             );
-          $raw = DB::select(DB::raw("select op.norec, op.kdprofile as kdprofile,
+          $raw = DB::select(DB::raw("
+        select * from (
+
+             select op.norec, op.kdprofile as kdprofile,
 		     op.iscito as cito,  op.tglpelayanan, prd.id as produkid , op.nourut, prd.namaproduk,
              ps.nocm,  so.noorderintern, so.noorder as noorder, ps.namapasien,  ps.tgllahir,  jk.jeniskelamin, 
              alm.alamatlengkap, ru.id as ruanganid, ru.namaruangan, pd.noregistrasi,
@@ -302,7 +305,9 @@ class BridgingPenunjangController extends ApiController
              dp.id as departemenid ,prd.objectdetailjenisprodukfk,
 			 djp.detailjenisproduk,djp.kodeexternal as kodeexternaldjp ,djp.objectjenisprodukfk,
 			 jp.jenisproduk,jp.namaexternal as namaexternaljp,kps.kelompokpasien,so.tglorder,
-			 gdr.golongandarah,ris.order_key
+			 gdr.golongandarah,ris.order_key, row_number() over (partition by prd.id order by op.tglpelayanan) 
+             as row_number
+
              FROM orderpelayanan_t as op
 			 left join produk_m as prd on prd.id=op.objectprodukfk
 			 left join detailjenisproduk_m as djp on djp.id=prd.objectdetailjenisprodukfk
@@ -322,7 +327,11 @@ class BridgingPenunjangController extends ApiController
                 and ris.order_code=cast( op.objectprodukfk as text)  
                 and ris.kdprofile = so.kdprofile
        where so.noorder = '$noorder'
-       and so.kdprofile = $kdProfile "));
+       and so.kdprofile = $kdProfile 
+       ) xxx where row_number=1
+       "
+         
+    ));
        
        $errorrr =  "";
        
