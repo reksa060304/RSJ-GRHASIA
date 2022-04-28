@@ -69,6 +69,7 @@ use App\Transaksi\EmrFoto;
 use App\Transaksi\EmrDokumen;
 use Illuminate\Http\Request;
 use App\Transaksi\SeqNumberEMR;
+use App\Transaksi\PelayananPasien;
 //use Illuminate\Http\Response;
 use DB;
 use App\Traits\Valet;
@@ -6243,6 +6244,15 @@ class EMRController  extends ApiController
                     $pro = DB::table('produk_m')->where('id',$item['produkfk'])->first();
                     $prod[] =$pro->namaproduk;
 
+                    $cekDuplikat = DB::table('orderpelayanan_t')
+                                    ->where('noorderfk',$dataSOnorec)
+                                    ->where('objectprodukfk',$item['produkfk'])
+                                    ->count();
+                    if($cekDuplikat > 0){
+                        continue;
+                    }
+                    
+
                     $listProduk = $listProduk .','.$pro->namaproduk;
                     $listProduk = substr($listProduk, 1, strlen($listProduk)-1);
                     $dataOP = new OrderPelayanan;
@@ -6372,7 +6382,7 @@ class EMRController  extends ApiController
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
-            $transMessage = "simpan OrderPelayanan";
+            $transMessage = "simpan OrderPelayanan";            
         }
 
         if ($transStatus == 'true') {
