@@ -5455,4 +5455,18 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         
         return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
+
+    public function getPenjagaanClosingKasir(Request $request)
+    {
+        
+        $noregistrasi = $request['noregistrasi'];
+
+        $dataz = DB::select(DB::raw("select tglclosing 
+        from pasiendaftar_t 
+        where noregistrasi = '$noregistrasi'"));
+
+        
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
 }

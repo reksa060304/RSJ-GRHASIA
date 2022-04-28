@@ -1762,168 +1762,186 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
 
             $scope.simpan = function () {
-                $scope.isRouteLoading = true;
-                $scope.tombolSimpanVis = false;
-                // medifirstService.getDataTableTransaksi("tatarekening/get-sudah-verif?noregistrasi="+
-                //     $scope.item.noRegistrasi, true).then(function(dat){
-                //     if (dat.data.status == true) {
-                //         alert('Sudah verifikasi Tatarekening Tidak Bisa hapus Obat!')
-                //         return;
-                //     }
-                // });
-                // if ($scope.item.penulisResep == undefined) {
-                //     alert("Pilih Penulis Resep terlebih dahulu!!")
-                //     return
-                // }
-                var checkRP = 0;
-                if ($scope.checkResepPulang == true) {
-                    checkRP = 1;
-                }
-                if (data2.length == 0) {
-                    alert("Pilih Produk terlebih dahulu!!")
-                    $scope.tombolSimpanVis = true;
-                    return
-                }
-                for (var i = data2.length - 1; i >= 0; i--) {
-                    //if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0 ) {
-                    //if (data2[i].hargasatuan == 0 && $scope.HargaMaster != 0) {
-                        if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0) {
-                        alert("Terdapat obat " + data2[i].namaproduk + " dengan harga kosong, kemungkinan stock kosong!!")
-                        $scope.tombolSimpanVis = true;
-                        $scope.isRouteLoading = false;
-                        return
+
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noRegistrasi ).then(function (e) {
+                    
+
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
                     }
 
-                }
-                for (var i = data2.length - 1; i >= 0; i--) {
-                    if (parseFloat(data2[i].jmlstok) < parseFloat(data2[i].jumlah)) {
-                        alert("Terdapat obat " + data2[i].namaproduk + " dengan jumlah melebihi STOK !! " + data2[i].namaproduk)
-                        $scope.tombolSimpanVis = true;
-                        $scope.isRouteLoading = false;
-                        return
-                    }
+                    console.log(cek);
 
-                }
-                var strukresep = {
-                    tglresep: moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss'),
-                    pasienfk: norec_apd,//
-                    nocm: $scope.item.nocm,
-                    namapasien: $scope.item.namaPasien,
-                    penulisresepfk: $scope.item.penulisResep != undefined ? $scope.item.penulisResep.id : null, //req nenden
-                    ruanganfk: $scope.item.ruangan.id,
-                    noorder: noOrder,
-                    status: strStatus,
-                    norecResep: norecResep,
-                    noresep: $scope.item.resep,
-                    retur: '-',
-                    isobatalkes: isPemakaianObatAlkes,
-                    isreseppulang: checkRP != undefined ? checkRP : null
-                }
-                var objSave =
-                {
-                    strukresep: strukresep,
-                    pelayananpasien: data2//$scope.dataGrid._data
-                }
-
-                $scope.tombolSimpanVis = false;
-                medifirstService.post('farmasi/save-pelayananobat', objSave).then(function (e) {
-                    $scope.tombolSimpanVis = true;
-                    $scope.item.resep = e.data.noresep.norec;
-                    if (dataOK.length > 0) {                        
-                        var objSaveKronis = {
-                            strukresep: strukresep,
-                            norecresep: $scope.item.resep,
-                            pelayananpasienobatkronis: dataOK,
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
+                    } else if (cek == 123){
+                        $scope.isRouteLoading = true;
+                        $scope.tombolSimpanVis = false;
+                        // medifirstService.getDataTableTransaksi("tatarekening/get-sudah-verif?noregistrasi="+
+                        //     $scope.item.noRegistrasi, true).then(function(dat){
+                        //     if (dat.data.status == true) {
+                        //         alert('Sudah verifikasi Tatarekening Tidak Bisa hapus Obat!')
+                        //         return;
+                        //     }
+                        // });
+                        // if ($scope.item.penulisResep == undefined) {
+                        //     alert("Pilih Penulis Resep terlebih dahulu!!")
+                        //     return
+                        // }
+                        var checkRP = 0;
+                        if ($scope.checkResepPulang == true) {
+                            checkRP = 1;
                         }
-                        medifirstService.post('farmasi/save-pelayanan-obat-kronis', objSaveKronis).then(function (e) { });
+                        if (data2.length == 0) {
+                            alert("Pilih Produk terlebih dahulu!!")
+                            $scope.tombolSimpanVis = true;
+                            return
+                        }
+                        for (var i = data2.length - 1; i >= 0; i--) {
+                            //if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0 ) {
+                            //if (data2[i].hargasatuan == 0 && $scope.HargaMaster != 0) {
+                                if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0) {
+                                alert("Terdapat obat " + data2[i].namaproduk + " dengan harga kosong, kemungkinan stock kosong!!")
+                                $scope.tombolSimpanVis = true;
+                                $scope.isRouteLoading = false;
+                                return
+                            }
+
+                        }
+                        for (var i = data2.length - 1; i >= 0; i--) {
+                            if (parseFloat(data2[i].jmlstok) < parseFloat(data2[i].jumlah)) {
+                                alert("Terdapat obat " + data2[i].namaproduk + " dengan jumlah melebihi STOK !! " + data2[i].namaproduk)
+                                $scope.tombolSimpanVis = true;
+                                $scope.isRouteLoading = false;
+                                return
+                            }
+
+                        }
+                        var strukresep = {
+                            tglresep: moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss'),
+                            pasienfk: norec_apd,//
+                            nocm: $scope.item.nocm,
+                            namapasien: $scope.item.namaPasien,
+                            penulisresepfk: $scope.item.penulisResep != undefined ? $scope.item.penulisResep.id : null, //req nenden
+                            ruanganfk: $scope.item.ruangan.id,
+                            noorder: noOrder,
+                            status: strStatus,
+                            norecResep: norecResep,
+                            noresep: $scope.item.resep,
+                            retur: '-',
+                            isobatalkes: isPemakaianObatAlkes,
+                            isreseppulang: checkRP != undefined ? checkRP : null
+                        }
+                        var objSave =
+                        {
+                            strukresep: strukresep,
+                            pelayananpasien: data2//$scope.dataGrid._data
+                        }
+
+                        $scope.tombolSimpanVis = false;
+                        medifirstService.post('farmasi/save-pelayananobat', objSave).then(function (e) {
+                            $scope.tombolSimpanVis = true;
+                            $scope.item.resep = e.data.noresep.norec;
+                            if (dataOK.length > 0) {                        
+                                var objSaveKronis = {
+                                    strukresep: strukresep,
+                                    norecresep: $scope.item.resep,
+                                    pelayananpasienobatkronis: dataOK,
+                                }
+                                medifirstService.post('farmasi/save-pelayanan-obat-kronis', objSaveKronis).then(function (e) { });
+                            }
+                            let params = $scope.item.noRegistrasi;    
+                            if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                                params = $scope.item.noreservasi;
+                            } 
+                            //saveAntrol(params)
+                            saveAntrol(params);
+                            saveAntrol2(params,6);
+
+
+                            // //Bridging Consis
+                            // if ($scope.item.consisid != undefined) {
+                            //     var objSave =
+                            //         {
+                            //             strukresep:$scope.item.resep,
+                            //             counterid:$scope.item.consisid
+                            //         }
+                            //     medifirstService.postbridgingconsisd(objSave).then(function(e) {
+                            //     })
+                            // }
+                            // //Bridging Consis
+                            // //Bridging MiniR45
+                            //     var objSave =
+                            //         {
+                            //             strukresep:$scope.item.resep
+                            //         }
+
+                            //     medifirstService.postbridgingminir45(objSave).then(function(e) {
+
+                            //     })
+                            // //Bridging minir45
+
+                            //##save Logging user
+                            medifirstService.get("sysadmin/logging/save-log-input-resep?norec_apd="
+                                + norec_apd
+                                + "&penulisresepfk="
+                                + $scope.item.penulisResep.id
+                                + "&ruanganfk="
+                                + $scope.item.ruangan.id
+                                + "&tglresep="
+                                + moment($scope.item.tglAwal).format('YYYY-MM-DD hh:mm:ss')
+                            ).then(function (data) {
+
+                            })
+                            //##end
+
+                            // var stt = 'false'
+                            // if (confirm('View resep? ')) {
+                            //     // Save it!
+                            //     stt='true';
+                            // } else {
+                            //     // Do nothing!
+                            //     stt='false'
+                            // }
+                            // var client = new HttpClient();
+                            // client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep='+$scope.item.consisid+'&nores='+e.data.noresep.norec+'&view='+stt+'&user='+pegawaiUser.namalengkap, function(response) {
+                            //     //aadc=response;
+                            // });
+
+
+
+                            // if (noOrder == 'EditResep') {
+                            //     var objDelete = {norec:norecResep}
+                            //     medifirstService.posthapuspelayananapotik(objDelete).then(function(e) {
+
+                            //     })
+                            // }
+                            $scope.isRouteLoading = false;
+                            $scope.tombolSimpanVis = true;
+                            window.history.back();
+                        }, function (error) {
+                            $scope.isRouteLoading = false;
+                            $scope.tombolSimpanVis = true;
+                        })
+                        var chacePeriode = {
+                            0: $scope.item.ruangan,
+                            1: '',//$scope.item.aturanPakai,
+                            2: $scope.item.jenisKemasan,
+                            3: '',
+                            4: '',
+                            5: '',
+                            6: '',
+                            7: '',
+                            8: ''
+                        }
+                        cacheHelper.set('cacheanuaing', chacePeriode);
+
+                        // $state.go("TransaksiPelayananApotik")
                     }
-                    let params = $scope.item.noRegistrasi;    
-                    if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
-                        params = $scope.item.noreservasi;
-                    } 
-                    //saveAntrol(params)
-                    saveAntrol(params);
-                    saveAntrol2(params,6);
-
-
-                    // //Bridging Consis
-                    // if ($scope.item.consisid != undefined) {
-                    //     var objSave =
-                    //         {
-                    //             strukresep:$scope.item.resep,
-                    //             counterid:$scope.item.consisid
-                    //         }
-                    //     medifirstService.postbridgingconsisd(objSave).then(function(e) {
-                    //     })
-                    // }
-                    // //Bridging Consis
-                    // //Bridging MiniR45
-                    //     var objSave =
-                    //         {
-                    //             strukresep:$scope.item.resep
-                    //         }
-
-                    //     medifirstService.postbridgingminir45(objSave).then(function(e) {
-
-                    //     })
-                    // //Bridging minir45
-
-                    //##save Logging user
-                    medifirstService.get("sysadmin/logging/save-log-input-resep?norec_apd="
-                        + norec_apd
-                        + "&penulisresepfk="
-                        + $scope.item.penulisResep.id
-                        + "&ruanganfk="
-                        + $scope.item.ruangan.id
-                        + "&tglresep="
-                        + moment($scope.item.tglAwal).format('YYYY-MM-DD hh:mm:ss')
-                    ).then(function (data) {
-
-                    })
-                    //##end
-
-                    // var stt = 'false'
-                    // if (confirm('View resep? ')) {
-                    //     // Save it!
-                    //     stt='true';
-                    // } else {
-                    //     // Do nothing!
-                    //     stt='false'
-                    // }
-                    // var client = new HttpClient();
-                    // client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep='+$scope.item.consisid+'&nores='+e.data.noresep.norec+'&view='+stt+'&user='+pegawaiUser.namalengkap, function(response) {
-                    //     //aadc=response;
-                    // });
-
-
-
-                    // if (noOrder == 'EditResep') {
-                    //     var objDelete = {norec:norecResep}
-                    //     medifirstService.posthapuspelayananapotik(objDelete).then(function(e) {
-
-                    //     })
-                    // }
-                    $scope.isRouteLoading = false;
-                    $scope.tombolSimpanVis = true;
-                    window.history.back();
-                }, function (error) {
-                    $scope.isRouteLoading = false;
-                    $scope.tombolSimpanVis = true;
-                })
-                var chacePeriode = {
-                    0: $scope.item.ruangan,
-                    1: '',//$scope.item.aturanPakai,
-                    2: $scope.item.jenisKemasan,
-                    3: '',
-                    4: '',
-                    5: '',
-                    6: '',
-                    7: '',
-                    8: ''
-                }
-                cacheHelper.set('cacheanuaing', chacePeriode);
-
-                // $state.go("TransaksiPelayananApotik")
+                });
+                
 
             }
             var HttpClient = function () {

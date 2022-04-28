@@ -1074,94 +1074,109 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
       // function simpan tindakan
       $scope.Save = function () {
+        medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.pasien.noregistrasi ).then(function (e) {
+                    
 
-        if ($scope.dataTindakan._data.length == 0) {
-          toastr.error('Tindakan belum di isi')
-          return
-        }
-        var dataTindakanFix = [];
-        $scope.dataTindakan._data.forEach(function (e) {
-
-          if (e.listKomponen.length <= 0) {
-            window.messageContainer.error("Simpan Gagal, Komponen Tindakan tidak ada");
-            return
+          if(e.data.detail[0].tglclosing == null){
+              var cek = 123;
+          } else{
+              var cek = 234;
           }
-          else {
-            var petugasLayanan = [];
-            $scope.gridPetugasPelaksana._data.forEach(function (a) {
-              if (e.rowNumber === a.idParent) {
-                petugasLayanan.push({
-                  "objectjenispetugaspefk": a.jenisPetugas.id,
-                  // "objectpegawaifk": a.jenisPetugas.id
-                  "listpegawai": a.listPetugas
+
+          console.log(cek);
+
+          if(cek == 234){
+              messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
+          } else if (cek == 123){
+            if ($scope.dataTindakan._data.length == 0) {
+              toastr.error('Tindakan belum di isi')
+              return
+            }
+            var dataTindakanFix = [];
+            $scope.dataTindakan._data.forEach(function (e) {
+    
+              if (e.listKomponen.length <= 0) {
+                window.messageContainer.error("Simpan Gagal, Komponen Tindakan tidak ada");
+                return
+              }
+              else {
+                var petugasLayanan = [];
+                $scope.gridPetugasPelaksana._data.forEach(function (a) {
+                  if (e.rowNumber === a.idParent) {
+                    petugasLayanan.push({
+                      "objectjenispetugaspefk": a.jenisPetugas.id,
+                      // "objectpegawaifk": a.jenisPetugas.id
+                      "listpegawai": a.listPetugas
+                    });
+                  }
+                })
+                var statusCitto = 0
+                if (e.cito == 2) {
+                  statusCitto = 1;
+                }
+                var nilaiCito = 0
+                var nilaijasaCito = 0
+                if (e.jasacito != 0) {
+                  nilaiCito = e.jasacito;
+                  nilaijasaCito = e.nilaicito;
+                }
+    
+    
+                // if ( $scope.listKomponen.length>0)
+                // {
+                dataTindakanFix.push({
+                  "noregistrasifk": $scope.currentNorecAPD,
+                  "tglregistrasi": $scope.item.pasien.tglregistrasi,
+                  "tglpelayanan": new moment(e.tglPelayanan).format('YYYY-MM-DD HH:mm'),
+                  "ruangan": e.ruangan,
+                  "produkfk": e.produk.id,
+                  "hargasatuan": e.hargaSatuan,
+                  "diskon": e.hargadiskon,
+                  "hargajual": e.hargaSatuan,
+                  "harganetto": e.hargaSatuan,
+                  "jumlah": e.qty,
+                  "kelasfk": $scope.item.pasien.objectkelasfk,
+                  "pelayananpetugas": petugasLayanan,
+                  "komponenharga": e.listKomponen,
+                  "keterangan": $scope.item.pemeriksaanKeluar === true ? 'Pemeriksaan Keluar' : '-',
+                  "iscito": statusCitto,
+                  "jasacito": nilaiCito,
+                  "isparamedis": e.isparamedis,
+                  "jenispelayananfk": e.jenispelayananfk,
+                  "nilaicito": nilaijasaCito,
+                  "istarifdetault": e.istarifdetault,
+                  "hargadijamin": e.hargadijamin,
+                  "norec_resep" :norec_resep?norec_resep:null
                 });
+    
+    
               }
             })
-            var statusCitto = 0
-            if (e.cito == 2) {
-              statusCitto = 1;
-            }
-            var nilaiCito = 0
-            var nilaijasaCito = 0
-            if (e.jasacito != 0) {
-              nilaiCito = e.jasacito;
-              nilaijasaCito = e.nilaicito;
+            var objSave = {
+              pelayananpasien: dataTindakanFix
             }
 
+            $scope.hideSimpan = true
+            medifirstService.post('tatarekening/tindakan/save-tindakan', JSON.stringify(objSave)).then(function (e) {
+              //  $scope.isSimpan = true;
+              // $scope.isNext = true;
+              medifirstService.postNonMessage('sysadmin/logging/save-log-input-tindakan', objSave).then(function (data) {
+              })
+              // $scope.savePanggilDokter()
+              $scope.hapusAll();
+              $scope.hideSimpan = false
+              if ($scope.hideEMR != true) {
+                window.history.back()
+              }
 
-            // if ( $scope.listKomponen.length>0)
-            // {
-            dataTindakanFix.push({
-              "noregistrasifk": $scope.currentNorecAPD,
-              "tglregistrasi": $scope.item.pasien.tglregistrasi,
-              "tglpelayanan": new moment(e.tglPelayanan).format('YYYY-MM-DD HH:mm'),
-              "ruangan": e.ruangan,
-              "produkfk": e.produk.id,
-              "hargasatuan": e.hargaSatuan,
-              "diskon": e.hargadiskon,
-              "hargajual": e.hargaSatuan,
-              "harganetto": e.hargaSatuan,
-              "jumlah": e.qty,
-              "kelasfk": $scope.item.pasien.objectkelasfk,
-              "pelayananpetugas": petugasLayanan,
-              "komponenharga": e.listKomponen,
-              "keterangan": $scope.item.pemeriksaanKeluar === true ? 'Pemeriksaan Keluar' : '-',
-              "iscito": statusCitto,
-              "jasacito": nilaiCito,
-              "isparamedis": e.isparamedis,
-              "jenispelayananfk": e.jenispelayananfk,
-              "nilaicito": nilaijasaCito,
-              "istarifdetault": e.istarifdetault,
-              "hargadijamin": e.hargadijamin,
-              "norec_resep" :norec_resep?norec_resep:null
-            });
-
-
+            }, function (error) {
+              // $scope.isNext = false;
+              $scope.hideSimpan = false
+            })
+            // $scope.SaveLogUser=function(){
+            // }
           }
-        })
-        var objSave = {
-          pelayananpasien: dataTindakanFix
-
-        }
-        $scope.hideSimpan = true
-        medifirstService.post('tatarekening/tindakan/save-tindakan', JSON.stringify(objSave)).then(function (e) {
-          //  $scope.isSimpan = true;
-          // $scope.isNext = true;
-          medifirstService.postNonMessage('sysadmin/logging/save-log-input-tindakan', objSave).then(function (data) {
-          })
-          // $scope.savePanggilDokter()
-          $scope.hapusAll();
-          $scope.hideSimpan = false
-          if ($scope.hideEMR != true) {
-            window.history.back()
-          }
-
-        }, function (error) {
-          // $scope.isNext = false;
-          $scope.hideSimpan = false
-        })
-        // $scope.SaveLogUser=function(){
-        // }
+        });
 
       }
       $scope.savePanggilDokter=  function(){
