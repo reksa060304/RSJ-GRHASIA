@@ -3108,6 +3108,11 @@
          {
         "nameDep": "LembarKendaliCtrl",
         "urlDep": "module/EMR/LembarKendaliCtrl"
-         }
+        
+        },
+        {
+       "nameDep": "LaporanFaktorPelayananFarmasiCtrl",
+       "urlDep": "module/Farmasi/LaporanFarmasi/LaporanFaktorPelayananFarmasiCtrl"
+       }
        ]
     }
