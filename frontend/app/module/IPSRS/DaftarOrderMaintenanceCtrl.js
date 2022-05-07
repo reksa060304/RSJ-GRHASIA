@@ -52,7 +52,7 @@ define(['initialize'], function (initialize) {
                 }
                 else {
                     $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00');
-                    $scope.item.tglAkhir = $scope.now;
+                    $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
                     init2();
                 }
             }

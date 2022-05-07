@@ -5277,42 +5277,10 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         if(isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
             $deptid = ' AND ru.objectdepartemenfk = ' . $request['idDept'];
         }
-
-        $totalpertanggal = DB::select(DB::raw("
-        select x.tanggal, (sum(coalesce(x.totalsarana, 0)) + sum(coalesce(x.totalpelayanan, 0))) as grandtotal from(
-
-            
-            
-            select 
-                    pp.tglpelayanan::date as tanggal,
-                    (((CASE WHEN ppd.hargajual IS NULL and ppd.komponenhargafk = 94 THEN	0  WHEN ppd.hargajual IS NOT NULL and ppd.komponenhargafk = 94 THEN ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL and ppd.komponenhargafk = 94 THEN
-                    0 WHEN ppd.hargadiscount IS NOT NULL and ppd.komponenhargafk = 94 THEN ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL and ppd.komponenhargafk = 94 THEN	0 WHEN ppd.jasa IS NOT NULL and ppd.komponenhargafk = 94 THEN	ppd.jasa	END	) as totalpelayanan,
-                    (((CASE WHEN ppd.hargajual IS NULL and ppd.komponenhargafk = 93 THEN	0  WHEN ppd.hargajual IS NOT NULL and ppd.komponenhargafk = 93 THEN ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL and ppd.komponenhargafk = 93 THEN
-                    0 WHEN ppd.hargadiscount IS NOT NULL and ppd.komponenhargafk = 93 THEN ppd.hargadiscount END) * sum(ppd.jumlah)) + CASE WHEN ppd.jasa IS NULL and ppd.komponenhargafk = 93 THEN	0 WHEN ppd.jasa IS NOT NULL and ppd.komponenhargafk = 93 THEN	ppd.jasa	END	) AS totalsarana
-                        
-                    from
-                        pasien_m ps 
-                    inner join pasiendaftar_t pd on ps.id=pd.nocmfk
-                    inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                    left join pegawai_m pg on pg.id = pd.objectpegawaifk
-                    inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                    inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
-                    left  join produk_m pr on pr.id=pp.produkfk
-                    inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                    inner join departemen_m dp on dp.id = ru.objectdepartemenfk
-                    where pp.isobat is null
-                    and (ppd.komponenhargafk = 93 or ppd.komponenhargafk = 94)
-                    and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
-                    and pp.kdprofile = $kdProfile
-                    $dokid
-                    $ruid
-                    $deptid
-                    group by 
-                    pp.tglpelayanan::date, ppd.hargajual, ppd.hargadiscount, ppd.jasa, ppd.komponenhargafk
-
-                    order by pp.tglpelayanan::date) as x group by x.tanggal
-            "));
+        $paramProduk = '';
+        if(isset($request['ProdukArr']) && $request['ProdukArr'] != "" && $request['ProdukArr'] != "undefined") {
+            $paramProduk = ' AND pr.id = ' . $request['ProdukArr'];
+        }
     
         $datasarana = DB::select(DB::raw("with lt as (
             select distinct  lt.noreff,lt.jenislog,lt.objectloginuserfk
@@ -5349,6 +5317,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $dokid
                     $ruid
                     $deptid
+                    $paramProduk
                     --group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.jenislog, cte.namapegawaiinput
                     group by pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual,ppd.hargadiscount,ppd.jasa
                     "));
@@ -5388,6 +5357,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $dokid
                     $ruid
                     $deptid
+                    $paramProduk
                     --group by pr.namaproduk, ppd.hargajual, pp.tglpelayanan::date, kh.komponenharga, ppd.hargadiscount, ppd.jasa, ru.namaruangan, pg.namalengkap, cte.namapegawaiinput, cte.jenislog
                     group by pp.tglpelayanan::date, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual,ppd.hargadiscount,ppd.jasa
                     
@@ -5414,9 +5384,6 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             $jenislog = $sarana->jenislog;
             $jumlahhargapelayanan = 0;
             $hargapelayanan = 0;
-            $jumlahpertanggal = 0;
-
-            
 
             foreach($datapelayanan as $pelayanan){
                 if($sarana->tglpelayanan == $pelayanan->tglpelayanan && $sarana->namaproduk == $pelayanan->namaproduk && $sarana->totaljumlah == $pelayanan->totaljumlah && $sarana->ruangan == $pelayanan->ruangan){
@@ -5424,14 +5391,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                     $hargapelayanan = $pelayanan->hargajual;
                 }
             }
-            foreach($totalpertanggal as $tanggal){
-                if($sarana->tglpelayanan == $tanggal->tanggal && date("Y-m-d", strtotime($tanggal->tanggal)) != $currentTgl){
-                    $jumlahpertanggal = $tanggal->grandtotal;
-                    $currentTgl= date("Y-m-d", strtotime($sarana->tglpelayanan));
-                    break;      
-                }
-                    
-            }
+
             $detail[] =array(
                 'tglpelayanan' => $tglpelayanan,
                 'namaproduk' => $namaproduk,
@@ -5443,14 +5403,12 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 'instalasi' => $instalasi,
                 'pegawaiinput' => $pegawaiinput,
                 'jenislog' => $jenislog,
-                'jumlahpertanggal' => $jumlahpertanggal,
                 'namalengkap' => $namalengkap,
             );
         }
         
         $result = array(
             'detail' => $detail,
-            'totalpertanggal' => $totalpertanggal,
         );
         
         return $this->setStatusCode(201)->respond($result, 'tes msg');
@@ -5469,4 +5427,41 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         $data['detail']  =$dataz;
         return $this->respond($data);
     }
+
+    public function getLaporanFaktorPelayanan(Request $request)
+    {
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $paramProduk = '';
+        if(isset($request['ProdukArr']) && $request['ProdukArr'] != "" && $request['ProdukArr'] != "undefined") {
+            $paramProduk = ' AND pr.id = ' . $request['ProdukArr'];
+        }
+
+        $dataz = DB::select(DB::raw("select
+        pp.tglpelayanan, pr.namaproduk, pp.jumlah,ppd.hargajual-COALESCE(ppd.hargadiscount,0)+COALESCE(ppd.jasa,0) hargabeli,(ppd.hargajual-COALESCE(ppd.hargadiscount,0)+COALESCE(ppd.jasa,0))*0.25 faktorpelayanan,
+        ((ppd.hargajual-COALESCE(ppd.hargadiscount,0)+COALESCE(ppd.jasa,0))*0.25)*pp.jumlah
+        totalfaktorpelayanan
+        from
+        pasien_m ps
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        left join pegawai_m pg on pg.id = pd.objectpegawaifk
+        inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+        inner join komponenharga_m kh on kh.id = ppd.komponenhargafk
+        left join produk_m pr on pr.id=pp.produkfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+        where pp.isobat is true
+        and ppd.komponenhargafk = 9
+        and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+        $paramProduk
+        and pp.kdprofile = $kdProfile"));
+        
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
+        
 }

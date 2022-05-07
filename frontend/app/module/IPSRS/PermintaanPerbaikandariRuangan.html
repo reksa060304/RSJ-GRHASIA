@@ -136,15 +136,21 @@
 
                                         <!-- //----- -->
                                         <div class="grid_12">
-                                            <div class="grid_6">
-                                                <div class="grid_6">
+                                            <div class="grid_12">
+                                                <div class="grid_4">
                                                     <label c-label item="item" c-label-text="Periode Tanggal"></label>
                                                 </div>
-                                                <div class="grid_6">
+                                                <div class="grid_2">
                                                     <label c-label item="item" c-label-text="Ruangan Tujuan"></label>
                                                 </div>
+                                                <div class="grid_2">
+                                                    <label c-label item="item" c-label-text="Ruangan Pelapor"></label>
+                                                </div>
+                                                <div class="grid_2">
+                                                    <label c-label item="item" c-label-text="Pelapor"></label>
+                                                </div>
                                                 <div class="grid_12">
-                                                    <div class="grid_3 padDatePicker">
+                                                    <div class="grid_2 padDatePicker">
                                                         <div class="grid_12">
                                                             <input style="width: 100%" k-ng-model="item.tglAwal1"
                                                                 kendo-datetimepicker k-max="now"
@@ -152,14 +158,14 @@
                                                                 k-format="'yyyy-MM-dd HH:mm'" />
                                                         </div>
                                                     </div>
-                                                    <div class="grid_3 padDatePicker">
+                                                    <div class="grid_2 padDatePicker">
                                                         <div class="grid_12">
                                                             <input style="width: 100%" k-ng-model="item.tglAkhir"
                                                                 kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm"
                                                                 k-format="'yyyy-MM-dd HH:mm'" />
                                                         </div>
                                                     </div>
-                                                    <div class="grid_3">
+                                                    <div class="grid_2">
                                                         <div class="grid_12">
                                                             <input kendo-combo-box k-data-source="listRuanganTujuan"
                                                                 k-ng-model="item.ruangantujuan" k-data-text-field="'namaruangan'"
@@ -167,7 +173,23 @@
                                                                 k-auto-bind="false" />
                                                             </div>
                                                     </div>
-                                                    <div class="grid_3">
+                                                    <div class="grid_2">
+                                                        <div class="grid_12">
+                                                            <input kendo-combo-box k-data-source="listRuangan"
+                                                                k-ng-model="item.ruangan" k-data-text-field="'namaruangan'"
+                                                                k-filter="'contains'" k-data-value-field="'id'"
+                                                                k-auto-bind="false" />
+                                                            </div>
+                                                    </div>
+                                                    <div class="grid_2">
+                                                        <div class="grid_12">
+                                                            <input kendo-combo-box k-data-source="listPelapor"
+                                                                k-ng-model="item.pelapor" k-data-text-field="'namalengkap'"
+                                                                k-filter="'contains'" k-data-value-field="'namalengkap'"
+                                                                k-auto-bind="false" />
+                                                            </div>
+                                                    </div>
+                                                    <div class="grid_2">
                                                         <button class="c-button" ng-click="cariFilter()">Cari</button>
                                                     </div>
                                                 </div>

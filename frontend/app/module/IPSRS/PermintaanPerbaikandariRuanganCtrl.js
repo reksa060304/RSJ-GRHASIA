@@ -32,15 +32,15 @@ define(['initialize'], function (initialize) {
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('PermintaanPerbaikandariRuanganCtrl');
                 if (chacePeriode != undefined) {
-                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm');
+                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00');
                     $scope.item.tglAkhir = new Date(chacePeriode[1]);
-                    $scope.item.tglAwal1 = new moment($scope.now).format('YYYY-MM-DD HH:mm');
+                    $scope.item.tglAwal1 = new moment($scope.now).format('YYYY-MM-DD 00:00');
                     init();
                 }
                 else {                    
                     $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00');
                     $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
-                    $scope.item.tglAwal1 = new moment($scope.now).format('YYYY-MM-DD HH:mm');
+                    $scope.item.tglAwal1 = new moment($scope.now).format('YYYY-MM-DD 00:00');
                     init();
                 }
             }
@@ -109,13 +109,24 @@ define(['initialize'], function (initialize) {
                 if($scope.item.ruangantujuan != undefined){
                     ruangan = $scope.item.ruangantujuan.id
                 }
+                var ruanganpelapor = ""
+                if($scope.item.ruangan != undefined){
+                    ruanganpelapor = $scope.item.ruangan.id
+                }
+                var pelapor = ""
+                if($scope.item.pelapor != undefined){
+                    pelapor = $scope.item.pelapor.namalengkap
+                }
 
                 var tglAwal1 = moment($scope.item.tglAwal1).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("ipsrs/get-daftar-permohonan?" +
                     "tglAwal=" + tglAwal1 +
-                    "&tglAkhir=" + tglAkhir + desc + ruangan + '&arrru=' + jenisForm +
-                    "&manage=" + manage
+                    "&tglAkhir=" + tglAkhir + desc + '&arrru=' + jenisForm +
+                    "&manage=" + manage +
+                    "&ruangantujuan=" + ruangan +
+                    "&ruangan=" + ruanganpelapor +
+                    "&pelapor=" + pelapor
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var data2 = dat.data.data;                       

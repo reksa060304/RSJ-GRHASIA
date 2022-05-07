@@ -18,6 +18,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("registrasi/laporan/get-data-combo-laporan", false).then(function (data) {
                     $scope.listDepartemen = data.data.departemen;
                     $scope.listDataDokter = data.data.dokter;
+                    $scope.listProduk = data.data.produk;
                     $scope.dataLogin = medifirstService.getPegawaiLogin();
                 });
             }
@@ -49,6 +50,11 @@ define(['initialize'], function (initialize) {
                     tempDepartemen = "&idDept=" + $scope.item.departement.id;
                 }
 
+                var listProduk = ""
+				if ($scope.item.listProdukMulti != undefined) {
+                    listProduk = $scope.item.listProdukMulti.id;
+                }
+
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
@@ -58,6 +64,7 @@ define(['initialize'], function (initialize) {
                     + tempRuanganId
                     + tempDepartemen
                     + dok
+                    + "&ProdukArr=" + listProduk
                     ).then(function (dat) {
                         
                         for (var i = 0; i < dat.data.detail.length; i++) {
@@ -75,14 +82,12 @@ define(['initialize'], function (initialize) {
                                     fields: {
                                         jumlahhargasarana: { type: "number" },
                                         jumlahhargapelayanan: { type: "number" },
-                                        jumlahpertanggal: { type: "number" },
                                     }
                                 }
                             },
                             aggregate: [
                                 { field: 'jumlahhargasarana', aggregate: 'sum' },
                                 { field: 'jumlahhargapelayanan', aggregate: 'sum' },
-                                { field: 'jumlahpertanggal', aggregate: 'sum' },
                             ]
                         });   
                         
@@ -142,7 +147,7 @@ define(['initialize'], function (initialize) {
                 excelExport: function (e) {
                     var sheet = e.workbook.sheets[0];
                     sheet.frozenRows = 3;
-                    sheet.mergedCells = ["A1:J1", "A2:J2", "A3:J3"];
+                    sheet.mergedCells = ["A1:I1", "A2:I2", "A3:I3"];
                     sheet.name = "Report";
                     var awal = moment($scope.item.tglAwal).format('YYYY-MM-DD');
                     var akhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD');
@@ -251,16 +256,6 @@ define(['initialize'], function (initialize) {
                         template: "{{formatRupiah('#: jumlahhargapelayanan #', '')}}",
                         groupFooterTemplate: "#: data.jumlahhargapelayanan.sum  #",
                         footerTemplate: "#: data.jumlahhargapelayanan.sum  #"
-                    },
-                    {
-                        
-                        // "field": "totalpertanggal",
-                        "title": "Total / Tanggal",
-                        "width": "100px",
-                        aggregates: ["sum"],
-                        template: "{{formatRupiah('#: jumlahpertanggal #', '')}}",
-                        groupFooterTemplate: "#: data.jumlahpertanggal.sum  #",
-                        footerTemplate: "#: data.jumlahpertanggal.sum  #"
                     },
                     {
                         

@@ -66,7 +66,7 @@
 </style>
 <div class="grid_12">
     <div class="panel panel-default container_12">
-        <div class="panel-heading" c-translate>Laporan Jasa Pelayanan Obat</div>
+        <div class="panel-heading" c-translate>Laporan Jasa Pelayanan</div>
     </div>
     <div class="panel panel-default panel-white" ng-hide="isMasuk">
         <fieldset class="effect-shadow" style=" border-radius: 4px">
@@ -97,18 +97,25 @@
                                 k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listDataDokter" />
                         </div>
-                        <div class="grid_3">
+                        <div class="grid_2">
                             <label c-label item="item" c-label-text="Departement"></label>
                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.departement"
                                 k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
                                 k-data-source="listDepartemen" k-on-change="getIsiComboRuangan()" />
                         </div>
-                        <div class="grid_3">
+                        <div class="grid_2">
                             <label c-label item="item" c-label-text="Ruangan"></label>
                             <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
                                 k-data-text-field="'ruangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
                                 k-data-source="listRuangan" />
                         </div>
+                        <div class="grid_3">
+                            <label c-label item="item" c-label-text="Nama Produk"></label>
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.listProdukMulti"
+                                k-data-text-field="'namaproduk'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listProduk" />
+                        </div>
+
                         <div class="grid_2" style="margin-top: 20px;">
                             <button class="c-button" ng-click="cariFilter()">Cari</button>
                         </div>

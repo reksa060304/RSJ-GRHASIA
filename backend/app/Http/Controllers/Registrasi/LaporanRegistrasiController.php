@@ -193,6 +193,36 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
             )
         );
 
+        $produk = DB::select(DB::raw("select pr.id, pr.namaproduk 
+        from
+          pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner join produk_m pr on pr.id = pp.produkfk
+        where pp.isobat is null
+        and pd.kdprofile = $idProfile
+        and pd.statusenabled = true
+        group by pr.id, pr.namaproduk"));
+
+
+
+        $produkobat = DB::select(DB::raw("select pr.id, pr.namaproduk 
+        from
+          pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner join produk_m pr on pr.id = pp.produkfk
+        where pp.isobat is true
+        and pd.kdprofile = $idProfile
+        and pd.statusenabled = true
+        group by pr.id, pr.namaproduk"));
+            //pp.isobat is null
+
+        
+        //$produk = $produk->get();
+
         $result = array(
             'departemen' => $dataDepartemen,
             'ruangan' => $dataRuangan,
@@ -211,6 +241,8 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
             'petugaspe' =>$dataPetugasPe,
             'ruanganjalan' => $dataRuanganJalan,
             'user' => $dataPegawaiLogin,
+            'produk' => $produk,
+            'produkobat' => $produkobat,
             'message' => 'as@egieramdan',
         );
 

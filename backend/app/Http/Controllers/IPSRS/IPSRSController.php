@@ -31,6 +31,7 @@ class IPSRSController extends ApiController
         $jenisalat="";
         $idRuangan="";
         $ruangantj="";
+        $pelapor="";
 
         if ((isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") && (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined"))
         {
@@ -42,14 +43,19 @@ class IPSRSController extends ApiController
             $jenisalat = "AND stp.objectjenisalatfk = '".$request['jenisalat']."' ";
         }
 
-        if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined")
+        if (isset($request['ruangan']) && $request['ruangan'] != "" && $request['ruangan'] != "undefined")
         {
-                $idRuangan = "AND stp.objectruangantujuanfk = '".$request['idRuangan']."'";
+                $idRuangan = "AND stp.objectruanganfk = '".$request['ruangan']."'";
         }
 
-        if (isset($request['ruangantj']) && $request['ruangantj'] != "" && $request['ruangantj'] != "undefined")
+        if (isset($request['ruangantujuan']) && $request['ruangantujuan'] != "" && $request['ruangantujuan'] != "undefined")
         {
-                $ruangantj = "AND stp.objectruangantujuanfk = '".$request['ruangantj']."'";
+                $ruangantj = "AND stp.objectruangantujuanfk = '".$request['ruangantujuan']."'";
+        }
+
+        if (isset($request['pelapor']) && $request['pelapor'] != "" && $request['pelapor'] != "undefined")
+        {
+                $ruangantj = "AND stp.pelapor = '".$request['pelapor']."'";
         }
 
         $data = DB::select(DB::raw("
@@ -73,6 +79,7 @@ class IPSRSController extends ApiController
 			$jenisalat
             $idRuangan
             $ruangantj
+            $pelapor
             ORDER BY stp.tglplanning DESC"));
 
         foreach ($data as $item) {
@@ -708,7 +715,7 @@ class IPSRSController extends ApiController
         $data = DB::table('ruangan_m as rm')
                 ->select('rm.id','rm.namaruangan')
                 ->where('rm.kdprofile',$kdProfile)
-                ->whereIn('rm.id',[58,571])
+                ->whereIn('rm.id',[850,851,852,602])
                 ->get();
         
         $result[] = array(
