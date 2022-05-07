@@ -57,11 +57,42 @@
                         </div>
                     </div>
                     
-                </div>
+             </div>
+			 
+			 
 
 
 		<!-- <div ng-include=' "../app/module/Shared/TemplateButtonSimpan" '></div> -->
 
+	</div>
+	<div class="grid_12">
+		<div class="grid_4">
+			<table border="1">
+				<tr>
+					<th colspan="4" style="text-align: center;">Rekap Non Racikan</th>
+				</tr>
+				<tr ng-repeat="list in listNonRacikan">
+					<td>{{list.nama}}</td>
+					<td>:</td>
+					<td>{{list.nilai}}</td>
+					<td>{{list.satuan}}</td>
+				</tr>
+			</table>
+		 </div>
+		 <div class="grid_2"></div>
+		 <div class="grid_4">
+			<table border="1">
+				<tr>
+					<th colspan="4" style="text-align: center;">Rekap Racikan</th>
+				</tr>
+				<tr ng-repeat="list in listRacikan">
+					<td>{{list.nama}}</td>
+					<td>:</td>
+					<td>{{list.nilai}}</td>
+					<td>{{list.satuan}}</td>
+				</tr>
+			</table>
+		 </div>
 	</div>
 
 <!-- </div> -->
