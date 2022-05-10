@@ -3061,7 +3061,8 @@
         {
             "nameDep": "LaporanSurveilansptmCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanSurveilansptmCtrl"
-        }, {
+        }, 
+        {
             "nameDep": "GrafikaCtrl",
             "urlDep": "module/Registrasi/Laporan/GrafikaCtrl"
         },
@@ -3098,21 +3099,29 @@
             "urlDep": "module/EMR/AsesmenMedisIGDJiwaCtrl"
         },
         {
-        "nameDep": "AsesmenRisikoBunuhDiriGCtrl",
-        "urlDep": "module/EMR/AsesmenRisikoBunuhDiriGCtrl"
+            "nameDep": "AsesmenRisikoBunuhDiriGCtrl",
+            "urlDep": "module/EMR/AsesmenRisikoBunuhDiriGCtrl"
         },
-         {
-        "nameDep": "LembarResumeCtrl",
-        "urlDep": "module/EMR/LembarResumeCtrl"
-         },
-         {
-        "nameDep": "LembarKendaliCtrl",
-        "urlDep": "module/EMR/LembarKendaliCtrl"
+        {
+            "nameDep": "LembarResumeCtrl",
+            "urlDep": "module/EMR/LembarResumeCtrl"
+        },
+        {
+            "nameDep": "LembarKendaliCtrl",
+            "urlDep": "module/EMR/LembarKendaliCtrl"
         
         },
         {
-       "nameDep": "LaporanFaktorPelayananFarmasiCtrl",
-       "urlDep": "module/Farmasi/LaporanFarmasi/LaporanFaktorPelayananFarmasiCtrl"
-       }
-       ]
-    }
+            "nameDep": "LaporanFaktorPelayananFarmasiCtrl",
+            "urlDep": "module/Farmasi/LaporanFarmasi/LaporanFaktorPelayananFarmasiCtrl"
+        },
+        {
+            "nameDep": "AsesmenPsikologiCtrl",
+            "urlDep": "module/EMR/AsesmenPsikologiCtrl"
+        },
+        {
+            "nameDep": "AsesmenMedisSpesialisKedokteranFisikDanRehabilitasiCtrl",
+            "urlDep": "module/EMR/AsesmenMedisSpesialisKedokteranFisikDanRehabilitasiCtrl"
+        }
+    ]
+}
