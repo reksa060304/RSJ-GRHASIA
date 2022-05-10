@@ -137,13 +137,17 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.jenisAlatCari != undefined) {
                     jenisalat = "&jenisalat=" + $scope.item.jenisAlatCari.id
                 }
+                var jeniskerusakan = ''
+                if ($scope.item.jenisKerusakanCari != undefined) {
+                    jeniskerusakan = "&jeniskerusakan=" + $scope.item.jenisKerusakanCari.id
+                }
                 var idRuangan= "&idRuangan=" + $scope.userLoginRuangan
 
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("ipsrs/get-daftar-permohonan?" +
                     "tglAwal=" + tglAwal +
-                    "&tglAkhir=" + tglAkhir + jenisalat + idRuangan +
+                    "&tglAkhir=" + tglAkhir + jenisalat + idRuangan + jeniskerusakan +
                     "&manage=" + manage
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
@@ -371,6 +375,11 @@ define(['initialize'], function (initialize) {
                     {
                         "field": "namapelapor",
                         "title": "Pelapor",
+                        "width": "80px",
+                    },
+                    {
+                        "field": "name",
+                        "title": "Unit Kerja",
                         "width": "80px",
                     },
                     {
@@ -834,6 +843,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.worklist = $scope.dataSelected.deskripsiplanning;
                 $scope.item.identifikasi = $scope.dataSelected.keteranganverifikasi;
                 $scope.popupPengerjaan.center().open();
+                console.log($scope.item.jenisKerusakan);
             }
 
             $scope.savePengerjaan = function(){
@@ -867,6 +877,8 @@ define(['initialize'], function (initialize) {
                         datapegawai.push(data);
                     }
                 }
+
+                console.log($scope.item.jenisKerusakan);
 
                 var strukplanning = {
                     'tglmulai' : $scope.item.tglMulai != undefined ? moment($scope.item.tglMulai).format('YYYY-MM-DD HH:mm') : null,

@@ -20,7 +20,7 @@
 <div class="grid_12">
 
     <div class="grid_12 headerBox">
-        <h1 style="color: white;"><b>Daftar Permohonan SIMRS</b></h1>
+        <h1 style="color: white;"><b>Daftar Permohonan PDTI</b></h1>
     </div>
     <div class="grid_12">
         <div class="panel panel-default container_12">
@@ -57,7 +57,7 @@
         </div>
         <div class="grid_3">
             <div class="grid_12">
-                <label c-label item="item" c-label-text="Jenis Kegiatan"></label>
+                <label c-label item="item" c-label-text="Jenis Alat"></label>
             </div>
             <div class="grid_8">
                 <input kendo-combo-box k-data-source="listJenisKerusakan" k-ng-model="item.jenisKerusakanCari"
@@ -109,7 +109,7 @@
             <button class="c-button" ng-click="identifikasi()">Identifikasi Kerusakan</button>
         </div>
         <div class="grid_1" style="margin-top: 22px">
-            <button class="c-button" ng-click="jenisKerusakan()">Jenis Kegiatan</button>
+            <button class="c-button" ng-click="jenisKerusakan()">Jenis Alat</button>
         </div>
         <div class="grid_1" style="margin-top: 22px">
             <button class="c-button" ng-click="startBtn()">Start</button>
@@ -339,7 +339,7 @@
         </div>
     </div>
 </div>
-<div kendo-window="popupJenisKerusakan" k-title="'Jenis Kegiatan'" k-visible="false" k-width="700" k-height="200">
+<div kendo-window="popupJenisKerusakan" k-title="'Jenis Alat'" k-visible="false" k-width="700" k-height="200">
     <div class="panel panel-default container_12">
         <div class="grid_12">
             <div class="grid_6">
@@ -352,7 +352,7 @@
             </div>
             <div class="grid_4">
                 <div class="grid_12">
-                    <label c-label item="item" c-label-text="Jenis Kegiatan"></label>
+                    <label c-label item="item" c-label-text="Jenis Alat"></label>
                 </div>
                 <div class="grid_12">
                     <input kendo-combo-box k-data-source="listJenisKerusakan" k-ng-model="item.jenisKerusakan"

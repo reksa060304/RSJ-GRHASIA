@@ -32,6 +32,7 @@ class IPSRSController extends ApiController
         $idRuangan="";
         $ruangantj="";
         $pelapor="";
+        $jeniskerusakan="";
 
         if ((isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") && (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined"))
         {
@@ -41,6 +42,11 @@ class IPSRSController extends ApiController
         if (isset($request['jenisalat']) && $request['jenisalat'] != "" && $request['jenisalat'] != "undefined")
         {
             $jenisalat = "AND stp.objectjenisalatfk = '".$request['jenisalat']."' ";
+        }
+
+        if (isset($request['jeniskerusakan']) && $request['jeniskerusakan'] != "" && $request['jeniskerusakan'] != "undefined")
+        {
+            $jeniskerusakan = "AND stp.objectjenispekerjaanfk = '".$request['jeniskerusakan']."' ";
         }
 
         if (isset($request['ruangan']) && $request['ruangan'] != "" && $request['ruangan'] != "undefined")
@@ -62,12 +68,14 @@ class IPSRSController extends ApiController
             SELECT  stp.norec, rg.namaruangan, stp.tglplanning,stp.objectpegawaipjawabfk,pg.namalengkap, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, 
                     stp.deskripsiplanning, stp.keteranganverifikasi, sttp.namaexternal,stp.signdate, stp.worklist, stp.keteranganverifikasi, 
                     pg2.nama as namainspektor, pg3.nama as namapelapor,stp.objectstatuspekerjaanfk,sttp.reportdisplay as statuspekerjaan,stp.objectjenispekerjaanfk AS idjeniskerusakan,
-                    jpk.reportdisplay as jeniskerusakan,stp.objectjenisalatfk,jpk2.reportdisplay as jenisalat,r.namaruangan as namaruangantujuan
+                    jpk.reportdisplay as jeniskerusakan,stp.objectjenisalatfk,jpk2.reportdisplay as jenisalat,r.namaruangan as namaruangantujuan, ukp.name
             FROM strukplanning_t as stp
             INNER JOIN ruangan_m as rg on rg.id = stp.objectruanganfk
+            inner join pegawai_m as pg1 on pg1.namalengkap = stp.pelapor 
             LEFT JOIN pegawai_m as pg on pg.id = stp.objectpegawaipjawabfk
             LEFT JOIN pegawai_m as pg2 on pg2.id = stp.objectpegawaipjawabevaluasifk
-            LEFT JOIN pegawai_m as pg3 on pg3.id = stp.narasumberfk 
+            LEFT JOIN pegawai_m as pg3 on pg3.id = stp.narasumberfk
+            LEFT JOIN unitkerjapegawai_m as ukp on pg1.objectunitkerjafk = ukp.id 
             LEFT JOIN statuspekerjaan_m as sttp on sttp.id = stp.objectstatuspekerjaanfk
 			LEFT JOIN jenispekerjaan_m as jpk on jpk.id = stp.objectjenispekerjaanfk
             LEFT JOIN jenispekerjaan_m as jpk2 on jpk2.id = stp.objectjenisalatfk
@@ -80,6 +88,7 @@ class IPSRSController extends ApiController
             $idRuangan
             $ruangantj
             $pelapor
+            $jeniskerusakan
             ORDER BY stp.tglplanning DESC"));
 
         foreach ($data as $item) {
@@ -114,7 +123,8 @@ class IPSRSController extends ApiController
                 'jenisalat' => $item->jenisalat,
                 'objectjenisalatfk' => $item->objectjenisalatfk,
                 'details' => $details,
-                'namaruangantujuan' => $item->namaruangantujuan
+                'namaruangantujuan' => $item->namaruangantujuan,
+                'name' => $item->name
             );
         }
         if (count($data) == 0) {
@@ -616,6 +626,7 @@ class IPSRSController extends ApiController
         DB::beginTransaction();
         $dataLogin = $request->all();
         $kdProfile = (int) $this->getDataKdProfile($request);
+        var_dump($request['strukplanning']['jeniskerusakan']);
         try {
 
             if ($request['norec'] == ''){

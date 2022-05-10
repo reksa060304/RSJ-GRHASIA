@@ -83,13 +83,24 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="grid_2" style="margin-top: 5px;">
+                                            <div class="grid_12">
+                                                <label c-label item="item" c-label-text="Jenis Alat"></label>
+                                            </div>
+                                            <div class="grid_12" style="margin-top: -7px;">
+                                                <input kendo-combo-box k-data-source="listJenisAlat"
+                                                    k-ng-model="item.jenisAlatCari" k-data-text-field="'reportdisplay'"
+                                                    k-filter="'contains'" k-data-value-field="'id'"
+                                                    k-auto-bind="false" />
+                                            </div>
+                                        </div>
                                         <div class="grid_3" style="margin-top: 5px;">
                                             <div class="grid_12">
                                                 <label c-label item="item" c-label-text="Jenis Kerusakan"></label>
                                             </div>
                                             <div class="grid_8" style="margin-top: -7px;">
-                                                <input kendo-combo-box k-data-source="listJenisAlat"
-                                                    k-ng-model="item.jenisAlatCari" k-data-text-field="'reportdisplay'"
+                                                <input kendo-combo-box k-data-source="listJenisKerusakan"
+                                                    k-ng-model="item.jenisKerusakanCari" k-data-text-field="'reportdisplay'"
                                                     k-filter="'contains'" k-data-value-field="'id'"
                                                     k-auto-bind="false" />
                                             </div>

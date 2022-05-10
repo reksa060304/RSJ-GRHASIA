@@ -46,13 +46,13 @@ define(['initialize'], function (initialize) {
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('DaftarRuanganSanitasiCtrl');
                 if (chacePeriode != undefined) {
-                    $scope.item.tglAwal = new Date(chacePeriode[0]);
-                    $scope.item.tglAkhir = new Date(chacePeriode[1]);
+                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00');
+                    $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59');;
                     init2();
                 }
                 else {
                     $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00');
-                    $scope.item.tglAkhir = $scope.now;
+                    $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
                     init2();
                 }
             }
@@ -379,7 +379,7 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         "field": "reportdisplay",
-                        "title": "Jenis kegiatan",
+                        "title": "Jenis Alat",
                         "width": "100px",
                     },
                     {
