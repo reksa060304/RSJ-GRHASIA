@@ -20,23 +20,53 @@ define(['initialize'], function (initialize) {
 
 
 			$scope.pindah = function () {
-				if ($scope.dataPasienSelected.norec_pd == undefined) {
-					// alert("Data Pasien Belum Di Pilih")
-					window.messageContainer.error("Pasien Belum Dipilih");
-					return
-				}
-			
-				var cacheSet = undefined;
-				var cacheSetss = undefined;
-				cacheHelper.set('CacheRegisOnline', cacheSetss);
-				cacheHelper.set('CacheRegistrasiPasien', cacheSet);
-				cacheHelper.set('cacheNoRegMutasi', $scope.dataPasienSelected.noregistrasi);
+				//console.log($scope.dataPasienSelected);
 
-				$state.go('RegistrasiPasienMutasi', {
-					noRec: $scope.dataPasienSelected.norec_pd,
-					noRecAntrian: $scope.dataPasienSelected.norec_apd,
-					noCm: $scope.dataPasienSelected.nocmfk,
-				})
+				medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.dataPasienSelected.noregistrasi ).then(function (e) {
+                    
+
+					if(e.data.detail[0].tglclosing == null){
+						var cek = 123;
+					} else{
+						var cek = 234;
+					}
+		  
+					console.log(cek);
+		  
+					if(cek == 234){
+						messageContainer.error("Data yang sudah diclosing tidak bisa dimutasi");
+					} else if (cek == 123){
+						//insert sini query simpan nya
+
+						if ($scope.dataPasienSelected.norec_pd == undefined) {
+							// alert("Data Pasien Belum Di Pilih")
+							window.messageContainer.error("Pasien Belum Dipilih");
+							return
+						}
+					
+						var cacheSet = undefined;
+						var cacheSetss = undefined;
+						cacheHelper.set('CacheRegisOnline', cacheSetss);
+						cacheHelper.set('CacheRegistrasiPasien', cacheSet);
+						cacheHelper.set('cacheNoRegMutasi', $scope.dataPasienSelected.noregistrasi);
+		
+						$state.go('RegistrasiPasienMutasi', {
+							noRec: $scope.dataPasienSelected.norec_pd,
+							noRecAntrian: $scope.dataPasienSelected.norec_apd,
+							noCm: $scope.dataPasienSelected.nocmfk,
+							noRegistrasi: $scope.dataPasienSelected.noregistrasi,
+						});
+
+						// var obj = {
+						// 	noRegistrasi: $scope.dataPasienSelected.noregistrasi
+						// }
+				  
+						//   $state.go("RegistrasiPasienMutasi", {
+						// 	dataPasien: JSON.stringify(obj)
+						//   });
+					}
+				});
+				
 				
 			}
 			loadData()

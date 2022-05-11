@@ -2,10 +2,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     initialize.controller('RegistrasiPasienMutasiCtrl', ['$scope', 'ModelItem', '$state', '$rootScope', 'CacheHelper', 'DateHelper', 'CetakHelper', 'ModelItem', 'MedifirstService',
         function ($scope, modelItem, $state, $rootScope, cacheHelper, dateHelper, cetakHelper, ModelItem, medifirstService) {
+            
             $scope.now = new Date();
             $scope.currentNoCm = $state.params.noCm;
             $scope.currentNorec = $state.params.noRec;
             $scope.currentNorecAntrian = $state.params.noRecAntrian;
+            $scope.currentNoregistrasi = $state.params.noRegistrasi;
             var responData = '';
             var norecPD = '';
             var noRegistrasis = '';
@@ -19,8 +21,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.model.tglSEP = $scope.now;
             $scope.model.tglRujukan = $scope.now;
             $scope.model.tglPelayanan = $scope.now;
+            
             loadCache();
             GetCombo();
+
+            //console.log($state.params);
 
             function GetCombo() {
                 medifirstService.get('registrasi/daftar-antrian-pasien/get-combo').then(function (e) {
@@ -46,6 +51,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
             }
 
+            //console.log(noRegistrasis);
             // $scope.model.rawatInap = true;
             // $scope.cekRawatInap($scope.model.rawatInap);
 
@@ -349,89 +355,108 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "statusPasien": $scope.item.historyPasien.statuspasien,
 
                 }
-                
-                medifirstService.get("registrasi/get-penjagaan-mutasi-pasien?nocm=" + $scope.item.pasien.nocm ).then(function (e) {
+
+
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + noRegistrasis ).then(function (e) {
                     
-                    if(e.data.detail.length > 0){
-                        var cek = e.data.detail.length;
-                        var ruangan = e.data.detail[0].namaruangan;
-                        var noregistrasi = e.data.detail[0].noregistrasi;
-                        var nocm = e.data.detail[0].nocm;
-                    } else{
-                        var cek = 0;
-                    }
-                    //console.log(cek);
 
-
-                    if(cek > 0){
-                        messageContainer.error("Pasien dengan nocm " + nocm + " masih aktif dirawat di " + ruangan);
-                    } else{
-                        $scope.isSimpan = true;
-                        medifirstService.post('registrasi/simpan-mutasi-pasien', tmpData).then(function (e) {
-                            $scope.resultAPD = e.data.data;
-                            responData = e.data;
-                            $scope.resultPD = e.data.data;
-                            $scope.model.noRegistrasi = e.data.data.noregistrasi;
-                            $scope.model.norec_apd = e.data.data.norec;
-    
-    
-                            //##log Pasien Daftar
-                            // medifirstService.get("sysadmin/logging/save-log-pendaftaran-pasien?norec_pd="
-                            //     +   $scope.resultAPD.norec ).then(function (x) {
-                            //     })
-                            medifirstService.postLogging('Mutasi Rawat Inap', 'norec pasiendaftar_t', $scope.currentNorec,
-                                'Mutasi Rawat Inap ' + ' dengan No Registrasi - ' + noRegistrasis + ' ke Ruangan '
-                                + $scope.item.ruangan.namaruangan).then(function (res) {
-                                })
-                                let json = {
-                                    norec: $scope.currentNorec,
-                                    norec_apd: $scope.resultAPD.norec
-                                }
-                                medifirstService.post("registrasi/save-adminsitrasi", json).then(function (z) {
-
-                                })
-                            medifirstService.post('registrasi/update-sep-igd', { norec: $scope.currentNorec }).then(function (z) { })
-                            //## end log    
-    
-                            var cachePasienDaftar = $scope.currentNorec
-                                + "~" + $scope.item.historyPasien.noregistrasi
-                                + "~" + $scope.resultAPD.norec;
-                            // + "~" + $scope.currentNoCm;
-                            cacheHelper.set('CacheRegistrasiPasien', cachePasienDaftar);
-                            if ($scope.item.asalRujukan != undefined) {
-                                var asalRujukan = { id: "2", asalrujukan: "Rumah sakit" }
-                                cacheHelper.set('cacheAsalRujukan', asalRujukan);
+					if(e.data.detail[0].tglclosing == null){
+						var cek = 123;
+					} else{
+						var cek = 234;
+					}
+		  
+					console.log(cek);
+		  
+					if(cek == 234){
+						messageContainer.error("Data yang sudah diclosing tidak bisa dimutasi");
+					} else if (cek == 123){
+                        //query masuk sini
+                        medifirstService.get("registrasi/get-penjagaan-mutasi-pasien?nocm=" + $scope.item.pasien.nocm ).then(function (e) {
+                    
+                            if(e.data.detail.length > 0){
+                                var cek = e.data.detail.length;
+                                var ruangan = e.data.detail[0].namaruangan;
+                                var noregistrasi = e.data.detail[0].noregistrasi;
+                                var nocm = e.data.detail[0].nocm;
+                            } else{
+                                var cek = 0;
                             }
-    
-    
-                            if (e.data.status == 201) {
+                            //console.log(cek);
+        
+        
+                            if(cek > 0){
+                                messageContainer.error("Pasien dengan nocm " + nocm + " masih aktif dirawat di " + ruangan);
+                            } else{
                                 $scope.isSimpan = true;
-                                $scope.isNext = false;
-                                $scope.isBatal = true;
-                                $scope.isReport = true;
-                                $scope.isReportPendaftaran = true;
-                                $scope.isReportRawatInap = true;
-                                $scope.isInputAsuransi = true;
-                                $scope.isAsuransi = false;
-                                $scope.model.generateNoSEP = false;
+                                medifirstService.post('registrasi/simpan-mutasi-pasien', tmpData).then(function (e) {
+                                    $scope.resultAPD = e.data.data;
+                                    responData = e.data;
+                                    $scope.resultPD = e.data.data;
+                                    $scope.model.noRegistrasi = e.data.data.noregistrasi;
+                                    $scope.model.norec_apd = e.data.data.norec;
+            
+            
+                                    //##log Pasien Daftar
+                                    // medifirstService.get("sysadmin/logging/save-log-pendaftaran-pasien?norec_pd="
+                                    //     +   $scope.resultAPD.norec ).then(function (x) {
+                                    //     })
+                                    medifirstService.postLogging('Mutasi Rawat Inap', 'norec pasiendaftar_t', $scope.currentNorec,
+                                        'Mutasi Rawat Inap ' + ' dengan No Registrasi - ' + noRegistrasis + ' ke Ruangan '
+                                        + $scope.item.ruangan.namaruangan).then(function (res) {
+                                        })
+                                        let json = {
+                                            norec: $scope.currentNorec,
+                                            norec_apd: $scope.resultAPD.norec
+                                        }
+                                        medifirstService.post("registrasi/save-adminsitrasi", json).then(function (z) {
+        
+                                        })
+                                    medifirstService.post('registrasi/update-sep-igd', { norec: $scope.currentNorec }).then(function (z) { })
+                                    //## end log    
+            
+                                    var cachePasienDaftar = $scope.currentNorec
+                                        + "~" + $scope.item.historyPasien.noregistrasi
+                                        + "~" + $scope.resultAPD.norec;
+                                    // + "~" + $scope.currentNoCm;
+                                    cacheHelper.set('CacheRegistrasiPasien', cachePasienDaftar);
+                                    if ($scope.item.asalRujukan != undefined) {
+                                        var asalRujukan = { id: "2", asalrujukan: "Rumah sakit" }
+                                        cacheHelper.set('cacheAsalRujukan', asalRujukan);
+                                    }
+            
+            
+                                    if (e.data.status == 201) {
+                                        $scope.isSimpan = true;
+                                        $scope.isNext = false;
+                                        $scope.isBatal = true;
+                                        $scope.isReport = true;
+                                        $scope.isReportPendaftaran = true;
+                                        $scope.isReportRawatInap = true;
+                                        $scope.isInputAsuransi = true;
+                                        $scope.isAsuransi = false;
+                                        $scope.model.generateNoSEP = false;
+                                    }
+                                    if ($scope.item.kelompokPasien.kelompokpasien.indexOf('BPJS') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('JKN') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('KEMENKES') > -1) {
+                                        if (norecPD == '') {
+            
+                                            $scope.inputPemakaianAsuransi();
+                                        }
+                                    } else {
+                                        window.history.back();
+                                    }
+                                    medifirstService.postNonMessage('bridging/bpjs/aplicaresws/update-tt-by-ruangan' ,{'idruangan':$scope.item.ruangan.id,'idkelas':kelasId}).then(function(xx){})
+            
+                                }, function (error) {
+                                    // throw error;
+                                    $scope.isSimpan = false;
+                                    $scope.isBatal = false;
+                                })
                             }
-                            if ($scope.item.kelompokPasien.kelompokpasien.indexOf('BPJS') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('JKN') > -1 || $scope.item.kelompokPasien.kelompokpasien.toUpperCase().indexOf('KEMENKES') > -1) {
-                                if (norecPD == '') {
-    
-                                    $scope.inputPemakaianAsuransi();
-                                }
-                            } else {
-                                window.history.back();
-                            }
-                            medifirstService.postNonMessage('bridging/bpjs/aplicaresws/update-tt-by-ruangan' ,{'idruangan':$scope.item.ruangan.id,'idkelas':kelasId}).then(function(xx){})
-    
-                        }, function (error) {
-                            // throw error;
-                            $scope.isSimpan = false;
-                            $scope.isBatal = false;
-                        })
+                        });
                     }
                 });
+                
             }
 
             $scope.model.generateNoSEP = false;

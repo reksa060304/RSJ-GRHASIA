@@ -151,6 +151,8 @@ define(['initialize'], function (initialize) {
           else
             $scope.isSelesaiPeriksa = true
         }
+
+        console.log($scope.dataPasienSelected);
       };
 
       $scope.columnPasienPulang = [
@@ -505,7 +507,7 @@ define(['initialize'], function (initialize) {
           toastr.error('Pasien belum diverifikasi')
           return
         }
-        if ($scope.listBelumBayar != undefined) {
+        if ($scope.listBelumBayar != undefined && $scope.dataPasienSelected.jenisAsuransi == 'Umum/Pribadi') {
           toastr.error('Pasien harus melunasi tagihan terlebih dahulu ')
           return
         }
