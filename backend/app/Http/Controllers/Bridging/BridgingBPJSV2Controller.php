@@ -1069,7 +1069,7 @@ class BridgingBPJSV2Controller extends ApiController
 
     public function getMonitoringHistori($noKartu)
     {
-        $tglMulai = Carbon::now()->subMonth(4)->format('Y-m-d');
+        $tglMulai = Carbon::now()->subMonth(1)->format('Y-m-d');
         //        return $this->respond($tglMulai);
         $tglAkhir = Carbon::now()->format('Y-m-d');
 
