@@ -409,7 +409,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                             norec: $scope.currentNorec,
                                             norec_apd: $scope.resultAPD.norec
                                         }
-                                        medifirstService.post("registrasi/save-adminsitrasi", json).then(function (z) {
+                                        medifirstService.post("registrasi/save-adminsitrasi-mutasi", json).then(function (z) {
         
                                         })
                                     medifirstService.post('registrasi/update-sep-igd', { norec: $scope.currentNorec }).then(function (z) { })
