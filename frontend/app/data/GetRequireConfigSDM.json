@@ -180,6 +180,10 @@
     {
       "nameDep": "SumberDanaCtrl",
       "urlDep": "module/SDM/SumberDanaCtrl"
+    },
+    {
+      "nameDep": "MahasiswaEksternalCtrl",
+      "urlDep": "module/SDM/Penelitian/MahasiswaEksternalCtrl"
     }
   ]
 }

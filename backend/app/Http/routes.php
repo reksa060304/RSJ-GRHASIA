@@ -2112,6 +2112,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('sdm/pendidikan/save-daftar-diklat-kategory', 'SDM\SumberDayaManusiaController@saveDiklatKategory');
               Route::post('sdm/pendidikan/save-pesertadidik', 'SDM\SumberDayaManusiaController@savePesertaDidik');
               Route::post('sdm/pendidikan/hapus-peserta-didik', 'SDM\SumberDayaManusiaController@hapusPesertaDidik');
+              Route::post('registrasi/save-adminsitrasi-mutasi', 'Registrasi\RegistrasiController@saveAdministrasiMutasi');
+              Route::get('sdm/pendidikan/get-detail-pdruangan', 'SDM\PelatihanController@getDetailPDRuangan');
+              Route::post('sdm/pendidikan/update-pesertadidik', 'SDM\SumberDayaManusiaController@updatePesertaDidik');
+              Route::post('sdm/pendidikan/save-pdruangan', 'SDM\SumberDayaManusiaController@savePesertaDidikRuangan');
+              Route::post('sdm/penelitian/verif-kegiatan-penelitian-eksternal','SDM\PenelitianController@verifKegiatanPenelitianExternal');
+              Route::post('sdm/penelitian/verif-tagihan-kegiatan-penelitian-eksternal','SDM\PenelitianController@verifTagihanKegiatanPenelitianExternal');
 
             // });
             // Route::group(['prefix' => 'penelitian'], function (){
