@@ -4649,6 +4649,7 @@ class GeneralController extends ApiController
             $newCOA->objectkelompoktransaksifk = 151;
             $newCOA->rincianexecuteplanning_askep = $request['rincian'];
             $newCOA->narasumberfk = $request['pelapor'];
+            $newCOA->pelapor = $request['namalengkap'];
             $newCOA->save();
 
             $norecHead2 = $newCOA->norec;

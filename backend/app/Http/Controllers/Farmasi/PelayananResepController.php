@@ -5463,5 +5463,135 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         $data['detail']  =$dataz;
         return $this->respond($data);
     }
+
+    public function getLaporanJasaPelayananIT(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $dataz = DB::select(DB::raw("select 
+        pr.namaproduk, 
+        case 
+            when pr.namaproduk = 'Biaya Pendaftaran Pasien Rawat Jalan Baru' then 2000
+            when pr.namaproduk = 'Biaya Pendaftaran Pasien Rawat Jalan Lama' then 1200
+            when pr.namaproduk = 'Biaya Pendaftaran Pasien IGD Baru' then 2000
+            when pr.namaproduk = 'Biaya Pendaftaran Pasien IGD Lama' then 1200
+            when pr.namaproduk = 'Biaya Pendaftaran Pasien Rawat Inap' then 8000
+        end as harga, count(pd.noregistrasi) as jumlahpasien,
+        case 
+            when pr.namaproduk = 'Biaya Pendaftaran Pasien Rawat Jalan Baru' then 2000*count(pd.noregistrasi)
+            when pr.namaproduk = 'Biaya Pendaftaran Pasien Rawat Jalan Lama' then 1200*count(pd.noregistrasi)
+            when pr.namaproduk = 'Biaya Pendaftaran Pasien IGD Baru' then 2000*count(pd.noregistrasi)
+            when pr.namaproduk = 'Biaya Pendaftaran Pasien IGD Lama' then 1200*count(pd.noregistrasi)
+            when pr.namaproduk = 'Biaya Pendaftaran Pasien Rawat Inap' then 8000*count(pd.noregistrasi)
+        end as total
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        left  join produk_m pr on pr.id=pp.produkfk
+        where pd.kdprofile = $kdProfile
+        and pd.statusenabled = true
+        and pr.id in (5008637, 5008635, 5008644, 5008636, 5008645)
+        group by pr.namaproduk"));
+        
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
+
+    public function getLaporanJasaPelayananDokter(Request $request)
+    {
+        ini_set('max_execution_time', 10000);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $paramProduk = '';
+        if(isset($request['ProdukArr']) && $request['ProdukArr'] != "" && $request['ProdukArr'] != "undefined") {
+            $paramProduk = ' AND pr.id = ' . $request['ProdukArr'];
+        }
+
+        $dataz = DB::select(DB::raw("select a.*, b.komponenharga as komponenhargapelayanan, b.hargajual as hargajualpelayanan, b.totaljumlah as totaljumlahpelayanan, b.total as totalpelayanan, (a.total + b.total) as totalsaranadanpelayanan  from(
+            with lt as (
+                        select distinct  lt.noreff,lt.jenislog,lt.objectloginuserfk
+                        from logginguser_t lt
+                        where lt.jenislog = 'Input Tindakan'
+                        ), cte as (
+                        select lt.noreff,lt.jenislog,pg.id idpegawai, pg.namalengkap namapegawaiinput, pg.objectjenispegawaifk as dokter 
+                        from lt
+                        inner join loginuser_s lu on lu.id=lt.objectloginuserfk
+                        left join pegawai_m pg on pg.id=lu.objectpegawaifk
+                        where lt.jenislog = 'Input Tindakan'
+                        )
+                        select 
+                                pp.tglpelayanan, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, jp.jenispegawai, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(pp.jumlah) as totaljumlah,
+                                (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
+                                0 ELSE ppd.hargadiscount END) * sum(pp.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total, row_number() over(order by pp.tglpelayanan) as urutansarana
+                                    
+                                from
+                                    pasien_m ps 
+                                inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                                left join pegawai_m pg on pg.id = pd.objectpegawaifk
+                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                                inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
+                                left  join produk_m pr on pr.id=pp.produkfk
+                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                                inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+                                                    left join  cte on cte.noreff = pp.norec
+                                                    inner join jenispegawai_m jp on jp.id = cte.dokter
+                                where pp.isobat is null
+                                and ppd.komponenhargafk = 93
+                                and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+                                and pp.kdprofile = $kdProfile
+                                and jp.jenispegawai = 'DOKTER'
+                                $paramProduk
+                                group by pp.tglpelayanan, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual,ppd.hargadiscount,ppd.jasa, jp.jenispegawai
+            ) a
+            inner join 
+            (
+                with lt as (
+                        select distinct  lt.noreff,lt.jenislog,lt.objectloginuserfk
+                        from logginguser_t lt
+                        where lt.jenislog = 'Input Tindakan'
+                        ), cte as (
+                        select lt.noreff,lt.jenislog,pg.id idpegawai, pg.namalengkap namapegawaiinput, pg.objectjenispegawaifk as dokter 
+                        from lt
+                        inner join loginuser_s lu on lu.id=lt.objectloginuserfk
+                        left join pegawai_m pg on pg.id=lu.objectpegawaifk
+                        where lt.jenislog = 'Input Tindakan'
+                        )
+                        select 
+                                pp.tglpelayanan, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, jp.jenispegawai, ru.namaruangan as ruangan, pg.namalengkap as nama, kh.komponenharga, ppd.hargajual, sum(pp.jumlah) as totaljumlah,
+                                (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
+                                0 ELSE ppd.hargadiscount END) * sum(pp.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total, row_number() over(order by pp.tglpelayanan) as urutanpelayanan
+                                    
+                                from
+                                    pasien_m ps 
+                                inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                                left join pegawai_m pg on pg.id = pd.objectpegawaifk
+                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                                inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
+                                left  join produk_m pr on pr.id=pp.produkfk
+                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                                inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+                                                    left join  cte on cte.noreff = pp.norec
+                                                    inner join jenispegawai_m jp on jp.id = cte.dokter
+                                where pp.isobat is null
+                                and ppd.komponenhargafk = 94
+                                and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+                                and pp.kdprofile = $kdProfile
+                                and jp.jenispegawai = 'DOKTER'
+                                $paramProduk
+                                group by pp.tglpelayanan, pr.namaproduk, cte.jenislog, cte.namapegawaiinput, ru.namaruangan, pg.namalengkap , kh.komponenharga, ppd.hargajual,ppd.hargadiscount,ppd.jasa, jp.jenispegawai
+            ) b
+            on a.urutansarana = b.urutanpelayanan;"));
+        
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
         
 }

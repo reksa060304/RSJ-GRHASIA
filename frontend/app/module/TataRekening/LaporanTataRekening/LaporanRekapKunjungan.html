@@ -1,0 +1,123 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .k-window-content .k-content {
+        overflow: none
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .warnaa {
+        color: black
+    }
+
+    .align-right{
+        text-align: right;
+    }
+
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+</style>
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading" c-translate>Laporan Rekap Kunjungan</div>
+    </div>
+    <div class="panel panel-default panel-white" ng-hide="isMasuk">
+        <fieldset class="effect-shadow" style=" border-radius: 4px">
+            <legend id="filterData">
+                <a ng-click="showAndHide()">
+                    <h2><span class="fa fa-plus warnaa">
+                        </span> &nbsp;Pencarian</h2>
+                </a>
+            </legend>
+            <div class="grid_12" id="contentPencarian">
+                <div class="grid_12">
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <label c-label item="item" c-label-text="Periode"></label>
+                            <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datetimepicker
+                                placeholer="yyyy" k-format="'yyyy'" />
+                        </div>
+                        <div class="grid_6">
+                            <label c-label item="item" c-label-text="Departemen"></label>
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.rajalranap"
+                                k-data-text-field="'nama'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                                k-data-source="listRajalRanap" />
+                        </div>
+                    </div>
+                    <div class="grid_8">
+                        
+                        <div class="grid_2" style="margin-top: 20px;">
+                            <button class="c-button" ng-click="cariFilter()">Cari</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Tabel Hasil Pencarian -->
+        <div class="grid_12">
+            <div class="grid_12 borderBox">
+                <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                </kendo-grid>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top:60px">
+            <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+        </div>
+        <div class="grid_12" style="margin-top: 15px;">
+            <div class="grid_9"></div>
+        </div>
+    </div>
+</div>
+
+</div>

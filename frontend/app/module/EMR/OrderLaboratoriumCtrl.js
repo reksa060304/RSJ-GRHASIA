@@ -566,93 +566,110 @@ define(['initialize'], function (initialize) {
                 $scope.inputOrder = true;
             }
             $scope.Simpan = function () {
-                if ($scope.item.ruangantujuan == undefined) {
-                    alert("Pilih Ruangan Tujuan terlebih dahulu!!")
-                    return
-                }
-                if ($scope.item.tglPelayanan == undefined) {
-                    alert("Pilih Tgl Order  terlebih dahulu!!")
-                    return
-                }
-                if ($scope.item.layanan == undefined || $scope.item.layanan.length == 0) {
-                    alert("Pilih layanan terlebih dahulu!!")
-                    return
-                }
-                var arrobj = Object.keys($scope.item.layanan)
-                var data2 = []
-                for (var i = arrobj.length - 1; i >= 0; i--) {
-                    if ($scope.item.layanan[parseInt(arrobj[i])] == true) {
-                        var data = {
-                            no: i + 1,
-                            produkfk: arrobj[i],
-                            namaproduk: arrobj[i],
-                            qtyproduk: 1,
+
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
+                    
+
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
+                    }
+          
+                    console.log(cek);
+          
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah orderan");
+                    } else if (cek == 123){
+                        if ($scope.item.ruangantujuan == undefined) {
+                            alert("Pilih Ruangan Tujuan terlebih dahulu!!")
+                            return
+                        }
+                        if ($scope.item.tglPelayanan == undefined) {
+                            alert("Pilih Tgl Order  terlebih dahulu!!")
+                            return
+                        }
+                        if ($scope.item.layanan == undefined || $scope.item.layanan.length == 0) {
+                            alert("Pilih layanan terlebih dahulu!!")
+                            return
+                        }
+                        var arrobj = Object.keys($scope.item.layanan)
+                        var data2 = []
+                        for (var i = arrobj.length - 1; i >= 0; i--) {
+                            if ($scope.item.layanan[parseInt(arrobj[i])] == true) {
+                                var data = {
+                                    no: i + 1,
+                                    produkfk: arrobj[i],
+                                    namaproduk: arrobj[i],
+                                    qtyproduk: 1,
+                                    objectruanganfk: namaRuanganFk,
+                                    objectruangantujuanfk: $scope.item.ruangantujuan.id,
+                                    pemeriksaanluar: $scope.item.pemeriksaanKeluar === true ? 1 : 0,
+                                    iscito: $scope.item.iscito != undefined && $scope.item.iscito == true ? $scope.item.iscito : false,
+                                    objectkelasfk: $scope.item.idKelas,
+                                    nourut: null,
+                                }
+                                data2.push(data)
+                            }
+                        }
+        
+                        var objSave = {
+                            tanggal: moment($scope.item.tglPelayanan).format('YYYY-MM-DD HH:mm:ss'),
+                            norec_so: '',
+                            norec_apd: norec_apd,
+                            norec_pd: norec_pd,
+                            qtyproduk: data2.length,//
                             objectruanganfk: namaRuanganFk,
                             objectruangantujuanfk: $scope.item.ruangantujuan.id,
-                            pemeriksaanluar: $scope.item.pemeriksaanKeluar === true ? 1 : 0,
+                            departemenfk: 3,
+                            pegawaiorderfk: $scope.PegawaiLogin2.id,
+                            keterangan: $scope.item.keterangan != undefined ? $scope.item.keterangan : null,
                             iscito: $scope.item.iscito != undefined && $scope.item.iscito == true ? $scope.item.iscito : false,
-                            objectkelasfk: $scope.item.idKelas,
-                            nourut: null,
+                            details: data2,
                         }
-                        data2.push(data)
+        
+                        $scope.isSimpan = true
+                        medifirstService.post('emr/save-order-pelayanan', objSave).then(function (e) {
+                            $scope.item.layanan = []
+                            $scope.isSimpan = false
+                            medifirstService.postLogging('Order Laboratorium', 'Norec strukorder_t', e.data.strukorder.norec, 'Order Laboratorium No Order - ' + e.data.strukorder.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
+                            })
+                            /*
+                            call notif ds
+                            */
+                            var noorder = e.data.strukorder.noorder
+                            var tglorder = e.data.strukorder.tglorder
+                            tglorder = tglorder.replace(' ', '%20');
+                            var namaPasien = $scope.item.namaPasien
+                            namaPasien = namaPasien.replace(' ', '%20');
+        
+                            // if ($scope.item.ruangantujuan != undefined) {
+                            //     if ($scope.item.ruangantujuan.ipaddress) {
+                            //         var ip = $scope.item.ruangantujuan.ipaddress.split(',')
+                            //         if (ip.length > 0) {
+                            //             for (var i = 0; i < ip.length; i++) {
+                            //                 const ips = ip[i]
+                            //                 if (ips == null) return
+        
+                            //                 var client = new HttpClient();
+                            //                 client.get('http://' + ips + ':3385/epicnotif/bewara?add-notif=1&noorder=' +
+                            //                     noorder + '&tglorder=' + tglorder + '&noregistrasi=' + $scope.item.noregistrasi
+                            //                     + '&nocm=' + $scope.item.noMr + '&namapasien=' + namaPasien
+                            //                     + '&namaruangan=' + $scope.item.ruangantujuan.namaruangan
+                            //                     , function (s) { });
+        
+                            //             }
+                            //         }
+                            //     }
+                            // }
+        
+                            init();
+                            $scope.BatalOrder();
+        
+        
+                        })
                     }
-                }
-
-                var objSave = {
-                    tanggal: moment($scope.item.tglPelayanan).format('YYYY-MM-DD HH:mm:ss'),
-                    norec_so: '',
-                    norec_apd: norec_apd,
-                    norec_pd: norec_pd,
-                    qtyproduk: data2.length,//
-                    objectruanganfk: namaRuanganFk,
-                    objectruangantujuanfk: $scope.item.ruangantujuan.id,
-                    departemenfk: 3,
-                    pegawaiorderfk: $scope.PegawaiLogin2.id,
-                    keterangan: $scope.item.keterangan != undefined ? $scope.item.keterangan : null,
-                    iscito: $scope.item.iscito != undefined && $scope.item.iscito == true ? $scope.item.iscito : false,
-                    details: data2,
-                }
-
-                $scope.isSimpan = true
-                medifirstService.post('emr/save-order-pelayanan', objSave).then(function (e) {
-                    $scope.item.layanan = []
-                    $scope.isSimpan = false
-                    medifirstService.postLogging('Order Laboratorium', 'Norec strukorder_t', e.data.strukorder.norec, 'Order Laboratorium No Order - ' + e.data.strukorder.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
-                    })
-                    /*
-                    call notif ds
-                    */
-                    var noorder = e.data.strukorder.noorder
-                    var tglorder = e.data.strukorder.tglorder
-                    tglorder = tglorder.replace(' ', '%20');
-                    var namaPasien = $scope.item.namaPasien
-                    namaPasien = namaPasien.replace(' ', '%20');
-
-                    // if ($scope.item.ruangantujuan != undefined) {
-                    //     if ($scope.item.ruangantujuan.ipaddress) {
-                    //         var ip = $scope.item.ruangantujuan.ipaddress.split(',')
-                    //         if (ip.length > 0) {
-                    //             for (var i = 0; i < ip.length; i++) {
-                    //                 const ips = ip[i]
-                    //                 if (ips == null) return
-
-                    //                 var client = new HttpClient();
-                    //                 client.get('http://' + ips + ':3385/epicnotif/bewara?add-notif=1&noorder=' +
-                    //                     noorder + '&tglorder=' + tglorder + '&noregistrasi=' + $scope.item.noregistrasi
-                    //                     + '&nocm=' + $scope.item.noMr + '&namapasien=' + namaPasien
-                    //                     + '&namaruangan=' + $scope.item.ruangantujuan.namaruangan
-                    //                     , function (s) { });
-
-                    //             }
-                    //         }
-                    //     }
-                    // }
-
-                    init();
-                    $scope.BatalOrder();
-
-
-                })
+                });
             }
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {

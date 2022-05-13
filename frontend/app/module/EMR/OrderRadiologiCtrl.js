@@ -925,115 +925,137 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.inputOrder = true;
             }
             $scope.Simpan = function () {
-                if ($scope.item.ruangantujuan == undefined) {
-                    alert("Pilih Ruangan Tujuan terlebih dahulu!!")
-                    return
-                }
-                if ($scope.item.tglPelayanan == undefined) {
-                    alert("Pilih Tgl Order  terlebih dahulu!!")
-                    return
-                }
-                // if (data2.length == 0) {
-                //     alert("Pilih layanan terlebih dahulu!!")
-                //     return
-                // }
-                if ($scope.item.layanan == undefined || $scope.item.layanan.length == 0) {
-                    alert("Pilih layanan terlebih dahulu!!")
-                    return
-                }
-                var arrobj = Object.keys($scope.item.layanan)
-                var data2 = []
-                for (var i = arrobj.length - 1; i >= 0; i--) {
-                    if ($scope.item.layanan[parseInt(arrobj[i])] == true) {
-                        var data = {
-                            no: i + 1,
-                            produkfk: arrobj[i],
-                            namaproduk: arrobj[i],
-                            qtyproduk: 1,
-                            objectruanganfk: namaRuanganFk,
-                            objectruangantujuanfk: $scope.item.ruangantujuan.id,
-                            pemeriksaanluar: $scope.item.pemeriksaanKeluar === true ? 1 : 0,
-                            iscito: $scope.item.iscito != undefined && $scope.item.iscito == true ? $scope.item.iscito : false,
-                            objectkelasfk: $scope.item.idKelas,
-                            nourut: null,
-                        }
-                        data2.push(data)
+
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
+                    
+
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
                     }
-                }
-                var objSave = {
-                    tanggal: moment($scope.item.tglPelayanan).format('YYYY-MM-DD HH:mm:ss'),
-                    norec_so: '',
-                    norec_apd: norec_apd,
-                    norec_pd: norec_pd,
-                    qtyproduk: data2.length,//
-                    objectruanganfk: namaRuanganFk,
-                    objectruangantujuanfk: $scope.item.ruangantujuan.id,
-                    departemenfk: 27,
-                    pegawaiorderfk: $scope.PegawaiLogin2.id,
-                    keterangan: $scope.item.keterangan != undefined ? $scope.item.keterangan : null,
-                    iscito: $scope.item.iscito != undefined && $scope.item.iscito == true ? $scope.item.iscito : false,
-                    details: data2
-                }
-                $scope.isSimpan = true
-                medifirstService.post('emr/save-order-pelayanan', objSave).then(function (e) {
-                    $scope.item.layanan = []
-                    $scope.isSimpan = false
-                    medifirstService.postLogging('Order Radiologi', 'Norec strukorder_t', e.data.strukorder.norec,
-                        'Order Radiologi No Order - ' + e.data.strukorder.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
-                        })
+          
+                    console.log(cek);
+          
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah orderan");
+                    } else if (cek == 123){
 
-                    /*
-                call notif ds
-                */
-                    var noorder = e.data.strukorder.noorder
-                    var tglorder = e.data.strukorder.tglorder
-                    tglorder = tglorder.replace(' ', '%20');
-                    var namaPasien = $scope.item.namaPasien
-                    namaPasien = namaPasien.replace(' ', '%20');
 
-                    if ($scope.item.ruangantujuan != undefined) {
-                        if ($scope.item.ruangantujuan.ipaddress) {
-                            var ip = $scope.item.ruangantujuan.ipaddress.split(',')
-                            if (ip.length > 0) {
-                                for (var i = 0; i < ip.length; i++) {
-                                    const ips = ip[i]
-                                    if (ips == null) return
-
-                                    var client = new HttpClient();
-                                    client.get('http://' + ips + ':3385/epicnotif/bewara?add-notif=1&noorder=' +
-                                        noorder + '&tglorder=' + tglorder + '&noregistrasi=' + $scope.item.noregistrasi
-                                        + '&nocm=' + $scope.item.noMr + '&namapasien=' + namaPasien
-                                        + '&namaruangan=' + $scope.item.ruangantujuan.namaruangan
-                                        , function (s) { });
-
+                        if ($scope.item.ruangantujuan == undefined) {
+                            alert("Pilih Ruangan Tujuan terlebih dahulu!!")
+                            return
+                        }
+                        if ($scope.item.tglPelayanan == undefined) {
+                            alert("Pilih Tgl Order  terlebih dahulu!!")
+                            return
+                        }
+                        // if (data2.length == 0) {
+                        //     alert("Pilih layanan terlebih dahulu!!")
+                        //     return
+                        // }
+                        if ($scope.item.layanan == undefined || $scope.item.layanan.length == 0) {
+                            alert("Pilih layanan terlebih dahulu!!")
+                            return
+                        }
+        
+        
+                        var arrobj = Object.keys($scope.item.layanan)
+                        var data2 = []
+                        for (var i = arrobj.length - 1; i >= 0; i--) {
+                            if ($scope.item.layanan[parseInt(arrobj[i])] == true) {
+                                var data = {
+                                    no: i + 1,
+                                    produkfk: arrobj[i],
+                                    namaproduk: arrobj[i],
+                                    qtyproduk: 1,
+                                    objectruanganfk: namaRuanganFk,
+                                    objectruangantujuanfk: $scope.item.ruangantujuan.id,
+                                    pemeriksaanluar: $scope.item.pemeriksaanKeluar === true ? 1 : 0,
+                                    iscito: $scope.item.iscito != undefined && $scope.item.iscito == true ? $scope.item.iscito : false,
+                                    objectkelasfk: $scope.item.idKelas,
+                                    nourut: null,
                                 }
+                                data2.push(data)
                             }
                         }
+                        var objSave = {
+                            tanggal: moment($scope.item.tglPelayanan).format('YYYY-MM-DD HH:mm:ss'),
+                            norec_so: '',
+                            norec_apd: norec_apd,
+                            norec_pd: norec_pd,
+                            qtyproduk: data2.length,//
+                            objectruanganfk: namaRuanganFk,
+                            objectruangantujuanfk: $scope.item.ruangantujuan.id,
+                            departemenfk: 27,
+                            pegawaiorderfk: $scope.PegawaiLogin2.id,
+                            keterangan: $scope.item.keterangan != undefined ? $scope.item.keterangan : null,
+                            iscito: $scope.item.iscito != undefined && $scope.item.iscito == true ? $scope.item.iscito : false,
+                            details: data2
+                        }
+                        $scope.isSimpan = true
+                        medifirstService.post('emr/save-order-pelayanan', objSave).then(function (e) {
+                            $scope.item.layanan = []
+                            $scope.isSimpan = false
+                            medifirstService.postLogging('Order Radiologi', 'Norec strukorder_t', e.data.strukorder.norec,
+                                'Order Radiologi No Order - ' + e.data.strukorder.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
+                                })
+        
+                            /*
+                        call notif ds
+                        */
+                            var noorder = e.data.strukorder.noorder
+                            var tglorder = e.data.strukorder.tglorder
+                            tglorder = tglorder.replace(' ', '%20');
+                            var namaPasien = $scope.item.namaPasien
+                            namaPasien = namaPasien.replace(' ', '%20');
+        
+                            if ($scope.item.ruangantujuan != undefined) {
+                                if ($scope.item.ruangantujuan.ipaddress) {
+                                    var ip = $scope.item.ruangantujuan.ipaddress.split(',')
+                                    if (ip.length > 0) {
+                                        for (var i = 0; i < ip.length; i++) {
+                                            const ips = ip[i]
+                                            if (ips == null) return
+        
+                                            var client = new HttpClient();
+                                            client.get('http://' + ips + ':3385/epicnotif/bewara?add-notif=1&noorder=' +
+                                                noorder + '&tglorder=' + tglorder + '&noregistrasi=' + $scope.item.noregistrasi
+                                                + '&nocm=' + $scope.item.noMr + '&namapasien=' + namaPasien
+                                                + '&namaruangan=' + $scope.item.ruangantujuan.namaruangan
+                                                , function (s) { });
+        
+                                        }
+                                    }
+                                }
+                            }
+                            init();
+                            $scope.BatalOrder();
+        
+                            // $scope.item.resep = e.data.noresep.norec
+                            // var stt = 'false'
+                            // if (confirm('View resep? ')) {
+                            //     // Save it!
+                            //     stt='true';
+                            // } else {
+                            //     // Do nothing!
+                            //     stt='false'
+                            // }
+                            // var client = new HttpClient();
+                            // client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep=1&nores='+e.data.noresep.norec+'&view='+stt+'&user='+pegawaiUser.namalengkap, function(response) {
+                            //     //aadc=response;
+                            // });
+                            // if (noOrder == 'EditResep') {
+                            //     var objDelete = {norec:norecResep}
+                            //     manageLogistikPhp.posthapuspelayananapotik(objDelete).then(function(e) {
+        
+                            //     })
+                            // }
+                            // window.history.back();
+                        })
+
                     }
-                    init();
-                    $scope.BatalOrder();
-
-                    // $scope.item.resep = e.data.noresep.norec
-                    // var stt = 'false'
-                    // if (confirm('View resep? ')) {
-                    //     // Save it!
-                    //     stt='true';
-                    // } else {
-                    //     // Do nothing!
-                    //     stt='false'
-                    // }
-                    // var client = new HttpClient();
-                    // client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep=1&nores='+e.data.noresep.norec+'&view='+stt+'&user='+pegawaiUser.namalengkap, function(response) {
-                    //     //aadc=response;
-                    // });
-                    // if (noOrder == 'EditResep') {
-                    //     var objDelete = {norec:norecResep}
-                    //     manageLogistikPhp.posthapuspelayananapotik(objDelete).then(function(e) {
-
-                    //     })
-                    // }
-                    // window.history.back();
-                })
+                });
             }
             // $scope.mainGridOptions = { 
             //     pageable: true,

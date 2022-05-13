@@ -12306,4 +12306,537 @@ $result = array(
         return $this->respond($result);
     }
 
+    public function getRekapKunjungan(Request $request)
+    {
+        
+        $tglAwal = $request['tglAwal'];
+        $kdProfile = $this->getDataKdProfile($request);
+        $rajalranap = '';
+        $rajalranapjoin = '';
+
+        if (isset($request['rajalranap']) && $request['rajalranap'] != "" && $request['rajalranap'] != "undefined" && $request['rajalranap'] == 1) {
+            $rajalranap = ' and ru.objectdepartemenfk <> 16';
+            $rajalranapjoin = ' and r.objectdepartemenfk <> 16';
+        }
+
+        if (isset($request['rajalranap']) && $request['rajalranap'] != "" && $request['rajalranap'] != "undefined" && $request['rajalranap'] == 2) {
+            $rajalranap = ' and ru.objectdepartemenfk = 16';
+            $rajalranapjoin = ' and r.objectdepartemenfk = 16';
+        }
+
+        $dataz = DB::select(DB::raw("select r.namaruangan, a.jumlahjanuari
+        , b.jumlahfebruari
+        , c.jumlahmaret, d.jumlahapril, e.jumlahmei, f.jumlahjuni,
+        g.jumlahjuli, h.jumlahagustus, i.jumlahseptember, j.jumlahoktober, k.jumlahnovember, l.jumlahdesember 
+        FROM
+        ruangan_m r
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 1 then count(apd.norec) else 0 end as jumlahjanuari
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 1
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as a on a.namaruangan = r.namaruangan 
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 2 then count(apd.norec) else 0 end as jumlahfebruari
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 2
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as b on b.namaruangan = r.namaruangan 
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 3 then count(apd.norec) else 0 end as jumlahmaret
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 3
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as c on c.namaruangan = r.namaruangan 
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 4 then count(apd.norec) else 0 end as jumlahapril
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 4
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as d on d.namaruangan = r.namaruangan 
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 5 then count(apd.norec) else 0 end as jumlahmei
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 5
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as e on e.namaruangan = r.namaruangan 
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 6 then count(apd.norec) else 0 end as jumlahjuni
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 6
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as f on f.namaruangan = r.namaruangan 
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 7 then count(apd.norec) else 0 end as jumlahjuli
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 7
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as g on g.namaruangan = r.namaruangan 
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 8 then count(apd.norec) else 0 end as jumlahagustus
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 8
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as h on h.namaruangan = r.namaruangan 
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 9 then count(apd.norec) else 0 end as jumlahseptember
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 9
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as i on i.namaruangan = r.namaruangan 
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 10 then count(apd.norec) else 0 end as jumlahoktober
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 10
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as j on j.namaruangan = r.namaruangan 
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 11 then count(apd.norec) else 0 end as jumlahnovember
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 11
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as k on k.namaruangan = r.namaruangan 
+        left join (
+            SELECT ru.namaruangan,
+            case when extract(month from apd.tglmasuk) = 12 then count(apd.norec) else 0 end as jumlahdesember
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            WHERE apd.tglmasuk BETWEEN '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from apd.tglmasuk) = 12
+                            $rajalranap
+            group by ru.namaruangan, extract(month from apd.tglmasuk)
+        ) as l on l.namaruangan = r.namaruangan 
+        where r.kdprofile = 30
+        and r.statusenabled = true
+        $rajalranapjoin
+        order by a.jumlahjanuari
+        , b.jumlahfebruari
+        , c.jumlahmaret, d.jumlahapril, e.jumlahmei, f.jumlahjuni,
+        g.jumlahjuli, h.jumlahagustus, i.jumlahseptember, j.jumlahoktober, k.jumlahnovember, l.jumlahdesember"));
+
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
+
+    public function getRekapTindakan(Request $request)
+    {
+        
+        $tglAwal = $request['tglAwal'];
+        $kdProfile = $this->getDataKdProfile($request);
+        $rajalranap = '';
+        $rajalranapjoin = '';
+
+        if (isset($request['rajalranap']) && $request['rajalranap'] != "" && $request['rajalranap'] != "undefined" && $request['rajalranap'] == 1) {
+            $rajalranap = ' and ru.objectdepartemenfk <> 16';
+            $rajalranapjoin = ' and r.objectdepartemenfk <> 16';
+        }
+
+        if (isset($request['rajalranap']) && $request['rajalranap'] != "" && $request['rajalranap'] != "undefined" && $request['rajalranap'] == 2) {
+            $rajalranap = ' and ru.objectdepartemenfk = 16';
+            $rajalranapjoin = ' and r.objectdepartemenfk = 16';
+        }
+
+        $dataz = DB::select(DB::raw("select r.namaproduk, a.jumlahjanuari
+        , b.jumlahfebruari
+        , c.jumlahmaret, d.jumlahapril, e.jumlahmei, f.jumlahjuni,
+        g.jumlahjuli, h.jumlahagustus, i.jumlahseptember, j.jumlahoktober, k.jumlahnovember, l.jumlahdesember
+        from antrianpasiendiperiksa_t apd
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner  join produk_m r on r.id=pp.produkfk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 1 then sum(ppd.jumlah) else 0 end as jumlahjanuari
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 1
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as a on a.namaproduk = r.namaproduk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 2 then sum(ppd.jumlah) else 0 end as jumlahfebruari
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 2
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as b on b.namaproduk = r.namaproduk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 3 then sum(ppd.jumlah) else 0 end as jumlahmaret
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 3
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as c on c.namaproduk = r.namaproduk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 4 then sum(ppd.jumlah) else 0 end as jumlahapril
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 4
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as d on d.namaproduk = r.namaproduk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 5 then sum(ppd.jumlah) else 0 end as jumlahmei
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 5
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as e on e.namaproduk = r.namaproduk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 6 then sum(ppd.jumlah) else 0 end as jumlahjuni
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 6
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as f on f.namaproduk = r.namaproduk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 7 then sum(ppd.jumlah) else 0 end as jumlahjuli
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 7
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as g on g.namaproduk = r.namaproduk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 8 then sum(ppd.jumlah) else 0 end as jumlahagustus
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 8
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as h on h.namaproduk = r.namaproduk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 9 then sum(ppd.jumlah) else 0 end as jumlahseptember
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 9
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as i on i.namaproduk = r.namaproduk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 10 then sum(ppd.jumlah) else 0 end as jumlahoktober
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 10
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as j on j.namaproduk = r.namaproduk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 11 then sum(ppd.jumlah) else 0 end as jumlahnovember
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 11
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as k on k.namaproduk = r.namaproduk
+        left join (
+            SELECT pr.namaproduk,
+            case when extract(month from pp.tglpelayanan) = 12 then sum(ppd.jumlah) else 0 end as jumlahdesember
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner  join produk_m pr on pr.id=pp.produkfk
+                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            and apd.kdprofile = $kdProfile
+                            and pd.kdprofile = $kdProfile
+                            and apd.statusenabled = true
+                            and pd.statusenabled=true
+                            and extract(month from pp.tglpelayanan) = 12
+                            and pp.isobat is null
+                            $rajalranap
+            group by pr.namaproduk, extract(month from pp.tglpelayanan)
+        ) as l on l.namaproduk = r.namaproduk
+        where pp.isobat is NULL
+        $rajalranap
+        group by r.namaproduk, a.jumlahjanuari
+        , b.jumlahfebruari
+        , c.jumlahmaret, d.jumlahapril, e.jumlahmei, f.jumlahjuni,
+        g.jumlahjuli, h.jumlahagustus, i.jumlahseptember, j.jumlahoktober, k.jumlahnovember, l.jumlahdesember
+        order by a.jumlahjanuari
+        , b.jumlahfebruari
+        , c.jumlahmaret, d.jumlahapril, e.jumlahmei, f.jumlahjuni,
+        g.jumlahjuli, h.jumlahagustus, i.jumlahseptember, j.jumlahoktober, k.jumlahnovember, l.jumlahdesember"));
+        
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
+
 }
