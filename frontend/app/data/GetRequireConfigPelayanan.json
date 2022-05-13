@@ -3122,6 +3122,22 @@
         {
             "nameDep": "AsesmenMedisSpesialisKedokteranFisikDanRehabilitasiCtrl",
             "urlDep": "module/EMR/AsesmenMedisSpesialisKedokteranFisikDanRehabilitasiCtrl"
+        },
+        {
+            "nameDep": "LaporanJasaPelayananTICtrl",
+            "urlDep": "module/Farmasi/LaporanFarmasi/LaporanJasaPelayananTICtrl"
+        },
+        {
+            "nameDep": "LaporanJasaPelayananDokterCtrl",
+            "urlDep": "module/Farmasi/LaporanFarmasi/LaporanJasaPelayananDokterCtrl"
+        },
+        {
+            "nameDep": "LaporanRekapKunjunganCtrl",
+            "urlDep": "module/TataRekening/LaporanTataRekening/LaporanRekapKunjunganCtrl"
+        },
+        {
+            "nameDep": "LaporanRekapTindakanCtrl",
+            "urlDep": "module/TataRekening/LaporanTataRekening/LaporanRekapTindakanCtrl"
         }
     ]
 }
