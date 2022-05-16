@@ -2245,13 +2245,7 @@ AND sp.statusenabled <> false
         $idProfile = (int) $kdProfile;
         $tglAwal = $tglAwal.' 00:00';
         $tglAkhir = $tglAkhir.' 23:59';
-        // var_dump($tglAwal);
-        // var_dump($tglAkhir);
-        //$tahun = new \DateTime($tglAkhir);
         $tahun = date ('Y');
-        // $datetime1 = new \DateTime(implode(" ",$tglAwal));
-        // $datetime2 = new \DateTime(implode(" ",$tglAkhir));
-        // $interval = $datetime1->diff($datetime2);
         $sehari = 1;//$interval->format('%d');
         $data10=[];
 
@@ -2265,6 +2259,13 @@ AND sp.statusenabled <> false
             from generate_series('$tglAkhir', '$tglAkhir'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
         "));
         
+        $monthtahunmonth = (int) date('m', strtotime($tglAwal));
+        $yeartahunmonth = (int) date('Y', strtotime($tglAwal));
+        
+
+        $tahunmonthq = DB::select(DB::raw("select to_char(daterange::date, 'YYYY-mm') as tahun
+        from generate_series('$yeartahunmonth-$monthtahunmonth-01'::date, '$tglAkhir'::date, '1 month') as daterange"));
+        
         $arrmin = [];
         foreach($tanggalmin as $rowmin)
         {
@@ -2274,7 +2275,7 @@ AND sp.statusenabled <> false
         foreach($tanggalmax as $rowmax)
         {
             $arrmax[] =  $rowmax->tglmax;
-        }  
+        }
         
         
         $tanggalminawal = DB::select(DB::raw("select '$arrmin[0] 23:59:59'::timestamp - interval '1 day ' as tgl"));
@@ -2484,53 +2485,45 @@ AND sp.statusenabled <> false
 
             $jumlahttkalihari = 0;
             $jumlahgrandtotaltt = 0;
-            
-            $year = (int) date('Y', strtotime($tglAkhir));
-            $num_of_days = [];
             $hari = 0;
-            $total_month_awal = (int) date('m', strtotime($tglAwal));
-            $total_month_akhir = (int) date('m', strtotime($tglAkhir));
-                    
-                // var_dump($year);
-                // var_dump($total_month_awal);
-                // var_dump($total_month_akhir);
-        
-            for($m=$total_month_awal; $m<=$total_month_akhir; $m++){
-                $num_of_days[] = array(
-                    'bulan' =>  $m,
-                    'jumlahhari' =>  cal_days_in_month(CAL_GREGORIAN, $m, $year),
-                    'year' => $year,
-                );
+            $hariawal = (int) date('d', strtotime($tglAwal));
 
+            foreach($tahunmonthq as $q){
                 if($jumlah >= 28){
-                    $hari = cal_days_in_month(CAL_GREGORIAN, $m, $year);
-                    $jumlah -= $hari;
-                    $hari = cal_days_in_month(CAL_GREGORIAN, $m, $year);
+                    if($hariawal > 1){
+                        $hari = $hariawal;
+                        $jumlah -= (cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($q->tahun)), date('Y', strtotime($q->tahun))) - $hari +1);
+                        $hariawal = 1;
+                    } else{
+                        $hari = cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($q->tahun)), date('Y', strtotime($q->tahun)));
+                        $jumlah -= $hari;
+                        $hari = cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($q->tahun)), date('Y', strtotime($q->tahun)));
+                    }
                 } else{
                     $hari = $jumlah;
                 }
-                
+                //var_dump($hariawal);
+                var_dump($q);
+                var_dump($hari);
 
-                //if()
+                $jumlahtt = DB::select(DB::raw("select '$q->tahun-$hari' as tanggal, sum(rm.jumlah_tt) as totalperperiode 
+                    from riwayatkamar_m rm
+                    inner join ruangan_m ru on ru.id = rm.objectruanganfk
+                    inner join(
+                        select objectruanganfk,objectkamarfk,max(tanggalawal) as tanggal from riwayatkamar_m 
+                        where 
+                        '$q->tahun-$hari 23:59:59' BETWEEN tanggalawal and COALESCE(tanggalakhir,'$q->tahun-$hari 23:59:59')
+                        group by objectruanganfk,objectkamarfk
+                    ) as x	
+                    on rm.objectruanganfk=x.objectruanganfk and rm.objectkamarfk=x.objectkamarfk and rm.tanggalawal = x.tanggal
+                    where rm.kdprofile = $idProfile and rm.statusenabled = true"));
 
-                //var_dump($hari);
+                    //var_dump($jumlahtt);
+                    
+                    $jumlahttkalihari += $hari*$jumlahtt[0]->totalperperiode;
+                    $jumlahgrandtotaltt += $jumlahtt[0]->totalperperiode;
 
-                $jumlahtt = DB::select(DB::raw("select '$year-$m-$hari' as tanggal, sum(rm.jumlah_tt) as totalperperiode 
-                from riwayatkamar_m rm
-                inner join ruangan_m ru on ru.id = rm.objectruanganfk
-                inner join(
-                    select objectruanganfk,objectkamarfk,max(tanggalawal) as tanggal from riwayatkamar_m 
-                    where 
-                    '$year-$m-$hari 23:59:59' BETWEEN tanggalawal and COALESCE(tanggalakhir,'$year-$m-$hari 23:59:59')
-                    group by objectruanganfk,objectkamarfk
-                ) as x	
-                on rm.objectruanganfk=x.objectruanganfk and rm.objectkamarfk=x.objectkamarfk and rm.tanggalawal = x.tanggal
-                where rm.kdprofile = $idProfile and rm.statusenabled = true"));
-                
-                $jumlahttkalihari += $hari*$jumlahtt[0]->totalperperiode;
-                $jumlahgrandtotaltt += $jumlahtt[0]->totalperperiode;
-                
-                //var_dump($jumlahttkalihari);
+                    
             }
             
             $bor = 0;
@@ -2604,22 +2597,24 @@ AND sp.statusenabled <> false
 
             //var_dump($jumlahpulang);
             
-
-            if($jumlahpulang == 0){
-                $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
-                $alos = 0;
-                $toi = 0;
-                $bto = $jumlahpulang/$jumlahgrandtotaltt;
-                $ndr = 0;
-                $gdr = 0;
-            } else{
-                $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
-                $alos = $jumlahharidirawat/$jumlahpulang;
-                $toi = ($jumlahttkalihari - $jumlahhariperawatantt)/$jumlahpulang;
-                $bto = $jumlahpulang/$jumlahgrandtotaltt;
-                $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
-                $gdr = $jumlahpasienmeninggal/$jumlahpulang*1000;
-            }
+            
+                if($jumlahpulang == 0){
+                    $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
+                    $alos = 0;
+                    $toi = 0;
+                    $bto = $jumlahpulang/$jumlahgrandtotaltt;
+                    $ndr = 0;
+                    $gdr = 0;
+                } else{
+                    $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
+                    $alos = $jumlahharidirawat/$jumlahpulang;
+                    $toi = ($jumlahttkalihari - $jumlahhariperawatantt)/$jumlahpulang;
+                    $bto = $jumlahpulang/$jumlahgrandtotaltt;
+                    $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
+                    $gdr = $jumlahpasienmeninggal/$jumlahpulang*1000;
+                }
+            
+            
 
             $data10[] = array(
                 'lamarawat'=>(int)$jumlahharidirawat,

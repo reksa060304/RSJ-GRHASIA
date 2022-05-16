@@ -114,6 +114,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
       function loadPertama() {
         $scope.isRouteLoading = true;
+        $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+        if($scope.pegawaiLogin.jenisPegawai.jenispegawai =="Apoteker"){
+          $scope.item.namaProduk={ id: 5006760, namaproduk: 'Pelayanan Resep Obat Jadi / Alkes' };
+        } 
+        
         medifirstService.get("sysadmin/general/get-tgl-posting", true).then(function (dat) {
           var tgltgltgltgl = dat.data.mindate[0].max
           var tglkpnaja = dat.data.datedate
@@ -283,7 +288,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           var cookie = document.cookie.split(';');
           cookie = cookie[0].split('=');
           // if (cookie[1] == 'dokter')
-          $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]          
+          $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]
+           
           if($scope.item.pasien.kdinternal  == "JIW" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
             let params = $scope.item.pasien.noregistrasi;    
             if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
