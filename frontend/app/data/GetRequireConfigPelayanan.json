@@ -3138,6 +3138,19 @@
         {
             "nameDep": "LaporanRekapTindakanCtrl",
             "urlDep": "module/TataRekening/LaporanTataRekening/LaporanRekapTindakanCtrl"
+        },
+        {
+            "nameDep": "AsesmenMedisSpesialisAnakCtrl",
+            "urlDep": "module/EMR/AsesmenMedisSpesialisAnakCtrl"
+        },
+        {
+            "nameDep": "AsesmenMedisSpesialisPenyakitDalamCtrl",
+            "urlDep": "module/EMR/AsesmenMedisSpesialisPenyakitDalamCtrl"
+        },
+        {
+            "nameDep": "AsesmenMedisSpesialisSyarafCtrl",
+            "urlDep": "module/EMR/AsesmenMedisSpesialisSyarafCtrl"
         }
+
     ]
 }
