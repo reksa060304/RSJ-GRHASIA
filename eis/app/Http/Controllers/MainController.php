@@ -2503,8 +2503,8 @@ AND sp.statusenabled <> false
                     $hari = $jumlah;
                 }
                 //var_dump($hariawal);
-                var_dump($q);
-                var_dump($hari);
+                //var_dump($q);
+                //var_dump($hari);
 
                 $jumlahtt = DB::select(DB::raw("select '$q->tahun-$hari' as tanggal, sum(rm.jumlah_tt) as totalperperiode 
                     from riwayatkamar_m rm
