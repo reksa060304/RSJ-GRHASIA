@@ -2730,22 +2730,22 @@ AND sp.statusenabled <> false
                 select count(x.kddiagnosa)as jumlah,x.kddiagnosa,x.namadiagnosa
                 from (select dm.kddiagnosa,
                 dm.namadiagnosa
-                from antrianpasiendiperiksa_t as app
-                left join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
-                left join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
+                from diagnosapasien_t as dp
+                inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
                 inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
-                inner join pasiendaftar_t as pd on pd.norec = app.noregistrasifk
+				left join antrianpasiendiperiksa_t as app on dp.noregistrasifk = app.norec
+				inner join pasiendaftar_t as pd on pd.norec = app.noregistrasifk
                 inner join pasien_m as ps on ps.id = pd.nocmfk
                 left join alamat_m as alm on alm.nocmfk = ps.id
-                 left join kecamatan_m as kec on kec.id = alm.objectkecamatanfk
+                left join kecamatan_m as kec on kec.id = alm.objectkecamatanfk
                 left join kotakabupaten_m as kot on kot.id = alm.objectkotakabupatenfk
                 left join propinsi_m as pro on pro.id = alm.objectpropinsifk
                 left join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-                where app.kdprofile = $idProfile and dm.kddiagnosa <> '-'  and   pd.statusenabled=true and
-                pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir'
+                where pd.kdprofile = $idProfile and pd.statusenabled=true and
+                dp.tglpendaftaran BETWEEN '$tglAwal' AND '$tglAkhir'
                 $paramProp
                 $paramKota
-                 $paramKec
+                $paramKec
 
                 )as x GROUP BY x.namadiagnosa ,x.kddiagnosa
                 ) as z
@@ -2793,11 +2793,12 @@ AND sp.statusenabled <> false
         from (
             select count(pd.noregistrasi) as jumlah, ru.namaruangan 
             FROM pasiendaftar_t as pd 
-            INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk 
+            inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+            INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk 
             where pd.kdprofile = $idProfile
             and pd.statusenabled = true 
             and ru.objectdepartemenfk = 16 
-            and pd.tglregistrasi::date between '$tglAwal' and '$tglAkhir' 
+            and apd.tglmasuk::date between '$tglAwal' and '$tglAkhir' 
             group by ru.namaruangan 
         ) 
         as x group by namaruangan"));
