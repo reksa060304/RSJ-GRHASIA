@@ -2740,7 +2740,6 @@ AND sp.statusenabled <> false
                 left join kecamatan_m as kec on kec.id = alm.objectkecamatanfk
                 left join kotakabupaten_m as kot on kot.id = alm.objectkotakabupatenfk
                 left join propinsi_m as pro on pro.id = alm.objectpropinsifk
-                left join ruangan_m as ru on ru.id = pd.objectruanganlastfk
                 where pd.kdprofile = $idProfile and pd.statusenabled=true and
                 dp.tglpendaftaran BETWEEN '$tglAwal' AND '$tglAkhir'
                 $paramProp
