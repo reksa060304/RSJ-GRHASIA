@@ -17397,5 +17397,151 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "LaporanJasaPelayananTI",
+    "url": "/TGFwb3Jhbkphc2FQZWxheWFuYW5JVA==",
+    "templateurl": "module/Farmasi/LaporanFarmasi/LaporanJasaPelayananTI.html",
+    "controller": "LaporanJasaPelayananTICtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanJasaPelayananDokter",
+    "url": "/TGFwb3Jhbkphc2FQZWxheWFuYW5Eb2t0ZXI=",
+    "templateurl": "module/Farmasi/LaporanFarmasi/LaporanJasaPelayananDokter.html",
+    "controller": "LaporanJasaPelayananDokterCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanRekapKunjungan",
+    "url": "/TGFwb3JhblJla2FwS3VuanVuZ2Fu",
+    "templateurl": "module/TataRekening/LaporanTataRekening/LaporanRekapKunjungan.html",
+    "controller": "LaporanRekapKunjunganCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanRekapTindakan",
+    "url": "/TGFwb3JhblJla2FwVGluZGFrYW4=",
+    "templateurl": "module/TataRekening/LaporanTataRekening/LaporanRekapTindakan.html",
+    "controller": "LaporanRekapTindakanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenMedisSpesialisAnak",
+    "url": "/AsesmenMedisSpesialisAnak",
+    "templateurl": "module/EMR/AsesmenMedisSpesialisAnak.html",
+    "controller": "AsesmenMedisSpesialisAnakCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenMedisSpesialisPenyakitDalam",
+    "url": "/AsesmenMedisSpesialisPenyakitDalam",
+    "templateurl": "module/EMR/AsesmenMedisSpesialisPenyakitDalam.html",
+    "controller": "AsesmenMedisSpesialisPenyakitDalamCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenMedisSpesialisSyaraf",
+    "url": "/AsesmenMedisSpesialisSyaraf",
+    "templateurl": "module/EMR/AsesmenMedisSpesialisSyaraf.html",
+    "controller": "AsesmenMedisSpesialisSyarafCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]

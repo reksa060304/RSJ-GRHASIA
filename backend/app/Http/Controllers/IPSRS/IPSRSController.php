@@ -71,7 +71,7 @@ class IPSRSController extends ApiController
                     jpk.reportdisplay as jeniskerusakan,stp.objectjenisalatfk,jpk2.reportdisplay as jenisalat,r.namaruangan as namaruangantujuan, ukp.name
             FROM strukplanning_t as stp
             INNER JOIN ruangan_m as rg on rg.id = stp.objectruanganfk
-            inner join pegawai_m as pg1 on pg1.namalengkap = stp.pelapor 
+            inner join pegawai_m as pg1 on pg1.id = stp.narasumberfk 
             LEFT JOIN pegawai_m as pg on pg.id = stp.objectpegawaipjawabfk
             LEFT JOIN pegawai_m as pg2 on pg2.id = stp.objectpegawaipjawabevaluasifk
             LEFT JOIN pegawai_m as pg3 on pg3.id = stp.narasumberfk

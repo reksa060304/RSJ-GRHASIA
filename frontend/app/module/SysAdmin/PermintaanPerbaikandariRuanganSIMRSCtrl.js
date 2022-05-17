@@ -333,6 +333,7 @@ define(['initialize'], function (initialize) {
                         ruangandesc : $scope.item.ruangan.id,
                         rincian : $scope.item.desckerusakan,
                         pelapor : $scope.item.pelapor.id,
+                        namalengkap : $scope.item.pelapor.namalengkap,
                         namaruangan : $scope.item.ruangan.namaruangan
                     }
                 medifirstService.post('sysadmin/general/save-permohonan-simrs',objSave).then(function(e) {

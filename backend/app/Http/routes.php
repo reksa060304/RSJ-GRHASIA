@@ -855,6 +855,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get-laporan-obat-antibiotik', 'Farmasi\PelayananResepController@getLaporanObatAntibiotik');
           Route::get('farmasi/get-laporan-jasa-pelayanan-obat', 'Farmasi\PelayananResepController@getLaporanJasaPelayanan');
           Route::get('farmasi/get-laporan-faktor-pelayanan-farmasi', 'Farmasi\PelayananResepController@getLaporanFaktorPelayanan');
+          Route::get('farmasi/get-laporan-jasa-pelayanan-it', 'Farmasi\PelayananResepController@getLaporanJasaPelayananIT');
+          Route::get('farmasi/get-laporan-jasa-pelayanan-dokter', 'Farmasi\PelayananResepController@getLaporanJasaPelayananDokter');
           
           Route::get('farmasi/get-daftar-satuanresep', 'Farmasi\PelayananResepController@getDaftarSatuanResep');
           Route::post('farmasi/save-data-satuanresep', 'Farmasi\PelayananResepController@saveDataSatuanResep');
@@ -2627,6 +2629,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/delete-suratpelimpahanjenazah-pasien','TataRekening\TagihanController@hapusPelimpahanRuangJenazah');
           Route::get('tatarekening/get-datasuratpelimpahanjenazah','TataRekening\TagihanController@getDataPelimpahanJenazah');
           Route::get('tatarekening/get-data-kelas-antrianpasien','TataRekening\TagihanController@getDataKelasAntrian');
+          Route::get('tatarekening/get-laporan-rekap-kunjungan','TataRekening\TagihanController@getRekapKunjungan');
+          Route::get('tatarekening/get-laporan-rekap-tindakan','TataRekening\TagihanController@getRekapTindakan');
             //*****END*****
 
             // Route::group(['prefix' => 'tindakan'], function () {
