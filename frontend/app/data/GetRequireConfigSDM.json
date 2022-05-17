@@ -184,6 +184,10 @@
     {
       "nameDep": "MahasiswaEksternalCtrl",
       "urlDep": "module/SDM/Penelitian/MahasiswaEksternalCtrl"
+    },
+    {
+      "nameDep": "DaftarJamPelatihanKaryawanCtrl",
+      "urlDep": "module/SDM/Pelatihan/DaftarJamPelatihanKaryawanCtrl"
     }
   ]
 }

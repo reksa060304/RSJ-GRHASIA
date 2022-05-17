@@ -1,18 +1,31 @@
 define(['initialize'], function(initialize) {
 	'use strict';
-	initialize.controller('PenelitianEksternalCtrl', ['$scope', '$state', 'DateHelper', 'CacheHelper', 'MedifirstService',
-		function($scope, $state, dateHelper, cacheHelper, medifirstService) {
-			$scope.dataVOloaded = true;
+	initialize.controller('PenelitianEksternalCtrl', ['$scope', '$state', 'DateHelper', 'CacheHelper', 'MedifirstService', 'ModelItem',
+		function ($scope, $state, dateHelper, cacheHelper, medifirstService, ModelItem) {
+			//untuk menampilkan levelpendidikan
+            $scope.lvlpendidikan = false
+            $scope.idlvlpendidikan = true
+            $scope.dataVOloaded = true;
 			$scope.isRouteLoading=false;
 			$scope.now = new Date();
 			$scope.item={};
 			$scope.currentKeterangan=[];
+            $scope.item.namainstansi = medifirstService.getPegawaiLogin().namaLengkap;
+            $scope.item.namauser = medifirstService.getUserLogin().kdUser;
+            
+            $scope.tabletambahmahasiswa = false;
+            $scope.tgl = true;
+            $scope.pemb = true;
+            $scope.ru = true;
 			var noOrder='';
 			var NorecKpe='';
 			var norec_kpe ='';
+            var norecmhs = '';
 			loadDataCombo();
 			LoadCache();
-
+            console.log(ModelItem.getPegawai())
+            console.log(medifirstService.getUserLogin());
+            
 			function LoadCache(){
                 var chacePeriode = cacheHelper.get('PenelitianEksternalCtrl');
                 if(chacePeriode != undefined){
@@ -28,20 +41,144 @@ define(['initialize'], function(initialize) {
                         6 : ''
                     }
                     cacheHelper.set('PenelitianEksternalCtrl', chacePeriode);
-               }else{
+                }else{
                     init()
-               }
-           }			
+                }
+            }			
+            if (ModelItem.getPegawai().jenisPegawai.qjenispegawai != 0) {
+                $scope.tgl = false;
+                $scope.pemb = false;
+                $scope.ru = false;
+                $scope.tabletambahmahasiswa = true;
 
-			function loadDataCombo(){			
-	            medifirstService.get("sdm/penelitian/get-data-combo-penelitian?", true).then(function(datas){
+            }
+
+			function loadDataCombo(){
+                $scope.isRouteLoading = true
+                var norec_pd = '';
+                if ($scope.norec_pd != undefined) {
+                    norec_pd = "&norec_pd=" + $scope.norec_pd;
+                }
+                var noregistrasi = '';
+                if ($scope.noregistrasifk != undefined) {
+                    noregistrasi = "noregistrasi=" + $scope.noregistrasifk;
+                }
+                var chacePeriode = cacheHelper.get('PenelitianEksternalCtrl');
+                if (chacePeriode != undefined) {
+                    chacePeriode = cacheHelper.get('PenelitianEksternalCtrl');
+                    NorecKpe = chacePeriode[0]
+                }
+                if (NorecKpe != '') {
+                    noregistrasi = "noregistrasi=" + NorecKpe;
+                    console.log('data masuk');
+                }
+	            medifirstService.get("sdm/penelitian/get-data-combo-penelitian?"+ noregistrasi, true).then(function(datas){
+                $scope.isRouteLoading = false
                     var dat = datas.data
-	            	$scope.ListInstitusiPendidikan=dat.institusi;
-	            	$scope.ListjurusanPeminatan=dat.jurusanpeminatan;
-	            	$scope.ListFakultas=dat.fakultas;
+	            	
+                    $scope.ListInstitusiPendidikan=dat.institusi;
+                    $scope.ListJenisDiklat = dat.jenisdiklat;
+                    $scope.ListJenisLayanan = dat.detailjenisproduk;
+                    $scope.ListJenisKelamin = dat.jeniskelamin;
+                    $scope.ListPegawai = dat.pegawai;
+                    $scope.ListRuangan = dat.dataruangan;
+                    $scope.kendo = datas.data.me.length;
+                    $scope.ListLevelPendidikan = dat.levelpendidikan;
+                    if (dat.pegawaiuser != '') {
+                    $scope.item.notelp = dat.pegawaiuser[0].nomor
+                    }
+                    console.log(datas.data.norec);
+                    if (datas.data.norec != '') {
+                        $scope.norec = datas.data.norec[0].jumlahpeserta
+                        console.log($scope.norec);
+                    }
+                    if (dat.sp != '') {
+                        if (dat.sp != undefined) {
+                            $scope.peneliti = true
+                            toastr.error("Informasi, Data Sudah Diverifikasi !")
+                        }
+                    }
+                    
+                    
+                    
+                    
+                    // console.log(dat.pegawaiuser.nomor);
+                    
+                    $scope.dataSourceGridDiagnosapasien = new kendo.data.DataSource({
+                        data: datas.data.me,
+                        // group: $scope.group,
+                        pageSize: 100,
+                        total: datas.data.me.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {}
+                        },
+                    });
 	            });
+                
+                
 		    }
+            
+            
+            $scope.klikGrid = function (dataSelected) {
+                console.log(dataSelected);
+            }
+            console.log($scope.item.layanan);
+            $scope.GetLevelPendidikan = function(){
+                if (noOrder == 'EditPenelitianEksternal') {
+                    console.log($scope.item.layanan);
+                    if ($scope.item.layanan != undefined) {
+                        $scope.lvlpendidikan = true
+                        $scope.idlvlpendidikan = false
+                    }
+                }
+                
 
+                var jenisLayanan = $scope.item.layanan.id
+                medifirstService.get("sdm/penelitian/get-data-combo-penelitian?diklat=" +
+                    jenisLayanan).then(function (datas) {
+                    var dat = datas.data
+                    $scope.ListLevelPendidikan = dat.layanan;
+                    $scope.item.satuan = dat.detailjp[0].namaexternal;
+                    console.log($scope.ListLevelPendidikan);
+                });
+            }
+            $scope.GetHarga = function () {
+                var layanan = $scope.item.layanan.id
+                var levelpendidikan = $scope.item.levelpendidikan.id;
+                $scope.item.biaya = undefined
+                $scope.item.jumlahpeserta = undefined
+                $scope.item.qty = undefined
+                medifirstService.get("sdm/penelitian/get-data-combo-penelitian?diklat=" +
+                    layanan + "&lynn=" + levelpendidikan).then(function (datas) {
+                    var dat = datas.data
+                    $scope.harganetto = dat.lynn[0].harganetto1;
+                    $scope.item.hargasatuan = $scope.harganetto;
+                });
+
+            }
+            $scope.GetBiaya = function(){
+                if ($scope.item.jumlahpeserta > 10 && $scope.item.levelpendidikan.id == 40400030) {
+                    console.log(true);
+                    $scope.item.biaya = (($scope.item.jumlahpeserta - 10) * 280000) + ($scope.item.qty * $scope.harganetto);
+
+                } else if ($scope.item.jumlahpeserta <= 10 && $scope.item.levelpendidikan.id == 40400030) {
+                    console.log(false);
+                    $scope.item.biaya = $scope.harganetto * $scope.item.qty;
+                    
+                }
+
+                if ($scope.item.layanan.id == 1950 && $scope.item.jumlahpeserta <= 25) {
+                    console.log('true false');
+                    $scope.item.biaya = (25 * $scope.item.qty) * $scope.harganetto;
+                } else if ($scope.item.layanan.id == 1950 && $scope.item.jumlahpeserta > 25) {
+                    $scope.item.biaya = $scope.item.jumlahpeserta * $scope.harganetto * $scope.item.qty;
+                }
+                if (($scope.item.levelpendidikan.id !== 40400030) && ($scope.item.layanan.id !== 1950)) {
+                    $scope.item.biaya = $scope.item.jumlahpeserta*$scope.harganetto * $scope.item.qty;
+                }
+
+            }
 			function init(){
 			   	if (noOrder == 'EditPenelitianEksternal') {
                     $scope.isRouteLoading=true;
@@ -50,94 +187,38 @@ define(['initialize'], function(initialize) {
                         $scope.isRouteLoading=false;
                         var datas = dat.data.datas[0];
                         norec_kpe = datas.norec;
-                        $scope.item.nim = datas.nim;
-                        $scope.item.namaPeneliti = datas.namapeneliti;
-                        $scope.item.periodePengajaran = datas.periodepengajaran;                           
-                        $scope.item.institusiPendidikan = {id:datas.institusipendidikanfk,institusipendidikan:datas.institusipendidikan};
-                        $scope.item.jurusanPeminatan = {id:datas.jurusanpeminatanfk,jurusanpeminatan:datas.jurusanpeminatan};
-                        $scope.item.fakultas = {id:datas.fakultasfk,fakultas:datas.fakultas};
-                        $scope.item.judulPenelitian = datas.judulpeneltian;
-                        $scope.item.lokasiPenelitian = datas.lokasipenelitian;
-                        $scope.item.tanggalMulai =moment(datas.tanggalmulai).format('YYYY-MM-DD HH:mm');     
-                        $scope.item.namaPendamping = datas.namapendamping;
-                        $scope.item.biayaPenelitian = datas.biayapenelitian;
-                        $scope.item.tanggalPembayaran =moment(datas.tanggalpembayaran).format('YYYY-MM-DD HH:mm');   
 
-                        $scope.item.nomorKwitansi = datas.nomorkwitansi;
-                        $scope.item.tanggalSelesai = moment(datas.tanggalselesai).format('YYYY-MM-DD HH:mm');                     
-                        $scope.item.tanggalPresentasi = moment(datas.tanggalpresentasi).format('YYYY-MM-DD HH:mm'); 
-                        $scope.item.tanggalPresentasiProposal = moment($scope.now).format('YYYY-MM-DD HH:mm'); 
-                        $scope.item.laporanPenelitian = datas.laporanpenelitian;
-                        // $scope.item.publikasiJurnal = datas.periodepengajaran;   
-                        // $scope.item.tindakLanjut = datas.periodepengajaran;  
+                        $scope.item.namauser = datas.namauser;
+                        $scope.item.namainstansi = datas.institusipendidikan
+                        $scope.item.notelp = datas.notelp;
+                        $scope.item.jenis = {id:datas.idjenis,diklatkategori:datas.diklatkategori};
+                        $scope.item.layanan = {id:datas.idlayanan,detailjenisproduk:datas.detailjenisproduk};
+                        $scope.item.levelpendidikan = {
+                            id: datas.idlevelpendidikan,
+                            namaproduk: datas.levelpendidikan
+                        };
+                        $scope.item.hargasatuan = datas.hargasatuan;
+                        $scope.idlvlpendidikan = false
+                        $scope.lvlpendidikan = true
+                        $scope.item.look = datas.levelpendidikan
+                        $scope.item.jumlahpeserta = datas.jumlahpeserta
+                        $scope.item.qty = datas.qty
+                        $scope.item.satuan = datas.satuan
+                        $scope.item.biaya = datas.biayapenelitian
+                        $scope.item.tanggalMulai = datas.tanggalmulai;
+                        $scope.item.tanggalSelesai = datas.tanggalselesai;
+                        $scope.tabletambahmahasiswa = true;
+                        $scope.tglregistrasiedit = moment(datas.tglregistrasi).format('YYYY-MM-DD HH:mm'); 
+                        $scope.item.namapendamping = datas.namapendamping;
+                        $scope.item.namapengawas = datas.namapengawas;
+                        $scope.item.judulpenelitian = datas.judulpeneltian;
+                        
+                    })
+                    
+                }
+            }
 
-                        if (datas.kelengkapanadministrasi !='' || datas.kelengkapanadministrasi != null){
-                             var ListcurrentKeterangan= datas.kelengkapanadministrasi.split(',')
-                             if(ListcurrentKeterangan.length > 0){
-                             	for (var i = 0; i < ListcurrentKeterangan.length; i++) {
-                             		for (var j = 0; j <  $scope.Listketerangan.length; j++) {
-                             			if( $scope.Listketerangan[j].id == ListcurrentKeterangan[i]){
-                             				$scope.Listketerangan[i].isChecked = true
-                                            var dataid = {"id": $scope.Listketerangan[i].id,
-                                            "keterangan":$scope.Listketerangan[i].keterangan,
-                                            "value":$scope.Listketerangan[i].id,
-                             			} 
-                             			 $scope.currentKeterangan.push(dataid)
-
-                             		}
-                             	}
-                             }
-
-                            //  ListcurrentKeterangan.forEach(function(data){
-                            //     $scope.Listketerangan.forEach(function(e){                                        
-                            //         for (let i in e.detail){
-                            //             if(e.detail[i].id ==data){
-                            //                  e.detail[i].isChecked = true
-                            //                 var dataid = {"id": e.detail[i].id,"keterangan": e.detail[i].keterangan,
-                            //                 "value": e.detail[i].id,
-                            //               }  
-                            //                 $scope.currentKeterangan.push(dataid)
-                            //             }
-                            //         }
-                            //     })
-                            // })
-
-
-
-                         }                            
-                    }
-	         	})
-	        }
-	    }
-
-		    $scope.Listketerangan = [
-			  	{
-					"id": 1,
-					"keterangan": "KTP"
-				},
-				{
-					"id": 2,
-					"keterangan": "Kartu Mahasiswa"
-				},
-				{
-					"id": 3,
-					"keterangan": "CV"
-					
-				},
-				{
-					"id": 4,
-					"keterangan": "Ethical Clearance"
-				},
-				{
-					"id": 4,
-					"keterangan": "Proposal Penelitian"	
-				},
-				{
-					"id": 5,
-					"keterangan": "Kuesioner Penelitian"		
-				}
-
-			];
+		    
 
 			$scope.addListKeterangan = function(bool,data) {
                 var index = $scope.currentKeterangan.indexOf(data);
@@ -156,104 +237,41 @@ define(['initialize'], function(initialize) {
 			}
 
 			$scope.Save = function(){
-				var listKeterangan=""
-                var TglSelesai = moment($scope.item.tanggalSelesai).format('YYYY-MM-DD HH:mm');
-                var a = ""
-                var b = ""
-                var c = ""
-
-                if ($scope.item.namaPendamping == undefined) {
-                    alert("Hasil Nama Pendamping Tidak Boleh Kosong!")
-                    return;
-                }  
-
-                if ($scope.item.judulPenelitian == undefined) {
-                    alert("Hasil Judul Penelitian Tidak Boleh Kosong!")
-                    return;
+                $scope.isRouteLoading = true;
+                //bikin if untuk tanggal mulai dan selesai
+                var tanggalmulai = null
+                if ($scope.item.tanggalMulai != undefined) {
+                    tanggalmulai = moment($scope.item.tanggalMulai).format('YYYY-MM-DD HH:mm')
                 }
-
-                if ($scope.item.laporanPenelitian == undefined) {
-                    alert("Hasil Laporan Penelitian Tidak Boleh Kosong!")
-                    return;
-                }  
-
-                if ($scope.item.lokasiPenelitian == undefined) {
-                    alert("Hasil Lokasi Penelitian Tidak Boleh Kosong!")
-                    return;
-                } 
-
-                if ($scope.item.namaPeneliti == undefined) {
-                    alert("Hasil Nama Peneliti Tidak Boleh Kosong!")
-                    return;
-                }  
-
-                if ($scope.item.nim == undefined) {
-                    alert("Hasil nim Peneliti Tidak Boleh Kosong!")
-                    return;
-                } 
-
-                if ($scope.item.tanggalMulai == undefined) {
-                    alert("Hasil Tanggal Mulai Tidak Boleh Kosong!")
-                    return;
-                } 
-
-                if ($scope.item.tanggalPembayaran == undefined) {
-                    alert("Hasil Tanggal Pembayaran Tidak Boleh Kosong!")
-                    return;
-                }  
-
-                if ($scope.item.tanggalPresentasi == undefined) {
-                    alert("Hasil Tanggal Presentasi Tidak Boleh Kosong!")
-                    return;
-                } 
-
-                if ($scope.item.tanggalSelesai == undefined) {
-                    alert("Hasil Tanggal Selesai Tidak Boleh Kosong!")
-                    return;
-                } 
-				
-                var biaya = 0;
-                if ($scope.item.biayaPenelitian != undefined) {
-                	biaya = $scope.item.biayaPenelitian;
+                var tanggalselesai = null
+                if ($scope.item.tanggalSelesai != undefined) {
+                    tanggalselesai = moment($scope.item.tanggalSelesai).format('YYYY-MM-DD HH:mm')
                 }
-
-                var nomorkwitansi ="-"
-                if ($scope.item.nomorKwitansi != undefined) {
-                	nomorkwitansi = $scope.item.nomorKwitansi;
+                $scope.tglregistrasi = ''
+                if ($scope.tglregistrasiedit != undefined) {
+                    $scope.tglregistrasi = moment($scope.tglregistrasiedit).format('YYYY-MM-DD HH:mm')
+                } else{
+                    $scope.tglregistrasi = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 }
-
-                var TahunAjaran =moment($scope.now).format('YYYY')
-                if ($scope.item.periodePengajaran != undefined) {
-                	TahunAjaran = $scope.item.periodePengajaran;
-                }
-                
-                for (var i =  $scope.currentKeterangan.length - 1; i >= 0; i--) {
-                    var c = $scope.currentKeterangan[i].id
-                    b = ","+ c
-                    a = a + b
-                }
-
-                listKeterangan= a.slice(1, a.length)
-
 				var data = {
 					"norec_kpe":norec_kpe,
-					"namapendamping":$scope.item.namaPendamping,
-					"biayapenelitian":biaya,
-					"fakultasfk":$scope.item.fakultas.id,
-					"institusipendidikanfk":$scope.item.institusiPendidikan.id,
-					"judulpeneltian":$scope.item.judulPenelitian,
-					"jurusanpeminatanfk":$scope.item.jurusanPeminatan.id,
-					"laporanpenelitian":$scope.item.laporanPenelitian,
-					"lokasipenelitian":$scope.item.lokasiPenelitian,
-					"namapeneliti":$scope.item.namaPeneliti,
-					"nim":$scope.item.nim,
-					"nomorkwitansi":nomorkwitansi,
-					"periodepengajaran":TahunAjaran,
-					"tanggalmulai":moment($scope.item.tanggalMulai).format('YYYY-MM-DD HH:mm'),
-					"tanggalpembayaran":moment($scope.item.tanggalPembayaran).format('YYYY-MM-DD HH:mm'),
-					"tanggalpresentasi":moment($scope.item.tanggalPresentasi).format('YYYY-MM-DD HH:mm'),
-					"tanggalselesai":TglSelesai,
-					"kelengkapanadministrasi":listKeterangan
+					"namauser": $scope.item.namauser,
+                    "institusipendidikan": $scope.item.namainstansi,
+                    "notelp": $scope.item.notelp,
+                    "objectdiklatkategorifk": $scope.item.jenis.id,
+                    "objectdetailjenisprodukfk": $scope.item.layanan.id,
+                    "objectprodukfk": $scope.item.levelpendidikan.id,
+                    "jumlahpeserta": $scope.item.jumlahpeserta,
+                    "qty": $scope.item.qty,
+                    "satuan": $scope.item.satuan,
+                    "biayapenelitian": $scope.item.biaya,
+                    "tglregistrasi": $scope.tglregistrasi,
+                    "tanggalmulai": tanggalmulai,
+                    "tanggalselesai": tanggalselesai,
+                    "hargasatuan": $scope.item.hargasatuan,
+                    "judulpenelitian": $scope.item.judulpenelitian,
+                    "namapendamping": $scope.item.namapendamping,
+                    "namapengawas": $scope.item.namapengawas,
 				};	
 
 				var objSave = {
@@ -262,10 +280,31 @@ define(['initialize'], function(initialize) {
 
                 medifirstService.post('sdm/penelitian/save-kegiatan-penelitian-eksternal',objSave).then(function (e) {
                     $scope.item = {};  
-                    $state.go('DaftarPenelitianEksternal')     
+                    // $state.go('DaftarPenelitianEksternal')
+                    $state.go('DaftarPenelitianEksternal')
                 })
 
 			}
+
+            // function deleteRow(e) {
+            //     e.preventDefault();
+
+            //     var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            //     console.log(dataItem.norec_eks);
+            //     var datasend = {
+            //         "statusenabled": true,
+            //         "norec_eks": dataItem.norec_eks,
+            //         "norec": false
+            //     };
+            //     var objSave = {
+            //         data: datasend
+            //     }
+            //         $scope.isRouteLoading = true;
+            //     medifirstService.post("sdm/pendidikan/save-pesertadidik", datasend).then(function (e) {
+            //         $scope.isRouteLoading = false;
+            //         loadDataCombo();
+            //     });
+            // }
 			
 		}
 	]);

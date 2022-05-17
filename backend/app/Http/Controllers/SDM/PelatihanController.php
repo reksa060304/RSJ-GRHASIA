@@ -2721,18 +2721,68 @@ class PelatihanController extends ApiController {
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
-      public function getMapKatPendidikanTOprogram(Request $request){
+    public function getMapKatPendidikanTOprogram(Request $request){
         $data = DB::select(DB::raw("SELECT mp.*,dk.diklatprogram,ju.diklatjurusan,dk.diklatkategorifk,dt.diklatkategori
-FROM mapdiklatprogramtodiklatjurusan_m as mp
-join diklatprogram_m as dk on dk.id=mp.diklatprogramfk
-join diklatjurusan_m as ju on ju.id=mp.diklatjurusanfk
-join diklatkategori_m as dt on dt.id=dk.diklatkategorifk
- 
-     "));
+            FROM mapdiklatprogramtodiklatjurusan_m as mp
+            join diklatprogram_m as dk on dk.id=mp.diklatprogramfk
+            join diklatjurusan_m as ju on ju.id=mp.diklatjurusanfk
+            join diklatkategori_m as dt on dt.id=dk.diklatkategorifk
+        "));
+        
         $result = array(
             'data' => $data,
             'by' => 'ea@epic',
         );
         return $result;
+    }
+
+    public function getDetailPDRuangan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $noreg = $request['noregistrasi'];
+        $data = DB::select(DB::raw("
+        SELECT
+        pdr.tglmasuk, ru1.namaruangan as ruanganlast, pdr.objectpegawaifk,pe.namalengkap,pd.email, pdr.objectruanganasalfk, ru.namaruangan as ruanganasal
+        FROM
+        sdm_pdruangan_t pdr
+        INNER JOIN sdm_pesertadidik_t pd on pd.norec= pdr.noregistrasifk
+        left JOIN ruangan_m ru on ru.id = pdr.objectruanganasalfk
+        left JOIN ruangan_m ru1 on ru1.id= pdr.objectruanganlastfk
+        left JOIN pegawai_m pe on pe.id = pdr.objectpegawaifk
+        WHERE
+        pdr.kdprofile = $kdProfile
+        and pdr.statusenabled = true
+        and pdr.noregistrasifk ILIKE '$noreg'
+        "));
+        $nor = '';
+        $no= $request['norec'];
+        if (isset($no)) {
+            $nor = \DB::select(DB::raw("SELECT
+            sdpd.nama,
+            jk.jeniskelamin,
+            sdpd.jeniskelaminfk,
+            sdpd.nim,
+            ru.namaruangan,
+            pe.namalengkap,
+            sdpd.norec AS norec_eks,
+            sdpd.nomorhp,
+            sdpd.noregistrasifk AS norec_pe, sdpd.email
+            FROM
+            sdm_pesertadidik_t sdpd 
+            INNER JOIN sdm_penelitianeksternal_t sdmp on sdmp.norec=sdpd.noregistrasifk
+            left join jeniskelamin_m jk on jk.id = sdpd.jeniskelaminfk
+            left JOIN pegawai_m pe on pe.id = sdpd.objectpegawailastfk
+            left JOIN ruangan_m ru on ru.id = sdpd.objectruanganlastfk
+            WHERE
+            sdpd.kdprofile = $kdProfile and sdpd.statusenabled = true and 
+            sdpd.norec ILIKE'$no'
+            "));
+            }
+        $result = array(
+            'data' => $data,
+            'nor' => $nor,
+            'by' => 'ea@epic',
+        );
+        return $this->respond($result);
     }
 }

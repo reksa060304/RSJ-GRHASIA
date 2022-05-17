@@ -69,6 +69,7 @@ use App\Http\Controllers\ApiController;
 use App\Traits\Valet;
 use Carbon\Carbon;
 use App\Master\MapPegawaiToUnit;
+use Webpatser\Uuid\Uuid;
 
 class SumberDayaManusiaController extends ApiController {
 
@@ -449,7 +450,11 @@ class SumberDayaManusiaController extends ApiController {
 
         $dataPelatihan=\DB::table('riwayatpelatihan_t as rpl')
             ->leftJoin('pegawai_m as pg','pg.id','=','rpl.objectpegawaifk')
-            ->select(DB::raw("rpl.*,pg.namalengkap"))
+            ->join('unitpenginput_m as up','up.id','=','rpl.unitpenginputfk')
+            ->join('jenispelatihan_m as jp','jp.id','=','rpl.jenispelatihanfk')
+            ->join('sumberdana_m as sd','sd.id','=','rpl.sumberdanafk')
+            ->leftjoin('namapelatihan_m as np','np.namapelatihan','=','rpl.namapelatihan')
+            ->select(DB::raw("rpl.*,pg.namalengkap, up.unitpenginput, jp.jenispelatihan, sd.sumberdana, rpl.namapelatihan, np.id as id_np"))
             ->where('rpl.kdprofile', $kdProfile)
             ->where('pg.statusenabled',true)
             ->orderBy('rpl.tglmulai');
@@ -2066,31 +2071,23 @@ class SumberDayaManusiaController extends ApiController {
     }
     public function savePesertaDidik(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        DB::beginTransaction();
+        
+        $data = '';
         try{
-//            $newId = PesertaDidik::max('id') +1 ;
-            if ($request['norec'] == ''){
-                $TP = new PesertaDidik();
-//                $TP->id = $newId;
-                $TP->kdprofile = $kdProfile;
-                $TP->norec = $TP->generateNewId();
-            }else{
-                $TP = PesertaDidik::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->first();
-            }
+            $TP = new PesertaDidik();
+            $TP->kdprofile = $kdProfile;
+            $TP->norec = $TP->generateNewId();
             $TP->statusenabled =  true;
-            $TP->agamafk = $request['agamafk'];
-            $TP->alamat = $request['alamat'];
-            $TP->fakultasfk = $request['fakultasfk'];
-            $TP->institusipendidikanfk = $request['institusipendidikanfk'];
             $TP->jeniskelaminfk = $request['jeniskelaminfk'];
-            $TP->jurusanpeminatanfk = $request['jurusanpeminatanfk'];
+            $TP->noregistrasifk = $request['noregistrasifk'];
             $TP->nama = $request['nama'];
             $TP->nim = $request['nim'];
             $TP->nomorhp = $request['nomorhp'];
-            $TP->tanggallahir = $request['tanggallahir'];
-            $TP->tempatlahir = $request['tempatlahir'];
+            $TP->objectruanganlastfk = $request['objectruanganlastfk'];
+            $TP->objectpegawailastfk = $request['objectpegawailastfk'];
+            $TP->email = $request['email'];
             $TP->save();
-
+            
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -2098,12 +2095,11 @@ class SumberDayaManusiaController extends ApiController {
 
 
         if ($transStatus == 'true') {
-            $transMessage = "Simpan Peserta Didik";
+            $transMessage = "Simpan Peserta Didik" ;
             DB::commit();
             $result = array(
                 'status' => 201,
                 'message' => $transMessage,
-                'result' => $TP,
                 'as' => 'asepic',
             );
         } else {
@@ -2116,20 +2112,135 @@ class SumberDayaManusiaController extends ApiController {
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+        // $result = array(
+        //         'status' => 400,
+        //         // 'message'  => $TP,
+        //         'as' => 'asepic',
+        //     );
+        // return $this->respond($result);
     }
-    public function hapusPesertaDidik(Request $request){
+
+    public function savePesertaDidikRuangan(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();
         try{
-            $TP = PesertaDidik::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->update([
-                'statusenabled' => false
-            ]);
+            if ($request['norec'] == ''){
+                $PDR = \DB::table('sdm_pdruangan_t')->insert([
+                    'kdprofile' => $kdProfile,
+                    'norec' => substr(Uuid::generate(), 0, 32),
+                    'noregistrasifk' => $request['noregistrasifk'],
+                    'objectruanganlastfk' => $request['objectruanganlastfk'],
+                    // 'objectruanganasalfk' => $request['objectruanganasalfk'],
+                    'objectpegawaifk' => $request['objectpegawaifk'],
+                    'statusenabled' => true,
+                    'tglmasuk' => $request['tglmasuk'],
+                ]);
 
+                $PDRU = DB::table('sdm_pesertadidik_t')->where('norec', $request['norec_pdruangan'])->where('kdprofile', $kdProfile)->update([
+                    'objectruanganlastfk' => $request['objectruanganlastfk'],
+                    'objectpegawailastfk' => $request['objectpegawaifk'],
+                ]);
+            }else{
+                $TP = \DB::table('sdm_pdruangan_t')->where('norec', $request['norec'])->where('kdprofile', $kdProfile)->update([
+                    'kdprofile' => $kdProfile,
+                    'noregistrasifk' => $request['noregistrasifk'],
+                    'objectruanganlastfk' => $request['objectruanganlastfk'],
+                    'objectruanganasalfk' => $request['objectruanganasalfk'],
+                    'objectpegawaifk' => $request['objectpegawaifk'],
+                    'statusenabled' => true,
+                    'tglmasuk' => $request['tglmasuk'],
+                ]);
+            }
+            if ($request['statusenabled'] == 'true') {
+                $TP = PesertaDidik::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Ruangan Peserta Didik";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                // 'data' => $data,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                // 'data'  => $data,
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+        // $result = array(
+        //         'status' => 400,
+        //         'message'  => $PDR,
+        //         'as' => 'asepic',
+        //     );
+        // return $this->respond($result);
+    }
+
+    public function updatePesertaDidik(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        
+        $data = '';
+        try{
+            $TP = PesertaDidik::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->first();
+            $TP->statusenabled =  true;
+            $TP->jeniskelaminfk = $request['jeniskelaminfk'];
+            $TP->noregistrasifk = $request['noregistrasifk'];
+            $TP->nama = $request['nama'];
+            $TP->nim = $request['nim'];
+            $TP->nomorhp = $request['nomorhp'];
+            $TP->objectruanganlastfk = $request['objectruanganlastfk'];
+            $TP->objectpegawailastfk = $request['objectpegawailastfk'];
+            $TP->save();
+            
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
         }
 
+
+        if ($transStatus == 'true') {
+            $transMessage = "Ubah Peserta Didik" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = "Ubah Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+    }
+
+    public function hapusPesertaDidik(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try{
+            $TP = PesertaDidik::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
 
         if ($transStatus == 'true') {
             $transMessage = "Sukses";
@@ -4459,5 +4570,147 @@ class SumberDayaManusiaController extends ApiController {
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getDataJampelatihan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        \DB::beginTransaction();
+
+        $data = DB::select(DB::raw("
+            WITH sdm_durasi AS (
+            SELECT
+                pg.namalengkap,
+                pg.nippns,
+                rp.tglmulai :: DATE,
+                rp.tglakhir :: DATE,
+                EXTRACT ( DAY FROM age( rp.tglakhir :: DATE, rp.tglmulai :: DATE ) ) + 1 hari,
+                CAST ( rp.durasi AS INTEGER ) AS durasisatuan -- 		CAST ( rp.durasi AS INTEGER ) / ( ( rp.tglakhir :: DATE - rp.tglmulai :: DATE ) + 1 ) :: INTEGER AS durasisatuan
+                
+            FROM
+                riwayatpelatihan_t rp
+                INNER JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+            ) SELECT
+            s.namalengkap,
+            s.nippns,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 1 ) AS januari,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 2 ) AS februari,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 3 ) AS maret,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 4 ) AS april,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 5 ) AS mei,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 6 ) AS juni,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 7 ) AS juli,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 8 ) AS agustus,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 9 ) AS september,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 10 ) AS oktober,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 11 ) AS november,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 12 ) AS desember,
+            SUM ( s.durasisatuan  )as jumlah,
+            CASE 
+            WHEN SUM ( s.durasisatuan  )> 20 THEN
+                1
+            ELSE
+                0
+        END as lebih20jam,
+        CASE 
+            WHEN SUM ( s.durasisatuan  )< 20 THEN
+                1
+            ELSE
+                0
+        END as kurang20jam
+            
+        FROM
+            sdm_durasi s 
+            where date_part('year', s.tglmulai)= 2022
+        GROUP BY
+            s.namalengkap,
+            s.nippns
+        "));
+        $count = DB::select(DB::raw("
+                WITH sdm_durasi AS (
+	SELECT
+		pg.namalengkap,
+		pg.nippns,
+		rp.tglmulai :: DATE,
+		rp.tglakhir :: DATE,
+		EXTRACT ( DAY FROM age( rp.tglakhir :: DATE, rp.tglmulai :: DATE ) ) + 1 hari,
+		CAST ( rp.durasi AS INTEGER ) AS durasisatuan -- 		CAST ( rp.durasi AS INTEGER ) / ( ( rp.tglakhir :: DATE - rp.tglmulai :: DATE ) + 1 ) :: INTEGER AS durasisatuan
+		
+	FROM
+		riwayatpelatihan_t rp
+		INNER JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+	)
+	SELECT
+	count(DISTINCT s.namalengkap),
+	count ( distinct s.namalengkap ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 1 ) AS januaris,
+	count ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 2 ) AS februaris,
+	count ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 3 ) AS marets,
+	COUNT ( distinct s.namalengkap ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 4 ) AS aprils,
+	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 5 ) AS meis,
+	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 6 ) AS junis,
+	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 7 ) AS julis,
+	COUNT( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 8 ) AS agustuss,
+	COUNT( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 9 ) AS septembers,
+	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 10 ) AS oktobers,
+	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 11 ) AS novembers,
+	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 12 ) AS desembers
+FROM
+	sdm_durasi s 
+WHERE
+	date_part( 'year', s.tglmulai ) = 2022 
+        "));
+        
+        $sum = DB::select(DB::raw("
+        WITH sdm_durasi AS (
+            SELECT
+                pg.namalengkap,
+                pg.nippns,
+                rp.tglmulai :: DATE,
+                rp.tglakhir :: DATE,
+                EXTRACT ( DAY FROM age( rp.tglakhir :: DATE, rp.tglmulai :: DATE ) ) + 1 hari,
+                CAST ( rp.durasi AS INTEGER ) AS durasisatuan -- 		CAST ( rp.durasi AS INTEGER ) / ( ( rp.tglakhir :: DATE - rp.tglmulai :: DATE ) + 1 ) :: INTEGER AS durasisatuan
+                
+            FROM
+                riwayatpelatihan_t rp
+                INNER JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+            ) SELECT
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 1 ) AS januari,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 2 ) AS februari,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 3 ) AS maret,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 4 ) AS april,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 5 ) AS mei,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 6 ) AS juni,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 7 ) AS juli,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 8 ) AS agustus,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 9 ) AS september,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 10 ) AS oktober,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 11 ) AS november,
+            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 12 ) AS desember,
+            SUM ( s.durasisatuan  )as jumlah,
+            CASE 
+            WHEN SUM ( s.durasisatuan  )> 20 THEN
+                1
+            ELSE
+                0
+        END as lebih20jam,
+        CASE 
+            WHEN SUM ( s.durasisatuan  )< 20 THEN
+                1
+            ELSE
+                0
+        END as kurang20jam
+            
+        FROM
+            sdm_durasi s 
+            where date_part('year', s.tglmulai)= 2022
+        "));
+
+        $result = array(
+            'data'=> $data,
+            'count'=> $count,
+            'sum'=> $sum,
+            'as'=> 'Fizi',
+        );
+        return $this->respond($result);
     }
 }

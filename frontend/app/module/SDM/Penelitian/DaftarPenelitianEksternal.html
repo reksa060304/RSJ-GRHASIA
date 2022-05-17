@@ -8,30 +8,10 @@
 			<div class="grid_12">
 				<div class="grid_2">
 					<div class="grid_12" style="margin-top: 6px;">
-						<label c-label item="item">Nama Peneliti</label>
-					</div>
-					<div class="grid_12">
-						<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.NamaPeneliti" />
-					</div>
-				</div>
-				<div class="grid_2" style="margin-top: 6px;">
-					<div class="grid_12">
-						<label c-label item="item">Fakultas</label>
-					</div>
-					<div class="grid_12">
-						<input required style="width: 100%;" kendo-combo-box k-ng-model="item.Fakultas"
-							k-data-text-field="'fakultas'" k-filter="'contains'" k-data-value-field="'id'"
-							k-data-source="listDataFakultas" />
-					</div>
-				</div>
-				<div class="grid_2" style="margin-top: 6px;">
-					<div class="grid_12">
 						<label c-label item="item">Institusi Pendidikan</label>
 					</div>
 					<div class="grid_12">
-						<input required style="width: 100%;" kendo-combo-box k-ng-model="item.InstitusiPendidikan"
-							k-data-text-field="'institusipendidikan'" k-filter="'contains'" k-data-value-field="'id'"
-							k-data-source="listDataInstitusiPendidikan" />
+						<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.institusipendidikan" />
 					</div>
 				</div>
 				<div class="grid_4">
@@ -63,26 +43,45 @@
 			<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 		</div>
 		<div class="grid_12">
-			<div class="grid_3"></div>
 			<div class="grid_3">
-				<c-button ng-show="!isLoading"
+				<button ng-show="!isLoading" class="c-button primary"
 					style="width: 99.5%; font-size: 24px; padding:0px, margin:0px; text-align: center;" item="item"
-					size="36" position=" 'right'" is-validate ng-click="Cetak()">
-					<span class="title">Cetak Surat Penelitian</span>
-				</c-button>
+					size="36" position="'right'" is-validate ng-click="tambahmahasiswa()" >
+					<span class="title">Tambah Mahasiswa</span>
+				</button>
 			</div>
 			<div class="grid_3">
-				<c-button ng-show="!isLoading" class="success"
+				<button ng-show="!isLoading" class="c-button success"
 					style="width: 99.5%; font-size: 24px; padding:0px, margin:0px; text-align: center;" item="item"
-					size="36" position=" 'right'" is-validate ng-click="Ubah()">
+					size="36" position="'right'" is-validate ng-click="Ubah()" >
 					<span class="title">Ubah</span>
-				</c-button>
+				</button>
 			</div>
 			<div class="grid_3">
-				<c-button ng-show="!isLoading" style="width: 99.5%; font-size: 24px; padding:0px, margin:0px;"
-					item="item" size="36" position=" 'right'" class="cancel" ng-click="Hapus()">
+				<button ng-show="!isLoading" style="width: 99.5%; font-size: 24px; padding:0px, margin:0px;"
+					item="item" size="36" position=" 'right'" class="c-button cancel" ng-click="Hapus()">
 					<span class="title">Hapus</span>
-				</c-button>
+				</button>
+			</div>
+			<div class="grid_3">
+				<button ng-show="verif" style="width: 99.5%; font-size: 24px; padding:0px, margin:0px;" item="item"
+					size="36" position="'right'" class="c-button primary" ng-click="verifikasi()">
+					<span class="title">Verifikasi</span>
+				</button>
+				<button ng-show="batalverif" style="width: 99.5%; font-size: 24px; padding:0px, margin:0px;" item="item" size="36"
+					position=" 'right'" class="c-button primary" ng-click="batalverifikasi()">
+					<span class="title">Batal Verifikasi</span>
+				</button>
+			</div>
+			<div class="grid_3">
+				<button ng-show="tagih" style="width: 99.5%; font-size: 24px; padding:0px, margin:0px;" item="item" size="36"
+					position="'right'" class="c-button primary" ng-click="tagihan()">
+					<span class="title">Verif Tagihan</span>
+				</button>
+				<button ng-show="unveriftagih" style="width: 99.5%; font-size: 24px; padding:0px, margin:0px;" item="item" size="36"
+					position="'right'" class="c-button primary" ng-click="unveriftagihan()">
+					<span class="title">Unverif Tagihan</span>
+				</button>
 			</div>
 		</div>
 	</div>
