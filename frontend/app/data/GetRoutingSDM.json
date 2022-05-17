@@ -861,7 +861,6 @@
   {
     "name": "MasterUnitPenginput",
     "url": "/VW5pdFBlbmdpbnB1dA==",
-
     "templateurl": "module/SDM/MasterUnitPenginput.html",
     "controller": "MasterUnitPenginputCtrl",
     "deps": [{
@@ -902,6 +901,25 @@
     "url": "/TambahMahasiswa/:norec",
     "templateurl": "module/SDM/Penelitian/MahasiswaEksternal.html",
     "controller": "MahasiswaEksternalCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarJamPelatihanKaryawanCtrl",
+    "url": "/JamPelatihanKaryawan",
+    "templateurl": "module/SDM/Pelatihan/DaftarJamPelatihanKaryawan.html",
+    "controller": "DaftarJamPelatihanKaryawanCtrl",
     "deps": [{
         "module": "Services",
         "define": "Service"

@@ -1032,23 +1032,30 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					alert("Data Belum Dipilih!")
 					return;
 				};
+				var idpenyelenggara = 1
+				if(dataItem.penyelenggara != 'INTERNAL'){
+					idpenyelenggara = 2
+					$scope.itemPelatihan.namaPelatihan = dataItem.namapelatihan;
+					$scope.namapelatihan = true
+					$scope.namapelatihancbx = false
+				}
 				$scope.item.norecPel = dataItem.norec;
 				$scope.item.nomor = dataItem.no;
 				// $scope.itemPelatihan.jenisPelatihan={id:dataItem.objectpelatihanfk,jenispelatihan:dataItem.jenispelatihan};
 				$scope.itemPelatihan.namaInstitusi = dataItem.instansipenyelenggara;
 				$scope.itemPelatihan.lokasi = dataItem.lokasipelatihan;
-				$scope.itemPelatihan.namaPelatihan = dataItem.namapelatihan;
+				$scope.itemPelatihan.namaPelatihan2 = {id:dataItem.id_np,namapelatihan:dataItem.namapelatihan};
 				$scope.itemPelatihan.tglMulaiPel = moment(dataItem.tglmulai).format('YYYY-MM-DD');;
 				$scope.itemPelatihan.tglSelesaiPel = moment(dataItem.tglakhir).format('YYYY-MM-DD');;
 				$scope.itemPelatihan.durasi = parseInt(dataItem.durasi);
 				$scope.itemPelatihan.noSertifikat = dataItem.nosertifikat;
 				$scope.itemPelatihan.keterangan = dataItem.keterangan;
-				$scope.itemPelatihan.unitpenginput = dataItem.unitpenginputfk;
-				$scope.itemPelatihan.jenispelatihan = dataItem.jenispelatihanfk;
-				$scope.itemPelatihan.penyelenggara = dataItem.penyelenggara;
+				$scope.itemPelatihan.unitpenginput = {id:dataItem.unitpenginputfk, unitpenginput:dataItem.unitpenginput};
+				$scope.itemPelatihan.jenispelatihan = {id:dataItem.jenispelatihanfk, jenispelatihan:dataItem.jenispelatihan};
+				$scope.itemPelatihan.penyelenggara = {id:idpenyelenggara,penyelenggara:dataItem.penyelenggara};
 				$scope.itemPelatihan.biayadiklat = parseInt(dataItem.biayadiklat);
 				$scope.itemPelatihan.biayasppd = parseInt(dataItem.biayasppd);
-				$scope.itemPelatihan.sumberdana = dataItem.sumberdanafk;
+				$scope.itemPelatihan.sumberdana = {id:dataItem.sumberdanafk, sumberdana:dataItem.sumberdana};
 				$scope.popUpRiwayatPelatihan.center().open();
 
 			}

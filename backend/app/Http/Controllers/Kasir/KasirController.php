@@ -226,7 +226,7 @@ class KasirController extends ApiController{
         if ($datakelompokuser[0]->objectkelompokuserfk == 58){
             $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
                 ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
-                ->select('sp.norec', 'sp.tglstruk', 'sp.namapasien_klien', 'kt.reportdisplay as jenistagihan',
+                ->select('sp.norec', 'sp.tglstruk', 'sp.namapasien_klien', 'kt.reportdisplay as jenistagihan','sp.isverifikasi',
                      'keteranganlainnya', 'sp.nosbklastfk', 'sp.nosbmlastfk', 'kt.id as jenisTagihanId',
                     \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar "))
                 ->where('sp.kdprofile', $kdProfile)
@@ -281,6 +281,7 @@ class KasirController extends ApiController{
 //        $dataPiutang=$dataPiutang->groupBy('kp.kelompokpasien', 'spp.norec','sp.tglstruk', 'pd.noregistrasi', 'pd.tglregistrasi','p.nocm','p.namapasien','spp.totalppenjamin','spp.totalharusdibayar',
 //            'spp.totalsudahdibayar', 'r.namarekanan', 'spp.totalbiaya', 'spp.noverifikasi');
         $dataNonLayanan =$dataNonLayanan->where('sp.statusenabled','=',true);
+        $dataNonLayanan =$dataNonLayanan->whereNull('sp.isverifikasi');
         $dataNonLayanan =$dataNonLayanan->get();
         $result = array();
         foreach ($dataNonLayanan as $item) {
@@ -379,6 +380,9 @@ class KasirController extends ApiController{
             $SP->namapasien_klien = $req['namapasien_klien'];
             if (isset($req['notelp_klien'])){
                 $SP->noteleponfaks = $req['notelp_klien'];
+            }
+            if (isset($req['isverifikasi'])){
+                $SP->isverifikasi = $req['isverifikasi'];
             }
             $SP->tglstruk = $req['tglstruk'];
             $SP->totalharusdibayar = $req['totalharusdibayar'];
