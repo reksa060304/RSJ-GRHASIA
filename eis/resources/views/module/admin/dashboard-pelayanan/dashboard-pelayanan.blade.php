@@ -422,6 +422,21 @@
                                 <div class="card">
                                     <div class="panel panel-info">
                                         <div class="panel-heading bg-info">
+                                            10 Besar Asal Perujuk Pasien
+                                        </div>
+                                        <div class="panel-body">
+                                            @php
+                                                $res['perujuk'] = App\Http\Controllers\MainController::getTopTenAsalPerujuk(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div id="chart10Perujuk"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading bg-info">
                                             Informasi Kedatangan Menurut Jenis Pelayanan
                                         </div>
                                         <div class="panel-body">
@@ -448,21 +463,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-12">
-                                <div class="card">
-                                    <div class="panel panel-primary">
-                                        <div class="panel-heading bg-primary">
-                                            Sebaran Pasien Rawat Inap
-                                        </div>
-                                        <div class="panel-body">
-                                            @php
-                                                $res['ranap'] = App\Http\Controllers\MainController::getKunjunganRuanganRawatInap(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
-                                            @endphp
-                                            <div id="chartKunjunganRanap"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            
+                            
                             <div class="col-lg-12 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-pink">
@@ -485,8 +487,8 @@
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                    <div class="col-lg-10 col-md-12" style="height: 400px ;">
-                                                         <div id="world-map-markers" class="set-map"></div>
+                                                        <div class="col-lg-10 col-md-12" style="height: 400px ;">
+                                                        <div id="world-map-markers" class="set-map"></div>
                                                     </div>
                                                     <div class="col-lg-2 col-md-12 custList" style="height: 400px !important; overflow: auto;">
                                                         <table id="tableDemog">
@@ -522,7 +524,23 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-12 col-md-12">
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading bg-primary">
+                                            Sebaran Pasien Rawat Inap
+                                        </div>
+                                        <div class="panel-body">
+                                            @php
+                                                $res['ranap'] = App\Http\Controllers\MainController::getKunjunganRuanganRawatInap(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div id="chartKunjunganRanap"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-warning">
                                         <div class="panel-heading  bg-c-kuning">
@@ -584,6 +602,42 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col-lg-6 col-md-12" >
+                                <div class="panel-heading bg-c-pink">
+                                    <span style="color:white">Demografi Asal Rujukan Pasien</span>
+                                </div>
+                                @php
+                                    $res['demografirujukan'] = App\Http\Controllers\MainController::getDemografiRujukan(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                @endphp
+                                <select id="comboAsalRujukan" class="form-control cbo-custom" name="asalrujukan">
+                                    <option value="">-- Filter Asal Rujukan --</option>
+                                    @php
+
+                                    @endphp
+                                    @foreach($res['demografirujukan'] as $k)
+                                        <option {!! $res['demografirujukan'][0]['asalrujukan'] == $k['asalrujukan'] ? 'selected' : '' !!}
+                                                value='{{ $k['asalrujukan'] }}'> {{ $k['asalrujukan'] }}</option>
+                                    @endforeach
+                                </select>
+                                <div id="world-map-markers-rujukan" class="set-map"></div>
+                            </div>
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading bg-primary">
+                                            10 Besar Wilayah Perujuk Pasien
+                                        </div>
+                                        <div class="panel-body">
+                                            @php
+                                                $res['diagnosakec'] = App\Http\Controllers\MainController::getTopTenDiagnosa(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'),16);
+                                            @endphp
+                                            <div id="chartRujukanKel"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             
                         </div >
 
@@ -624,10 +678,13 @@
         setChartPerjenis()
         setChartJenisPel()
         setChartPerujuk()
+        setChartPerujukPasien()
         setChartRanap()
         setChartDiag()
+        setChartDiagRujukan()
         getKecamatan(33)
         setChartDiagKec(null)
+        setChartRujukanKel(null)
 
         function setChartTrend() {
             let trend =  @json($res['trend_kunjungan']);;
@@ -1684,6 +1741,96 @@
 
             })
         }
+        function setChartPerujukPasien(){
+            this.data10Perujuk = @json($res['perujuk']);
+
+            let pie1 = 2;
+            let series = [];
+            let categories = [];
+            let loopIndex = 0;
+            for (let i in this.data10Perujuk) {
+                categories.push(this.data10Perujuk[i].asalrujukan);
+                let dataz2 = [];
+                dataz2.push({
+                    y: parseFloat(this.data10Perujuk[i].jumlah),
+                    color: colors()[i]
+                });
+                if (loopIndex < 10)
+                    series.push({
+                        name: this.data10Perujuk[i].asalrujukan,
+                        data: dataz2
+                    });
+                loopIndex++;
+
+            }
+            Highcharts.chart('chart10Perujuk', {
+                chart: {
+                    type: 'column',
+                },
+
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ["Jumlah "],
+                    labels: {
+                        align: 'center',
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif'
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Asal Rujukan Pasien'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        // url:"#",
+                        cursor: 'pointer',
+
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pasien';
+                            }
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        let point = this.point,
+                            s = this.x + ':' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pasien <br/>';
+                        return s;
+
+                    }
+                    // headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    // pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    //     '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+                    // footerFormat: '</table>',
+                    // shared: true,
+                    // useHTML: true
+                },
+                series: series,
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1
+                },
+
+            })
+        }
         function setChartRanap(){
             this.dataKunjunganRanap  =@json($res['ranap']);
 
@@ -1768,6 +1915,12 @@
                 },
 
             })
+        }
+        function setChartDiagRujukan(){
+            this.DemografiRujukan = @json($res['demografirujukan']);
+            if(this.DemografiRujukan.length> 0){
+                getDataMapRujukan(this.DemografiRujukan[0].asalrujukan)
+            }
         }
         function setChartDiag(){
             this.data10Diagnosa = @json($res['toptendiag']);
@@ -1957,6 +2110,99 @@
             })
         }
 
+        function setChartRujukanKel(data){
+            
+            this.data10Diagnosa = data
+
+            // console.log(this.data10Diagnosa)
+            let pie1 = 2;
+            let series = [];
+            let categories = [];
+            let loopIndex = 0;
+            for (let i in this.data10Diagnosa) {
+                categories.push(this.data10Diagnosa[i].namadesakelurahan);
+                let dataz2 = [];
+                dataz2.push({
+                    y: parseFloat(this.data10Diagnosa[i].jumlah),
+                    color: colors()[i]
+                });
+                if (loopIndex < 10)
+                    series.push({
+                        name: this.data10Diagnosa[i].namakotakabupaten + " - " + this.data10Diagnosa[i].namakecamatan + " - " + this.data10Diagnosa[i].namadesakelurahan ,
+                        data: dataz2
+                    });
+                loopIndex++;
+
+            }
+            Highcharts.chart('chartRujukanKel', {
+                chart: {
+                    type: 'column',
+                },
+
+                title: {
+                    text: '-'
+                },
+                xAxis: {
+                    categories: ["Jumlah "],
+                    labels: {
+                        align: 'center',
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif'
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: '10 Besar Wilayah Perujuk Pasien'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        // url:"#",
+                        cursor: 'pointer',
+
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pasien';
+                            }
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        let point = this.point,
+                            s = this.x + ':' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pasien <br/>';
+                        return s;
+
+                    }
+                    // headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    // pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    //     '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+                    // footerFormat: '</table>',
+                    // shared: true,
+                    // useHTML: true
+                },
+                series: series,
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1
+                },
+
+            })
+        }
+
 
         $("#comboDiagnosa").on('select2:select', function(){
             var tglawal = $("#tglawal").val();
@@ -1981,6 +2227,27 @@
                 }
             });
         })
+
+        $("#comboAsalRujukan").on('select2:select', function(){
+            var tglawal = $("#tglawal").val();
+            var tglakhir = $("#tglakhir").val();
+            var selectedRujukan = $(this).select2('data');
+            var asalrujukan = selectedRujukan[0].id;
+
+            console.log($(this).select2('data'));
+
+            $.ajax({
+                type   : 'GET',
+                url    : APP_URL+'/get-rujukan-bykode-byrsaddress/'+asalrujukan,
+                cache  : false,
+                data    : {tglawal:tglawal,tglakhir:tglakhir},
+                success: function(respond){
+                    // dataMapAwal = respond
+                    setMapDataRujukan(respond,asalrujukan)
+                }
+            });
+        })
+
         function getDataMap (kddiagnosa,namadiagnosa){
             var tglawal = $("#tglawal").val();
             var tglakhir = $("#tglakhir").val();
@@ -1999,10 +2266,48 @@
             // setMapLeaflet(kddiagnosa)
         }
 
+        function getDataMapRujukan (asalrujukan){
+            var tglawal = $("#tglawal").val();
+            var tglakhir = $("#tglakhir").val();
+
+            $.ajax({
+                type   : 'GET',
+                url    : APP_URL+'/get-rujukan-bykode-byrsaddress/'+asalrujukan,
+                cache  : false,
+                data    : {tglawal:tglawal,tglakhir:tglakhir},
+                success: function(respond){
+                    // dataMapAwal = respond
+                    setMapDataRujukan(respond,asalrujukan)
+                }
+            });
+
+            // setMapLeaflet(kddiagnosa)
+        }
+
         function getKecamatan(code){
             $.ajax({
                 type   : 'GET',
                 url    : APP_URL+'/get-kec-by-prov',
+                cache  : false,
+                data    : {kdmap:code},
+                success: function(responsd)
+                {
+
+                    $('#tBodyDemog').empty();
+                    var trHTML = "";
+
+                    $.each(responsd, function (i, item) {
+                        trHTML += "<tr><td class='klikKec' data-kd-kec='" +item.kecid+ "'  style='cursor:pointer' onclick='clickTR(" +item.kecid+ ")' >" + item.namakecamatan
+                            + "</td></tr> ";
+                    });
+                    $('#tableDemog').append(trHTML);
+                }
+            });
+        }
+        function getKecamatanRujukan(code){
+            $.ajax({
+                type   : 'GET',
+                url    : APP_URL+'/get-kec-by-prov-rujukan',
                 cache  : false,
                 data    : {kdmap:code},
                 success: function(responsd)
@@ -2038,6 +2343,7 @@
             $('#comboDiagnosa').val(kddiagnosa).trigger('change');
 
             $('#world-map-markers').empty();
+
             var gdpData2 = []
             if(dataSource.length != undefined && dataSource.length > 0){
                 dataSource.forEach(function(item, index){
@@ -2056,11 +2362,14 @@
                 onRegionClick: function(e, code){
                     if(gdpData2[code] != undefined){
                         getKecamatan(code)
+                        
                     }else{
                         getKecamatan(code)
                         // alert('Data Tidak ada')
                         // return
                     }
+                    
+
                 },
 
                 regionStyle: {
@@ -2095,6 +2404,92 @@
                 }
             });
         }
+
+        function setMapDataRujukan(dataSource,asalrujukan) {
+            $('#comboAsalRujukan').val(asalrujukan).trigger('change');
+
+            $('#world-map-markers-rujukan').empty();
+            var gdpData2 = []
+            if(dataSource.length != undefined && dataSource.length > 0){
+                dataSource.forEach(function(item, index){
+                    gdpData2[item.kdmap] = item.jumlah;
+                })
+            }else{
+                gdpData2 = dataSource
+            }
+
+            $('#world-map-markers-rujukan').vectorMap({
+                map: 'indonesia-adm1_merc',
+                backgroundColor:'transparent',
+                normalizeFunction: 'polynomial',
+                hoverOpacity: 0.9,
+                hoverColor: true,
+                onRegionClick: function(e, code){
+
+                    var tglawal = $("#tglawal").val();
+                    var tglakhir = $("#tglakhir").val();
+                    var map = $('#world-map-markers-rujukan').vectorMap('get', 'mapObject');
+                    var regionName = map.getRegionName(code);
+                    console.log(asalrujukan);
+                    console.log(regionName);
+
+                    $.ajax({
+                        type   : 'GET',
+                        url    : APP_URL+'/get-top-rujukan-by-kel',
+                        cache  : false,
+                        data    : {asalrujukan:asalrujukan,id:regionName,tglawal:tglawal,tglakhir:tglakhir},
+                        success: function(res)
+                        {
+                            setChartRujukanKel(res)
+                        }
+                    });
+
+                    // if(gdpData2[code] != undefined){
+                    //     getKecamatanRujukan(code)
+
+
+
+                    // }else{
+                    //     getKecamatanRujukan(code)
+                    //     // alert('Data Tidak ada')
+                    //     // return
+                    // }
+                    
+                },
+
+                regionStyle: {
+                    initial: {
+                        fill: 'rgba(210, 214, 222, 1)',
+                        'fill-opacity': 0.7,
+                        stroke: 'none',
+                        'stroke-width': 0,
+                        'stroke-opacity': 1
+                    },
+                    hover: {
+                        'fill-opacity': 0.6,
+                        cursor: 'pointer'
+                    },
+                    selected: {
+                        fill: "#2A3F52"
+                    }
+                },
+                series: {
+                    regions: [{
+                        values: gdpData2,
+                        scale: ['#c7b3b3','#c99f9f','#c98585','#fcacac','#fa9393','#fa6969','#fa4848','#f72323', '#990a00'],
+                        normalizeFunction: 'polynomial'
+                    }]
+                },
+                onRegionTipShow: function(e, el, code){
+                    var jml = 0
+                    if(gdpData2[code] != undefined){
+                        jml =gdpData2[code]
+                    }
+                    el.html(el.html()+' ('+asalrujukan+' : '+jml+')');
+                }
+            });
+        }
+
         function klikDetails(kode,title,jenis){
             var tglawal = $("#tglawal").val();
             var tglakhir = $("#tglakhir").val();

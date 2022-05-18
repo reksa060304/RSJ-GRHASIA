@@ -60,6 +60,7 @@ Route::group(["middleware" => "login_check"], function () {
 
     Route::get('/get-diagnosa-bykode/{kddiagnosa}', 'DashboardController@geTopTenDiagnosaByKD');
     Route::get('/get-diagnosa-bykode-byrsaddress/{kddiagnosa}', 'DashboardController@geTopTenDiagnosaByRSAddress');
+    Route::get('/get-rujukan-bykode-byrsaddress/{asalrujukan}', 'DashboardController@geRujukanByRSAddress');
     Route::get('/get-name-prov/{kode}', 'DashboardController@getNameRegionBykode');
     Route::get('/get-name-kota/{kode}/{kddiagnosa}', 'DashboardController@getNameKotaBykode');
     Route::get('/pelayanan-detail/{code}/{nama}/{kddiagnosa}','DashboardController@geTopTenDiagnosaDetail');
@@ -82,7 +83,9 @@ Route::group(["middleware" => "login_check"], function () {
     Route::get('/get-detail-kunjungan-pasien','DashboardController@getDetailKun');
     Route::get('/get-detail-bed','DashboardController@getDetailBed');
     Route::get('/get-kec-by-prov','MainController@getKecByProv');
+    Route::get('/get-kec-by-prov-rujukan','MainController@getKecByProvRujukan');
     Route::get('/get-top-diagnosa-by-kec','MainController@getTopDiagByKec');
+    Route::get('/get-top-rujukan-by-kel','MainController@getTopRujukanByKel');
     Route::get('/get-detail-kunjungan-pasien','MainController@getDetailKun');
     Route::get('/get-detail-pendapatan','MainController@getDetailPendapatan');
     Route::get('/get-detail-pegawai','MainController@getDetailPegawai');

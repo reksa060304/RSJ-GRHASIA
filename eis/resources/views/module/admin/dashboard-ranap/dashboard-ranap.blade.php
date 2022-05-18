@@ -125,7 +125,7 @@
                                                     <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
                                                     <div class="card-block-small">
                                                             <i class="icofont icofont-bed bg-c-blue card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-blue f-w-600">BOR</span>
+                                                            <span class="text-c-hitam f-w-600">BOR</span>
                                                             <h4>{!! $bor[0]['bor'] !!}</h4>
                                                         </div>
                                                     </div>
@@ -134,7 +134,7 @@
                                                     <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
                                                         <div class="card-block-small">
                                                             <i class="icofont icofont-prescription bg-c-pink card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-pink f-w-600">ALOS</span>
+                                                            <span class="text-c-hitam f-w-600">ALOS</span>
                                                             <h4>{!! $bor[0]['alos'] !!}</h4>
                                                         </div>
                                                     </div>
@@ -143,7 +143,7 @@
                                                     <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
                                                         <div class="card-block-small">
                                                             <i class="icofont icofont-disabled bg-c-green card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-green f-w-600">TOI</span>
+                                                            <span class="text-c-hitam f-w-600">TOI</span>
                                                             <h4>{!! $bor[0]['toi'] !!}</h4>
                                                         </div>
                                                     </div>
@@ -151,8 +151,8 @@
                                                 <div class="col-md-12 col-xl-4">
                                                     <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
                                                         <div class="card-block-small">
-                                                            <i class="icofont icofont-first-aid bg-c-1 card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-kuning f-w-600">BTO</span>
+                                                            <i class="icofont icofont-first-aid bg-success card1-icon" style="padding-right:0"></i>
+                                                            <span class="text-c-hitam f-w-600">BTO</span>
                                                             <h4>{!! $bor[0]['bto'] !!}</h4>
                                                         </div>
                                                     </div>
@@ -161,7 +161,7 @@
                                                     <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
                                                         <div class="card-block-small">
                                                             <i class="icofont icofont-operation-theater bg-c-merah card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-merah f-w-600">NDR</span>
+                                                            <span class="text-c-hitam f-w-600">NDR</span>
                                                             <h4>{!! $bor[0]['ndr'] !!}</h4>
                                                         </div>
                                                     </div>
@@ -170,7 +170,7 @@
                                                     <div class="card widget-card-1" style="background: rgba(69, 90, 100, 0.08);">
                                                         <div class="card-block-small">
                                                             <i class="icofont icofont-pulse bg-c-ungu card1-icon" style="padding-right:0"></i>
-                                                            <span class="text-c-ungu f-w-600">GDR</span>
+                                                            <span class="text-c-hitam f-w-600">GDR</span>
                                                             <h4>{!! $bor[0]['gdr'] !!}</h4>
                                                         </div>
                                                     </div>

@@ -202,7 +202,7 @@
                             <div class="col-md-12 col-xl-3">
                                 <div class="card widget-card-1"  style="border: 1px solid rgba(69, 90, 100, 0.14);">
                                     <div class="card-block-small">
-                                        <i class="icofont icofont-bed bg-c-yellow card1-icon"></i>
+                                        <i class="icofont icofont-bed bg-c-merah card1-icon"></i>
                                         <span class="text-c-yellow f-w-600">KOSONG</span>
                                         <h4>{!! $res['totalKosong'] !!}</h4>
                                         <div>
@@ -246,7 +246,7 @@
                     <div class="card-block">
                         <div class="row">
                             <div class="col-md-4" style="padding: 0 2px 0 2px">
-                                <div class="card text-center text-white bg-c-green">
+                                <div class="card text-center text-white bg-primary">
                                     <div class="card-block">
                                         <h4 class="m-t-10 m-b-10">{!!  $v['bed'] !!}</h4>
                                         <h6 style="font-size: 12px;" class="m-b-0">Bed</h6>
@@ -262,7 +262,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4" style="padding: 0 2px 0 2px">
-                                <div class="card text-center text-white bg-c-1">
+                                <div class="card text-center text-white bg-c-pink">
                                     <div class="card-block">
                                         <h4 class="m-t-10 m-b-10">{!!  $v['kosong'] !!}</h4>
                                         <h6 style="font-size: 12px;" class="m-b-0">Tersedia</h6>
