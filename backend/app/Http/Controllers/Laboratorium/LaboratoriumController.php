@@ -931,8 +931,12 @@ class LaboratoriumController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         DB::beginTransaction();
-        try{
+        $norecpelayanan = '';
+        $dokterfk = 0;
+        try{            
             foreach ($request['hasil'] as $key => $value) {
+                $norecpelayanan = $value['norecpelayanan'];
+                $dokterfk = $value['dokterfk'];
                 $cek =  HasilLaboratorium::where([
                     // 'noregistrasifk',$request['hasil'][0]['noregistrasifk']
                     // 'norecpelayanan',$value['norecpelayanan']
@@ -942,7 +946,7 @@ class LaboratoriumController extends ApiController
                     'produkfk' => $value['produkfk'],
                     'detailpemeriksaan' => $value['detailpemeriksaan'],
                     // detailpemeriksaan
-                    ])->first();
+                    ])->lockForUpdate()->first();
                 if(!empty($cek)){
                    $update = HasilLaboratorium::where([
                         // 'noregistrasifk',$request['hasil'][0]['noregistrasifk']
@@ -988,17 +992,35 @@ class LaboratoriumController extends ApiController
                     $h->norecpelayanan = $value['norecpelayanan'];
                     $h->keterangan = $value['catatan'];
                     $h->save();
+                    
                 }
+                $newId = LoggingUser::max('id');
+                $newId = $newId +1;
+                $logUser = new LoggingUser();
+                $logUser->id = $newId;
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= $kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->jenislog = "Simpan Hasil Lab";
+                $logUser->keterangan = json_encode($value);
+                $logUser->noreff = $value['norecpelayanan'];;
+                $logUser->referensi='Norec PP';
+                $logUser->objectloginuserfk =  $value['dokterfk'];
+                $logUser->tanggal = date('Y-m-d H:i:s');
+                $logUser->save();
     
                     # code...
                
             }
+             
             
         
             
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errLine=$e->getLine();            
+            $errMsg=$e->getMessage();            
 
         }
 
@@ -1018,9 +1040,12 @@ class LaboratoriumController extends ApiController
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
-//                "e"=>$e,
+                "e"=>$e,
                 "as" =>'er@epic',
+                "errLine" => $errLine,
+                "errMsg" => $errMsg,
             );
+            
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }

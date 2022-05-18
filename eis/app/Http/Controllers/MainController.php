@@ -2708,6 +2708,66 @@ AND sp.statusenabled <> false
         );
         return $result;
     }
+    public  function getTopRujukanByKel(Request $r){
+        $idProfile = session("kdProfile");
+        // $dataLogin = $request->all();
+        $tglAwal =$r['tglawal'].' 00:00';
+        $tglAkhir =$r['tglakhir'].' 23:59';
+        $bulan = Carbon::now()->format('F');
+        $asalrujukan = $r['asalrujukan'];
+        $namaregion = $r['id'];
+//        if(isset($request['propinsiId']) && $request['propinsiId']!=''&& $request['propinsiId']!='undefined'){
+//            $paramProp = ' and pro.id='.$request['propinsiId'];
+//        }
+//        if(isset($request['kotaId']) && $request['kotaId']!=''&& $request['kotaId']!='undefined'){
+//            $paramKota = ' and kot.id='.$request['kotaId'];
+        $data = DB::select(DB::raw("select pro.namapropinsi, kot.namakotakabupaten, kec.namakecamatan ,dk.namadesakelurahan, count(apd.objectasalrujukanfk) as jumlah
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
+        left join alamat_m as alm on alm.nocmfk = ps.id
+        left join propinsi_m as pro on pro.id = alm.objectpropinsifk
+        left join kotakabupaten_m as kot on kot.id = alm.objectkotakabupatenfk
+        left join kecamatan_m as kec on kec.id = alm.objectkecamatanfk
+        left join desakelurahan_m as dk on dk.id = alm.objectdesakelurahanfk
+        where apd.tglmasuk between '$tglAwal' and '$tglAkhir'
+        and pd.statusenabled = true and pd.kdprofile = 30
+		and aj.asalrujukan = '$asalrujukan'
+		and pro.namapropinsi ilike '%$namaregion%'
+        group by pro.namapropinsi, kot.namakotakabupaten, kec.namakecamatan ,dk.namadesakelurahan
+		order by jumlah desc limit 10
+            "));
+        if (count($data)>0){
+            foreach ($data as $item){
+                $result[] = array(
+                    'jumlah' =>$item->jumlah,
+                    'namadesakelurahan' => $item->namadesakelurahan ,
+                    'namakecamatan' => $item->namakecamatan ,
+                    'namakotakabupaten' => $item->namakotakabupaten ,
+                    'namapropinsi' => $item->namapropinsi ,
+                );
+            }
+
+        }else{
+            $result[] = array(
+                'jumlah' => 0,
+                'namadesakelurahan' => null ,
+                'namakecamatan' => null ,
+                'namakotakabupaten' => null ,
+                'namapropinsi' => null ,
+            );
+        }
+
+        $results = array(
+            'result' => $result,
+            'month' => $bulan,
+            'message' => 'ramdanegie',
+        );
+        return $result;
+    }
+    
     public static function getTopTenDiagnosa($tglAwal,$tglAkhir,$kdProfile,$prov = null){
         $idProfile = (int) $kdProfile;
         // $dataLogin = $request->all();
@@ -2831,6 +2891,14 @@ AND sp.statusenabled <> false
             where kb.objectpropinsifk in (select id from propinsi_m where kdmap='$r[kdmap]')
             order by kk.namakecamatan"));
     }
+    public function getKecByProvRujukan(Request $r){
+        return DB::select(DB::raw("select kb.id as kbid,kb.namakotakabupaten,
+            kk.id as kecid, kk.namakecamatan
+             from kotakabupaten_m kb
+            join kecamatan_m as kk on kk.objectkotakabupatenfk =kb.id
+            where kb.objectpropinsifk in (select id from propinsi_m where kdmap='$r[kdmap]')
+            order by kk.namakecamatan"));
+    }
     public static function getKunjunganPerJenisPelayanan ($tglAwal,$tglAkhir,$kdProfile){
 
         $idProfile = (int) $kdProfile;
@@ -2944,6 +3012,83 @@ AND sp.statusenabled <> false
                 'jumlah' => 0,
                 'kodeppkrujukan' => null,
                 'ppkrujukan' => null,
+            );
+        }
+
+        $results = array(
+            'result' => $result,
+            'month' => $bulan,
+            'message' => 'ramdanegie',
+        );
+        return $result;
+    }
+    public static function getTopTenAsalPerujuk($tglAwal,$tglAkhir,$kdProfile){
+
+        $idProfile = (int) $kdProfile;
+        $IdBPJS=2;
+        $tglAwal =$tglAwal.' 00:00'; //Carbon::now()->startOfMonth()->subMonth(1);
+        $tglAkhir = $tglAkhir.' 23:59';
+        $bulan = Carbon::now()->format('F');
+        $data = DB::select(DB::raw("select aj.asalrujukan, count(apd.objectasalrujukanfk) as jumlah
+        from pasiendaftar_t pd
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
+        where apd.tglmasuk between '$tglAwal' and '$tglAkhir'
+        and pd.statusenabled = true and pd.kdprofile = $idProfile
+        group by aj.asalrujukan
+        order by jumlah desc
+        limit 10"));
+        if (count($data) > 0){
+            $result = $data ;
+        }else{
+            $result []= array(
+                'jumlah' => 0,
+                'asalrujukan' => null,
+            );
+        }
+
+        $results = array(
+            'result' => $result,
+            'month' => $bulan,
+            'message' => 'ramdanegie',
+        );
+        return $result;
+    }
+    public static function getDemografiRujukan($tglAwal,$tglAkhir,$kdProfile){
+
+        $idProfile = (int) $kdProfile;
+        $IdBPJS=2;
+        $tglAwal =$tglAwal.' 00:00'; //Carbon::now()->startOfMonth()->subMonth(1);
+        $tglAkhir = $tglAkhir.' 23:59';
+        $bulan = Carbon::now()->format('F');
+        $data = DB::select(DB::raw("select aj.asalrujukan, count(apd.objectasalrujukanfk) as jumlah
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
+        left join alamat_m as alm on alm.nocmfk = ps.id
+        left join propinsi_m as pro on pro.id = alm.objectpropinsifk
+        left join kotakabupaten_m as kot on kot.id = alm.objectkotakabupatenfk
+        left join kecamatan_m as kec on kec.id = alm.objectkecamatanfk
+        left join desakelurahan_m as dk on dk.id = alm.objectdesakelurahanfk
+        where apd.tglmasuk between '$tglAwal' and '$tglAkhir'
+        and pd.statusenabled = true and pd.kdprofile = $idProfile
+        group by aj.asalrujukan
+        order by jumlah desc"));
+
+        if (count($data)>0){
+            foreach ($data as $item){
+                $result[] = array(
+                    'jumlah' =>$item->jumlah,
+                    'asalrujukan' => $item->asalrujukan ,
+                );
+            }
+
+        }else{
+            $result[] = array(
+                'jumlah' => 0,
+                'asalrujukan' => null ,
             );
         }
 

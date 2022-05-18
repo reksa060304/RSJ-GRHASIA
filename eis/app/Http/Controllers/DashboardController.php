@@ -98,6 +98,36 @@ class DashboardController extends ApiController
 
 
     }
+    public function geRujukanByRSAddress($asalrujukan, Request $r)
+    {
+        $now = date('Y-m');
+        $kdProfile = session("kdProfile");
+        $map = \DB::select(DB::raw("select pro.kdmap, count(apd.objectasalrujukanfk) as jumlah
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
+        left join alamat_m as alm on alm.nocmfk = ps.id
+        left join propinsi_m as pro on pro.id = alm.objectpropinsifk
+        left join kotakabupaten_m as kot on kot.id = alm.objectkotakabupatenfk
+        left join kecamatan_m as kec on kec.id = alm.objectkecamatanfk
+        left join desakelurahan_m as dk on dk.id = alm.objectdesakelurahanfk
+        where apd.tglmasuk between '$r[tglawal] 00:00' and '$r[tglakhir] 23:59'
+        and pd.statusenabled = true and pd.kdprofile = $kdProfile
+		and aj.asalrujukan = '$asalrujukan'
+        group by pro.kdmap"));
+        $data['map'] = $map;
+        $data['asalrujukan'] = $asalrujukan;
+        $dataMap =[];
+        foreach ($map as $key => $m) {
+            $dataMap [$m->kdmap] = (float) $m->jumlah;
+
+        }
+        return $dataMap;
+
+
+    }
     public function getNameRegionBykode($kode){
         $data = \DB::select(\DB::raw("select * from provinsi_m where kdmap='$kode'"));
 
