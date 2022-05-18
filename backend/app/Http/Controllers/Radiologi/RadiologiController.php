@@ -1769,6 +1769,18 @@ class RadiologiController extends ApiController
                 ]);
 
             foreach ($request['bridging'] as $item){
+                $cekDuplikat =  PelayananPasien::where([
+                // 'noregistrasifk',$request['hasil'][0]['noregistrasifk']
+                // 'norecpelayanan',$value['norecpelayanan']
+
+                'noregistrasifk' => $dataAPDnorec,
+                'tglpelayanan' => date('Y-m-d H:i:s'),
+                'produkfk' => $item['produkid'],
+                // detailpemeriksaan
+                ])->count();
+                if($cekDuplikat > 0){
+                    continue;
+                }
                 $PelPasien = new PelayananPasien();
                 $PelPasien->norec = $PelPasien->generateNewId();
                 $PelPasien->kdprofile = $idProfile;

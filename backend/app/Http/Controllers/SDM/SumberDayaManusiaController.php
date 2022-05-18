@@ -4576,55 +4576,60 @@ class SumberDayaManusiaController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         \DB::beginTransaction();
-
+        $tahun = $request['tahun'];
+        $st = ' ';
+        if ($request['status'] == '1' ) {
+            $st = 'where ds.lebih20jam =' . $request['status'];
+        }
+        if($request['status'] == '0') {
+            $st = 'where ds.lebih20jam =' . $request['status'];
+        }
         $data = DB::select(DB::raw("
-            WITH sdm_durasi AS (
+            with diklatsum as (
             SELECT
                 pg.namalengkap,
-                pg.nippns,
-                rp.tglmulai :: DATE,
-                rp.tglakhir :: DATE,
-                EXTRACT ( DAY FROM age( rp.tglakhir :: DATE, rp.tglmulai :: DATE ) ) + 1 hari,
-                CAST ( rp.durasi AS INTEGER ) AS durasisatuan -- 		CAST ( rp.durasi AS INTEGER ) / ( ( rp.tglakhir :: DATE - rp.tglmulai :: DATE ) + 1 ) :: INTEGER AS durasisatuan
+            pg.nippns,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 1 ) AS januari,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 2 ) AS februari,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 3 ) AS maret,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 4 ) AS april,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 5 ) AS mei,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 6 ) AS juni,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 7 ) AS juli,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 8 ) AS agustus,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 9 ) AS september,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 10 ) AS oktober,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 11 ) AS november,
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 12 ) AS desember,
+            SUM ( cast(rp.durasi as integer)  )as jumlah,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer)  )> 20 THEN
+                1
+            ELSE
+                0
+            END as lebih20jam,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer)  )< 20 THEN
+                1
+            ELSE
+                0
+            END as kurang20jam
                 
             FROM
                 riwayatpelatihan_t rp
                 INNER JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
-            ) SELECT
-            s.namalengkap,
-            s.nippns,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 1 ) AS januari,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 2 ) AS februari,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 3 ) AS maret,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 4 ) AS april,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 5 ) AS mei,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 6 ) AS juni,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 7 ) AS juli,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 8 ) AS agustus,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 9 ) AS september,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 10 ) AS oktober,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 11 ) AS november,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 12 ) AS desember,
-            SUM ( s.durasisatuan  )as jumlah,
-            CASE 
-            WHEN SUM ( s.durasisatuan  )> 20 THEN
-                1
-            ELSE
-                0
-        END as lebih20jam,
-        CASE 
-            WHEN SUM ( s.durasisatuan  )< 20 THEN
-                1
-            ELSE
-                0
-        END as kurang20jam
-            
-        FROM
-            sdm_durasi s 
-            where date_part('year', s.tglmulai)= 2022
-        GROUP BY
-            s.namalengkap,
-            s.nippns
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+
+                            GROUP BY
+                            pg.namalengkap, pg.nippns
+            )
+            SELECT * FROM diklatsum ds
+            $st
+            ORDER BY nippns asc
         "));
         $count = DB::select(DB::raw("
                 WITH sdm_durasi AS (
@@ -4639,6 +4644,10 @@ class SumberDayaManusiaController extends ApiController {
 	FROM
 		riwayatpelatihan_t rp
 		INNER JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+        where rp.kdprofile = $kdProfile
+        and rp.statusenabled= true
+        and pg.statusenabled= true
+        and pg.kdprofile = $kdProfile
 	)
 	SELECT
 	count(DISTINCT s.namalengkap),
@@ -4657,7 +4666,7 @@ class SumberDayaManusiaController extends ApiController {
 FROM
 	sdm_durasi s 
 WHERE
-	date_part( 'year', s.tglmulai ) = 2022 
+    date_part( 'year', s.tglmulai ) = $tahun 
         "));
         
         $sum = DB::select(DB::raw("
@@ -4673,6 +4682,10 @@ WHERE
             FROM
                 riwayatpelatihan_t rp
                 INNER JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $kdProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $kdProfile
             ) SELECT
             SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 1 ) AS januari,
             SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 2 ) AS februari,
@@ -4692,23 +4705,45 @@ WHERE
                 1
             ELSE
                 0
-        END as lebih20jam,
-        CASE 
-            WHEN SUM ( s.durasisatuan  )< 20 THEN
-                1
-            ELSE
-                0
-        END as kurang20jam
+        END as lebih20jam
             
         FROM
             sdm_durasi s 
-            where date_part('year', s.tglmulai)= 2022
+            where date_part('year', s.tglmulai)= $tahun
         "));
 
         $result = array(
             'data'=> $data,
             'count'=> $count,
             'sum'=> $sum,
+            'as'=> 'Fizi',
+        );
+        return $this->respond($result);
+    }
+    public function getDataLaporanDiklat(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data1 = \DB::select(DB::raw("
+            with eksternal as(
+            SELECT pg.namalengkap, pg.nippns,ukp.name, jp.jenispelatihan, rp.penyelenggara,  
+            rp.tglmulai::date  || ' s/d ' || rp.tglakhir :: DATE as waktu, 
+            rp.lokasipelatihan, rp.durasi, rp.biayadiklat, rp.biayasppd, ' ' as waktusosialisasi FROM pegawai_m pg
+            INNER JOIN riwayatpelatihan_t rp on pg.id = rp.objectpegawaifk
+            left join unitkerjapegawai_m ukp on ukp.id = pg.objectunitkerjapegawaifk
+            left join jenispelatihan_m jp on jp.id = rp.jenispelatihanfk
+            WHERE rp.penyelenggara ilike'%eksternal%'
+            and pg.kdprofile = $idProfile
+            and pg.statusenabled = TRUE
+            )
+            SELECT sum(eks.biayasppd+eks.biayadiklat)jumlahbiaya, eks.namalengkap, eks.nippns, eks.name  unitkerja, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, sum(eks.durasi::INTEGER)jumlahjam, sum(eks.biayadiklat)biayadiklat, sum(eks.biayasppd)biayasppd, eks.waktusosialisasi FROM eksternal eks 
+            GROUP BY eks.namalengkap, eks.nippns, eks.name, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, eks.waktusosialisasi
+            ORDER BY eks.nippns asc, eks.namalengkap asc
+        "));
+        $result = array(
+            'eksternal'=> $data1,
+            // 'count'=> $count,
+            // 'sum'=> $sum,
             'as'=> 'Fizi',
         );
         return $this->respond($result);

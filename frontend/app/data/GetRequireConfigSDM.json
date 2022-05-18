@@ -188,6 +188,10 @@
     {
       "nameDep": "DaftarJamPelatihanKaryawanCtrl",
       "urlDep": "module/SDM/Pelatihan/DaftarJamPelatihanKaryawanCtrl"
+    },
+    {
+      "nameDep": "LaporanDiklatKaryawanCtrl",
+      "urlDep": "module/SDM/Pelatihan/LaporanDiklatKaryawanCtrl"
     }
   ]
 }

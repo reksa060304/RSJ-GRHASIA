@@ -191,6 +191,18 @@ class TindakanController extends ApiController
         $penjumlahanJasa=0;
         $penjumlahanJasaTuslah=0;
         foreach ($request['pelayananpasien'] as $item){
+            $cekDuplikat =  PelayananPasien::where([
+            // 'noregistrasifk',$request['hasil'][0]['noregistrasifk']
+            // 'norecpelayanan',$value['norecpelayanan']
+
+            'noregistrasifk' => $item['noregistrasifk'],
+            'tglpelayanan' => $item['tglpelayanan'],
+            'produkfk' =>  $item['produkfk'],
+            // detailpemeriksaan
+            ])->count();
+            if($cekDuplikat > 0){
+                continue;
+            }
             $totJasa=0;
             $totalJasa=0;
             $penjumlahanJasa=0;
