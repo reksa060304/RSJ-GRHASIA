@@ -65,10 +65,8 @@ define(['initialize'], function (initialize) {
                     if (dat.pegawaiuser != '') {
                         $scope.item.notelp = dat.pegawaiuser[0].nomor
                     }
-                    console.log(datas.data.norec);
                     if (datas.data.norec != '') {
                         $scope.norec = datas.data.norec[0].jumlahpeserta
-                        console.log($scope.norec);
                     }
                     for (var i = 0; i < datas.data.me.length; i++) {
                         datas.data.me[i].no = i + 1
@@ -173,6 +171,7 @@ define(['initialize'], function (initialize) {
                         width: "50px",
                     },
                     
+                    
                 ],
                 // groupable: true,
                 // filterable: true,
@@ -192,7 +191,6 @@ define(['initialize'], function (initialize) {
                     $scope.item.jeniskelamin = { id:dat[0].jeniskelaminfk,
                         jeniskelamin: dat[0].jeniskelamin
                     };
-                    console.log(dataSelected);
                     $scope.item.namapeneliti = dat[0].nama;
                     $scope.item.telp = dat[0].nomorhp;
                     $scope.norec_maeks = dat[0].norec_eks;
@@ -308,7 +306,6 @@ define(['initialize'], function (initialize) {
                     "objectpegawailastfk": pegawai,
                     "email": $scope.item.email
                 }
-
                 medifirstService.post('sdm/pendidikan/update-pesertadidik', data).then(function (e) {
                     $scope.item = {};
                     // $state.go('DaftarPenelitianEksternal')
@@ -324,7 +321,6 @@ define(['initialize'], function (initialize) {
                     return
                 }
                 $scope.item.nimm = $scope.dataSelected.nim
-                console.log($scope.dataSelected.nim);
                 $scope.item.namaPasien = $scope.dataSelected.nama;
                 $scope.item.jeniskelamin = $scope.dataSelected.jeniskelamin;
                 // $scope.itemDd.noRM = $scope.dataPasienSelectedR.nocm;
@@ -361,7 +357,6 @@ define(['initialize'], function (initialize) {
                     for (var i = 0; i < dataa.length; i++) {
                         dataa[i].no = i + 1
                     }
-                    console.log(dataa);
                     $scope.dataDetail = new kendo.data.DataSource({
                         data: dataa,
                         pageSize: 10,
@@ -409,6 +404,13 @@ define(['initialize'], function (initialize) {
                         title: "Pembimbing",
                         width: "100px",
                     },
+                    {
+                        "command": [{
+                            text: "Hapus",
+                            click: deleteRows
+                        }],
+                        width: 70
+                    }
                 ],
                 // groupable: true,
                 // filterable: true,
@@ -433,7 +435,6 @@ define(['initialize'], function (initialize) {
                 "objectpegawaifk": $scope.item.pegawai.id,
                 "norec_pdruangan": $scope.norec_maeks,
             };
-            console.log(data);
             // return
             medifirstService.post('sdm/pendidikan/save-pdruangan', data).then(function (e) {
                 // $scope.item = {};
@@ -445,7 +446,6 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.klikGridDetail= function(dataPasienSelectedDetail){
-                console.log(dataPasienSelectedDetail);
             }
 
             $scope.deletedRow = function() {
@@ -462,7 +462,19 @@ define(['initialize'], function (initialize) {
                 });
             }
 
+            function deleteRows(e) {
+                e.preventDefault();
 
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                var datasend = {
+                    // "a": 'okee',
+                    "norec": dataItem.norec
+                };
+                // return
+                medifirstService.post("sdm/pendidikan/save-pdruangan", datasend).then(function (e) {
+                    loadDetailRiwayat();
+                });
+            }
         }
     ]);
 });

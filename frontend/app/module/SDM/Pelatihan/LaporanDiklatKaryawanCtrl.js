@@ -3,6 +3,7 @@ define(['initialize'], function (initialize) {
     initialize.controller('LaporanDiklatKaryawanCtrl', ['MedifirstService', 'CacheHelper', '$scope', 'DateHelper', '$state', 'ModelItem',
         function (medifirstService, cacheHelper, $scope, DateHelper, $state, ModelItem) {
             //Inisial Variable 
+                // $scope.isRouteLoading = true
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.dataSelected = {};
@@ -11,7 +12,8 @@ define(['initialize'], function (initialize) {
             $scope.item.listKasirMulti = [];
             $scope.item.listKasirMultis = [];
             $scope.isRouteLoading = false;
-
+            $scope.item.periode=moment($scope.now).format('YYYY');
+            $scope.item.month=moment($scope.now).format('MM');
             $scope.tglMeninggal = '';
             $scope.Page = {
                 refresh: true,
@@ -25,6 +27,7 @@ define(['initialize'], function (initialize) {
             loadCombo()
 
             function loadCombo() {
+                $scope.isRouteLoading = true
                 medifirstService.get("registrasi/laporan/get-data-combo-laporan").then(function (dat) {
 
                     // $scope.listPegawai = dat.data.dokter;
@@ -57,6 +60,10 @@ define(['initialize'], function (initialize) {
             }
             loadFirst()
              $scope.monthungkul = {
+                 start: "year",
+                 depth: "year"
+             }
+             $scope.yearUngkul = {
                  start: "decade",
                  depth: "decade"
              }
@@ -100,52 +107,30 @@ define(['initialize'], function (initialize) {
             loadData()
 
             function loadData() {
-
+                console.log(moment($scope.item.periode).format('YYYY'));
+                console.log(moment($scope.item.month).format('MM'));
                 $scope.isRouteLoading = true;
-                var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM HH:mm');
-                var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM HH:mm');
-
-                var rm = ""
-                if ($scope.item.noRM != undefined) {
-                    rm = "&nocm=" + $scope.item.noRM
-                }
-
-                var pasien = ""
-                if ($scope.item.namaPasien != undefined) {
-                    pasien = "&nama=" + $scope.item.namaPasien
-                }
-
-                var namaruangan = ""
-                if ($scope.item.ruangan != undefined) {
-                    namaruangan = "&ruanganId=" + $scope.item.ruangan.id
-                }
-
-                var departemen = ""
-                if ($scope.item.departemen != undefined) {
-                    departemen = "&departemen=" + $scope.item.departemen.id
-                }
-                var kelompokpasien = ""
-                if ($scope.item.kelompokpasien != undefined) {
-                    kelompokpasien = "&kelompokpasien=" + $scope.item.kelompokpasien.id
-                }
-
-                medifirstService.get("sdm/get-datalaporan-diklat")
+               
+                var  tahun = "&tahun="+moment($scope.item.periode).format('YYYY');
+                var bulan = "bulan="+ moment($scope.item.month).format('MM');
+                console.log(bulan,tahun);
+                medifirstService.get("sdm/get-datalaporan-diklat?"+ bulan + tahun)
                     .then(function (data) {
                         
                         $scope.isRouteLoading = false;
                         // console.log(data.data.eksternal);
-                        // $scope.columnGridPelatihanEksternal = new kendo.data.DataSource({
-                        //     data: data.data.eksternal,
-                        //     group: $scope.group,
-                        //     pageSize: 10,
-                        //     total: data.data.eksternal.length,
-                        //     serverPaging: false,
-                        //     schema: {
-                        //         model: {
-                        //             fields: {}
-                        //         }
-                        //     }
-                        // });
+                        $scope.dataSourceGridPelatihanInternal = new kendo.data.DataSource({
+                            data: data.data.internal,
+                            group: $scope.group,
+                            pageSize: 10,
+                            total: data.data.internal.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {}
+                                }
+                            }
+                        });
 
                         $scope.dataSourcePelatihanEksternal = new kendo.data.DataSource({
                             data: data.data.eksternal,
@@ -162,6 +147,76 @@ define(['initialize'], function (initialize) {
                     });
 
             };
+
+            $scope.columnGridPelatihanInternal = {
+                toolbar: [
+                    "excel",
+
+                ],
+                excel: {
+                    fileName: "LaporanDataBulananPengirimanPesertaPengirimanPelatihanInternal.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+
+                    sheet.mergedCells = ["A1:F1"];
+
+                    var myHeaders = [{
+                        value: "Laporan Data Bulanan Pengiriman Peserta Pengiriman Pelatihan Internal",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                        // color:"#ffffff"
+                    }];
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        type: "header",
+                        height: 70
+                    });
+                },
+                selectable: "row",
+                pageable: true,
+                columns: [{
+                        "field": "no",
+                        "title": "NO",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "namalengkap",
+                        "title": "NAMA",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "nippns",
+                        "title": "NIP",
+                        "width": "70px",
+                    },
+                    {
+                        "field": "jenispelatihan",
+                        "title": "JENIS PELATIHAN",
+                        "width": "100px",
+                    },
+                    // {
+                    //     "field": "penyelenggara",
+                    //     "title": "PENYELENGGARA",
+                    //     "width": "100px",
+                    // },
+                    {
+                        field: "waktu",
+                        "title": "WAKTU",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "jumlahjam",
+                        "title": "JUMLAH JAM",
+                        "width": "70px",
+                    },
+                ]
+            }
+
+
 
             $scope.columnGridPelatihanEksternal = {
                 toolbar: [

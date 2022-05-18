@@ -61,7 +61,7 @@
 <c-panel item="item" header="'Laporan Diklat Karyawan'" disabled>
 </c-panel>
 <div class="grid_12">
-    <div class="grid_2" style="margin-top:5px">
+    <!-- <div class="grid_2" style="margin-top:5px">
         <label c-label item="item" c-label-text="Departement"></label>
         <input style="width: 100%;" kendo-combo-box k-ng-model="item.departemen" k-data-text-field="'departemen'"
             k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartement"
@@ -71,7 +71,7 @@
         <label c-label c-label-text="namaRuangan" real></label>
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.ruangan" k-data-text-field=" 'ruangan' "
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listRuangans " />
-    </div>
+    </div> -->
     <!-- <div class="grid_2" style="margin-top:5px">
         <div class="grid_12">
             <label c-label item="item" c-label-text="Dokter"></label>
@@ -79,34 +79,30 @@
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.dokter" k-data-text-field=" 'namalengkap' "
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listDokter " />
     </div>     -->
-    <div class="grid_2" style="margin-top:5px">
+    <!-- <div class="grid_2" style="margin-top:5px">
         <label c-label c-label-text="Kelompok" real></label>
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.kelompokpasien"
             k-data-text-field=" 'kelompokpasien' " k-filter=" 'contains' " k-data-value-field=" 'id' "
             k-auto-bind="false " k-data-source="listKelompokPasien " />
-    </div>
+    </div> -->
 
 
 
-    <div class="grid_4" style="margin-top:5px">
-        <div class="grid_12">
-            <label c-label item="item" c-label-text="Periode Bulan Tahun"></label>
-        </div>
-        <div class="clear"></div>
-
+    <div class="grid_2" style="margin-top:5px">
         <div class="grid_12">
             <!-- AwalPeriode -->
-            <div class="grid_6 padDatePicker">
-                <input style="width: 100%" k-ng-model="item.periode" kendo-datepicker k-options="monthungkul"
-                    k-max="now" placeholer="yyyy-MM" k-format="'mmmm'" />
-            </div>
+            <label c-label item="item" c-label-text="Periode Bulan"></label>
 
-            <!-- AkhirPeriode -->
-            <!-- <div class="grid_6 padDatePicker">
-                <input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-datepicker
-                    placeholer="yyyy-MM" k-format="'yyyy-MM'" />
-            </div>
-            <div class="clear"></div> -->
+                <input style="width: 100%" k-ng-model="item.month" kendo-datepicker k-options="monthungkul"
+                    placeholer="MM" k-format="'MM'" />
+        </div>
+    </div>
+    <div class="grid_2" style="margin-top:5px">
+        <div class="grid_12">
+            <!-- AwalPeriode -->
+            <label c-label item="item" c-label-text="Periode Tahun"></label>
+                <input style="width: 100%" k-ng-model="item.periode" kendo-datepicker k-options="yearUngkul"
+                    placeholer="YYYY" k-format="'yyyy'" />
         </div>
     </div>
     <div class="grid_1" style="margin-top:5px">
@@ -147,7 +143,8 @@
                     <md-content class="md-padding">
                         <div class="grid_12" style="margin-top: 10px;">
                             <div class="grid_12 borderBox">
-                                <kendo-grid id="kGrid" data-source="dataSourceGridPelatihanInternal" options="columnGridPelatihanInternal"
+                                <kendo-grid id="kGrid" data-source="dataSourceGridPelatihanInternal"
+                                    options="columnGridPelatihanInternal"
                                     k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
                                     k-ng-model="dataPasienSelected" ng-click="klikGrid(dataPasienSelected)">
                                 </kendo-grid>
@@ -171,4 +168,7 @@
             </md-tabs>
         </md-content>
     </div>
+</div>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 </div>
