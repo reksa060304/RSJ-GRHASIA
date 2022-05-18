@@ -2025,6 +2025,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/get-combo-gaji-peg','SDM\SumberDayaManusiaController@getComboGaji');
             Route::get('sdm/get-gaji-perpegawai','SDM\SumberDayaManusiaController@getGajiPerPegawai');
             Route::get('sdm/get-datajampelatihan-pegawai', 'SDM\SumberDayaManusiaController@getDataJampelatihan');
+            Route::get('sdm/get-datalaporan-diklat', 'SDM\SumberDayaManusiaController@getDataLaporanDiklat');
             /*END GET*/
 
             /*POST*/

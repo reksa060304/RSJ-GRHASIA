@@ -206,25 +206,22 @@ define(['initialize'], function (initialize) {
                                     total: {type: "number"},
                                 }                               
                             }
-                        },
-                        aggregate: [
-                            {field: "total", aggregate:"sum"},
-                            {field: "januari", aggregate:"sum"},
-                            {field: "februari", aggregate:"sum"},
-                            {field: "maret", aggregate:"sum"},
-                            {field: "april", aggregate:"sum"},
-                            {field: "mei", aggregate:"sum"},
-                            {field: "juni", aggregate:"sum"},
-                            {field: "juli", aggregate:"sum"},
-                            {field: "agustus", aggregate:"sum"},
-                            {field: "september", aggregate:"sum"},
-                            {field: "oktober", aggregate:"sum"},
-                            {field: "november", aggregate:"sum"},
-                            {field: "desember", aggregate:"sum"},
-
-                        ]
-
-
+                            },
+                            aggregate: [
+                                {field: "total", aggregate:"sum"},
+                                {field: "januari", aggregate:"sum"},
+                                {field: "februari", aggregate:"sum"},
+                                {field: "maret", aggregate:"sum"},
+                                {field: "april", aggregate:"sum"},
+                                {field: "mei", aggregate:"sum"},
+                                {field: "juni", aggregate:"sum"},
+                                {field: "juli", aggregate:"sum"},
+                                {field: "agustus", aggregate:"sum"},
+                                {field: "september", aggregate:"sum"},
+                                {field: "oktober", aggregate:"sum"},
+                                {field: "november", aggregate:"sum"},
+                                {field: "desember", aggregate:"sum"},
+                            ]
                         }
                         // $scope.isRouteLoading = false;
                     })

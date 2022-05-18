@@ -961,6 +961,19 @@ class LaboratoriumController extends ApiController
                         );
                 }else
                 {
+                    $cekDuplikat =  HasilLaboratorium::where([
+                    // 'noregistrasifk',$request['hasil'][0]['noregistrasifk']
+                    // 'norecpelayanan',$value['norecpelayanan']
+
+                    'noregistrasifk' => $value['noregistrasifk'],
+                    'norecpelayanan' => $value['norecpelayanan'],
+                    'produkfk' => $value['produkfk'],
+                    'detailpemeriksaan' => $value['detailpemeriksaan'],
+                    // detailpemeriksaan
+                    ])->count();
+                    if($cekDuplikat > 0){
+                        continue;
+                    }
                     $h = new HasilLaboratorium();
                     $h->norec = $h->generateNewId();
                     $h->kdprofile = $idProfile;

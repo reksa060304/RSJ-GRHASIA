@@ -933,5 +933,24 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LaporanDiklatKaryawanCtrl",
+    "url": "/LaporanDiklatKaryawan",
+    "templateurl": "module/SDM/Pelatihan/LaporanDiklatKaryawan.html",
+    "controller": "LaporanDiklatKaryawanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
