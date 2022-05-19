@@ -12,7 +12,7 @@ define(['initialize'], function(initialize) {
 			$scope.currentKeterangan=[];
             $scope.item.namainstansi = medifirstService.getPegawaiLogin().namaLengkap;
             $scope.item.namauser = medifirstService.getUserLogin().kdUser;
-            
+            $scope.Pembimbing = false
             $scope.tabletambahmahasiswa = false;
             $scope.tgl = true;
             $scope.pemb = true;
@@ -50,7 +50,7 @@ define(['initialize'], function(initialize) {
                 $scope.pemb = false;
                 $scope.ru = false;
                 $scope.tabletambahmahasiswa = true;
-
+                
             }
 
 			function loadDataCombo(){
@@ -120,17 +120,24 @@ define(['initialize'], function(initialize) {
 		    }
             
             
-            $scope.klikGrid = function (dataSelected) {
-                console.log(dataSelected);
-            }
-            console.log($scope.item.layanan);
             $scope.GetLevelPendidikan = function(){
+                console.log(noOrder);
+            console.log($scope.item.layanan.id);
+            $scope.item.levelpendidikan = undefined
+
                 if (noOrder == 'EditPenelitianEksternal') {
                     console.log($scope.item.layanan);
-                    if ($scope.item.layanan != undefined) {
-                        $scope.lvlpendidikan = true
-                        $scope.idlvlpendidikan = false
+                    if (ModelItem.getPegawai().jenisPegawai.qjenispegawai != 0) {
+                        if ($scope.item.layanan.id == 1947 || $scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
+                            $scope.pembimbing = true;
+                            console.log('masuk tol');
+                        }
                     }
+                    if ($scope.item.layanan.id != null) {
+                        $scope.lvlpendidikan = false
+                        $scope.idlvlpendidikan = true
+                    }
+
                 }
                 
 
@@ -182,6 +189,7 @@ define(['initialize'], function(initialize) {
 			function init(){
 			   	if (noOrder == 'EditPenelitianEksternal') {
                     $scope.isRouteLoading=true;
+                    
                     medifirstService.get("sdm/penelitian/get-detail-penelitian-eksternal?"
                     +"Norec="+NorecKpe, true).then(function(dat){
                         $scope.isRouteLoading=false;
@@ -212,7 +220,12 @@ define(['initialize'], function(initialize) {
                         $scope.item.namapendamping = datas.namapendamping;
                         $scope.item.namapengawas = datas.namapengawas;
                         $scope.item.judulpenelitian = datas.judulpeneltian;
-                        
+
+                        if ($scope.item.layanan.id == 1947 || $scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
+                            console.log('masuk tol');
+                            $scope.Pembimbing = true;
+
+                        }
                     })
                     
                 }

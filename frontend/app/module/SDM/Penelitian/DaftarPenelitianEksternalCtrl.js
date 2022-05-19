@@ -150,9 +150,6 @@ define(['initialize'], function (initialize) {
                         $scope.batalverif = false;
                     }
                 }
-                if (condition) {
-                    
-                }
                 
                 
             }

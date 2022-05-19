@@ -121,7 +121,7 @@
                                     <div class="grid_12">
                                         <!-- <input kendo-date-picker k-ng-model="item.tanggalMulai" k-format="'dd-MM-yyyy'" style="width: 100%" /> -->
                                         <input style="width: 100%" k-ng-model="item.tanggalMulai" kendo-datetimepicker
-                                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" ng-disabled="tgl" />
+                                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
                                     </div>
                                 </div>
                                 <div class="grid_3">
@@ -131,35 +131,38 @@
                                     <div class="grid_12">
                                         <!-- <input kendo-date-picker k-ng-model="item.tanggalMulai" k-format="'dd-MM-yyyy'" style="width: 100%" /> -->
                                         <input style="width: 100%" k-ng-model="item.tanggalSelesai" kendo-datetimepicker
-                                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" ng-disabled="tgl" />
+                                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'"  />
                                     </div>
                                 </div>
                             </div>
                              <div class="grid_12">
-                                <div class="grid_3">
+                                <div class="grid_3" >
                                     <div class="grid_12" style="margin: 6px 0 0 0;">
-                                        <label><b>Nama Pembimbing</b></label>
+                                        <label ng-show="Pembimbing"><b>Nama Pembimbing</b></label>
                                     </div>
                                     <div class="grid_12">
                                         <input c-text-box type="input" filter="'varchar'" class="k-textbox"
-                                            ng-model="item.namapendamping" ng-disabled="peneliti" />
+                                            ng-model="item.namapendamping" ng-disabled="peneliti" ng-show="Pembimbing"
+                                            />
+                                    </div>
+                                </div>
+                                <div class="grid_3" >
+                                    <div class="grid_12" style="margin: 6px 0 0 0;">
+                                        <label ng-show="Pembimbing" c-label item="item"
+                                            c-label-text="Nama Pengawas"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input c-text-box type="input" filter="'varchar'" class="k-textbox"
+                                            ng-model="item.namapengawas" ng-disabled="peneliti" ng-show="Pembimbing" />
                                     </div>
                                 </div>
                                 <div class="grid_3">
                                     <div class="grid_12" style="margin: 6px 0 0 0;">
-                                        <label c-label item="item" c-label-text="Nama Pengawas"></label>
+                                        <label ng-show="Pembimbing" c-label item="item"
+                                            c-label-text="Judul Penelitian"></label>
                                     </div>
                                     <div class="grid_12">
-                                        <input c-text-box type="input" filter="'varchar'" class="k-textbox"
-                                            ng-model="item.namapengawas" ng-disabled="peneliti" />
-                                    </div>
-                                </div>
-                                <div class="grid_3">
-                                    <div class="grid_12" style="margin: 6px 0 0 0;">
-                                        <label c-label item="item" c-label-text="Judul Penelitian"></label>
-                                    </div>
-                                    <div class="grid_12">
-                                        <input c-text-box type="text" filter="'varchar'" class="k-textbox"
+                                        <input ng-show="Pembimbing" c-text-box type="text" filter="'varchar'" class="k-textbox"
                                             ng-model="item.judulpenelitian" ng-disabled="peneliti" />
                                     </div>
                                 </div>

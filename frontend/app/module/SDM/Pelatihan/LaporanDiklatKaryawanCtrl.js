@@ -316,7 +316,7 @@ define(['initialize'], function (initialize) {
                 ]
             }
 
-            $scope.columnGrid = {
+            $scope.columnGridGabungan = {
                 toolbar: [
                     "excel",
 
@@ -349,50 +349,53 @@ define(['initialize'], function (initialize) {
                 pageable: true,
                 columns: [{
                         "field": "tglregistrasi",
-                        "title": "Tanggal",
+                        "title": "NO",
                         "width": "50px",
-                        "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
                     },
                     {
                         "field": "tglregistrasi",
-                        "title": "Jam",
+                        "title": "NAMA",
                         "width": "50px",
                         "template": "<span class='style-left'>{{formatJam('#: tglregistrasi #')}}</span>"
                     },
                     {
                         "field": "nocm",
-                        "title": "Norm",
+                        "title": "NIP",
                         "width": "50px",
                         "template": "<span class='style-center'>#: nocm #</span>"
                     },
                     {
                         "field": "noantrian",
-                        "title": "Antrian",
+                        "title": "JABATAN",
                         "width": "30px",
                         "template": "<span class='style-center'>#: noantrian #</span>"
 
                     },
                     {
                         "field": "namapasien",
-                        "title": "Nama",
+                        "title": "JENIS PELATIHAN",
                         "width": "100px",
                         "template": "<span class='style-center'>#: namapasien #</span>"
                     },
                     {
                         "field": "reportdisplay",
-                        "title": "JK",
+                        "title": "TEMPAT",
                         "width": "50px",
                         // "template": "<span class='style-center'>#: jeniskelamin #</span>"
                     },
                     {
                         "field": "umur",
-                        "title": "Umur",
+                        "title": "WAKTU",
                         "width": "50px",
-                        // "template": "<span class='style-center'>#: namapasien #</span>"
+                        columns: [{
+                            "title":"Tgl"
+                        },{
+                            "title": "Bulan"
+                        },]
                     },
                     {
                         "field": "kelompokpasien",
-                        "title": "Cara Bayar",
+                        "title": "JAM PELAKSANAAN",
                         "width": "50px",
                     },
                     // {
@@ -402,34 +405,15 @@ define(['initialize'], function (initialize) {
                     // },
                     {
                         "field": "namalengkap",
-                        "title": "Dokter",
+                        "title": "JML JAM",
                         "width": "50px",
                     },
                     {
                         "field": "status",
-                        "title": "Status ",
+                        "title": "TOTAL JAM",
                         "width": "50px",
                     },
-                    {
-                        "field": "diagnosa",
-                        "title": "Diagnosa",
-                        "width": "50px",
-                    },
-                    {
-                        "field": "kasus",
-                        "title": "Kasus ",
-                        "width": "50px",
-                    },
-                    {
-                        "field": "user",
-                        "title": "Admin",
-                        "width": "50px",
-                    },
-                    {
-                        "field": "bayar",
-                        "title": "Sudah Bayar",
-                        "width": "50px",
-                    }
+                    
                 ]
             };
 
