@@ -1373,7 +1373,7 @@ class MainController extends ApiController
         "));
 
         if(isset($results)){
-            $ratarata = $results[0]->rataratabiayaperpasien;
+            $ratarata = round($results[0]->rataratabiayaperpasien,0);
         }
 
         return $ratarata;
