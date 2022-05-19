@@ -122,6 +122,54 @@
                             <div class="col-lg-12 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-warning">
+                                        <div class="panel-heading  bg-green">
+                                            Rincian Jumlah Obat Per DPJP
+                                        </div>
+                                        @php  
+                                            $array =   App\Http\Controllers\MainController::getLaporanLayananDPJP(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                        @endphp
+                                        <div class="panel-body" >
+                                            <div class="row" style="padding:10px 20px;">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive" >
+                                                        <table class="table  table-striped table-sm table-styling" id="t_Layanan"
+                                                               style="width:100%">
+                                                            <thead class="table-default">
+                                                            <tr>
+                                                                <th style="color:black;width: 10%">NO </th>
+                                                                <th style="color:black">DOKTER </th>
+                                                                <th style="color:black">KELOMPOK PASIEN</th>
+                                                                <th style="color:black;width: 10%">JUMLAH</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+
+                                                            @forelse($array as $i => $d)
+
+                                                                <tr>
+                                                                    <td >{{ $i +1 }}</td>
+                                                                    <td >{{ $d->namalengkap }}</td>
+                                                                    <td >{{ $d->kelompokpasien }}</td>
+                                                                    <td >{{ $d->jumlahobat }}</td>
+                                                                </tr>
+                                                            @empty
+                                                                <tr>
+                                                                    <td colspan="3" style="text-align: center">Data Tidak ada</td>
+                                                                </tr>
+                                                            @endforelse
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-warning">
                                         <div class="panel-heading  bg-c-kuning">
                                             Pendapatan PerInstalasi
                                         </div>

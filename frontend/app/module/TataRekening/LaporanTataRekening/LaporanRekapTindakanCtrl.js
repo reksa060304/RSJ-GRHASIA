@@ -21,6 +21,10 @@ define(['initialize'], function (initialize) {
                     $scope.dataLogin = medifirstService.getPegawaiLogin();
                 });
 
+                medifirstService.get("sysadmin/master/get-data-combo-master", true).then(function (dat) {
+                    $scope.listDepartement = dat.data.departemen;
+                });
+
                 $scope.listRajalRanap = [
                     {
                         id: 1,
@@ -32,10 +36,9 @@ define(['initialize'], function (initialize) {
                 ]
             }
 
-            $scope.getIsiComboRuangan = function () {
-                $scope.listRuangan = $scope.item.departement.ruangan
+            $scope.RuanganToDepartement = function () {
+                $scope.listruangan = $scope.item.departemen.ruangan                
             }
-
             
             function init() {
                 $scope.isRouteLoading = true;
@@ -50,11 +53,23 @@ define(['initialize'], function (initialize) {
                     rajalranap = $scope.item.rajalranap.id;
                 }
 
+                var departemen = ""
+				if ($scope.item.departemen != undefined) {
+                    departemen = $scope.item.departemen.id;
+                }
+
+                var ruangan = ""
+				if ($scope.item.ruangan != undefined) {
+                    ruangan = $scope.item.ruangan.id;
+                }
+
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
                 medifirstService.get("tatarekening/get-laporan-rekap-tindakan?" +
                     "tglAwal=" + tglAwal +
-                    "&rajalranap=" + rajalranap
+                    "&rajalranap=" + rajalranap +
+                    "&departemen=" + departemen +
+                    "&ruangan=" + ruangan
                     ).then(function (dat) {
                         
                         for (var i = 0; i < dat.data.detail.length; i++) {

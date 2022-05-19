@@ -12551,17 +12551,15 @@ $result = array(
         
         $tglAwal = $request['tglAwal'];
         $kdProfile = $this->getDataKdProfile($request);
-        $rajalranap = '';
-        $rajalranapjoin = '';
+        $departemen = '';
+        $ruangan = '';
 
-        if (isset($request['rajalranap']) && $request['rajalranap'] != "" && $request['rajalranap'] != "undefined" && $request['rajalranap'] == 1) {
-            $rajalranap = ' and ru.objectdepartemenfk <> 16';
-            $rajalranapjoin = ' and r.objectdepartemenfk <> 16';
+        if (isset($request['departemen']) && $request['departemen'] != "" && $request['departemen'] != "undefined") {
+            $departemen = ' and ru.objectdepartemenfk = '.$request['departemen'];
         }
 
-        if (isset($request['rajalranap']) && $request['rajalranap'] != "" && $request['rajalranap'] != "undefined" && $request['rajalranap'] == 2) {
-            $rajalranap = ' and ru.objectdepartemenfk = 16';
-            $rajalranapjoin = ' and r.objectdepartemenfk = 16';
+        if (isset($request['ruangan']) && $request['ruangan'] != "" && $request['ruangan'] != "undefined") {
+            $ruangan = ' and ru.id = '.$request['ruangan'];
         }
 
         $dataz = DB::select(DB::raw("select r.namaproduk, a.jumlahjanuari
@@ -12590,7 +12588,8 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 1
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as a on a.namaproduk = r.namaproduk
         left join (
@@ -12611,7 +12610,8 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 2
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as b on b.namaproduk = r.namaproduk
         left join (
@@ -12632,7 +12632,8 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 3
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as c on c.namaproduk = r.namaproduk
         left join (
@@ -12653,7 +12654,8 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 4
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as d on d.namaproduk = r.namaproduk
         left join (
@@ -12674,7 +12676,8 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 5
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as e on e.namaproduk = r.namaproduk
         left join (
@@ -12695,7 +12698,8 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 6
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as f on f.namaproduk = r.namaproduk
         left join (
@@ -12716,7 +12720,8 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 7
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as g on g.namaproduk = r.namaproduk
         left join (
@@ -12737,7 +12742,8 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 8
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as h on h.namaproduk = r.namaproduk
         left join (
@@ -12758,7 +12764,8 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 9
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as i on i.namaproduk = r.namaproduk
         left join (
@@ -12779,7 +12786,8 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 10
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as j on j.namaproduk = r.namaproduk
         left join (
@@ -12800,7 +12808,8 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 11
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as k on k.namaproduk = r.namaproduk
         left join (
@@ -12821,11 +12830,13 @@ $result = array(
                             and pd.statusenabled=true
                             and extract(month from pp.tglpelayanan) = 12
                             and pp.isobat is null
-                            $rajalranap
+                            $departemen
+                            $ruangan
             group by pr.namaproduk, extract(month from pp.tglpelayanan)
         ) as l on l.namaproduk = r.namaproduk
         where pp.isobat is NULL
-        $rajalranap
+        $departemen
+        $ruangan
         group by r.namaproduk, a.jumlahjanuari
         , b.jumlahfebruari
         , c.jumlahmaret, d.jumlahapril, e.jumlahmei, f.jumlahjuni,

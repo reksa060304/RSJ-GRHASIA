@@ -220,6 +220,20 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="small-box bg-c-blue">
+                                    @php
+                                        $ratarata =  App\Http\Controllers\MainController::getRataRataBiayaObat(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'),'seminggu');
+                                    @endphp
+                                    <div class="inner">
+                                        <h3 style="color:white;">{{ $ratarata }}</h3>
+                                        <p style="color:white;">Rata-Rata Biaya Obat Per Pasien</p>
+                                    </div>
+                                    <div class="icon">
+                                        <img class="icon-pasien" src="{!! asset('images/icon-pasien.png') !!}">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-lg-12 col-md-12">
                             <div class="card">

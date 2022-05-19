@@ -738,8 +738,14 @@ class RadiologiController extends ApiController
             ->select('apd.norec as norec_apd','ru.id as ruid','ru.namaruangan','pd.noregistrasi','ps.nocm','ps.namapasien','jk.jeniskelamin',
                 'kp.kelompokpasien','rk.namarekanan','kl.namakelas','kl.id as klid',
                 'pd.tglregistrasi','pd.tglpulang','ps.tgllahir','apd.norec','pd.norec as norec_pd',
-                'sp.tglstruk','pd.nostruklastfk','alm.alamatlengkap','gol.golongandarah', 'apd.tglmasuk','ru1.namaruangan as ruanganasal','apd.tglregistrasi', 'pp.iscito as cito',
-                DB::raw("'' AS expertise
+                'sp.tglstruk','pd.nostruklastfk','alm.alamatlengkap','gol.golongandarah', 'apd.tglmasuk','ru1.namaruangan as ruanganasal','apd.tglregistrasi',
+                DB::raw("CASE 
+                WHEN pp.iscito is null or pp.iscito = false THEN
+                    false
+                ELSE
+                    pp.iscito 
+                END
+                as cito,'' AS expertise
                 "))
             ->where('apd.kdprofile', $idProfile)
             ->where('ru.objectdepartemenfk',$dataruangan[0]->objectdepartemenfk)
@@ -807,11 +813,22 @@ class RadiologiController extends ApiController
             ->orderBy('hh.tanggal','desc')
             ->get();
         $hasilRadBlmAdaExpertise = DB::table('pelayananpasien_t as pp')
+            ->join('produk_m as pr','pr.id','=','pp.produkfk')
             ->leftjoin('hasilradiologi_t as hh','pp.norec','=','hh.pelayananpasienfk')
             ->distinct()
-            ->select('pp.noregistrasifk as norec_apd')
+            ->select('pp.noregistrasifk as norec_apd', 'pr.id')
             ->whereNull('hh.norec')
-            ->whereIn('pp.noregistrasifk',$apdnorec)                        
+            ->whereIn('pp.noregistrasifk',$apdnorec) 
+            ->whereNotIn('pr.id',[5008637, 5008635, 5008644, 5008645, 5008636])                        
+            ->get();
+        $hasilRadBlmAdaExpertiseTapiPendaftaran = DB::table('pelayananpasien_t as pp')
+            ->join('produk_m as pr','pr.id','=','pp.produkfk')
+            ->leftjoin('hasilradiologi_t as hh','pp.norec','=','hh.pelayananpasienfk')
+            ->distinct()
+            ->select('pp.noregistrasifk as norec_apd', 'pr.id')
+            ->whereNull('hh.norec')
+            ->whereIn('pp.noregistrasifk',$apdnorec) 
+            ->whereIn('pr.id',[5008637, 5008635, 5008644, 5008645, 5008636])                        
             ->get();
         $hasilLab = DB::table('pelayananpasien_t as pp')
             ->join('hasillaboratorium_t as hh','pp.norec','=','hh.norecpelayanan')
@@ -847,9 +864,23 @@ class RadiologiController extends ApiController
         $i=0;
         foreach ($data as $key => $v) {         
             foreach ($hasilRadBlmAdaExpertise as $key2 => $v2) {
+
                 if($data[$i]->norec_apd ==  $v2->norec_apd){
                     $data[$i]->expertise =false;  
                     $data[$i]->tglexpertise =null;                  
+                } 
+            }
+            $i = $i + 1;
+        }
+
+        $i=0;
+        foreach ($data as $key => $v) {         
+            foreach ($dataMerge as $key2 => $v2) {
+                foreach ($hasilRadBlmAdaExpertiseTapiPendaftaran as $key3 => $v3) {
+                    if(($data[$i]->norec_apd ==  $v2->norec_apd) && ($data[$i]->norec_apd ==  $v3->norec_apd)){
+                        $data[$i]->expertise =true;  
+                        $data[$i]->tglexpertise =null;                  
+                    } 
                 }
             }
             $i = $i + 1;
