@@ -2125,6 +2125,8 @@ class SumberDayaManusiaController extends ApiController {
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();
         try{
+            
+
             if ($request['norec'] == ''){
                 $PDR = \DB::table('sdm_pdruangan_t')->insert([
                     'kdprofile' => $kdProfile,
@@ -2141,19 +2143,21 @@ class SumberDayaManusiaController extends ApiController {
                     'objectruanganlastfk' => $request['objectruanganlastfk'],
                     'objectpegawailastfk' => $request['objectpegawaifk'],
                 ]);
-            }else{
-                $TP = \DB::table('sdm_pdruangan_t')->where('norec', $request['norec'])->where('kdprofile', $kdProfile)->update([
-                    'kdprofile' => $kdProfile,
-                    'noregistrasifk' => $request['noregistrasifk'],
-                    'objectruanganlastfk' => $request['objectruanganlastfk'],
-                    'objectruanganasalfk' => $request['objectruanganasalfk'],
-                    'objectpegawaifk' => $request['objectpegawaifk'],
-                    'statusenabled' => true,
-                    'tglmasuk' => $request['tglmasuk'],
-                ]);
+
             }
-            if ($request['statusenabled'] == 'true') {
-                $TP = PesertaDidik::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
+            // else{
+            //     $TP = \DB::table('sdm_pdruangan_t')->where('norec', $request['norec'])->where('kdprofile', $kdProfile)->update([
+            //         'kdprofile' => $kdProfile,
+            //         'noregistrasifk' => $request['noregistrasifk'],
+            //         'objectruanganlastfk' => $request['objectruanganlastfk'],
+            //         'objectruanganasalfk' => $request['objectruanganasalfk'],
+            //         'objectpegawaifk' => $request['objectpegawaifk'],
+            //         'statusenabled' => true,
+            //         'tglmasuk' => $request['tglmasuk'],
+            //     ]);
+            // }
+            if ($request['norec'] != '' && isset($request['norec'])) {
+                $TP = \DB::table('sdm_pdruangan_t')->where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
             }
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -2201,8 +2205,7 @@ class SumberDayaManusiaController extends ApiController {
             $TP->nama = $request['nama'];
             $TP->nim = $request['nim'];
             $TP->nomorhp = $request['nomorhp'];
-            $TP->objectruanganlastfk = $request['objectruanganlastfk'];
-            $TP->objectpegawailastfk = $request['objectpegawailastfk'];
+            $TP->email = $request['email'];
             $TP->save();
             
             $transStatus = 'true';
@@ -4732,17 +4735,37 @@ WHERE
             INNER JOIN riwayatpelatihan_t rp on pg.id = rp.objectpegawaifk
             left join unitkerjapegawai_m ukp on ukp.id = pg.objectunitkerjapegawaifk
             left join jenispelatihan_m jp on jp.id = rp.jenispelatihanfk
-            WHERE rp.penyelenggara ilike'%eksternal%'
+            WHERE rp.penyelenggara ilike'eksternal'
             and pg.kdprofile = $idProfile
             and pg.statusenabled = TRUE
+            and date_part('month', rp.tglmulai :: date) = $request->bulan
+            and date_part('year', rp.tglmulai :: date) = $request->tahun
             )
             SELECT sum(eks.biayasppd+eks.biayadiklat)jumlahbiaya, eks.namalengkap, eks.nippns, eks.name  unitkerja, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, sum(eks.durasi::INTEGER)jumlahjam, sum(eks.biayadiklat)biayadiklat, sum(eks.biayasppd)biayasppd, eks.waktusosialisasi FROM eksternal eks 
             GROUP BY eks.namalengkap, eks.nippns, eks.name, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, eks.waktusosialisasi
             ORDER BY eks.nippns asc, eks.namalengkap asc
         "));
+        $data2 = \DB::select(DB::raw("
+            with eksternal as(
+            SELECT pg.namalengkap, pg.nippns,ukp.name, jp.jenispelatihan, rp.penyelenggara,  
+            rp.tglmulai::date  || ' s/d ' || rp.tglakhir :: DATE as waktu, 
+            rp.lokasipelatihan, rp.durasi, rp.biayadiklat, rp.biayasppd, ' ' as waktusosialisasi FROM pegawai_m pg
+            INNER JOIN riwayatpelatihan_t rp on pg.id = rp.objectpegawaifk
+            left join unitkerjapegawai_m ukp on ukp.id = pg.objectunitkerjapegawaifk
+            left join jenispelatihan_m jp on jp.id = rp.jenispelatihanfk
+            WHERE rp.penyelenggara ilike'internal'
+            and pg.kdprofile = $idProfile
+            and pg.statusenabled = TRUE
+            and date_part('month', rp.tglmulai :: date) = $request->bulan
+            and date_part('year', rp.tglmulai :: date) = $request->tahun
+            )
+            SELECT eks.namalengkap, eks.nippns, eks.name  unitkerja, eks.jenispelatihan,eks.waktu, sum(eks.durasi::INTEGER)jumlahjam FROM eksternal eks 
+            GROUP BY eks.namalengkap, eks.nippns, eks.name, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, eks.waktusosialisasi
+            ORDER BY eks.nippns asc, eks.namalengkap asc
+        "));
         $result = array(
             'eksternal'=> $data1,
-            // 'count'=> $count,
+            'internal'=> $data2,
             // 'sum'=> $sum,
             'as'=> 'Fizi',
         );
