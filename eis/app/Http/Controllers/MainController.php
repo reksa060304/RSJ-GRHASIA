@@ -1292,6 +1292,92 @@ class MainController extends ApiController
                 "));
             return $results;
     }
+    public static function getLaporanLayananDPJP($tglAwal,$tglAkhir,$kdProfile)
+    {
+
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $tglAwal.' 00:00';
+        $tglAkhir =  $tglAkhir.' 23:59';
+
+        $results = DB::select(DB::raw("select pg.namalengkap, kp.kelompokpasien, sum(pp.qtydetailresep) as jumlahobat
+        from
+            pasien_m ps
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk 
+        left join pegawai_m pg on pg.id = pd.objectpegawaifk
+        inner join jenispegawai_m jp on jp.id = pg.objectjenispegawaifk
+        where pd.kdprofile = $idProfile
+        and pd.statusenabled = true
+        and pp.tglpelayanan::date between '$tglAwal' and '$tglAkhir'
+        and pp.isobat = true
+        and jp.jenispegawai = 'DOKTER'
+        and pg.namalengkap <> '-' 
+        and pg.namalengkap is not null
+        group by pg.namalengkap, kp.kelompokpasien
+        "));
+        return $results;
+    }
+    public static function getRataRataBiayaObat($tglAwal,$tglAkhir,$kdProfile)
+    {
+
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $tglAwal.' 00:00';
+        $tglAkhir =  $tglAkhir.' 23:59';
+        $ratarata = 0;
+
+        $results = DB::select(DB::raw("select sum(totalpenjualan) as totalfix, count(noregistrasi) as jumlahpasien, (sum(totalpenjualan))/(count(noregistrasi)) as rataratabiayaperpasien from(
+        SELECT
+            pd.noregistrasi, sum(((pp.hargajual - (coalesce(pp.hargadiscount,0))) * jumlah)) as totalpenjualan
+        FROM
+        pelayananpasien_t AS pp
+        INNER JOIN produk_m AS pr ON pr.id = pp.produkfk
+        INNER JOIN strukresep_t AS sr ON sr.norec = pp.strukresepfk
+        INNER JOIN ruangan_m AS rudp ON rudp.id = sr.ruanganfk
+        INNER JOIN antrianpasiendiperiksa_t AS apd ON sr.pasienfk = apd.norec
+        INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+        INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+        INNER JOIN ruangan_m AS rupx ON rupx.id = apd.objectruanganfk
+        INNER JOIN departemen_m AS dp ON dp.id = rupx.objectdepartemenfk
+        LEFT JOIN LATERAL (
+            SELECT
+                apdtemp.norec,
+                apdtemp.tglmasuk,
+                apdtemp.noregistrasifk,
+                apdtemp.objectruanganfk,
+                rutemp.objectdepartemenfk,
+                rutemp.namaruangan
+            FROM
+                antrianpasiendiperiksa_t apdtemp
+            INNER JOIN ruangan_m rutemp ON rutemp. ID = apdtemp.objectruanganfk
+            WHERE
+                apdtemp.statusenabled = TRUE
+            AND apdtemp.noregistrasifk = pd.norec
+            AND rutemp.objectdepartemenfk IN (31, 25, 56,24,35,17,34,30,16,18,19,28,26,62)
+            AND apdtemp.tglmasuk <= pp.tglpelayanan
+            AND pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+            ORDER BY
+                apd.tglmasuk DESC
+            LIMIT 1
+        ) apdtemp ON apdtemp.noregistrasifk = pd.norec
+        WHERE
+            pd.statusenabled = TRUE
+        and pd.kdprofile = $idProfile
+        AND sr.statusenabled = TRUE
+        AND pp.statusenabled = TRUE
+        AND apd.statusenabled = TRUE   
+        AND pp.isobat = true
+        AND pp.tglpelayanan between '$tglAwal' and '$tglAkhir' 
+        group by pd.noregistrasi) as c
+        "));
+
+        if(isset($results)){
+            $ratarata = $results[0]->rataratabiayaperpasien;
+        }
+
+        return $ratarata;
+    }
     public function getCountPegawai(Request $request){
 
         $idProfile = (int) session("kdProfile");

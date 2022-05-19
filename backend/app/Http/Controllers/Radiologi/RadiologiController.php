@@ -738,8 +738,14 @@ class RadiologiController extends ApiController
             ->select('apd.norec as norec_apd','ru.id as ruid','ru.namaruangan','pd.noregistrasi','ps.nocm','ps.namapasien','jk.jeniskelamin',
                 'kp.kelompokpasien','rk.namarekanan','kl.namakelas','kl.id as klid',
                 'pd.tglregistrasi','pd.tglpulang','ps.tgllahir','apd.norec','pd.norec as norec_pd',
-                'sp.tglstruk','pd.nostruklastfk','alm.alamatlengkap','gol.golongandarah', 'apd.tglmasuk','ru1.namaruangan as ruanganasal','apd.tglregistrasi', 'pp.iscito as cito',
-                DB::raw("'' AS expertise
+                'sp.tglstruk','pd.nostruklastfk','alm.alamatlengkap','gol.golongandarah', 'apd.tglmasuk','ru1.namaruangan as ruanganasal','apd.tglregistrasi',
+                DB::raw("CASE 
+                WHEN pp.iscito is null or pp.iscito = false THEN
+                    false
+                ELSE
+                    pp.iscito 
+                END
+                as cito,'' AS expertise
                 "))
             ->where('apd.kdprofile', $idProfile)
             ->where('ru.objectdepartemenfk',$dataruangan[0]->objectdepartemenfk)
