@@ -1378,6 +1378,102 @@ class MainController extends ApiController
 
         return $ratarata;
     }
+    public static function getKartuStok($tglAwal,$tglAkhir,$kdProfile)
+    {
+
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $tglAwal.' 00:00';
+        $tglAkhir =  $tglAkhir.' 23:59';
+        $ratarata = 0;
+
+        $results = DB::select(DB::raw("select a.namaproduk, a.satuanstandar, a.saldoawal, b.saldomasuk, b.saldokeluar, c.saldoakhir from
+        (
+        select ROW_NUMBER() OVER(order by pro.namaproduk) nourut, pro.namaproduk, ss.satuanstandar,
+        case when ks.status = true 
+        then ks.saldoawal - ks.jumlah else ks.saldoawal + ks.jumlah end as saldoawal
+            from kartustok_t as ks
+            inner join produk_m as pro on pro.id = ks.produkfk
+            inner join satuanstandar_m ss on ss.id = pro.objectsatuanstandarfk
+            inner join ruangan_m as ru on ru.id = ks.ruanganfk
+            inner join (
+                select pro.namaproduk, min(ks.tglkejadian) tglkejadian
+                from kartustok_t as ks
+                inner join produk_m as pro on pro.id = ks.produkfk
+                inner join ruangan_m as ru on ru.id = ks.ruanganfk
+                where ks.kdprofile = $idProfile
+                and ks.statusenabled = TRUE
+                and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+                and ru.id != 59
+                and ks.keterangan not like '%Ubah Resep%'
+                group by pro.namaproduk
+            ) as j on j.tglkejadian = ks.tglkejadian and j.namaproduk = pro.namaproduk
+            where ks.kdprofile = $idProfile
+            and ks.statusenabled = TRUE
+            and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+            and ru.id = 94
+            and ks.saldoawal >= 0
+            group by pro.namaproduk,
+            ks.status,ks.saldoawal, ks.jumlah, ks.tglkejadian, ss.satuanstandar
+            order by pro.namaproduk, ks.tglkejadian
+        ) as a
+        
+        inner join(
+        select ROW_NUMBER() OVER(order by y.namaproduk) nourut, y.namaproduk, y.satuanstandar, sum(y.saldomasuk) as saldomasuk, sum(y.saldokeluar) as saldokeluar
+        from(
+            select x.namaproduk, x.satuanstandar,
+            case when x.status = TRUE
+            then x.jumlah else 0 end as saldomasuk,
+            case when x.status = true 
+            then 0 else x.jumlah end as saldokeluar
+            from(
+                select ks.keterangan, ks.tglkejadian, pro.namaproduk, ss.satuanstandar, ks.jumlah, ks.status
+                    from kartustok_t as ks
+                    inner join produk_m as pro on pro.id = ks.produkfk
+                    inner join ruangan_m as ru on ru.id = ks.ruanganfk
+                    inner join satuanstandar_m ss on ss.id = pro.objectsatuanstandarfk
+                    where ks.kdprofile = $idProfile
+                    and ks.statusenabled = TRUE
+                    and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+                    and ru.id = 94
+                    and ks.saldoawal >= 0
+                    --group by ks.keterangan, pro.namaproduk, ks.jumlah, ks.status
+                    order by pro.namaproduk, ks.tglkejadian
+            ) as x
+        ) as y  group by y.namaproduk, y.satuanstandar
+        ) as b on a.nourut = b.nourut
+        
+        
+        inner join(
+        select ROW_NUMBER() OVER(order by pro.namaproduk) nourut, pro.namaproduk, ss.satuanstandar,
+        ks.saldoawal as saldoakhir
+            from kartustok_t as ks
+            inner join produk_m as pro on pro.id = ks.produkfk
+            inner join satuanstandar_m ss on ss.id = pro.objectsatuanstandarfk
+            inner join ruangan_m as ru on ru.id = ks.ruanganfk
+            inner join (
+                select pro.namaproduk, max(ks.tglkejadian) tglkejadian
+                from kartustok_t as ks
+                inner join produk_m as pro on pro.id = ks.produkfk
+                inner join ruangan_m as ru on ru.id = ks.ruanganfk
+                where ks.kdprofile = $idProfile
+                and ks.statusenabled = TRUE
+                and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+                and ru.id != 59
+                and ks.keterangan not like '%Ubah Resep%'
+                group by pro.namaproduk
+            ) as j on j.tglkejadian = ks.tglkejadian and j.namaproduk = pro.namaproduk
+            where ks.kdprofile = $idProfile
+            and ks.statusenabled = TRUE
+            and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+            and ru.id = 94
+            and ks.saldoawal >= 0
+            group by pro.namaproduk,ks.saldoawal, ks.tglkejadian, ss.satuanstandar
+            order by pro.namaproduk, ks.tglkejadian
+        ) as c on b.nourut = c.nourut;
+        "));
+
+        return $results;
+    }
     public function getCountPegawai(Request $request){
 
         $idProfile = (int) session("kdProfile");

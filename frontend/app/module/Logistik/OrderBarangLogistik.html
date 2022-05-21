@@ -176,13 +176,23 @@
             </div>
         </div>
 
-        <div class="grid_12">
+        <!-- <div class="grid_12">
             <div class="grid_12 borderBox">
-                <div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" k-columns="columnGrid"
+                <div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" options="columnGrid"
                     k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
                 </div>
             </div>
+        </div> -->
+
+        <div class="grid_12">
+            <div class="grid_12 borderBox">
+                <kendo-grid id="kGrid" data-source="dataGrid" k-selectable="'row'" k-sortable="'true'"  options="columnGrid"
+                    k-ng-model="dataSelected" ng-click="KlikGrids(dataSelected)">
+                </kendo-grid>
+            </div>
         </div>
+
+
         <!-- NamaKegiatan -->
         <div class="grid_12">
             <div class="grid_3">

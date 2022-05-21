@@ -2589,7 +2589,7 @@ class BendaharaPenerimaanController extends ApiController {
         (((CASE WHEN pp.hargajual IS NULL THEN	0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
                 0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN	0 ELSE	pp.jasa	END	) AS totaldibayarclosing,				
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
-                sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, sts.norec, djp.detailjenisproduk
+                sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, sts.norec, djp.detailjenisproduk, jpr.id as jenisproduk
                         
                 FROM   pasien_m ps 
                         inner join pasiendaftar_t pd on ps.id=pd.nocmfk
@@ -2605,9 +2605,10 @@ class BendaharaPenerimaanController extends ApiController {
                         LEFT JOIN pegawai_m AS pgdpjp ON pgdpjp.id = pd.objectpegawaifk
                         LEFT JOIN produk_m AS pr ON pr.id = pp.produkfk  
                         LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
-						inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
                         inner join strukclosing_t as sc on sbm.noclosingfk = sc.norec
                         inner join strukclosingkasir_t as sck on sc.norec = sck.noclosingfk
+                        inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+                        left join jenisproduk_m jpr on jpr.id = djp.objectjenisprodukfk
                         left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
                         left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
                 where pd.statusenabled = true
@@ -2620,7 +2621,7 @@ class BendaharaPenerimaanController extends ApiController {
         select sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
                      (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast) as totaldibayarclosing, 
 				ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
-        sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, sts.norec, djp.detailjenisproduk
+        sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, sts.norec, djp.detailjenisproduk, jpr.id as jenisproduk
         from strukclosingkasir_t as sck
         inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
         inner join strukbuktipenerimaan_t as sbm on sbm.noclosingfk = sc.norec
@@ -2628,8 +2629,9 @@ class BendaharaPenerimaanController extends ApiController {
         inner join strukpelayanandetail_t as spd on sp.norec = spd.nostrukfk
 		inner join strukbuktipenerimaancarabayar_t sbmcr on sbmcr.nosbmfk = sbm.norec
         inner join produk_m pr on pr.id=spd.objectprodukfk
-		inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
         inner join carabayar_m as cb on cb.id = sck.carabayarfk
+        inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+        left join jenisproduk_m jpr on jpr.id = djp.objectjenisprodukfk
         left join ruangan_m as ru on ru.id = spd.objectruanganasalfk
         left join pasiendaftar_t as pd on sp.noregistrasifk = pd.norec
         left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
@@ -2639,8 +2641,6 @@ class BendaharaPenerimaanController extends ApiController {
         where sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan'
         and sts.statusenabled = true
         and sc.noclosing IN('".implode("','",$noclosing)."')"));
-
-
        
         $jumlahpoliklinik = 0;
         $jumlahperiksajiwa = 0;
@@ -2977,6 +2977,12 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
+            else if($konten->jenisproduk == 27688){
+                $jumlahdiklat += $konten->totaldibayarclosing;
+                $voljumlahdiklat++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
             else if(($konten->idruangan == 765 && $konten->idproduk != 5007076 && $konten->isobat != 't') || ($konten->idruangan == 29 && $konten->idproduk != 5007076 && $konten->isobat != 't')){
                 $jumlahtindakanigd += $konten->totaldibayarclosing;
                 $voljumlahtindakanigd++;
@@ -2992,12 +2998,6 @@ class BendaharaPenerimaanController extends ApiController {
             else if(($konten->objectdepartemenfk != 16 && $konten->isobat == 't') || ($konten->idruangan == 94 && $konten->detailjenisproduk == 'TENAGA AHLI')){
                 $jumlahobatrajal += $konten->totaldibayarclosing;
                 $voljumlahobatrajal++;
-                $cekjumlah = $konten->namaproduk;
-            }
-
-            else if($konten->detailjenisproduk == 1299){
-                $jumlahdiklat += $konten->totaldibayarclosing;
-                $voljumlahdiklat++;
                 $cekjumlah = $konten->namaproduk;
             }
 
