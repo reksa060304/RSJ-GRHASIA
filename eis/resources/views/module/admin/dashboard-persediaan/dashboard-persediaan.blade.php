@@ -157,7 +157,8 @@
                                                             <th style="color:black">NAMA PRODUK</th>
                                                             <th style="color:black">SATUAN</th>
                                                             <th style="color:black">STOK AWAL</th>
-                                                            <th style="color:black">TERPAKAI</th>
+                                                            <th style="color:black">STOK MASUK</th>
+                                                            <th style="color:black">STOK KELUAR</th>
                                                             <th style="color:black">STOK AKHIR</th>
                                                         </tr>
                                                         </thead>
@@ -169,7 +170,8 @@
                                                                 <td >{{ $d->namaproduk }}</td>
                                                                 <td >{{ $d->satuanstandar }}</td>
                                                                 <td >{{ $d->saldoawal }}</td>
-                                                                <td >{{ $d->jumlah }}</td>
+                                                                <td >{{ $d->saldomasuk }}</td>
+                                                                <td >{{ $d->saldokeluar }}</td>
                                                                 <td >{{ $d->saldoakhir }}</td>
                                                             </tr>
                                                         @empty
