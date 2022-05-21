@@ -152,12 +152,12 @@
                         </div>
                     </md-content>
                 </md-tab>
-                <md-tab label="Laporan Kunjungan" ng-disabled="true">
+                <md-tab label="peserta pelatihan gabungan">
                     <md-content class="md-padding">
                         <div class="grid_12" style="margin-top: 10px;">
                             <div class="grid_12 borderBox">
-                                <kendo-grid id="kGrid" k-groupable="'true'" data-source="dataSourceGrid"
-                                    options="columnGrid" k-pageable="'true'" k-sortable="'true'" k-resizable="'true'"
+                                <kendo-grid id="kGrid" k-groupable="'true'" data-source="dataSourceGridGabungan"
+                                    options="columnGridGabungan" k-pageable="'true'" k-sortable="'true'" k-resizable="'true'"
                                     k-selectable="'row'" k-ng-model="dataPasienSelected"
                                     ng-click="klikGrid(dataPasienSelected)"></kendo-grid>
                             </div>

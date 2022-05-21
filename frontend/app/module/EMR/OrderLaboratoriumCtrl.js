@@ -1101,6 +1101,7 @@ define(['initialize'], function (initialize) {
 
                 }
                 $scope.loading = false
+                $scope.popUpPaket.close()
                 // $scope.batal()
             }
             function kosongkanPaket() {

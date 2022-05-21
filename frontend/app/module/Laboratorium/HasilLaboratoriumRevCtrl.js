@@ -557,6 +557,8 @@ define(['initialize'], function (initialize) {
             
 
             $scope.simpan = function () {
+                $scope.save = true;
+                $scope.isRouteLoading = true
                 var dataArray = [];
 
                 for (var i = $scope.resultGrids._data.length - 1; i >= 0; i--) {
@@ -578,7 +580,10 @@ define(['initialize'], function (initialize) {
                         "hasil": dataArray
                     }
                     medifirstService.post('laboratorium/save-hasil-lab-manual', objSave).then(function (e) {
+                        $scope.save = false;
+                        $scope.isRouteLoading = false;
                         $scope.result();
+
                     })
                 }
             }
