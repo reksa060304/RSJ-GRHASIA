@@ -1378,6 +1378,29 @@ class MainController extends ApiController
 
         return $ratarata;
     }
+    public static function getKartuStok($tglAwal,$tglAkhir,$kdProfile)
+    {
+
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $tglAwal.' 00:00';
+        $tglAkhir =  $tglAkhir.' 23:59';
+        $ratarata = 0;
+
+        $results = DB::select(DB::raw("select ks.tglkejadian::date,pro.namaproduk, ss.satuanstandar, sum(COALESCE(ks.jumlah,0.0)) + sum(coalesce(ks.saldoawal,0.0))
+        as saldoawal,
+        sum(COALESCE(ks.jumlah,0.0)) as jumlah, sum(coalesce(ks.saldoawal,0.0)) as saldoakhir
+        from kartustok_t as ks
+        inner join produk_m as pro on pro.id = ks.produkfk
+        inner join ruangan_m as ru on ru.id = ks.ruanganfk
+        inner JOIN satuanstandar_m as ss on ss.id = pro.objectsatuanstandarfk
+        left join flag_m as fg on fg.id = ks.flagfk
+        where ks.kdprofile = $idProfile
+        and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+        group by ks.tglkejadian::date,pro.namaproduk,ss.satuanstandar;
+        "));
+
+        return $results;
+    }
     public function getCountPegawai(Request $request){
 
         $idProfile = (int) session("kdProfile");

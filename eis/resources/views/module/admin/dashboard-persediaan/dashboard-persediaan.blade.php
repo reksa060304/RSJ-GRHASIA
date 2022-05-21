@@ -136,6 +136,57 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-12 col-md-12">
+                            <div class="card">
+                                <div class="panel panel-warning">
+                                    <div class="panel-heading bg-c-pink" style="color:white;">
+                                        Stok Obat
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row" style="padding:10px 20px;">
+                                            <div class="col-md-12">
+                                                <div class="table-responsive" >
+                                                @php
+                                                    $stokobat =  App\Http\Controllers\MainController::getKartuStok(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'),'seminggu');
+                                                @endphp
+                                                    <table id="t_ObatTren" class="table  table-striped table-sm table-styling"
+                                                           style="width:100%">
+                                                        <thead class="table-default">
+                                                        <tr>
+                                                            <th style="color:black;width: 10%">NO</th>
+                                                            <th style="color:black">NAMA PRODUK</th>
+                                                            <th style="color:black">SATUAN</th>
+                                                            <th style="color:black">STOK AWAL</th>
+                                                            <th style="color:black">TERPAKAI</th>
+                                                            <th style="color:black">STOK AKHIR</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @forelse($stokobat as $i => $d)
+
+                                                            <tr>
+                                                                <td >{{ $i +1 }}</td>
+                                                                <td >{{ $d->namaproduk }}</td>
+                                                                <td >{{ $d->satuanstandar }}</td>
+                                                                <td >{{ $d->saldoawal }}</td>
+                                                                <td >{{ $d->jumlah }}</td>
+                                                                <td >{{ $d->saldoakhir }}</td>
+                                                            </tr>
+                                                        @empty
+                                                            <tr>
+                                                                <td colspan="4" style="text-align: center">Data Tidak ada</td>
+                                                            </tr>
+                                                        @endforelse
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-lg-6 col-md-12">
                             <div class="card">
                                 <div class="panel panel-danger">

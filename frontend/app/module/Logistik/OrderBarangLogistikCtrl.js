@@ -440,48 +440,149 @@ define(['initialize'], function (initialize) {
                 Kosongkan()
             }
 
-            $scope.columnGrid = [
-                {
-                    "field": "no",
-                    "title": "No",
-                    "width": "30px",
+
+
+
+            $scope.columnGrid = {
+                toolbar: ["excel"],
+                excel: {
+                    fileName: "Daftar Order Barang" + moment($scope.now).format('DD/MMM/YYYY'),
+                    allPages: true,
                 },
-                {
-                    "field": "produkfk",
-                    "title": "Kode Produk",
-                    "width": "70px",
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    var tanggal = moment($scope.now).format('DD-MMM-YYYY');
+
+                    sheet.mergedCells = ["A1:H1", "A2:H2"];
+                    sheet.name = "Order Barang";
+
+                    sheet.rows[0].cells[0].background = '#ffffff'; 
+                    sheet.rows[0].cells[0].color = '#000000';
+                    sheet.rows[0].cells[0].textAlign = 'center';
+                    sheet.rows[0].cells[1].background = '#ffffff'; 
+                    sheet.rows[0].cells[1].color = '#000000';
+                    sheet.rows[0].cells[1].textAlign = 'center'; 
+                    sheet.rows[0].cells[2].background = '#ffffff'; 
+                    sheet.rows[0].cells[2].color = '#000000';
+                    sheet.rows[0].cells[2].textAlign = 'center'; 
+                    sheet.rows[0].cells[3].background = '#ffffff'; 
+                    sheet.rows[0].cells[3].color = '#000000';
+                    sheet.rows[0].cells[3].textAlign = 'center'; 
+                    sheet.rows[0].cells[4].background = '#ffffff'; 
+                    sheet.rows[0].cells[4].color = '#000000';
+                    sheet.rows[0].cells[4].textAlign = 'center';
+                    sheet.rows[0].cells[5].background = '#ffffff'; 
+                    sheet.rows[0].cells[5].color = '#000000';
+                    sheet.rows[0].cells[5].textAlign = 'center';
+                    sheet.rows[0].cells[6].background = '#ffffff'; 
+                    sheet.rows[0].cells[6].color = '#000000';
+                    sheet.rows[0].cells[6].textAlign = 'center';
+                    sheet.rows[0].cells[7].background = '#ffffff'; 
+                    sheet.rows[0].cells[7].color = '#000000';
+                    sheet.rows[0].cells[7].textAlign = 'center';
+
+                    for (var i = 0; i < e.workbook.sheets[0].rows.length; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 0; j < $row.cells.length; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderTop"] = { color: "#000000", size: 1 };
+                            $cell["borderRight"] = { color: "#000000", size: 1 };
+                            $cell["borderBottom"] = { color: "#000000", size: 1 };
+                            $cell["borderLeft"] = { color: "#000000", size: 1 };
+                        }
+                        console.log(e.workbook.sheets[0].rows.length);
+                        console.log(e.workbook.sheets[0].rows[i].cells.length);
+                    }
+
+                    var columns = e.workbook.sheets[0].columns;
+                    delete columns[0].width;
+                    columns[0].width = 50;
+                    delete columns[1].width;
+                    columns[1].width = 150;
+                    delete columns[2].width;
+                    columns[2].width = 100;
+                    delete columns[3].width;
+                    columns[3].width = 200;
+                    delete columns[4].width;
+                    columns[4].width = 300;
+                    delete columns[5].width;
+                    columns[5].width = 100;
+                    delete columns[6].width;
+                    columns[6].width = 100;
+                    delete columns[7].width;
+                    columns[7].width = 100;
+
+                    // var sheetbor = spreadsheet.activeSheet();
+                    // sheetbor.range("A10:H70").border = "black";
+
+                    var myHeaders = [{
+                        value: "Order Barang " + tanggal,
+                        fontSize: 14,
+                        fontWeight: 500,
+                        textAlign: "center",
+                        backgroundUrl: "#fffff"
+                    }];
+
+                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 30 });
+
+                    var myHeaders = [{
+                        value: " ",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        textAlign: "center",
+                        backgroundUrl: "#fffff"
+                    }];
+
+                    sheet.rows.splice(1, 0, { cells: myHeaders, type: "header", height: 15 });
                 },
-                {
-                    "field": "kdproduk",
-                    "title": "Kode Sirs",
-                    "width": "70px",
-                },
-                {
-                    "field": "asalproduk",
-                    "title": "Asal Produk",
-                    "width": "100px",
-                },
-                {
-                    "field": "namaproduk",
-                    "title": "Produk",
-                    "width": "200px",
-                },
-                {
-                    "field": "satuanstandar",
-                    "title": "Satuan",
-                    "width": "80px",
-                },
-                {
-                    "field": "jmlstok",
-                    "title": "Stok",
-                    "width": "70px",
-                },
-                {
-                    "field": "jumlah",
-                    "title": "Qty",
-                    "width": "70px",
-                }
-            ];
+
+                selectable: 'row',
+                scrollable: true,
+                pageable: true,  
+                columns: [
+                    {
+                        "field": "no",
+                        "title": "No",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "produkfk",
+                        "title": "Kode Produk",
+                        "width": "70px",
+                    },
+                    {
+                        "field": "kdproduk",
+                        "title": "Kode Sirs",
+                        "width": "70px",
+                    },
+                    {
+                        "field": "asalproduk",
+                        "title": "Asal Produk",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "namaproduk",
+                        "title": "Produk",
+                        "width": "200px",
+                    },
+                    {
+                        "field": "satuanstandar",
+                        "title": "Satuan",
+                        "width": "80px",
+                    },
+                    {
+                        "field": "jmlstok",
+                        "title": "Stok",
+                        "width": "70px",
+                    },
+                    {
+                        "field": "jumlah",
+                        "title": "Qty",
+                        "width": "70px",
+                    }
+                ]
+
+            };
 
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
