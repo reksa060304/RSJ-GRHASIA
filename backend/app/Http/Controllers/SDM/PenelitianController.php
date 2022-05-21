@@ -107,7 +107,7 @@ class PenelitianController extends ApiController {
             pe.namalengkap,
             sdpd.norec AS norec_eks,
             sdpd.nomorhp,
-            sdpd.noregistrasifk AS norec_pe, sdpd.email 
+            sdpd.noregistrasifk AS norec_pe, sdpd.email ,sdpd.image
             FROM
             sdm_pesertadidik_t sdpd 
             INNER JOIN sdm_penelitianeksternal_t sdmp on sdmp.norec=sdpd.noregistrasifk

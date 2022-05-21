@@ -1,3 +1,11 @@
+<style>
+    .center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    }
+</style>
 <div>
     <div class="panel panel-default container_12" style="background-color:transparant">
         <div class="panel-heading"><label class='title' c-label item="item" c-label-text="Kegiatan Diklat External"
@@ -59,10 +67,22 @@
                                                         ng-model="item.email" ng-disabled="peneliti" />
                                                 </div>
                                             </div>
+                                            <div class="grid_6">
+                                                <div class="grid_3">
+                                                    <label c-label item="item">Unggah File</label>
+                                                    <br>
+                                                </div>
+                                                <form class="grid_9" method="post" enctype="multipart/form-data"
+                                                    id="coba">
+                                                    <!-- <input type="file" name="files[]" multiple /> -->
+                                                    <div class="grid_12">
+                                                        <input type="file" name="image"  id="files" class="mySip" />
+                                                        <!-- <input type="submit" value="Upload File" name="submit" /> -->
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
-                                        <div class="grid_12">
-                                            
-                                        </div>
+                                      
                                         <div class="grid_12" style="margin-top:10px">
                                             <div class="grid_4"></div>
                                             

@@ -1208,7 +1208,7 @@ class SumberDayaManusiaController extends ApiController {
             if(!empty($uploadedFileSip)){
                 $extensionSip = $uploadedFileSip->getClientOriginalExtension();
                 $filenameSip = 'SIP-'.$pegawai->namalengkap.'.'.$extensionSip;
-
+                
 //                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameSip,file_get_contents($request->file('filesip')));
                 $dataSaveSipStr->namafilesip = $filenameSip;
             }
@@ -2074,6 +2074,8 @@ class SumberDayaManusiaController extends ApiController {
         
         $data = '';
         try{
+            
+        // var_dump($request->file('image'));
             $TP = new PesertaDidik();
             $TP->kdprofile = $kdProfile;
             $TP->norec = $TP->generateNewId();
@@ -2086,8 +2088,8 @@ class SumberDayaManusiaController extends ApiController {
             $TP->objectruanganlastfk = $request['objectruanganlastfk'];
             $TP->objectpegawailastfk = $request['objectpegawailastfk'];
             $TP->email = $request['email'];
+            $TP->image = $request['image'];
             $TP->save();
-            
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -2206,6 +2208,7 @@ class SumberDayaManusiaController extends ApiController {
             $TP->nim = $request['nim'];
             $TP->nomorhp = $request['nomorhp'];
             $TP->email = $request['email'];
+            $TP->image = $request['image'];
             $TP->save();
             
             $transStatus = 'true';
@@ -2232,6 +2235,14 @@ class SumberDayaManusiaController extends ApiController {
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+        
+        // $result = array(
+        //         'status' => 200,
+        //         // 'message'  => $transMessage,
+        //         'as' => 'asepic',
+        //     );
+        
+        // return $this->respond($result);
 
     }
 
