@@ -25,12 +25,10 @@ define(['initialize'], function (initialize) {
                     "&tglAkhir=" + tglAkhir
                 ).then(function (data) {
                     var data = data.data
-                    for (var i = 0; i < data.data.length; i++) {
-                        data.data[i].no = i + 1
-                        var tanggal = $scope.now;
-                        var tanggalLahir = new Date(data.data[i].tglLahir);
-                        var umurzz = DateHelper.CountAge(tanggalLahir, tanggal);
-                        data.data[i].umurzz = umurzz.year + ' thn ' + umurzz.month + ' bln ' + umurzz.day + ' hari'
+                    for(var i = 0; i < data.data.length; i++){
+                        data.data[i].koders = '30';
+                        data.data[i].kdprov = '0002';
+                        data.data[i].kabkota = 'Kab. Sleman';
                     }
                     $scope.isRouteLoading = false;
                     $scope.sourceLaporan = new kendo.data.DataSource({
@@ -96,10 +94,33 @@ define(['initialize'], function (initialize) {
                     //     width: "40px"
                     // },
                     {
+                        field: "koders",
+                        title: "Kode RS",
+                        width: "80px",
+                        headerAttributes: {
+                            style: "text-align : center"
+                        },
+                    },
+                    {
+                        field: "kdprov",
+                        title: "Kode Propinsi",
+                        width: "80px",
+                        headerAttributes: {
+                            style: "text-align : center"
+                        },
+                    },
+                    {
+                        field: "kabkota",
+                        title: "Kab / Kota",
+                        width: "80px",
+                        headerAttributes: {
+                            style: "text-align : center"
+                        },
+                    },
+                    {
                         field: "tahun",
                         title: "Tahun",
                         width: "120px",
-                        template: "<span class='style-center'>#: jenis_spesialisasi #</span>",
                         headerAttributes: {
                             style: "text-align : center"
                         },
@@ -115,7 +136,7 @@ define(['initialize'], function (initialize) {
 
                     },
                     {
-                        field: "BOR",
+                        field: "bor",
                         title: "BOR",
                         width: "80px",
                         headerAttributes: {
@@ -123,7 +144,7 @@ define(['initialize'], function (initialize) {
                         },
                     },
                     {
-                        field: "LOS",
+                        field: "alos",
                         title: "LOS",
                         width: "80px",
                         headerAttributes: {
@@ -131,7 +152,7 @@ define(['initialize'], function (initialize) {
                         },
                     },
                     {
-                        field: "BTO",
+                        field: "bto",
                         title: "BTO",
                         width: "80px",
                         headerAttributes: {
@@ -139,7 +160,7 @@ define(['initialize'], function (initialize) {
                         },
                     },
                     {
-                        field: "TOI",
+                        field: "toi",
                         title: "TOI",
                         width: "80px",
                         headerAttributes: {
@@ -147,7 +168,7 @@ define(['initialize'], function (initialize) {
                         },
                     },
                     {
-                        field: "NDR",
+                        field: "ndr",
                         title: "NDR",
                         width: "80px",
                         headerAttributes: {
@@ -155,7 +176,7 @@ define(['initialize'], function (initialize) {
                         },
                     },
                     {
-                        field: "GDR",
+                        field: "gdr",
                         title: "GDR",
                         width: "80px",
                         headerAttributes: {
@@ -163,7 +184,7 @@ define(['initialize'], function (initialize) {
                         },
                     },
                     {
-                        field: "ratarataperhari",
+                        field: "hasil",
                         title: "Rata-rata Kunjungan/Hari",
                         width: "120px",
                         headerAttributes: {
