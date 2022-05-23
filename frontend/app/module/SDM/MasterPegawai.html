@@ -1205,6 +1205,72 @@
 						</div>
 					</md-content>
 				</md-tab>
+
+				<md-tab label="Hukuman disiplin">
+					<md-content class="md-padding">
+						<div class="grid_6">
+							<kendo-grid k-data-source="gridKomponenGajiAdd" k-pageable="true" k-ng-model="dataKomponenGajiAdd"
+								k-selectable="'row'" options="opsiGridKomponenGajiAdd" ng-click="klAdd(dataKomponenGajiAdd)"
+								style="font-size: small;"></kendo-grid>
+						</div>
+
+						<div kendo-window="popUpKomponenGajiAdd" k-title="'Data Komponen Gaji'" k-width="850" k-height="350"
+							k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+							<div class="panel panel-default container_12" style="padding: 0px 10px;">
+								<div class="grid_6">
+									<div class="grid_12">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Jenis Hukuman"></label>
+										</div>
+										<div class="grid_12">
+											<input kendo-combo-box k-ng-model="itemKomponenAdd.komponen"
+												k-data-text-field="'komponengaji'" k-data-value-field="'id'" k-filter="'contains'"
+												k-auto-bind="false" k-data-source="ListKomponenAdd" />
+										</div>
+									</div>
+									
+									<div class="grid_6">
+										
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Masa Berlaku Dari"></label>
+										</div>
+										<div class="grid_12">
+											<input style="width: 100%" kendo-date-picker k-ng-model="itemKomponenAdd.tglAktif"
+												k-format="'yyyy-MM-dd'" />
+										</div>
+									</div>
+									<div class="grid_6">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Sampai"></label>
+										</div>
+										<div class="grid_12">
+											<input style="width: 100%" kendo-date-picker k-ng-model="itemKomponenAdd.tglAktif"
+												k-format="'yyyy-MM-dd'" />
+										</div>
+									</div>
+									<div class="grid_6">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Pejabat menetapkan"></label>
+										</div>
+										<div class="grid_12">
+											<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+												ng-model="itemKomponenAdd.noSK" />
+										</div>
+									</div>
+								</div>
+								<div class="grid_12">
+									<div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+										<button class="k-button k-button-icontext k-primary k-grid-update"
+											ng-click="tambahKomponenAdd()"><span class="k-icon k-update"></span>Simpan</button>
+										<button class="k-button  k-button-icontext" ng-click="batalKomponenAdd()"><span
+												class="k-icon k-cancel"></span>Batal</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</md-content>
+				</md-tab>
 				
 				<!-- <md-tab label="Login User">
 					<md-content class="md-padding">

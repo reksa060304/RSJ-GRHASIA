@@ -1951,4 +1951,23 @@ class ReportController extends ApiController{
          return $response;
     
     }
+    public function nametagDiklat(Request $request)
+    {
+        $kdProfile = 30;       
+        $norec = $request['norec'];
+        $pageWidth = 950;
+        $data = \DB::table('sdm_pesertadidik_t as sdmp')->where('sdmp.noregistrasifk',$norec)
+        ->where('sdmp.kdprofile',$kdProfile)
+        ->join('sdm_penelitianeksternal_t as sdm','sdm.norec','=','sdmp.noregistrasifk')
+        ->join('detailjenisproduk_m as djp','djp.id','=','sdm.objectdetailjenisprodukfk')
+        // ->join('jeniskelamin_m as jk','jk.id','=','sdm.jeniskelaminfk')
+        // ->join('sdm')
+        ->select('sdmp.norec','sdmp.nama','sdmp.image','djp.detailjenisproduk','sdm.institusipendidikan',DB::raw('sdm.tanggalmulai::date,sdm.tanggalselesai::date'))
+        ->get();
+        // $pdf = PDF::loadview('report.diklat-nametag', compact('data','pageWidth'));
+        //        return $pdf->stream();
+
+        return view('report.diklat-nametag',compact('data','pageWidth'));
+        // return $this->respond($data);
+    }
 }

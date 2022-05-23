@@ -1,5 +1,7 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
+
     initialize.controller('MahasiswaEksternalCtrl', ['$scope', '$state', 'DateHelper', 'CacheHelper', 'MedifirstService', 'ModelItem',
         function ($scope, $state, dateHelper, cacheHelper, medifirstService, ModelItem) {
             $scope.dataVOloaded = true;
@@ -77,6 +79,12 @@ define(['initialize'], function (initialize) {
                             toastr.error("Informasi, Data Sudah Diverifikasi !")
                         }
                     }
+                    for (let i = 0; i < dat.me.length; i++) {
+                        const element = dat.me[i];
+                        element.images = 'data:image;base64,' + dat.me[i].image;
+                        
+                    }
+                    
                     $scope.dataSourceGridDiagnosapasien = new kendo.data.DataSource({
                         data: datas.data.me,
                         // group: $scope.group,
@@ -91,7 +99,7 @@ define(['initialize'], function (initialize) {
 
 
             }
-
+            var imageData = 
             $scope.columnGridDiagnosapasien = {
                 toolbar: ["excel", ],
                 excel: {
@@ -142,12 +150,12 @@ define(['initialize'], function (initialize) {
                     {
                         field: "nim",
                         title: "NIM",
-                        width: "100px",
+                        width: "70px",
                     },
                     {
                         field: "jeniskelamin",
                         title: "Gender",
-                        width: "100px",
+                        width: "70px",
                     },
                     {
                         field: "namalengkap",
@@ -166,9 +174,10 @@ define(['initialize'], function (initialize) {
 
                     },
                     {
-                        field: "count",
+                        field: "image",
                         title: "Image",
                         width: "50px",
+                        template: '<img src=" #: images #" width="70" height="90" class="center">'
                     },
                     
                     
@@ -181,9 +190,16 @@ define(['initialize'], function (initialize) {
                 sortable: true,
                 pageable: true,
             }
-            $scope.klikGrid = function (dataSelected) {
+                $scope.klikGrid = function (dataSelected) {
                     $scope.isRouteLoading =true
-                  var noregistrasi = "norec=" + dataSelected.norec_eks;
+                    var noregistrasi = "";
+                    if (dataSelected != undefined) {
+                        noregistrasi = "norec=" + dataSelected.norec_eks;
+                       
+                    }else{
+                         $scope.isRouteLoading = false
+                         return
+                    }
 
                 medifirstService.get("sdm/pendidikan/get-detail-pdruangan?" + noregistrasi, true).then(function (datas) {
                     var dat = datas.data.nor
@@ -196,6 +212,7 @@ define(['initialize'], function (initialize) {
                     $scope.norec_maeks = dat[0].norec_eks;
                     $scope.item.email = dat[0].email;
                     $scope.isRouteLoading=false
+                    console.log(dataSelected);
                 });
 
             }
@@ -230,7 +247,6 @@ define(['initialize'], function (initialize) {
                         $scope.item.tanggalMulai = datas.tanggalmulai;
                         $scope.item.tanggalSelesai = datas.tanggalselesai;
 
-
                     })
 
                 }
@@ -257,61 +273,222 @@ define(['initialize'], function (initialize) {
             
             
             $scope.tambahMhs = function () {
+                // var base64String = "";
+                const formData = new FormData()
+                const image = document.querySelectorAll('[type=file]')[0].files[0]
                 $scope.isRouteLoading = true;
-                //bikin if untuk ruangan dan pegawai
+                 //bikin if untuk ruangan dan pegawai
                 var ruangan = null
                 var pegawai = null
-            
-                
-                var data = {
-                    "norec": false,
-                    "noregistrasifk": $state.params.norec,
-                    "nama": $scope.item.namapeneliti,
-                    "nim": $scope.item.nim,
-                    "nomorhp": $scope.item.telp,
-                    "jeniskelaminfk": $scope.item.jeniskelamin.id,
-                    "objectruanganlastfk": ruangan,
-                    "objectpegawailastfk": pegawai,
-                    "email": $scope.item.email,
-                };
-                if ($scope.norec < $scope.kendo + 1) {
-                    window.messageContainer.error("Data tidak berhasil disimpan Quota Peserta sudah Terpenuhi.");
-                    $scope.isRouteLoading = false;
-                    $scope.item = {};
-                    return;
-                }
-                medifirstService.post('sdm/pendidikan/save-pesertadidik', data).then(function (e) {
-                    $scope.item = {};
-                    // $state.go('DaftarPenelitianEksternal')
-                    $scope.isRouteLoading = false;
-                    loadDataCombo();
-                })
+                console.log(image);
+                if (image == undefined) {
+                    var data = {
+                        "norec": false,
+                        "noregistrasifk": $state.params.norec,
+                        "nama": $scope.item.namapeneliti,
+                        "nim": $scope.item.nim,
+                        "nomorhp": $scope.item.telp,
+                        "jeniskelaminfk": $scope.item.jeniskelamin.id,
+                        "objectruanganlastfk": ruangan,
+                        "objectpegawailastfk": pegawai,
+                        "email": $scope.item.email,
+                        "image": "noimage",
+                    };
+                    if ($scope.norec < $scope.kendo + 1) {
 
+                        window.messageContainer.error("Data tidak berhasil disimpan Quota Peserta sudah Terpenuhi.");
+                        $scope.item = {};
+                        return;
+                    }
+                    medifirstService.post('sdm/pendidikan/save-pesertadidik', data).then(function (e) {
+                        $scope.item = {};
+                        // $state.go('DaftarPenelitianEksternal')
+                        $scope.isRouteLoading = false;
+                        loadDataCombo();
+                    })
+                }
+                else{
+                    var reader = new FileReader();
+                    console.log("next");
+                    reader.onload = function () {
+                        $scope.base64String = reader.result.replace("data:", "")
+                            .replace(/^.+,/, "");
+                        console.log($scope.base64String);
+                        // $scope.image = base64String
+                    
+                        var data = {
+                            "norec": false,
+                            "noregistrasifk": $state.params.norec,
+                            "nama": $scope.item.namapeneliti,
+                            "nim": $scope.item.nim,
+                            "nomorhp": $scope.item.telp,
+                            "jeniskelaminfk": $scope.item.jeniskelamin.id,
+                            "objectruanganlastfk": ruangan,
+                            "objectpegawailastfk": pegawai,
+                            "email": $scope.item.email,
+                            "image": $scope.base64String,
+                        };
+                        if ($scope.norec < $scope.kendo + 1) {
+                            
+                            window.messageContainer.error("Data tidak berhasil disimpan Quota Peserta sudah Terpenuhi.");
+                            $scope.item = {};
+                            return;
+                        }
+                        console.log($scope.base64String);
+                        medifirstService.post('sdm/pendidikan/save-pesertadidik', data).then(function (e) {
+                            $scope.item = {};
+                            // $state.go('DaftarPenelitianEksternal')
+                            $scope.isRouteLoading = false;
+                            loadDataCombo();
+                        })
+                    }
+                    reader.readAsDataURL(image)
+                    console.log(image);
+                }
+                // formData.append('norec', false)
+                // formData.append('noregistrasifk', $state.params.norec)
+                // formData.append('nama', $scope.item.namapeneliti)
+                // formData.append('nim', $scope.item.nim)
+                // formData.append('nomorhp', $scope.item.telp)
+                // formData.append('jeniskelaminfk', $scope.item.jeniskelamin.id)
+                // formData.append('objectruanganlastfk', ruangan)
+                // formData.append('objectpegawailastfk', pegawai)
+                // formData.append('email', $scope.item.email)
+                // formData.append('image', base64String)
+
+                
+                // var arr = document.cookie.split(';')
+                // var authorization;
+                // for (var i = 0; i < arr.length; i++) {
+                //     var element = arr[i].split('=');
+                //     if (element[0].indexOf('authorization') > 0) {
+                //         authorization = element[1];
+                //     }
+                // }
+                
+                // fetch(url, {
+                //     method: 'POST',
+                //     body: formData,
+                //     headers: {
+                //         'X-AUTH-TOKEN': authorization
+                //     }
+                // }).then(response => {
+                //     // console.log(response)
+                //         $scope.isRouteLoading = false
+                //     if (response.status == 201)
+                //         toastr.info('Sukses');
+                //     else
+                //         toastr.info('Simpan Gagal');
+                // })
             }
 
             $scope.updated = function () {
+                const formData = new FormData()
                 $scope.isRouteLoading = true;
                 //bikin if untuk ruangan dan pegawai
                 var ruangan = null
                 var pegawai = null
-                var NOREC = $scope.dataSelected.norec_eks
-                var data = {
-                    "norec": NOREC,
-                    "noregistrasifk": $state.params.norec,
-                    "nama": $scope.item.namapeneliti,
-                    "nim": $scope.item.nim,
-                    "nomorhp": $scope.item.telp,
-                    "jeniskelaminfk": $scope.item.jeniskelamin.id,
-                    "objectruanganlastfk": ruangan,
-                    "objectpegawailastfk": pegawai,
-                    "email": $scope.item.email
+                // var NOREC = $scope.dataSelected.norec_eks
+                const image = document.querySelectorAll('[type=file]')[0].files[0]
+                console.log(image);
+                
+                if (image == undefined) {
+                    var data = {
+                        "norec": $scope.dataSelected.norec_eks,
+                        "noregistrasifk": $state.params.norec,
+                        "nama": $scope.item.namapeneliti,
+                        "nim": $scope.item.nim,
+                        "nomorhp": $scope.item.telp,
+                        "jeniskelaminfk": $scope.item.jeniskelamin.id,
+                        "objectruanganlastfk": ruangan,
+                        "objectpegawailastfk": pegawai,
+                        "email": $scope.item.email,
+                        "image": "noimage"
+                    }
+                    medifirstService.post('sdm/pendidikan/update-pesertadidik', data).then(function (e) {
+                        $scope.item = {};
+                        // $state.go('DaftarPenelitianEksternal')
+                        $scope.isRouteLoading = false;
+                        loadDataCombo();
+                    })
+                } 
+                else {
+                    var reader = new FileReader();
+                    console.log("next");
+                    reader.onload = function () {
+                        $scope.base64String = reader.result.replace("data:", "")
+                            .replace(/^.+,/, "");
+                        console.log($scope.base64String);
+                        // $scope.image = base64String
+
+                        var data = {
+                            "norec": $scope.dataSelected.norec_eks,
+                            "noregistrasifk": $state.params.norec,
+                            "nama": $scope.item.namapeneliti,
+                            "nim": $scope.item.nim,
+                            "nomorhp": $scope.item.telp,
+                            "jeniskelaminfk": $scope.item.jeniskelamin.id,
+                            "objectruanganlastfk": ruangan,
+                            "objectpegawailastfk": pegawai,
+                            "email": $scope.item.email,
+                            "image": $scope.base64String
+                        }
+                        medifirstService.post('sdm/pendidikan/update-pesertadidik', data).then(function (e) {
+                            $scope.item = {};
+                            // $state.go('DaftarPenelitianEksternal')
+                            $scope.isRouteLoading = false;
+                            loadDataCombo();
+                        })
+                    }
+                    reader.readAsDataURL(image)
+                    console.log(image);
                 }
-                medifirstService.post('sdm/pendidikan/update-pesertadidik', data).then(function (e) {
-                    $scope.item = {};
-                    // $state.go('DaftarPenelitianEksternal')
-                    $scope.isRouteLoading = false;
-                    loadDataCombo();
-                })
+                // reader.onload = function () {
+                //     $scope.base64String = reader.result.replace("data:", "")
+                //         .replace(/^.+,/, "");
+                //     console.log($scope.base64String);
+                //     // $scope.image = base64String
+
+                //     var data = {
+                //         "norec": NOREC,
+                //         "noregistrasifk": $state.params.norec,
+                //         "nama": $scope.item.namapeneliti,
+                //         "nim": $scope.item.nim,
+                //         "nomorhp": $scope.item.telp,
+                //         "jeniskelaminfk": $scope.item.jeniskelamin.id,
+                //         "objectruanganlastfk": ruangan,
+                //         "objectpegawailastfk": pegawai,
+                //         "email": $scope.item.email,
+                //         "image": $scope.base64String
+                //     }
+                //     medifirstService.post('sdm/pendidikan/update-pesertadidik', data).then(function (e) {
+                //         $scope.item = {};
+                //         // $state.go('DaftarPenelitianEksternal')
+                //         $scope.isRouteLoading = false;
+                //         loadDataCombo();
+                //     })
+                // }
+                // reader.readAsDataURL(image)
+                // console.log(image);
+                
+                // var NOREC = $scope.dataSelected.norec_eks
+                // var data = {
+                //     "norec": NOREC,
+                //     "noregistrasifk": $state.params.norec,
+                //     "nama": $scope.item.namapeneliti,
+                //     "nim": $scope.item.nim,
+                //     "nomorhp": $scope.item.telp,
+                //     "jeniskelaminfk": $scope.item.jeniskelamin.id,
+                //     "objectruanganlastfk": ruangan,
+                //     "objectpegawailastfk": pegawai,
+                //     "email": $scope.item.email
+                // }
+                // medifirstService.post('sdm/pendidikan/update-pesertadidik', data).then(function (e) {
+                //     $scope.item = {};
+                //     // $state.go('DaftarPenelitianEksternal')
+                //     $scope.isRouteLoading = false;
+                //     loadDataCombo();
+                // })
 
             }
             //tambah ruangan

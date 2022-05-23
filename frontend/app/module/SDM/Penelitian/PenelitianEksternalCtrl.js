@@ -266,6 +266,18 @@ define(['initialize'], function(initialize) {
                 } else{
                     $scope.tglregistrasi = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 }
+                var judulpenelitian = "";
+                var namapendamping = "";
+                var namapengawas = "";
+                if ($scope.item.judulpenelitian != undefined) {
+                    judulpenelitian = $scope.item.judulpenelitian
+                }
+                if ($scope.item.namapendamping != undefined) {
+                    namapendamping = $scope.item.namapendamping
+                }
+                if ($scope.item.namapengawas != undefined) {
+                    namapengawas = $scope.item.namapengawas
+                }
 				var data = {
 					"norec_kpe":norec_kpe,
 					"namauser": $scope.item.namauser,
@@ -282,9 +294,9 @@ define(['initialize'], function(initialize) {
                     "tanggalmulai": tanggalmulai,
                     "tanggalselesai": tanggalselesai,
                     "hargasatuan": $scope.item.hargasatuan,
-                    "judulpenelitian": $scope.item.judulpenelitian,
-                    "namapendamping": $scope.item.namapendamping,
-                    "namapengawas": $scope.item.namapengawas,
+                    "judulpenelitian": judulpenelitian,
+                    "namapendamping": namapendamping,
+                    "namapengawas": namapengawas,
 				};	
 
 				var objSave = {

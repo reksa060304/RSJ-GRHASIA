@@ -1,5 +1,7 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
+
     initialize.controller('DaftarPenelitianEksternalCtrl', ['$scope', '$state', 'DateHelper', 'CacheHelper', 'MedifirstService', 'ModelItem',
         function ($scope, $state, dateHelper, cacheHelper, medifirstService, ModelItem) {
             $scope.item = {};
@@ -257,6 +259,20 @@ define(['initialize'], function (initialize) {
                             "width": "50px",
                             "template": "<span class='style-center'>#: nosbmlastfk != null || nosbklastfk != null  ? 'Lunas': 'Belum Bayar' #</span>"
                         },
+                        {
+                            'command': 
+                            [
+                                {
+                                text: "nametag",
+                                click: cetaknametag,
+                                }
+                            ],
+                            "width": 100
+
+                        },
+                    
+                    
+
                     ],
                     
                 }
@@ -428,6 +444,16 @@ define(['initialize'], function (initialize) {
                     GetData();
                     $scope.isRouteLoading = false
                 })
+            }
+            function cetaknametag(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                var datasend = {
+                    "norec": dataItem.norec
+                }
+                // return
+                window.open(baseTransaksi + "report/diklat-nametag?norec="+ dataItem.norec);
+               
             }
         }
     ]);
