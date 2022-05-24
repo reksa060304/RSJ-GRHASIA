@@ -17543,5 +17543,115 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FungsionalIndependenceMeasurement",
+    "url": "/FungsionalIndependenceMeasurement",
+    "templateurl": "module/EMR/FungsionalIndependenceMeasurement.html",
+    "controller": "FungsionalIndependenceMeasurementCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.SuratKeteranganPemeriksaanKesehatanJiwa",
+    "url": "/SuratKeteranganPemeriksaanKesehatanJiwa",
+    "templateurl": "module/EMR/SuratKeteranganPemeriksaanKesehatanJiwa.html",
+    "controller": "SuratKeteranganPemeriksaanKesehatanJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.SuratKeteranganPemeriksaanNapza",
+    "url": "/SuratKeteranganPemeriksaanNapza",
+    "templateurl": "module/EMR/SuratKeteranganPemeriksaanNapza.html",
+    "controller": "SuratKeteranganPemeriksaanNapzaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.SuratKeteranganDokter",
+    "url": "/SuratKeteranganDokter",
+    "templateurl": "module/EMR/SuratKeteranganDokter.html",
+    "controller": "SuratKeteranganDokterCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.HPPCFIT",
+    "url": "/HPPCFIT",
+    "templateurl": "module/EMR/HPPCFIT.html",
+    "controller": "HPPCFITCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
