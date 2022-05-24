@@ -1064,6 +1064,8 @@ define(['initialize'], function (initialize) {
                     "details" :  dataPost,
                 }
 
+                console.log(itemsave);
+
                 var jsonVansLab = {
                     "noorder": $scope.item.noOrder,                    
                     "iddokterverif": $scope.item.dokterVerif.id,

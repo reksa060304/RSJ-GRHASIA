@@ -739,6 +739,93 @@ class LaporanRekamMedisController extends   ApiController
         );
         return $this->respond($result);
     }
+    public function getDataRL13TempatTidur(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['tglAwal'];  
+
+        $main = array("Penyakit Dalam", "Kesehatan Anak", "Obstetri", "Ginekologi", "Bedah", "Bedah Ortopedhi", "Bedah Saraf", "Luka Bakar", "Saraf", "Jiwa", "Psikologi", "Penatalaksanaan Penyalahgunaan NAPZA", "THT", "Mata", "Kulit dan Kelamin", "Kardiologi", "Paru-paru", "Geriatri", "Radioterapi", "Kedokteran Nuklir", "Kusta", "Rehabilitasi Medik", "Isolasi", "ICU", "ICCU", "NICU / PICU", "Umum", "Gigi & Mulut", "Pelayanan Rawat Darurat", "Perinatologi/Bayi");
+        
+        $jumlahperkelas = DB::select(DB::raw("select extract(year from x.tanggal::date) as year, sum(x.kelasvip) jumlahkelasvip, sum(x.kelassatu) jumlahkelassatu, sum(x.kelasdua) jumlahkelasdua, sum(x.kelastiga) jumlahkelastiga, sum(x.kelaskhusus) jumlahkelaskhusus, sum(x.kelasvip) + sum(x.kelassatu) + sum(x.kelasdua) + sum(x.kelastiga) + sum(x.kelaskhusus) totaltt from(
+            select '$tglAwal-01' as tanggal,
+            case when ks.id = 4 then sum(rm.jumlah_tt) else 0 end as kelasvip,
+            case when ks.id = 3 then sum(rm.jumlah_tt) else 0 end as kelassatu,
+            case when ks.id = 2 then sum(rm.jumlah_tt) else 0 end as kelasdua,
+            case when ks.id = 1 then sum(rm.jumlah_tt) else 0 end as kelastiga,
+            case when ks.id = 6 then sum(rm.jumlah_tt) else 0 end as kelaskhusus
+                from riwayatkamar_m rm
+            inner join ruangan_m ru on ru.id = rm.objectruanganfk
+            inner join kamar_m km on km.id = rm.objectkamarfk
+            inner join kelas_m ks on ks.id = rm.objectkelasfk
+            inner join(
+                select objectruanganfk,objectkamarfk,max(tanggalawal) as tanggal 
+                from riwayatkamar_m 
+                where 
+                '$tglAwal-01 23:59:59' BETWEEN tanggalawal and COALESCE(tanggalakhir,'$tglAwal-01 23:59:59')
+                group by objectruanganfk,objectkamarfk
+            ) as x	
+            on rm.objectruanganfk=x.objectruanganfk 
+            and rm.objectkamarfk=x.objectkamarfk 
+            and rm.tanggalawal = x.tanggal
+            and ks.id in (1, 2, 3, 4, 6)
+            where rm.kdprofile = $idProfile 
+            and rm.statusenabled = true
+            group by ks.id) as x group by extract(year from x.tanggal::date)"));
+
+        $currentmain = "Larasatizka";
+
+        $jumlahtt = 0;
+        $kelasvvip = 0;
+        $kelasvip = 0;
+        $kelassatu = 0; 
+        $kelasdua = 0; 
+        $kelastiga = 0; 
+        $kelaskhusus = 0; 
+
+        foreach($main as $row){
+            $jumlahtt = 0;
+            $kelasvvip = 0;
+            $kelasvip = 0;
+            $kelassatu = 0; 
+            $kelasdua = 0; 
+            $kelastiga = 0; 
+            $kelaskhusus = 0;
+            if($row != $currentmain){
+                foreach($jumlahperkelas as $jml){
+                    $year = $jml->year;
+                    if($row == "Jiwa"){
+                        $jumlahtt = $jml->totaltt;
+                        $kelasvip = $jml->jumlahkelasvip;
+                        $kelassatu = $jml->jumlahkelassatu; 
+                        $kelasdua = $jml->jumlahkelasdua; 
+                        $kelastiga = $jml->jumlahkelastiga; 
+                        $kelaskhusus = $jml->jumlahkelaskhusus;
+                    }
+                }
+
+                $data10[] = array(
+                    'pelayanan' => $row,
+                    'year' => $year,
+                    'jumlahkelasvvip' => $kelasvvip,
+                    'jumlahkelasvip' => $kelasvip,
+                    'jumlahkelassatu' => $kelassatu,
+                    'jumlahkelasdua' => $kelasdua,
+                    'jumlahkelastiga' => $kelastiga,
+                    'jumlahkelaskhusus' => $kelaskhusus,
+                    'totaltt' => $jumlahtt,
+                );
+
+
+            }
+            $currentmain = $row;
+        }
+
+        $result = array(
+            'data' => $data10,
+            'message' => 'as@cepot',
+        );
+        return $this->respond($result);
+    }
     public function getDataRL31YangRawatInap(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

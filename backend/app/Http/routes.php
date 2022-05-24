@@ -1753,6 +1753,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-combo-mapping-rl', 'Registrasi\LaporanRekamMedisController@getComboMappingRL');
 
               Route::get('registrasi/laporan/get-laporan-rl12', 'Registrasi\LaporanRekamMedisController@getDataRL31RawatInap');
+              Route::get('registrasi/laporan/get-laporan-rl13', 'Registrasi\LaporanRekamMedisController@getDataRL13TempatTidur');
               Route::get('registrasi/laporan/get-laporan-rl31','Registrasi\LaporanRekamMedisController@getDataRL31YangRawatInap');
               Route::get('registrasi/laporan/get-laporan-rl32','Registrasi\LaporanRekamMedisController@getLaporanRL32RawatDarurat');
               Route::get('registrasi/laporan/get-laporan-rl33','Registrasi\LaporanRekamMedisController@getKegiatanKesehatanGigidanMulut');

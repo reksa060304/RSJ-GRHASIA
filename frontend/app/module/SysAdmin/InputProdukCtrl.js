@@ -12,6 +12,7 @@ define(['initialize'], function (initialize) {
 
 			function load() {
 				$scope.listverifikasiAnggaran = [
+					{ "id": 0, "namaExternal": null, "namaAlias": "NULL" },
 					{ "id": 1, "namaExternal": "t", "namaAlias": "True" },
 					{ "id": 2, "namaExternal": "f", "namaAlias": "False" }
 				];
@@ -19,6 +20,12 @@ define(['initialize'], function (initialize) {
 				$scope.listStatusEnabled = [
 					{ "id": 1, "status": "t", "statusenabled": "True" },
 					{ "id": 0, "status": "f", "statusenabled": "False" }					
+				];
+
+				$scope.listBoolean = [
+					{ "id": 0, "status": null, "pilihanbool": "Null" },
+					{ "id": 1, "status": "t", "pilihanbool": "True" },
+					{ "id": 2, "status": "f", "pilihanbool": "False" }					
 				];
 				
 				if ($state.params.idx != "") {
@@ -87,13 +94,16 @@ define(['initialize'], function (initialize) {
 						$scope.item.account = { id: e.data[0].objectaccountfk, namaaccount: "" };
 						$scope.item.verifikasiAnggaran = { id: e.data[0].verifikasianggaran, namaExternal: "" };
 						$scope.item.statusProduk = { id: e.data[0].objectstatusprodukfk, statusproduk: "" };
-						$scope.item.IsARVDonasi = { id: e.data[0].isarvdonasi, namaExternal: "" };
-						$scope.item.IsNarkotika = { id: e.data[0].isnarkotika, namaExternal: "" };
-						$scope.item.IsPsikotropika = { id: e.data[0].ispsikotropika, namaExternal: "" };
-						$scope.item.IsOnkologi = { id: e.data[0].isonkologi, namaExternal: "" };
-						$scope.item.Oot = { id: e.data[0].isoot, namaExternal: "" };
-						$scope.item.IsPrekusor = { id: e.data[0].isprekusor, namaExternal: "" };
-						$scope.item.IsVaksinDonasi = { id: e.data[0].isvaksindonasi, namaExternal: "" };
+						// $scope.item.IsFornas = { id: e.data[0].isfornas, namaExternal: "" };
+						// $scope.item.IsForrs = { id: e.data[0].isforrs, namaExternal: "" };
+						// $scope.item.IsGeneric = { id: e.data[0].isgeneric, namaExternal: "" };
+						// $scope.item.IsARVDonasi = { id: e.data[0].isarvdonasi, namaExternal: "" };
+						// $scope.item.IsNarkotika = { id: e.data[0].isnarkotika, namaExternal: "" };
+						// $scope.item.IsPsikotropika = { id: e.data[0].ispsikotropika, namaExternal: "" };
+						// $scope.item.IsOnkologi = { id: e.data[0].isonkologi, namaExternal: "" };
+						// $scope.item.Oot = { id: e.data[0].isoot, namaExternal: "" };
+						// $scope.item.IsPrekusor = { id: e.data[0].isprekusor, namaExternal: "" };
+						// $scope.item.IsVaksinDonasi = { id: e.data[0].isvaksindonasi, namaExternal: "" };
 						$scope.item.produsenProduk = { id: e.data[0].objectprodusenprodukfk, namaprodusenproduk: "" };
 						$scope.item.rekanan = { id: e.data[0].objectrekananfk, namarekanan: "" };
 						$scope.item.sediaan = { id: e.data[0].objectsediaanfk, namasediaan: "" };
@@ -102,6 +112,88 @@ define(['initialize'], function (initialize) {
 						}else{
 							$scope.item.StatusEnabledT = { id: 0, status: "f", statusenabled: "False" }
 						}
+
+						if(e.data[0].isfornas == true || e.data[0].isfornas == 't'){
+							$scope.item.IsFornas = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].isfornas == false || e.data[0].isfornas == 'f'){
+							$scope.item.IsFornas = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].isfornas == null || e.data[0].isfornas == ''){
+							$scope.item.IsFornas = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+
+						if(e.data[0].isforrs == true || e.data[0].isforrs == 't'){
+							$scope.item.IsForrs = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].isforrs == false || e.data[0].isforrs == 'f'){
+							$scope.item.IsForrs = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].isforrs == null || e.data[0].isforrs == ''){
+							$scope.item.IsForrs = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+
+						if(e.data[0].isgeneric == true || e.data[0].isgeneric == 't'){
+							$scope.item.IsGeneric = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].isgeneric == false || e.data[0].isgeneric == 'f'){
+							$scope.item.IsGeneric = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].isgeneric == null || e.data[0].isgeneric == ''){
+							$scope.item.IsGeneric = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+
+						if(e.data[0].isarvdonasi == true || e.data[0].isarvdonasi == 't'){
+							$scope.item.IsARVDonasi = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].isarvdonasi == false || e.data[0].isarvdonasi == 'f'){
+							$scope.item.IsARVDonasi = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].isarvdonasi == null || e.data[0].isarvdonasi == ''){
+							$scope.item.IsARVDonasi = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+
+						if(e.data[0].isnarkotika == true || e.data[0].isnarkotika == 't'){
+							$scope.item.IsNarkotika = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].isnarkotika == false || e.data[0].isnarkotika == 'f'){
+							$scope.item.IsNarkotika = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].isnarkotika == null || e.data[0].isnarkotika == ''){
+							$scope.item.IsNarkotika = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+
+						if(e.data[0].ispsikotropika == true || e.data[0].ispsikotropika == 't'){
+							$scope.item.IsPsikotropika = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].ispsikotropika == false || e.data[0].ispsikotropika == 'f'){
+							$scope.item.IsPsikotropika = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].ispsikotropika == null || e.data[0].ispsikotropika == ''){
+							$scope.item.IsPsikotropika = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+
+						if(e.data[0].isonkologi == true || e.data[0].isonkologi == 't'){
+							$scope.item.IsOnkologi = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].isonkologi == false || e.data[0].isonkologi == 'f'){
+							$scope.item.IsOnkologi = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].isonkologi == null || e.data[0].isonkologi == ''){
+							$scope.item.IsOnkologi = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+
+						if(e.data[0].isoot == true || e.data[0].isoot == 't'){
+							$scope.item.Oot = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].isoot == false || e.data[0].isoot == 'f'){
+							$scope.item.Oot = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].isoot == null || e.data[0].isoot == ''){
+							$scope.item.Oot = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+
+						if(e.data[0].isprekusor == true || e.data[0].isprekusor == 't'){
+							$scope.item.IsPrekusor = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].isprekusor == false || e.data[0].isprekusor == 'f'){
+							$scope.item.IsPrekusor = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].isprekusor == null || e.data[0].isprekusor == ''){
+							$scope.item.IsPrekusor = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+
+						if(e.data[0].isvaksindonasi == true || e.data[0].isvaksindonasi == 't'){
+							$scope.item.IsVaksinDonasi = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].isvaksindonasi == false || e.data[0].isvaksindonasi == 'f'){
+							$scope.item.IsVaksinDonasi = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].isvaksindonasi == null || e.data[0].isvaksindonasi == ''){
+							$scope.item.IsVaksinDonasi = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+
+
 						LoadCombo()
 					})
 				} else {
@@ -442,6 +534,18 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.statusProduk != undefined) {
 					objectstatusprodukfk = $scope.item.statusProduk.id
 				}
+				var isfornas = null
+				if ($scope.item.IsFornas != undefined) {
+					isfornas = $scope.item.IsFornas.namaExternal
+				}
+				var isforrs = null
+				if ($scope.item.IsForrs != undefined) {
+					isforrs = $scope.item.IsForrs.namaExternal
+				}
+				var isgeneric = null
+				if ($scope.item.IsGeneric != undefined) {
+					isgeneric = $scope.item.IsGeneric.namaExternal
+				}
 				var isarvdonasi = null
 				if ($scope.item.IsARVDonasi != undefined) {
 					isarvdonasi = $scope.item.IsARVDonasi.namaExternal
@@ -538,6 +642,9 @@ define(['initialize'], function (initialize) {
 					"objectaccountfk": objectaccountfk,//$scope.item.account.id,
 					"verifikasianggaran": verifikasianggaran,//$scope.item.verifikasiAnggaran.id,
 					"objectstatusprodukfk": objectstatusprodukfk,//$scope.item.statusProduk.id,
+					"isfornas": isfornas,
+					"isforrs": isforrs,
+					"isgeneric": isgeneric,
 					"isarvdonasi": isarvdonasi,//$scope.item.IsVaksinDonasi.namaExternal,
 					"isnarkotika": isnarkotika,//$scope.item.IsNarkotika.namaExternal,
 					"ispsikotropika": ispsikotropika,//$scope.item.IsPsikotropika.namaExternal,
