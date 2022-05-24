@@ -3170,6 +3170,11 @@
         {
             "nameDep": "HPPCFITCtrl",
             "urlDep": "module/EMR/HPPCFITCtrl"
+        },
+        {
+            "nameDep": "RL31TempatTidurCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL31TempatTidurCtrl"
+
         }
     ]
 }

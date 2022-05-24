@@ -17653,5 +17653,25 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RL31TempatTidur",
+    "url": "/UkwxLjNUZW1wYXQgVGlkdXI=",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL31TempatTidur.html",
+    "controller": "RL31TempatTidurCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
