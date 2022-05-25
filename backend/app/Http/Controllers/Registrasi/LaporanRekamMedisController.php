@@ -966,27 +966,42 @@ class LaporanRekamMedisController extends   ApiController
                                     group by pd.tglpulang::date, cte.tglmasuk, cteruangan.namaruangan 
                                     order by pd.tglpulang::date) as x group by x.tanggalpulang, x.ruanganasal) as y group by y.ruanganasal"));
 
+                                    
+            $hidup = DB::select(DB::raw("with cte as(
+                select min(apd.tglmasuk), ru.namaruangan, pd.norec
+                FROM pasiendaftar_t as pd
+                inner join antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk
+                where pd.kdprofile = $kdProfile and pd.statusenabled = true and ru.objectdepartemenfk <> 16
+                group by ru.namaruangan, pd.norec
+                )
+                select pd.tglpulang::date as tgl, count(pd.noregistrasi) total, cte.namaruangan ruanganasal
+                            FROM pasiendaftar_t as pd
+                                        INNER JOIN ruangan_m as rum on rum.id = pd.objectruanganlastfk
+                                        inner join cte on pd.norec = cte.norec
+                            where pd.kdprofile = $kdProfile and pd.statusenabled = true
+                                        and cast(pd.tglpulang as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
+                                        and rum.objectdepartemenfk = 16
+                            and pd.tglpulang is not null
+                                        group by pd.tglpulang::date, cte.namaruangan"));
 
-            $hidup = DB::select(DB::raw("select pd.tglpulang::date as tgl, count(pm.namapasien) jumlah, ru.namaruangan as ruanganasal
-            FROM pasiendaftar_t as pd
-            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-            INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
-            where pd.kdprofile = $kdProfile and pd.statusenabled = true
-						and cast(pd.tglpulang as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
-						and ru.objectdepartemenfk = 16
-                        and pd.tglpulang is not null
-						group by pd.tglpulang::date, ru.namaruangan"));
-
-
-            $meninggal = DB::select(DB::raw("select pd.tglmeninggal::date as tgl, count(pm.namapasien) jumlah, ru.namaruangan as ruanganasal
-            FROM pasiendaftar_t as pd
-            INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
-			inner join kondisipasien_m kps on kps.id = pd.objectkondisipasienfk
-            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
-            where pd.kdprofile = $kdProfile and pd.statusenabled = true
-						and cast(pd.tglmeninggal as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
-                        and ru.objectdepartemenfk = 16
-						group by pd.tglmeninggal::date, ru.namaruangan"));
+            $meninggal = DB::select(DB::raw("with cte as(
+                select min(apd.tglmasuk), ru.namaruangan, pd.norec
+                FROM pasiendaftar_t as pd
+                inner join antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk
+                where pd.kdprofile = $kdProfile and pd.statusenabled = true and ru.objectdepartemenfk <> 16
+                group by ru.namaruangan, pd.norec
+                )
+                select pd.tglmeninggal::date as tgl, count(pd.noregistrasi) total, cte.namaruangan as ruanganasal, kps.id
+                            FROM pasiendaftar_t as pd
+                                        inner join kondisipasien_m kps on kps.id = pd.objectkondisipasienfk
+                            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+                                        inner join cte on cte.norec = pd.norec
+                            where pd.kdprofile = $kdProfile and pd.statusenabled = true
+                                        and cast(pd.tglmeninggal as date) between '$tglAwal-01-01' and '$tglAwal-12-31'
+                            and ru.objectdepartemenfk = 16
+                                        group by pd.tglmeninggal::date, cte.namaruangan, kps.id"));
 
 
             $kelas = DB::select(DB::raw("select tgl, sum(jumlah) as total, ruanganasal, objectkelasfk from (
