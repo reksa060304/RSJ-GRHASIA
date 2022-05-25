@@ -1745,7 +1745,8 @@ class RadiologiController extends ApiController
             StrukOrder::where('norec', $request['norec_so'])
                 ->where('kdprofile', $idProfile)
                 ->update([
-                    'statusorder' => 1
+                    'statusorder' => 1,
+                    'objectpegawaiorderfk' => $request['iddokterorder']
                 ]
             );
 

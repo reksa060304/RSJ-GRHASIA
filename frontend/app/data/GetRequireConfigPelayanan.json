@@ -3150,7 +3150,31 @@
         {
             "nameDep": "AsesmenMedisSpesialisSyarafCtrl",
             "urlDep": "module/EMR/AsesmenMedisSpesialisSyarafCtrl"
-        }
+        },
+        {
+            "nameDep": "FungsionalIndependenceMeasurementCtrl",
+            "urlDep": "module/EMR/FungsionalIndependenceMeasurementCtrl"
+        },
+        {
+            "nameDep": "SuratKeteranganPemeriksaanKesehatanJiwaCtrl",
+            "urlDep": "module/EMR/SuratKeteranganPemeriksaanKesehatanJiwaCtrl"
+        },
+        {
+            "nameDep": "SuratKeteranganPemeriksaanNapzaCtrl",
+            "urlDep": "module/EMR/SuratKeteranganPemeriksaanNapzaCtrl"
+        },
+        {
+            "nameDep": "SuratKeteranganDokterCtrl",
+            "urlDep": "module/EMR/SuratKeteranganDokterCtrl"
+        },
+        {
+            "nameDep": "HPPCFITCtrl",
+            "urlDep": "module/EMR/HPPCFITCtrl"
+        },
+        {
+            "nameDep": "RL31TempatTidurCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL31TempatTidurCtrl"
 
+        }
     ]
 }

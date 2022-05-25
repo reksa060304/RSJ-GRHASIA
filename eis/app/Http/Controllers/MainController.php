@@ -2671,18 +2671,22 @@ AND sp.statusenabled <> false
             $hariawal = (int) date('d', strtotime($tglAwal));
 
             foreach($tahunmonthq as $q){
+                //var_dump($jumlah);
                 if($jumlah >= 28){
                     if($hariawal > 1){
-                        $hari = $hariawal;
-                        $jumlah -= (cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($q->tahun)), date('Y', strtotime($q->tahun))) - $hari +1);
+                        $hari = (cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($q->tahun)), date('Y', strtotime($q->tahun))) - $hariawal +1);
+                        $jumlah -=  $hari;
                         $hariawal = 1;
+                        //var_dump($jumlah);
                     } else{
                         $hari = cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($q->tahun)), date('Y', strtotime($q->tahun)));
                         $jumlah -= $hari;
                         $hari = cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($q->tahun)), date('Y', strtotime($q->tahun)));
+                        //($jumlah);
                     }
                 } else{
                     $hari = $jumlah;
+                    //var_dump($jumlah);
                 }
                 //var_dump($hariawal);
                 //var_dump($q);
@@ -2705,6 +2709,12 @@ AND sp.statusenabled <> false
                     $jumlahttkalihari += $hari*$jumlahtt[0]->totalperperiode;
                     $jumlahgrandtotaltt += $jumlahtt[0]->totalperperiode;
 
+                    
+                    // var_dump($q->tahun);
+                    // var_dump($hari);
+                    // var_dump($jumlahtt[0]->totalperperiode);
+                    // var_dump($hari*$jumlahtt[0]->totalperperiode);
+                    // var_dump($hari*$jumlahtt[0]->totalperperiode);
                     
             }
             
@@ -2777,7 +2787,11 @@ AND sp.statusenabled <> false
             $jumlahhariperawatantt = $jumlahpasienawal + $jumlahpasienmasuk + $jumlahpasienpindah;
             $jumlahpulang = $jumlahpasiendipindahkan + $jumlahpasienpulang + $jumlahpasienpulangaps + $jumlahpasienpulangmelarikandiri;
 
-            //var_dump($jumlahpulang);
+            // var_dump($jumlahhariperawatantt/$jumlahpulang);
+            // var_dump($jumlahpulang);
+            // var_dump($jumlahgrandtotaltt);
+            // var_dump($jumlahttkalihari);
+            
             
             
                 if($jumlahpulang == 0){

@@ -122,6 +122,7 @@
 					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.reportDisplay" />
 				</div>
 			</div>
+
 		</div>
 	<div class="grid_12">
 		<div ng-cloak>
@@ -207,6 +208,17 @@
 
 									<div class="grid_12">
 										<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.isProdukIntern" />
+									</div>
+								</div>
+
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="isGeneric"></label>
+									</div>
+
+
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.genericProduk" k-data-text-field="'pilihanbool'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listBoolean" />
 									</div>
 								</div>
 							</div>
@@ -614,52 +626,76 @@
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.statusProduk" k-data-text-field="'statusproduk'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="liststatusProduk" />
 									</div>
 								</div>
-								<div class="grid_1">
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item" >Is Formularium Nasional</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsFornas" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+									</div>
+								</div>
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item" >Is Formularium RS</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsForrs" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+									</div>
+								</div>
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item" >Is Generic</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsGeneric" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+									</div>
+								</div>
+								<div class="grid_2">
 									<div class="grid_12">
 										<label c-label item="item" >Is ARV Donasi</label>
 									</div>
 									<div class="grid_12">
-										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsARVDonasi" k-data-text-field="'namaExternal'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsARVDonasi" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
 									</div>
 								</div>
-								<div class="grid_1">
+								<div class="grid_2">
 									<div class="grid_12">
 										<label c-label item="item" >Is Narkotika</label>
 									</div>
 									<div class="grid_12">
-										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsNarkotika" k-data-text-field="'namaExternal'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsNarkotika" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
 									</div>
 								</div>
-								<div class="grid_1">
+								<div class="grid_2">
 									<div class="grid_12">
 										<label c-label item="item" >Is Psikotropika</label>
 									</div>
 									<div class="grid_12">
-										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsPsikotropika" k-data-text-field="'namaExternal'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsPsikotropika" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
 									</div>
 								</div>
-								<div class="grid_1">
+								<div class="grid_2">
 									<div class="grid_12">
 										<label c-label item="item" >Is Onkologi</label>
 									</div>
 									<div class="grid_12">
-										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsOnkologi" k-data-text-field="'namaExternal'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsOnkologi" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
 									</div>
 								</div>
-								<div class="grid_1">
+								<div class="grid_2">
 									<div class="grid_12">
 										<label c-label item="item" >Is Oot</label>
 									</div>
 									<div class="grid_12">
-										<input style="width: 100%;" kendo-combo-box k-ng-model="item.Oot" k-data-text-field="'namaExternal'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.Oot" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
 									</div>
 								</div>
-								<div class="grid_1">
+								<div class="grid_2">
 									<div class="grid_12">
 										<label c-label item="item" >Is Prekusor</label>
 									</div>
 									<div class="grid_12">
-										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsPrekusor" k-data-text-field="'namaExternal'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsPrekusor" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
 									</div>
 								</div>
 								<div class="grid_2">
@@ -667,7 +703,7 @@
 										<label c-label item="item" >Is Vaksin Donasi</label>
 									</div>
 									<div class="grid_12">
-										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsVaksinDonasi" k-data-text-field="'namaExternal'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.IsVaksinDonasi" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
 									</div>
 								</div>
 									

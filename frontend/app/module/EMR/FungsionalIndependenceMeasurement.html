@@ -1,0 +1,625 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading" c-translate>Fungsional Independence Measurement (FIM)</div>
+    </div>
+    <div class="grid_12">
+        <fieldset style="margin-top: 10px;">
+            <div class="grid_12">
+                <label c-label item="item" class="margin-bottom">Diagnosa</label>
+            <input class="k-textbox" ng-model="item.obj[3003830]" type="text" placeholder="{{data.satuan}}"
+            ng-value="{{data.value}}" style="width: 300px;"  ng-change="GCSKuantitatif()">
+            </div>
+        </fieldset>
+
+<div class="grid_12">
+    <fieldset style="margin-top: 10px;">
+        <table>
+            <tr>
+                <td colspan="3" style="text-align: center;"><b>Dasar Penilaian</b></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">MANDIRI</td>
+                <td rowspan="4">Tanpa Bantuan </td>
+            </tr>
+            
+            <tr>
+                <td style="width: 200px;" >Nilai</td>
+                <td style="width: 500px;">Keterangan</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">7</td>
+                <td>Mandiri tanpa modifikasi/alat bantu</td>
+               
+            </tr>
+            <tr>
+                <td style="text-align: center;">6</td>
+                <td>Mandiri dengan modifikasi/alat bantu</td> 
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">KETERGANTUNGAN DENGAN MODIFIKASI / ALAT BANTU</td>
+                <td rowspan="8">Dengan Bantuan</td>
+            </tr>
+             
+            <tr>
+                <td style="width: 200px;">Nilai</td>
+                <td style="width: 500px;">Keterangan</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">5</td>
+                <td>Perlu supervisi</td>
+               
+            </tr>
+            <tr>
+                <td style="text-align: center;">4</td>
+                <td>Bantuan minimal (subyek = 75%)</td> 
+            </tr>
+            </tr>
+            <tr>
+                <td style="text-align: center;">4</td>
+                <td>Bantuan sedang (subyek = 50%)</td> 
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">KETERGANTUNGAN PENUH</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">2</td>
+                <td>Bantuan maksimal (subyek = 25%)</td> 
+            </tr>
+            <tr>
+                <td style="text-align: center;">2</td>
+                <td>Bantuan penuh (subyek = 0%)</td> 
+            </tr>
+           </table>
+    </fieldset>
+</div>
+
+        <fieldset style="margin-top: 10px;">
+            <table style="border: 0px">
+                <tr>
+                    <th rowspan="2">NO</th>
+                    <th rowspan="2" colspan="2">PENILAIAN</th>
+                    <th>HARI TANGGAL</th>
+                    <th>HARI TANGGAL</th>
+                    <th>HARI TANGGAL</th>
+                    <th>HARI TANGGAL</th>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[3003831]" kendo-date-picker k-max="now" placeholer="dd-MM-yyyy"
+                                k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[3003832]" kendo-date-picker k-max="now" placeholer="dd-MM-yyyy"
+                                k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[3003833]" kendo-date-picker k-max="now" placeholer="dd-MM-yyyy"
+                                k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_3"
+                            style="margin-top: 0px;margin-bottom: 5px;margin-left: 10px;margin-right: 10px;">
+                            <input k-ng-model="item.obj[3003834]" kendo-date-picker k-max="now" placeholer="dd-MM-yyyy"
+                                k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" ng-value="{{data2.datevalue}}" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7">SELF-CARE</td>
+                </tr>
+                <tr>
+                    <td>a. </td>
+                    <td>Makan</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003835]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()"> 
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003836]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003837]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003838]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+               
+                <tr>
+                    <td>b.</td>
+                    <td>Merias Diri</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003839]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003840]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003841]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003842]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>c.</td>
+                    <td>Mandi</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003843]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003844]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003845]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003846]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    
+                </tr>
+                <tr>
+                    <td>d. </td>
+                    <td>Berpakaian untuk tubuh bagian atas</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003847]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003848]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003849]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003850]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>e. </td>
+                    <td>Berpakaian untuk tubuh bagian bawah</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003851]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003852]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003853]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003854]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>f.</td>
+                    <td>Toileting</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003855]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003856]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003857]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003858]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7">KONTROL SPINCTER</td>
+                </tr>
+                <tr>
+                    <td>a. </td>
+                    <td>Management bledder</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003859]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()"> 
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003860]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003861]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003862]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>b.</td>
+                    <td>Management bowel</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003863]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003864]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003865]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003866]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7">MOBILITY <br> Transfer</td>
+                </tr>
+                <tr>
+                    <td>a. </td>
+                    <td>Tempat tidur, kursi, kursi roda</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003867]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()"> 
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003868]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003869]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003870]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>b.</td>
+                    <td>Toilet</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003871]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003872]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003873]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003874]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>c.</td>
+                    <td>Tempat duduk mandi, bak mandi, shower</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003875]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003876]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003877]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003878]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7">LOCOMOTION</td>
+                </tr>
+                <tr>
+                    <td>a. </td>
+                    <td>Berjalan/dengan kursi roda</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003879]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()"> 
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003880]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003881]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003882]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>b.</td>
+                    <td>Tangga</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003883]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003884]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003885]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003886]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7">KOMUNIKASI</td>
+                </tr>
+                <tr>
+                    <td>a. </td>
+                    <td>Komprehensif</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003887]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()"> 
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003888]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003889]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003890]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>b.</td>
+                    <td>Ekspresi</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003891]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003892]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003893]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003894]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7">KOGNITIF-SOSIAL</td>
+                </tr>
+                <tr>
+                    <td>a. </td>
+                    <td>Sosial Interaksi</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003895]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()"> 
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003896]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003897]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003898]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>b.</td>
+                    <td>Memecahkan persoalan</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003899]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003900]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003901]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003902]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>c.</td>
+                    <td>Daya Ingat</td>
+                    <td>NILAI</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003903]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003904]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003905]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003906]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">JUMLAH</td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003907]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003908]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003909]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="k-textbox" ng-model="item.obj[3003910]" type="text" placeholder="{{data.satuan}}"
+                            ng-value="{{data.value}}" style="width: 50px;"  ng-change="GCSKuantitatif()">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">PARAF DOKTER PENILAI</td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3003911]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3003912]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3003913]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                            <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3003914]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        <br>
+      
+
+    </div>
+
+<br>
+    <div class="grid_12">
+        <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+    </div>
+</div>
+</div>

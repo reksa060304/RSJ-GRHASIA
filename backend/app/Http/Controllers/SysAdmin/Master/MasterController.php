@@ -230,25 +230,34 @@ class MasterController extends ApiController{
                 $prod->isprodukintern = $data['isprodukintern'];
             }
             if (isset($request['isarvdonasi'])){
-                $prod->isprodukintern = $data['isarvdonasi'];
+                $prod->isarvdonasi = $data['isarvdonasi'];
             }
             if (isset($request['isnarkotika'])){
-                $prod->isprodukintern = $data['isnarkotika'];
+                $prod->isnarkotika = $data['isnarkotika'];
             }
             if (isset($request['ispsikotropika'])){
-                $prod->isprodukintern = $data['ispsikotropika'];
+                $prod->ispsikotropika = $data['ispsikotropika'];
             }
             if (isset($request['isonkologi'])){
-                $prod->isprodukintern = $data['isonkologi'];
+                $prod->isonkologi = $data['isonkologi'];
             }
             if (isset($request['isoot'])){
-                $prod->isprodukintern = $data['isoot'];
+                $prod->isoot = $data['isoot'];
             }
             if (isset($request['isprekusor'])){
-                $prod->isprodukintern = $data['isprekusor'];
+                $prod->isprekusor = $data['isprekusor'];
             }
             if (isset($request['isvaksindonasi'])){
-                $prod->isprodukintern = $data['isvaksindonasi'];
+                $prod->isvaksindonasi = $data['isvaksindonasi'];
+            }
+            if (isset($request['isfornas'])){
+                $prod->isfornas = $data['isfornas'];
+            }
+            if (isset($request['isforrs'])){
+                $prod->isforrs = $data['isforrs'];
+            }
+            if (isset($request['isgeneric'])){
+                $prod->isgeneric = $data['isgeneric'];
             }
             if (isset($request['objectjenisgenerikfk'])){
                 $prod->isprodukintern = $data['objectjenisgenerikfk'];
@@ -280,12 +289,13 @@ class MasterController extends ApiController{
             $transMessage = "Simpan Gagal!!";
             DB::rollBack();
             $result = array(
-                "status" => 400,
-                "message"  => $transMessage,
+                "status" => 201,
+                "message" => $transMessage,
                 "data" => $data,
                 "as" => 'ea@epic',
-            );
+            );            
         }
+
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
