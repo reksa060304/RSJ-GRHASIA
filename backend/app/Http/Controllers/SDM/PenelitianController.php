@@ -204,6 +204,8 @@ class PenelitianController extends ApiController {
             $dataKPE->namapendamping = $request['data']['namapendamping'];
             $dataKPE->judulpeneltian = $request['data']['judulpenelitian'];
             $dataKPE->namapengawas = $request['data']['namapengawas'];
+            $dataKPE->nosertifikat = $request['data']['nosertifikat'];
+            $dataKPE->pengesah = $request['data']['pengesah'];
             
             $dataKPE->save();
             $idPP=$dataKPE->norec;
@@ -443,11 +445,12 @@ class PenelitianController extends ApiController {
         djp.id as idlayanan, djp.detailjenisproduk,
         pr.id as idlevelpendidikan, pr.namaproduk as levelpendidikan,
         sdmp.jumlahpeserta, sdmp.qty, sdmp.satuan, sdmp.biayapenelitian, sdmp.tanggalmulai, sdmp.tanggalselesai, sdmp.judulpeneltian,
-        sdmp.namapendamping, sdmp.namapengawas
+        sdmp.namapendamping,sdmp.namapengawas, sdmp.nosertifikat, sdmp.pengesah, pg.namalengkap
         FROM sdm_penelitianeksternal_t sdmp
         INNER JOIN diklatkategori_m dk on dk.id= sdmp.objectdiklatkategorifk
         INNER JOIN detailjenisproduk_m djp on djp.id= sdmp.objectdetailjenisprodukfk
         INNER JOIN produk_m pr on pr.id= sdmp.objectprodukfk
+        left join pegawai_m pg on pg.id = sdmp.pengesah
         where sdmp.kdprofile = $kdProfile and sdmp.norec ilike'$Norec'")
         );
         $idlvl = $data[0]->idlevelpendidikan;
@@ -466,7 +469,6 @@ class PenelitianController extends ApiController {
             'datas'=>$data,
             'lvl'=>$lvl,
             'idlvl'=>$idlvl,
-
             'me'=> $mahasiswaeksternal,
             'message' => 'ea@epic',
         );

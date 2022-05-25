@@ -112,7 +112,6 @@ class SumberDayaManusiaController extends ApiController {
         $JenisProvider = JenisProvider::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $KomponenGajiAdd = KomponenGaji::where('statusenabled',true)->where('kdprofile',$kdProfile)->where('kdkomponen','+')->get();
         $KomponenGajiDel = KomponenGaji::where('statusenabled',true)->where('kdprofile',$kdProfile)->where('kdkomponen','-')->get();
-
         $PangkatPegawai = \DB::table('pangkat_m as pk')
             ->where('pk.kdprofile', $kdProfile)
             ->where('pk.statusenabled', true)
@@ -239,6 +238,10 @@ class SumberDayaManusiaController extends ApiController {
             ->where('sd.kdprofile', $kdProfile)
             ->orderBy('sd.sumberdana')
             ->get();
+        $jenishukuman = \DB::table('jenishukuman_m')
+        ->where('statusenabled',true)
+        ->where('kdprofile',$kdProfile)->get();
+
         $result = array(
             'sumberdana' => $sumberdana,
             'datajenispelatihan'=> $datajenispelatihan,
@@ -277,6 +280,7 @@ class SumberDayaManusiaController extends ApiController {
             'jenispetugaspe' => $dataJenispetugaspe,
             'komponengajiadd' => $KomponenGajiAdd,
             'komponengajidel' => $KomponenGajiDel,
+            'jenishukuman'=> $jenishukuman,
             'by' => 'ea@epic',
         );
 
@@ -2085,14 +2089,30 @@ class SumberDayaManusiaController extends ApiController {
             $TP->nama = $request['nama'];
             $TP->nim = $request['nim'];
             $TP->nomorhp = $request['nomorhp'];
-            $TP->objectruanganlastfk = $request['objectruanganlastfk'];
-            $TP->objectpegawailastfk = $request['objectpegawailastfk'];
+            // $TP->objectruanganlastfk = $request['objectruanganlastfk'];
+            // $TP->objectpegawailastfk = $request['objectpegawailastfk'];
             $TP->email = $request['email'];
-            $TP->image = $request['image'];
+
+            $uploadimage = $request->file('image');
+            if(!empty($uploadimage)){
+                $extensionimage = $uploadimage->getClientOriginalExtension();
+                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
+                
+//                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameImage,file_get_contents($request->file('filesip')));
+                $TP->image = $filenameImage;
+            }
+            
+            // $TP->image = $request['image'];
             $TP->save();
+            $norec = $request['email'];
+            if(!empty($uploadimage)) {
+                $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
+            }
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errMessage = $e->getMessage();
+            $errLine = $e->getLine();
         }
 
 
@@ -2110,6 +2130,8 @@ class SumberDayaManusiaController extends ApiController {
             $result = array(
                 'status' => 400,
                 'message'  => $transMessage,
+                'e'=> $errLine,
+                "message"=> $errMessage,
                 'as' => 'asepic',
             );
         }

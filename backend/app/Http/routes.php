@@ -2040,6 +2040,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('sdm/delete-data-sipstr', 'SDM\SumberDayaManusiaController@deleteDataSipStr');
             Route::post('sdm/save-rekam-data-pegawai', 'SDM\SumberDayaManusiaController@saveDataRekamDataPegawai');
             Route::post('sdm/upload-data-sipstr', 'SDM\SumberDayaManusiaController@simpanSipStr');
+            Route::get('report/cetak-sertifikat','Report\ReportController@cetakSertifikat');
             Route::post('sdm/update-data-pegawai-form-pensiun', 'SDM\SumberDayaManusiaController@updateDataPegawaiFormPensiun');
             Route::post('sdm/save-data-pensiun-pegawai', 'SDM\SumberDayaManusiaController@SavePensiunPegawai');
             Route::post('sdm/save-jadwal-perbulan-pegawai', 'SDM\SumberDayaManusiaController@saveJadwalBulananPegawai');
