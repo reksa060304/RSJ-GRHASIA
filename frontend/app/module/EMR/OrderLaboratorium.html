@@ -4,7 +4,9 @@
         text-align: center;
         width: 100%;
     }
-
+    button:disabled {
+    background: #B5B2B1;
+    }
     .style-right {
         display: inline-block;
         text-align: right;
@@ -131,7 +133,7 @@
 		}
 	}
 </style>
-
+    <div ng-include=' "../app/template/Shared/TemplateLoading" '></div>
 <div ng-show="dataVOloaded">
 
     <div class="grid_12">
@@ -209,7 +211,7 @@
                         </div>
                         <div class="grid_12">
                             <div class="grid_3">
-                                <button class="btnTemplate1" ng-click="Simpan()" ng-hide="isSimpan"> <i
+                                <button class="btnTemplate1" ng-click="Simpan()" ng-hide="isSimpan" ng-disabled="savebtn"> <i
                                         class="fa fa-save"></i>Simpan</button>
                             </div>
                             <div class="grid_3">
@@ -375,6 +377,7 @@
                         class="k-icon k-cancel"></span>Tutup</button>
             </div>
         </div>
+
     </div>
 
 </div>
