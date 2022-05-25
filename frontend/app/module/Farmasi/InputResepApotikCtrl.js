@@ -249,6 +249,10 @@ define(['initialize'], function (initialize) {
                 //         max: new Date($scope.now)
                 //     };
                 // })
+                $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                if($scope.pegawaiLogin.jenisPegawai.jenispegawai =="Apoteker"){
+                    $scope.item.ruangan = { id: 94, namaruangan: 'FARMASI' };
+                }
                 medifirstService.get("sysadmin/general/get-tgl-posting", true).then(function (dat) {
                     var tgltgltgltgl = dat.data.mindate[0].max
                     var tglkpnaja = dat.data.datedate
