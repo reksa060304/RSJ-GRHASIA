@@ -17,6 +17,7 @@ define(['initialize'], function(initialize) {
             $scope.tgl = true;
             $scope.pemb = true;
             $scope.ru = true;
+            $scope.serti=false
 			var noOrder='';
 			var NorecKpe='';
 			var norec_kpe ='';
@@ -80,7 +81,7 @@ define(['initialize'], function(initialize) {
                     $scope.ListJenisDiklat = dat.jenisdiklat;
                     $scope.ListJenisLayanan = dat.detailjenisproduk;
                     $scope.ListJenisKelamin = dat.jeniskelamin;
-                    $scope.ListPegawai = dat.pegawai;
+                    $scope.ListPejabatPengesah = dat.pegawai;
                     $scope.ListRuangan = dat.dataruangan;
                     $scope.kendo = datas.data.me.length;
                     $scope.ListLevelPendidikan = dat.levelpendidikan;
@@ -220,11 +221,14 @@ define(['initialize'], function(initialize) {
                         $scope.item.namapendamping = datas.namapendamping;
                         $scope.item.namapengawas = datas.namapengawas;
                         $scope.item.judulpenelitian = datas.judulpeneltian;
-
-                        if ($scope.item.layanan.id == 1947 || $scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
-                            console.log('masuk tol');
-                            $scope.Pembimbing = true;
-
+                        $scope.item.pengesah = {id: datas.idpengesah,namalengkap:datas.namalengkap};
+                        $scope.item.nosertifikat = datas.nosertifikat;
+                        if (ModelItem.getPegawai().jenisPegawai.qjenispegawai != 0) {
+                            if ($scope.item.layanan.id == 1947 || $scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
+                                console.log('masuk tol');
+                                $scope.Pembimbing = true;
+                            }
+                            $scope.serti = true
                         }
                     })
                     
@@ -278,6 +282,14 @@ define(['initialize'], function(initialize) {
                 if ($scope.item.namapengawas != undefined) {
                     namapengawas = $scope.item.namapengawas
                 }
+                var nosertifikat = "";
+                if ($scope.item.nosertifikat != undefined) {
+                    nosertifikat = $scope.item.nosertifikat
+                }
+                var pengesah = null;
+                if ($scope.item.pengesah != undefined) {
+                    pengesah = $scope.item.pengesah.id
+                }
 				var data = {
 					"norec_kpe":norec_kpe,
 					"namauser": $scope.item.namauser,
@@ -297,6 +309,8 @@ define(['initialize'], function(initialize) {
                     "judulpenelitian": judulpenelitian,
                     "namapendamping": namapendamping,
                     "namapengawas": namapengawas,
+                    "nosertifikat": nosertifikat,
+                    "pengesah": pengesah
 				};	
 
 				var objSave = {

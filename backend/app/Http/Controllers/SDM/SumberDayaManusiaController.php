@@ -575,7 +575,12 @@ class SumberDayaManusiaController extends ApiController {
             $dataGajiMinus = $dataGajiMinus->where('pg.id','=',$request['idPegawai']);
         }
         $dataGajiMinus = $dataGajiMinus->get();
-
+        $dataHukumanDisiplin = \DB::table('sdm_hukumandisiplin_t as hd')
+        ->join('jenishukuman_m as jh', 'jh.id','=','hd.objectjenishukumanfk')
+        ->join('pegawai_m as pg', 'pg.id','=','hd.objectpegawaifk')
+        ->select('hd.tgldari', 'hd.tglsampai', 'hd.pejabatmenetapkan','jh.id','jh.jenishukuman','hd.norec')
+        ->where('pg.id','=',$request['idPegawai'])
+        ->get();
         $result = array(
             'datapegawai' => $data,
             'datakeluarga' => $dataKeluarga,
@@ -587,6 +592,7 @@ class SumberDayaManusiaController extends ApiController {
             'datatelp'=> $dataTelp,
             'datagajiplus'=> $dataGajiPlus,
             'datagajiminus'=> $dataGajiMinus,
+            'datahukumandisiplin'=> $dataHukumanDisiplin,
             "createby : " => 'ea@epic',
 
         );
@@ -647,6 +653,7 @@ class SumberDayaManusiaController extends ApiController {
             $dataTelp=$request['simpantelp'];
             $dataKomponenGajiAdd=$request['komponengajiadd'];
             $dataKomponenGajiDel=$request['komponengajidel'];
+            $dataHukumanDisiplin= $request['hukumandisiplin'];
 //            return $this->respond($dataKeluargaPegawai);
 
 
@@ -951,6 +958,26 @@ class SumberDayaManusiaController extends ApiController {
                     $dataKomponenGajiDel->save();
                 }
             }
+            if ($dataHukumanDisiplin != "") {
+                foreach ($dataHukumanDisiplin as $hudis) {
+                    if ($hudis['norec'] == "") {
+                        $dataHukumanDisiplin = \DB::table('sdm_hukumandisiplin_t')
+                        ->insert([
+                            'norec' => substr(Uuid::generate(), 0, 32),
+                            'kdprofile'=> $kdProfile,
+                            'statusenabled'=> true,
+                            'objectjenishukumanfk'=> $hudis['objectjenishukumanfk'],
+                            'tgldari'=>$hudis['tgldari'],
+                            'tglsampai'=>$hudis['tglsampai'],
+                            'pejabatmenetapkan'=> $hudis['pejabatmenetapkan'],
+                            'objectpegawaifk'=> $IdPegawais,
+                        ]);
+                    } else {
+                        # code...
+                    }
+                    
+                }
+            }
 
             //## Logging User
 //                if ($dataPegawai['id'] == ""){
@@ -1007,7 +1034,8 @@ class SumberDayaManusiaController extends ApiController {
                 'datastr' => $dataStr,
                 'datatelp' =>$dataTelp,
                 'datakomponenadd' => $dataKomponenGajiAdd,
-                'datakomponendel' => $dataKomponenGajiDel,
+                'datakomponendel' => $dataKomponenGajiDel,                
+                'hukumandisiplin' => $dataHukumanDisiplin,
                 "as" => 'ea@epic',
             );
         } else {
@@ -1025,7 +1053,8 @@ class SumberDayaManusiaController extends ApiController {
                 'datasip' => $dataSip,
                 'datastr' => $dataStr,
                 'datakomponenadd' => $dataKomponenGajiAdd,
-                'datakomponendel' => $dataKomponenGajiDel,
+                'datakomponendel' => $dataKomponenGajiDel,                
+                'hukumandisiplin' => $dataHukumanDisiplin,
                 "as" => 'ea@epic',
             );
         }
@@ -2106,6 +2135,7 @@ class SumberDayaManusiaController extends ApiController {
             $TP->save();
             $norec = $request['email'];
             if(!empty($uploadimage)) {
+                // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
                 $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
             }
             $transStatus = 'true';

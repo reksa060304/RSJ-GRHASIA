@@ -175,6 +175,25 @@
                                             ng-model="item.biaya" disabled />
                                     </div>
                                 </div>
+                                <div class="grid_3" ng-show="serti">
+                                    <div class="grid_12" style="margin: 6px 0 0 0;">
+                                        <label c-label item="item" c-label-text="No Sertifikat"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input c-text-box type="text" filter="'varchar'" class="k-textbox"
+                                            ng-model="item.nosertifikat"/>
+                                    </div>
+                                </div>
+                                <div class="grid_3" ng-show="serti">
+                                    <div class="grid_12" style="margin: 6px 0 0 0;">
+                                        <label c-label item="item" c-label-text="Pejabat Pengesah"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.pengesah"
+                                            k-data-text-field="'namalengkap'" k-data-value-field="'id'"
+                                            k-filter="'contains'" k-auto-bind="false" k-data-source="ListPejabatPengesah"/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

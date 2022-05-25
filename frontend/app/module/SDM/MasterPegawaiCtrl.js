@@ -26,6 +26,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			var dataRiwayatPendidikan = [];
 			var dataRiwayatJabatan = [];
 			var dataKomponenGajiAdd = [];
+			var dataHukumanDisiplin = [];
 			var dataKomponenGajiAdds = [];
 			var dataKomponenGajiDel = [];
 			var dataKomponenGajiDels = [];
@@ -119,6 +120,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
 			};
 
+			function ClearDataHukumanDisiplin() {
+				$scope.itemHukumanDisiplin = {};
+				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
+			};
 			function FormLoad() {
 				$scope.isRouteLoading = true;
 				medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
@@ -154,7 +159,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					$scope.ListUnitKerja = dataCombo.dataunitkerja;
 					$scope.ListProvider = dataCombo.jenisprovider;
 					$scope.ListJenisPegawai = dataCombo.jenispegawai;
-					$scope.ListKomponenAdd = dataCombo.komponengajiadd;
+					$scope.ListJenisHukuman = dataCombo.jenishukuman;
 					$scope.ListKomponenDel = dataCombo.komponengajidel;
 					// $scope.ListSubUnitKerja = dataCombo.subunitkerja;
 					$scope.ListAktif = [{ id: 0, aktif: "Tidak Aktif" }, { id: 1, aktif: "Aktif" }]
@@ -192,6 +197,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							var dataCacheTelp = dataCache.datatelp;
 							var dataCacheGajiPlus = dataCache.datagajiplus;
 							var dataCacheGajiMinus = dataCache.datagajiminus;
+							var dataCacheHukumanDisiplin = dataCache.datahukumandisiplin;
 
 							// Data Pegawai
 							$scope.item.idPegawai = dataCachePegawai.id;
@@ -306,6 +312,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 								data: dataRiwayatPelatihan
 							})
 							// End Data Pendidikan  
+
+							// data hukuman disiplin
+							dataHukumanDisiplin = dataCacheHukumanDisiplin;
+							for (var i = 0; i < dataHukumanDisiplin.length; i++) {
+								dataHukumanDisiplin[i].no = i + 1
+							}
+							$scope.gridHukumanDisiplin = new kendo.data.DataSource({
+								data: dataHukumanDisiplin
+							})
+							// end data hukuman disiplin
 
 							// Data Phone
 							dataNoTelp = dataCacheTelp;
@@ -649,12 +665,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				]
 			}
 			$scope.opsiGridKomponenGajiAdd = {
-				toolbar: [
-					{
-						name: "create", text: "Add Pendapatan",
-						template: '<button ng-click="createKomponenAdd()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Add Pendapatan</button>'
-					}
-				],
+				toolbar: [{
+					name: "create",
+					text: "Add Pendapatan",
+					template: '<button ng-click="createKomponenAdd()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Add Pendapatan</button>'
+				}],
 				sortable: false,
 				reorderable: true,
 				filterable: false,
@@ -662,8 +677,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				columnMenu: false,
 				resizable: true,
 				selectable: 'row',
-				columns: [
-					{
+				columns: [{
 						"field": "no",
 						"title": "No",
 						"width": "10%"
@@ -689,9 +703,76 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						"width": "30%"
 					},
 					{
-						"command": [
-							{ text: "Edit", click: EditKomponenAdd, imageClass: "k-icon k-i-pencil" },
-							{ text: "Hapus", click: HapusKomponenAdd, imageClass: "k-icon k-i-delete" },
+						"command": [{
+								text: "Edit",
+								click: EditKomponenAdd,
+								imageClass: "k-icon k-i-pencil"
+							},
+							{
+								text: "Hapus",
+								click: HapusKomponenAdd,
+								imageClass: "k-icon k-i-delete"
+							},
+						],
+						title: "",
+						width: "150px",
+					}
+				]
+			}
+
+			$scope.opsiGridHukumanDisiplin = {
+				toolbar: [{
+					name: "create",
+					text: "Add Hukuman Disiplin",
+					template: '<button ng-click="createHukumanDisiplin()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Add Hukuman Disiplin</button>'
+				}],
+				sortable: false,
+				reorderable: true,
+				filterable: false,
+				pageable: true,
+				columnMenu: false,
+				resizable: true,
+				selectable: 'row',
+				columns: [{
+						"field": "no",
+						"title": "No",
+						"width": "10%"
+					},
+					{
+						"field": "jenishukuman",
+						"title": "jenis Hukuman",
+						"width": "50%"
+					},
+					{
+						"field": "aktif",
+						"title": "Masa Berlaku",
+						"width": "20%",
+						columns: [{
+							field: "tgldari",
+							title: "Dari",
+							"width": "20%",
+						}, {
+							field: "tglsampai",
+							title: "Sampai",
+							"width": "20%",
+						}]
+					},
+					{
+						"field": "pejabatmenetapkan",
+						"title": "Pejabat Menetapkan",
+						"width": "50%"
+					},
+					{
+						"command": [{
+								text: "Edit",
+								click: EditHukuamanDisiplin,
+								imageClass: "k-icon k-i-pencil"
+							},
+							{
+								text: "Hapus",
+								click: HapusHukumanDisiplin,
+								imageClass: "k-icon k-i-delete"
+							},
 						],
 						title: "",
 						width: "150px",
@@ -1125,6 +1206,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.popUpKomponenGajiAdd.center().open();
 			}
 
+			function EditHukuamanDisiplin(e) {
+				$scope.itemHukumanDisiplin = [];
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+				$scope.itemHukumanDisiplin.norec = dataItem.norec;
+				$scope.itemHukumanDisiplin.jenishukuman = {
+					id: dataItem.id,
+					jenishukuman: dataItem.jenishukuman
+				};
+			
+				$scope.itemHukumanDisiplin.tgldari = moment(dataItem.tgldari).format('YYYY-MM-DD HH:mm');
+				$scope.itemHukumanDisiplin.tglsampai = moment(dataItem.tglsampai).format('YYYY-MM-DD HH:mm');
+				$scope.itemHukumanDisiplin.pejabatmenetapkan = dataItem.pejabatmenetapkan;
+				$scope.popUpHukumanDisiplin.center().open();
+			}
+
 			function EditKomponenDel(e) {
 				$scope.itemKomponenDel = [];
 				e.preventDefault();
@@ -1173,6 +1274,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				for (var i = dataKomponenGajiAdd.length - 1; i >= 0; i--) {
 					if (dataKomponenGajiAdd[i].no == dataItem.no) {
 						dataKomponenGajiAdd.splice(i, 1);
+					}
+				}
+				grid.removeRow(row);
+			}
+			function HapusHukumanDisiplin(e) {
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+				var grid = this;
+				var row = $(e.currentTarget).closest("tr");
+				var tr = $(e.target).closest("tr");
+				for (var i = dataHukumanDisiplin.length - 1; i >= 0; i--) {
+					if (dataHukumanDisiplin[i].no == dataItem.no) {
+						dataHukumanDisiplin.splice(i, 1);
 					}
 				}
 				grid.removeRow(row);
@@ -1341,6 +1459,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				actions.splice(actions.indexOf("Close"), 1);
 				$scope.popUpKomponenGajiAdd.setOptions({ actions: actions });
 			}
+			$scope.createHukumanDisiplin = function () {
+				$scope.item.norecKomAdd = "";
+				$scope.item.nomorId = undefined;
+				$scope.popUpHukumanDisiplin.center().open();
+				var actions = $scope.popUpHukumanDisiplin.options.actions;
+				actions.splice(actions.indexOf("Close"), 1);
+				$scope.popUpHukumanDisiplin.setOptions({
+					actions: actions
+				});
+			}
 			$scope.createKomponenDel = function () {
 				$scope.item.norecKomDel = "";
 				$scope.item.nomorId = undefined;
@@ -1391,6 +1519,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.batalKomponenAdd = function () {
 				ClearDataKomponenAdd();
 				$scope.popUpKomponenGajiAdd.close();
+			}
+			$scope.batalHukumanDisiplin = function () {
+				ClearDataHukumanDisiplin();
+				$scope.popUpHukumanDisiplin.close();
 			}
 
 			$scope.batalKomponenDel = function () {
@@ -1866,6 +1998,63 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				}
 			}
 
+			$scope.tambahhudis = function () {
+				var listRawRequired = [
+					"itemHukumanDisiplin.jenishukuman|k-ng-model|Jenis Hukuman",
+					"itemHukumanDisiplin.tgldari|k-ng-model|Tgl Dari",
+					"itemHukumanDisiplin.tglsampai|k-ng-model|Tgl Sampai",
+					"itemHukumanDisiplin.pejabatmenetapkan|ng-model|Pejabat Menetapkan",
+				];
+
+				var isValid = ModelItem.setValidation($scope, listRawRequired);
+				if (isValid.status) {
+					var nomorId = 0
+					if ($scope.gridHukumanDisiplin == undefined) {
+						nomorId = 1
+					} else {
+						nomorId = dataHukumanDisiplin.length + 1
+					}
+					var data = {};
+					if ($scope.item.nomorId != undefined) {
+						for (var i = dataHukumanDisiplin.length - 1; i >= 0; i--) {
+							if (dataHukumanDisiplin[i].no == $scope.item.nomorId) {
+								data.norec = $scope.itemHukumanDisiplin.norec
+								data.no = nomorId,
+									data.jenishukuman = $scope.itemHukumanDisiplin.jenishukuman.jenishukuman,
+									data.objectjenishukumanfk = $scope.itemHukumanDisiplin.jenishukuman.id,
+									data.tgldari = moment($scope.itemHukumanDisiplin.tgldari).format('YYYY-MM-DD HH:mm'),
+									data.tglsampai = moment($scope.itemHukumanDisiplin.tglsampai).format('YYYY-MM-DD HH:mm'),
+									data.pejabatmenetapkan = $scope.itemHukumanDisiplin.pejabatmenetapkan,
+								$scope.dataHukumanDisiplin = new kendo.data.DataSource({
+									data: dataHukumanDisiplin
+								});
+							}
+						}
+
+					} else {
+
+						data = {
+							no: nomorId,
+							norec: "",
+							objectjenishukumanfk: $scope.itemHukumanDisiplin.jenishukuman.id,
+							tgldari: moment($scope.itemHukumanDisiplin.tgldari).format('YYYY-MM-DD HH:mm'),
+							tglsampai: moment($scope.itemHukumanDisiplin.tglsampai).format('YYYY-MM-DD HH:mm'),
+							pejabatmenetapkan: $scope.itemHukumanDisiplin.pejabatmenetapkan,
+							jenishukuman: $scope.itemHukumanDisiplin.jenishukuman.jenishukuman
+						}
+
+						dataHukumanDisiplin.push(data)
+						$scope.gridHukumanDisiplin = new kendo.data.DataSource({
+							data: dataHukumanDisiplin
+						});
+					}
+					ClearDataHukumanDisiplin();
+					$scope.popUpHukumanDisiplin.close();
+				} else {
+					ModelItem.showMessages(isValid.messages);
+				}
+			}
+
 			$scope.tambahKomponenDel = function () {
 				var listRawRequired = [
 					"itemKomponenDel.komponen|k-ng-model|Komponen Gaji",
@@ -2314,6 +2503,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						komponengajiadd: dataKomponenGajiAdd,
 						komponengajidel: dataKomponenGajiDel,
 						simpantelp: dataNoTelp,
+						hukumandisiplin: dataHukumanDisiplin,
 					}
 
 					// if (dataKeluarga.length == 0 || dataRiwayatPendidikan.length == 0 || dataRiwayatJabatan.length == 0 || dataSip.length == 0 || dataStr.length == 0 || dataRiwayatPelatihan.length == 0 || dataNoTelp.length==0) {

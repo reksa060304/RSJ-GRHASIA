@@ -18,6 +18,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var NorecKpe = '';
             var norec_kpe = '';
             var norecmhs = '';
+            var gambar = ""
+            // var images = ""
             loadDataCombo();
             LoadCache();
             
@@ -81,10 +83,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                     for (let i = 0; i < dat.me.length; i++) {
                         const element = dat.me[i];
-                        element.images = 'data:image;base64,' + dat.me[i].image;
-                        
+                        element.images =dat.me[i].image;
+                        // element.imagess = '<img src="DIKLAT/FileFoto/'+ dat.me[i].image+'" width="70" height="90" class="center">';
+                        // images[i] = dat.me[i].image
+                        // /../../../../../backend/public/DIKLAT/FileFoto/DIKLAT-MuhamadFazriAnnafi2-1709142-fazri@gmail.com.jpg
                     }
-                    
                     $scope.dataSourceGridDiagnosapasien = new kendo.data.DataSource({
                         data: datas.data.me,
                         // group: $scope.group,
@@ -99,97 +102,206 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 
             }
-            var imageData = 
-            $scope.columnGridDiagnosapasien = {
-                toolbar: ["excel", ],
-                excel: {
-                    fileName: "Laporan .xlsx",
-                    allPages: true,
-                },
-                excelExport: function (e) {
-                    var departemenss = "";
-                    if ($scope.item.departement != undefined) {
-                        departemenss = $scope.item.departement.departemen;
-                    }
-                    if ($scope.item.departemen != undefined) {
-                        departemenss = $scope.item.departemen.departemen;
-                    }
-                    if ($scope.item.departement == undefined && $scope.item.departemen == undefined) {
-                        departemenss = "Rumah Sakit Jiwa Grhasia";
-                    }
-                    var sheet = e.workbook.sheets[0];
-                    sheet.frozenRows = 1;
-                    sheet.mergedCells = ["A1:D1"];
-                    sheet.name = "Orders";
+            // var imageData = 
+                        gambar = '../../../../../backend/public/DIKLAT/FileFoto/DIKLAT-MuhamadFazriAnnafi2-1709142-fazri@gmail.com.jpg'
+            if (ModelItem.getPegawai().jenisPegawai.qjenispegawai != 0) {
+                $scope.columnGridDiagnosapasien = {
+                    toolbar: ["excel", ],
+                    excel: {
+                        fileName: "Laporan .xlsx",
+                        allPages: true,
+                    },
+                    excelExport: function (e) {
+                        var departemenss = "";
+                        if ($scope.item.departement != undefined) {
+                            departemenss = $scope.item.departement.departemen;
+                        }
+                        if ($scope.item.departemen != undefined) {
+                            departemenss = $scope.item.departemen.departemen;
+                        }
+                        if ($scope.item.departement == undefined && $scope.item.departemen == undefined) {
+                            departemenss = "Rumah Sakit Jiwa Grhasia";
+                        }
+                        var sheet = e.workbook.sheets[0];
+                        sheet.frozenRows = 1;
+                        sheet.mergedCells = ["A1:D1"];
+                        sheet.name = "Orders";
 
-                    var myHeaders = [{
-                        value: "Laporan Diagnosa Per-pasien " + departemenss,
-                        fontSize: 20,
-                        textAlign: "center",
-                        background: "#ffffff",
-                        // color:"#ffffff"
-                    }];
-                    sheet.rows.splice(0, 0, {
-                        cells: myHeaders,
-                        type: "header",
-                        height: 70
-                    });
-
-                },
-                groupable: false,
-                columns: [{
-                        field: "no",
-                        title: "No",
-                        width: "30px",
-                    },
-                    {
-                        field: "nama",
-                        title: "Nama",
-                        width: "100px",
-                    },
-                    {
-                        field: "nim",
-                        title: "NIM",
-                        width: "70px",
-                    },
-                    {
-                        field: "jeniskelamin",
-                        title: "Gender",
-                        width: "70px",
-                    },
-                    {
-                        field: "namalengkap",
-                        title: "Pembimbing",
-                        width: "100px",
-                    },
-                    {
-                        field: "namaruangan",
-                        title: "Ruangan",
-                        width: "100px",
-                    },
-                    {
-                        field: "email",
-                        title: "Email",
-                        width: "50px",
+                        var myHeaders = [{
+                            value: "Laporan Diagnosa Per-pasien " + departemenss,
+                            fontSize: 20,
+                            textAlign: "center",
+                            background: "#ffffff",
+                            // color:"#ffffff"
+                        }];
+                        sheet.rows.splice(0, 0, {
+                            cells: myHeaders,
+                            type: "header",
+                            height: 70
+                        });
 
                     },
-                    {
-                        field: "image",
-                        title: "Image",
-                        width: "50px",
-                        template: '<img src=" #: images #" width="70" height="90" class="center">'
+                    groupable: false,
+
+                    columns: [{
+                            field: "no",
+                            title: "No",
+                            width: "30px",
+                        },
+                        {
+                            field: "nama",
+                            title: "Nama",
+                            width: "100px",
+                        },
+                        {
+                            field: "nim",
+                            title: "NIM",
+                            width: "70px",
+                        },
+                        {
+                            field: "jeniskelamin",
+                            title: "Gender",
+                            width: "70px",
+                        },
+                        {
+                            field: "namalengkap",
+                            title: "Pembimbing",
+                            width: "100px",
+                        },
+                        {
+                            field: "namaruangan",
+                            title: "Ruangan",
+                            width: "100px",
+                        },
+                        {
+                            field: "email",
+                            title: "Email",
+                            width: "50px",
+
+                        },
+                        {
+                            field: "image",
+                            title: "Image",
+                            width: "50px",
+                            template: "<span class='center'>#: image == null ? 'noimage': '✔'#</span>"
+                            // template: '<img src="../../../../../../../backend/public/DIKLAT/FileFoto/#:images#" width="70" height="90" class="center"/>',
+                            // template: "<div class='customer-photo' style='background-image: url(../../../../../backend/public/DIKLAT/FileFoto/DIKLAT-MuhamadFazriAnnafi2-1709142-fazri@gmail.com.jpg);'></div>",
+                        },
+
+                        {
+                            command: [{
+                                text: "Sertifikat",
+                                click: cetaksertifikat
+                            }],
+                            width: 100
+                        },
+
+
+                    ],
+                    // groupable: true,
+                    // filterable: true,
+                    columnMenu: true,
+                    reorderable: true,
+                    resizable: true,
+                    sortable: true,
+                    pageable: true,
+                }
+            } else {
+                $scope.columnGridDiagnosapasien = {
+                    toolbar: ["excel", ],
+                    excel: {
+                        fileName: "Laporan .xlsx",
+                        allPages: true,
                     },
-                    
-                    
-                ],
-                // groupable: true,
-                // filterable: true,
-                columnMenu: true,
-                reorderable: true,
-                resizable: true,
-                sortable: true,
-                pageable: true,
+                    excelExport: function (e) {
+                        var departemenss = "";
+                        if ($scope.item.departement != undefined) {
+                            departemenss = $scope.item.departement.departemen;
+                        }
+                        if ($scope.item.departemen != undefined) {
+                            departemenss = $scope.item.departemen.departemen;
+                        }
+                        if ($scope.item.departement == undefined && $scope.item.departemen == undefined) {
+                            departemenss = "Rumah Sakit Jiwa Grhasia";
+                        }
+                        var sheet = e.workbook.sheets[0];
+                        sheet.frozenRows = 1;
+                        sheet.mergedCells = ["A1:D1"];
+                        sheet.name = "Orders";
+
+                        var myHeaders = [{
+                            value: "Laporan Diagnosa Per-pasien " + departemenss,
+                            fontSize: 20,
+                            textAlign: "center",
+                            background: "#ffffff",
+                            // color:"#ffffff"
+                        }];
+                        sheet.rows.splice(0, 0, {
+                            cells: myHeaders,
+                            type: "header",
+                            height: 70
+                        });
+
+                    },
+                    groupable: false,
+
+                    columns: [{
+                            field: "no",
+                            title: "No",
+                            width: "30px",
+                        },
+                        {
+                            field: "nama",
+                            title: "Nama",
+                            width: "100px",
+                        },
+                        {
+                            field: "nim",
+                            title: "NIM",
+                            width: "70px",
+                        },
+                        {
+                            field: "jeniskelamin",
+                            title: "Gender",
+                            width: "70px",
+                        },
+                        {
+                            field: "namalengkap",
+                            title: "Pembimbing",
+                            width: "100px",
+                        },
+                        {
+                            field: "namaruangan",
+                            title: "Ruangan",
+                            width: "100px",
+                        },
+                        {
+                            field: "email",
+                            title: "Email",
+                            width: "50px",
+
+                        },
+                        {
+                            field: "image",
+                            title: "Image",
+                            width: "50px",
+                            template: "<span class='center'>#: image == null ? 'noimage': '✔'#</span>"
+                            // template: '<img src="../../../../../../../backend/public/DIKLAT/FileFoto/#:images#" width="70" height="90" class="center"/>',
+                            // template: "<div class='customer-photo' style='background-image: url(../../../../../backend/public/DIKLAT/FileFoto/DIKLAT-MuhamadFazriAnnafi2-1709142-fazri@gmail.com.jpg);'></div>",
+                        },
+
+
+                    ],
+                    // groupable: true,
+                    // filterable: true,
+                    columnMenu: true,
+                    reorderable: true,
+                    resizable: true,
+                    sortable: true,
+                    pageable: true,
+                }
             }
+            
                 $scope.klikGrid = function (dataSelected) {
                     $scope.isRouteLoading =true
                     var noregistrasi = "";
@@ -273,78 +385,142 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             
             
             $scope.tambahMhs = function () {
-                // var base64String = "";
-                const formData = new FormData()
-                const image = document.querySelectorAll('[type=file]')[0].files[0]
-                $scope.isRouteLoading = true;
-                 //bikin if untuk ruangan dan pegawai
-                var ruangan = null
-                var pegawai = null
-                console.log(image);
-                if (image == undefined) {
-                    var data = {
-                        "norec": false,
-                        "noregistrasifk": $state.params.norec,
-                        "nama": $scope.item.namapeneliti,
-                        "nim": $scope.item.nim,
-                        "nomorhp": $scope.item.telp,
-                        "jeniskelaminfk": $scope.item.jeniskelamin.id,
-                        "objectruanganlastfk": ruangan,
-                        "objectpegawailastfk": pegawai,
-                        "email": $scope.item.email,
-                        "image": "noimage",
-                    };
-                    if ($scope.norec < $scope.kendo + 1) {
+                const url = baseTransaksi + 'sdm/pendidikan/save-pesertadidik'
 
-                        window.messageContainer.error("Data tidak berhasil disimpan Quota Peserta sudah Terpenuhi.");
-                        $scope.item = {};
-                        return;
+                const form = document.querySelector('form')
+
+                const formData = new FormData()
+                var image = "noimage"
+                
+               
+                 //         "norec": false,
+                 //         "noregistrasifk": $state.params.norec,
+                 //         "nama": $scope.item.namapeneliti,
+                 //         "nim": $scope.item.nim,
+                 //         "nomorhp": $scope.item.telp,
+                 //         "jeniskelaminfk": $scope.item.jeniskelamin.id,
+                 //         "objectruanganlastfk": ruangan,
+                 //         "objectpegawailastfk": pegawai,
+                 //         "email": $scope.item.email,
+                 //         "image": "noimage",
+                  $scope.isRouteLoading = true;
+                   //bikin if untuk ruangan dan pegawai
+                  var ruangan = null
+                  var pegawai = null
+                  if (document.querySelectorAll('[type=file]')[0].files[0] != undefined) {
+                    image = document.querySelectorAll('[type=file]')[0].files[0]
+                  }
+                formData.append('norec', false)
+                formData.append('noregistrasifk', $state.params.norec)
+                formData.append('nama', $scope.item.namapeneliti)
+                formData.append('nim', $scope.item.nim)
+                formData.append('nomorhp', $scope.item.telp)
+                formData.append('jeniskelaminfk', $scope.item.jeniskelamin.id)
+                formData.append('objectruanganlastfk', ruangan)
+                formData.append('objectpegawailastfk', pegawai)
+                formData.append('email', $scope.item.email)
+                formData.append('image', image)
+
+                if ($scope.norec < $scope.kendo + 1) {
+                    window.messageContainer.error("Data tidak berhasil disimpan Quota Peserta sudah Terpenuhi.");
+                    $scope.isRouteLoading = false;
+                    $scope.item = {};
+                    return;
+                }
+                var arr = document.cookie.split(';')
+                var authorization;
+                for (var i = 0; i < arr.length; i++) {
+                    var element = arr[i].split('=');
+                    if (element[0].indexOf('authorization') > 0) {
+                        authorization = element[1];
                     }
-                    medifirstService.post('sdm/pendidikan/save-pesertadidik', data).then(function (e) {
+                }
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-AUTH-TOKEN': authorization
+                    }
+                }).then(response => {
+                    // console.log(response)
+                    if (response.status == 201) {
+                        toastr.info('Sukses');
                         $scope.item = {};
-                        // $state.go('DaftarPenelitianEksternal')
                         $scope.isRouteLoading = false;
-                        loadDataCombo();
-                    })
-                }
-                else{
-                    var reader = new FileReader();
-                    console.log("next");
-                    reader.onload = function () {
-                        $scope.base64String = reader.result.replace("data:", "")
-                            .replace(/^.+,/, "");
-                        console.log($scope.base64String);
-                        // $scope.image = base64String
-                    
-                        var data = {
-                            "norec": false,
-                            "noregistrasifk": $state.params.norec,
-                            "nama": $scope.item.namapeneliti,
-                            "nim": $scope.item.nim,
-                            "nomorhp": $scope.item.telp,
-                            "jeniskelaminfk": $scope.item.jeniskelamin.id,
-                            "objectruanganlastfk": ruangan,
-                            "objectpegawailastfk": pegawai,
-                            "email": $scope.item.email,
-                            "image": $scope.base64String,
-                        };
-                        if ($scope.norec < $scope.kendo + 1) {
-                            
-                            window.messageContainer.error("Data tidak berhasil disimpan Quota Peserta sudah Terpenuhi.");
-                            $scope.item = {};
-                            return;
-                        }
-                        console.log($scope.base64String);
-                        medifirstService.post('sdm/pendidikan/save-pesertadidik', data).then(function (e) {
-                            $scope.item = {};
-                            // $state.go('DaftarPenelitianEksternal')
-                            $scope.isRouteLoading = false;
-                            loadDataCombo();
-                        })
+                        loadDataCombo();}
+                    else{
+                        toastr.info('Simpan Gagal');
                     }
-                    reader.readAsDataURL(image)
-                    console.log(image);
-                }
+                    // $scope.loadDataSip();
+                    // $scope.batalSip();
+                })
+                // // var base64String = "";
+                // const formData = new FormData()
+                // const image = document.querySelectorAll('[type=file]')[0].files[0]
+                // $scope.isRouteLoading = true;
+                //  //bikin if untuk ruangan dan pegawai
+                // var ruangan = null
+                // var pegawai = null
+                // console.log(image);
+                // if (image == undefined) {
+                //     var data = {
+                //         "norec": false,
+                //         "noregistrasifk": $state.params.norec,
+                //         "nama": $scope.item.namapeneliti,
+                //         "nim": $scope.item.nim,
+                //         "nomorhp": $scope.item.telp,
+                //         "jeniskelaminfk": $scope.item.jeniskelamin.id,
+                //         "objectruanganlastfk": ruangan,
+                //         "objectpegawailastfk": pegawai,
+                //         "email": $scope.item.email,
+                //         "image": "noimage",
+                //     };
+                //     
+                //     medifirstService.post('sdm/pendidikan/save-pesertadidik', data).then(function (e) {
+                //         $scope.item = {};
+                //         // $state.go('DaftarPenelitianEksternal')
+                //         $scope.isRouteLoading = false;
+                //         loadDataCombo();
+                //     })
+                // }
+                // else{
+                //     var reader = new FileReader();
+                //     console.log("next");
+                //     reader.onload = function () {
+                //         $scope.base64String = reader.result.replace("data:", "")
+                //             .replace(/^.+,/, "");
+                //         console.log($scope.base64String);
+                //         // $scope.image = base64String
+                    
+                //         var data = {
+                //             "norec": false,
+                //             "noregistrasifk": $state.params.norec,
+                //             "nama": $scope.item.namapeneliti,
+                //             "nim": $scope.item.nim,
+                //             "nomorhp": $scope.item.telp,
+                //             "jeniskelaminfk": $scope.item.jeniskelamin.id,
+                //             "objectruanganlastfk": ruangan,
+                //             "objectpegawailastfk": pegawai,
+                //             "email": $scope.item.email,
+                //             "image": $scope.base64String,
+                //         };
+                //         if ($scope.norec < $scope.kendo + 1) {
+                            
+                //             window.messageContainer.error("Data tidak berhasil disimpan Quota Peserta sudah Terpenuhi.");
+                //             $scope.item = {};
+                //             return;
+                //         }
+                //         console.log($scope.base64String);
+                //         medifirstService.post('sdm/pendidikan/save-pesertadidik', data).then(function (e) {
+                //             $scope.item = {};
+                //             // $state.go('DaftarPenelitianEksternal')
+                //             $scope.isRouteLoading = false;
+                //             loadDataCombo();
+                //         })
+                //     }
+                //     reader.readAsDataURL(image)
+                //     console.log(image);
+                // }
                 // formData.append('norec', false)
                 // formData.append('noregistrasifk', $state.params.norec)
                 // formData.append('nama', $scope.item.namapeneliti)
@@ -651,6 +827,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.post("sdm/pendidikan/save-pdruangan", datasend).then(function (e) {
                     loadDetailRiwayat();
                 });
+            }
+            function cetaksertifikat(e) {
+                 e.preventDefault();
+
+                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                if (local != null) {
+                    var profile = local.id;
+                    var norec = dataItem.norec_eks;
+                    console.log(dataItem);
+                    // return
+                    window.open(configuration.baseApiBackend + "report/cetak-sertifikat?norec=" + norec + '&kdprofile=' + profile +
+                        '&nama=' + nama, '_blank');
+                }
             }
         }
     ]);
