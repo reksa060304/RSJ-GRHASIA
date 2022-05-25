@@ -1970,4 +1970,26 @@ class ReportController extends ApiController{
         return view('report.diklat-nametag',compact('data','pageWidth'));
         // return $this->respond($data);
     }
+    public function cetakSertifikat(Request $request)
+    {
+        $kdProfile = 30;       
+        $norec = $request['norec'];
+        $pageWidth = 950;
+        $data = \DB::table('sdm_pesertadidik_t as sdmp')->where('sdmp.norec',$norec)
+        ->where('sdmp.kdprofile',$request['kdprofile'])
+        ->join('sdm_penelitianeksternal_t as sdm','sdm.norec','=','sdmp.noregistrasifk')
+        ->join('detailjenisproduk_m as djp','djp.id','=','sdm.objectdetailjenisprodukfk')
+        ->leftjoin('pegawai_m as pg','pg.id','=','sdm.pengesah')
+        ->leftjoin('sdm_golongan_m as gp', 'gp.id', '=', 'pg.objectgolonganfk')
+        ->leftjoin('jabatan_m as ja', 'ja.id', '=', 'pg.objectjabatanfungsionalfk')
+        // ->join('jeniskelamin_m as jk','jk.id','=','sdm.jeniskelaminfk')
+        // ->join('sdm')
+        ->select('sdm.institusipendidikan','sdmp.nim','sdmp.nama','gp.namaexternal','gp.name','sdmp.norec','sdmp.nama','ja.namajabatan','sdmp.image','djp.detailjenisproduk','sdm.institusipendidikan','pg.namalengkap','pg.nippns','sdm.nosertifikat',DB::raw('sdm.tanggalmulai::date,sdm.tanggalselesai::date'))
+        ->get();
+        // $pdf = PDF::loadview('report.diklat-nametag', compact('data','pageWidth'));
+        //        return $pdf->stream();
+
+        return view('report.cetak-sertifikat',compact('data','pageWidth'));
+        // return $this->respond($data);
+    }
 }

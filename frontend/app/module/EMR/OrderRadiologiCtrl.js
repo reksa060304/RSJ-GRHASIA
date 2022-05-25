@@ -139,6 +139,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function init() {
                 $scope.isRouteLoading = true;
                 medifirstService.get("sysadmin/general/get-tgl-posting", true).then(function (dat) {
+                $scope.isRouteLoading = false;
                     var tgltgltgltgl = dat.data.mindate[0].max
                     var tglkpnaja = dat.data.datedate
                     $scope.minDate = new Date(tgltgltgltgl);
@@ -925,28 +926,34 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.inputOrder = true;
             }
             $scope.Simpan = function () {
-
+                $scope.savebtn = true
+                $scope.isRouteLoading = true
                 medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
-                    
-
+                    // 
                     if(e.data.detail[0].tglclosing == null){
                         var cek = 123;
                     } else{
                         var cek = 234;
                     }
-          
-                    console.log(cek);
-          
+                    
+                    // console.log(cek);
+                    
                     if(cek == 234){
                         messageContainer.error("Data yang sudah diclosing tidak bisa ditambah orderan");
+                        $scope.savebtn = false
+                        $scope.isRouteLoading = false
                     } else if (cek == 123){
 
 
                         if ($scope.item.ruangantujuan == undefined) {
+                             $scope.savebtn = false
+                             $scope.isRouteLoading = false
                             alert("Pilih Ruangan Tujuan terlebih dahulu!!")
                             return
                         }
                         if ($scope.item.tglPelayanan == undefined) {
+                             $scope.savebtn = false
+                             $scope.isRouteLoading = false
                             alert("Pilih Tgl Order  terlebih dahulu!!")
                             return
                         }
@@ -955,6 +962,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         //     return
                         // }
                         if ($scope.item.layanan == undefined || $scope.item.layanan.length == 0) {
+                             $scope.savebtn = false
+                             $scope.isRouteLoading = false
                             alert("Pilih layanan terlebih dahulu!!")
                             return
                         }
@@ -993,10 +1002,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             iscito: $scope.item.iscito != undefined && $scope.item.iscito == true ? $scope.item.iscito : false,
                             details: data2
                         }
-                        $scope.isSimpan = true
+                        // $scope.isSimpan = true
+                        $scope.savebtn = true
+                        $scope.isRouteLoading = true
+                        // return
                         medifirstService.post('emr/save-order-pelayanan', objSave).then(function (e) {
                             $scope.item.layanan = []
-                            $scope.isSimpan = false
+                            $scope.savebtn = false
+                            $scope.isRouteLoading = false
                             medifirstService.postLogging('Order Radiologi', 'Norec strukorder_t', e.data.strukorder.norec,
                                 'Order Radiologi No Order - ' + e.data.strukorder.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
                                 })
