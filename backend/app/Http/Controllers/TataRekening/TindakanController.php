@@ -1236,7 +1236,11 @@ class TindakanController extends ApiController
             $data = $data
                 ->where('prd.namaproduk','ilike','%'.$req['filter']['filters'][0]['value'].'%' );
         }
+        if($request['idRuangan'] == 94){
+        $data = $data->orderBy('prd.reportdisplay','ASC');
+        } else{
         $data = $data->orderBy('prd.namaproduk', 'ASC');
+        }
         $data = $data->take(100);
         $data = $data->get();
         // $result = array(

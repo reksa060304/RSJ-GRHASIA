@@ -13,7 +13,8 @@ define(['initialize'], function (initialize) {
             $scope.item.listKasirMultis = [];
             $scope.isRouteLoading = false;
             $scope.item.periode=moment($scope.now).format('YYYY');
-            $scope.item.month=moment($scope.now).format('MM');
+            $scope.item.monthawal = moment($scope.now).format('MM');
+            $scope.item.monthakhir = moment($scope.now).format('MM');
             $scope.tglMeninggal = '';
             $scope.Page = {
                 refresh: true,
@@ -112,9 +113,10 @@ define(['initialize'], function (initialize) {
                 $scope.isRouteLoading = true;
                
                 var  tahun = "&tahun="+moment($scope.item.periode).format('YYYY');
-                var bulan = "bulan="+ moment($scope.item.month).format('MM');
-                console.log(bulan,tahun);
-                medifirstService.get("sdm/get-datalaporan-diklat?"+ bulan + tahun)
+                var bulanawal = "bulanawal=" + moment($scope.item.monthawal).format('MM');
+                var bulanakhir = "&bulanakhir=" + moment($scope.item.monthakhir).format('MM');
+                // console.log(bulan,tahun);
+                medifirstService.get("sdm/get-datalaporan-diklat?"+ bulanawal+bulanakhir + tahun)
                     .then(function (data) {
                         
                         $scope.isRouteLoading = false;
@@ -136,7 +138,6 @@ define(['initialize'], function (initialize) {
                             data: data.data.eksternal,
                             pageSize: 50,
                             total: data.data.eksternal.length,
-
                             serverPaging: false,
                             schema: {
                                 model: {
@@ -144,6 +145,25 @@ define(['initialize'], function (initialize) {
                                 }
                             }
                         });
+                        // return
+                        var bulan = data.data.gabungan
+                        for (let i = 0; i < bulan.length; i++) {
+                            bulan[i].no = i + 1
+                        }
+                        var internal = data.data.internal
+                        for (let i = 0; i < internal.length; i++) {
+                            internal[i].no = i + 1
+                        }
+                        var eksternal = data.data.eksternal
+                        for (let i = 0; i < eksternal.length; i++) {
+                            eksternal[i].no = i + 1
+                        }
+
+                        $scope.dataSourceGridGabungan = new kendo.data.DataSource({
+                            data: data.data.gabungan,
+                            pageSize: 50,
+                            total: data.data.eksternal.length,
+                        })
                     });
 
             };
@@ -319,7 +339,6 @@ define(['initialize'], function (initialize) {
             $scope.columnGridGabungan = {
                 toolbar: [
                     "excel",
-
                 ],
                 excel: {
                     fileName: "DaftarKunjunganPasienPemeriksaan.xlsx",
@@ -348,53 +367,58 @@ define(['initialize'], function (initialize) {
                 selectable: 'row',
                 pageable: true,
                 columns: [{
-                        "field": "tglregistrasi",
+                        "field": "no",
                         "title": "NO",
-                        "width": "50px",
+                        "width": "30px",
                     },
                     {
-                        "field": "tglregistrasi",
+                        "field": "namalengkap",
                         "title": "NAMA",
-                        "width": "50px",
-                        "template": "<span class='style-left'>{{formatJam('#: tglregistrasi #')}}</span>"
+                        "width": "100px",
+                        // "template": "<span class='style-left'>{{formatJam('#: tglregistrasi #')}}</span>"
                     },
                     {
-                        "field": "nocm",
+                        "field": "nippns",
                         "title": "NIP",
                         "width": "50px",
-                        "template": "<span class='style-center'>#: nocm #</span>"
+                        // "template": "<span class='style-center'>#: nocm #</span>"
                     },
                     {
-                        "field": "noantrian",
+                        "field": "namajabatan",
                         "title": "JABATAN",
-                        "width": "30px",
-                        "template": "<span class='style-center'>#: noantrian #</span>"
+                        "width": "50px",
+                        // "template": "<span class='style-center'>#: noantrian #</span>"
 
                     },
                     {
-                        "field": "namapasien",
+                        "field": "jenispelatihan",
                         "title": "JENIS PELATIHAN",
                         "width": "100px",
-                        "template": "<span class='style-center'>#: namapasien #</span>"
+                        // "template": "<span class='style-center'>#: namapasien #</span>"
                     },
                     {
-                        "field": "reportdisplay",
+                        "field": "lokasipelatihan",
                         "title": "TEMPAT",
-                        "width": "50px",
+                        "width": "100px",
                         // "template": "<span class='style-center'>#: jeniskelamin #</span>"
                     },
                     {
-                        "field": "umur",
+                        // "field": "umur",
                         "title": "WAKTU",
                         "width": "50px",
                         columns: [{
-                            "title":"Tgl"
+                            "field": "tgl",
+                            "title":"Tgl",
+                        "width": "30px",
                         },{
-                            "title": "Bulan"
+                            "field": "bulan",
+                            "title": "Bulan",
+                        "width": "70px",
+
                         },]
                     },
                     {
-                        "field": "kelompokpasien",
+                        "field": "jampelaksanaan",
                         "title": "JAM PELAKSANAAN",
                         "width": "50px",
                     },
@@ -404,12 +428,12 @@ define(['initialize'], function (initialize) {
                     //     "width": "140px",
                     // },
                     {
-                        "field": "namalengkap",
+                        "field": "jmltotal",
                         "title": "JML JAM",
                         "width": "50px",
                     },
                     {
-                        "field": "status",
+                        "field": "totaljam",
                         "title": "TOTAL JAM",
                         "width": "50px",
                     },

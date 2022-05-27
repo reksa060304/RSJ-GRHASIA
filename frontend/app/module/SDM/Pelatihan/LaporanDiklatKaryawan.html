@@ -91,10 +91,19 @@
     <div class="grid_2" style="margin-top:5px">
         <div class="grid_12">
             <!-- AwalPeriode -->
-            <label c-label item="item" c-label-text="Periode Bulan"></label>
+            <label c-label item="item" c-label-text="Periode Bulan Awal"></label>
 
-                <input style="width: 100%" k-ng-model="item.month" kendo-datepicker k-options="monthungkul"
+                <input style="width: 100%" k-ng-model="item.monthawal" kendo-datepicker k-options="monthungkul"
                     placeholer="MM" k-format="'MM'" />
+        </div>
+    </div>
+    <div class="grid_2" style="margin-top:5px">
+        <div class="grid_12">
+            <!-- AwalPeriode -->
+            <label c-label item="item" c-label-text="Periode Bulan Akhir"></label>
+
+            <input style="width: 100%" k-ng-model="item.monthakhir" kendo-datepicker k-options="monthungkul" placeholer="MM"
+                k-format="'MM'" />
         </div>
     </div>
     <div class="grid_2" style="margin-top:5px">

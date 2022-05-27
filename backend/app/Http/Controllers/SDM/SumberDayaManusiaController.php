@@ -95,7 +95,7 @@ class SumberDayaManusiaController extends ApiController {
         $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $jenisJabatan = JenisJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $GolonganPegawai = GolonganPegawai::where('statusenabled', true)
-                            ->select(DB::raw("id, namaexternal || ' - ' || reportdisplay as golongan"))
+                            ->select(DB::raw("id, namaexternal || ', ' || reportdisplay as golongan"))
                             ->where('kdprofile', $kdProfile)
                             ->get();
         $KelompokJabatan = KelompokJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
@@ -240,7 +240,8 @@ class SumberDayaManusiaController extends ApiController {
             ->get();
         $jenishukuman = \DB::table('jenishukuman_m')
         ->where('statusenabled',true)
-        ->where('kdprofile',$kdProfile)->get();
+        ->where('kdprofile',$kdProfile)
+        ->orderBy("id")->get();
 
         $result = array(
             'sumberdana' => $sumberdana,
@@ -575,7 +576,19 @@ class SumberDayaManusiaController extends ApiController {
             $dataGajiMinus = $dataGajiMinus->where('pg.id','=',$request['idPegawai']);
         }
         $dataGajiMinus = $dataGajiMinus->get();
-
+        $dataHukumanDisiplin = \DB::table('sdm_hukumandisiplin_t as hd')
+        ->join('jenishukuman_m as jh', 'jh.id','=','hd.objectjenishukumanfk')
+        ->join('pegawai_m as pg', 'pg.id','=','hd.objectpegawaifk')
+        ->select('hd.tgldari', 'hd.tglsampai', 'hd.tglsk','hd.pejabatmenetapkan','jh.id','jh.jenishukuman','hd.norec','hd.objectjenishukumanfk')
+        ->where('pg.id','=',$request['idPegawai'])
+        ->get();
+        $dataPangkatGolongan = \DB::table("pegawai_m as pg")
+        ->leftjoin("riwayatgolongan_t as rg","rg.objectpegawaifk","=","pg.id") 
+        ->join("sdm_golongan_m as gol","gol.id","=","rg.objectgolonganfk")
+        ->select(DB::raw("rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal"))
+        ->where("pg.id",$request['idPegawai'])
+        ->get();
+        
         $result = array(
             'datapegawai' => $data,
             'datakeluarga' => $dataKeluarga,
@@ -587,6 +600,8 @@ class SumberDayaManusiaController extends ApiController {
             'datatelp'=> $dataTelp,
             'datagajiplus'=> $dataGajiPlus,
             'datagajiminus'=> $dataGajiMinus,
+            'datahukumandisiplin'=> $dataHukumanDisiplin,
+            'datapangkatgolongan'=> $dataPangkatGolongan,
             "createby : " => 'ea@epic',
 
         );
@@ -647,6 +662,8 @@ class SumberDayaManusiaController extends ApiController {
             $dataTelp=$request['simpantelp'];
             $dataKomponenGajiAdd=$request['komponengajiadd'];
             $dataKomponenGajiDel=$request['komponengajidel'];
+            $dataHukumanDisiplin= $request['hukumandisiplin'];
+            $dataRiwayatPangkatGolongan = $request['pangkatgolongan'];
 //            return $this->respond($dataKeluargaPegawai);
 
 
@@ -951,6 +968,61 @@ class SumberDayaManusiaController extends ApiController {
                     $dataKomponenGajiDel->save();
                 }
             }
+            if ($dataHukumanDisiplin != "") {
+                foreach ($dataHukumanDisiplin as $hudis) {
+                    if ($hudis['norec'] == "") {
+                        $dahudis = \DB::table('sdm_hukumandisiplin_t')
+                        ->insert([
+                            'norec' => substr(Uuid::generate(), 0, 32),
+                            'kdprofile'=> $kdProfile,
+                            'statusenabled'=> true,
+                            'objectjenishukumanfk'=> $hudis['objectjenishukumanfk'],
+                            'tgldari'=>$hudis['tgldari'],
+                            'tglsampai'=>$hudis['tglsampai'],
+                            'pejabatmenetapkan'=> $hudis['pejabatmenetapkan'],
+                            'objectpegawaifk'=> $IdPegawais,
+                            'tglsk'=> $hudis['tglsk'],
+                        ]);
+                    } else {
+                        $dahudis = \DB::table('sdm_hukumandisiplin_t')
+                        ->where('norec', $hudis['norec'])
+                        ->where('kdprofile', $kdProfile)
+                        ->where('objectpegawaifk', $IdPegawais)
+                        ->update([
+                            'statusenabled'=> true,
+                            'objectjenishukumanfk'=> $hudis['objectjenishukumanfk'],
+                            'tgldari'=>$hudis['tgldari'],
+                            'tglsampai'=>$hudis['tglsampai'],
+                            'pejabatmenetapkan'=> $hudis['pejabatmenetapkan'],
+                            'tglsk'=> $hudis['tglsk'],
+                        ]);
+                    }
+                    
+                }
+            }
+
+            if ($dataRiwayatPangkatGolongan != "") {
+                foreach ($dataRiwayatPangkatGolongan as $rpg) {
+                    
+                    if ($rpg['norec'] != "") {
+                        $masakerjatambahan = $rpg['masakerjatambahan'];
+                        if($rpg['masakerjatambahan'] == 'undefined'){
+                            $masakerjatambahan = null;
+                        }
+                        \DB::table("riwayatgolongan_t")->insert([
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'objectpegawaifk'=> $IdPegawais,
+                        'objectgolonganfk'=> $rpg['objectgolonganfk'],
+                        'tglsk'=>$rpg['tglsk'],
+                        'tgltmt'=>$rpg['tgltmt'],
+                        'masakerjatambahan'=> $masakerjatambahan,
+                        ]);
+                    }
+                }
+                # code...
+            }
 
             //## Logging User
 //                if ($dataPegawai['id'] == ""){
@@ -1007,7 +1079,9 @@ class SumberDayaManusiaController extends ApiController {
                 'datastr' => $dataStr,
                 'datatelp' =>$dataTelp,
                 'datakomponenadd' => $dataKomponenGajiAdd,
-                'datakomponendel' => $dataKomponenGajiDel,
+                'datakomponendel' => $dataKomponenGajiDel,                
+                'hukumandisiplin' => $dataHukumanDisiplin,
+                'riwayatpangkatgolongan' => $dataRiwayatPangkatGolongan,
                 "as" => 'ea@epic',
             );
         } else {
@@ -1025,7 +1099,9 @@ class SumberDayaManusiaController extends ApiController {
                 'datasip' => $dataSip,
                 'datastr' => $dataStr,
                 'datakomponenadd' => $dataKomponenGajiAdd,
-                'datakomponendel' => $dataKomponenGajiDel,
+                'datakomponendel' => $dataKomponenGajiDel,                
+                'hukumandisiplin' => $dataHukumanDisiplin,
+                'riwayatpangkatgolongan' => $dataRiwayatPangkatGolongan,
                 "as" => 'ea@epic',
             );
         }
@@ -1786,6 +1862,34 @@ class SumberDayaManusiaController extends ApiController {
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function deleteDataHukumanDisiplin(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        try {
+            \DB::table('sdm_hukumandisiplin_t')->where('norec',$request['norec'])->where('kdprofile', $kdProfile)->delete();
+            $transMessage = "Sukses ";
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Hapus Data Hukuman Disiplin Gagal";
+        }
+        if ($transStatus != 'false') {
+            \DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'ridwan',
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'ridwan',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 
     public function getDataKeluarga (Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
@@ -2106,6 +2210,7 @@ class SumberDayaManusiaController extends ApiController {
             $TP->save();
             $norec = $request['email'];
             if(!empty($uploadimage)) {
+                // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
                 $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
             }
             $transStatus = 'true';
@@ -4771,7 +4876,7 @@ WHERE
             WHERE rp.penyelenggara ilike'eksternal'
             and pg.kdprofile = $idProfile
             and pg.statusenabled = TRUE
-            and date_part('month', rp.tglmulai :: date) = $request->bulan
+            and date_part('month', rp.tglmulai :: date) between '$request->bulanawal' and '$request->bulanakhir'
             and date_part('year', rp.tglmulai :: date) = $request->tahun
             )
             SELECT sum(eks.biayasppd+eks.biayadiklat)jumlahbiaya, eks.namalengkap, eks.nippns, eks.name  unitkerja, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, sum(eks.durasi::INTEGER)jumlahjam, sum(eks.biayadiklat)biayadiklat, sum(eks.biayasppd)biayasppd, eks.waktusosialisasi FROM eksternal eks 
@@ -4789,17 +4894,32 @@ WHERE
             WHERE rp.penyelenggara ilike'internal'
             and pg.kdprofile = $idProfile
             and pg.statusenabled = TRUE
-            and date_part('month', rp.tglmulai :: date) = $request->bulan
+            and date_part('month', rp.tglmulai :: date) between '$request->bulanawal' and '$request->bulanakhir'
             and date_part('year', rp.tglmulai :: date) = $request->tahun
             )
             SELECT eks.namalengkap, eks.nippns, eks.name  unitkerja, eks.jenispelatihan,eks.waktu, sum(eks.durasi::INTEGER)jumlahjam FROM eksternal eks 
             GROUP BY eks.namalengkap, eks.nippns, eks.name, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, eks.waktusosialisasi
             ORDER BY eks.nippns asc, eks.namalengkap asc
         "));
+        $data3 = \DB::select(DB::raw("
+        /*gabungan*/
+	
+        SELECT pg.namalengkap, pg.nippns, jb.namajabatan, jp.jenispelatihan, rp.lokasipelatihan, date_part('day', rp.tglmulai::date)||' - '||date_part('day', rp.tglakhir::date) as tgl,CASE 
+        WHEN date_part('month', rp.tglmulai::date)= date_part('month', rp.tglakhir::date) THEN
+       	to_char(rp.tglmulai::date,'Month')
+	    ELSE
+		to_char(rp.tglmulai::date,'Month')||' - '|| to_char(rp.tglakhir::date,'Month')
+        END as bulan, '' as jampelaksanaan, '' as jmltotal, rp.durasi as totaljam FROM riwayatpelatihan_t rp left JOIN pegawai_m pg on pg.id = rp.objectpegawaifk left join jabatan_m jb on jb.id = pg.objectjabatanfungsionalfk left join jenispelatihan_m jp on jp.id = rp.jenispelatihanfk
+        WHERE pg.kdprofile = $idProfile
+        and pg.statusenabled = TRUE
+        and date_part('month', rp.tglmulai :: date) between '$request->bulanawal' and '$request->bulanakhir'
+        and date_part('year', rp.tglmulai :: date) = $request->tahun
+        ORDER BY pg.namalengkap asc 
+        "));
         $result = array(
             'eksternal'=> $data1,
             'internal'=> $data2,
-            // 'sum'=> $sum,
+            'gabungan'=> $data3,
             'as'=> 'Fizi',
         );
         return $this->respond($result);

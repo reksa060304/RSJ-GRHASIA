@@ -1,44 +1,47 @@
-<style>
-        @page {
-            size: 7in 9.25in;
-            margin: 27mm 16mm 27mm 16mm;
-        }
-
-        .borderss {
-            border-bottom: 1px solid black;
-        }
-
-        body {
-            font-family: Arial;
-            
-        }
-
-        .column {
-            float: left;
-            width: 50%;
-            padding: 10px;
-            height: 300px;
-            /* Should be removed. Only for demonstration */
-        }
-
-        /* Clear floats after the columns */
-        .row:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-    </style>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    @if(stripos(\Request::url(), 'localhost') !== FALSE)
+         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+        @else
+         <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
+        @endif
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-<body>
-    @foreach ($data as $d)
+<style type="text/css" media="print">
+    @page {
+        size: auto;   /* auto is the initial value */
+        margin: 0;  /* this affects the margin in the printer settings */
+    }
+</style>
+<style>
+    .borderss {
+        border-bottom: 1px solid black;
+    }
 
-    <table border="2" style="display: inline-block;table-layout: fixed">
+    body {
+        font-family: Arial;
+    }
+    .space{
+        padding-left: 125px;
+        padding-bottom: 15px;
+        width: 40%
+    }
+</style>
+</head>
+<body style="background-color: #CCCCCC">
+<div align="center">
+
+    <table border="2" style="display: inline-block;" width="{{$pageWidth}}" class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF"  >
+        @foreach ($data as $d)
+
         <tbody style="display: inline-block; table-layout: fixed">
 
             <tr >
                 <td style="text-align: center;">
-                    <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 60px" border="0">
+                    <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 60px; padding-top: 3px">
                 </td>
                 <td>
                     <div style="font-size: 10px; font-weight: bold;padding: 0px 20px 0px 20px; text-align: center; letter-spacing: -1px">RUMAH
@@ -49,10 +52,15 @@
             </tr>
             <tr>
                 <td>
-                    <img src="data:image;base64,{{$d->image}}" alt="" width="75" height="100"
+                    @if ($d->image == null)
+                        <img src="/DIKLAT/FileFoto/avatar.jpg" alt="" width="75" height="100"
                         style="padding: 5px 20px 5px 20px; text-align: center">
+                    @else
+                        <img src="/DIKLAT/FileFoto/{{$d->image}}" alt="" width="75" height="100"
+                        style="padding: 5px 20px 5px 20px; text-align: center">
+                    @endif
                 </td>
-                <td style="width: 200px">
+                <td style="width: 250px">
                     <div style="font-size: 12px; font-weight: bold;padding: 0px 20px 0px 20px; text-align: center;letter-spacing: -1px">
                         {{$d->detailjenisproduk}}</div>
                     <div style="font-size: 10px; font-weight: bold;padding: 0px 20px 0px 20px; text-align: center;">
@@ -64,10 +72,15 @@
                 </td>
             </tr>
         </tbody>
+     @endforeach
 
 
     </table>
-    @endforeach
+</div>
 
 
 </body>
+</html>
+
+
+

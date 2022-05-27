@@ -2039,6 +2039,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('sdm/update-false-pegawai', 'SDM\SumberDayaManusiaController@deleteDataPegawai');
             Route::post('sdm/update-idfinger-pegawai', 'SDM\SumberDayaManusiaController@updateDataIdFingerPrint');
             Route::post('sdm/delete-data-keluarga-pegawai', 'SDM\SumberDayaManusiaController@deleteDataKeluarga');
+            Route::post('sdm/delete-data-hukuman-disiplin', 'SDM\SumberDayaManusiaController@deleteDataHukumanDisiplin');
             Route::post('sdm/delete-data-sipstr', 'SDM\SumberDayaManusiaController@deleteDataSipStr');
             Route::post('sdm/save-rekam-data-pegawai', 'SDM\SumberDayaManusiaController@saveDataRekamDataPegawai');
             Route::post('sdm/upload-data-sipstr', 'SDM\SumberDayaManusiaController@simpanSipStr');
