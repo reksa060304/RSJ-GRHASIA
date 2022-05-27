@@ -35,7 +35,8 @@ define(['initialize'], function (initialize) {
                     var datas = dat.data.detail
                     for (var i = 0; i < datas.length; i++) {
                         datas[i].no = i + 1;
-                        datas[i].kdprov = '0023';
+                        datas[i].kdprov = '24';
+                        datas[i].koders = '3404022';
                         datas[i].year = new Date(tglAwal).getFullYear();
                     }
                     $scope.isRouteLoading = false;
@@ -203,7 +204,7 @@ define(['initialize'], function (initialize) {
                         width: "150px"
                     },
                     {
-                        field: "kode",
+                        field: "koders",
                         title: "KODE RS",
                         width: "150px"
                     },

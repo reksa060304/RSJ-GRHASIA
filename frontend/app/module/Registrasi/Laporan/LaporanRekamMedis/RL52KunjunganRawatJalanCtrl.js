@@ -43,7 +43,8 @@ define(['initialize'], function (initialize) {
                         var datas = dat.data.data
                         for (var i = 0; i < datas.length; i++) {
                             datas[i].no = i + 1;
-                            datas[i].kdprov = '0023';
+                            datas[i].kdprov = '24';
+                            datas[i].koders = '3404022';
                             datas[i].year = new Date(tglAwal).getFullYear();
                         }
                         $scope.ambildataexcel = datas;
@@ -127,7 +128,7 @@ define(['initialize'], function (initialize) {
                     },
                     columns: [
                         {
-                            field: "idprofile",
+                            field: "koders",
                             title: "KODE RS"
                         },
                         {

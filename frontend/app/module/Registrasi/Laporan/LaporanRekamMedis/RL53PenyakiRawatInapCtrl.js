@@ -52,7 +52,8 @@ define(['initialize'], function (initialize) {
                     var datas = dat.data.data
                     for (var i = 0; i < datas.length; i++) {
                         datas[i].no = i + 1;
-                        datas[i].kdprov = '0023';
+                        datas[i].kdprov = '24';
+                        datas[i].koders = '3404022';
                     }
                     $scope.ambildataexcel = datas;
                     $scope.panggil($scope.ambildataexcel);
@@ -157,7 +158,7 @@ define(['initialize'], function (initialize) {
                             title: "KAB / KOTA"
                         },
                         {
-                            field: "idprofile",
+                            field: "koders",
                             title: "KODE RS"
                         },
                         {

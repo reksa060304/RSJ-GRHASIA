@@ -1,0 +1,130 @@
+<!-- <div ng-controller="LaporanKematianRsCtrl"> -->
+
+    <style>
+        .k-grid .k-grid-header .k-header .k-link {
+            height: auto;
+        }
+    
+        .k-grid .k-grid-header .k-header {
+            white-space: normal;
+        }
+    
+        .k-grid .k-grid-header .k-header {
+            text-align: center;
+        }
+    </style>
+    <div ng-show="dataVOloaded">
+        <!-- <c-panel item="item" header="'Daftar Tagihan Rekanan'" disabled> -->
+        <div class="grid_12 headerBox">
+            <h2 style="color: white;">
+                <p>GRAFIK BARBER JOHNSON</p>
+            </h2>
+        </div>
+        <div class="grid_12">
+            <div class="grid_3">
+                <label c-label item="item" c-label-text="Tanggal awal"></label>
+                <input style="width: 100%" k-ng-model="item.tglawal" kendo-datetimepicker placeholer="yyyy-mm-dd"
+                    k-format="'yyyy-MM-dd'" />
+            </div>
+            <div class="grid_3">
+                <label c-label item="item" c-label-text="Tanggal Akhir"></label>
+                <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datetimepicker placeholer="yyyy-mm-dd"
+                    k-format="'yyyy-MM-dd'" />
+            </div>
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label>&nbsp;</label>
+                </div>
+                <div class="grid_12">
+                    <button class="primary c-button" style="margin-top: 6px" ng-click="CariData()">Cari</button>
+                </div>
+            </div>
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label>&nbsp;</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <button class="cancel c-button" style="margin-top: 6px" ng-click="ClearSearch()">Clear</button>
+                </div>
+            </div>
+        </div>
+        <div style="height:100px;" class="grid_12"></div>
+
+        <canvas id="myChart" style="width:100%;"></canvas>
+
+        <div class="grid_12">
+            <div class="grid_12" style="float:right">
+                <div class="grid_10"></div>
+            </div>
+        </div>
+        <br />
+    </div>
+    <br />
+    </div>
+    <div class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
+    
+    <!-- <script>
+
+        new Chart(document.getElementById("myChart"), {
+        type: 'scatter',
+        data: {
+            datasets: [{// 'line' dataset default does not affect this dataset since it's a 'scatter'
+                data: [{x:0, y:0},{x:2.5, y:7.5}],
+                showLine: true,
+                fill: false,
+                borderColor: 'black'
+            }, {// 'line' dataset default does not affect this dataset since it's a 'scatter'
+                data: [{x:0, y:0},{x:4.05, y:5.95}],
+                showLine: true,
+                fill: false,
+                borderColor: 'black'
+            }, {
+                data: [{x:0, y:0},{x:16.67, y:12.98}],
+                showLine: true,
+                fill: false,
+                borderColor: 'black' // overrides the `line` dataset default
+            }, {// 'line' dataset default does not affect this dataset since it's a 'scatter'
+                data: [{x:0, y:0},{x:0, y:0}],
+                showLine: true,
+                fill: false,
+                borderColor: 'black'
+            }]
+        },
+        options: {
+            responsive: true
+        }
+        });
+        
+        // new Chart("myChart", {
+        //   type: "line",
+        //   data: {
+        //     datasets: [{
+        //       pointRadius: 4,
+        //       pointBackgroundColor: "rgb(0,0,255)",
+        //       data: {
+        //             datasets: [{
+        //                 data: [0, 0],
+        //             }, {
+        //                 data: [0, 1]
+        //             }, {
+        //                 data: [1, 0],
+        //                 showLine: true // overrides the `line` dataset default
+        //             }, {
+        //                 type: 'scatter', // 'line' dataset default does not affect this dataset since it's a 'scatter'
+        //                 data: [1, 1]
+        //             }]
+        //         }
+        //     }]
+        //   },
+        //   options: {
+        //     legend: {display: false},
+        //     scales: {
+        //       xAxes: [{ticks: {min: 0, max:25}}],
+        //       yAxes: [{ticks: {min: 0, max:25}}],
+        //     }
+        //   }
+        // });
+    </script> -->
