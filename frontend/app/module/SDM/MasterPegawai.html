@@ -147,6 +147,17 @@
 									</div>
 								</div>
 							</div>
+							<div class="grid_12">
+								<div class="grid_6">
+									<div class="grid_12">
+										<label><b>Masa Kerja Tambahan</b></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="number" placeholder="Masa Kerja Tambahan" filter="'varchar'" class="k-textbox"
+											ng-model="item.masakerjatambahan"/>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="grid_12" style="margin-top: 16px">
@@ -1102,6 +1113,15 @@
 									</div>
 									<div class="grid_4">
 										<div class="grid_12">
+											<label c-label>No SK</label>
+										</div>
+										<div class="grid_12">
+											<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+												ng-model="itemPandG.masakerjatambahan" />
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_12">
 											<label c-label item="item" c-label-text="Tanggal SK"></label>
 										</div>
 										<div class="clear"></div>
@@ -1120,13 +1140,14 @@
 												k-format="'yyyy-MM-dd'" />
 										</div>
 									</div>
-									<div class="grid_4">
+									
+									<div class="grid_6">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="Masa Kerja Tambahan"></label>
+											<label c-label>Pejabat Yang Menetapkan</label>
 										</div>
 										<div class="grid_12">
-											<input c-text-box type="number" filter="'varchar'" class="k-textbox"
-												ng-model="itemPandG.masakerjatambahan" />
+											<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+												ng-model="itemPandG.jabatmenetapkan" />
 										</div>
 									</div>
 								</div>
@@ -1285,7 +1306,7 @@
 								<div class="grid_12">
 									<div class="grid_12">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="Jenis Hukuman"></label>
+											<label c-label >Jenis Hukuman</label>
 										</div>
 										<div class="grid_12">
 											<input kendo-combo-box k-ng-model="itemHukumanDisiplin.jenishukuman"
@@ -1297,7 +1318,7 @@
 									<div class="grid_6">
 										
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="Masa Berlaku Dari"></label>
+											<label c-label >Masa Berlaku TMT</label>
 										</div>
 										<div class="grid_12">
 											<input style="width: 100%" kendo-date-picker k-ng-model="itemHukumanDisiplin.tgldari"
@@ -1306,16 +1327,25 @@
 									</div>
 									<div class="grid_6">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="Sampai"></label>
+											<label c-label>Sampai</label>
 										</div>
 										<div class="grid_12">
 											<input style="width: 100%" kendo-date-picker k-ng-model="itemHukumanDisiplin.tglsampai"
 												k-format="'yyyy-MM-dd'" />
 										</div>
 									</div>
-									<div class="grid_12">
+									<div class="grid_6">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="Pejabat menetapkan"></label>
+											<label c-label>Tanggal SK</label>
+										</div>
+										<div class="grid_12">
+											<input style="width: 100%" kendo-date-picker k-ng-model="itemHukumanDisiplin.tglsk"
+												k-format="'yyyy-MM-dd'" />
+										</div>
+									</div>
+									<div class="grid_6">
+										<div class="grid_12">
+											<label  c-label>Pejabat Yang Menetapkan</label>
 										</div>
 										<div class="grid_12">
 											<input c-text-box type="input" filter="'varchar'" class="k-textbox"

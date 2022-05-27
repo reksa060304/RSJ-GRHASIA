@@ -95,7 +95,7 @@ class SumberDayaManusiaController extends ApiController {
         $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $jenisJabatan = JenisJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $GolonganPegawai = GolonganPegawai::where('statusenabled', true)
-                            ->select(DB::raw("id, namaexternal || ' - ' || reportdisplay as golongan"))
+                            ->select(DB::raw("id, namaexternal || ', ' || reportdisplay as golongan"))
                             ->where('kdprofile', $kdProfile)
                             ->get();
         $KelompokJabatan = KelompokJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
@@ -240,7 +240,8 @@ class SumberDayaManusiaController extends ApiController {
             ->get();
         $jenishukuman = \DB::table('jenishukuman_m')
         ->where('statusenabled',true)
-        ->where('kdprofile',$kdProfile)->get();
+        ->where('kdprofile',$kdProfile)
+        ->orderBy("id")->get();
 
         $result = array(
             'sumberdana' => $sumberdana,
@@ -578,12 +579,12 @@ class SumberDayaManusiaController extends ApiController {
         $dataHukumanDisiplin = \DB::table('sdm_hukumandisiplin_t as hd')
         ->join('jenishukuman_m as jh', 'jh.id','=','hd.objectjenishukumanfk')
         ->join('pegawai_m as pg', 'pg.id','=','hd.objectpegawaifk')
-        ->select('hd.tgldari', 'hd.tglsampai', 'hd.pejabatmenetapkan','jh.id','jh.jenishukuman','hd.norec')
+        ->select('hd.tgldari', 'hd.tglsampai', 'hd.tglsk','hd.pejabatmenetapkan','jh.id','jh.jenishukuman','hd.norec','hd.objectjenishukumanfk')
         ->where('pg.id','=',$request['idPegawai'])
         ->get();
         $dataPangkatGolongan = \DB::table("pegawai_m as pg")
         ->leftjoin("riwayatgolongan_t as rg","rg.objectpegawaifk","=","pg.id") 
-        ->leftjoin("sdm_golongan_m as gol","gol.id","=","rg.objectgolonganfk")
+        ->join("sdm_golongan_m as gol","gol.id","=","rg.objectgolonganfk")
         ->select(DB::raw("rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal"))
         ->where("pg.id",$request['idPegawai'])
         ->get();
@@ -980,10 +981,9 @@ class SumberDayaManusiaController extends ApiController {
                             'tglsampai'=>$hudis['tglsampai'],
                             'pejabatmenetapkan'=> $hudis['pejabatmenetapkan'],
                             'objectpegawaifk'=> $IdPegawais,
+                            'tglsk'=> $hudis['tglsk'],
                         ]);
-                    } 
-
-                    if($hudis['norec'] != "") {
+                    } else {
                         $dahudis = \DB::table('sdm_hukumandisiplin_t')
                         ->where('norec', $hudis['norec'])
                         ->where('kdprofile', $kdProfile)
@@ -994,6 +994,7 @@ class SumberDayaManusiaController extends ApiController {
                             'tgldari'=>$hudis['tgldari'],
                             'tglsampai'=>$hudis['tglsampai'],
                             'pejabatmenetapkan'=> $hudis['pejabatmenetapkan'],
+                            'tglsk'=> $hudis['tglsk'],
                         ]);
                     }
                     
@@ -1853,6 +1854,34 @@ class SumberDayaManusiaController extends ApiController {
             DB::rollBack();
             $result = array(
 
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'ridwan',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function deleteDataHukumanDisiplin(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        try {
+            \DB::table('sdm_hukumandisiplin_t')->where('norec',$request['norec'])->where('kdprofile', $kdProfile)->delete();
+            $transMessage = "Sukses ";
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Hapus Data Hukuman Disiplin Gagal";
+        }
+        if ($transStatus != 'false') {
+            \DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'ridwan',
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
                 "status" => 400,
                 "message" => $transMessage,
                 "as" => 'ridwan',
