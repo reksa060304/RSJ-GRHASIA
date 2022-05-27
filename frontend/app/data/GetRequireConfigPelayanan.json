@@ -3174,7 +3174,15 @@
         {
             "nameDep": "RL31TempatTidurCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL31TempatTidurCtrl"
+        },
+        {
+            "nameDep": "GrafikBarberJohnsonCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/GrafikBarberJohnsonCtrl"
 
+        },
+        {
+            "nameDep": "RL11DataDasarRumahSakitCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL11DataDasarRumahSakitCtrl"
         }
     ]
 }
