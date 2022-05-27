@@ -457,10 +457,10 @@
 							<div class="grid_4" style="margin-top: -6px;">
 								<div class="grid_6">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="NilaiJabatan"></label>
+										<label c-label item="item" c-label-text="KelasJabatan"></label>
 									</div>
 									<div class="grid_12">
-										<input c-text-box type="input" placeholder="Nilai Jabatan" filter="'varchar'"
+										<input c-text-box type="input" placeholder="Kelas Jabatan" filter="'varchar'"
 											class="k-textbox" ng-model="item.nilaiJabatan" />
 									</div>
 								</div>
@@ -1070,6 +1070,71 @@
 												class="k-icon k-update"></span>Simpan</button>
 										<button class="k-button  k-button-icontext"
 											ng-click="batalRiwayatJabatan()"><span
+												class="k-icon k-cancel"></span>Batal</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</md-content>
+				</md-tab>
+
+				<md-tab label="Riwayat Pangkat dan Golongan">
+					<md-content class="md-padding">
+						<div class="grid_12">
+							<kendo-grid k-data-source="gridRiwayatPangkatGolongan" k-pageable="true" k-ng-model="dataRiwayatPangkatGolongan"
+								k-selectable="'row'" options="opsiGridRiwayatPangkatGolongan" ng-click="kl(dataRiwayatPangkatGolongan)"
+								style="font-size: small;"></kendo-grid>
+						</div>
+
+						<div kendo-window="popUpRiwayatPangkatGolongan" k-title="'Data Riwayat Pangkat dan Golongan'" k-width="850" k-height="350"
+							k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+							<div class="panel panel-default container_12" style="padding: 0px 10px;">
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Golongan"></label>
+										</div>
+										<div class="grid_12">
+											<input kendo-combo-box k-ng-model="itemPandG.golongan"
+												k-data-text-field="'golongan'" k-data-value-field="'id'" k-filter="'contains'"
+												k-auto-bind="false" k-data-source="ListGolonganPegawai" />
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Tanggal SK"></label>
+										</div>
+										<div class="clear"></div>
+										<div class="grid_12">
+											<input style="width: 100%" kendo-date-picker k-ng-model="itemPandG.tanggalsk" k-format="'yyyy-MM-dd'" />
+										</div>
+									</div>
+									
+									<div class="grid_4">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Tanggal TMT"></label>
+										</div>
+										<div class="clear"></div>
+										<div class="grid_12">
+											<input style="width: 100%" kendo-date-picker k-ng-model="itemPandG.tanggaltmt"
+												k-format="'yyyy-MM-dd'" />
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Masa Kerja Tambahan"></label>
+										</div>
+										<div class="grid_12">
+											<input c-text-box type="number" filter="'varchar'" class="k-textbox"
+												ng-model="itemPandG.masakerjatambahan" />
+										</div>
+									</div>
+								</div>
+								<div class="grid_12">
+									<div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+										<button class="k-button k-button-icontext k-primary k-grid-update"
+											ng-click="tambahRiwayatPangkatGolongan()"><span class="k-icon k-update"></span>Simpan</button>
+										<button class="k-button  k-button-icontext" ng-click="batalRiwayatPangkatGolongan()"><span
 												class="k-icon k-cancel"></span>Batal</button>
 									</div>
 								</div>

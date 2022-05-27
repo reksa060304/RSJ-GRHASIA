@@ -38,7 +38,7 @@
 </head>
 <body style="background-color: #CCCCCC">
     <div align="center">
-        <table class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" border="2">
+        <table class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" >
                             @foreach ($data as $d)
 
             <thead>
