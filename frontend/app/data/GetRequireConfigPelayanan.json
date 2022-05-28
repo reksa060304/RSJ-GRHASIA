@@ -3183,6 +3183,14 @@
         {
             "nameDep": "RL11DataDasarRumahSakitCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL11DataDasarRumahSakitCtrl"
+        },
+        {
+            "nameDep": "HPPMinatBakatCtrl",
+            "urlDep": "module/EMR/HPPMinatBakatCtrl"
+        },
+        {
+            "nameDep": "HPPCTKICtrl",
+            "urlDep": "module/EMR/HPPCTKICtrl"
         }
     ]
 }
