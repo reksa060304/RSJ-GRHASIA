@@ -994,20 +994,20 @@ class LaboratoriumController extends ApiController
                     $h->save();
                     
                 }
-                $newId = LoggingUser::max('id');
-                $newId = $newId +1;
-                $logUser = new LoggingUser();
-                $logUser->id = $newId;
-                $logUser->norec = $logUser->generateNewId();
-                $logUser->kdprofile= $kdProfile;
-                $logUser->statusenabled=true;
-                $logUser->jenislog = "Simpan Hasil Lab";
-                $logUser->keterangan = json_encode($value);
-                $logUser->noreff = $value['norecpelayanan'];;
-                $logUser->referensi='Norec PP';
-                $logUser->objectloginuserfk =  $value['dokterfk'];
-                $logUser->tanggal = date('Y-m-d H:i:s');
-                $logUser->save();
+                // $newId = LoggingUser::max('id');
+                // $newId = $newId +1;
+                // $logUser = new LoggingUser();
+                // $logUser->id = $newId;
+                // $logUser->norec = $logUser->generateNewId();
+                // $logUser->kdprofile= $kdProfile;
+                // $logUser->statusenabled=true;
+                // $logUser->jenislog = "Simpan Hasil Lab";
+                // $logUser->keterangan = json_encode($value);
+                // $logUser->noreff = $value['norecpelayanan'];;
+                // $logUser->referensi='Norec PP';
+                // $logUser->objectloginuserfk =  $value['dokterfk'];
+                // $logUser->tanggal = date('Y-m-d H:i:s');
+                // $logUser->save();
     
                     # code...
                

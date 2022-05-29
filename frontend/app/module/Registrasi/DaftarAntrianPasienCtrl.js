@@ -14,6 +14,7 @@ define(['initialize'], function (initialize) {
             $scope.until = new Date();
             $scope.items = {};
             $scope.dataItem = {};
+            $scope.jmlRows = 50
             $scope.from = moment($scope.from).format('YYYY-MM-DD 00:00');
             $scope.until = moment($scope.until).format('YYYY-MM-DD 23:59');
             loadCombo()
@@ -115,6 +116,10 @@ define(['initialize'], function (initialize) {
 
             $scope.findData = function () {
                 $scope.isRouteLoading = true;
+                var jmlRows = "";
+                if ($scope.jmlRows != undefined) {
+                    jmlRows = '&jmlrows='+$scope.jmlRows
+                }
                 var ruanganId = ''
                 if ($scope.ruangan)
                     ruanganId = '&ruanganId=' + $scope.ruangan.id
@@ -127,7 +132,7 @@ define(['initialize'], function (initialize) {
                 // findPasien.findQueueSemua($scope.from, $scope.until, $scope.noRekamMedis, $scope.ruangan).then(function (e) {
                 medifirstService.get('registrasi/daftar-antrian-pasien/get-daftar-antrian-pasien?tglAwal=' + moment($scope.from).format('YYYY-MM-DD HH:mm') +
                     '&tglAkhir=' + moment($scope.until).format('YYYY-MM-DD HH:mm')
-                    + ruanganId + noRM + nama).then(function (e) {
+                    + ruanganId + noRM + nama+jmlRows).then(function (e) {
                         if (e.data.listData.length > 0) {
                             for (var key in e.data.listData) {
                                 if (e.data.listData.hasOwnProperty(key)) {

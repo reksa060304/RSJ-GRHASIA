@@ -4174,7 +4174,8 @@ class RegistrasiController extends ApiController
             $data = $data->Where('ps.namapasien', 'ilike', '%'.$filter['nama'].'%')	;
         }
 //		$data = $data->whereIn('dept.id',[18,24,28,27,3]);
-        $data = $data->limit(50);
+        $data = $data->limit($request['jmlrows']);
+
         $data = $data->orderBy('apd.tglmasuk','desc');
 
         $data = $data->get();
