@@ -17673,5 +17673,89 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "GrafikBarberJohnson",
+    "url": "/R3JhZmlrQmFyYmVySm9obnNvbg==",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/GrafikBarberJohnson.html",
+    "controller": "GrafikBarberJohnsonCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL11DataDasarRumahSakit",
+    "url": "/UkwxLjFEYXRhRGFzYXJSdW1haFNha2l0",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL11DataDasarRumahSakit.html",
+    "controller": "RL11DataDasarRumahSakitCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.HPPMinatBakat",
+    "url": "/HPPMinatBakat",
+    "templateurl": "module/EMR/HPPMinatBakat.html",
+    "controller": "HPPMinatBakatCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.HPPCTKI",
+    "url": "/HPPCTKI",
+    "templateurl": "module/EMR/HPPCTKI.html",
+    "controller": "HPPCTKICtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]

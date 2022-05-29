@@ -793,7 +793,7 @@ class LaporanRekamMedisController extends   ApiController
             if($row != $currentmain){
                 foreach($jumlahperkelas as $jml){
                     $year = $jml->year;
-                    if($row == "Jiwa"){
+                    if($row == "Jiwa" || $row == "Umum" || $row == "Penatalaksanaan Penyalahgunaan NAPZA"){
                         $jumlahtt = $jml->totaltt;
                         $kelasvip = $jml->jumlahkelasvip;
                         $kelassatu = $jml->jumlahkelassatu; 
@@ -5266,6 +5266,457 @@ class LaporanRekamMedisController extends   ApiController
             'message' => 'as@Ramdan',
         );
 
+        return $this->respond($result);
+    }
+
+    public static function getGrafikBarberJohnson(Request $request){
+
+        //$idProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'].' 00:00';
+        $tglAkhir = $request['tglAkhir'].' 23:59';
+        $tahun = date ('Y');
+        $sehari = 1;//$interval->format('%d');
+        $data10=[];
+
+        $tanggalmin = DB::select(DB::raw("
+            select min(d::date) as tglmin
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
+        "));
+
+        $tanggalmax = DB::select(DB::raw("
+            select min(d::date) as tglmax
+            from generate_series('$tglAkhir', '$tglAkhir'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
+        "));
+        
+        $monthtahunmonth = (int) date('m', strtotime($tglAwal));
+        $yeartahunmonth = (int) date('Y', strtotime($tglAwal));
+        
+
+        $tahunmonthq = DB::select(DB::raw("select to_char(daterange::date, 'YYYY-mm') as tahun
+        from generate_series('$yeartahunmonth-$monthtahunmonth-01'::date, '$tglAkhir'::date, '1 month') as daterange"));
+        
+        $arrmin = [];
+        foreach($tanggalmin as $rowmin)
+        {
+            $arrmin[] =  $rowmin->tglmin;
+        }
+        $arrmax = [];
+        foreach($tanggalmax as $rowmax)
+        {
+            $arrmax[] =  $rowmax->tglmax;
+        }
+        
+        
+        $tanggalminawal = DB::select(DB::raw("select '$arrmin[0] 23:59:59'::timestamp - interval '1 day ' as tgl"));
+
+        $arrminawal = [];
+        foreach($tanggalminawal as $rowminawal)
+        {
+            $arrminawal[] =  $rowminawal->tgl;
+        }
+
+        $tanggalmaxawal = DB::select(DB::raw("select '$arrmax[0] 23:59:59'::timestamp - interval '1 day ' as tgl"));
+
+        $arrmaxawal = [];
+        foreach($tanggalmaxawal as $rowmaxawal)
+        {
+            $arrmaxawal[] =  $rowmaxawal->tgl;
+        }
+
+
+
+            $dataKemarin = DB::select(DB::raw("select (tgl::date + interval '1 day')::date as tgl, sum(jumlah) as jumlah from(
+                (select tgl as tgl,jumlah from (select tgl, case when jumlah is null then 0 else sum(jumlah) end as jumlah from(
+                    with cte as(
+                    select d as tgl
+                    from generate_series('$arrminawal[0]', '$arrmaxawal[0]'::timestamp + INTERVAL '0 day', '1 day'::interval) d
+                    )
+                    select * FROM
+                    cte
+                    left join(
+                    select noregistrasi, norec, tgl as tglapd, jumlah, tglpulang, tglkeluar, ruanganasal, ruangantujuan from (select pd.noregistrasi, apd.norec, apd.tglmasuk as tgl, pd.tglpulang, apd.tglkeluar, count(apd.tglmasuk) as jumlah, ru1.namaruangan ruanganasal, ru.namaruangan ruangantujuan
+                    FROM pasiendaftar_t as pd
+                    INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                    INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk = 16
+                    inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk <> 16
+                    where pd.kdprofile = 30
+                    and pd.statusenabled = true
+                    group by apd.tglmasuk, apd.tglkeluar, pd.tglpulang, pd.noregistrasi, apd.norec, ru.namaruangan, ru1.namaruangan
+                    ) as x
+                                    
+                    UNION ALL
+                                    
+                    select noregistrasi, norec, tgl as tglapd, jumlah, tglpulang, tglkeluar, ruanganasal, ruangantujuan from (select pd.noregistrasi, apd.norec, apd.tglmasuk as tgl, pd.tglpulang, apd.tglkeluar, count(apd.tglmasuk) as jumlah, ru1.namaruangan ruanganasal, ru.namaruangan ruangantujuan
+                    FROM pasiendaftar_t as pd
+                    INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                    INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk = 16
+                    inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk = 16
+                    where pd.kdprofile = 30
+                    and pd.statusenabled = true
+                    group by apd.tglmasuk, apd.tglkeluar, pd.tglpulang, pd.noregistrasi, apd.norec, ru.namaruangan, ru1.namaruangan
+                    ) as x
+                    ) as y on cte.tgl between y.tglapd and coalesce(y.tglkeluar,now())
+                ) as e
+                group by e.tgl, e.jumlah
+                order by e.tgl) as i)
+            ) as f group by tgl"));
+            
+            //var_dump($dataKemarin);            
+
+            $data = DB::select(DB::raw("
+            select tgl, sum(jumlah) as jumlah from(
+                select tgl, jumlah from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah
+                    FROM pasiendaftar_t as pd
+                    INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                    INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk = 16
+                    inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk <> 16
+                    where pd.kdprofile = 30 
+                    and pd.statusenabled = true
+                    and cast(apd.tglmasuk as date) between '$tglAwal' and '$tglAkhir'
+                    group by apd.tglmasuk::date
+                ) as x
+            ) as f group by tgl"));
+            
+            $dataPindah = DB::select(DB::raw("
+            select tgl, sum(jumlah) as jumlah from(
+                select tgl, jumlah from (select apd.tglmasuk::date as tgl, count(apd.tglmasuk) as jumlah
+                    FROM pasiendaftar_t as pd
+                    INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                    INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk = 16
+                    INNER JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk = 16
+                    where pd.kdprofile = 30 
+                    and pd.statusenabled = true
+                    and cast(apd.tglmasuk as date) between '$tglAwal' and '$tglAkhir' 
+                    group by apd.tglmasuk::date
+                ) as x
+            ) as z group by tgl"));
+            
+            $dataDipindahkan = DB::select(DB::raw("
+            select tgl, sum(jumlah) as jumlah from(select tgl, jumlah from (
+                select apd.tglkeluar::date as tgl, count(apd.tglkeluar) as jumlah
+                    FROM pasiendaftar_t as pd
+                    INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                    INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk = 16
+                    INNER JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk = 16
+                    where pd.kdprofile = 30 
+                    and pd.statusenabled = true
+                    and cast(apd.tglkeluar as date) between '$tglAwal' and '$tglAkhir' 
+                    and apd.tglkeluar <> coalesce(pd.tglpulang,now())
+                    and apd.tglkeluar > apd.tglmasuk
+                    group by apd.tglkeluar::date
+                ) as x
+                
+                union all
+                
+                select tgl, jumlah from (
+                    select apd.tglkeluar::date as tgl, count(apd.tglkeluar) as jumlah
+                    FROM pasiendaftar_t as pd
+                    INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                    INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk = 16
+                    INNER JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk <> 16
+                    where pd.kdprofile = 30 
+                    and pd.statusenabled = true
+                    and cast(apd.tglkeluar as date) between '$tglAwal' and '$tglAkhir' 
+                    and apd.tglkeluar <> coalesce(pd.tglpulang,now())
+                    and apd.tglkeluar > apd.tglmasuk
+                    group by apd.tglkeluar::date
+                ) as x
+            ) as y group by tgl"));
+            
+            $dataPulang = DB::select(DB::raw("
+            select max(apd.tglkeluar), pd.tglpulang::date as tgl, count(pd.tglpulang) as jumlah
+                FROM pasiendaftar_t as pd
+                INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+                inner JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
+                where pd.kdprofile = 30 and pd.statusenabled = true
+                and cast(pd.tglpulang as date) between '$tglAwal' and '$tglAkhir'
+                and pd.tglpulang = apd.tglkeluar
+                and ru.objectdepartemenfk = 16
+                and (pd.objectstatuspulangfk not in (2,3) or pd.objectstatuspulangfk is null)
+                and apd.tglmasuk <> apd.tglkeluar
+            group by pd.tglpulang::date"));
+
+            $dataPulangAPS = DB::select(DB::raw("
+            select pd.tglpulang::date as tgl, count(pm.namapasien) jumlah
+                FROM pasiendaftar_t as pd
+                INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+                INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
+                where pd.kdprofile = 30 and pd.statusenabled = true
+                and cast(pd.tglpulang as date) between '$tglAwal' and '$tglAkhir'
+                and pd.objectstatuspulangfk = 2
+                and ru.objectdepartemenfk = 16
+                and pd.tglpulang is not null
+            group by pd.tglpulang::date"));
+                
+            $dataPulangMelarikanDiri = DB::select(DB::raw("
+            select pd.tglpulang::date as tgl, count(pm.namapasien) jumlah
+                FROM pasiendaftar_t as pd
+                INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
+                INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
+                where pd.kdprofile = 30 and pd.statusenabled = true
+                and cast(pd.tglpulang as date) between '$tglAwal' and '$tglAkhir'
+                and pd.objectstatuspulangfk = 3
+                and ru.objectdepartemenfk = 16
+                and pd.tglpulang is not null
+            group by pd.tglpulang::date"));
+
+            $lamadirawat = DB::select(DB::raw("
+            select sum(y.totallama) as jumlah from(
+                select x.tanggalpulang, sum(x.lamadirawat) as totallama from(
+                with cte as (
+                    select pdt.norec, min(apdt.tglmasuk::date) tglmasuk from pasiendaftar_t as pdt
+                    inner join antrianpasiendiperiksa_t as apdt on apdt.noregistrasifk = pdt.norec
+                    inner join ruangan_m as rum on rum.id = apdt.objectruanganfk
+                    where rum.objectdepartemenfk = 16
+                    and pdt.statusenabled = TRUE
+                    and pdt.kdprofile = 30
+                    and pdt.tglpulang::date between '$tglAwal' and '$tglAkhir'
+                    group by pdt.norec, apdt.objectruanganfk
+                )
+                
+                select pd.tglpulang::date as tanggalpulang, cte.tglmasuk as tanggalmasuk,
+                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  (pd.tglpulang::date-cte.tglmasuk) + 1 end as lamadirawat
+                    FROM pasiendaftar_t as pd
+                    INNER JOIN cte on cte.norec = pd.norec
+                    WHERE pd.kdprofile = 30 and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
+                    group by pd.tglpulang::date, cte.tglmasuk 
+                    order by pd.tglpulang::date
+                ) as x group by x.tanggalpulang
+            ) as y"));
+
+            $jumlahdays = DB::select(DB::raw("SELECT '$tglAkhir'::date - '$tglAwal'::date + 1 as jumlahhari"));
+            //var_dump($jumlahdays[0]->jumlahhari);
+            $jumlah = $jumlahdays[0]->jumlahhari;
+
+            $jumlahttkalihari = 0;
+            $jumlahgrandtotaltt = 0;
+            $hari = 0;
+            $hariawal = (int) date('d', strtotime($tglAwal));
+
+            foreach($tahunmonthq as $q){
+                //var_dump($jumlah);
+                if($jumlah >= 28){
+                    if($hariawal > 1){
+                        $hari = (cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($q->tahun)), date('Y', strtotime($q->tahun))) - $hariawal +1);
+                        $jumlah -=  $hari;
+                        $hariawal = 1;
+                        //var_dump($jumlah);
+                    } else{
+                        $hari = cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($q->tahun)), date('Y', strtotime($q->tahun)));
+                        $jumlah -= $hari;
+                        $hari = cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($q->tahun)), date('Y', strtotime($q->tahun)));
+                        //($jumlah);
+                    }
+                } else{
+                    $hari = $jumlah;
+                    //var_dump($jumlah);
+                }
+                //var_dump($hariawal);
+                //var_dump($q);
+                //var_dump($hari);
+
+                $jumlahtt = DB::select(DB::raw("select '$q->tahun-$hari' as tanggal, sum(rm.jumlah_tt) as totalperperiode 
+                    from riwayatkamar_m rm
+                    inner join ruangan_m ru on ru.id = rm.objectruanganfk
+                    inner join(
+                        select objectruanganfk,objectkamarfk,max(tanggalawal) as tanggal from riwayatkamar_m 
+                        where 
+                        '$q->tahun-$hari 23:59:59' BETWEEN tanggalawal and COALESCE(tanggalakhir,'$q->tahun-$hari 23:59:59')
+                        group by objectruanganfk,objectkamarfk
+                    ) as x	
+                    on rm.objectruanganfk=x.objectruanganfk and rm.objectkamarfk=x.objectkamarfk and rm.tanggalawal = x.tanggal
+                    where rm.kdprofile = 30 and rm.statusenabled = true"));
+
+                    //var_dump($jumlahtt);
+                    
+                    $jumlahttkalihari += $hari*$jumlahtt[0]->totalperperiode;
+                    $jumlahgrandtotaltt += $jumlahtt[0]->totalperperiode;
+
+                    
+                    // var_dump($q->tahun);
+                    // var_dump($hari);
+                    // var_dump($jumlahtt[0]->totalperperiode);
+                    // var_dump($hari*$jumlahtt[0]->totalperperiode);
+                    // var_dump($hari*$jumlahtt[0]->totalperperiode);
+                    
+            }
+            
+            $bor = 0;
+            $alos = 0;
+            $toi = 0;
+            $bto = 0;
+            $ndr = 0;
+            $gdr = 0;
+            $jumlahpasienpindah = 0;
+            $jumlahpasienawal = 0;
+            $jumlahpasienmasuk = 0;
+            $jumlahpasiendipindahkan = 0;
+            $jumlahpasienpulang = 0;
+            $jumlahpindah = 0;
+            $jumlahmasuk = 0;
+            $jumlahhariperawatan = 0;
+            $jumlahpulang = 0;
+            $jumlahpasienpulangaps = 0;
+            $jumlahpasienpulangmelarikandiri = 0;
+            $jumlahtttotal = 0;
+            $jumlahbortt = 0;
+            $jumlahborhariperawatan = 0;
+            $jumlahharidirawat = 0;
+            $xbor = 0;
+            $ybor = 0;
+            $xbto = 0;
+            $ybto = 0;
+            $xtoi = 0;
+            $yalos = 0;
+            $periodegrafik = $jumlahdays[0]->jumlahhari;
+
+            foreach($dataKemarin as $awal){
+                $jumlahpasienawal += $awal->jumlah;
+            }
+
+            foreach($data as $masuk){
+                $jumlahpasienmasuk += $masuk->jumlah;
+            }
+
+            foreach($dataPindah as $pindah){
+                $jumlahpasienpindah += $pindah->jumlah;
+            }
+
+            foreach($dataDipindahkan as $dipindah){
+                $jumlahpasiendipindahkan += $dipindah->jumlah;
+            }
+
+            foreach($dataPulang as $pulang){
+                $jumlahpasienpulang += $pulang->jumlah;
+            }
+
+            foreach($dataPulangAPS as $pulangaps){
+                $jumlahpasienpulangaps += $pulangaps->jumlah;
+            }
+
+            foreach($dataPulangMelarikanDiri as $pulanglari){
+                $jumlahpasienpulangmelarikandiri += $pulanglari->jumlah;
+            }
+
+            foreach($lamadirawat as $lama){
+                $jumlahharidirawat += $lama->jumlah;
+            }
+
+            $jumlahhariperawatantt = $jumlahpasienawal + $jumlahpasienmasuk + $jumlahpasienpindah;
+            $jumlahpulang = $jumlahpasiendipindahkan + $jumlahpasienpulang + $jumlahpasienpulangaps + $jumlahpasienpulangmelarikandiri;
+            
+            if($jumlahpulang == 0){
+                $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
+                $alos = 0;
+                $toi = 0;
+                $bto = $jumlahpulang/$jumlahgrandtotaltt;
+            } else{
+                $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
+                $alos = $jumlahharidirawat/$jumlahpulang;
+                $toi = ($jumlahttkalihari - $jumlahhariperawatantt)/$jumlahpulang;
+                $bto = $jumlahpulang/$jumlahgrandtotaltt;
+            }
+
+            //var_dump($periodegrafik);
+
+            $ybor = $bor/10;
+            $xbor = 10-($bor/10);
+            if($bto>0){
+                $xbto = $periodegrafik/$bto;
+                $ybto = $periodegrafik/$bto;
+            } else{
+                $xbto = 0;
+                $ybto = 0;
+            }
+            
+            $xtoi = $toi;
+            $yalos = $alos;
+
+            $data10[] = array(
+                'xbor' =>(float) number_format($xbor,2),
+                'ybor' =>(float) number_format($ybor,2),
+                'xbto' =>(float) number_format($xbto,2),
+                'ybto' => (float)number_format($ybto,2),
+                'xtoi' => (float)number_format($xtoi,2),
+                'yalos' => (float) number_format($yalos,2),
+            );
+            
+
+        return $data10;
+
+    }
+    
+    public function getDataRL11DataDasarRumahSakit(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['tglAwal']; 
+
+        $kolom1 = array("1. Nomor Kode RS", "2. Tanggal Registrasi", "3. Nama Rumah Sakit", "4. Jenis Rumah Sakit", "5. Kelas Rumah Sakit", "6. Nama Direktur RS", "7. Nama Penyelenggara RS", "Alamat / Lokasi RS", "a. Kab / Kota", "b. Kode Pos", "c. Telepon", "d. Fax", "e. E-mail", "f. No. Telp Bag Humas", "g. Website", "9. Luas Rumah Sakit", "a. Luas Tanah", "b. Luas Bangunan", "10. Surat Ijin / Penetapan", "a. Nomor", "b. Tanggal", "c. Oleh", "d. Sifat", "e. Masa berlaku s/d tahun", "11. Status Penyelenggara Swasta", "12. Akreditasi RS", "a. Pentahapan", "b. Status", "c. Tanggal Akreditasi", "13. Jumlah Pegawai", "Keterangan", "Tenaga Medis", "- Dokter Umum", "- Perawat", "- Analis Lab", "- Radiografer", "- Terapis", "- Psikolog", "- Dokter Spesialis Anak", "- Dokter Spesialis Jiwa", "- Dokter Spesialis Peny. Dalam", "- Dokter Spesialis Saraf", "- Dokter Spesialis Kulit dan Kelamnin", "Dokter Spesialis Radiologi", "Dokter Gigi", "Tenaga Non Kesehatan");
+        $kolom2 = array(": 2022", " ", ": 3404022", ": 21-February-2013", ": RSJ. GRHASIA", ": RS JIWA / RSKO", ": A", ":", ": Pemda Tk I", ": Jln. Kaliurang KM 17, Pakembinangun, Pakem, Sleman, Prop. DIY. T", ": Sleman", ":", ": (0274) 895143, 895297", "(0274) 895142", "grhasia@jogjaprov.go.id", ":", ": grhasia.jogjaprov.go.id", ":", ": 0.00", ": 0.00", ":", ":", "21-February-2013", "GUBERNUR DIY", ":", ": 2025", ": -", ":", ":", ": Bintang 5 Paripurna", ": 20-May-2019", " ", "Jumlah", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ");
+        $kolom4 = array(" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "13. Jumlah Tempat Tidur", "No.", "1", "2", "3", "4", "5", "6", "7", "8", " ");
+        $kolom5 = array(" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "Nama Kelas", "Isoalasi", "Airbone", "Infeksi/TB", "Intensif", "VIP", "Kelas III", "Kelas II", "Kelas I", "Jumlah Total");
+
+        $jumlahperkelas = DB::select(DB::raw("select sum(x.kelasvip) jumlahkelasvip, sum(x.kelassatu) jumlahkelassatu, sum(x.kelasdua) jumlahkelasdua, sum(x.kelastiga) jumlahkelastiga, sum(x.kelasisolasi) jumlahkelasisolasi, sum(x.kelasintensif) jumlahkelasintensif, sum(x.kelasairbone) jumlahkelasairbone, sum(x.kelasinfeksi) jumlahkelasinfeksi, sum(x.kelasvip) + sum(x.kelassatu) + sum(x.kelasdua) + sum(x.kelastiga) + sum(x.kelasisolasi) + sum(x.kelasairbone) + sum(x.kelasinfeksi) + sum(x.kelasintensif) totaltt from(
+            select
+						case when km.namakamar ilike '%isolasi%' and ks.id = 6 then sum(rm.jumlah_tt) else 0 end as kelasisolasi,
+						case when km.namakamar ilike '%airbone%' and ks.id = 6 then sum(rm.jumlah_tt) else 0 end as kelasairbone,
+						case when km.namakamar ilike '%infeksi/tb%' and ks.id = 6 then sum(rm.jumlah_tt) else 0 end as kelasinfeksi,
+						case when km.namakamar ilike '%intensif%' and ks.id = 6 then sum(rm.jumlah_tt) else 0 end as kelasintensif,
+            case when ks.id = 4 then sum(rm.jumlah_tt) else 0 end as kelasvip,
+						case when ks.id = 1 then sum(rm.jumlah_tt) else 0 end as kelastiga,
+						case when ks.id = 2 then sum(rm.jumlah_tt) else 0 end as kelasdua,
+            case when ks.id = 3 then sum(rm.jumlah_tt) else 0 end as kelassatu
+                from riwayatkamar_m rm
+            inner join ruangan_m ru on ru.id = rm.objectruanganfk
+            inner join kamar_m km on km.id = rm.objectkamarfk
+            inner join kelas_m ks on ks.id = rm.objectkelasfk
+            inner join(
+                select objectruanganfk,objectkamarfk,max(tanggalawal) as tanggal 
+                from riwayatkamar_m 
+                where 
+                '$tglAwal-01 23:59:59' BETWEEN tanggalawal and COALESCE(tanggalakhir,'$tglAwal-01 23:59:59')
+                group by objectruanganfk,objectkamarfk
+            ) as x	
+            on rm.objectruanganfk=x.objectruanganfk 
+            and rm.objectkamarfk=x.objectkamarfk 
+            and rm.tanggalawal = x.tanggal
+            and ks.id in (1, 2, 3, 4, 6)
+            where rm.kdprofile = 30 
+            and rm.statusenabled = true
+            group by ks.id, km.namakamar) as x"));
+        
+        $kolom6 = array(" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "Jml TT", $jumlahperkelas[0]->jumlahkelasisolasi, $jumlahperkelas[0]->jumlahkelasairbone, $jumlahperkelas[0]->jumlahkelasinfeksi, $jumlahperkelas[0]->jumlahkelasintensif, $jumlahperkelas[0]->jumlahkelasvip, $jumlahperkelas[0]->jumlahkelastiga, $jumlahperkelas[0]->jumlahkelasdua, $jumlahperkelas[0]->jumlahkelassatu, $jumlahperkelas[0]->totaltt);
+        
+        foreach($kolom1 as $satu){
+            $data1[] = array(
+                'jumlahkolom1' => $satu,
+            );
+        }
+        foreach($kolom2 as $dua){
+            $data2[] = array(
+                'jumlahkolom2' => $dua,
+            );
+        }
+        foreach($kolom4 as $empat){
+            $data4[] = array(
+                'jumlahkolom4' => $empat,
+            );
+        }
+        foreach($kolom5 as $lima){
+            $data5[] = array(
+                'jumlahkolom5' => $lima,
+            );
+        }
+        foreach($kolom6 as $enam){
+            $data6[] = array(
+                'jumlahkolom6' => $enam,
+            );
+        }
+
+        $result = array(
+            'data' => array_merge($data1, $data2, $data4, $data5, $data6),
+            'message' => 'as@cepot',
+        );
         return $this->respond($result);
     }
 }

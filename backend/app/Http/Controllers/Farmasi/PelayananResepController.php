@@ -5476,6 +5476,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             when pr.namaproduk = 'Biaya Pendaftaran Pasien IGD Baru' then 2000
             when pr.namaproduk = 'Biaya Pendaftaran Pasien IGD Lama' then 1200
             when pr.namaproduk = 'Biaya Pendaftaran Pasien Rawat Inap' then 8000
+            when pr.namaproduk ilike 'konsultasi online%' then 10000
         end as harga, count(pd.noregistrasi) as jumlahpasien,
         case 
             when pr.namaproduk = 'Biaya Pendaftaran Pasien Rawat Jalan Baru' then 2000*count(pd.noregistrasi)
@@ -5483,6 +5484,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             when pr.namaproduk = 'Biaya Pendaftaran Pasien IGD Baru' then 2000*count(pd.noregistrasi)
             when pr.namaproduk = 'Biaya Pendaftaran Pasien IGD Lama' then 1200*count(pd.noregistrasi)
             when pr.namaproduk = 'Biaya Pendaftaran Pasien Rawat Inap' then 8000*count(pd.noregistrasi)
+            when pr.namaproduk ilike 'konsultasi online%' then 10000*count(pd.noregistrasi)
         end as total
         from
             pasien_m ps 
@@ -5492,7 +5494,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         left  join produk_m pr on pr.id=pp.produkfk
         where pd.kdprofile = $kdProfile
         and pd.statusenabled = true
-        and pr.id in (5008637, 5008635, 5008644, 5008636, 5008645)
+        and pr.id in (5008637, 5008635, 5008644, 5008636, 5008645, 5007133, 5007131, 5007129, 5007130, 5007132, 5007127)
         group by pr.namaproduk"));
         
         $data['detail']  =$dataz;

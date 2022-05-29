@@ -23,8 +23,8 @@ define(['initialize'], function (initialize) {
                 ).then(function (data) {
                     var data = data.data
                     for(var i = 0; i < data.data.length; i++){
-                        data.data[i].koders = '30';
-                        data.data[i].kdprov = '0002';
+                        data.data[i].koders = '3404022';
+                        data.data[i].kdprov = '24';
                         data.data[i].kabkota = 'Kab. Sleman';
                     }
                     $scope.isRouteLoading = false;
