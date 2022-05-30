@@ -5686,35 +5686,453 @@ class LaporanRekamMedisController extends   ApiController
             group by ks.id, km.namakamar) as x"));
         
         $kolom6 = array(" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "Jml TT", $jumlahperkelas[0]->jumlahkelasisolasi, $jumlahperkelas[0]->jumlahkelasairbone, $jumlahperkelas[0]->jumlahkelasinfeksi, $jumlahperkelas[0]->jumlahkelasintensif, $jumlahperkelas[0]->jumlahkelasvip, $jumlahperkelas[0]->jumlahkelastiga, $jumlahperkelas[0]->jumlahkelasdua, $jumlahperkelas[0]->jumlahkelassatu, $jumlahperkelas[0]->totaltt);
-        
-        foreach($kolom1 as $satu){
-            $data1[] = array(
-                'jumlahkolom1' => $satu,
-            );
-        }
-        foreach($kolom2 as $dua){
-            $data2[] = array(
-                'jumlahkolom2' => $dua,
-            );
-        }
-        foreach($kolom4 as $empat){
-            $data4[] = array(
-                'jumlahkolom4' => $empat,
-            );
-        }
-        foreach($kolom5 as $lima){
-            $data5[] = array(
-                'jumlahkolom5' => $lima,
-            );
-        }
-        foreach($kolom6 as $enam){
-            $data6[] = array(
-                'jumlahkolom6' => $enam,
-            );
-        }
+        //var_dump($jumlahperkelas);
+        $data10[0] = array(
+            'jumlahkolom1' =>"TAHUN",
+            'jumlahkolom2' =>": 2022",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[1] = array(
+            'jumlahkolom1' =>"RL 1.1 Data Dasar Rumah Sakit",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[2] = array(
+            'jumlahkolom1' =>"1. Nomor Kode RS",
+            'jumlahkolom2' =>": 3404022",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[3] = array(
+            'jumlahkolom1' =>"2. Tanggal Registrasi",
+            'jumlahkolom2' =>": 21-February-2013",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[4] = array(
+            'jumlahkolom1' =>"3. Nama Rumah Sakit",
+            'jumlahkolom2' =>": RSJ. GRHASIA",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[5] = array(
+            'jumlahkolom1' =>"4. Jenis Rumah Sakit",
+            'jumlahkolom2' =>": RS Jiwa / RSKO",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[6] = array(
+            'jumlahkolom1' =>"5. Kelas Rumah Sakit",
+            'jumlahkolom2' =>": A",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[7] = array(
+            'jumlahkolom1' =>"6. Nama Direktur RS",
+            'jumlahkolom2' =>": ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[8] = array(
+            'jumlahkolom1' =>"7. Nama Penyelenggara RS",
+            'jumlahkolom2' =>": Pemda Tk I",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[9] = array(
+            'jumlahkolom1' =>"8. Alamat / Lokasi RS",
+            'jumlahkolom2' =>": Jln. Kaliurang Km 17, Pakembinangun, Pakem, Sleman, Prop. DIY. T",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[10] = array(
+            'jumlahkolom1' =>"a. Kab / Kota",
+            'jumlahkolom2' =>": Sleman",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[11] = array(
+            'jumlahkolom1' =>"b. Kode Pos",
+            'jumlahkolom2' =>": ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[12] = array(
+            'jumlahkolom1' =>"c. Telepon",
+            'jumlahkolom2' =>": (0274) 895143, 895297",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[13] = array(
+            'jumlahkolom1' =>"d. Fax",
+            'jumlahkolom2' =>": (0274) 895142",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[14] = array(
+            'jumlahkolom1' =>"e. E-mail",
+            'jumlahkolom2' =>": grhasia@jogjaprov.go.id",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[15] = array(
+            'jumlahkolom1' =>"f. No. Telp Bag. Humas",
+            'jumlahkolom2' =>": ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[16] = array(
+            'jumlahkolom1' =>"g. Website",
+            'jumlahkolom2' =>":  grhasia.jogjaprov.go.id",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[17] = array(
+            'jumlahkolom1' =>"9. Luas Rumah Sakit",
+            'jumlahkolom2' =>":  ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[18] = array(
+            'jumlahkolom1' =>"a. Luas Tanah",
+            'jumlahkolom2' =>": 0.00",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[19] = array(
+            'jumlahkolom1' =>"b. Luas Bangunan",
+            'jumlahkolom2' =>": 0.00",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[20] = array(
+            'jumlahkolom1' =>"10. Surat Ijin / Penetapan",
+            'jumlahkolom2' =>": ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[21] = array(
+            'jumlahkolom1' =>"a. Nomor",
+            'jumlahkolom2' =>": ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[22] = array(
+            'jumlahkolom1' =>"b. Tanggal",
+            'jumlahkolom2' =>": 21-February-2013",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[23] = array(
+            'jumlahkolom1' =>"c. Oleh",
+            'jumlahkolom2' =>": GUBERNUR DIY",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[24] = array(
+            'jumlahkolom1' =>"d. Sifat",
+            'jumlahkolom2' =>": ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[25] = array(
+            'jumlahkolom1' =>"e. Masa berlaku s/d tahun",
+            'jumlahkolom2' =>": 2025",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[26] = array(
+            'jumlahkolom1' =>"11. Status Penyelenggara Swasta",
+            'jumlahkolom2' =>": -",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[27] = array(
+            'jumlahkolom1' =>"12. Akreditasi RS",
+            'jumlahkolom2' =>": ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[28] = array(
+            'jumlahkolom1' =>"a. Pentahapan",
+            'jumlahkolom2' =>": ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[29] = array(
+            'jumlahkolom1' =>"b. Status",
+            'jumlahkolom2' =>": Bintang 5 Paripurna",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[30] = array(
+            'jumlahkolom1' =>"c. Tanggal Akreditas",
+            'jumlahkolom2' =>": 20-May-2019",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[31] = array(
+            'jumlahkolom1' =>" ",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[32] = array(
+            'jumlahkolom1' =>"13. Jumlah Pegawai",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>"14. Jumlah Tempat Tidur",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[33] = array(
+            'jumlahkolom1' =>"Keterangan",
+            'jumlahkolom2' =>"Jumlah",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>"No",
+            'jumlahkolom4' =>"Nama Kelas",
+            'jumlahkolom5' =>"Jml TT",
+        );
+
+        $data10[34] = array(
+            'jumlahkolom1' =>"Tenaga Medis",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>"1",
+            'jumlahkolom4' =>"Isolasi",
+            'jumlahkolom5' =>$jumlahperkelas[0]->jumlahkelasisolasi,
+        );
+
+        $data10[35] = array(
+            'jumlahkolom1' =>"- Dokter Umum",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>"2",
+            'jumlahkolom4' =>"Airbone",
+            'jumlahkolom5' =>$jumlahperkelas[0]->jumlahkelasairbone,
+        );
+
+        $data10[36] = array(
+            'jumlahkolom1' =>"- Perawat",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>"3",
+            'jumlahkolom4' =>"Infeksi/TB",
+            'jumlahkolom5' =>$jumlahperkelas[0]->jumlahkelasinfeksi,
+        );
+
+        $data10[37] = array(
+            'jumlahkolom1' =>"- Analis LAB",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>"4",
+            'jumlahkolom4' =>"Intensif",
+            'jumlahkolom5' =>$jumlahperkelas[0]->jumlahkelasintensif,
+        );
+
+        $data10[38] = array(
+            'jumlahkolom1' =>"- Radiografer",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>"5",
+            'jumlahkolom4' =>"VIP",
+            'jumlahkolom5' =>$jumlahperkelas[0]->jumlahkelasvip,
+        );
+
+        $data10[39] = array(
+            'jumlahkolom1' =>"- Terapis",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>"6",
+            'jumlahkolom4' =>"Kelas III",
+            'jumlahkolom5' =>$jumlahperkelas[0]->jumlahkelastiga,
+        );
+
+        $data10[40] = array(
+            'jumlahkolom1' =>"- Psikolog",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>"7",
+            'jumlahkolom4' =>"Kelas II",
+            'jumlahkolom5' =>$jumlahperkelas[0]->jumlahkelasdua,
+        );
+
+        $data10[41] = array(
+            'jumlahkolom1' =>"- Dokter Spesialis Anak",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>"8",
+            'jumlahkolom4' =>"Kelas I",
+            'jumlahkolom5' =>$jumlahperkelas[0]->jumlahkelassatu,
+        );
+
+        $data10[42] = array(
+            'jumlahkolom1' =>"- Dokter Spesialis Jiwa",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>"Jumlah total",
+            'jumlahkolom5' =>$jumlahperkelas[0]->totaltt,
+        );
+
+        $data10[43] = array(
+            'jumlahkolom1' =>"- Dokter Spesialis Peny. Dalam",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[44] = array(
+            'jumlahkolom1' =>"- Dokter Spesialis Saraf",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[45] = array(
+            'jumlahkolom1' =>"- Dokter Spesialis Kulit dan Kelamin",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[46] = array(
+            'jumlahkolom1' =>"- Dokter Spesialis Radiologi",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[47] = array(
+            'jumlahkolom1' =>"- Dokter Gigi",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+        $data10[48] = array(
+            'jumlahkolom1' =>"Tenaga Non Kesehatan",
+            'jumlahkolom2' =>" ",
+            'jumlahkolom6' =>" ",
+            'jumlahkolom3' =>" ",
+            'jumlahkolom4' =>" ",
+            'jumlahkolom5' =>" ",
+        );
+
+
 
         $result = array(
-            'data' => array_merge($data1, $data2, $data4, $data5, $data6),
+            'data' => $data10,
             'message' => 'as@cepot',
         );
         return $this->respond($result);
