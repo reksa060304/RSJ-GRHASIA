@@ -632,133 +632,149 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 $scope.isSimpan = true;
 
-                medifirstService.post('registrasi/save-registrasipasien', objSave).then(function (e) {
-                    $scope.isSimpan = false;
-                    $scope.resultAPD = e.data.dataAPD;
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.cacheNoRegistrasi ).then(function (e) {
+                    
 
-                    // responData = e.data;
-                    $scope.resultPD = e.data.dataPD;
-                    $scope.Noregistrasi = e.data.dataPD.noregistrasi;
-                    $scope.cacheNoRegistrasi = e.data.dataPD.noregistrasi;
-                    $scope.model.noRegistrasi = e.data.dataPD.noregistrasi;
-                    $scope.model.norec_pd = e.data.dataPD.norec;
-                    var cachePasienDaftar = $scope.model.norec_pd
-                        + "~" + $scope.model.noRegistrasi
-                        + "~" + $scope.resultAPD.norec;
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
+                    }
 
-                    //variable untuk validasi pada tracerbon dan pengambilan norec_pd 
-                    $scope.tracernocmfk = e.data.dataPD.nocmfk;
-                    $scope.arr = {
-                        norec_pd: $scope.model.norec_pd,
-                        nocmfk: $scope.tracernocmfk
-                    };
-                    cacheHelper.set('norectracer', $scope.arr)
-                    // END variable untuk validasi pada tracerbon dan pengambilan norec_pd 
+                    console.log(cek);
 
-                    cacheHelper.set('CacheRegistrasiPasien', cachePasienDaftar);
-                    if (e.data.status == 201) {
-                        // update rujukan transdata
-                        var trans = cacheHelper.get('cacheRujukanTransdataPA');
-                        if (trans != undefined) {
-                            var json = {
-                                'data': {
-                                    "profilefk": trans.profilefk,
-                                    "norujukan": trans.norujukan,
-                                    "tglrujukan": moment(new Date(trans.tglrujukan)).format('YYYY-MM-DD'),
-                                    "profilerujukanfk": trans.profilerujukanfk
-                                }
-                            }
-                            medifirstService.post('registrasi/update-rujukan-transdata', json).then(function (x) {
-
-                            })
-                        }
-                        //end update transdata
-
-                        if ($scope.item.asalRujukan != undefined) {
-                            var asalRujukan = $scope.item.asalRujukan
-                            cacheHelper.set('cacheAsalRujukan', asalRujukan);
-                        }
-                        if (norecPD != '') {
-                            $scope.saveLogging('Edit Registrasi', 'norec Pasien Daftar',
-                                norecPD, 'Edit Registrasi ke ruangan ' + $scope.item.ruangan.namaruangan + ' pada No Registrasi ' + $scope.model.noRegistrasi)
-                        } else {
-                            //##log Pasien Daftar
-                            medifirstService.get("sysadmin/logging/save-log-pendaftaran-pasien?norec_pd="
-                                + $scope.model.norec_pd).then(function (x) {
-                                    let json = {
-                                        norec: $scope.model.norec_pd,
-                                        norec_apd: $scope.resultAPD.norec
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa diedit registrasi");
+                    } else if (cek == 123){
+                        medifirstService.post('registrasi/save-registrasipasien', objSave).then(function (e) {
+                            $scope.isSimpan = false;
+                            $scope.resultAPD = e.data.dataAPD;
+        
+                            // responData = e.data;
+                            $scope.resultPD = e.data.dataPD;
+                            $scope.Noregistrasi = e.data.dataPD.noregistrasi;
+                            $scope.cacheNoRegistrasi = e.data.dataPD.noregistrasi;
+                            $scope.model.noRegistrasi = e.data.dataPD.noregistrasi;
+                            $scope.model.norec_pd = e.data.dataPD.norec;
+                            var cachePasienDaftar = $scope.model.norec_pd
+                                + "~" + $scope.model.noRegistrasi
+                                + "~" + $scope.resultAPD.norec;
+        
+                            //variable untuk validasi pada tracerbon dan pengambilan norec_pd 
+                            $scope.tracernocmfk = e.data.dataPD.nocmfk;
+                            $scope.arr = {
+                                norec_pd: $scope.model.norec_pd,
+                                nocmfk: $scope.tracernocmfk
+                            };
+                            cacheHelper.set('norectracer', $scope.arr)
+                            // END variable untuk validasi pada tracerbon dan pengambilan norec_pd 
+        
+                            cacheHelper.set('CacheRegistrasiPasien', cachePasienDaftar);
+                            if (e.data.status == 201) {
+                                // update rujukan transdata
+                                var trans = cacheHelper.get('cacheRujukanTransdataPA');
+                                if (trans != undefined) {
+                                    var json = {
+                                        'data': {
+                                            "profilefk": trans.profilefk,
+                                            "norujukan": trans.norujukan,
+                                            "tglrujukan": moment(new Date(trans.tglrujukan)).format('YYYY-MM-DD'),
+                                            "profilerujukanfk": trans.profilerujukanfk
+                                        }
                                     }
-                                    medifirstService.post("registrasi/save-adminsitrasi",json).then(function (z) {
-                                        
+                                    medifirstService.post('registrasi/update-rujukan-transdata', json).then(function (x) {
+        
                                     })
-                                })
-                            //## end log    
-                            if (isRegisOnline != '') {
-                                var data = {
-                                    "noreservasi": isRegisOnline,
                                 }
-                                medifirstService.post('registrasi/confirm-pasien-online', data).then(function (e) {
-                                    // body...
-                                })
-                            }else{
-                                // save Antrol
-
-                                if (norecPD == '' && isRegisOnline == '') {
-                                   saveAntrol($scope.Noregistrasi,$scope.resultAPD)
-                                   saveAntrol($scope.Noregistrasi,$scope.resultAPD)
+                                //end update transdata
+        
+                                if ($scope.item.asalRujukan != undefined) {
+                                    var asalRujukan = $scope.item.asalRujukan
+                                    cacheHelper.set('cacheAsalRujukan', asalRujukan);
                                 }
-
+                                if (norecPD != '') {
+                                    $scope.saveLogging('Edit Registrasi', 'norec Pasien Daftar',
+                                        norecPD, 'Edit Registrasi ke ruangan ' + $scope.item.ruangan.namaruangan + ' pada No Registrasi ' + $scope.model.noRegistrasi)
+                                } else {
+                                    //##log Pasien Daftar
+                                    medifirstService.get("sysadmin/logging/save-log-pendaftaran-pasien?norec_pd="
+                                        + $scope.model.norec_pd).then(function (x) {
+                                            let json = {
+                                                norec: $scope.model.norec_pd,
+                                                norec_apd: $scope.resultAPD.norec
+                                            }
+                                            medifirstService.post("registrasi/save-adminsitrasi",json).then(function (z) {
+                                                
+                                            })
+                                        })
+                                    //## end log    
+                                    if (isRegisOnline != '') {
+                                        var data = {
+                                            "noreservasi": isRegisOnline,
+                                        }
+                                        medifirstService.post('registrasi/confirm-pasien-online', data).then(function (e) {
+                                            // body...
+                                        })
+                                    }else{
+                                        // save Antrol
+        
+                                        if (norecPD == '' && isRegisOnline == '') {
+                                           saveAntrol($scope.Noregistrasi,$scope.resultAPD)
+                                           saveAntrol($scope.Noregistrasi,$scope.resultAPD)
+                                        }
+        
+                                    }
+        
+        
+                                }
+                                if (!$scope.isPenunjang) {
+                                    $scope.isNext = false;
+                                    $scope.isBatal = true;
+                                    $scope.isReport = true;
+                                    $scope.isReportPendaftaran = true;
+                                    if ($scope.model.rawatInap == true) {
+                                        $scope.isReportRawatInap = true;
+                                    }else if($scope.item.ruangan.namaruangan == 'IGD'){
+                                        $scope.isReportRawatInap = true;
+                                    }else {
+                                        $scope.isReportIgd = true;
+                                    }
+                                    $scope.isInputAsuransi = true;
+                                    $scope.isAsuransi = true;
+                                } else {
+                                    $scope.isSelesaiSimpan = true
+                                }
+        
+        
+        
+                                if ($scope.item.kelompokPasien.kelompokpasien != 'Umum/Pribadi') {
+                                    if (norecPD == '') {
+                                        $scope.inputPemakaianAsuransi();
+                                    }
+                                }
+                                if (norecPD == '' && $scope.item.ruangan.namaruangan != 'IGD' && $scope.model.rawatInap != true
+                                    && $scope.item.ruangan.namaruangan != 'Hemodialisa' && $scope.item.ruangan.namaruangan != 'RADIOLOGI'
+                                    && $scope.item.ruangan.namaruangan != 'LABORATORIUM' && $scope.item.ruangan.namaruangan != 'ELEKTROMEDIK') {
+                                    // $scope.tracerBon();
+                                    $scope.nomorAntrian();
+                                }
+         
                             }
-
-
-                        }
-                        if (!$scope.isPenunjang) {
-                            $scope.isNext = false;
-                            $scope.isBatal = true;
-                            $scope.isReport = true;
-                            $scope.isReportPendaftaran = true;
-                            if ($scope.model.rawatInap == true) {
-                                $scope.isReportRawatInap = true;
-                            }else if($scope.item.ruangan.namaruangan == 'IGD'){
-                                $scope.isReportRawatInap = true;
-                            }else {
-                                $scope.isReportIgd = true;
+        
+                            if ($scope.nocmIgd != undefined) {
+                                updateTriage();
                             }
-                            $scope.isInputAsuransi = true;
-                            $scope.isAsuransi = true;
-                        } else {
-                            $scope.isSelesaiSimpan = true
-                        }
-
-
-
-                        if ($scope.item.kelompokPasien.kelompokpasien != 'Umum/Pribadi') {
-                            if (norecPD == '') {
-                                $scope.inputPemakaianAsuransi();
+                            if(isRawatInap=='true'){
+                              medifirstService.postNonMessage('bridging/bpjs/aplicaresws/update-tt-by-ruangan' ,{'idruangan':$scope.item.ruangan.id,'idkelas':kelasId}).then(function(xx){})
                             }
-                        }
-                        if (norecPD == '' && $scope.item.ruangan.namaruangan != 'IGD' && $scope.model.rawatInap != true
-                            && $scope.item.ruangan.namaruangan != 'Hemodialisa' && $scope.item.ruangan.namaruangan != 'RADIOLOGI'
-                            && $scope.item.ruangan.namaruangan != 'LABORATORIUM' && $scope.item.ruangan.namaruangan != 'ELEKTROMEDIK') {
-                            // $scope.tracerBon();
-                            $scope.nomorAntrian();
-                        }
- 
+        
+                        }, function (error) {
+                            // throw error;
+                            $scope.isSimpan = false;
+                            $scope.isBatal = false;
+                        })
                     }
-
-                    if ($scope.nocmIgd != undefined) {
-                        updateTriage();
-                    }
-                    if(isRawatInap=='true'){
-                      medifirstService.postNonMessage('bridging/bpjs/aplicaresws/update-tt-by-ruangan' ,{'idruangan':$scope.item.ruangan.id,'idkelas':kelasId}).then(function(xx){})
-                    }
-
-                }, function (error) {
-                    // throw error;
-                    $scope.isSimpan = false;
-                    $scope.isBatal = false;
-                })
+                });
             }
             
 

@@ -2336,22 +2336,23 @@ AND sp.statusenabled <> false
             sum(x.klaim_rj) as klaim_rj,
             x.blntahun
              from (
+           
             SELECT to_char(tglpulang,'yyyy') as tahun,to_char(tglpulang,'MM')as  bulan,
              to_char(tglpulang,'yyyy') || '-' ||to_char(tglpulang,'MM')as blntahun,
             case when jenispelayanan ='1' then count(norec) else 0 end as jmlkasus_ri,
             case when jenispelayanan ='2' then count(norec) else 0  end as jmlkasus_rj,
-            case when jenispelayanan ='1'  and status='Proses Pending' then 1 else 0 end as jmlkasuspending_ri,
-            case when jenispelayanan ='2'  and status='Proses Pending' then 1 else 0 end as jmlkasuspending_rj,
+            case when jenispelayanan ='1'  and statusklaimfk='2' then 1 else 0 end as jmlkasuspending_ri,
+            case when jenispelayanan ='2'  and statusklaimfk='2' then 1 else 0 end as jmlkasuspending_rj,
             case when jenispelayanan ='1' then   sum(totalpengajuan) else 0 end as pengajuan_ri,
             case when jenispelayanan ='2' then   sum(totalpengajuan) else 0 end as pengajuan_rj,
-            case when jenispelayanan ='1' and  status='Proses Pending' then sum(totalpengajuan) else 0 end as pending_ri,
-            case when jenispelayanan ='2' and  status='Proses Pending' then sum(totalpengajuan) else 0 end as pending_rj,
-            case when jenispelayanan ='1' and status='Klaim' then sum(totalpengajuan) else 0 end as klaim_ri,
-            case when jenispelayanan ='2' and status='Klaim' then sum(totalpengajuan) else 0 end as klaim_rj
+            case when jenispelayanan ='1' and  statusklaimfk='2' then sum(totalpengajuan) else 0 end as pending_ri,
+            case when jenispelayanan ='2' and  statusklaimfk='2' then sum(totalpengajuan) else 0 end as pending_rj,
+            case when jenispelayanan ='1' and statusklaimfk='3' then sum(totalpengajuan) else 0 end as klaim_ri,
+            case when jenispelayanan ='2' and statusklaimfk='3' then sum(totalpengajuan) else 0 end as klaim_rj
 
             FROM monitoringklaim_t
             where kdprofile=$kdProfile
-            group by tglpulang,status,jenispelayanan
+            group by tglpulang,status,jenispelayanan,statusklaimfk
             ) as x GROUP BY x.tahun,x.bulan,x.blntahun
             order by x.blntahun desc;
 
