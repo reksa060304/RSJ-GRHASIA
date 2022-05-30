@@ -500,6 +500,7 @@ define(['initialize'], function (initialize) {
                         "field": "namaproduk",
                         "title": "Nama Item",
                         "width": "120px",
+                        groupHeaderTemplate: "#= value #",
                     },
                     
                     {

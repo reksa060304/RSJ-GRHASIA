@@ -21,31 +21,13 @@ define(['initialize'], function (initialize) {
                medifirstService.get("registrasi/laporan/get-laporan-rl11?" +
                     "tglAwal=" + tglAwal
                 ).then(function (data) {
-                    // var datas = []
-                    // datas.jumlahkolom1 = []
-                    // datas.jumlahkolom2 = []
-                    // datas.jumlahkolom4 = []
-                    // datas.jumlahkolom5 = []
-                    // datas.jumlahkolom6 = []
-                    // for(var i = 0; i < data.data.data[0].kolom1.length; i++){
-                    //     datas.jumlahkolom1[i] = data.data.data[0].kolom1[i]
-                    // }
-                    // for(var i = 0; i < data.data.data[0].kolom2.length; i++){
-                    //     datas.jumlahkolom2[i] = data.data.data[0].kolom2[i]
-                    // }
-                    // for(var i = 0; i < data.data.data[0].kolom4.length; i++){
-                    //     datas.jumlahkolom4[i] = data.data.data[0].kolom4[i]
-                    // }
-                    // for(var i = 0; i < data.data.data[0].kolom5.length; i++){
-                    //     datas.jumlahkolom5[i] = data.data.data[0].kolom5[i]
-                    // }
-                    // for(var i = 0; i < data.data.data[0].kolom6.length; i++){
-                    //     datas.jumlahkolom6[i] = data.data.data[0].kolom6[i]
-                    // }
-                    console.log(data.data);
+                    // var hasil = data.data.data.filter(element => {
+                    //     return element != null;
+                    // });
+                    console.log(data.data.data);
                     $scope.isRouteLoading = false;
                     $scope.sourceLaporan = new kendo.data.DataSource({
-                        data: data,
+                        data: data.data.data,
                         group: $scope.group,
                         pageSize: 10,
                         total: data.length,
@@ -56,7 +38,7 @@ define(['initialize'], function (initialize) {
                             }
                         }
                     });
-                    $scope.dataExcel = data.data;
+                    $scope.dataExcel = data.data.data;
                 })
             }
 
@@ -81,13 +63,133 @@ define(['initialize'], function (initialize) {
                 sortable: true,
                 pageable: true,
                 excelExport: function (e) {
-                    var rows = e.workbook.sheets[0].rows;
-                    rows.unshift({
-                        cells: [{
-                            value: "RL1.1_DataDasarRumahSakit",
-                            background: "#fffff"
-                        }]
-                    });
+                    var sheet = e.workbook.sheets[0];
+                    
+                    for (var i = 0; i < 1; i++) {
+                        for (var j = 0; j < 6; j++) {
+                            sheet.rows[i].cells[j].background = '#ffffff';
+                        }
+                    }
+
+                    //sheet.rows[0].cells[35].fontWeight = 'bold';
+
+                    for (var i = 3; i < 4; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 0; j < $row.cells.length; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderTop"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 3; i < 32; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 5; j < 6; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderRight"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 31; i < 32; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 0; j < $row.cells.length; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderBottom"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 3; i < 32; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 0; j < 1; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderLeft"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 34; i < 35; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 0; j < 2; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderTop"] = { color: "#000000", size: 1 };
+                            $cell["borderBottom"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 34; i < 50; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 1; j < 2; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderRight"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 49; i < 50; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 0; j < 2; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderBottom"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 34; i < 50; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 0; j < 1; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderLeft"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 34; i < 50; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 0; j < 1; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderRight"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 34; i < 43; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 3; j < 6; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderTop"] = { color: "#000000", size: 1 };
+                            $cell["borderBottom"] = { color: "#000000", size: 1 };
+                            $cell["borderRight"] = { color: "#000000", size: 1 };
+                            $cell["borderLeft"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 43; i < 44; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 3; j < 4; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderLeft"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 43; i < 44; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 3; j < 6; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderBottom"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 43; i < 44; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 5; j < 6; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderRight"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    for (var i = 43; i < 44; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 4; j < 5; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderRight"] = { color: "#000000", size: 1 };
+                        }
+                    }
+
+                    
                 },
                 columns: [
                     {
@@ -96,22 +198,27 @@ define(['initialize'], function (initialize) {
                         width: "80px",
                     },
                     {
-                        field: "jumlahkolom1",
+                        field: "jumlahkolom2",
                         title: " ",
                         width: "80px",
                     },
                     {
-                        field: "jumlahkolom1",
+                        field: "jumlahkolom6",
                         title: " ",
                         width: "80px",
                     },
                     {
-                        field: "jumlahkolom1",
+                        field: "jumlahkolom3",
                         title: " ",
                         width: "80px",
                     },
                     {
-                        field: "jumlahkolom1",
+                        field: "jumlahkolom4",
+                        title: " ",
+                        width: "80px",
+                    },
+                    {
+                        field: "jumlahkolom5",
                         title: " ",
                         width: "80px",
                     }
