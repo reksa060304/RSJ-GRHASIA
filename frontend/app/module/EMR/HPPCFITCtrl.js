@@ -122,7 +122,7 @@ define(['initialize'], function (initialize) {
 
                 $scope.item.obj[3004000]=$scope.cc.nocm
                 $scope.item.obj[3004001]=$scope.cc.namapasien
-                $scope.item.obj[3004002]=$scope.cc.tglLahir
+                $scope.item.obj[3004002]=moment($scope.cc.tglLahir).format('DD-MMMM-YYYY ');
                 $scope.item.obj[3004003]=$scope.cc.alamat
                 $scope.item.obj[3004008]=$scope.cc.namapasien
 

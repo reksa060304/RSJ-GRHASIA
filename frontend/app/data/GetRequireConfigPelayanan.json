@@ -3191,6 +3191,10 @@
         {
             "nameDep": "HPPCTKICtrl",
             "urlDep": "module/EMR/HPPCTKICtrl"
+        },
+        {
+            "nameDep": "FormulirPemberianInformasiPersetujuanCtrl",
+            "urlDep": "module/EMR/FormulirPemberianInformasiPersetujuanCtrl"
         }
     ]
 }
