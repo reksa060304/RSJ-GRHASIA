@@ -2330,10 +2330,10 @@ public function deleteDataCuti(Request $request){
             
             // $TP->image = $request['image'];
             $TP->save();
-            $norec = $request['email'];
+            // $norec = ;
             if(!empty($uploadimage)) {
                 // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
-                $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
+                $request->file('image')->move('DIKLAT/FileFoto/'.$request['email'],$filenameImage);
             }
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -2458,11 +2458,28 @@ public function deleteDataCuti(Request $request){
             $TP->nomorhp = $request['nomorhp'];
             $TP->email = $request['email'];
             $TP->image = $request['image'];
+            $uploadimage = $request->file('image');
+            if(!empty($uploadimage)){
+                $extensionimage = $uploadimage->getClientOriginalExtension();
+                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
+                
+//                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameImage,file_get_contents($request->file('filesip')));
+                $TP->image = $filenameImage;
+            }
+            
+            // $TP->image = $request['image'];
             $TP->save();
+            // $norec = ;
+            if(!empty($uploadimage)) {
+                // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
+                $request->file('image')->move('DIKLAT/FileFoto/'.$request['email'],$filenameImage);
+            }
             
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errMessage = $e->getMessage();
+            $errLine = $e->getLine();
         }
 
 
@@ -2480,6 +2497,7 @@ public function deleteDataCuti(Request $request){
             $result = array(
                 'status' => 400,
                 'message'  => $transMessage,
+                 "e" => $e->getMessage() .' '.$e->getLine(),
                 'as' => 'asepic',
             );
         }
@@ -2498,7 +2516,21 @@ public function deleteDataCuti(Request $request){
     public function hapusPesertaDidik(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();
+            $a= "0";
         try{
+            if ($request['image'] != null) {
+                $filename = $request['image'];
+                // $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
+                $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
+
+                if (!\File::exists($path)) {
+//                abort(404);
+                }else{
+                    $file = \File::deleteDirectory($path);
+                }
+                // Storage::disk('local')->delete('DIKLAT/FileFoto/'.$request['email'].'/'.$filename);
+                $a="tidak nol";
+            }
             $TP = PesertaDidik::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -2511,6 +2543,7 @@ public function deleteDataCuti(Request $request){
             $result = array(
                 'status' => 201,
                 'message' => $transMessage,
+                'a'=>$a,
                 'result' => $TP,
                 'as' => 'asepic',
             );
