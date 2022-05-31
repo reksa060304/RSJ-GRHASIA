@@ -29,7 +29,11 @@ define(['initialize'], function (initialize) {
                     + "&tglAkhir=" + tglAkhir).then(function (data) {
                         var data = data.data
                         for (var i = 0; i < data.data.length; i++) {
-                            data.data[i].no = i + 1
+                            data.data[i].kdprov = '24'
+                            data.data[i].kabkota = 'Kab. Sleman'
+                            data.data[i].koders = '3404022'
+                            data.data[i].namars = 'RSJ. Grhasia'
+                            data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
                         }
                         $scope.isRouteLoading = false;
                         $scope.ambildataexcel = data.data;
@@ -67,19 +71,45 @@ define(['initialize'], function (initialize) {
                     // columnMenu: true,
                     columns: [
                         {
-                            field: "no",
-                            title: "No",
-                            Template: "<span class='style-center'>#: no #</span>",
-                            width: "50px"
+                            field: "kdprov",
+                            title: "KODE PROPINSI",
+                            width: "80px"
+                        },
+                        {
+                            field: "kabkota",
+                            title: "KAB / KOTA",
+                            width: "80px"
+                        },
+                        {
+                            field: "koders",
+                            title: "KODE RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "namars",
+                            title: "NAMA RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "tahun",
+                            title: "TAHUN",
+                            width: "80px"
+                        },
+                        {
+                            field: "namaruangan",
+                            title: "NO",
+                            width: "80px"
                         },
                         {
                             field: "namaproduk",
-                            title: "Jenis Kegiatan"
+                            title: "JENIS KEGIATAN",
+                            width: "80px"
                         },
                         {
-                            field: "jmltindakan",
-                            title: "Jumlah"
-                        }
+                            field: "jumlah",
+                            title: "JUMLAH",
+                            width: "80px"
+                        },
                     ]
                 })
             };
@@ -100,19 +130,40 @@ define(['initialize'], function (initialize) {
             $scope.columnRL52 = [
 
                 {
-                    field: "no",
-                    title: "No",
-                    Template: "<span class='style-center'>#: no #</span>",
-                    width: "50px"
+                    field: "kdprov",
+                    title: "KODE PROPINSI",
+                    width: "80px"
                 },
                 {
-                    title: "Jenis Kegiatan",
-                    field: "namaproduk"
+                    field: "kabkota",
+                    title: "KAB / KOTA",
+                    width: "80px"
                 },
                 {
-                    title: "Jumlah",
-                    field: "jmltindakan"
-                }
+                    field: "namars",
+                    title: "NAMA RS",
+                    width: "80px"
+                },
+                {
+                    field: "tahun",
+                    title: "TAHUN",
+                    width: "80px"
+                },
+                {
+                    field: "namaruangan",
+                    title: "NO",
+                    width: "80px"
+                },
+                {
+                    field: "namaproduk",
+                    title: "JENIS KEGIATAN",
+                    width: "80px"
+                },
+                {
+                    field: "jumlah",
+                    title: "JUMLAH",
+                    width: "80px"
+                },
             ];
 
             $scope.Perbaharui = function () {
