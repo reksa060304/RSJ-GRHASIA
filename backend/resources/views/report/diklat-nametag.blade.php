@@ -56,7 +56,7 @@
                         <img src="{{ asset('/img/avatar.jpg') }}" alt="" width="75" height="100"
                         style="padding: 5px 20px 5px 20px; text-align: center">
                     @else
-                        <img src="/DIKLAT/FileFoto/{{$d->email}}/{{$d->image}}" alt="" width="75" height="100"
+                        <img src="{{ asset('/DIKLAT/FileFoto/{{$d->email}}/{{$d->image}}') }}" alt="" width="75" height="100"
                         style="padding: 5px 20px 5px 20px; text-align: center">
                     @endif
                 </td>
