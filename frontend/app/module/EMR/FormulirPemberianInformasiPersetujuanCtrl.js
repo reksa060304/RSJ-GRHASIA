@@ -13,7 +13,7 @@ define(['initialize'], function (initialize) {
             $scope.cc = {}
             var nomorEMR = '-'
             var peagawaiLogin = medifirstService.getPegawaiLogin()
-            $scope.cc.emrfk = 3000427
+            $scope.cc.emrfk = 3000430
             var dataLoad = []
             $scope.isCetak = true
             var norecEMR = ''
@@ -120,11 +120,14 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
 
-                $scope.item.obj[3004000]=$scope.cc.nocm
-                $scope.item.obj[3004001]=$scope.cc.namapasien
-                $scope.item.obj[3004002]=moment($scope.cc.tglLahir).format('DD-MMMM-YYYY ');
-                $scope.item.obj[3004003]=$scope.cc.alamat
-                $scope.item.obj[3004008]=$scope.cc.namapasien
+               
+                $scope.item.obj[3004451]=$scope.cc.namapasien
+                $scope.item.obj[3004452]=$scope.cc.nocm
+                $scope.item.obj[3004453]=moment($scope.cc.tglLahir).format('DD-MMMM-YYYY ');
+                $scope.item.obj[3004454]=$scope.cc.umur
+                $scope.item.obj[3004355]=$scope.cc.jeniskelamin
+                $scope.item.obj[3004456]=$scope.cc.alamat
+            
 
 
                 $scope.item.obj[101008]=$scope.now

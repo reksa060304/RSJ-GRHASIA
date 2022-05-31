@@ -1,0 +1,164 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Perjanjian Pasien Melarikan Diri</div>
+        </div>
+        
+        
+        <div class="grid_12" style="margin-top: 10px;">
+            <fieldset style="margin-top: 10px">
+           <div class="grid_12 text-left ">
+               Saya yang bertandatangan dibawah ini :
+            </div>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom">Nama : </label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004630]"
+                    k-data-source=""
+                    style="height: 30px; width: 50%; "/>
+        </div>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom">Alamat : </label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004631]"
+                    k-data-source=""
+                    style="height: 70px; width: 50%; "/>
+        </div>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom">Nomor Identitas : </label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004632]"
+                    k-data-source=""
+                    style="height: 30px; width: 50%; "/>
+        </div>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom">Nomor Telp : </label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004633]"
+                    k-data-source=""
+                    style="height: 30px; width: 50%; "/>
+        </div>
+
+        </fieldset>
+        </div>
+        <div class="grid_12" style="margin-top: 10px;">
+                <fieldset>
+                    <div class="grid_12 text-left ">
+                        Sebagai penanggungjawab pasien tersebut di atas, dengan ini menyatakan dengan sesungguhnya bahwa :
+                    </div>
+                    <br>
+                    <br>
+                    <div class="grid_12 text-left ">
+                        1. Saya menyadari adanya kemungkinan pasien melakukan tindakan-tindakan yang di luar kendali atau kesadarannya.
+                         Tindakan-tindakan tersebut, diantaranya dapat berupa resiko melarikan diri, kecelakaan maupun keselamatan jiwanya,
+                          baik di dalam maupun di luar wilayah kerja Rumah Sakit Jiwa Grhasia DIY, bukanlah menjadi tanggung jawab Rumah Sakit Jiwa Grhasia DIY
+                           sepanjang tidak ditemukan unsur kelalaian dari pihak Rumah Sakit Jiwa Grhasia DIY.
+                           <br>
+                           <br>
+                    </div>
+                   
+                    <div class="grid_12 text-left ">
+                        2. Dalam hal pasien melarikan diri, maka pihak RSJ Grhasia DIY akan melakukan upaya pencarian pasien melarikan diri tersebut, 
+                        melaporkan kejadian perkara tersebut kepada aparat Kepolisian setempat dan kepada pihak keluarga / penanggungjawab pasien pada kesempatan pertama.
+                        <br>
+                        <br>
+                    </div>
+                    
+                    <div class="grid_12 text-left ">
+                        3. Apabila tidak didapatkan unsur kelalaian dari petugas RSJ Grhasia DIY dan dalam waktu 3 x 24 jam terhitung sejak pasien melarikan diri, 
+                        pasien tersebut tidak ditemukan, maka tanggungjawab selanjutnya diserahkan pada pihak keluarga / penanggungjawab.
+                    </div>
+                </fieldset>
+            </div>
+                
+       
+            <div class="grid_12" style="margin-top: 10px;">
+                <fieldset style="margin-top:10px;">
+                    <div>
+                        <div  class="grid_12">
+                            <label  c-label item="item" c-label-text="Tanggal"></label>
+                        </div>
+                        <input style="width: 20%" k-ng-model="item.obj[3004634]" kendo-datetimepicker placeholer="dd-MM-yyyy HH:mm" k-format="'dd-MM-yyyy HH:mm'" parsedate="dd-MM-yyyy HH:mm" />
+                        
+                        <div class="grid_12" style="margin-top:10px">
+                            <div  class="grid_12">
+                                <label  c-label item="item" c-label-text="Penanggung Jawab Pasien"></label>
+                            </div>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004635]"
+                                        style="height: 30px; width: 30%; "/>
+                            </div>
+                        </div>
+                        <div>
+                        <div  class="grid_12">
+                                    <label  c-label item="item" c-label-text="Petugas Pemberi Informasi"></label>
+                                </div>
+                                <div class="grid_12">
+                                    <input style="width: 250px;" kendo-combo-box k-ng-model="item.obj[3004636]"
+                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                        k-auto-bind="false" k-data-source="listPegawai" />
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <div class="grid_12" style="margin-top:10px">
+                                <div  class="grid_12">
+                                    <label  c-label item="item" c-label-text="Saksi"></label>
+                                </div>
+                                <div class="grid_12 margin-top-20 margin-bottom">
+                                    <label c-label item="item" class="margin-bottom"></label>
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004637]"
+                                            style="height: 30px; width: 30%; "/>
+                                </div>
+                            </div>
+                       
+                            <br>
+                </fieldset>
+            </div>
+            
+
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

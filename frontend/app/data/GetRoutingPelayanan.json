@@ -17779,5 +17779,49 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.KetentuanRawatInap",
+    "url": "/KetentuanRawatInap",
+    "templateurl": "module/EMR/KetentuanRawatInap.html",
+    "controller": "KetentuanRawatInapCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PerjanjianPasienMelarikanDiri",
+    "url": "/PerjanjianPasienMelarikanDiri",
+    "templateurl": "module/EMR/PerjanjianPasienMelarikanDiri.html",
+    "controller": "PerjanjianPasienMelarikanDiriCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]

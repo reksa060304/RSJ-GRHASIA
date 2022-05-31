@@ -3195,6 +3195,14 @@
         {
             "nameDep": "FormulirPemberianInformasiPersetujuanCtrl",
             "urlDep": "module/EMR/FormulirPemberianInformasiPersetujuanCtrl"
+        },
+        {
+            "nameDep": "KetentuanRawatInapCtrl",
+            "urlDep": "module/EMR/KetentuanRawatInapCtrl"
+        },
+        {
+            "nameDep": "PerjanjianPasienMelarikanDiriCtrl",
+            "urlDep": "module/EMR/PerjanjianPasienMelarikanDiriCtrl"
         }
     ]
 }
