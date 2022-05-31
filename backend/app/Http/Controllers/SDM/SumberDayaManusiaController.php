@@ -2320,10 +2320,9 @@ public function deleteDataCuti(Request $request){
             $TP->email = $request['email'];
 
             $uploadimage = $request->file('image');
-            if(!empty($uploadimage)){
+            if($request['image']!='noimage'){
                 $extensionimage = $uploadimage->getClientOriginalExtension();
                 $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
-                
 //                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameImage,file_get_contents($request->file('filesip')));
                 $TP->image = $filenameImage;
             }
@@ -2333,7 +2332,7 @@ public function deleteDataCuti(Request $request){
             // $norec = ;
             if(!empty($uploadimage)) {
                 // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
-                $request->file('image')->move('DIKLAT/FileFoto/'.$request['email'],$filenameImage);
+                $request->file('image')->move('service/DIKLAT/FileFoto/'.$request['email'],$filenameImage);
             }
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -2459,12 +2458,23 @@ public function deleteDataCuti(Request $request){
             $TP->email = $request['email'];
             $TP->image = $request['image'];
             $uploadimage = $request->file('image');
-            if(!empty($uploadimage)){
+            if($request['image']!='noimage'){
                 $extensionimage = $uploadimage->getClientOriginalExtension();
                 $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
                 
 //                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameImage,file_get_contents($request->file('filesip')));
                 $TP->image = $filenameImage;
+            }else{
+                $TP->image = null;
+                $filename = $request['image'];
+                // $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
+                $path = public_path('service/DIKLAT/FileFoto/'.$request['email'].'/');
+
+                if (!\File::exists($path)) {
+//                abort(404);
+                }else{
+                    $file = \File::deleteDirectory($path);
+                }
             }
             
             // $TP->image = $request['image'];
@@ -2472,7 +2482,7 @@ public function deleteDataCuti(Request $request){
             // $norec = ;
             if(!empty($uploadimage)) {
                 // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
-                $request->file('image')->move('DIKLAT/FileFoto/'.$request['email'],$filenameImage);
+                $request->file('image')->move('service/DIKLAT/FileFoto/'.$request['email'],$filenameImage);
             }
             
             $transStatus = 'true';
@@ -2521,7 +2531,7 @@ public function deleteDataCuti(Request $request){
             if ($request['image'] != null) {
                 $filename = $request['image'];
                 // $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
-                $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
+                $path = public_path('service/DIKLAT/FileFoto/'.$request['email'].'/');
 
                 if (!\File::exists($path)) {
 //                abort(404);
