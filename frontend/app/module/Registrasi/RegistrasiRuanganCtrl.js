@@ -635,7 +635,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.cacheNoRegistrasi ).then(function (e) {
                     
 
-                    if(e.data.detail[0].tglclosing == null){
+                    if(e.data.detail == ''){
+                        var cek = 123;
+                    } else if(e.data.detail[0].tglclosing == null){
                         var cek = 123;
                     } else{
                         var cek = 234;
