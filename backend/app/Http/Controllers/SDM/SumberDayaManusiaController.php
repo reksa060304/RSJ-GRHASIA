@@ -2332,7 +2332,7 @@ public function deleteDataCuti(Request $request){
             // $norec = ;
             if(!empty($uploadimage)) {
                 // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
-                $request->file('image')->move('service/DIKLAT/FileFoto/'.$request['email'],$filenameImage);
+                $request->file('image')->move('service/img/DIKLAT/FileFoto/'.$request['email'],$filenameImage);
             }
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -2468,7 +2468,7 @@ public function deleteDataCuti(Request $request){
                 $TP->image = null;
                 $filename = $request['image'];
                 // $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
-                $path = public_path('service/DIKLAT/FileFoto/'.$request['email'].'/');
+                $path = public_path('service/img/DIKLAT/FileFoto/'.$request['email'].'/');
 
                 if (!\File::exists($path)) {
 //                abort(404);
@@ -2482,7 +2482,7 @@ public function deleteDataCuti(Request $request){
             // $norec = ;
             if(!empty($uploadimage)) {
                 // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
-                $request->file('image')->move('service/DIKLAT/FileFoto/'.$request['email'],$filenameImage);
+                $request->file('image')->move('service/img/DIKLAT/FileFoto/'.$request['email'],$filenameImage);
             }
             
             $transStatus = 'true';
@@ -2531,7 +2531,7 @@ public function deleteDataCuti(Request $request){
             if ($request['image'] != null) {
                 $filename = $request['image'];
                 // $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
-                $path = public_path('service/DIKLAT/FileFoto/'.$request['email'].'/');
+                $path = public_path('service/img/DIKLAT/FileFoto/'.$request['email'].'/');
 
                 if (!\File::exists($path)) {
 //                abort(404);
