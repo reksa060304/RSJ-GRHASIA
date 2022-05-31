@@ -121,6 +121,21 @@
                             </div>
                             <div class="col-lg-12 col-md-12">
                                 <div class="card">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading bg-primary">
+                                            Pendapatan Akrual
+                                        </div>
+                                        <div class="panel-body">
+                                            @php
+                                                $res['pendapatanakrual'] = App\Http\Controllers\MainController::getPendapatanAkrual(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div id="chartPendapatanAkrual"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="card">
                                     <div class="panel panel-warning">
                                         <div class="panel-heading  bg-green">
                                             Rincian Jumlah Obat Per DPJP
@@ -422,6 +437,7 @@
         setChartPendapatan()
         setChartNonLayanan()
         setChartTren()
+        setChartPendapatanAkrual()
         function setChartPendapatan() {
             this.dataChartPendapatan =  @json($res['pendapatan']);
             let array = this.dataChartPendapatan.data
@@ -834,6 +850,91 @@
                     data: dataKelPasienPie
 
                 }]
+            })
+        }
+        function setChartPendapatanAkrual(){
+            this.datapendapatanakrual  =@json($res['pendapatanakrual']);
+            let categories = []
+            let series = [];
+            let jumlah = 0;
+            for (let i in this.datapendapatanakrual) {
+                categories.push(this.datapendapatanakrual[i].ruangan);
+                let dataz2 = [];
+                dataz2.push({
+                    y: parseFloat(this.datapendapatanakrual[i].jumlah),
+                    color: this.colors[i]
+                });
+                jumlah = jumlah + parseFloat(this.datapendapatanakrual[i].jumlah);
+                // if (loopIndex > 0)
+                series.push({
+                    name: this.datapendapatanakrual[i].ruangan,
+                    data: dataz2
+                });
+                // loopIndex++;
+
+            }
+            Highcharts.chart('chartPendapatanAkrual', {
+                chart: {
+                    type: 'column',
+                },
+
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ["Total : Rp. " + formatRupiah(jumlah,'')],
+                    labels: {
+                        align: 'center',
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Pasien'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        // url:"#",
+                        cursor: 'pointer',
+
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return 'Rp. ' + formatRupiah(this.y, '');
+                            }
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    formatter: function (e) {
+                        let point = this.point,
+                            s = this.series.name + ': Rp. ' + formatRupiah(this.y, '') + ' <br/>';
+                        return s;
+
+                    }
+
+                },
+                series: series,
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1
+                },
+
             })
         }
         function setChartNonLayanan(){
