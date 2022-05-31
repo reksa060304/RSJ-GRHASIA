@@ -562,6 +562,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if (document.querySelectorAll('[type=file]')[0].files[0] != undefined) {
                     image = document.querySelectorAll('[type=file]')[0].files[0]
                 }
+                console.log(image);
                 formData.append('norec', $scope.dataSelected.norec_eks)
                 formData.append('noregistrasifk', $state.params.norec)
                 formData.append('nama', $scope.item.namapeneliti)
@@ -573,12 +574,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 formData.append('email', $scope.item.email)
                 formData.append('image', image)
 
-                if ($scope.norec < $scope.kendo + 1) {
-                    window.messageContainer.error("Data tidak berhasil disimpan Quota Peserta sudah Terpenuhi.");
-                    $scope.isRouteLoading = false;
-                    $scope.item = {};
-                    return;
-                }
                 var arr = document.cookie.split(';')
                 var authorization;
                 for (var i = 0; i < arr.length; i++) {
