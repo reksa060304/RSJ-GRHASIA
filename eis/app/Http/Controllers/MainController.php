@@ -3107,13 +3107,60 @@ AND sp.statusenabled <> false
                         0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN	0 ELSE	pp.jasa	END	)) AS totalfix 
                         from
                         pasiendaftar_t pd
-                    inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
                         inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                         inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
-                        left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
-                        left JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true
+                        inner JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
+                        inner JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec
                         where sbm.tglsbm between '$tglAwal' and '$tglAkhir'
                         and pd.kdprofile = 30 and pd.statusenabled = true
+                        group by ru.namaruangan, ru.id, ru.objectdepartemenfk
+                    ) as x group by x.idruangan, x.departemen
+                ) as y
+        ) as i"));
+
+        $result = array(
+            'result' => $data,
+            'message' => 'ramdanegie',
+        );
+        return $data;
+    }
+    public static function getPendapatanPotensial($tglAwal,$tglAkhir,$kdProfile){
+
+        $idProfile = (int) $kdProfile;
+        $tglAwal =$tglAwal.' 00:00'; //Carbon::now()->startOfMonth()->subMonth(1);
+        $tglAkhir = $tglAkhir.' 23:59';
+        
+        $data = DB::select(DB::raw("
+        select unnest(array['Instalasi Farmasi', 'Instalasi laboratorium', 'Instalasi Gawat Darurat', 'Instalasi Rawat Inap', 'Instalasi Rawat Jalan', 'Instalasi Radiologi']) AS ruangan,
+        unnest(array[farmasi, laboratorium, gawatdarurat, ranap, rajal, radiologi]) AS jumlah
+        from(
+        select sum(totalfarmasi) as farmasi, sum(totallaboratorium) as laboratorium,
+                sum(totalgawatdarurat) as gawatdarurat, sum(totalranap) as ranap, sum(totalrajal) as rajal,
+                sum(totalradiologi) as radiologi, (sum(totalfarmasi) + sum(totallaboratorium) + sum(totalgawatdarurat)
+                + sum(totalranap) + sum(totalradiologi)) as totalall from(
+                    select
+                    case when x.idruangan = 94 then sum(totalfix) else 0 end as totalfarmasi,
+                    case when x.idruangan = 575 then sum(totalfix) else 0 end as totallaboratorium,
+                    case when x.idruangan = 765 then sum(totalfix) else 0 end as totalgawatdarurat,
+                    case when x.departemen = 16 then sum(totalfix) else 0 end as totalranap,
+                    case when x.departemen <> 16 and x.idruangan not in(94, 575, 576, 765) then sum(totalfix) else 0 end as totalrajal,
+                    case when x.idruangan = 576 then sum(totalfix) else 0 end as totalradiologi
+                    from(
+                        select ru.namaruangan, ru.id idruangan, ru.objectdepartemenfk departemen,
+                        sum((((CASE WHEN pp.hargajual IS NULL THEN	0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
+                        0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN	0 ELSE	pp.jasa	END	)) AS totalfix 
+                        from
+                        pasiendaftar_t pd
+                        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                        inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
+                        inner JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
+                        --inner JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec
+                        where sp.tglstruk between '$tglAwal' and '$tglAkhir'
+                        and pd.kdprofile = 30 and pd.statusenabled = true
+												and pd.objectkelompokpasienlastfk <> 1
+												and pd.objectkelompokpasienlastfk <> 12
                         group by ru.namaruangan, ru.id, ru.objectdepartemenfk
                     ) as x group by x.idruangan, x.departemen
                 ) as y
