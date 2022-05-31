@@ -1,0 +1,393 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Formulir Pemberian Informasi dan Persetujuan Umum (General Consent) Untuk Menerima Pelayanan Kesehatan</div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+            
+               
+                <fieldset style="margin-top: 10px">
+                    <LEGEND></LEGEND>
+                    <div class="grid_12 margin-top-30 text-center">
+                        <label c-label item="item" font size=""> <u><h2>PEMBERIAN INFORMASI</h2></u></label>
+                    </div>
+                    
+            <div class="grid_12" style="margin-top: 20px">
+                <table style="width:100%;color: #4c5356;">
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Nama Petugas Pemberi Informasi :
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input style="width: 250px;" kendo-combo-box k-ng-model="item.obj[3004425]"
+                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listPegawai" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Nama Pasien 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004351]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Nomor Rekam Medis
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004351]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Tempat / Tanggal Lahir
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004351]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Usia
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004351]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Usia
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004351]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Jenis Kelamin
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004351]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Alamat Pasien
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004353]"
+                                        style="height: 75px; width: 50%; "/>
+                             </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            Jika penerima informasi bukan Pasien, lengkapi kolom di bawah :
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Nama Penerima Informasi
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004351]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                NIK
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004351]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Alamat
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004353]"
+                                        style="height: 75px; width: 50%; "/>
+                             </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Hubungan dengan Pasien
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004351]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+            </div>
+                <br>
+                <br>
+                <fieldset>
+                    <div class="grid_12 text-left ">
+                      Dengan ini menyatakan dengan sesungguhnya bahwa :
+                    </div>
+                    <br>
+                    <div class="grid_12 text-left ">
+                       <b>1. HAK DAN KEWAJIBAN SEBAGAI PASIEN.</b> Dengan menandatanagani dokumen ini. Saya mengaku sudah mendapat informasi tentang HAK
+                      dan Kewajiban Pasien serta Peraturan yang berlaku di Rumah Sakit Jiwa Grhasia yang diberikan oleh petugas Rumah Sakit dan saya telah memahami,
+                      menerima dan menyetujui.
+                    </div>
+                    <div class="grid_12 text-left ">
+                        <b>2. PERSETUJUAN PELAYANAN KESEHATAN.</b> Saya menyetujui dan memberikan persetujuan untuk dirawat di Rumah Sakit Jiwa Grhasia dan dengan ini
+                        saya meminta dan memberikan kuasa kepada Rumah Sakit Jiwa Grhasia, Dokter, Perawat dan Petugas Kesehatan lainnya di Rumah Sakit Grhasia untuk memberikan asuhan Medis
+                        dan keperawatan, termasuk dimasukan tindakan atau prosedur diagnostik seperti pemeriksaaan radiologi, EKG, EEG, dan pengambilan darah untuk pemeriksaan laboratorium,
+                        pemberian dan atau penyuntikan produk farmasi dan obat-obatan, serta pemasangan alat kesehatan (kecuali yang membutuhkan persetujuan khusus)
+                    </div>
+                    <div class="grid_12 text-left ">
+                        <b>3. AKSES INFORMASI KESEHATAN.</b> Saya memberikan kuasa kepada setiap dan seluruh petugas kesehatan yang merawat pasien untuk memeriksa dan atau memberitahukan 
+                        informasi kesehatan pasien serta melakukan konsul kepada pemberi kesehatan lain yang dirasa perlu dalam melakukan perawatan pasien serta melakukan konsul kepada pemberi
+                        kesehatan lain yang dirasa perlu dalam melakukan perawatan pasien dan saya menyetujui atau menerima diagnosis, terapi dan segala tindakan dalam rangka upaya penyembuhan. 
+                    </div>
+                    <div class="grid_12 text-left ">
+                        <b>4. RAHASIA MEDIS.</b> Saya menyetujui dan memberi kuasa kepada Rumah Sakit Jiwa Grhasia untuk menjaga privasi dan kerahasiaan penyakit pasien selama dalam masa perawatannya serta menjamin
+                        kerahasiaan informasi medis pasien untuk kepentingan perawatan, pengobatan dan pendidikan maupun penelitian dan saya menyetujui pelepasan informasi medis sesuai dengan Permenkes 
+                        269 Tahun 2008 Pasal 10 Tentang Rekam Medis (kepentingan kesehatan pasien, penegakan hukum, penelitian, pendidikan, dan audit medis) dan keperluan klaim informasi.
+                    </div>
+                    <div class="grid_12 text-left ">
+                        <b>KERAHASIAAN INFORMASI.</b> Saya memberi kuasa kepada Rumah Sakit Jiwa Grhasia untuk memberikan informasi tentang diagnosis, hasil pelayanan dan pengobatan saya selama dirawat kepada (tulis nama) :
+                    </div>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom">a.</label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004353]"
+                                        style="height: 20px; width: 50%; "/>
+                    </div>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom">b.</label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004353]"
+                                        style="height: 20px; width: 50%; "/>
+                    </div>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">c.</label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004353]"
+                                style="height: 20px; width: 50%; "/>
+                    </div>
+                    <div class="grid_12 text-left ">
+                        <b>PRIVASI.</b> Saya memberi kuasa kepada Rumah Sakit Jiwa Grhasia untuk menjaga privasi dan kerahasiaan penyakit saya selama dalam perawatan.
+                        Saya menginginkan / tidak menginginkan privasi khusus pada saat :
+                    </div>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">a.</label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004353]"
+                                style="height: 20px; width: 50%; "/>
+                    </div>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">b.</label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004353]"
+                                style="height: 20px; width: 50%; "/>
+                    </div>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">c.</label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004353]"
+                        style="height: 20px; width: 50%; "/>
+                    </div>
+                    <div class="grid_12 text-left ">
+                        <b>5. RUMAH SAKIT LAYANAN PENDIDIKAN.</b>Saya mengetahui bahwa Rumah Sakit Jiwa Grhasia merupakan Rumah Sakit yang digunakan untuk pendidikan dan praktik klinik
+                        mahasiswa kedokteran dan profesi kesehatan lainnya. Untuk itu, saya menyetujui mereka berpartisipasi dalam perawatan pasien sepanjang dibawah supervisi Penanggung Jawab
+                        Pasien yaitu dokter, perawat, dan tenaga kesehatan lain. Hal ini dikecualikan bagi pasien kelas VIP.
+                    </div>
+                    <div class="grid_12 text-left ">
+                        <b>6. BARANG PRIBADI.</b>Saya memahami dan akan memenuhi peraturan untuk tidak membawa barang berharga yang tidak diperlukan (perhiasan, elektronik, dll) dan jika terjadi kehilangan, 
+                        pencurian atau kerusakan maka Rumah Sakit Jiwa Grhasia tidak bertanggung jawab terhadap hal tersebut.
+                    </div>
+                    <div class="grid_12 text-left ">
+                        <b>7. PENGAJUAN KELUHAN.</b>Saya menyatakan bahwa telah menerima informasi tentang adanya tata cara mengajukan dan mengatasi keluhan terkait pelayanan medik yang diberikan
+                        terhadap diri saya. Saya setuju untuk mengikuti tata cara mengajukan keluhan sesuai prosedur yang ada.
+                    </div>
+                    <div class="grid_12 text-left ">
+                        8. Saya menyetujui untuk melunasi seluruh biaya perawatan, obat obatan dan tindakan lain (sesuai jenis cara bayarnya) maupun selisih biaya jaminan kesehatan serta sanggup menerima 
+                        kembali setelah pasien dapat dipulangakan dalam waktu secepatnya
+                    </div>
+                    <div class="grid_12 text-left ">
+                        9. Melalui dokumen ini, saya menegaskan kembali bahwa saya mempercayakan kepada semua Tenaga Kesehatan Rumah Sakit Jiwa Grhasia untuk memberikan perawatan, diagnostikdan terapi
+                        kepada pasien Rawat Inap / Rawat Jalan / IGD, semua pemeriksaan penjang yang dibutuhkan untuk pengobatan dan tindakan yang aman.
+                    </div>
+
+                </fieldset>
+
+
+                <fieldset>
+                    <div class="grid_12 margin-top-30 text-center">
+                        <label c-label item="item" font size=""> <u><h2>HAK PASIEN</h2></u></label>
+                    </div>
+                    <div class="grid_12 text-left ">
+                        1. Pasien berhak menerima informasi mengenai tata tertib dan peraturan yang berlaku di Rumah Sakit.
+                    </div>
+                    <div class="grid_12 text-left ">
+                        2. Pasien dapat memperoleh informasi tentang hak dan kewajiban pasien.
+                    </div>
+                    <div class="grid_12 text-left ">
+                        3. Pasien dapat memperoleh layanan yang manusiawi, adil, jujur dan tanpa diskriminasi.
+                    </div>
+                    <div class="grid_12 text-left ">
+                        4. Pasien berhak memperoleh layanan kesehatan yang bermutu sesuai dengan standar profesi dan standar prosedur operasional
+                    </div>
+                    <div class="grid_12 text-left ">
+                        5. Pasien berhak memperoleh layanan yang efektif 
+                    </div>
+
+                </fieldset>
+
+                
+            <div class="grid_12" style="margin-top: 10px;">
+                <fieldset style="margin-top:10px;">
+                        <div style="padding: 20px;">
+                            <div  class="grid_12">
+                                <label  c-label item="item" c-label-text="Tanggal"></label>
+                            </div>
+                            <input style="width: 20%" k-ng-model="item.obj[3004424]" kendo-datetimepicker placeholer="dd-MM-yyyy HH:mm" k-format="'dd-MM-yyyy HH:mm'" parsedate="dd-MM-yyyy HH:mm" />
+                            <div class="grid_12" style="margin-top:10px">
+                                <div  class="grid_12">
+                                    <label  c-label item="item" c-label-text="Psikolog Pemeriksa"></label>
+                                </div>
+                                <div class="grid_12">
+                                    <input style="width: 250px;" kendo-combo-box k-ng-model="item.obj[3004425]"
+                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                        k-auto-bind="false" k-data-source="listPegawai" />
+                                </div>
+                            </div>
+                            <br> 
+                            <br>
+                    <div class="grid_12 margin-top-10 text-left margin-bottom">
+                        <p>NIP/SIPPK : </p>
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004426]"
+                            style="height: 30px; width: 15%; "/>
+                    </div>
+                        </div>
+                </fieldset>
+            </div>
+            
+
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

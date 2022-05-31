@@ -579,16 +579,19 @@ class SumberDayaManusiaController extends ApiController {
         $dataHukumanDisiplin = \DB::table('sdm_hukumandisiplin_t as hd')
         ->join('jenishukuman_m as jh', 'jh.id','=','hd.objectjenishukumanfk')
         ->join('pegawai_m as pg', 'pg.id','=','hd.objectpegawaifk')
-        ->select('hd.tgldari', 'hd.tglsampai', 'hd.tglsk','hd.pejabatmenetapkan','jh.id','jh.jenishukuman','hd.norec','hd.objectjenishukumanfk')
+        ->select('hd.tgldari', 'hd.tglsampai', 'hd.tglsk','hd.nosk','hd.pejabatmenetapkan','jh.id','jh.jenishukuman','hd.norec','hd.objectjenishukumanfk')
         ->where('pg.id','=',$request['idPegawai'])
         ->get();
         $dataPangkatGolongan = \DB::table("pegawai_m as pg")
         ->leftjoin("riwayatgolongan_t as rg","rg.objectpegawaifk","=","pg.id") 
         ->join("sdm_golongan_m as gol","gol.id","=","rg.objectgolonganfk")
-        ->select(DB::raw("rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal"))
+        ->select(DB::raw("rg.objectgolonganfk,rg.norec,rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, rg.nosk, rg.pejabatmenetapkan"))
         ->where("pg.id",$request['idPegawai'])
+        ->orderBy('rg.tgltmt','asc')
         ->get();
-        
+        $datacuti = \DB::table('riwayatcuti_t')->select("*")
+        ->where("objectpegawaifk",$request['idPegawai'])
+        ->get();
         $result = array(
             'datapegawai' => $data,
             'datakeluarga' => $dataKeluarga,
@@ -602,12 +605,50 @@ class SumberDayaManusiaController extends ApiController {
             'datagajiminus'=> $dataGajiMinus,
             'datahukumandisiplin'=> $dataHukumanDisiplin,
             'datapangkatgolongan'=> $dataPangkatGolongan,
+            'datacuti'=> $datacuti,
             "createby : " => 'ea@epic',
 
         );
         return $this->respond($result);
     }
 
+
+    //pangkat golongan sdm
+    public function deleteDataPangkatGolongan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        try {
+            \DB::table('riwayatgolongan_t')->where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
+            $transMessage = "Hapus Data Pelatihan Golongan Sukses ";
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Hapus Data Pelatihan Golongan Gagal";
+        }
+
+        if ($transStatus != 'false') {
+
+            \DB::commit();
+            $result = array(
+
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'fizi',
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'fizi',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    //end pangkat golongan sdm
+
+    //riwayat pelatihan
     public function deleteDataPelatihan(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         try {
@@ -664,6 +705,7 @@ class SumberDayaManusiaController extends ApiController {
             $dataKomponenGajiDel=$request['komponengajidel'];
             $dataHukumanDisiplin= $request['hukumandisiplin'];
             $dataRiwayatPangkatGolongan = $request['pangkatgolongan'];
+            $dataRiwayatcuti = $request['cuti'];
 //            return $this->respond($dataKeluargaPegawai);
 
 
@@ -686,6 +728,7 @@ class SumberDayaManusiaController extends ApiController {
             $dataSavePegawai->bankrekeningnomor = $dataPegawai['nomorrekening'];
             $dataSavePegawai->bankrekeningatasnama = $dataPegawai['namarekening'];
             $dataSavePegawai->bankrekeningnama = $dataPegawai['namabank'];
+            $dataSavePegawai->masakerjatambahan = $dataPegawai['masakerjatambahan'];
             // bank 2
             $dataSavePegawai->bankrekeningnomor2 = $dataPegawai['nomorrekening2'];
             $dataSavePegawai->bankrekeningatasnama2 = $dataPegawai['namarekening2'];
@@ -982,6 +1025,7 @@ class SumberDayaManusiaController extends ApiController {
                             'pejabatmenetapkan'=> $hudis['pejabatmenetapkan'],
                             'objectpegawaifk'=> $IdPegawais,
                             'tglsk'=> $hudis['tglsk'],
+                            'nosk'=> $hudis['nosk'],
                         ]);
                     } else {
                         $dahudis = \DB::table('sdm_hukumandisiplin_t')
@@ -995,6 +1039,7 @@ class SumberDayaManusiaController extends ApiController {
                             'tglsampai'=>$hudis['tglsampai'],
                             'pejabatmenetapkan'=> $hudis['pejabatmenetapkan'],
                             'tglsk'=> $hudis['tglsk'],
+                            'nosk'=> $hudis['nosk'],
                         ]);
                     }
                     
@@ -1004,11 +1049,8 @@ class SumberDayaManusiaController extends ApiController {
             if ($dataRiwayatPangkatGolongan != "") {
                 foreach ($dataRiwayatPangkatGolongan as $rpg) {
                     
-                    if ($rpg['norec'] != "") {
-                        $masakerjatambahan = $rpg['masakerjatambahan'];
-                        if($rpg['masakerjatambahan'] == 'undefined'){
-                            $masakerjatambahan = null;
-                        }
+                    if ($rpg['norec'] == "") {
+                       
                         \DB::table("riwayatgolongan_t")->insert([
                         'norec' => substr(Uuid::generate(), 0, 32),
                         'kdprofile'=> $kdProfile,
@@ -1017,11 +1059,60 @@ class SumberDayaManusiaController extends ApiController {
                         'objectgolonganfk'=> $rpg['objectgolonganfk'],
                         'tglsk'=>$rpg['tglsk'],
                         'tgltmt'=>$rpg['tgltmt'],
-                        'masakerjatambahan'=> $masakerjatambahan,
+                        'pejabatmenetapkan'=> $rpg['pejabatmenetapkan'] ,
+                        'nosk'=> $rpg['nosk'],
+                        ]);
+                    }else{
+                        \DB::table("riwayatgolongan_t")
+                        ->where('norec', $rpg['norec'])
+                        ->where('kdprofile', $kdProfile)
+                        ->where('objectpegawaifk', $IdPegawais)
+                        ->update([
+                            // 'statusenabled'=> true,
+                            'objectgolonganfk'=> $rpg['objectgolonganfk'],
+                            'tglsk'=>$rpg['tglsk'],
+                            'tgltmt'=>$rpg['tgltmt'],
+                            'pejabatmenetapkan'=> $rpg['pejabatmenetapkan'] ,
+                            'nosk'=> $rpg['nosk'],
                         ]);
                     }
                 }
                 # code...
+            }
+            if ($dataRiwayatcuti != "") {
+                foreach ($dataRiwayatcuti as $ct) {
+                    if ($ct['norec'] == "") {
+                        \DB::table("riwayatcuti_t")
+                        ->insert([
+                            'norec' => substr(Uuid::generate(), 0, 32),
+                            'kdprofile'=> $kdProfile,
+                            'statusenabled'=> true,
+                            'objectpegawaifk'=> $IdPegawais,
+                            'tgldari'=>$ct['tgldari'],
+                            'tglsampai'=>$ct['tglsampai'],
+                            'tglsk'=> $ct['tglsk'],
+                            'nosk'=> $ct['nosk'],
+                            'pejabatmenetapkan'=> $ct['pejabatmenetapkan'],
+                        ]);
+                        
+                    } else {
+                        \DB::table("riwayatcuti_t")
+                        ->where('norec', $ct['norec'])
+                        ->where('kdprofile', $kdProfile)
+                        ->where('objectpegawaifk', $IdPegawais)
+                        ->update([
+                            'kdprofile'=> $kdProfile,
+                            'statusenabled'=> true,
+                            'objectpegawaifk'=> $IdPegawais,
+                            'tgldari'=>$ct['tgldari'],
+                            'tglsampai'=>$ct['tglsampai'],
+                            'tglsk'=> $ct['tglsk'],
+                            'nosk'=> $ct['nosk'],
+                            'pejabatmenetapkan'=> $ct['pejabatmenetapkan'],
+                        ]);
+                    }
+                    
+                }
             }
 
             //## Logging User
@@ -1082,6 +1173,7 @@ class SumberDayaManusiaController extends ApiController {
                 'datakomponendel' => $dataKomponenGajiDel,                
                 'hukumandisiplin' => $dataHukumanDisiplin,
                 'riwayatpangkatgolongan' => $dataRiwayatPangkatGolongan,
+                'datariwayatcuti' => $dataRiwayatcuti,
                 "as" => 'ea@epic',
             );
         } else {
@@ -1862,6 +1954,7 @@ class SumberDayaManusiaController extends ApiController {
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
     public function deleteDataHukumanDisiplin(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         try {
@@ -1885,6 +1978,35 @@ class SumberDayaManusiaController extends ApiController {
                 "status" => 400,
                 "message" => $transMessage,
                 "as" => 'ridwan',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+public function deleteDataCuti(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        try {
+            \DB::table('riwayatcuti_t')->where('norec',$request['norec'])->where('kdprofile', $kdProfile)->delete();
+            $transMessage = "Hapus Data Cuti Diluar Tanggungan Sukses";
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Hapus Data Cuti Diluar Tanggungan Gagal";
+        }
+        if ($transStatus != 'false') {
+            \DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'fizi',
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'fizi',
             );
         }
 
@@ -2208,10 +2330,10 @@ class SumberDayaManusiaController extends ApiController {
             
             // $TP->image = $request['image'];
             $TP->save();
-            $norec = $request['email'];
+            // $norec = ;
             if(!empty($uploadimage)) {
                 // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
-                $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
+                $request->file('image')->move('DIKLAT/FileFoto/'.$request['email'],$filenameImage);
             }
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -2336,11 +2458,28 @@ class SumberDayaManusiaController extends ApiController {
             $TP->nomorhp = $request['nomorhp'];
             $TP->email = $request['email'];
             $TP->image = $request['image'];
+            $uploadimage = $request->file('image');
+            if(!empty($uploadimage)){
+                $extensionimage = $uploadimage->getClientOriginalExtension();
+                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
+                
+//                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameImage,file_get_contents($request->file('filesip')));
+                $TP->image = $filenameImage;
+            }
+            
+            // $TP->image = $request['image'];
             $TP->save();
+            // $norec = ;
+            if(!empty($uploadimage)) {
+                // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
+                $request->file('image')->move('DIKLAT/FileFoto/'.$request['email'],$filenameImage);
+            }
             
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errMessage = $e->getMessage();
+            $errLine = $e->getLine();
         }
 
 
@@ -2358,6 +2497,7 @@ class SumberDayaManusiaController extends ApiController {
             $result = array(
                 'status' => 400,
                 'message'  => $transMessage,
+                 "e" => $e->getMessage() .' '.$e->getLine(),
                 'as' => 'asepic',
             );
         }
@@ -2376,7 +2516,21 @@ class SumberDayaManusiaController extends ApiController {
     public function hapusPesertaDidik(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();
+            $a= "0";
         try{
+            if ($request['image'] != null) {
+                $filename = $request['image'];
+                // $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
+                $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
+
+                if (!\File::exists($path)) {
+//                abort(404);
+                }else{
+                    $file = \File::deleteDirectory($path);
+                }
+                // Storage::disk('local')->delete('DIKLAT/FileFoto/'.$request['email'].'/'.$filename);
+                $a="tidak nol";
+            }
             $TP = PesertaDidik::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -2389,6 +2543,7 @@ class SumberDayaManusiaController extends ApiController {
             $result = array(
                 'status' => 201,
                 'message' => $transMessage,
+                'a'=>$a,
                 'result' => $TP,
                 'as' => 'asepic',
             );

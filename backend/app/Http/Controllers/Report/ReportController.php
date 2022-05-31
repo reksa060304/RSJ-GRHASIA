@@ -1962,7 +1962,7 @@ class ReportController extends ApiController{
         ->join('detailjenisproduk_m as djp','djp.id','=','sdm.objectdetailjenisprodukfk')
         // ->join('jeniskelamin_m as jk','jk.id','=','sdm.jeniskelaminfk')
         // ->join('sdm')
-        ->select('sdmp.norec','sdmp.nama','sdmp.image','djp.detailjenisproduk','sdm.institusipendidikan',DB::raw('sdm.tanggalmulai::date,sdm.tanggalselesai::date'))
+        ->select('sdmp.email','sdmp.norec','sdmp.nama','sdmp.image','djp.detailjenisproduk','sdm.institusipendidikan',DB::raw('sdm.tanggalmulai::date,sdm.tanggalselesai::date'))
         ->get();
         // $pdf = PDF::loadview('report.diklat-nametag', compact('data','pageWidth'));
         //        return $pdf->stream();

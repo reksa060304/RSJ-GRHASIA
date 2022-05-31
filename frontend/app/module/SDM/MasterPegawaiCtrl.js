@@ -12,6 +12,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.itemPelatihan = {};
 			$scope.itemLogin = {};
 			$scope.itemHukumanDisiplin = {};
+			$scope.itemCuti = {};
 			$scope.itemLogin.idlogin = undefined;
 			$scope.itemLogin.pegawaiId = undefined;
 			$scope.itemJabatan = {};
@@ -36,6 +37,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			var dataSip = [];
 			var dataStr = [];
 			var dataNoTelp = [];
+			var dataCuti = [];
 			var objSave = [];
 			var objUpload = [];
 			var dataRiwayatPelatihan = [];
@@ -77,7 +79,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.itemKeluarga = {};
 				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");				
 			};
-
+			function ClearCuti() {
+				$scope.itemCuti = {};
+				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");				
+			};
 			function ClearDataRiwayatPendidikan() {
 				$scope.itemPendidikan = {};
 				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
@@ -129,6 +134,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 			function ClearDataHukumanDisiplin() {
 				$scope.itemHukumanDisiplin = {};
+				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
+			};
+
+			function ClearDataCuti() {
+				$scope.itemCuti = {};
 				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
 			};
 			function FormLoad() {
@@ -187,7 +197,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					init();
 				}
 			}
-
+			
 			function init() {
 				if (jenisCache != '') {
 					if (jenisCache == 'EditPegawai') {
@@ -206,6 +216,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							var dataCacheGajiMinus = dataCache.datagajiminus;
 							var dataCacheHukumanDisiplin = dataCache.datahukumandisiplin;
 							var dataCachePangkatGolongan = dataCache.datapangkatgolongan;
+							var dataCacheCuti = dataCache.datacuti;
 
 							// Data Pegawai
 							$scope.item.idPegawai = dataCachePegawai.id;
@@ -215,6 +226,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							$scope.item.gelarBelakang = dataCachePegawai.gelarbelakang;
 							$scope.item.nama = dataCachePegawai.nama;
 							$scope.item.tempatLahir = dataCachePegawai.tempatlahir;
+							$scope.item.masakerjatambahan = dataCachePegawai.masakerjatambahan;
 
 							if (dataCachePegawai.tgllahir)
 								$scope.item.tglLahir = moment(dataCachePegawai.tgllahir).format('YYYY-MM-DD HH:mm');
@@ -295,14 +307,105 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 								data: dataRiwayatJabatan
 							})
 							//end
-
+							
 							//data riwayat pangkatgolongan
 							dataRiwayatPangkatGolongan = dataCachePangkatGolongan;
+							var sum = 0
+							// var umur = ""
+							function CountAge(birthday, dataNow) {
+								// debugger;
+								if (birthday === undefined || birthday === '')
+									birthday = new Date();
+								else {
+									if (birthday instanceof Date) {
+
+									} else {
+										var arr = birthday.split('-');
+										if (arr[0].length === 4) {
+											birthday = new Date(arr[0], arr[1], arr[2]);
+										} else {
+											birthday = new Date(arr[2], arr[1], arr[0]);
+										}
+									}
+
+								}
+								if (dataNow === undefined)
+									dataNow = new Date();
+								var ageDifMs = dataNow - birthday;
+								var ageDate = new Date(ageDifMs); // miliseconds from epoch
+								var year = ageDate.getFullYear() - 1970;
+								if (year <= -1)
+									year = 0;
+								var day = ageDate.getDate() - 1;
+								var date = new Date(year, ageDate.getMonth(), day);
+								return {
+									year: year,
+									month: ageDate.getMonth(),
+									day: day,
+									date: date
+								};
+							}
 							for (var i = 0; i < dataRiwayatPangkatGolongan.length; i++) {
 								dataRiwayatPangkatGolongan[i].no = i + 1;
+								$scope.a = dataRiwayatPangkatGolongan[i].no
+								
+								
+								// 
+
+								// var usia = (umur.year * 12) + umur.month;
+								// $scope.umur = thn + ' thn ' + bln + ' bln ' + day + ' hr '
+								if (dataRiwayatPangkatGolongan[i].no != dataRiwayatPangkatGolongan.length) {
+									$scope.tmt = new Date(dataRiwayatPangkatGolongan[i + 1].tgltmt)
+									console.log($scope.tmt);
+										var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[i].tgltmt), $scope.tmt);
+										var bln = umur.month,
+											thn = umur.year
+										// 	day = umur.day
+										console.log(bln, thn);
+										dataRiwayatPangkatGolongan[i].mkgt = thn + ' thn ' + bln + ' bln '
+								} else {
+									var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[i].tgltmt), $scope.now);
+									var bln = umur.month,
+										thn = umur.year
+										$scope.blntrkhr = umur.month
+									// 	day = umur.day
+									console.log(bln, thn);
+									dataRiwayatPangkatGolongan[i].mkgt = thn + ' thn ' + bln + ' bln '
+								}
 							}
+							
+							console.log(sum);
 							$scope.gridRiwayatPangkatGolongan = new kendo.data.DataSource({
 								data: dataRiwayatPangkatGolongan
+							})
+							//end
+
+							// data cuti
+							dataCuti = dataCacheCuti;
+							for (let i = 0; i < dataCuti.length; i++) {
+								dataCuti[i].no = i + 1;
+								var umur = dateHelper.CountAge(new Date(dataCuti[i].tgldari), new Date(dataCuti[i].tglsampai));
+								var bln = umur.month,
+									thn = umur.year
+								// $scope.blntrkhr = umur.month
+								console.log(thn, bln);
+							}
+
+							//buat penjumlahan mkgtotal - cutitotal 
+							var mkgtotal = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), $scope.now)
+							var cutitotal = dateHelper.CountAge(new Date(dataCuti[0].tgldari), new Date(dataCuti[dataCuti.length - 1].tglsampai))
+							var mkgbln = mkgtotal.month, mkgthn = mkgtotal.year
+							var cutibln = cutitotal.month, cutithn = cutitotal.year
+							console.log(mkgbln, mkgthn);
+							console.log(mkgtotal, cutitotal);
+							var sumthn = mkgthn - cutithn, sumbln = mkgbln - cutibln
+							console.log(sumthn, sumbln);
+							$scope.sum = sumthn
+							$scope.item.masakerjakeseluruhan = ($scope.item.masakerjatambahan + $scope.sum)+ " Thn"
+							console.log($scope.item.masakerjakeseluruhan);
+
+							$scope.gridCuti = new kendo.data.DataSource({
+								data: dataCuti
 							})
 							//end
 
@@ -687,7 +790,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				toolbar: [{
 					name: "create",
 					text: "Buat Riwayat Pangkat dan Golongan",
-					template: '<button ng-click="createPangkatGolongan()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Buat Riwayat Jabatan</button>'
+					template: '<button ng-click="createPangkatGolongan()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Buat Riwayat Pangkat Dan Golongan</button>'
 				}],
 				sortable: false,
 				reorderable: true,
@@ -699,34 +802,38 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				columns: [{
 						"field": "no",
 						"title": "No",
-						"width": "5%"
+						"width": "20px"
 					},
 					{
-						"field": "golongan",
-						"title": "Golongan",
-						"width": "20%"
+						"field": "nosk",
+						"title": "NO SK",
+						"width": "70px",
+						// "template": "<span class='style-left'>{{formatTanggal('#: tglsk #')}}</span>"
 					},
 					{
 						"field": "tglsk",
 						"title": "Tanggal SK",
-						"width": "20%",
+						"width": "50px",
 						"template": "<span class='style-left'>{{formatTanggal('#: tglsk #')}}</span>"
 					},
 					{
+						"field": "golongan",
+						"title": "Golongan",
+						"width": "100px",
+						// "template": "#:namaexternal #, #:name #"
+					},
+					
+					{
 						"field": "tgltmt",
 						"title": "Tanggal TMT",
-						"width": "20%"
+						"width": "70px"
 					},
 					{
-						// "field": "namajabatan",
+						"field": "mkgt",
 						"title": "Masa Kerja Golongan",
-						"width": "20%"
+						"width": "100px",
 					},
-					{
-						// "field": "pegawaipenanggungjawab",
-						"title": "Masa Kerja Keseluruhan",
-						"width": "20%"
-					},
+					
 					{
 						"command": [{
 								text: "Edit",
@@ -735,7 +842,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							},
 							{
 								text: "Hapus",
-								// click: HapusPangkatGolongan,
+								click: HapusPangkatGolongan,
 								imageClass: "k-icon k-i-delete"
 							},
 						],
@@ -816,35 +923,41 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				columns: [{
 						"field": "no",
 						"title": "No",
-						"width": "10%"
+						"width": "20px"
+					},
+					{
+						"field": "nosk",
+						"title": "NO SK",
+						"width": "50px"
+					},
+					 {
+						"field": "tglsk",
+						"title": "Tanggal SK",
+						"width": "50px"
 					},
 					{
 						"field": "jenishukuman",
 						"title": "Jenis Hukuman",
-						"width": "50%"
-					}, {
-						"field": "tglsk",
-						"title": "Tanggal SK",
-						"width": "50%"
+						"width": "110px"
 					},
 					{
-						"field": "aktif",
+						// "field": "aktif",
 						"title": "Masa Berlaku",
-						"width": "20%",
+						// "width": "20%",
 						columns: [{
 							field: "tgldari",
 							title: "Dari",
-							"width": "20%",
+							"width": "50px",
 						}, {
 							field: "tglsampai",
 							title: "Sampai",
-							"width": "20%",
+							"width": "50px",
 						}]
 					},
 					{
 						"field": "pejabatmenetapkan",
 						"title": "Pejabat Yang Menetapkan",
-						"width": "50%"
+						"width": "70px"
 					},
 					{
 						"command": [{
@@ -858,8 +971,78 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 								imageClass: "k-icon k-i-delete"
 							},
 						],
-						title: "",
-						width: "150px",
+						title: "Actions",
+						width: "100px",
+					}
+				]
+			}
+
+			$scope.opsiGridCuti = {
+				toolbar: [{
+					name: "create",
+					text: "Buat Cuti Diluar Tanggungan Negara",
+					template: '<button ng-click="createCuti()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Buat Cuti Diluar Tanggungan Negara</button>'
+				}],
+				sortable: false,
+				reorderable: true,
+				filterable: false,
+				pageable: true,
+				columnMenu: false,
+				resizable: true,
+				selectable: 'row',
+				columns: [{
+						"field": "no",
+						"title": "No",
+						"width": "20px"
+					},
+					{
+						"field": "nosk",
+						"title": "NO SK",
+						"width": "50px"
+					},
+					{
+						"field": "tglsk",
+						"title": "Tanggal SK",
+						"width": "50px"
+					},
+					// {
+					// 	"field": "jenishukuman",
+					// 	"title": "Jenis Hukuman",
+					// 	"width": "110px"
+					// },
+					{
+						// "field": "aktif",
+						"title": "Masa Berlaku",
+						// "width": "20%",
+						columns: [{
+							field: "tgldari",
+							title: "Dari",
+							"width": "50px",
+						}, {
+							field: "tglsampai",
+							title: "Sampai",
+							"width": "50px",
+						}]
+					},
+					{
+						"field": "pejabatmenetapkan",
+						"title": "Pejabat Yang Menetapkan",
+						"width": "70px"
+					},
+					{
+						"command": [{
+								text: "Edit",
+								click: EditCuti,
+								imageClass: "k-icon k-i-pencil"
+							},
+							{
+								text: "Hapus",
+								click: HapusCuti,
+								imageClass: "k-icon k-i-delete"
+							},
+						],
+						title: "Actions",
+						width: "100px",
 					}
 				]
 			}
@@ -1316,6 +1499,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.itemHukumanDisiplin = [];
 				e.preventDefault();
 				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				console.log(dataItem);
 				if (dataItem == undefined) {
 					alert("Data Belum Dipilih!")
 					return;
@@ -1330,7 +1514,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.itemHukumanDisiplin.tgldari = moment(dataItem.tgldari).format('YYYY-MM-DD HH:mm');
 				$scope.itemHukumanDisiplin.tglsampai = moment(dataItem.tglsampai).format('YYYY-MM-DD HH:mm');
 				$scope.itemHukumanDisiplin.pejabatmenetapkan = dataItem.pejabatmenetapkan;
+				$scope.itemHukumanDisiplin.nosk = dataItem.nosk;
 				$scope.popUpHukumanDisiplin.center().open();
+			}
+			function EditCuti(e) {
+				$scope.itemCuti = [];
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				console.log(dataItem);
+				if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+				$scope.item.nomorIdcuti = dataItem.no;
+				$scope.item.noreccuti = dataItem.norec;
+				$scope.itemCuti.tglsk = moment(dataItem.tglsk).format('YYYY-MM-DD HH:mm');
+				$scope.itemCuti.tgldari = moment(dataItem.tgldari).format('YYYY-MM-DD HH:mm');
+				$scope.itemCuti.tglsampai = moment(dataItem.tglsampai).format('YYYY-MM-DD HH:mm');
+				$scope.itemCuti.pejabatmenetapkan = dataItem.pejabatmenetapkan;
+				$scope.itemCuti.nosk = dataItem.nosk;
+				$scope.popUpCuti.center().open();
 			}
 			function EditPangkatGolongan(e) {
 				$scope.itemPandG = [];
@@ -1343,14 +1546,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.item.nomorId = dataItem.no;
 				$scope.item.norecPG = dataItem.norec;
 				$scope.itemPandG.golongan = {
-					id: dataItem.id,
-					golongan: dataItem.jenishukuman
+					id: dataItem.objectgolonganfk,
+					golongan: dataItem.name
 				};
-				
-				$scope.itemPandG.tgldari = moment(dataItem.tgldari).format('YYYY-MM-DD HH:mm');
-				$scope.itemPandG.tglsampai = moment(dataItem.tglsampai).format('YYYY-MM-DD HH:mm');
+				console.log(dataItem);
+				$scope.itemPandG.tanggaltmt = moment(dataItem.tgltmt).format('YYYY-MM-DD HH:mm');
+				$scope.itemPandG.tanggalsk = moment(dataItem.tglsk).format('YYYY-MM-DD HH:mm');
 				$scope.itemPandG.pejabatmenetapkan = dataItem.pejabatmenetapkan;
-				$scope.popUpHukumanDisiplin.center().open();
+				$scope.itemPandG.nosk = dataItem.nosk;
+				$scope.popUpRiwayatPangkatGolongan.center().open();
 			}
 
 			function EditKomponenDel(e) {
@@ -1427,6 +1631,64 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				// return
 				grid.removeRow(row);
 				medifirstService.post('sdm/delete-data-hukuman-disiplin', itemDelete).then(function (e) {
+					if (e.status === 201) {
+						grid.removeRow(row);
+					}
+				})
+
+			}
+
+			function HapusCuti(e) {
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+				var grid = this;
+				var row = $(e.currentTarget).closest("tr");
+				var tr = $(e.target).closest("tr");
+				for (var i = dataCuti.length - 1; i >= 0; i--) {
+					if (dataCuti[i].no == dataItem.no) {
+						dataCuti.splice(i, 1);
+					}
+				}
+				var itemDelete = {
+					"norec": dataItem.norec
+				}
+				console.log(itemDelete);
+				// return
+				grid.removeRow(row);
+				medifirstService.post('sdm/delete-data-cuti', itemDelete).then(function (e) {
+					if (e.status === 201) {
+						grid.removeRow(row);
+					}
+				})
+
+			}
+
+			function HapusPangkatGolongan(e) {
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+				var grid = this;
+				var row = $(e.currentTarget).closest("tr");
+				var tr = $(e.target).closest("tr");
+				for (var i = dataRiwayatPangkatGolongan.length - 1; i >= 0; i--) {
+					if (dataRiwayatPangkatGolongan[i].no == dataItem.no) {
+						dataRiwayatPangkatGolongan.splice(i, 1);
+					}
+				}
+				var itemDelete = {
+					"norec": dataItem.norec
+				}
+				// console.log(itemDelete);
+				// return
+				grid.removeRow(row);
+				medifirstService.post('sdm/delete-data-pangkat-golongan', itemDelete).then(function (e) {
 					if (e.status === 201) {
 						grid.removeRow(row);
 					}
@@ -1618,6 +1880,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					actions: actions
 				});
 			}
+
+			$scope.createCuti = function () {
+				$scope.item.noreccuti = "";
+				$scope.item.nomorIdcuti = undefined;
+				$scope.popUpCuti.center().open();
+				var actions = $scope.popUpCuti.options.actions;
+				actions.splice(actions.indexOf("Close"), 1);
+				$scope.popUpCuti.setOptions({
+					actions: actions
+				});
+			}
 			$scope.createKomponenDel = function () {
 				$scope.item.norecKomDel = "";
 				$scope.item.nomorId = undefined;
@@ -1648,6 +1921,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.batalDataKeluarga = function () {
 				ClearDataKeluarga();
 				$scope.popUpDataKeluarga.close();
+			}
+			$scope.batalCuti = function () {
+				ClearCuti();
+				$scope.popUpCuti.close();
 			}
 
 			$scope.batalRiwayatPendidikan = function () {
@@ -2096,7 +2373,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				var listRawRequired = [
 					"itemPandG.golongan|k-ng-model|Golongan",
 					"itemPandG.tanggalsk|k-ng-model|Tanggal SK",
-					// "itemPandG.masakerjatambahan|ng-model|Masa Kerja Tambahan",
+					"itemPandG.nosk|ng-model|NO SK",
+					"itemPandG.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
 					"itemPandG.tanggaltmt|k-ng-model|Tanggal TMT",
 					// "itemPandG.ttdSK|k-ng-model|Penandatangan SK",
 					// "itemPandG.jabatanTtd|k-ng-model|Penandatangan Jabatan",
@@ -2118,20 +2396,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							if (dataRiwayatPangkatGolongan[i].no == $scope.item.nomorId) {
 
 								data.no = $scope.item.nomorId
-								// data.objectjenisjabatanfk = $scope.itemJabatan.jenisJabatan.id
-								// data.jenisjabatan = $scope.itemJabatan.jenisJabatan.jenisjabatan
-								// data.objectjabatanfk = $scope.itemJabatan.jabatan.id
-								// data.namajabatan = $scope.itemJabatan.jabatan.namajabatan
-								// data.nosk = $scope.itemJabatan.noSK
-								// data.tglsk = moment($scope.itemJabatan.tglSK).format('YYYY-MM-DD HH:mm')
-								// data.objectpegawaittdfk = $scope.itemJabatan.ttdSK.id
-								// data.pegawaittd = $scope.itemJabatan.ttdSK.namalengkap
-								// data.objectjabatanttdfk = $scope.itemJabatan.jabatanTtd.id
-								// data.namajabatanttd = $scope.itemJabatan.jabatanTtd.namajabatan
-								// data.pegawaipenanggungjawab = $scope.itemJabatan.ttdSK.namalengkap + " / " + $scope.itemJabatan.jabatanTtd.namajabatan
-								// data.norec = $scope.item.norecJab
-
+								data.tglsk= moment($scope.itemPandG.tanggalsk).format('YYYY-MM-DD HH:mm');
+								data.tgltmt= moment($scope.itemPandG.tanggaltmt).format('YYYY-MM-DD HH:mm');
+								data.norec= $scope.item.norecPG;
+								data.pejabatmenetapkan= $scope.itemPandG.pejabatmenetapkan;
+								data.objectgolonganfk= $scope.itemPandG.golongan.id;
+								data.golongan= $scope.itemPandG.golongan.golongan;
+								data.nosk= $scope.itemPandG.nosk
 								dataRiwayatPangkatGolongan[i] = data;
+								console.log(data);
 								$scope.gridRiwayatPangkatGolongan = new kendo.data.DataSource({
 									data: dataRiwayatPangkatGolongan
 								});
@@ -2143,9 +2416,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							tglsk: moment($scope.itemPandG.tanggalsk).format('YYYY-MM-DD HH:mm'),
 							tgltmt: moment($scope.itemPandG.tanggaltmt).format('YYYY-MM-DD HH:mm'),
 							norec: $scope.item.norecPG,
-							masakerjatambahan: $scope.itemPandG.masakerjatambahan,
+							pejabatmenetapkan: $scope.itemPandG.pejabatmenetapkan,
 							objectgolonganfk: $scope.itemPandG.golongan.id,
 							golongan: $scope.itemPandG.golongan.golongan,
+							nosk: $scope.itemPandG.nosk
 						}
 						console.log(data);
 						dataRiwayatPangkatGolongan.push(data)
@@ -2223,6 +2497,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.tambahhudis = function () {
 				var listRawRequired = [
 					"itemHukumanDisiplin.jenishukuman|k-ng-model|Jenis Hukuman",
+					"itemHukumanDisiplin.nosk|ng-model|NO SK",
 					"itemHukumanDisiplin.tgldari|k-ng-model|Masa Berlaku Dari",
 					"itemHukumanDisiplin.tglsampai|k-ng-model|Tgl Sampai",
 					"itemHukumanDisiplin.tglsk|k-ng-model|Tgl SK",
@@ -2250,6 +2525,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 									data.tgldari = moment($scope.itemHukumanDisiplin.tgldari).format('YYYY-MM-DD HH:mm');
 									data.tglsampai = moment($scope.itemHukumanDisiplin.tglsampai).format('YYYY-MM-DD HH:mm');
 									data.pejabatmenetapkan = $scope.itemHukumanDisiplin.pejabatmenetapkan;
+									data.nosk = $scope.itemHukumanDisiplin.nosk;
 									data.tglsk = moment($scope.itemHukumanDisiplin.tglsk).format('YYYY-MM-DD HH:mm');
 									dataHukumanDisiplin[i] = data
 								$scope.gridHukumanDisiplin = new kendo.data.DataSource({
@@ -2268,7 +2544,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							tglsampai: moment($scope.itemHukumanDisiplin.tglsampai).format('YYYY-MM-DD HH:mm'),
 							pejabatmenetapkan: $scope.itemHukumanDisiplin.pejabatmenetapkan,
 							tglsk: moment($scope.itemHukumanDisiplin.tglsk).format('YYYY-MM-DD HH:mm'),
-							jenishukuman: $scope.itemHukumanDisiplin.jenishukuman.jenishukuman
+							jenishukuman: $scope.itemHukumanDisiplin.jenishukuman.jenishukuman,
+							nosk: $scope.itemHukumanDisiplin.nosk
 						}
 
 						dataHukumanDisiplin.push(data)
@@ -2279,6 +2556,68 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					}
 					ClearDataHukumanDisiplin();
 					$scope.popUpHukumanDisiplin.close();
+				} else {
+					ModelItem.showMessages(isValid.messages);
+				}
+			}
+
+			$scope.tambahCuti = function () {
+				var listRawRequired = [
+					// "itemCuti.jenishukuman|k-ng-model|Jenis Hukuman",
+					"itemCuti.nosk|ng-model|NO SK",
+					"itemCuti.tgldari|k-ng-model|Masa Berlaku Dari",
+					"itemCuti.tglsampai|k-ng-model|Tgl Sampai",
+					"itemCuti.tglsk|k-ng-model|Tgl SK",
+					"itemCuti.pejabatmenetapkan|ng-model|Pejabat Menetapkan",
+				];
+
+				var isValid = ModelItem.setValidation($scope, listRawRequired);
+				if (isValid.status) {
+					var nomorIdh = 0
+					if ($scope.gridCuti == undefined) {
+						nomorIdh = 1
+					} else {
+						nomorIdh = dataCuti.length + 1
+					}
+					var data = {};
+					if ($scope.item.nomorIdcuti != undefined) {
+						for (var i = dataCuti.length - 1; i >= 0; i--) {
+							if (dataCuti[i].no == $scope.item.nomorIdcuti) {
+								console.log(data);
+								data.norec = $scope.item.noreccuti
+								data.no = nomorIdh,
+								data.tgldari = moment($scope.itemCuti.tgldari).format('YYYY-MM-DD HH:mm');
+								data.tglsampai = moment($scope.itemCuti.tglsampai).format('YYYY-MM-DD HH:mm');
+								data.pejabatmenetapkan = $scope.itemCuti.pejabatmenetapkan;
+								data.nosk = $scope.itemCuti.nosk;
+								data.tglsk = moment($scope.itemCuti.tglsk).format('YYYY-MM-DD HH:mm');
+								dataCuti[i] = data
+						console.log(dataCuti);
+
+								$scope.gridCuti = new kendo.data.DataSource({
+									data: dataCuti
+								});
+							}
+						}
+					} else {
+						data = {
+							no: nomorIdh,
+							norec: $scope.item.noreccuti,
+							tgldari: moment($scope.itemCuti.tgldari).format('YYYY-MM-DD HH:mm'),
+							tglsampai: moment($scope.itemCuti.tglsampai).format('YYYY-MM-DD HH:mm'),
+							pejabatmenetapkan: $scope.itemCuti.pejabatmenetapkan,
+							tglsk: moment($scope.itemCuti.tglsk).format('YYYY-MM-DD HH:mm'),
+							nosk: $scope.itemCuti.nosk
+						}
+
+						dataCuti.push(data)
+						console.log(dataCuti);
+						$scope.gridCuti = new kendo.data.DataSource({
+							data: dataCuti
+						});
+					}
+					ClearDataCuti();
+					$scope.popUpCuti.close();
 				} else {
 					ModelItem.showMessages(isValid.messages);
 				}
@@ -2670,7 +3009,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						shiftkerja:  $scope.item.shiftKerja != undefined ? $scope.item.shiftKerja.id : null,
 						nilaijabatan: NilaiJabatan,
 						grade: Grade,
-						jenispegawai: $scope.item.JenisPegawai.id
+						jenispegawai: $scope.item.JenisPegawai.id,
+						masakerjatambahan: $scope.item.masakerjatambahan
 						// Data Status Pegawai
 					}
 
@@ -2734,6 +3074,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						simpantelp: dataNoTelp,
 						hukumandisiplin: dataHukumanDisiplin,
 						pangkatgolongan: dataRiwayatPangkatGolongan,
+						cuti: dataCuti,
 					}
 
 					// if (dataKeluarga.length == 0 || dataRiwayatPendidikan.length == 0 || dataRiwayatJabatan.length == 0 || dataSip.length == 0 || dataStr.length == 0 || dataRiwayatPelatihan.length == 0 || dataNoTelp.length==0) {

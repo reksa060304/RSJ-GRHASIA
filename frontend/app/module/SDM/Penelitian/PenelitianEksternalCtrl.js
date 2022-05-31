@@ -316,7 +316,8 @@ define(['initialize'], function(initialize) {
 				var objSave = {
                     data: data,
                 }
-
+                console.log(objSave);
+                // return
                 medifirstService.post('sdm/penelitian/save-kegiatan-penelitian-eksternal',objSave).then(function (e) {
                     $scope.item = {};  
                     // $state.go('DaftarPenelitianEksternal')
