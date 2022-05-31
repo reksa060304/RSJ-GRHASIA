@@ -205,7 +205,10 @@ class PenelitianController extends ApiController {
             $dataKPE->judulpeneltian = $request['data']['judulpenelitian'];
             $dataKPE->namapengawas = $request['data']['namapengawas'];
             $dataKPE->nosertifikat = $request['data']['nosertifikat'];
-            $dataKPE->pengesah = $request['data']['pengesah'];
+
+            if(isset($request['data']['pengesah'])){
+                $dataKPE->pengesah = $request['data']['pengesah'];
+            }
             
             $dataKPE->save();
             $idPP=$dataKPE->norec;
@@ -229,6 +232,8 @@ class PenelitianController extends ApiController {
         } catch (\Exception $e) {
             $transStatus = 'false';
             $transMessage = "Simpan Kegiatan Penelitian Eksternal";
+            $errMessage = $e->getMessage();
+            $errLine = $e->getLine();
         }
 
         if ($transStatus == 'true') {
@@ -248,6 +253,8 @@ class PenelitianController extends ApiController {
                 'status' => 400,
                 'norec' => $idPP,
                 'message'  => $transStatus,
+                'e'=> $errMessage,
+                'line'=> $errLine,
                 'as' => 'ea@epic',
             );
         }
