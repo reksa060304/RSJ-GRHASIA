@@ -131,7 +131,8 @@ define(['initialize'], function(initialize) {
                 if (noOrder == 'EditPenelitianEksternal') {
                     console.log($scope.item.layanan);
                     if ($scope.usereksternal != true) {
-                        if ($scope.item.layanan.id == 1947 || $scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
+                        // $scope.item.layanan.id == 1947 || layanan praktek klinik
+                        if ($scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
                             $scope.pembimbing = true;
                             console.log('masuk tol');
                         }
@@ -226,8 +227,8 @@ define(['initialize'], function(initialize) {
                         $scope.item.pengesah = {id: datas.idpengesah,namalengkap:datas.namalengkap};
                         $scope.item.nosertifikat = datas.nosertifikat;
                         if ($scope.usereksternal != true) {
-                            if ($scope.item.layanan.id == 1947 || $scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
-                                console.log('masuk tol');
+                            if ($scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
+                                // console.log('masuk tol');
                                 $scope.Pembimbing = true;
                             }
                             $scope.serti = true
