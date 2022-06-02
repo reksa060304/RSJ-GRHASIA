@@ -2332,7 +2332,7 @@ public function deleteDataCuti(Request $request){
             // $norec = ;
             if(!empty($uploadimage)) {
                 // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
-                $request->file('image')->move('service/img/DIKLAT/FileFoto/'.$request['email'],$filenameImage);
+                $request->file('image')->move('img/DIKLAT/FileFoto/'.$request['email'],$filenameImage);
             }
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -2468,7 +2468,7 @@ public function deleteDataCuti(Request $request){
                 $TP->image = null;
                 $filename = $request['image'];
                 // $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
-                $path = public_path('service/img/DIKLAT/FileFoto/'.$request['email'].'/');
+                $path = public_path('img/DIKLAT/FileFoto/'.$request['email'].'/');
 
                 if (!\File::exists($path)) {
 //                abort(404);
@@ -2482,7 +2482,7 @@ public function deleteDataCuti(Request $request){
             // $norec = ;
             if(!empty($uploadimage)) {
                 // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
-                $request->file('image')->move('service/img/DIKLAT/FileFoto/'.$request['email'],$filenameImage);
+                $request->file('image')->move('img/DIKLAT/FileFoto/'.$request['email'],$filenameImage);
             }
             
             $transStatus = 'true';
@@ -2531,7 +2531,7 @@ public function deleteDataCuti(Request $request){
             if ($request['image'] != null) {
                 $filename = $request['image'];
                 // $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
-                $path = public_path('service/img/DIKLAT/FileFoto/'.$request['email'].'/');
+                $path = public_path('img/DIKLAT/FileFoto/'.$request['email'].'/');
 
                 if (!\File::exists($path)) {
 //                abort(404);
@@ -4890,138 +4890,545 @@ public function deleteDataCuti(Request $request){
         if($request['status'] == '0') {
             $st = 'where ds.lebih20jam =' . $request['status'];
         }
-        $data = DB::select(DB::raw("
-            with diklatsum as (
-            SELECT
-                pg.namalengkap,
-            pg.nippns,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 1 ) AS januari,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 2 ) AS februari,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 3 ) AS maret,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 4 ) AS april,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 5 ) AS mei,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 6 ) AS juni,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 7 ) AS juli,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 8 ) AS agustus,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 9 ) AS september,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 10 ) AS oktober,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 11 ) AS november,
-            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 12 ) AS desember,
-            SUM ( cast(rp.durasi as integer)  )as jumlah,
-            CASE 
-            WHEN SUM ( cast(rp.durasi as integer)  )> 20 THEN
-                1
-            ELSE
-                0
-            END as lebih20jam,
-            CASE 
-            WHEN SUM ( cast(rp.durasi as integer)  )< 20 THEN
-                1
-            ELSE
-                0
-            END as kurang20jam
-                
+        // $all = [];
+        $data0 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns
             FROM
                 riwayatpelatihan_t rp
-                INNER JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
                 and pg.kdprofile = $idProfile
             and date_part('year', rp.tglmulai::date) = $tahun
-
-                            GROUP BY
-                            pg.namalengkap, pg.nippns
-            )
-            SELECT * FROM diklatsum ds
-            $st
-            ORDER BY nippns asc
-        "));
-        $count = DB::select(DB::raw("
-                WITH sdm_durasi AS (
-	SELECT
-		pg.namalengkap,
-		pg.nippns,
-		rp.tglmulai :: DATE,
-		rp.tglakhir :: DATE,
-		EXTRACT ( DAY FROM age( rp.tglakhir :: DATE, rp.tglmulai :: DATE ) ) + 1 hari,
-		CAST ( rp.durasi AS INTEGER ) AS durasisatuan -- 		CAST ( rp.durasi AS INTEGER ) / ( ( rp.tglakhir :: DATE - rp.tglmulai :: DATE ) + 1 ) :: INTEGER AS durasisatuan
-		
-	FROM
-		riwayatpelatihan_t rp
-		INNER JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
-        where rp.kdprofile = $kdProfile
-        and rp.statusenabled= true
-        and pg.statusenabled= true
-        and pg.kdprofile = $kdProfile
-	)
-	SELECT
-	count(DISTINCT s.namalengkap),
-	count ( distinct s.namalengkap ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 1 ) AS januaris,
-	count ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 2 ) AS februaris,
-	count ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 3 ) AS marets,
-	COUNT ( distinct s.namalengkap ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 4 ) AS aprils,
-	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 5 ) AS meis,
-	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 6 ) AS junis,
-	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 7 ) AS julis,
-	COUNT( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 8 ) AS agustuss,
-	COUNT( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 9 ) AS septembers,
-	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 10 ) AS oktobers,
-	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 11 ) AS novembers,
-	COUNT ( distinct s.namalengkap )  FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 12 ) AS desembers
-FROM
-	sdm_durasi s 
-WHERE
-    date_part( 'year', s.tglmulai ) = $tahun 
-        "));
-        
-        $sum = DB::select(DB::raw("
-        WITH sdm_durasi AS (
-            SELECT
+            GROUP BY
                 pg.namalengkap,
                 pg.nippns,
-                rp.tglmulai :: DATE,
-                rp.tglakhir :: DATE,
-                EXTRACT ( DAY FROM age( rp.tglakhir :: DATE, rp.tglmulai :: DATE ) ) + 1 hari,
-                CAST ( rp.durasi AS INTEGER ) AS durasisatuan -- 		CAST ( rp.durasi AS INTEGER ) / ( ( rp.tglakhir :: DATE - rp.tglmulai :: DATE ) + 1 ) :: INTEGER AS durasisatuan
-                
+                pg.ID;
+
+        "));
+        $data1 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
+           
+            CASE 
+	WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 1 ) is not  null THEN
+		SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 1 )
+		ELSE
+		0
+END as januari
             FROM
                 riwayatpelatihan_t rp
-                INNER JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
-                where rp.kdprofile = $kdProfile
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
-                and pg.kdprofile = $kdProfile
-            ) SELECT
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 1 ) AS januari,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 2 ) AS februari,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 3 ) AS maret,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 4 ) AS april,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 5 ) AS mei,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 6 ) AS juni,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 7 ) AS juli,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 8 ) AS agustus,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 9 ) AS september,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 10 ) AS oktober,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 11 ) AS november,
-            SUM ( s.durasisatuan ) FILTER ( WHERE date_part( 'month', s.tglmulai :: DATE ) = 12 ) AS desember,
-            SUM ( s.durasisatuan  )as jumlah,
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
+        "));
+        $data2 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
             CASE 
-            WHEN SUM ( s.durasisatuan  )> 20 THEN
-                1
+        WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 2 ) is not  null THEN
+            SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 2 )
             ELSE
-                0
-        END as lebih20jam
-            
-        FROM
-            sdm_durasi s 
-            where date_part('year', s.tglmulai)= $tahun
+            0
+    END as februari
+            FROM
+                riwayatpelatihan_t rp
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
         "));
 
+        $data3 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 3 ) is not  null THEN
+                SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 3 )
+                ELSE
+                0
+            END as maret
+            FROM
+                riwayatpelatihan_t rp
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
+        "));
+
+        $data4 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 4 ) is not  null THEN
+                SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 4 )
+                ELSE
+                0
+            END as april
+            FROM
+                riwayatpelatihan_t rp
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
+        "));
+
+        $data5 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 5 ) is not  null THEN
+                SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 5 )
+                ELSE
+                0
+            END as mei
+            FROM
+                riwayatpelatihan_t rp
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
+        "));
+
+        $data6 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 6 ) is not  null THEN
+                SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 6 )
+                ELSE
+                0
+            END as juni
+            FROM
+                riwayatpelatihan_t rp
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
+        "));
+
+        $data7 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 7 ) is not  null THEN
+                SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 7 )
+                ELSE
+                0
+            END as juli
+            FROM
+                riwayatpelatihan_t rp
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
+        "));
+
+        $data8 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 8 ) is not  null THEN
+                SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 8 )
+                ELSE
+                0
+            END as agustus
+            FROM
+                riwayatpelatihan_t rp
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
+        "));
+
+        $data9 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 9 ) is not  null THEN
+                SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 9 )
+                ELSE
+                0
+            END as september
+            FROM
+                riwayatpelatihan_t rp
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
+        "));
+
+        $data10 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 10 ) is not  null THEN
+                SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 10 )
+                ELSE
+                0
+            END as oktober
+            FROM
+                riwayatpelatihan_t rp
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
+        "));
+
+        $data11 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 11 ) is not  null THEN
+                SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 11 )
+                ELSE
+                0
+            END as november
+            FROM
+                riwayatpelatihan_t rp
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
+        "));
+
+        $data12 = \DB::select(DB::raw("
+            /*januari*/ SELECT
+            pg.ID,
+            pg.namalengkap,
+            pg.nippns,
+            CASE 
+            WHEN SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 12 ) is not  null THEN
+                SUM ( cast(rp.durasi as integer) ) FILTER ( WHERE date_part( 'month', rp.tglmulai :: DATE ) = 12 )
+                ELSE
+                0
+            END as desember
+            FROM
+                riwayatpelatihan_t rp
+                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                where rp.kdprofile = $idProfile
+                and rp.statusenabled= true
+                and pg.statusenabled= true
+                and pg.kdprofile = $idProfile
+            and date_part('year', rp.tglmulai::date) = $tahun
+            GROUP BY
+                pg.namalengkap,
+                pg.nippns,
+                pg.ID;
+        "));
+
+
+
+        //bulan
+        $januari = 0;
+        $februari = 0;
+        $maret = 0;
+        $april = 0;
+        $mei = 0;
+        $juni = 0;
+        $juli = 0;
+        $agustus = 0;
+        $september = 0;
+        $oktober = 0;
+        $november = 0;
+        $desember = 0;
+
+        //akumulasi
+        $akujanuari = 0;
+        $akufebruari=0;
+        $akumaret=0;
+        $akuapril=0;
+        $akumei=0;
+        $akujuni=0;
+        $akujuli=0;
+        $akuagustus=0;
+        $akuseptember=0;
+        $akuoktober=0;
+        $akunovember=0;
+        $akudesember=0;
+        //detail buat ngegabungin
+        $detail = [];
+
+        foreach ($data0 as $d0) {
+           //bulan
+        $januari = 0;
+        $februari = 0;
+        $maret = 0;
+        $april = 0;
+        $mei = 0;
+        $juni = 0;
+        $juli = 0;
+        $agustus = 0;
+        $september = 0;
+        $oktober = 0;
+        $november = 0;
+        $desember = 0;
+
+        //akumulasi
+        $akujanuari = 0;
+        $akufebruari=0;
+        $akumaret=0;
+        $akuapril=0;
+        $akumei=0;
+        $akujuni=0;
+        $akujuli=0;
+        $akuagustus=0;
+        $akuseptember=0;
+        $akuoktober=0;
+        $akunovember=0;
+        $akudesember=0;
+
+            foreach ($data1 as $d1) {
+                if ($d0->id == $d1->id) {
+                    $januari = $d1->januari;
+                    break;
+                } else {
+                    $januari = 0;
+                }
+            }
+
+            foreach ($data2 as $d2) {
+                if ($d0->id == $d2->id) {
+                    $februari = $d2->februari;
+                    break;
+                } else {
+                    $februari = 0;
+                }
+            }
+
+            foreach ($data3 as $d3) {
+                if ($d0->id == $d3->id) {
+                    $maret = $d3->maret;
+                    break;
+                } else {
+                    $maret = 0;
+                }
+            }
+
+            foreach ($data4 as $d4) {
+                if ($d0->id == $d4->id) {
+                    $april = $d4->april;
+                    break;
+                } else {
+                    $april = 0;
+                }
+            }
+
+            foreach ($data5 as $d5) {
+                if ($d0->id == $d5->id) {
+                    $mei = $d5->mei;
+                    break;
+                } else {
+                    $mei = 0;
+                }
+            }
+
+            foreach ($data6 as $d6) {
+                if ($d0->id == $d6->id) {
+                    $juni = $d6->juni;
+                    break;
+                } else {
+                    $juni = 0;
+                }
+            }
+
+            foreach ($data7 as $d7) {
+                if ($d0->id == $d7->id) {
+                    $juli = $d7->juli;
+                    break;
+                } else {
+                    $juli = 0;
+                }
+            }
+
+            foreach ($data8 as $d8) {
+                if ($d0->id == $d8->id) {
+                    $agustus = $d8->agustus;
+                    break;
+                } else {
+                    $agustus = 0;
+                }
+            }
+
+            foreach ($data9 as $d9) {
+                if ($d0->id == $d9->id) {
+                    $september = $d9->september;
+                    break;
+                } else {
+                    $september = 0;
+                }
+            }
+
+            foreach ($data10 as $d10) {
+                if ($d0->id == $d10->id) {
+                    $oktober = $d10->oktober;
+                    break;
+                } else {
+                    $oktober = 0;
+                }
+            }
+
+            foreach ($data11 as $d11) {
+                if ($d0->id == $d11->id) {
+                    $november = $d11->november;
+                    break;
+                } else {
+                    $november = 0;
+                }
+            }
+
+            foreach ($data12 as $d12) {
+                if ($d0->id == $d12->id) {
+                    $desember = $d12->desember;
+                    break;
+                } else {
+                    $desember = 0;
+                }
+            }
+
+            
+            $akujanuari += $januari;
+            $akufebruari += $januari + $februari;
+            $akumaret += $januari + $februari+ $maret;
+            $akuapril += $januari + $februari+ $maret+ $april;
+            $akumei += $januari + $februari+ $maret+ $april+ $mei;
+            $akujuni += $januari + $februari+ $maret+ $april+ $mei+ $juni;
+            $akujuli += $januari + $februari+ $maret+ $april+ $mei+ $juni+ $juli;
+            $akuagustus += $januari + $februari+ $maret+ $april+ $mei+ $juni+ $juli+ $agustus;
+            $akuseptember += $januari + $februari+ $maret+ $april+ $mei+ $juni+ $juli+ $agustus+ $september;
+            $akuoktober += $januari + $februari+ $maret+ $april+ $mei+ $juni+ $juli+ $agustus+ $september+ $oktober;
+            $akunovember += $januari + $februari+ $maret+ $april+ $mei+ $juni+ $juli+ $agustus+ $september+ $oktober+ $november;
+            $akudesember += $januari + $februari+ $maret+ $april+ $mei+ $juni+ $juli+ $agustus+ $september+ $oktober+ $november+ $desember;
+
+            $detail[]= array(
+                'namalengkap'=> $d0->namalengkap,
+                'nippns'=> $d0->nippns,
+                'januari'=> $januari,
+                'akujanuari'=>$akujanuari,
+                'februari'=> $februari,
+                'akufebruari'=>$akufebruari,
+                'maret'=> $maret,
+                'akumaret'=>$akumaret,
+                'april'=> $april,
+                'akuapril'=>$akuapril,
+                'mei'=> $mei,
+                'akumei'=>$akumei,
+                'juni'=> $juni,
+                'akujuni'=>$akujuni,
+                'juli'=> $juli,
+                'akujuli'=>$akujuli,
+                'agustus'=> $agustus,
+                'akuagustus'=>$akuagustus,
+                'september'=> $september,
+                'akuseptember'=>$akuseptember,
+                'oktober'=> $oktober,
+                'akuoktober'=>$akuoktober,
+                'november'=> $november,
+                'akunovember'=>$akunovember,
+                'desember'=> $desember,
+                'akudesember'=>$akudesember,
+            );
+        }
+        $pegawai = DB::select(DB::raw("SELECT * FROM pegawai_m 
+        where namalengkap not ilike  '-' and statusenabled = true 
+        and kdprofile = 30 and namalengkap not ilike '%programmer%' and usereksternal is null"));
         $result = array(
-            'data'=> $data,
-            'count'=> $count,
-            'sum'=> $sum,
+            'data'=> $detail,
+            'count'=> $pegawai,
+            // 'sum'=> $sum,
             'as'=> 'Fizi',
         );
         return $this->respond($result);
