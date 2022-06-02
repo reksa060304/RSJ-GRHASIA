@@ -32,7 +32,7 @@ class PenelitianController extends ApiController {
     public function getDataComboPenelitian(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $dataLogin = $request->all();
-        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap, lu.objectkelompokuserfk, nom.nomor from loginuser_s as lu
+        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap, lu.objectkelompokuserfk, nom.nomor, pg.* from loginuser_s as lu
                 INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
                 INNER JOIN nomortelphone_t as nom on nom.pegawaifk = pg.id
                 where lu.kdprofile = $kdProfile and lu.id=:idLoginUser and nom.nomor ilike '0%'"),
@@ -437,8 +437,10 @@ class PenelitianController extends ApiController {
             sp.norec,sdmp.noregistrasifk,sp.nostruk, sdmp.judulpeneltian, sdmp.namapengawas, sdmp.namapendamping
                 ")
         );
+        $IdPegawai = \DB::table('pegawai_m')->where('id', $request['modelid'])->get();
         $result = array(
         'datas'=>$data,
+        'idpegawai'=>$IdPegawai,
         'message' => 'ea@epic',
         );
         return $this->respond($result);

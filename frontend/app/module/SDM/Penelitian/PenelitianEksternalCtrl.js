@@ -26,14 +26,15 @@ define(['initialize'], function(initialize) {
 			LoadCache();
             console.log(ModelItem.getPegawai())
             console.log(medifirstService.getUserLogin());
-            
+            console.log($scope.usereksternal);
 			function LoadCache(){
                 var chacePeriode = cacheHelper.get('PenelitianEksternalCtrl');
                 if(chacePeriode != undefined){
-                   NorecKpe = chacePeriode[0]
-                   noOrder = chacePeriode[1]
-                   init()
-                   var chacePeriode ={ 0 : '' ,
+                    NorecKpe = chacePeriode[0]
+                    noOrder = chacePeriode[1]
+                    $scope.usereksternal = chacePeriode[2]
+                    init()
+                    var chacePeriode ={ 0 : '' ,
                         1 : '',
                         2 : '',
                         3 : '', 
@@ -46,14 +47,14 @@ define(['initialize'], function(initialize) {
                     init()
                 }
             }			
-            if (ModelItem.getPegawai().jenisPegawai.qjenispegawai != 0) {
+            
+            if ($scope.idpegawai != true) {
                 $scope.tgl = false;
                 $scope.pemb = false;
                 $scope.ru = false;
                 $scope.tabletambahmahasiswa = true;
-                
-            }
 
+            }
 			function loadDataCombo(){
                 $scope.isRouteLoading = true
                 var norec_pd = '';
@@ -73,10 +74,11 @@ define(['initialize'], function(initialize) {
                     noregistrasi = "noregistrasi=" + NorecKpe;
                     console.log('data masuk');
                 }
+                // var modelid = '&modelid='+ModelItem.getPegawai().id;
 	            medifirstService.get("sdm/penelitian/get-data-combo-penelitian?"+ noregistrasi, true).then(function(datas){
                 $scope.isRouteLoading = false
                     var dat = datas.data
-	            	
+	            	// $scope.idpegawai = datas.data.pegawaiuser[0].usereksternal
                     $scope.ListInstitusiPendidikan=dat.institusi;
                     $scope.ListJenisDiklat = dat.jenisdiklat;
                     $scope.ListJenisLayanan = dat.detailjenisproduk;
@@ -99,7 +101,7 @@ define(['initialize'], function(initialize) {
                             toastr.error("Informasi, Data Sudah Diverifikasi !")
                         }
                     }
-                    
+                   
                     
                     
                     
@@ -128,7 +130,7 @@ define(['initialize'], function(initialize) {
 
                 if (noOrder == 'EditPenelitianEksternal') {
                     console.log($scope.item.layanan);
-                    if (ModelItem.getPegawai().jenisPegawai.qjenispegawai != 0) {
+                    if ($scope.usereksternal != true) {
                         if ($scope.item.layanan.id == 1947 || $scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
                             $scope.pembimbing = true;
                             console.log('masuk tol');
@@ -223,7 +225,7 @@ define(['initialize'], function(initialize) {
                         $scope.item.judulpenelitian = datas.judulpeneltian;
                         $scope.item.pengesah = {id: datas.idpengesah,namalengkap:datas.namalengkap};
                         $scope.item.nosertifikat = datas.nosertifikat;
-                        if (ModelItem.getPegawai().jenisPegawai.qjenispegawai != 0) {
+                        if ($scope.usereksternal != true) {
                             if ($scope.item.layanan.id == 1947 || $scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
                                 console.log('masuk tol');
                                 $scope.Pembimbing = true;

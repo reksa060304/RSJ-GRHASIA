@@ -65,14 +65,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if (ModelItem.getPegawai().jenisPegawai.qjenispegawai == 0) {
                     usr = "user=" + medifirstService.getUserLogin().kdUser;
                 }
-                medifirstService.get("sdm/penelitian/get-daftar-penelitian-eksternal?"+ usr+tglAwal+tglAkhir+InstitusiPendidikan, true).then(function (dat) {
+                var modelid = "&modelid="+ModelItem.getPegawai().id;
+                medifirstService.get("sdm/penelitian/get-daftar-penelitian-eksternal?"+ usr+tglAwal+tglAkhir+InstitusiPendidikan+modelid, true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var datas = dat.data.datas;
                         for (var i = 0; i < datas.length; i++) {
                             datas[i].no = i + 1
                         }
-
+                        $scope.idpegawai = dat.data.idpegawai[0].usereksternal;
                         
+                    console.log($scope.idpegawai);
                         $scope.DataPenelitian = new kendo.data.DataSource({
                             data: datas,
                             total: datas.length,
@@ -101,7 +103,110 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             6: ''
                         }
                         cacheHelper.set('DaftarPenelitianEksternalCtrl', chacePeriode);
-                    });
+                if ($scope.idpegawai == true) {
+                    $scope.verif = false
+                    $scope.tagih = false
+                    $scope.columnPenelitian = {
+                        toolbar: ["excel"],
+                        excel: {
+                            fileName: "Data Penelitian Eksternal" + moment($scope.now).format('DD/MMM/YYYY'),
+                            allPages: true,
+                        },
+                        selectable: 'row',
+                        pageable: true,
+                        columns: [{
+                                "field": "no",
+                                "title": "No",
+                                "width": "10%"
+                            },
+                            {
+                                "field": "diklatkategori",
+                                "title": "Jenis Diklat",
+                                "width": "15%"
+                            },
+                            {
+                                "field": "detailjenisproduk",
+                                "title": "Kegiatan",
+                                "width": "20%"
+                            },
+                            {
+                                "field": "jumlahpeserta",
+                                "title": "Peserta",
+                                "width": "20%"
+                            },
+                            {
+                                "title": "Tanggal",
+                                "width": "20%",
+                                "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>"
+                            },
+                        ]
+                    }
+                }
+                else {
+                    $scope.verif = true
+                    $scope.tagih = true
+                    $scope.columnPenelitian = {
+                        toolbar: ["excel"],
+                        excel: {
+                            fileName: "Data Penelitian Eksternal" + moment($scope.now).format('DD/MMM/YYYY'),
+                            allPages: true,
+                        },
+                        selectable: 'row',
+                        pageable: true,
+                        columns: [{
+                                "field": "no",
+                                "title": "No",
+                                "width": "10px"
+                            },
+                            {
+                                "field": "institusipendidikan",
+                                "title": "Institusi Pendidikan",
+                                "width": "50px"
+                            },
+                            {
+                                "field": "diklatkategori",
+                                "title": "Jenis Diklat",
+                                "width": "50px"
+                            },
+                            {
+                                "field": "detailjenisproduk",
+                                "title": "Kegiatan",
+                                "width": "50px"
+                            },
+                            {
+                                "field": "jumlahpeserta",
+                                "title": "Peserta",
+                                "width": "20px"
+                            },
+                            {
+                                "title": "Tanggal",
+                                "width": "50px",
+                                "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>"
+                            },
+                            {
+                                "title": "Verif",
+                                "width": "50px",
+                                "template": "<span class='style-center'>#: noregistrasifk != null ? 'Sudah diverif': 'Belum diverif' #</span>"
+                            },
+                            {
+                                "title": "Status Bayar",
+                                "width": "50px",
+                                "template": "<span class='style-center'>#: nosbmlastfk != null || nosbklastfk != null  ? 'Lunas': 'Belum Bayar' #</span>"
+                            },
+                            {
+                                'command': [{
+                                    text: "nametag",
+                                    click: cetaknametag,
+                                }],
+                                "width": 100
+                            },
+                        ],
+                    }
+                }
+                });
+
+               
+                
             }
 
             $scope.SearchData = function (e) {
@@ -168,7 +273,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var chacePeriode = {
                     0: $scope.current,
                     1: 'EditPenelitianEksternal',
-                    2: '',
+                    2: $scope.idpegawai,
                     3: '',
                     4: '',
                     5: '',
@@ -205,116 +310,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     GetData()
                 })
             }
-
-            if (ModelItem.getPegawai().jenisPegawai.qjenispegawai != 0) {
-                $scope.verif = true
-                $scope.tagih = true
-                
-
-                $scope.columnPenelitian = {
-                    toolbar: ["excel"],
-                    excel: {
-                        fileName: "Data Penelitian Eksternal" + moment($scope.now).format('DD/MMM/YYYY'),
-                        allPages: true,
-                    },
-                    selectable: 'row',
-                    pageable: true,
-                    columns: [{
-                            "field": "no",
-                            "title": "No",
-                            "width": "10px"
-                        },
-                        {
-                            "field": "institusipendidikan",
-                            "title": "Institusi Pendidikan",
-                            "width": "50px"
-                        },
-                        {
-                            "field": "diklatkategori",
-                            "title": "Jenis Diklat",
-                            "width": "50px"
-                        },
-                        {
-                            "field": "detailjenisproduk",
-                            "title": "Kegiatan",
-                            "width": "50px"
-                        },
-                        {
-                            "field": "jumlahpeserta",
-                            "title": "Peserta",
-                            "width": "20px"
-                        },
-                        {
-                            "title": "Tanggal",
-                            "width": "50px",
-                            "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>"
-                        },
-                        {
-                            "title": "Verif",
-                            "width": "50px",
-                            "template": "<span class='style-center'>#: noregistrasifk != null ? 'Sudah diverif': 'Belum diverif' #</span>"
-                        },
-                        {
-                            "title": "Status Bayar",
-                            "width": "50px",
-                            "template": "<span class='style-center'>#: nosbmlastfk != null || nosbklastfk != null  ? 'Lunas': 'Belum Bayar' #</span>"
-                        },
-                        {
-                            'command': 
-                            [
-                                {
-                                text: "nametag",
-                                click: cetaknametag,
-                                }
-                            ],
-                            "width": 100
-
-                        },
-                    
-                    
-
-                    ],
-                    
-                }
-            } else {
-                $scope.verif = false
-                $scope.tagih = false
-                $scope.columnPenelitian = {
-                    toolbar: ["excel"],
-                    excel: {
-                        fileName: "Data Penelitian Eksternal" + moment($scope.now).format('DD/MMM/YYYY'),
-                        allPages: true,
-                    },
-                    selectable: 'row',
-                    pageable: true,
-                    columns: [{
-                            "field": "no",
-                            "title": "No",
-                            "width": "10%"
-                        },
-                        {
-                            "field": "diklatkategori",
-                            "title": "Jenis Diklat",
-                            "width": "15%"
-                        },
-                        {
-                            "field": "detailjenisproduk",
-                            "title": "Kegiatan",
-                            "width": "20%"
-                        },
-                        {
-                            "field": "jumlahpeserta",
-                            "title": "Peserta",
-                            "width": "20%"
-                        },
-                        {
-                            "title": "Tanggal",
-                            "width": "20%",
-                            "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>"
-                        },
-                    ]
-                }
-            }
+            console.log(ModelItem.getPegawai());
+            
             
             $scope.verifikasi = function(){
                 $scope.isRouteLoading = true
