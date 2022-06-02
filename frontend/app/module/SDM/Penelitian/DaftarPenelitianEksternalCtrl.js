@@ -235,7 +235,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isverifikasi = current.isverifikasi
                 $scope.count = current.count
                 console.log(JSON.stringify($scope.current));
-                if (ModelItem.getPegawai().jenisPegawai.qjenispegawai != 0) {
+                if ($scope.idpegawai != true) {
                     if (current.noregistrasifk != null) {
                         $scope.verif = false;
                         $scope.batalverif = true;
