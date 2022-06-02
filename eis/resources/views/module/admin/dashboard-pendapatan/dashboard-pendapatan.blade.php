@@ -107,7 +107,7 @@
                             </div>
                         </div>
                         <div class="row" style="margin-top:10px ">
-                            <div class="col-lg-12 col-xl-12">
+                            <!-- <div class="col-lg-12 col-xl-12">
                                 <div class="card">
                                     <div class="panel panel-warning">
                                         <div class="panel-heading bg-warning">
@@ -118,7 +118,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="col-lg-12 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-primary">
@@ -130,6 +130,21 @@
                                                 $res['pendapatanakrual'] = App\Http\Controllers\MainController::getPendapatanAkrual(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
                                             @endphp
                                             <div id="chartPendapatanAkrual"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading bg-c-pink" style="color:white;">
+                                            Pendapatan Potensial
+                                        </div>
+                                        <div class="panel-body">
+                                            @php
+                                                $res['pendapatanpotensial'] = App\Http\Controllers\MainController::getPendapatanPotensial(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div id="chartPendapatanPotensial"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -438,6 +453,7 @@
         setChartNonLayanan()
         setChartTren()
         setChartPendapatanAkrual()
+        setChartPendapatanPotensial()
         function setChartPendapatan() {
             this.dataChartPendapatan =  @json($res['pendapatan']);
             let array = this.dataChartPendapatan.data
@@ -537,104 +553,104 @@
             var tglAwal = $("#tglawal").val()
             var tglAkhir = $("#tglakhir").val()
             this.isShowTrend = false;
-            Highcharts.chart('chartPendapatan', {
+            // Highcharts.chart('chartPendapatan', {
 
-                chart: {
-                    type: 'column'
-                },
-                title: {
-                    text: ''
-                },
-                subtitle: {
-                    text: ''
-                },
-                xAxis: {
-                    // categories: [" "],
-                    // labels: {
-                    //     align: 'center',
-                    //     style: {
-                    //         fontSize: '7px',
-                    //         fontFamily: 'Verdana, sans-serif'
-                    //     }
-                    // },
-                    type: 'category'
-                },
-                yAxis: {
-                    title: {
-                        text: 'Realisasi Pendapatan'
-                    }
-                },
-                legend: {
-                    enabled: true,
-                    borderRadius: 5,
-                    borderWidth: 1
-                },
-                // legend: {
-                //     enabled: false
-                // },
-                plotOptions: {
-                    column: {
-                        // url:"#",
-                        cursor: 'pointer',
+            //     chart: {
+            //         type: 'column'
+            //     },
+            //     title: {
+            //         text: ''
+            //     },
+            //     subtitle: {
+            //         text: ''
+            //     },
+            //     xAxis: {
+            //         // categories: [" "],
+            //         // labels: {
+            //         //     align: 'center',
+            //         //     style: {
+            //         //         fontSize: '7px',
+            //         //         fontFamily: 'Verdana, sans-serif'
+            //         //     }
+            //         // },
+            //         type: 'category'
+            //     },
+            //     yAxis: {
+            //         title: {
+            //             text: 'Realisasi Pendapatan'
+            //         }
+            //     },
+            //     legend: {
+            //         enabled: true,
+            //         borderRadius: 5,
+            //         borderWidth: 1
+            //     },
+            //     // legend: {
+            //     //     enabled: false
+            //     // },
+            //     plotOptions: {
+            //         column: {
+            //             // url:"#",
+            //             cursor: 'pointer',
 
-                        dataLabels: {
-                            enabled: true,
-                            color: this.colors[1],
+            //             dataLabels: {
+            //                 enabled: true,
+            //                 color: this.colors[1],
 
-                            formatter: function () {
-                                return 'Rp. ' + formatRupiah(this.y,  '');
-                            }
-                        },
-                        showInLegend: true
-                    },
-                    series: {
-                        cursor: 'pointer',
-                        borderWidth: 0,
-                        // dataLabels: {
-                        //     enabled: true,
-                        //     format: '{point.y:.1f}%'
-                        // },
-                        point: {
-                            events: {
-                                click: function () {
-                                    if (this.name == undefined) return;
-                                    getDetailChartPen(event.point.name, tglAwal, tglAkhir)
-                                    // alert( "point this.name = [" + this.name + tglAwal+ "], this.category = [" + this.category + "]")
-                                }
-                                // click: function (event) {
-                                //     if (event.point.name == undefined) return;
-                                //      getDetailChartPen(event.point.name, tglAwal, tglAkhir)
-                                // }.bind(this)
-                            },
-                            // }
-                        }
-                    },
+            //                 formatter: function () {
+            //                     return 'Rp. ' + formatRupiah(this.y,  '');
+            //                 }
+            //             },
+            //             showInLegend: true
+            //         },
+            //         series: {
+            //             cursor: 'pointer',
+            //             borderWidth: 0,
+            //             // dataLabels: {
+            //             //     enabled: true,
+            //             //     format: '{point.y:.1f}%'
+            //             // },
+            //             point: {
+            //                 events: {
+            //                     click: function () {
+            //                         if (this.name == undefined) return;
+            //                         getDetailChartPen(event.point.name, tglAwal, tglAkhir)
+            //                         // alert( "point this.name = [" + this.name + tglAwal+ "], this.category = [" + this.category + "]")
+            //                     }
+            //                     // click: function (event) {
+            //                     //     if (event.point.name == undefined) return;
+            //                     //      getDetailChartPen(event.point.name, tglAwal, tglAkhir)
+            //                     // }.bind(this)
+            //                 },
+            //                 // }
+            //             }
+            //         },
 
-                },
-                // tooltip: {
-                //     formatter: function () {
-                //         let point = this.point,
-                //             s = this.series.name + ': Rp. ' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' <br/>';
-                //         return s;
+            //     },
+            //     // tooltip: {
+            //     //     formatter: function () {
+            //     //         let point = this.point,
+            //     //             s = this.series.name + ': Rp. ' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' <br/>';
+            //     //         return s;
 
-                //     }
+            //     //     }
 
-                // },
-                credits: {
-                    text: 'Total : Rp. ' + formatRupiah(totalAll,''),
-                    style: {
-                        color:"black",
-                        cursor: "pointer",
-                        fontSize: "12px"
-                    }
-                },
-                series: series,
-                drilldown: {
-                    series: resultSumDep,
+            //     // },
+            //     credits: {
+            //         text: 'Total : Rp. ' + formatRupiah(totalAll,''),
+            //         style: {
+            //             color:"black",
+            //             cursor: "pointer",
+            //             fontSize: "12px"
+            //         }
+            //     },
+            //     series: series,
+            //     drilldown: {
+            //         series: resultSumDep,
 
-                }
+            //     }
 
-            })
+            // })
 
 
             //   kelompok pasien
@@ -894,7 +910,92 @@
                 },
                 yAxis: {
                     title: {
-                        text: 'Jumlah Pasien'
+                        text: 'Jumlah Pendapatan'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        // url:"#",
+                        cursor: 'pointer',
+
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return 'Rp. ' + formatRupiah(this.y, '');
+                            }
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    formatter: function (e) {
+                        let point = this.point,
+                            s = this.series.name + ': Rp. ' + formatRupiah(this.y, '') + ' <br/>';
+                        return s;
+
+                    }
+
+                },
+                series: series,
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1
+                },
+
+            })
+        }
+        function setChartPendapatanPotensial(){
+            this.datapendapatanakrual  =@json($res['pendapatanpotensial']);
+            let categories = []
+            let series = [];
+            let jumlah = 0;
+            for (let i in this.datapendapatanakrual) {
+                categories.push(this.datapendapatanakrual[i].ruangan);
+                let dataz2 = [];
+                dataz2.push({
+                    y: parseFloat(this.datapendapatanakrual[i].jumlah),
+                    color: this.colors[i]
+                });
+                jumlah = jumlah + parseFloat(this.datapendapatanakrual[i].jumlah);
+                // if (loopIndex > 0)
+                series.push({
+                    name: this.datapendapatanakrual[i].ruangan,
+                    data: dataz2
+                });
+                // loopIndex++;
+
+            }
+            Highcharts.chart('chartPendapatanPotensial', {
+                chart: {
+                    type: 'column',
+                },
+
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ["Total : Rp. " + formatRupiah(jumlah,'')],
+                    labels: {
+                        align: 'center',
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Pendapatan'
                     }
                 },
                 plotOptions: {

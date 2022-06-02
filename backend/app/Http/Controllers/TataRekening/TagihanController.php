@@ -12581,7 +12581,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
@@ -12603,7 +12603,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
@@ -12625,7 +12625,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
@@ -12647,7 +12647,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
@@ -12669,7 +12669,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
@@ -12691,7 +12691,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
@@ -12713,7 +12713,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
@@ -12735,7 +12735,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
@@ -12757,7 +12757,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
@@ -12779,7 +12779,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
@@ -12801,7 +12801,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
@@ -12823,7 +12823,7 @@ $result = array(
                             inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                             inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
                             inner  join produk_m pr on pr.id=pp.produkfk
-                            WHERE pp.tglpelayanan BETWEEN '2022-01-01 00:00:00' and '2022-12-31 23:59:59'
+                            WHERE pp.tglpelayanan BETWEEN '$tglAwal-01-01 00:00:00' and '$tglAwal-12-31 23:59:59'
                             and apd.kdprofile = $kdProfile
                             and pd.kdprofile = $kdProfile
                             and apd.statusenabled = true
