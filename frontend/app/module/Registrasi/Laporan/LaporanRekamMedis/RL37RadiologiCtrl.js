@@ -1,56 +1,156 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('RL37RadiologiCtrl', ['$scope', 'MedifirstService',
-        function ($scope, medifirstService) {
+    initialize.controller('RL37RadiologiCtrl', ['CacheHelper', '$q', '$rootScope', '$scope', 'MedifirstService', 'DateHelper', 
+        function (cacheHelper, $q, $rootScope, $scope, medifirstService, DateHelper) {
             //Inisial Variable 
+            $scope.isRouteLoading = false;
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.dataSelected = {};
             $scope.item = {};
-            $scope.isRouteLoading = false;
-            $scope.item.tglawal = $scope.now;
-            $scope.item.tglakhir = $scope.now;
-
-            $scope.CariData = function () {
+            $scope.dataLogin = JSON.parse(window.localStorage.getItem('pegawai'));
+            $scope.CariRegistrasiPasien = function () {
+                $scope.isRouteLoading = true;
                 LoadData()
             }
-            function LoadData() {
 
-                $scope.isRouteLoading = true;
+            function LoadData() {
                 var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');;
+                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+              
+                var chacePeriode = {
+                    0: tglAwal,
+                    1: tglAkhir
+                }
+                cacheHelper.set('LaporanRl39Ctrl', chacePeriode);
 
                 medifirstService.get("registrasi/laporan/get-laporan-rl37?"
                     + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
-
-                ).then(function (data) {
-                    var data = data.data
-                    for (var i = 0; i < data.data.length; i++) {
-                        data.data[i].no = i + 1
-                    
-
-                    }
-                    $scope.isRouteLoading = false;
-
-                    $scope.sourceLaporan = new kendo.data.DataSource({
-
-                        data: data.data,
-                        group: $scope.group,
-                        pageSize: 10,
-                        total: data.length,
-                        serverPaging: false,
-                        schema: {
-                            model: {
-                                fields: {
+                    + "&tglAkhir=" + tglAkhir).then(function (data) {
+                        var data = data.data
+                        for (var i = 0; i < data.data.length; i++) {
+                            data.data[i].kdprov = '24'
+                            data.data[i].kabkota = 'Kab. Sleman'
+                            data.data[i].koders = '3404022'
+                            data.data[i].namars = 'RSJ. Grhasia'
+                            data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
+                        }
+                        $scope.isRouteLoading = false;
+                        $scope.ambildataexcel = data.data
+                        $scope.dataRL52 = new kendo.data.DataSource({
+                            data: data.data,
+                            pageSize: 10,
+                            total: data.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
 
-                    $scope.dataExcel = data.data;
-                })
+                        
+                    })
             }
+
+            // $scope.panggil = function (cokot) {
+
+                $("#kGrid").kendoGrid({
+                    toolbar: ["excel"],
+                    excel: {
+                        fileName: "Laporan RL3.7 Radiologi.xlsx",
+                        allPages: true,
+                    },
+                    excelExport: function (e) {
+                        var columns = e.workbook.sheets[0].columns;
+                        var sheet = e.workbook.sheets[0];
+                        for(var i = 0; i < e.workbook.sheets[0].columns.length; i++){
+                            delete columns[i].width;
+                            columns[i].width = 200;
+                        }
+
+                        for (var i = 0; i < 1; i++) {
+                            var $row = e.workbook.sheets[0].rows[i];
+                            for (var j = 0; j < $row.cells.length; j++) {
+                                var $cell = $row.cells[j];
+                                $cell["borderTop"] = { color: "#000000", size: 2 };
+                                $cell["borderRight"] = { color: "#000000", size: 2 };
+                                $cell["borderBottom"] = { color: "#000000", size: 2 };
+                                $cell["borderLeft"] = { color: "#000000", size: 2 };
+                            }
+                            console.log(e.workbook.sheets[0].rows.length);
+                            console.log(e.workbook.sheets[0].rows[i].cells.length);
+                        }
+
+                        sheet.rows[0].cells[0].background = '#6fde78';
+                        sheet.rows[0].cells[0].color = '#000000'; 
+                        sheet.rows[0].cells[1].background = '#6fde78'; 
+                        sheet.rows[0].cells[1].color = '#000000'; 
+                        sheet.rows[0].cells[2].background = '#6fde78'; 
+                        sheet.rows[0].cells[2].color = '#000000'; 
+                        sheet.rows[0].cells[3].background = '#6fde78'; 
+                        sheet.rows[0].cells[3].color = '#000000'; 
+                        sheet.rows[0].cells[4].background = '#6fde78'; 
+                        sheet.rows[0].cells[4].color = '#000000'; 
+                        sheet.rows[0].cells[5].background = '#6fde78'; 
+                        sheet.rows[0].cells[5].color = '#000000'; 
+                        sheet.rows[0].cells[6].background = '#6fde78'; 
+                        sheet.rows[0].cells[6].color = '#000000'; 
+                        sheet.rows[0].cells[7].background = '#6fde78'; 
+                        sheet.rows[0].cells[7].color = '#000000'; 
+                    },
+                    dataSource: $scope.ambildataexcel,
+                    filterable: true,
+                    pageable: true,
+                    resizable: true,
+                    // columnMenu: true,
+                    columns: [
+                        {
+                            field: "kdprov",
+                            title: "KODE PROPINSI",
+                            width: "80px"
+                        },
+                        {
+                            field: "kabkota",
+                            title: "KAB / KOTA",
+                            width: "80px"
+                        },
+                        {
+                            field: "koders",
+                            title: "KODE RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "namars",
+                            title: "NAMA RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "tahun",
+                            title: "TAHUN",
+                            width: "80px"
+                        },
+                        {
+                            field: "namaruangan",
+                            title: "NO",
+                            width: "80px"
+                        },
+                        {
+                            field: "namaproduk",
+                            title: "JENIS KEGIATAN",
+                            width: "80px"
+                        },
+                        {
+                            field: "jumlah",
+                            title: "JUMLAH",
+                            width: "80px"
+                        },
+                    ]
+                })
+            // };
+
+            //$scope.panggil();
 
             $scope.click = function (dataPasienSelected) {
                 var data = dataPasienSelected;
@@ -63,118 +163,54 @@ define(['initialize'], function (initialize) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
             }
 
-
-
-
-            // $scope.group = {
-            //     field: "pendudukdki",
-            //     aggregates: [{
-            //         field: "pendudukdki",
-            //         aggregate: "count"
-            //     }, {
-            //         field: "pendudukdki",
-            //         aggregate: "count"
-            //     }]
-            // };
-            // $scope.aggregate = [{
-            //     field: "pendudukdki",
-            //     aggregate: "count"
-            // }, {
-            //     field: "pendudukdki",
-            //     aggregate: "count"
-            // }]
-            // var record = 0;
-            $("#kGrid").kendoGrid({
-                toolbar: ["excel"],
-                // , "pdf"],
-
-                excel: {
-                    fileName: "RL3.7KegiatanRadiologi.xlsx",
-                    allPages: true,
-
-                },
-                // pdf: {
-                //     fileName: "LaporanPasienMasuk.pdf",
-                //     allPages: true,
-                // },
-
-                dataSource: $scope.dataExcel,
-                sortable: true,
-                reorderable: true,
-                filterable: true,
-                pageable: true,
-                // groupable: true,
-                columnMenu: true,
-                resizable: true,
-                excelExport: function (e) {
-                    var rows = e.workbook.sheets[0].rows;
-                    rows.unshift({
-                        cells: [{ value: "KEGIATAN RADIOLOGI", background: "#fffff" }]
-                    });
-                },
-                columns: [
-                    ///WITHOUT MAPPING////
-                    // {
-                    //     field: "no", 
-                    //     title: "No",
-                    //     Template: "<span class='style-center'>#: no #</span>",
-                    //     width:"15px"
-                    // },
-                    // {
-                    //   field: "jeniskegiatan",
-                    //   title: "JENIS KEGIATAN",
-                    //   width: "150px",
-                    //   template: "<span class='style-center'>#: jeniskegiatan #</span>",
-                    //   // headerAttributes: { style: "text-align : center" },
-                    // },
-                    // {
-                    //   field: "jumlah",
-                    //   title: "JUMLAH",
-                    //   width: "100px",
-                    //   template: "<span class='style-center'>#: jumlah #</span>",
-                    //   // headerAttributes: { style: "text-align : center" },
-                    // },
-                    {
-                        field: "no",
-                        title: "No",
-                        Template: "<span class='style-center'>#: no #</span>",
-                        width: "15px"
-                    },
-                    {
-                        field: "kelompoklaporan",
-                        title: "JENIS KEGIATAN",
-                        width: "150px",
-                        template: "<span class='style-center'>#: kelompoklaporan #</span>",
-                        // headerAttributes: { style: "text-align : center" },
-                    },
-                    {
-                        field: "jumlah",
-                        title: "JUMLAH",
-                        width: "100px",
-                        template: "<span class='style-center'>#: jumlah #</span>",
-                        // headerAttributes: { style: "text-align : center" },
-                    },
-
-                ]
-
-            });
             $scope.Perbaharui = function () {
                 $scope.ClearSearch();
             }
 
-
-
-            //medifirstService.get("laporan/get-data-combo-rm", true,true,10).then(function (dat) {
-            //      $scope.listDiagnosa = dat.diagnosa;
-            //   $scope.item.diganosas = {id:$scope.listDiagnosa[0].id,kddiagnosa:$scope.listDiagnosa[0].kddiagnosa}
-            //  });
             //fungsi clear kriteria search
             $scope.ClearSearch = function () {
                 $scope.item = {};
                 $scope.item.tglawal = $scope.now;
                 $scope.item.tglakhir = $scope.now;
-
+                $scope.CariRegistrasiPasien();
             }
+
+            var HttpClient = function () {
+                this.get = function (aUrl, aCallback) {
+                    var anHttpRequest = new XMLHttpRequest();
+                    anHttpRequest.onreadystatechange = function () {
+                        if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+                            aCallback(anHttpRequest.responseText);
+                    }
+                    anHttpRequest.open("GET", aUrl, true);
+                    anHttpRequest.send(null);
+                }
+            }
+
+            $scope.tglPelayanan = $scope.item.pelayanan;
+            $scope.dokter = $scope.item.namaPegawai;
+
+            $scope.listDataFormat = [
+                {
+                    "id": 1, "format": "pdf"
+                },
+                {
+                    "id": 2, "format": "xls"
+                }
+            ];
+
+
+            $scope.date = new Date();
+            var tanggals = DateHelper.getDateTimeFormatted3($scope.date);
+
+            //Tanggal Default
+            $scope.item.tglawal = tanggals + " 00:00";
+            $scope.item.tglakhir = tanggals + " 12:59";
+
+            // Tanggal Inputan
+            $scope.tglawal = $scope.item.tglawal;
+            $scope.tglakhir = $scope.item.tglakhir;
+            $scope.pegawai = medifirstService.getPegawai();
 
 
 

@@ -1,8 +1,8 @@
 define(['initialize'], function (initialize) {
-    'use strict';
-    initialize.controller('RL32RawatDaruratCtrl', ['CacheHelper', '$q', '$rootScope', '$scope', 'MedifirstService', 'ModelItem', 'DateHelper',
-        function (cacheHelper, $q, $rootScope, $scope, medifirstService, ModelItem, DateHelper) {
-            //Inisial Variable 
+    'use strict'
+    initialize.controller('RL32RawatDaruratCtrl', ['CacheHelper', '$scope', 'MedifirstService', 'DateHelper',
+        function (cacheHelper, $scope, medifirstService, DateHelper) {
+
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.dataSelected = {};
@@ -14,40 +14,23 @@ define(['initialize'], function (initialize) {
             $scope.CariData = function () {
                 LoadData()
             }
-            function LoadData() {
 
+            function LoadData() {
                 $scope.isRouteLoading = true;
                 var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');;
+                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
 
-                // var idDiagnosaAwal = "";
-                // if ($scope.item.diagnosa1 != undefined) {
-                //     idDiagnosaAwal = "&idDiagnosaAwal=" + $scope.item.diagnosa1.kddiagnosa;
-                // }
-                // var idDiagnosaAkhir = "";
-                // if ($scope.item.diagnosa2 != undefined) {
-                //     idDiagnosaAkhir = "&idDiagnosaAkhir=" + $scope.item.diagnosa2.kddiagnosa;
-                // }
-
-
-                medifirstService.get("registrasi/laporan/get-laporan-rl32?"
-                    + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir
-
+               medifirstService.get("registrasi/laporan/get-laporan-rl32?"
+               + "tglAwal=" + tglAwal
+               + "&tglAkhir=" + tglAkhir
                 ).then(function (data) {
                     var data = data.data
-                    for (var i = 0; i < data.data.length; i++) {
-                        data.data[i].no = i + 1
-                        var tanggal = $scope.now;
-                        var tanggalLahir = new Date(data.data[i].tglLahir);
-                        var umurzz = DateHelper.CountAge(tanggalLahir, tanggal);
-                        data.data[i].umurzz = umurzz.year + ' thn ' + umurzz.month + ' bln ' + umurzz.day + ' hari'
-
+                    for(var i = 0; i < data.data.length; i++){
+                        data.data[i].no = i + 1;
+                        data.data[i].doa = '0';
                     }
                     $scope.isRouteLoading = false;
-
                     $scope.sourceLaporan = new kendo.data.DataSource({
-
                         data: data.data,
                         group: $scope.group,
                         pageSize: 10,
@@ -55,20 +38,15 @@ define(['initialize'], function (initialize) {
                         serverPaging: false,
                         schema: {
                             model: {
-                                fields: {
-                                }
+                                fields: {}
                             }
                         }
                     });
-
                     $scope.dataExcel = data.data;
                 })
             }
 
-            $scope.click = function (dataPasienSelected) {
-                var data = dataPasienSelected;
 
-            };
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY HH:mm');
             }
@@ -76,33 +54,12 @@ define(['initialize'], function (initialize) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
             }
 
-
-
-
-            // $scope.group = {
-            //     field: "pendudukdki",
-            //     aggregates: [{
-            //         field: "pendudukdki",
-            //         aggregate: "count"
-            //     }, {
-            //         field: "pendudukdki",
-            //         aggregate: "count"
-            //     }]
-            // };
-            // $scope.aggregate = [{
-            //     field: "pendudukdki",
-            //     aggregate: "count"
-            // }, {
-            //     field: "pendudukdki",
-            //     aggregate: "count"
-            // }]
-            // var record = 0;
             $("#kGrid").kendoGrid({
                 toolbar: ["excel"],
                 // , "pdf"],
 
                 excel: {
-                    fileName: "RL32.xlsx",
+                    fileName: "RL1.3_TempatTidur.xlsx",
                     allPages: true,
 
                 },
@@ -113,50 +70,47 @@ define(['initialize'], function (initialize) {
 
                 dataSource: $scope.dataExcel,
                 sortable: true,
-                reorderable: true,
-                filterable: true,
+                // reorderable: true,
+                // filterable: true,
                 pageable: true,
-                groupable: true,
-                columnMenu: true,
-                resizable: true,
+                // groupable: true,
+                // columnMenu: true,
+                // resizable: true,
                 excelExport: function (e) {
                     var rows = e.workbook.sheets[0].rows;
                     rows.unshift({
-                        cells: [{ value: "Formulis RL 3.2", background: "#fffff" }]
-
+                        cells: [{
+                            value: "RL1.3_TempatTidur",
+                            background: "#fffff"
+                        }]
                     });
                 },
                 columns: [
                     {
                         field: "no",
-                        title: "NO",
+                        title: "No. Urut",
                         Template: "<span class='style-center'>#: no #</span>",
                         width: "40px",
-
                     },
                     {
-                        field: "jenispelayanan",
-                        title: "JENIS PELAYANAN",
+                        field: "namaruangan",
+                        title: "Jenis Pelayanan",
                         width: "120px",
-                        template: "<span class='style-center'>#: jenispelayanan #</span>",
-                        // headerAttributes: { style: "text-align : center" },
-
-
+                        template: "<span class='style-center'>#: namaruangan #</span>",
                     },
-
                     {
-                        title: "TOTAL PASIEN",
+                        title: "Total Pasien",
                         headerAttributes: { style: "text-align : center" },
                         columns: [
                             {
-                                field: "rujukan",
-                                title: "RUJUKAN",
+                                field: "jumlahrujukanfix",
+                                title: "Rujukan",
                                 width: "100px",
                                 headerAttributes: { style: "text-align : center" }
                             },
                             {
-                                field: "nonrujukan",
-                                title: "NON RUJUKAN",
+                                field: "jumlahnonrujukanfix",
+                                title: "Non",
                                 width: "80px",
                                 headerAttributes: { style: "text-align : center" },
                             }
@@ -165,24 +119,24 @@ define(['initialize'], function (initialize) {
                     },
 
                     {
-                        title: "TINDAKAN LANJUT PELAYANAN",
+                        title: "Tindakan Lanjut Pelayanan",
                         headerAttributes: { style: "text-align : center" },
                         columns: [
                             {
-                                field: "dirawat",
-                                title: "DIRAWAT",
+                                field: "jumlahdirawatfix",
+                                title: "Dirawat",
                                 width: "60px",
                                 headerAttributes: { style: "text-align : center" }
                             },
                             {
-                                field: "dirujuk",
-                                title: "DIRUJUK",
+                                field: "jumlahdirujukfix",
+                                title: "Dirujuk",
                                 width: "60px",
                                 headerAttributes: { style: "text-align : center" },
                             },
                             {
-                                field: "pulang",
-                                title: "PULANG",
+                                field: "jumlahpulangfix",
+                                title: "Pulang",
                                 width: "60px",
                                 headerAttributes: { style: "text-align : center" },
                             },
@@ -190,8 +144,8 @@ define(['initialize'], function (initialize) {
                         ]
                     },
                     {
-                        field: "mati",
-                        title: "MATI DI IGD",
+                        field: "jumlahmeninggalfix",
+                        title: "Mati di IGD",
                         width: "80px",
                         headerAttributes: { style: "text-align : center" },
                     },
@@ -203,27 +157,16 @@ define(['initialize'], function (initialize) {
                     }
 
                 ]
-
             });
             $scope.Perbaharui = function () {
                 $scope.ClearSearch();
             }
-
-
-
-            // modelItemAkuntansi.getDataTableTransaksi("laporan/get-data-combo-rm", true,true,10).then(function (dat) {
-            //      $scope.listDiagnosa = dat.diagnosa;
-            //   $scope.item.diganosas = {id:$scope.listDiagnosa[0].id,kddiagnosa:$scope.listDiagnosa[0].kddiagnosa}
-            //  });
-            //fungsi clear kriteria search
             $scope.ClearSearch = function () {
                 $scope.item = {};
                 $scope.item.tglawal = $scope.now;
                 $scope.item.tglakhir = $scope.now;
 
             }
-
-
 
         }
     ]);
