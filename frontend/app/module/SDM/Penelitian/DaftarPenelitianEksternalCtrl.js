@@ -65,6 +65,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if (ModelItem.getPegawai().jenisPegawai.qjenispegawai == 0) {
                     usr = "user=" + medifirstService.getUserLogin().kdUser;
                 }
+                console.log(ModelItem.getPegawai());
                 var modelid = "&modelid="+ModelItem.getPegawai().id;
                 medifirstService.get("sdm/penelitian/get-daftar-penelitian-eksternal?"+ usr+tglAwal+tglAkhir+InstitusiPendidikan+modelid, true).then(function (dat) {
                         $scope.isRouteLoading = false;

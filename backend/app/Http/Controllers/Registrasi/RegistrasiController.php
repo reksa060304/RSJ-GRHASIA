@@ -12069,10 +12069,10 @@ GROUP BY y.KET
         $kdProfile = $this->getDataKdProfile($request);
         $noregistrasi = $request['noregistrasi'];
         $norec = $request['norec'];
-        $pd = collect(DB::select("
-            select * from pasiendaftar_t where noregistrasi = '$noregistrasi'
-        "))->first();
-        
+        // $pd = collect(DB::select("
+        //     select * from pasiendaftar_t where noregistrasi = '$noregistrasi'
+        // "))->first();
+        $pd = PasienDaftar::where('noregistrasi', $noregistrasi)->select('nocmfk', 'norec','objectruanganlastfk')->first();
         DB::beginTransaction();
         try {
             if ($request['norec'] == '-') {
@@ -12084,11 +12084,9 @@ GROUP BY y.KET
                 $new->nocmfk = $pd->nocmfk;
                 $new->norec_pd = $pd->norec;
                 $new->objectruanganfk = $pd->objectruanganlastfk;
-
-            }else{
-                $new = collect(DB::select("
-                    select * From skriningawalpasien_t where norec = '$norec'
-                "))->first();
+            }
+            else{
+                $new = SkriningAwalPasien::where('norec', $norec)->first();
             }
                 $new->kesadaran = $request['kesadaran'];
                 $new->transportasi = $request['transportasi'];
@@ -12098,11 +12096,13 @@ GROUP BY y.KET
                 $new->keterangankhusus = $request['keterangan']; 
                 $new->pegawaifk = $request['petugas']; 
                 $new->save();
+            $transMessage = "Simpan Screening Sukses! ";
 
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
             $transMessage = "Gagal Simpan Screening!";
+            
         }
 
         if ($transStatus != 'false') {
@@ -12116,17 +12116,27 @@ GROUP BY y.KET
             DB::rollBack();
             $result = array(
                 "status" => 400,
+                'e'=>$e->getMessage(),
+                'line'=>$e->getLine(),
                 "message" => "Gagal Simpan Screening!",
             );
         }
+        // $result = array(
+        //         "status" => 400,
+        //         // 'e'=>$e->getMessage(),
+        //         // 'line'=>$e->getLine(),
+        //         "message" => "Gagal Simpan Screening!",
+        //     );
+        //     return $this->respond($result);
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
     public function getDataSkringAwalPasien(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $noregistrasi = $request['noregistrasi'];
+        $s = 'undefined';
 
-        $data = collect(DB::select("
+        $data = \DB::select(DB::raw("
             SELECT sap.*,pd.noregistrasi,to_char(pm.tgllahir, 'DD/MM/YYYY') AS tgllahir,
                    to_char(pd.tglregistrasi, 'DD/MM/YYYY HH24:MI:SS') AS tglregistrasi,
                    jk.jeniskelamin,alm.alamatlengkap,ru.namaruangan,pg.namalengkap
@@ -12137,10 +12147,25 @@ GROUP BY y.KET
             LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.id
             LEFT JOIN ruangan_m AS ru ON ru.id = sap.objectruanganfk
             LEFT JOIN pegawai_m AS pg ON pg.id = sap.pegawaifk
-            WHERE pd.noregistrasi = '$noregistrasi'
-        "))->first();
+            WHERE pd.noregistrasi = '$noregistrasi' and sap.statusenabled= true and sap.kdprofile= $kdProfile
+        "));
 
-        return $this->respond($data);
+        if (count($data) > 0) {
+            $result = array(
+                "data" =>  $data,
+                "message" => "Ok",
+        );
+        } else {
+            $result = array(
+                "data" =>  $s,
+                "message" => "Data tidak ditemukan"
+            );
+        }
+        // $result = array(
+        //     'data'=> $data,
+        //     'as'=> 'Fizi'
+        // );
+        return $this->respond($result);
     }
 
     public function deleteSkringAwalPasien(Request $request) {
@@ -12149,10 +12174,11 @@ GROUP BY y.KET
         DB::beginTransaction();
         try {
 
-            $del = SkriningAwalPasien::where('norec', $request['norec'])
+            $new = SkriningAwalPasien::where('norec', $request['norec'])
                    ->update([
                         "statusenabled" => false,
                    ]);                                   
+            $transMessage = "Hapus Screening!";
 
             $transStatus = 'true';
         } catch (\Exception $e) {

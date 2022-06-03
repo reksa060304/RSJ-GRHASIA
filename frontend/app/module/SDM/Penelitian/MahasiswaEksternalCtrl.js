@@ -743,11 +743,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         width: "30px",
                     },
                     {
-                        field: "tglmasuk",
-                        title: "Tanggal Masuk",
-                        width: "100px",
-                    },
-                    {
                         field: "ruanganlast",
                         title: "Ruangan",
                         width: "100px",
@@ -755,6 +750,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         field: "namalengkap",
                         title: "Pembimbing",
+                        width: "100px",
+                    },
+                    {
+                        field: "tglmasuk",
+                        title: "Tanggal Masuk",
+                        width: "100px",
+                    }, {
+                        field: "tglkeluar",
+                        title: "Tanggal Keluar",
                         width: "100px",
                     },
                     {
@@ -782,7 +786,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var data = {
                 "norec": norec,
                 "noregistrasifk": $scope.dataSelected.norec_eks,
-                "tglmasuk": moment($scope.now).format('YYYY-MM-DD HH:mm'),
+                "tglmasuk": moment($scope.item.tglmasuk).format('YYYY-MM-DD'),
+                "tglkeluar": moment($scope.item.tglkeluar).format('YYYY-MM-DD'),
                 "objectruanganasalfk": $scope.ruangan ? $scope.ruangan : null,
                 "objectruanganlastfk": $scope.item.ruangan.id,
                 "objectpegawaifk": $scope.item.pegawai.id,
