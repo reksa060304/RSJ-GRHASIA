@@ -2439,7 +2439,48 @@ class LaporanRekamMedisController extends   ApiController
                                 and pr.id not in (5008635, 5008644)
                 group by ru.namaruangan, pr.namaproduk
 
-            union all
+                        union all
+
+                        SELECT ru.namaruangan, 'TOTAL' as namaproduk, sum(ppd.jumlah) as jumlah
+                                            FROM
+                                            pasiendaftar_t pd
+                                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                                            inner  join produk_m pr on pr.id=pp.produkfk
+                                            WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
+                                            and apd.kdprofile = 30
+                                            and pd.kdprofile = 30
+                                            and apd.statusenabled = true
+                                            and pd.statusenabled=true
+                                            and pp.isobat is null
+                                            and ru.id = 785
+                                            and pr.id not in (5008635, 5008644)
+                            group by ru.namaruangan
+                        union ALL
+
+                        SELECT ' ' namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
+                                            FROM
+                                            pasiendaftar_t pd
+                                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                                            inner  join produk_m pr on pr.id=pp.produkfk
+                                            WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
+                                            and apd.kdprofile = 30
+                                            and pd.kdprofile = 30
+                                            and apd.statusenabled = true
+                                            and pd.statusenabled=true
+                                            and pp.isobat is null
+                                            and ru.id = 785
+                                            and pr.id not in (5008635, 5008644)
+                            group by ru.namaruangan, pr.namaproduk
+
+                        union all
 
 
                         SELECT ru.namaruangan, 'TOTAL' as namaproduk, sum(ppd.jumlah) as jumlah
@@ -5485,20 +5526,21 @@ class LaporanRekamMedisController extends   ApiController
                 $bto = $jumlahpulang/$jumlahgrandtotaltt;
             }
 
-            //var_dump($periodegrafik);
+            // var_dump($periodegrafik);
+            // var_dump($bto);
 
-            $ybor = $bor/10;
-            $xbor = 10-($bor/10);
+            $ybor = number_format($bor,2)/10;
+            $xbor = 10-(number_format($bor,2)/10);
             if($bto>0){
-                $xbto = $periodegrafik/$bto;
-                $ybto = $periodegrafik/$bto;
+                $xbto = $periodegrafik/number_format($bto,2);
+                $ybto = $periodegrafik/number_format($bto,2);
             } else{
                 $xbto = 0;
                 $ybto = 0;
             }
             
-            $xtoi = $toi;
-            $yalos = $alos;
+            $xtoi = number_format($toi,2);
+            $yalos = number_format($alos,2);
 
             $data10[] = array(
                 'xbor' =>(float) number_format($xbor,2),
