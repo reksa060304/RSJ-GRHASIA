@@ -25,8 +25,36 @@ define(['initialize'], function (initialize) {
                + "&tglAkhir=" + tglAkhir
                 ).then(function (data) {
                     var data = data.data
+                    var totaljumlahrujukanfix = 0;
+                    var totaljumlahnonrujukanfix = 0;
+                    var totaljumlahdirawatfix = 0;
+                    var totaljumlahdirujukfix = 0;
+                    var totaljumlahpulangfix = 0;
+                    var totaljumlahmeninggalfix = 0;
                     for(var i = 0; i < data.data.length; i++){
-                        data.data[i].no = i + 1;
+
+                        if(data.data[i].namaruangan != 'TOTAL'){
+                            data.data[i].no = i + 1;
+                        } else{
+                            data.data[i].no = 99;
+                        }
+
+                        totaljumlahrujukanfix += parseInt(data.data[i].jumlahrujukanfix)
+                        totaljumlahnonrujukanfix += parseInt(data.data[i].jumlahnonrujukanfix)
+                        totaljumlahdirawatfix += parseInt(data.data[i].jumlahdirawatfix)
+                        totaljumlahdirujukfix += parseInt(data.data[i].jumlahdirujukfix)
+                        totaljumlahpulangfix += parseInt(data.data[i].jumlahpulangfix)
+                        totaljumlahmeninggalfix += parseInt(data.data[i].jumlahmeninggalfix)
+
+                        if(data.data[i].namaruangan == 'TOTAL'){
+                            data.data[i].jumlahrujukanfix = totaljumlahrujukanfix 
+                            data.data[i].jumlahnonrujukanfix = totaljumlahnonrujukanfix 
+                            data.data[i].jumlahdirawatfix = totaljumlahdirawatfix 
+                            data.data[i].jumlahdirujukfix = totaljumlahdirujukfix 
+                            data.data[i].jumlahpulangfix = totaljumlahpulangfix 
+                            data.data[i].jumlahmeninggalfix = totaljumlahmeninggalfix 
+                        }
+
                         data.data[i].doa = '0';
                     }
                     $scope.isRouteLoading = false;
@@ -56,26 +84,16 @@ define(['initialize'], function (initialize) {
 
             $("#kGrid").kendoGrid({
                 toolbar: ["excel"],
-                // , "pdf"],
 
                 excel: {
                     fileName: "RL1.3_TempatTidur.xlsx",
                     allPages: true,
 
                 },
-                // pdf: {
-                //     fileName: "LaporanPasienMasuk.pdf",
-                //     allPages: true,
-                // },
 
                 dataSource: $scope.dataExcel,
                 sortable: true,
-                // reorderable: true,
-                // filterable: true,
                 pageable: true,
-                // groupable: true,
-                // columnMenu: true,
-                // resizable: true,
                 excelExport: function (e) {
                     var rows = e.workbook.sheets[0].rows;
                     rows.unshift({

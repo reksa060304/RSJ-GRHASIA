@@ -1194,6 +1194,7 @@ class LaporanRekamMedisController extends   ApiController
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
 
+        $main = array("Bedah", "Non Bedah", "Kebidanan", "Psikiatrik", "Anak", "TOTAL");
 
         $data10 = DB::select(DB::raw("select x.namaruangan, sum(jumlahrujukan) as jumlahrujukanfix, sum(jumlahnonrujukan) jumlahnonrujukanfix, 
         sum(jumlahdirawat) as jumlahdirawatfix, sum(jumlahdirujuk) jumlahdirujukfix, sum(jumlahpulang) jumlahpulangfix,
@@ -1218,9 +1219,45 @@ class LaporanRekamMedisController extends   ApiController
             group by ru.namaruangan, pd.noregistrasi, apd.objectruanganfk, pd.objectruanganlastfk, pd.tglpulang, pd.objectstatuspulangfk, apd.objectasalrujukanfk, pd.objectstatuspulangfk, pd.objectruanganlastfk, apd.objectruanganfk
         ) as x group by x.namaruangan;
         "));
+        //var_dump($data10);
+
+        $rujukan = 0;
+        $nonrujukan = 0;
+        $dirawat = 0;
+        $dirujuk = 0;
+        $pulang = 0;
+        $meninggal = 0;
+
+        foreach($main as $row){
+            $rujukan = 0;
+            $nonrujukan = 0;
+            $dirawat = 0;
+            $dirujuk = 0;
+            $pulang = 0;
+            $meninggal = 0;
+
+                if($row == 'Psikiatrik'){
+                    $rujukan = $data10[0]->jumlahrujukanfix;
+                    $nonrujukan = $data10[0]->jumlahnonrujukanfix;
+                    $dirawat = $data10[0]->jumlahdirawatfix;
+                    $dirujuk = $data10[0]->jumlahdirujukfix;
+                    $pulang = $data10[0]->jumlahpulangfix;
+                    $meninggal = $data10[0]->jumlahmeninggalfix;
+                }
+
+                $datas[] = array(
+                    'namaruangan' => $row,
+                    'jumlahrujukanfix' => $rujukan,
+                    'jumlahnonrujukanfix' => $nonrujukan,
+                    'jumlahdirawatfix' => $dirawat,
+                    'jumlahdirujukfix' => $dirujuk,
+                    'jumlahpulangfix' => $pulang,
+                    'jumlahmeninggalfix' => $meninggal,
+                );
+        }
 
         $result = array(
-            'data' => $data10,
+            'data' => $datas,
             'message' => 'er@epic',
 
         );
