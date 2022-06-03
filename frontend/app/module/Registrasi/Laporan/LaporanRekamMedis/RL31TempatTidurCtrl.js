@@ -75,13 +75,50 @@ define(['initialize'], function (initialize) {
                 // columnMenu: true,
                 // resizable: true,
                 excelExport: function (e) {
-                    var rows = e.workbook.sheets[0].rows;
-                    rows.unshift({
-                        cells: [{
-                            value: "RL1.3_TempatTidur",
-                            background: "#fffff"
-                        }]
-                    });
+                    var columns = e.workbook.sheets[0].columns;
+                    var sheet = e.workbook.sheets[0];
+                    for(var i = 0; i < e.workbook.sheets[0].columns.length; i++){
+                        delete columns[i].width;
+                        columns[i].width = 200;
+                    }
+
+                    for (var i = 0; i < 1; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 0; j < $row.cells.length; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderTop"] = { color: "#000000", size: 2 };
+                            $cell["borderRight"] = { color: "#000000", size: 2 };
+                            $cell["borderBottom"] = { color: "#000000", size: 2 };
+                            $cell["borderLeft"] = { color: "#000000", size: 2 };
+                        }
+                        console.log(e.workbook.sheets[0].rows.length);
+                        console.log(e.workbook.sheets[0].rows[i].cells.length);
+                    }
+
+                    sheet.rows[0].cells[0].background = '#6fde78';
+                    sheet.rows[0].cells[0].color = '#000000'; 
+                    sheet.rows[0].cells[1].background = '#6fde78'; 
+                    sheet.rows[0].cells[1].color = '#000000'; 
+                    sheet.rows[0].cells[2].background = '#6fde78'; 
+                    sheet.rows[0].cells[2].color = '#000000'; 
+                    sheet.rows[0].cells[3].background = '#6fde78'; 
+                    sheet.rows[0].cells[3].color = '#000000'; 
+                    sheet.rows[0].cells[4].background = '#6fde78'; 
+                    sheet.rows[0].cells[4].color = '#000000'; 
+                    sheet.rows[0].cells[5].background = '#6fde78'; 
+                    sheet.rows[0].cells[5].color = '#000000'; 
+                    sheet.rows[0].cells[6].background = '#6fde78'; 
+                    sheet.rows[0].cells[6].color = '#000000'; 
+                    sheet.rows[0].cells[7].background = '#6fde78'; 
+                    sheet.rows[0].cells[7].color = '#000000';
+                    sheet.rows[0].cells[8].background = '#6fde78'; 
+                    sheet.rows[0].cells[8].color = '#000000';
+                    sheet.rows[0].cells[9].background = '#6fde78'; 
+                    sheet.rows[0].cells[9].color = '#000000';
+                    sheet.rows[0].cells[10].background = '#6fde78'; 
+                    sheet.rows[0].cells[10].color = '#000000'; 
+                    sheet.rows[0].cells[11].background = '#6fde78'; 
+                    sheet.rows[0].cells[11].color = '#000000'; 
                 },
                 columns: [
                     // {

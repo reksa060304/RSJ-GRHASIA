@@ -48,6 +48,14 @@ define(['initialize'], function (initialize) {
                                     fill: true,
                                     borderColor: 'red',
                                     pointStyle: 'line',
+                                },{// 'line' dataset default does not affect this dataset since it's a 'scatter'
+                                    label: 'Daerah Efisien',
+                                    data: [{x:2.5, y:12}, {x:2.5, y:0}],
+                                    showLine: true,
+                                    mode: "vertical",
+                                    fill: true,
+                                    borderColor: 'red',
+                                    pointStyle: 'line',
                                 }, {// 'line' dataset default does not affect this dataset since it's a 'scatter'
                                     label: 'BOR',
                                     data: [{x:0, y:0},{x:datas[0].xbor, y:datas[0].ybor}],

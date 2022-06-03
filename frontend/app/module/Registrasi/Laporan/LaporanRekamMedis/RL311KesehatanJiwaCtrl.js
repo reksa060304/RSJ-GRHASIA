@@ -1,6 +1,6 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('RL311KesehatanJiwaCtrl', ['CacheHelper', '$q', '$rootScope', '$scope', 'MedifirstService', 'DateHelper',
+    initialize.controller('RL311KesehatanJiwaCtrl', ['CacheHelper', '$q', '$rootScope', '$scope', 'MedifirstService', 'DateHelper', 
         function (cacheHelper, $q, $rootScope, $scope, medifirstService, DateHelper) {
             //Inisial Variable 
             $scope.isRouteLoading = false;
@@ -17,37 +17,25 @@ define(['initialize'], function (initialize) {
             function LoadData() {
                 var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
                 var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
-                // var tempRuanganId = "";
-                // if ($scope.item.ruangan != undefined) {
-                //     tempRuanganId = "&idRuangan=" + $scope.item.ruangan.id;
-                // }
-                // var tempDepartemen = "";
-                // if ($scope.item.departement != undefined) {
-                //     tempDepartemen = "&idDept=" + $scope.item.departement.id;
-                // }
-                // var tempKelPasienId = "";
-                // if ($scope.item.kelompokPasien != undefined) {
-                // if ($scope.item.kelompokPasien.kelompokpasien == 'Non BPJS') {
-                //   tempKelPasienId = "&kelompokPasien=153"
-                // } else {
-                //   tempKelPasienId = "&kelompokPasien=" + $scope.item.kelompokPasien.id;
-                // }
-                // }
+              
                 var chacePeriode = {
                     0: tglAwal,
                     1: tglAkhir
                 }
-                cacheHelper.set('LaporanRl3_11Ctrl', chacePeriode);
+                cacheHelper.set('LaporanRl39Ctrl', chacePeriode);
 
                 medifirstService.get("registrasi/laporan/get-laporan-rl311?"
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir).then(function (data) {
                         var data = data.data
                         for (var i = 0; i < data.data.length; i++) {
-                            data.data[i].no = i + 1
+                            data.data[i].kdprov = '24'
+                            data.data[i].kabkota = 'Kab. Sleman'
+                            data.data[i].koders = '3404022'
+                            data.data[i].namars = 'RSJ. Grhasia'
+                            data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
                         }
                         $scope.isRouteLoading = false;
-
                         $scope.ambildataexcel = data.data;
                         $scope.panggil($scope.ambildataexcel);
                         $scope.dataRL52 = new kendo.data.DataSource({
@@ -72,9 +60,47 @@ define(['initialize'], function (initialize) {
                 $("#kGrid").kendoGrid({
                     toolbar: ["excel"],
                     excel: {
-                        fileName: "Laporan Pelayanan Kesehatan Jiwa.xlsx",
+                        fileName: "Laporan Pelayanan Rehabilitasi Medik.xlsx",
                         filterable: true,
                         allPages: true
+                    },
+                    excelExport: function (e) {
+                        var columns = e.workbook.sheets[0].columns;
+                        var sheet = e.workbook.sheets[0];
+                        for(var i = 0; i < e.workbook.sheets[0].columns.length; i++){
+                            delete columns[i].width;
+                            columns[i].width = 200;
+                        }
+
+                        for (var i = 0; i < 1; i++) {
+                            var $row = e.workbook.sheets[0].rows[i];
+                            for (var j = 0; j < $row.cells.length; j++) {
+                                var $cell = $row.cells[j];
+                                $cell["borderTop"] = { color: "#000000", size: 2 };
+                                $cell["borderRight"] = { color: "#000000", size: 2 };
+                                $cell["borderBottom"] = { color: "#000000", size: 2 };
+                                $cell["borderLeft"] = { color: "#000000", size: 2 };
+                            }
+                            console.log(e.workbook.sheets[0].rows.length);
+                            console.log(e.workbook.sheets[0].rows[i].cells.length);
+                        }
+
+                        sheet.rows[0].cells[0].background = '#6fde78';
+                        sheet.rows[0].cells[0].color = '#000000'; 
+                        sheet.rows[0].cells[1].background = '#6fde78'; 
+                        sheet.rows[0].cells[1].color = '#000000'; 
+                        sheet.rows[0].cells[2].background = '#6fde78'; 
+                        sheet.rows[0].cells[2].color = '#000000'; 
+                        sheet.rows[0].cells[3].background = '#6fde78'; 
+                        sheet.rows[0].cells[3].color = '#000000'; 
+                        sheet.rows[0].cells[4].background = '#6fde78'; 
+                        sheet.rows[0].cells[4].color = '#000000'; 
+                        sheet.rows[0].cells[5].background = '#6fde78'; 
+                        sheet.rows[0].cells[5].color = '#000000'; 
+                        sheet.rows[0].cells[6].background = '#6fde78'; 
+                        sheet.rows[0].cells[6].color = '#000000'; 
+                        sheet.rows[0].cells[7].background = '#6fde78'; 
+                        sheet.rows[0].cells[7].color = '#000000'; 
                     },
                     dataSource: $scope.ambildataexcel,
                     filterable: true,
@@ -83,24 +109,50 @@ define(['initialize'], function (initialize) {
                     // columnMenu: true,
                     columns: [
                         {
-                            field: "no",
-                            title: "No",
-                            Template: "<span class='style-center'>#: no #</span>",
-                            width: "50px"
+                            field: "kdprov",
+                            title: "KODE PROPINSI",
+                            width: "80px"
+                        },
+                        {
+                            field: "kabkota",
+                            title: "KAB / KOTA",
+                            width: "80px"
+                        },
+                        {
+                            field: "koders",
+                            title: "KODE RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "namars",
+                            title: "NAMA RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "tahun",
+                            title: "TAHUN",
+                            width: "80px"
+                        },
+                        {
+                            field: "namaruangan",
+                            title: "NO",
+                            width: "80px"
                         },
                         {
                             field: "namaproduk",
-                            title: "Jenis Pelayanan"
+                            title: "JENIS KEGIATAN",
+                            width: "80px"
                         },
                         {
-                            field: "jmltindakan",
-                            title: "Jumlah"
-                        }
+                            field: "jumlah",
+                            title: "JUMLAH",
+                            width: "80px"
+                        },
                     ]
                 })
             };
 
-            $scope.panggil();
+            //$scope.panggil();
 
             $scope.click = function (dataPasienSelected) {
                 var data = dataPasienSelected;
@@ -116,19 +168,40 @@ define(['initialize'], function (initialize) {
             $scope.columnRL52 = [
 
                 {
-                    field: "no",
-                    title: "No",
-                    Template: "<span class='style-center'>#: no #</span>",
-                    width: "50px"
+                    field: "kdprov",
+                    title: "KODE PROPINSI",
+                    width: "80px"
                 },
                 {
-                    title: "Jenis Kegiatan",
-                    field: "namaproduk"
+                    field: "kabkota",
+                    title: "KAB / KOTA",
+                    width: "80px"
                 },
                 {
-                    title: "Jumlah",
-                    field: "jmltindakan"
-                }
+                    field: "namars",
+                    title: "NAMA RS",
+                    width: "80px"
+                },
+                {
+                    field: "tahun",
+                    title: "TAHUN",
+                    width: "80px"
+                },
+                {
+                    field: "namaruangan",
+                    title: "NO",
+                    width: "80px"
+                },
+                {
+                    field: "namaproduk",
+                    title: "JENIS KEGIATAN",
+                    width: "80px"
+                },
+                {
+                    field: "jumlah",
+                    title: "JUMLAH",
+                    width: "80px"
+                },
             ];
 
             $scope.Perbaharui = function () {
@@ -154,22 +227,6 @@ define(['initialize'], function (initialize) {
                     anHttpRequest.send(null);
                 }
             }
-
-            
-            $scope.$watch('item.namaPenjamin', function (e) {
-
-                if (e === undefined) return;
-                findPasien.getDataRekanan(e.id).then(function (data) {
-                    $scope.sourceDataRekanan = data.data.data.listData;
-                    $scope.item.institusiAsalPasien = $scope.sourceDataRekanan;
-                });
-                if (e.id == 5 || e.id == 3) {
-                    $scope.Perusahaan = true
-                } else {
-                    $scope.Perusahaan = false
-                    $scope.item.institusiAsalPasien = ""
-                }
-            })
 
             $scope.tglPelayanan = $scope.item.pelayanan;
             $scope.dokter = $scope.item.namaPegawai;
@@ -197,55 +254,6 @@ define(['initialize'], function (initialize) {
             $scope.pegawai = medifirstService.getPegawai();
 
 
-            $scope.Cetak = function () {
-                // if($scope.item.format == undefined){
-                // 	alert('format file harus dipilih terlebih dahulu !!!')
-                // }
-                if ($scope.item.tglawal == $scope.tglawal)
-                    var tglawal = $scope.item.tglawal;
-                else
-                    var tglawal = DateHelper.getDateTimeFormatted2($scope.item.tglawal, "dd-MM-yyyy HH:mm");
-                if ($scope.item.tglakhir == $scope.tglakhir)
-                    var tglakhir = $scope.item.tglakhir;
-                else
-                    var tglakhir = DateHelper.getDateTimeFormatted2($scope.item.tglakhir, "dd-MM-yyyy HH:mm");
-                if ($scope.item.departement == undefined)
-                    var departement = "";
-                else
-                    var departement = $scope.item.departement.id;
-                if ($scope.item.namaPenjamin == undefined)
-                    var kelompokPasien = "";
-                else
-                    var kelompokPasien = $scope.item.namaPenjamin.id;
-                if ($scope.item.ruangan == undefined)
-                    var ruangan = "";
-                else
-                    var ruangan = $scope.item.ruangan.id;
-                if ($scope.item.institusiAsalPasien == undefined || $scope.item.institusiAsalPasien.id == undefined)
-                    var perusahaan = "";
-                else
-                    var perusahaan = $scope.item.institusiAsalPasien.id;
-                var stt = 'false'
-                if (confirm('View Laporan Pasien Pulang? ')) {
-                    // Save it!
-                    stt = 'true';
-                } else {
-                    // Do nothing!
-                    stt = 'false'
-                }
-                var client = new HttpClient();
-                client.get('http://127.0.0.1:1237/printvb/kasir?cetak-LaporanPasienPulang=1&tglAwal=' + tglawal + '&tglAkhir=' + tglakhir + '&strIdDepartement=' + departement + '&strIdRuangan=' + ruangan + '&strIdKelompokPasien=' + kelompokPasien + '&strIdPegawai=' + $scope.pegawai.id + '&strIdPerusahaan=' + perusahaan + '&view=' + stt, function (response) {
-                    // do something with response
-                });
-                // if(client.status==0){
-                //     if($scope.item.format == undefined){
-                //         alert('format file harus dipilih terlebih dahulu !!!');
-                //     }else{
-                //         var urlLaporan = ReportPelayanan.open('preporting/lapPelayananPasien?startDate=''+tglawal+'+tglawal+'&tglAkhir='+tglakhir+'&strIdRuangan='+ruangan+'&strIdDepartement='+departement+'&strIdKelompokPasien='+kelompokPasien+'&strIdDokter='+namaPegawai+'&format='+$scope.item.format.format);
-                //         window.open(urlLaporan, '_blank');
-                //     }
-                // }   
-            }
 
         }
     ]);
