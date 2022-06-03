@@ -2742,7 +2742,7 @@ class PelatihanController extends ApiController {
         $noreg = $request['noregistrasi'];
         $data = DB::select(DB::raw("
         SELECT
-        pdr.tglmasuk, ru1.namaruangan as ruanganlast, pdr.objectpegawaifk,pe.namalengkap,pd.email,pdr.norec, pdr.objectruanganasalfk, ru.namaruangan as ruanganasal
+        pdr.tglmasuk,pdr.tglkeluar, ru1.namaruangan as ruanganlast, pdr.objectpegawaifk,pe.namalengkap,pd.email,pdr.norec, pdr.objectruanganasalfk, ru.namaruangan as ruanganasal
         FROM
         sdm_pdruangan_t pdr
         INNER JOIN sdm_pesertadidik_t pd on pd.norec= pdr.noregistrasifk

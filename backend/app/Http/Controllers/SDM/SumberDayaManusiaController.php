@@ -2387,6 +2387,7 @@ public function deleteDataCuti(Request $request){
                     'objectpegawaifk' => $request['objectpegawaifk'],
                     'statusenabled' => true,
                     'tglmasuk' => $request['tglmasuk'],
+                    'tglkeluar' => $request['tglkeluar']
                 ]);
 
                 $PDRU = DB::table('sdm_pesertadidik_t')->where('norec', $request['norec_pdruangan'])->where('kdprofile', $kdProfile)->update([

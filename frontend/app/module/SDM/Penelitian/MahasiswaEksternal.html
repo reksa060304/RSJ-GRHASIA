@@ -173,50 +173,81 @@
 <div kendo-window="popUpTambahRuangan" k-title="'Data Detail Pindah Mahasiswa'" k-width="1000" k-visible="false"
     k-on-open="win2visible = true" k-on-close="win2visible = false">
     <div class="panel panel-default container_12" style="padding: 0px 10px;">
-        <div class="grid_11">
-            <div class="grid_2" style="margin-top:5px">
-                <label c-label real>NIM </label>
-                <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.nimm"
-                    disabled />
-            </div>
-            <div class="grid_4" style="margin-top:5px">
-                <label c-label real>Nama Mahasiswa </label>
-                <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.namaPasien"
-                disabled />
-            </div>
-            <div class="grid_4" style="margin-top:5px">
-                <label c-label real>Jenis Kelamin </label>
-                <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.jeniskelamin"
-                disabled />
-            </div>
-            <div class="grid_4">
-                <div class="grid_12">
-                    <label c-label item="item" c-label-text="Ruang"></label>
+        <div class="grid_12">
+            <div class="grid_12">
+                <div class="grid_2" style="margin-top:5px">
+                    <label c-label real>NIM </label>
+                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.nimm" disabled />
                 </div>
-                <div class="grid_12">
-                    <input style="width: 100%;" kendo-combo-box ng-disabled="ru" k-ng-model="item.ruangan"
-                        k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
-                        k-auto-bind="false" k-data-source="ListRuangan" />
+                <div class="grid_5" style="margin-top:5px">
+                    <label c-label real>Nama Mahasiswa </label>
+                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.namaPasien"
+                        disabled />
+                </div>
+                <div class="grid_5" style="margin-top:5px">
+                    <label c-label real>Jenis Kelamin </label>
+                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.jeniskelamin"
+                        disabled />
                 </div>
             </div>
-            <div class="grid_4">
-                <div class="grid_12">
-                    <label c-label item="item" c-label-text="Pembimbing"></label>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Ruang"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box ng-disabled="ru" k-ng-model="item.ruangan"
+                            k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="ListRuangan" />
+                    </div>
                 </div>
-                <div class="grid_12">
-                    <input style="width: 100%;" kendo-combo-box ng-disabled="pemb" k-ng-model="item.pegawai"
-                        k-data-text-field="'nama'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
-                        k-data-source="ListPegawai" />
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Pembimbing"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box ng-disabled="pemb" k-ng-model="item.pegawai"
+                            k-data-text-field="'nama'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="ListPegawai" />
+                    </div>
                 </div>
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Dari"></label>
+                    </div>
+                    <div class="grid_12">
+                        <!-- <input kendo-date-picker k-ng-model="item.tanggalMulai" k-format="'dd-MM-yyyy'" style="width: 100%" /> -->
+                        <input style="width: 100%" k-ng-model="item.tglmasuk" kendo-datetimepicker
+                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
+                    </div>
+                </div>
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Sampai"></label>
+                    </div>
+                    <div class="grid_12">
+                        <!-- <input kendo-date-picker k-ng-model="item.tanggalMulai" k-format="'dd-MM-yyyy'" style="width: 100%" /> -->
+                        <input style="width: 100%" k-ng-model="item.tglkeluar" kendo-datetimepicker
+                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
+                    </div>
+                </div>
+                
             </div>
-            <div class="grid_4">
-                <div class="grid_12">
-                    <div class="k-edit-buttons  k-state-default pull-left" style="margin-top:10px">
-                        <button class="k-button  k-button-icontext" ng-click="saveruangan()"><span
-                                class="k-icon k-save"></span>Pindah</button>
+            <div class="grid_12">
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <div class="k-edit-buttons  k-state-default" style="margin-top:10px">
+                            <button class="k-button  k-button-icontext" ng-click="saveruangan()"><span
+                                    class="k-icon k-save"></span>Pindah</button>
+                        </div>
                     </div>
                 </div>
             </div>
+            
+            
+            
+            
+            
         </div>
         <div class="grid_12">
             <div class="grid_12 headerBox">
