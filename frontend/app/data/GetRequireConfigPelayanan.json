@@ -3203,6 +3203,14 @@
         {
             "nameDep": "PerjanjianPasienMelarikanDiriCtrl",
             "urlDep": "module/EMR/PerjanjianPasienMelarikanDiriCtrl"
+        },
+        {
+            "nameDep": "SuratPermohonanPersetujuanPembiayaanPerawatanCtrl",
+            "urlDep": "module/EMR/SuratPermohonanPersetujuanPembiayaanPerawatanCtrl"
+        },
+        {
+            "nameDep": "LembarMasukKeluarCtrl",
+            "urlDep": "module/EMR/LembarMasukKeluarCtrl"
         }
     ]
 }
