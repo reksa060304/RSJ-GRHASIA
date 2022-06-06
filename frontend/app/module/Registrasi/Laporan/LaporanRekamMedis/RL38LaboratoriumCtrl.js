@@ -33,6 +33,7 @@ define(['initialize'], function (initialize) {
                             data.data[i].kabkota = 'Kab. Sleman'
                             data.data[i].koders = '3404022'
                             data.data[i].namars = 'RSJ. Grhasia'
+                            data.data[i].no = 1
                             data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
                         }
                         $scope.isRouteLoading = false;
@@ -131,17 +132,17 @@ define(['initialize'], function (initialize) {
                             width: "80px"
                         },
                         {
-                            field: "namaruangan",
+                            field: "no",
                             title: "NO",
                             width: "80px"
                         },
                         {
-                            field: "namaproduk",
+                            field: "namaruangan",
                             title: "JENIS KEGIATAN",
                             width: "80px"
                         },
                         {
-                            field: "jumlah",
+                            field: "jumlahtotal",
                             title: "JUMLAH",
                             width: "80px"
                         },

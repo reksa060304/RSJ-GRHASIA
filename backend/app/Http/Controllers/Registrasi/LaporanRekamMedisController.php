@@ -1919,50 +1919,48 @@ class LaporanRekamMedisController extends   ApiController
         $tglAwal = $request['tglAwal']; 
         $tglAkhir = $request['tglAkhir']; 
 
-        $data10 = DB::select(DB::raw("SELECT namaruangan, 'TOTAL' as namaproduk, sum(jumlah) as jumlah from(
-            SELECT ru.namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                    FROM
-                    pasiendaftar_t pd
-                    INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                    inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                    inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                    inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                    inner  join produk_m pr on pr.id=pp.produkfk
-                    WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                    and apd.kdprofile = 30
-                    and pd.kdprofile = 30
-                    and apd.statusenabled = true
-                    and pd.statusenabled=true
-                    and pp.isobat is null
-                    and ru.id = 576
-                    and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk
-            ) as i group by namaruangan
+        $main = array("RADIODIAGNOSTIK", "Foto tanpa bahan kontras", "Foto dengan bahan kontras", "Foto dengan rol film", "Flouroskopi",
+        "Foto Gigi :", "C.T. Scan :", "Lymphografi", "Angiograpi", "Lain-Lain", "RADIOTHERAPI", "Jumlah Kegiatan Radiotherapi", "Lain-Lain",
+        "KEDOKTERAN NUKLIR", "Jumlah Kegiatan Diagnostik", "Jumlah Kegiatan Therapi", "Lain-Lain", "IMAGING/PENCITRAAN USG", "USG", "MRI", "Lain-lain", "TOTAL");
 
-            union ALL
+        $data10 = DB::select(DB::raw("SELECT ru.namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+            inner  join produk_m pr on pr.id=pp.produkfk
+            WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
+            and apd.kdprofile = 30
+            and pd.kdprofile = 30
+            and apd.statusenabled = true
+            and pd.statusenabled=true
+            and pp.isobat is null
+            and ru.id = 576
+            and pr.id not in (5008635, 5008644)
+        group by ru.namaruangan, pr.namaproduk"));
 
-            SELECT ' ' namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id = 576
-                                and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk"));
+        $jumlah = 0;
+        foreach($main as $row){
+            $jumlah = 0;
+            
+            if($row == 'Foto tanpa bahan kontras'){
+                foreach($data10 as $data){
+                    $jumlah += $data->jumlah;
+                }
+            }
+            
+
+            $datas[] = array(
+                'namaruangan' => $row,
+                'jumlahtotal' => $jumlah,
+            );
+        }
 
         $result = array(
-            'data' => $data10,
+            'data' => $datas,
             'message' => 'er@epic',
 
         );
@@ -1977,51 +1975,157 @@ class LaporanRekamMedisController extends   ApiController
         $tglAwal = $request['tglAwal']; 
         $tglAkhir = $request['tglAkhir']; 
 
-        $data10 = DB::select(DB::raw("SELECT namaruangan, 'TOTAL' as namaproduk, sum(jumlah) as jumlah from(
-            SELECT 'LAB' namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                    FROM
-                    pasiendaftar_t pd
-                    INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                    inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                    inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                    inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                    inner  join produk_m pr on pr.id=pp.produkfk
-                    WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                    and apd.kdprofile = 30
-                    and pd.kdprofile = 30
-                    and apd.statusenabled = true
-                    and pd.statusenabled=true
-                    and pp.isobat is null
-                    and ru.id = 575
-                    and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk
-            ) as i group by namaruangan
+        $main = array('HEMATOLOGI', 'Sitologi Sel Darah', 'Eosinofil, hitung jumlah', 'Eritrosit, hitung jumlah', 'Leukosit, hitung jenis', 'Leukosit, hitung jumlah',
+        'Limfosit plasma biru, hitung jumlah', 'Morfologi sel', 'Retikulosit, hitung jumlah', 'Trombosit, hitung jumlah', 'Sitokimia darah', 'Besi, pewarnaan', 'Neutrophil Alkaline Phosphatase/NAP, pewarnaan',
+        'Nitroblue tetrazoleum, pewarnaan', 'Periodic Acid Schiff/PAS, pewarnaan', 'Peroksidase, pewarnaan', 'Sudan Black B, pewarnaan', 'Analisa Hb', 'Hemoglobin A2, penetapan kadar', 'Hemoglobin F, identifikasi',
+        'Hemoglobin F, penetapan kadar', 'Perbankan Darah', "Coomb's, percob. direk, indirek", 'Penetapan gol darah A, B, O, Rh dll', 'Uji saring antibodi pada darah donor', 'Uji silang mayor/minor',
+        'Hemostasis', 'Agregasi trombosit', 'Antitrombin III', 'Cryofibrinogen/cryoglobulin', 'D Dimer', 'Euglobulin Clotlysis', 'Faktor pembekuan V, VII, VIII, IX, X', 'Faktor pembekuan VIII, IX, X, penetapan kadar',
+        'Faktor pembekuan XII, XIII, penetapan kadar', 'Fibrinogen Degradation Product/FDP', 'Fibrinogen, penetapan kadar', 'Pembekuan, masa', 'Pembendungan, percobaan', 'Perdarahan, masa', 'Plasminogen activator inhibitor -1/PAI-1',
+        'Protein C', 'Protein S', 'Protrombin plasma, masa', 'Retraksi bekuan', 'Trombin, masa', 'Trombin, penetapan waktu seri', 'Tromboplastin, masa partial teraktivasi', 'Trombotest/Owren Test', 'Pemeriksaan lain',
+        'Eritrosit, ketahanan osmotik', "Ham's test", 'Hematokrit, penetapan nilai', 'Hemoglobin Eritrosit Rata-rata/HER', 'Konsentrasi Hemoglobin Eritrosit Rata-rata/KHER', 'Laju endapan darah', 'Sel L.E.', 'Volume Eritrosit Rata-rata/VER',
+        'KIMIA KLINIK', 'Protein dan NPN', 'Albumin', 'Amoniak', 'Asam urat', 'Bilirubin', 'Gamma globulin', 'Globulin', 'Haptoglobin', 'Kreatinin', 'Methemoglobin', 'Mikroalbumin', 'Myoglobin', 'Porfirin', 'Protein Bence Jones', 'Protein Elektroforesis',
+        'Protein Esbach', 'Protein, penetapan kualitatif', 'Protein, penetapan semikuantitatif', 'Protein Total, penetapan kuantitatif', 'Urea/BUN', 'Urobilin', 'Urobilinogen', 'Karbohidrat', 'Amilum', 'Fruktosa', 'Galaktosa', 'Glukosa', 'Laktosa',
+        'Lipid, Lipoprotein, Apoprotein', 'Apoprotein A/B', 'Fosfolipid/serebrosit/sfingolipid', 'Kolesterol High Density Lipoprotein (HDL)', 'Kolesterol Low Density Lipoprotein (LDL)', 'Kolesterol total', 'Lipid total', 'Lipoprotein (a) / Lp (a)',
+        'Small Dense LDL', 'Trigliserida', 'Enzim', 'Alkali fosfatase', 'Aldolase/ALD', 'Amilase', 'Asam fosfatase', 'Cholinesterase', 'Creatinin, Kinase, MB Iso enzym', 'Creatinin, Phosphokinase CPK-NAC = Creatinin Kinas', 'Gamma GT/Glutamil Transferase',
+        'Glutamat Lakto Dehidrogenase/GLDH', 'Glutamat Oksaloasetik Transaminase/GOT=Aspartat Am', 'Glutamat Piruvat Transaminase/GPT = Alanin Amino T', 'Hidroksi Butirik Dehidrogenase/HBDH', 'Isositrat Dehidrogenase/ICD', 'Laktat Dehidrogenase/LDH', 'Leucine Amino Peptidase/LAP',
+        'Lipase', 'Mikronutrient dan Monitoring kadar terapi obat', 'Aminofilin/Teofilin', 'Asam folat', 'Besi, penetapan kadar', 'Besi - TIBC', 'Besi, unsaturated IBC', 'Digitoksin', 'Digoksin', 'Fenitoin', 'Fenobarbital', 'Ferritin', 'Iodium', 'Isoniazid',
+        'Karbamazepin', 'Magnesium', 'Metotreksat', 'Propanolol', 'Seng', 'Siklosporin', 'Tembaga', 'Vitamin A', 'Vitamin B12', 'Elektrolit', 'Fosfat anorganik', 'Kalium', 'Kalsium', 'Klorida', 'Natrium', 'Magnesium', 'Fungsi Organ', 'Asam laktat', 'Creatinin clearance', 'Cystatin C',
+        'Indeks ikterus', 'Insulin clearance', 'Insulin dalam plasma', 'Kalsium', 'Lemak, tes absorbsi', 'Urea clearance', 'Hormon dan Fungsi Endokrin', 'Adenocorticotropin Hormon/ACTH', 'Anti Diuretik Hormon/ADH Respon', 'Aldosteron', 'Calcitonin', 'C Peptide', 'Estrogen', 'Estradiol, 17 Beta',
+        'Follicle Stimulating Hormon', 'Fruktosamin', 'Gastrin', 'Glucocorticoid', 'Growth Hormon', 'Hb glikosilat/HbA1c', 'Human Chorionic Gonadotropin/HCG', 'Insulin Growth Factor 1 / IGF1', 'Iodine uptake dan saturasi/T3 dan T4 uptake', 'Insulin', 'Keton', 'Kortisol', 'Luteinizing Hormon/LH', 
+        'Pankreas, fungsi dengan tes triolen', 'Pregnandiol', 'Progesteron', 'Prolaktin', 'Renin', 'Testosteron', 'Thyroglobulin', 'Thyroxin dalam serum/T4', 'Thyrotropic Release Factor Assay', 'Thyroid Stimulating Hormon/TSH', 'Thyroid, tes fungsi yang lain', 'Vinyl Mandelic Acid/VMA', 'Pemeriksaan Lain',
+        'Analisa batu', 'Analisa cairan otak', 'Analisa cairan sendi', 'Analisa cairan tubuh', 'Analisa sperma:volume, bau, warna, liquefaksi, vis', 'Analisa tinja: sel darah, lemak, sisa makanan', 'Hemosiderin', 'Homosistein', 'Oval fat bodies', 'Sel, hitung jenis', 'Sel, hitung jumlah', 'Tes kehamilan', 
+        'Troponin T/I', 'Urinalisis');
 
-            union ALL
+        $data10 = DB::select(DB::raw("SELECT ru.namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
+            FROM
+            pasiendaftar_t pd
+            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+            inner  join produk_m pr on pr.id=pp.produkfk
+            WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
+            and apd.kdprofile = 30
+            and pd.kdprofile = 30
+            and apd.statusenabled = true
+            and pd.statusenabled=true
+            and pp.isobat is null
+            and ru.id = 575
+            and pr.id not in (5008635, 5008644)
+        group by ru.namaruangan, pr.namaproduk"));
 
-            SELECT ' ' namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id = 575
-                                and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk"));
+        $jumlah = 0;
+        foreach($main as $row){
+            $jumlah = 0;
+            foreach($data10 as $data){
+                if($row == 'Eosinofil, hitung jumlah' && ($data->namaproduk == 'Darah rutin 5 diff' || $data->namaproduk == 'Darah lengkap 5 diff + LED')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Eritrosit, hitung jumlah' && ($data->namaproduk == 'Darah rutin 5 diff' || $data->namaproduk == 'Darah lengkap 5 diff + LED' || $data->namaproduk == 'Darah rutin 3 diff' || $data->namaproduk == 'Jumlah eritrosit')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Leukosit, hitung jenis' && ($data->namaproduk == 'Darah rutin 5 diff' || $data->namaproduk == 'Darah lengkap 5 diff + LED' || $data->namaproduk == 'Darah rutin 3 diff' || $data->namaproduk == 'Hitung jenis lekosit')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Leukosit, hitung jumlah' && ($data->namaproduk == 'Darah rutin 5 diff' || $data->namaproduk == 'Darah lengkap 5 diff + LED' || $data->namaproduk == 'Darah rutin 3 diff' || $data->namaproduk == 'Jumlah lekosit')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Morfologi sel' && $data->namaproduk == 'Gambaran darah tepi'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Retikulosit, hitung jumlah' && $data->namaproduk == 'Retikulosit'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Trombosit, hitung jumlah' && ($data->namaproduk == 'Darah rutin 5 diff' || $data->namaproduk == 'Darah lengkap 5 diff + LED' || $data->namaproduk == 'Darah rutin 3 diff' || $data->namaproduk == 'Jumlah trombosit')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Penetapan gol darah A, B, O, Rh dll' && $data->namaproduk == 'Golongan darah'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'D Dimer' && $data->namaproduk == 'D-DIMER'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Pembekuan, masa' && $data->namaproduk == 'Waktu pembekuan'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Perdarahan, masa' && $data->namaproduk == 'Waktu perdarahan'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Hematokrit, penetapan nilai' && ($data->namaproduk == 'Darah rutin 5 diff' || $data->namaproduk == 'Darah lengkap 5 diff + LED' || $data->namaproduk == 'Darah rutin 3 diff' || $data->namaproduk == 'Hematokrit')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Hemoglobin Eritrosit Rata-rata/HER' && ($data->namaproduk == 'Darah rutin 5 diff' || $data->namaproduk == 'Darah lengkap 5 diff + LED' || $data->namaproduk == 'Darah rutin 3 diff' || $data->namaproduk == 'Indeks eritrosit ( MCV / MCH / MCHC )')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Konsentrasi Hemoglobin Eritrosit Rata-rata/KHER' && ($data->namaproduk == 'Darah rutin 5 diff' || $data->namaproduk == 'Darah lengkap 5 diff + LED' || $data->namaproduk == 'Darah rutin 3 diff' || $data->namaproduk == 'Indeks eritrosit ( MCV / MCH / MCHC )')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Laju endapan darah' && ($data->namaproduk == 'Darah lengkap 5 diff + LED' || $data->namaproduk == 'Laju endap darah ( LED )')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Volume Eritrosit Rata-rata/VER' && ($data->namaproduk == 'Darah rutin 5 diff' || $data->namaproduk == 'Darah lengkap 5 diff + LED' || $data->namaproduk == 'Darah rutin 3 diff' || $data->namaproduk == 'Indeks eritrosit ( MCV / MCH / MCHC )')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Albumin' && $data->namaproduk == 'Albumin'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Asam urat' && $data->namaproduk == 'Asam urat'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Bilirubin' && ($data->namaproduk == 'Bilirubin total' || $data->namaproduk == 'Bilirubin direk' || $data->namaproduk == 'Bilirubin Indirect')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Globulin' && $data->namaproduk == 'Globulin'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Kreatinin' && $data->namaproduk == 'Kreatinin'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Protein Total, penetapan kuantitatif' && $data->namaproduk == 'Protein total'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Urea/BUN' && $data->namaproduk == 'Ureum'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Urobilin' && ($data->namaproduk == 'Bilirubin Urin' || $data->namaproduk == 'Urin rutin / lengkap' || $data->namaproduk == 'Urine rutin' || $data->namaproduk == 'Protein Urin')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Urobilinogen' && ($data->namaproduk == 'Bilirubin Urin' || $data->namaproduk == 'Urin rutin / lengkap' || $data->namaproduk == 'Urine rutin' || $data->namaproduk == 'Protein Urin')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Glukosa' && ($data->namaproduk == 'Gula darah puasa' || $data->namaproduk == 'Gula darah 2 jam' || $data->namaproduk == 'Gula darah sewaktu' || $data->namaproduk == 'Gula darah ( 1x pemeriksaan )' || $data->namaproduk == 'Glukosa POCT')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Kolesterol High Density Lipoprotein (HDL)' && $data->namaproduk == 'HDL'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Kolesterol Low Density Lipoprotein (LDL)' && ($data->namaproduk == 'LDL ( indirect )' || $data->namaproduk == 'LDL ( direct )')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Kolesterol total' && $data->namaproduk == 'Cholesterol total'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Trigliserida' && $data->namaproduk == 'Trigliserida'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Creatinin, Kinase, MB Iso enzym' && $data->namaproduk == 'CKMB / Creatinin Kinase Myocardial Band'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Gamma GT/Glutamil Transferase' && $data->namaproduk == 'Gama GT'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Glutamat Oksaloasetik Transaminase/GOT=Aspartat Am' && $data->namaproduk == 'SGOT'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Glutamat Piruvat Transaminase/GPT = Alanin Amino T' && $data->namaproduk == 'SGPT'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Besi, penetapan kadar' && $data->namaproduk == 'Fe / besi serum'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Ferritin' && $data->namaproduk == 'Ferritin'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Kalium' && $data->namaproduk == 'Panel Elektrolit ( Na , K , Cl )'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Klorida' && $data->namaproduk == 'Panel Elektrolit ( Na , K , Cl )'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Natrium' && $data->namaproduk == 'Panel Elektrolit ( Na , K , Cl )'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Hb glikosilat/HbA1c' && $data->namaproduk == 'HbA1c'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Iodine uptake dan saturasi/T3 dan T4 uptake' && ($data->namaproduk == 'T4' || $data->namaproduk == 'T3')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Thyroxin dalam serum/T4' && $data->namaproduk == 'T4'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Thyroid Stimulating Hormon/TSH' && $data->namaproduk == 'TSH ( thyroid stimulating hormone )'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Thyroid, tes fungsi yang lain' && ($data->namaproduk == 'FT4' || $data->namaproduk == 'FT3')){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Analisa tinja: sel darah, lemak, sisa makanan' && $data->namaproduk == 'Faeces rutin'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Tes kehamilan' && $data->namaproduk == 'Tes Kehamilan'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Troponin T/I' && $data->namaproduk == 'TROPONIN'){
+                    $jumlah += $data->jumlah;
+                } else if($row == 'Urinalisis' && ($data->namaproduk == 'Bilirubin Urin' || $data->namaproduk == 'Urin rutin / lengkap' || $data->namaproduk == 'Urine rutin' || $data->namaproduk == 'Protein Urin')){
+                    $jumlah += $data->jumlah;
+                }
+            }
 
+            $datas[] = array(
+                'namaruangan' => $row,
+                'jumlahtotal' => $jumlah,
+            );
+        }
 
         $result = array(
-            'data' => $data10,
+            'data' => $datas,
             'message' => 'as@cepot',
         );
         return $this->respond($result);
