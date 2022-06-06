@@ -17823,5 +17823,49 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.SuratPermohonanPersetujuanPembiayaanPerawatan",
+    "url": "/SuratPermohonanPersetujuanPembiayaanPerawatan",
+    "templateurl": "module/EMR/SuratPermohonanPersetujuanPembiayaanPerawatan.html",
+    "controller": "SuratPermohonanPersetujuanPembiayaanPerawatanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.LembarMasukKeluar",
+    "url": "/LembarMasukKeluar",
+    "templateurl": "module/EMR/LembarMasukKeluar.html",
+    "controller": "LembarMasukKeluarCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
