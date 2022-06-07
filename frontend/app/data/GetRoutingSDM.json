@@ -952,5 +952,24 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "GajiPegawaiV2Ctrl",
+    "url": "/GajiPegawaiV2",
+    "templateurl": "module/TataRekening/GajiPegawaiV2.html",
+    "controller": "GajiPegawaiV2Ctrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

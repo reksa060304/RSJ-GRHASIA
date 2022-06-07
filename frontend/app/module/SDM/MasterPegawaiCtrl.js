@@ -60,7 +60,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					$scope.itemPelatihan.namaPelatihan = undefined;
 				}
 			}
-			
+			console.log(medifirstService.getKelompokUser());
+			if (medifirstService.getKelompokUser() == 'diklit') {
+				console.log('okray');
+				$scope.nondiklat = true
+			}
 			$scope.ListPenyelenggara = [
 				{
 					"id": 1,
@@ -392,18 +396,40 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							}
 
 							//buat penjumlahan mkgtotal - cutitotal 
-							var mkgtotal = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), $scope.now)
-							var cutitotal = dateHelper.CountAge(new Date(dataCuti[0].tgldari), new Date(dataCuti[dataCuti.length - 1].tglsampai))
-							var mkgbln = mkgtotal.month, mkgthn = mkgtotal.year
-							var cutibln = cutitotal.month, cutithn = cutitotal.year
-							console.log(mkgbln, mkgthn);
-							console.log(mkgtotal, cutitotal);
-							var sumthn = mkgthn - cutithn, sumbln = mkgbln - cutibln
-							console.log(sumthn, sumbln);
-							$scope.sum = sumthn
-							$scope.item.masakerjakeseluruhan = ($scope.item.masakerjatambahan + $scope.sum)+ " Thn"
-							console.log($scope.item.masakerjakeseluruhan);
-
+							if (dataRiwayatPangkatGolongan.length > 0) {
+								if (dataCuti.length > 0) {
+									var mkgtotal = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), $scope.now)
+									var cutitotal = dateHelper.CountAge(new Date(dataCuti[0].tgldari), new Date(dataCuti[dataCuti.length - 1].tglsampai))
+									var mkgbln = mkgtotal.month,
+										mkgthn = mkgtotal.year
+									var cutibln = cutitotal.month,
+										cutithn = cutitotal.year
+									console.log(mkgbln, mkgthn);
+									console.log(mkgtotal, cutitotal);
+									var sumthn = mkgthn - cutithn,
+										sumbln = mkgbln - cutibln
+									console.log(sumthn, sumbln);
+									$scope.sum = sumthn
+									$scope.item.masakerjakeseluruhan = ($scope.item.masakerjatambahan + $scope.sum) + " Thn"
+									console.log($scope.item.masakerjakeseluruhan);
+								}else{
+									var mkgtotal = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), $scope.now)
+									var cutitotal = dateHelper.CountAge(new Date(dataCuti[0].tgldari), new Date(dataCuti[dataCuti.length - 1].tglsampai))
+									var mkgbln = mkgtotal.month,
+										mkgthn = mkgtotal.year
+									var cutibln = cutitotal.month,
+										cutithn = cutitotal.year
+									console.log(mkgbln, mkgthn);
+									console.log(mkgtotal, cutitotal);
+									var sumthn = mkgthn - cutithn,
+										sumbln = mkgbln - cutibln
+									console.log(sumthn, sumbln);
+									$scope.sum = sumthn
+									$scope.item.masakerjakeseluruhan = ($scope.item.masakerjatambahan + $scope.sum) + " Thn"
+									console.log($scope.item.masakerjakeseluruhan);
+								}
+	
+							}
 							$scope.gridCuti = new kendo.data.DataSource({
 								data: dataCuti
 							})

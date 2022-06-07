@@ -5497,4 +5497,180 @@ END as januari
         );
         return $this->respond($result);
     }
+    public function gajiPegawaiV2(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin=$request->all();
+        $arr_fix = $dataLogin['data'];
+        $kode = [];
+        foreach ( $dataLogin['data'] as $item){
+            $kode[] = $item['nippns'];
+        }
+//        return $arr_fix;
+
+        $data = \DB::table('pegawai_m as pg')
+            ->leftjoin('gajipegawaiv2_t as gpv','pg.nippns','=','gpv.nip')
+            // ->leftJoin('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
+            ->select('pg.nippns', 'pg.namalengkap','pg.id')
+            ->where('pg.kdprofile', 30)
+            // ->where('gpv.kdprofile', $idProfile)
+            // ->groupBy('pg.id','pg.namalenk',
+            //     'ss.satuanstandar')
+            // ->orderBy('pg.namalengkap');
+        ->whereIn('pg.nippns',$kode);
+        // if(isset($request['ruanganfk']) && $request['ruanganfk']!="" && $request['ruanganfk']!="undefined"){
+        //     $data = $data->where('spd.objectruanganfk','=', $request['ruanganfk']);
+        // }
+        $data = $data->get();
+
+        // $data3 = \DB::table('pegawai_m as pg')
+        //     ->Join('gajipegawaiv2_t as gpv','pr.id','=','gpv.objectpegawaifk')
+        //     ->leftJoin('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
+        //     ->select(DB::raw('pg.nippns, pg.namalengkap'))
+        //     ->where('pg.kdprofile', $idProfile)
+        //     ->where('gpv.kdprofile', $idProfile)
+        //     // ->groupBy('pg.id','pg.namalenk',
+        //     //     'ss.satuanstandar')
+        //     ->orderBy('pg.namalengkap');
+        // $data3 = $data3->whereIn('pg.id',$kode);
+        // $data3 = $data3->get();
+
+        $sama = false;
+        $sami = false;
+        $gaBisaSave = true;
+        $data2= [];
+        foreach ($arr_fix as $ketanItem){
+            $sama = false;
+            foreach ($data as $item){
+                if ($ketanItem['nippns'] == $item->nippns){
+                    $sama = true;
+                    $data2[] = array(
+                        'nippns' => $item->nippns,
+                        'namalengkap' => $item->namalengkap,
+                        'gajipokok' => $ketanItem['gaji pokok'],
+                        'objectpegawaifk'=> $item->id,
+                        'tunjanganumum'=> $ketanItem['tunjangan umum'],
+                        'tunjanganjabatan'=> $ketanItem['tunjangan jabatan,fungsional tertentu'],
+                        'tunjanganberas'=> $ketanItem['tunjangan beras'],
+                        'jumlahbruto'=> $ketanItem['jumlah bruto'],
+                        'potonganiwp8'=> $ketanItem['potongan iwp 8%'],
+                        'jumlahpotongan'=> $ketanItem['jumlah potongan'],
+                        'jumlahyangdibayarkan'=> $ketanItem['jumlah yang dibayarkan'],
+                    );
+                }
+            }
+//            $data2=[];
+            // if ($sama == false){
+            //     foreach ($data3 as $berasMerah){
+            //         $sami = false;
+            //         if ($ketanItem['kd'] == $berasMerah->prid){
+            //             $sami = true;
+            //             $data2[] = array(
+            //                 'kodeProduk' => $ketanItem['kd'],
+            //                 'namaProduk' => strtoupper($berasMerah->namaproduk),
+            //                 'qtyProduk' => 0,
+            //                 'satuanStandar' => $item->satuanstandar,
+            //                 'stokReal' => $ketanItem['qty'],
+            //                 'selisih' => (double)$ketanItem['qty'] ,
+            //             );
+            //             break;
+            //         }
+            //     }
+            //     if ($sami == false){
+            //         $gaBisaSave = false;
+            //         $data4 = \DB::table('produk_m as pr')
+            //             ->leftJoin('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
+            //             ->leftJoin('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
+            //             ->leftJoin('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
+            //             ->select(DB::raw('pr.id as prid,pr.namaproduk,ss.satuanstandar'))
+            //             ->where('pr.kdprofile', $idProfile)
+            //             ->where('spd.kdprofile', $idProfile)
+            //             ->orderBy('pr.namaproduk');
+            //         $data4 = $data4->where('pr.id',$ketanItem['kd']);
+            //         $data4 = $data4->get();
+            //         if (count($data4)==0){
+            //             $data2[] = array(
+            //                 'kodeProduk' => 'xxx'.$ketanItem['kd'].'xxx',
+            //                 'namaProduk' => 'xxx !Kode Produk Tidak ada! xxx',
+            //                 'qtyProduk' => 0,
+            //                 'satuanStandar' => 'xxxxxx',
+            //                 'stokReal' => $ketanItem['qty'],
+            //                 'selisih' => (double)$ketanItem['qty'] ,
+            //             );
+            //         }else{
+            //             foreach ($data4 as $berasItem){
+            //                 $data2[] = array(
+            //                     'kodeProduk' => 'xxx'.$ketanItem['kd'].'xxx',
+            //                     'namaProduk' => 'xxx'.strtoupper($berasItem->namaproduk).'xxx!belum ada penerimaan!',
+            //                     'qtyProduk' => 0,
+            //                     'satuanStandar' => $berasItem->satuanstandar,
+            //                     'stokReal' => $ketanItem['qty'],
+            //                     'selisih' => (double)$ketanItem['qty'] ,
+            //                 );
+            //             }
+            //         }
+
+            //     }
+            // }
+        }
+
+
+        $result= array(
+            'detail' => $data2,
+            // 'data_stok_kosong' => $data3,
+            'datalogin' => $dataLogin,
+            'arr_req' => $arr_fix,
+            'save_cmd' => $gaBisaSave,
+            'message' => 'as@epic',
+        );
+        return $this->respond($result);
+    }
+
+    public function saveGajiPegawaiV2(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        ini_set('max_execution_time', 300); //6 minutes
+        $dataReq = $request->all();
+        $dataPegawai = \DB::table('loginuser_s as lu')
+            ->select('lu.objectpegawaifk')
+            ->where('lu.id',$dataReq['userData']['id'])
+            ->first();
+        $datas=array();
+        \DB::beginTransaction();
+        try{
+            foreach ($request['data'] as $item) {
+                $store = \DB::table('gajipegawaiv2_t')->insert([
+                    'norec'=>substr(Uuid::generate(), 0, 32),
+                    'objectpegawaifk' => $item['objectpegawaifk'],
+                    'gaji' => $item['gaji'],
+                    'tgl'=> $item['tgl'],
+                    'kdprofile' => $idProfile,
+                    'statusenabled'=> true,
+                    'nip'=> $item['nippns'],
+                ]);
+                
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "Input Gaji Pegawai";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "by" => 'as@epic',
+            );
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "by" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }
