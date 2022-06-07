@@ -335,7 +335,7 @@
 		<md-content>
 			<md-tabs md-dynamic-height md-border-bottom>
 
-				<md-tab label="Status Kepegawaian">
+				<md-tab label="Status Kepegawaian" ng-disabled='nondiklat'>
 					<md-content class="md-padding">
 						<div class="grid_12">
 							<div class="grid_4">
@@ -386,7 +386,7 @@
 							</div>
 							<div class="grid_4">
 								<div class="grid_12">
-									<label c-label item="item" c-label-text="StatusPegawai"></label>
+									<label c-label item="item" c-label-text="StatusPegawai" ></label>
 								</div>
 								<div class="grid_12">
 									<input style="width: 100%;" kendo-combo-box k-ng-model="item.kategoryPegawai"
@@ -508,7 +508,7 @@
 					</md-content>
 				</md-tab>
 
-				<md-tab label="Data Keluarga">
+				<md-tab label="Data Keluarga" ng-disabled="nondiklat">
 					<md-content class="md-padding">
 						<div class="grid_12">
 							<kendo-grid k-data-source="gridKeluarga" k-pageable="true" k-ng-model="dataKeluarga"
@@ -695,7 +695,7 @@
 					</md-content>
 				</md-tab>
 
-				<md-tab label="Riwayat Pendidikan">
+				<md-tab label="Riwayat Pendidikan" ng-disabled="nondiklat">
 					<md-content class="md-padding">
 
 						<div class="grid_12">
@@ -1006,7 +1006,7 @@
 					</md-content>
 				</md-tab>
 
-				<md-tab label="Riwayat Jabatan">
+				<md-tab label="Riwayat Jabatan" ng-disabled="nondiklat">
 					<md-content class="md-padding">
 						<div class="grid_12">
 							<kendo-grid k-data-source="gridRiwayatJabatan" k-pageable="true"
@@ -1098,7 +1098,7 @@
 					</md-content>
 				</md-tab>
 
-				<md-tab label="Riwayat Pangkat dan Golongan">
+				<md-tab label="Riwayat Pangkat dan Golongan" ng-disabled="nondiklat">
 					<md-content class="md-padding">
 						<div class="grid_12">
 							<kendo-grid k-data-source="gridRiwayatPangkatGolongan" k-pageable="true" k-ng-model="dataRiwayatPangkatGolongan"
@@ -1177,7 +1177,7 @@
 					</md-content>
 				</md-tab>
 
-				<md-tab label="KOMPONEN GAJI">
+				<md-tab label="KOMPONEN GAJI" ng-disabled="nondiklat">
 					<md-content class="md-padding">
 						<div class="grid_6">
 							<kendo-grid k-data-source="gridKomponenGajiAdd" k-pageable="true"
@@ -1305,7 +1305,7 @@
 					</md-content>
 				</md-tab>
 
-				<md-tab label="Hukuman disiplin">
+				<md-tab label="Hukuman disiplin" ng-disabled="nondiklat">
 					<md-content class="md-padding">
 						<div class="grid_12">
 							<kendo-grid k-data-source="gridHukumanDisiplin" k-pageable="true" k-ng-model="dataHukumanDisiplin"
@@ -1394,7 +1394,7 @@
 					</md-content>
 				</md-tab>
 
-				<md-tab label="Cuti Diluar Tanggungan Negara">
+				<md-tab label="Cuti Diluar Tanggungan Negara" ng-disabled="nondiklat">
 					<md-content class="md-padding">
 						<div class="grid_12">
 							<kendo-grid k-data-source="gridCuti" k-pageable="true" k-ng-model="dataCuti"
