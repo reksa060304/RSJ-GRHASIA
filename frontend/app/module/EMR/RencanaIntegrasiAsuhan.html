@@ -1,0 +1,522 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Rencana Integrasi Asuhan <br><i>Combined Care Plan </i></div>
+        </div>
+
+
+        <fieldset style="margin-top: 10px">
+            <LEGEND></LEGEND>
+            <div class="grid_12 margin-top-30 text-center">
+                <label c-label item="item" font size=""></label>
+            </div>
+            
+    <div class="grid_12" style="margin-top: 20px">
+        <table style="width:100%;color: #4c5356;">
+            <tr>
+                <th style= "text-align: center">
+                   
+                         Tanggal <br>
+                         <i>Date Time</i>
+                  
+                </th>
+                <th style= "text-align: center">
+                    
+                    Nama dan Paraf Profesi<br>
+                    <i>Name Printed and Signature</i>
+                    
+                </th>
+                <th style= "text-align: center">
+                    
+                    INTEGRASI ASUHAN <br>
+                    (Rencana Target Asuhan yang Akan Dicapai)
+                  
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12">
+                        <label c-label item="item" class="margin-bottom">Tanggal </label>
+                        <input style="width: 100%" k-ng-model="item.obj[3004730]" kendo-datetimepicker
+                        placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                        <label c-label item="item" class="margin-bottom"><br></label>
+                    </div>
+                </td>
+                <td>
+                <label c-label item="item" class="margin-bottom">Dokter </label>
+                <div class="grid_12">
+                    <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004731]"
+                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listPegawai" />
+                </div>
+                <label c-label item="item" class="margin-bottom">Perawat </label>
+                <div class="grid_12">
+                    <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004732]"
+                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listPegawai" />
+                </div>
+                <label c-label item="item" class="margin-bottom">PPA Lain </label>
+                <div class="grid_12">
+                    <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004733]"
+                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listPegawai" />
+                </div>
+            </td>
+            <td>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <label c-label item="item" class="margin-bottom"></label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004734]"
+                            k-data-source=""
+                            style="height: 100px; width: 100%; "/>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">Catatan / Notasi DPJP</label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004735]"
+                            k-data-source=""
+                            style="height: 50px; width: 100%; "/>
+                </div>
+            </td>
+         </tr>
+           
+        </table>
+    </fieldset>
+</div>
+   
+      
+<fieldset style="margin-top: 10px">
+    <LEGEND></LEGEND>
+    <div class="grid_12 margin-top-30 text-center">
+        <label c-label item="item" font size=""></label>
+    </div>
+    
+<div class="grid_12" style="margin-top: 20px">
+<table style="width:100%;color: #4c5356;">
+    <tr>
+        <th style= "text-align: center">
+           
+                 Tanggal <br>
+                 <i>Date Time</i>
+          
+        </th>
+        <th style= "text-align: center">
+            
+            Nama dan Paraf Profesi<br>
+            <i>Name Printed and Signature</i>
+            
+        </th>
+        <th style= "text-align: center">
+            
+            INTEGRASI ASUHAN <br>
+            (Rencana Target Asuhan yang Akan Dicapai)
+          
+        </th>
+    </tr>
+    <tr>
+        <td>
+            <div class="grid_12">
+                <label c-label item="item" class="margin-bottom">Tanggal </label>
+                <input style="width: 100%" k-ng-model="item.obj[3004736]" kendo-datetimepicker
+                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                <label c-label item="item" class="margin-bottom"><br></label>
+            </div>
+        </td>
+        <td>
+        <label c-label item="item" class="margin-bottom">Dokter </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004737]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+        <label c-label item="item" class="margin-bottom">Perawat </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004738]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+        <label c-label item="item" class="margin-bottom">PPA Lain </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004739]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+    </td>
+    <td>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom"></label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004740]"
+                    k-data-source=""
+                    style="height: 100px; width: 100%; "/>
+        </div>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom">Catatan / Notasi DPJP</label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004741]"
+                    k-data-source=""
+                    style="height: 50px; width: 100%; "/>
+        </div>
+    </td>
+ </tr>
+   
+</table>
+</fieldset>
+</div>
+
+
+<fieldset style="margin-top: 10px">
+    <LEGEND></LEGEND>
+    <div class="grid_12 margin-top-30 text-center">
+        <label c-label item="item" font size=""></label>
+    </div>
+    
+<div class="grid_12" style="margin-top: 20px">
+<table style="width:100%;color: #4c5356;">
+    <tr>
+        <th style= "text-align: center">
+           
+                 Tanggal <br>
+                 <i>Date Time</i>
+          
+        </th>
+        <th style= "text-align: center">
+            
+            Nama dan Paraf Profesi<br>
+            <i>Name Printed and Signature</i>
+            
+        </th>
+        <th style= "text-align: center">
+            
+            INTEGRASI ASUHAN <br>
+            (Rencana Target Asuhan yang Akan Dicapai)
+          
+        </th>
+    </tr>
+    <tr>
+        <td>
+            <div class="grid_12">
+                <label c-label item="item" class="margin-bottom">Tanggal </label>
+                <input style="width: 100%" k-ng-model="item.obj[3004742]" kendo-datetimepicker
+                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                <label c-label item="item" class="margin-bottom"><br></label>
+            </div>
+        </td>
+        <td>
+        <label c-label item="item" class="margin-bottom">Dokter </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004743]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+        <label c-label item="item" class="margin-bottom">Perawat </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004744]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+        <label c-label item="item" class="margin-bottom">PPA Lain </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004745]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+    </td>
+    <td>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom"></label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004746]"
+                    k-data-source=""
+                    style="height: 100px; width: 100%; "/>
+        </div>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom">Catatan / Notasi DPJP</label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004747]"
+                    k-data-source=""
+                    style="height: 50px; width: 100%; "/>
+        </div>
+    </td>
+ </tr>
+   
+</table>
+</fieldset>
+</div>
+
+
+<fieldset style="margin-top: 10px">
+    <LEGEND></LEGEND>
+    <div class="grid_12 margin-top-30 text-center">
+        <label c-label item="item" font size=""></label>
+    </div>
+    
+<div class="grid_12" style="margin-top: 20px">
+<table style="width:100%;color: #4c5356;">
+    <tr>
+        <th style= "text-align: center">
+           
+                 Tanggal <br>
+                 <i>Date Time</i>
+          
+        </th>
+        <th style= "text-align: center">
+            
+            Nama dan Paraf Profesi<br>
+            <i>Name Printed and Signature</i>
+            
+        </th>
+        <th style= "text-align: center">
+            
+            INTEGRASI ASUHAN <br>
+            (Rencana Target Asuhan yang Akan Dicapai)
+          
+        </th>
+    </tr>
+    <tr>
+        <td>
+            <div class="grid_12">
+                <label c-label item="item" class="margin-bottom">Tanggal </label>
+                <input style="width: 100%" k-ng-model="item.obj[3004748]" kendo-datetimepicker
+                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                <label c-label item="item" class="margin-bottom"><br></label>
+            </div>
+        </td>
+        <td>
+        <label c-label item="item" class="margin-bottom">Dokter </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004749]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+        <label c-label item="item" class="margin-bottom">Perawat </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004750]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+        <label c-label item="item" class="margin-bottom">PPA Lain </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004751]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+    </td>
+    <td>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom"></label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004752]"
+                    k-data-source=""
+                    style="height: 100px; width: 100%; "/>
+        </div>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom">Catatan / Notasi DPJP</label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004753]"
+                    k-data-source=""
+                    style="height: 50px; width: 100%; "/>
+        </div>
+    </td>
+ </tr>
+   
+</table>
+</fieldset>
+</div>
+
+<fieldset style="margin-top: 10px">
+    <LEGEND></LEGEND>
+    <div class="grid_12 margin-top-30 text-center">
+        <label c-label item="item" font size=""></label>
+    </div>
+    
+<div class="grid_12" style="margin-top: 20px">
+<table style="width:100%;color: #4c5356;">
+    <tr>
+        <th style= "text-align: center">
+           
+                 Tanggal <br>
+                 <i>Date Time</i>
+          
+        </th>
+        <th style= "text-align: center">
+            
+            Nama dan Paraf Profesi<br>
+            <i>Name Printed and Signature</i>
+            
+        </th>
+        <th style= "text-align: center">
+            
+            INTEGRASI ASUHAN <br>
+            (Rencana Target Asuhan yang Akan Dicapai)
+          
+        </th>
+    </tr>
+    <tr>
+        <td>
+            <div class="grid_12">
+                <label c-label item="item" class="margin-bottom">Tanggal </label>
+                <input style="width: 100%" k-ng-model="item.obj[3004754]" kendo-datetimepicker
+                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                <label c-label item="item" class="margin-bottom"><br></label>
+            </div>
+        </td>
+        <td>
+        <label c-label item="item" class="margin-bottom">Dokter </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004755]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+        <label c-label item="item" class="margin-bottom">Perawat </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004756]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+        <label c-label item="item" class="margin-bottom">PPA Lain </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004757]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+    </td>
+    <td>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom"></label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004758]"
+                    k-data-source=""
+                    style="height: 100px; width: 100%; "/>
+        </div>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom">Catatan / Notasi DPJP</label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004759]"
+                    k-data-source=""
+                    style="height: 50px; width: 100%; "/>
+        </div>
+    </td>
+ </tr>
+   
+</table>
+</fieldset>
+</div>
+
+<fieldset style="margin-top: 10px">
+    <LEGEND></LEGEND>
+    <div class="grid_12 margin-top-30 text-center">
+        <label c-label item="item" font size=""></label>
+    </div>
+    
+<div class="grid_12" style="margin-top: 20px">
+<table style="width:100%;color: #4c5356;">
+    <tr>
+        <th style= "text-align: center">
+           
+                 Tanggal <br>
+                 <i>Date Time</i>
+          
+        </th>
+        <th style= "text-align: center">
+            
+            Nama dan Paraf Profesi<br>
+            <i>Name Printed and Signature</i>
+            
+        </th>
+        <th style= "text-align: center">
+            
+            INTEGRASI ASUHAN <br>
+            (Rencana Target Asuhan yang Akan Dicapai)
+          
+        </th>
+    </tr>
+    <tr>
+        <td>
+            <div class="grid_12">
+                <label c-label item="item" class="margin-bottom">Tanggal </label>
+                <input style="width: 100%" k-ng-model="item.obj[3004760]" kendo-datetimepicker
+                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                <label c-label item="item" class="margin-bottom"><br></label>
+            </div>
+        </td>
+        <td>
+        <label c-label item="item" class="margin-bottom">Dokter </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004761]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+        <label c-label item="item" class="margin-bottom">Perawat </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004762]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+        <label c-label item="item" class="margin-bottom">PPA Lain </label>
+        <div class="grid_12">
+            <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3004763]"
+                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listPegawai" />
+        </div>
+    </td>
+    <td>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom"></label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004764]"
+                    k-data-source=""
+                    style="height: 100px; width: 100%; "/>
+        </div>
+        <div class="grid_12 margin-top-20 margin-bottom">
+            <label c-label item="item" class="margin-bottom">Catatan / Notasi DPJP</label>
+            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3004765]"
+                    k-data-source=""
+                    style="height: 50px; width: 100%; "/>
+        </div>
+    </td>
+ </tr>
+   
+</table>
+</fieldset>
+</div>
+
+            
+
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>
