@@ -107,13 +107,12 @@
 								</div>
 								<div class="grid_4">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="Status Kawin"></label>
+										<label c-label item="item" c-label-text="Pendidikan Pegawai"></label>
 									</div>
 									<div class="grid_12">
-										<input style="width: 100%;" kendo-combo-box
-											k-ng-model="item.statusPerkawinanPegawai"
-											k-data-text-field="'statusperkawinan'" k-data-value-field="'id'"
-											k-filter="'contains'" k-auto-bind="false" k-data-source="ListStatusKawin" />
+										<input kendo-combo-box k-ng-model="item.pendidikanpegawai"
+											k-data-text-field="'pendidikanpegawai'" k-data-value-field="'id'"
+											k-filter="'contains'" k-data-source="ListPendidikanPegawai" style="width: 100%;" />
 									</div>
 								</div>
 							</div>
@@ -148,7 +147,7 @@
 								</div>
 							</div>
 							<div class="grid_12">
-								<div class="grid_6">
+								<div class="grid_4">
 									<div class="grid_12">
 										<label><b>Masa Kerja Tambahan</b></label>
 									</div>
@@ -157,13 +156,24 @@
 											ng-model="item.masakerjatambahan"/>
 									</div>
 								</div>
-								<div class="grid_6">
+								<div class="grid_4">
 									<div class="grid_12">
 										<label><b>Masa Kerja Keseluruhan</b></label>
 									</div>
 									<div class="grid_12">
 										<input c-text-box type="input" placeholder="Masa Kerja Tambahan" filter="'varchar'" class="k-textbox"
 											ng-model="item.masakerjakeseluruhan" ng-disabled="true" />
+									</div>
+								</div>
+								<div class="grid_4">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="Status Kawin"></label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box
+											k-ng-model="item.statusPerkawinanPegawai"
+											k-data-text-field="'statusperkawinan'" k-data-value-field="'id'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="ListStatusKawin" />
 									</div>
 								</div>
 							</div>

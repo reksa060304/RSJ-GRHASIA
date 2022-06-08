@@ -156,6 +156,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					$scope.ListAgama = dataCombo.agama;
 					$scope.ListStatusKawin = dataCombo.statuskawin;
 					$scope.ListPendidikan = dataCombo.pendidikan;
+					$scope.ListPendidikanPegawai = dataCombo.pendidikanpegawai;
 					// $scope.UsiaPensiun =dataCombo.usiapensiun.nilaifield;
 					$scope.ListKedudukanPegawai = dataCombo.kedudukan;
 					$scope.ListKategoriPegawai = dataCombo.kategorypegawai;

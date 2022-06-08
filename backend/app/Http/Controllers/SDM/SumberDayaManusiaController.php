@@ -60,6 +60,7 @@ use App\Transaksi\TenagaPengajar;
 use App\Transaksi\JadwalKerjaPegawai;
 use App\Transaksi\StrukBuktiPengeluaran;
 use App\Transaksi\StrukBuktiPengeluaranCaraBayar;
+use App\Transaksi\PendidikanPegawai;
 use Illuminate\Http\Request;
 use DB;
 use App\Transaksi\LoggingUser;
@@ -243,6 +244,8 @@ class SumberDayaManusiaController extends ApiController {
         ->where('kdprofile',$kdProfile)
         ->orderBy("id")->get();
 
+        $pendidikanpegawai = PendidikanPegawai::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
+
         $result = array(
             'sumberdana' => $sumberdana,
             'datajenispelatihan'=> $datajenispelatihan,
@@ -282,6 +285,7 @@ class SumberDayaManusiaController extends ApiController {
             'komponengajiadd' => $KomponenGajiAdd,
             'komponengajidel' => $KomponenGajiDel,
             'jenishukuman'=> $jenishukuman,
+            'pendidikanpegawai'=> $pendidikanpegawai,
             'by' => 'ea@epic',
         );
 
