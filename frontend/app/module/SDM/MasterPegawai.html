@@ -1208,7 +1208,7 @@
 							<div class="panel panel-default container_12" style="padding: 0px 10px;">
 								<div class="grid_12">
 									<div class="grid_12">
-										<div class="grid_6">
+										<div class="grid_4">
 											<div class="grid_12">
 												<label c-label>No SK</label>
 											</div>
@@ -1217,7 +1217,7 @@
 													ng-model="itemGajiBerkala.nosk" />
 											</div>
 										</div>
-										<div class="grid_6">
+										<div class="grid_4">
 											<div class="grid_12">
 												<label c-label>Tanggal SK</label>
 											</div>
@@ -1227,7 +1227,18 @@
 													k-ng-model="itemGajiBerkala.tanggalsk" k-format="'yyyy-MM-dd'" />
 											</div>
 										</div>
+										<div class="grid_4">
+											<div class="grid_12">
+												<label c-label item="item" c-label-text="Golongan"></label>
+											</div>
+											<div class="grid_12">
+												<input style="width: 100%;" kendo-combo-box k-ng-model="itemGajiBerkala.golongan"
+													k-data-text-field="'golongan'" k-data-value-field="'id'" k-auto-bind="true"
+													k-data-source="ListGolonganPegawai" />
+											</div>
+										</div>
 									</div>
+									
 									<div class="grid_12">
 										<div class="grid_6">
 											<div class="grid_12">

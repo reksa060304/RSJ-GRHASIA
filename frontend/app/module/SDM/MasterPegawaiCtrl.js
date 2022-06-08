@@ -17,6 +17,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.itemLogin.pegawaiId = undefined;
 			$scope.itemJabatan = {};
 			$scope.itemPandG = {};
+			$scope.itemGajiBerkala = {};
 			$scope.itemSip = {};
 			$scope.itemStr = {};
 			$scope.itemTelp = [];
@@ -24,7 +25,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.item.idPegawai = undefined;
 			$scope.item.PasswordDefault = undefined;
 			$scope.item.masakerjatambahan = 0;
-			console.log($scope.item.masakerjatambahan);
 			$scope.now = new Date();
 			var dataKeluarga = [];
 			var dataPegawai = [];
@@ -36,6 +36,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			var dataKomponenGajiDel = [];
 			var dataKomponenGajiDels = [];
 			var dataRiwayatPangkatGolongan = [];
+			var dataRiwayatGajiBerkala = [];
 			var dataSip = [];
 			var dataStr = [];
 			var dataNoTelp = [];
@@ -105,6 +106,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			};
 			function ClearDataRiwayatPangkatGolongan() {
 				$scope.itemPandG = {};
+				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
+			};
+			function ClearDataRiwayatGajiBerkala() {
+				$scope.itemGajiBerkala = {};
 				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
 			};
 
@@ -223,7 +228,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							var dataCacheHukumanDisiplin = dataCache.datahukumandisiplin;
 							var dataCachePangkatGolongan = dataCache.datapangkatgolongan;
 							var dataCacheCuti = dataCache.datacuti;
-
+							var dataCacheGajiBerkala = dataCache.datagajiberkala;
 							// Data Pegawai
 							$scope.item.idPegawai = dataCachePegawai.id;
 							$scope.item.nipPns = dataCachePegawai.nippns;
@@ -396,6 +401,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 								// $scope.blntrkhr = umur.month
 								console.log(thn, bln);
 							}
+
+							// DATA GAJI BERKALA
+							dataRiwayatGajiBerkala = dataCacheGajiBerkala;
+							for (let i = 0; i < dataRiwayatGajiBerkala.length; i++) {
+								dataCacheGajiBerkala[i].no = i + 1;
+								
+							}
+							$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
+								data: dataRiwayatGajiBerkala
+							});
 
 							//buat penjumlahan mkgtotal - cutitotal 
 							if (dataRiwayatPangkatGolongan.length > 0) {
@@ -912,13 +927,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					},
 					{
 						"field": "golongan",
-						"title": "Gaji Awal",
+						"title": "Golongan",
+						"width": "50px",
+					},
+					{
+						"field": "gajiawal",
+						"title": "Gaji Pokok Lama",
 						"width": "100px",
 						// "template": "#:namaexternal #, #:name #"
 					},
 					{
-						"field": "golongan",
-						"title": "Gaji Akhir",
+						"field": "gajiakhir",
+						"title": "Gaji Pokok Baru",
 						"width": "100px",
 						// "template": "#:namaexternal #, #:name #"
 					},
@@ -926,17 +946,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					{
 						"field": "tgltmt",
 						"title": "Tanggal TMT",
-						"width": "70px"
+						"width": "70px",
+						"template": "<span class='style-left'>{{formatTanggal('#: tgltmt #')}}</span>"
+
 					},
 					{
 						"command": [{
 								text: "Edit",
-								click: EditPangkatGolongan,
+								click: EditGajiBerkala,
 								imageClass: "k-icon k-i-pencil"
 							},
 							{
 								text: "Hapus",
-								click: HapusPangkatGolongan,
+								click: HapusGajiBerkala,
 								imageClass: "k-icon k-i-delete"
 							},
 						],
@@ -1652,6 +1674,31 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.popUpRiwayatPangkatGolongan.center().open();
 			}
 
+			function EditGajiBerkala(e) {
+				$scope.itemGajiBerkala = [];
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+				$scope.item.IdGajiBerkala = dataItem.no;
+				console.log(dataItem);
+				$scope.item.norecGajiBerkala = dataItem.norec;
+				$scope.itemGajiBerkala.golongan = {
+					id: dataItem.objectgolonganfk,
+					golongan: dataItem.name
+				};
+				console.log(dataItem);
+				$scope.itemGajiBerkala.tanggaltmt = moment(dataItem.tgltmt).format('YYYY-MM-DD HH:mm');
+				$scope.itemGajiBerkala.tanggalsk = moment(dataItem.tglsk).format('YYYY-MM-DD HH:mm');
+				$scope.itemGajiBerkala.pejabatmenetapkan = dataItem.pejabatmenetapkan;
+				$scope.itemGajiBerkala.nosk = dataItem.nosk;
+				$scope.itemGajiBerkala.gajiawal = dataItem.gajiawal;
+				$scope.itemGajiBerkala.gajiakhir = dataItem.gajiakhir;
+				$scope.popUpRiwayatGajiBerkala.center().open();
+			}
+
 			function EditKomponenDel(e) {
 				$scope.itemKomponenDel = [];
 				e.preventDefault();
@@ -1784,6 +1831,35 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				// return
 				grid.removeRow(row);
 				medifirstService.post('sdm/delete-data-pangkat-golongan', itemDelete).then(function (e) {
+					if (e.status === 201) {
+						grid.removeRow(row);
+					}
+				})
+
+			}
+
+			function HapusGajiBerkala(e) {
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+				var grid = this;
+				var row = $(e.currentTarget).closest("tr");
+				var tr = $(e.target).closest("tr");
+				for (var i = dataRiwayatPangkatGolongan.length - 1; i >= 0; i--) {
+					if (dataRiwayatPangkatGolongan[i].no == dataItem.no) {
+						dataRiwayatPangkatGolongan.splice(i, 1);
+					}
+				}
+				var itemDelete = {
+					"norec": dataItem.norec
+				}
+				// console.log(itemDelete);
+				// return
+				grid.removeRow(row);
+				medifirstService.post('sdm/delete-data-gaji-berkala', itemDelete).then(function (e) {
 					if (e.status === 201) {
 						grid.removeRow(row);
 					}
@@ -2035,6 +2111,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.batalRiwayatPendidikan = function () {
 				ClearDataRiwayatPendidikan();
 				$scope.popUpRiwayatPendidikan.close();
+			}
+			$scope.batalRiwayatGajiBerkala = function () {
+				ClearDataRiwayatPendidikan();
+				$scope.popUpRiwayatGajiBerkala.close();
 			}
 
 			$scope.batalRiwayatPelatihan = function () {
@@ -2541,9 +2621,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 			$scope.tambahRiwayatGajiBerkala = function () {
 				var listRawRequired = [
-					"itemGajiBerkala.gajiawal|ng-model|gajiawal",
-					"itemGajiBerkala.gajiakhir|ng-model|gaji akhir",
+					"itemGajiBerkala.gajiawal|ng-model|gaji Pokok Lama",
+					"itemGajiBerkala.gajiakhir|ng-model|gaji Pokok Baru",
 					"itemGajiBerkala.tanggalsk|k-ng-model|Tanggal SK",
+					"itemGajiBerkala.golongan|k-ng-model|Golongan",
 					"itemGajiBerkala.nosk|ng-model|NO SK",
 					"itemGajiBerkala.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
 					"itemGajiBerkala.tanggaltmt|k-ng-model|Tanggal TMT",
@@ -2555,26 +2636,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				console.log(isValid);
 				if (isValid.status) {
 					var nomorId = 0
-					console.log($scope.gridRiwayatGajiBerkala);
+					// console.log($scope.gridRiwayatGajiBerkala);
 					if ($scope.gridRiwayatGajiBerkala == undefined) {
 						nomorId = 1
 					} else {
 						nomorId = dataRiwayatGajiBerkala.length + 1
 					}
 					var data = {};
-					if ($scope.item.nomorId != undefined) {
+					if ($scope.item.IdGajiBerkala != undefined) {
 						for (var i = dataRiwayatGajiBerkala.length - 1; i >= 0; i--) {
-							if (dataRiwayatGajiBerkala[i].no == $scope.item.nomorId) {
-								data.no = $scope.item.nomorId
-								data.tglsk = moment($scope.itemPandG.tanggalsk).format('YYYY-MM-DD HH:mm');
-								data.tgltmt = moment($scope.itemPandG.tanggaltmt).format('YYYY-MM-DD HH:mm');
-								data.norec = $scope.item.norecPG;
-								data.pejabatmenetapkan = $scope.itemPandG.pejabatmenetapkan;
-								data.objectgolonganfk = $scope.itemPandG.golongan.id;
-								data.golongan = $scope.itemPandG.golongan.golongan;
-								data.nosk = $scope.itemPandG.nosk
+							if (dataRiwayatGajiBerkala[i].no == $scope.item.IdGajiBerkala) {
+								data.no = $scope.item.IdGajiBerkala
+								data.tglsk = moment($scope.itemGajiBerkala.tanggalsk).format('YYYY-MM-DD HH:mm');
+								data.tgltmt = moment($scope.itemGajiBerkala.tanggaltmt).format('YYYY-MM-DD HH:mm');
+								data.norec = $scope.item.norecGajiBerkala;
+								data.pejabatmenetapkan = $scope.itemGajiBerkala.pejabatmenetapkan;
+								data.gajiawal = $scope.itemGajiBerkala.gajiawal;
+								data.gajiakhir = $scope.itemGajiBerkala.gajiakhir;
+								data.objectgolonganfk = $scope.itemGajiBerkala.golongan.id;
+								data.golongan = $scope.itemGajiBerkala.golongan.golongan;
+								data.nosk = $scope.itemGajiBerkala.nosk
 								dataRiwayatGajiBerkala[i] = data;
-								console.log(data);
+								
 								$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
 									data: dataRiwayatGajiBerkala
 								});
@@ -2583,13 +2666,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					} else {
 						data = {
 							no: nomorId,
-							tglsk: moment($scope.itemPandG.tanggalsk).format('YYYY-MM-DD HH:mm'),
-							tgltmt: moment($scope.itemPandG.tanggaltmt).format('YYYY-MM-DD HH:mm'),
-							norec: $scope.item.norecPG,
-							pejabatmenetapkan: $scope.itemPandG.pejabatmenetapkan,
-							objectgolonganfk: $scope.itemPandG.golongan.id,
-							golongan: $scope.itemPandG.golongan.golongan,
-							nosk: $scope.itemPandG.nosk
+							tglsk: moment($scope.itemGajiBerkala.tanggalsk).format('YYYY-MM-DD HH:mm'),
+							tgltmt: moment($scope.itemGajiBerkala.tanggaltmt).format('YYYY-MM-DD HH:mm'),
+							norec: $scope.item.norecGajiBerkala,
+							pejabatmenetapkan: $scope.itemGajiBerkala.pejabatmenetapkan,
+							gajiawal: $scope.itemGajiBerkala.gajiawal,
+							gajiakhir: $scope.itemGajiBerkala.gajiakhir,
+							nosk: $scope.itemGajiBerkala.nosk,
+							golongan: $scope.itemGajiBerkala.golongan.golongan,
+							objectgolonganfk: $scope.itemGajiBerkala.golongan.id
 						}
 						console.log(data);
 						dataRiwayatGajiBerkala.push(data)
@@ -2597,8 +2682,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							data: dataRiwayatGajiBerkala
 						});
 					}
-					ClearDataRiwayatPangkatGolongan();
-					$scope.popUpRiwayatPangkatGolongan.close();
+					ClearDataRiwayatGajiBerkala();
+					$scope.popUpRiwayatGajiBerkala.close();
 				} else {
 					ModelItem.showMessages(isValid.messages);
 				}
@@ -3246,6 +3331,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						hukumandisiplin: dataHukumanDisiplin,
 						pangkatgolongan: dataRiwayatPangkatGolongan,
 						cuti: dataCuti,
+						gajiberkala: dataRiwayatGajiBerkala,
 					}
 
 					// if (dataKeluarga.length == 0 || dataRiwayatPendidikan.length == 0 || dataRiwayatJabatan.length == 0 || dataSip.length == 0 || dataStr.length == 0 || dataRiwayatPelatihan.length == 0 || dataNoTelp.length==0) {
