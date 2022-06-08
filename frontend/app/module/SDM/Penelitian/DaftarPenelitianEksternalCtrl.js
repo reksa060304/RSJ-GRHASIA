@@ -13,6 +13,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			var dataProduk = [];
             // LoadCombo();
             GetData()
+            console.log(medifirstService.getPegawai());
             $scope.tambahmahasiswa = function (current) {
                 if ($scope.current == undefined) {
                     toastr.error('Data Kegiatan Belum Dipilih', 'Info');
@@ -62,9 +63,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     InstitusiPendidikan = "&Fakultas=" + $scope.item.institusipendidikan;
                 }
                 var usr = ''
-                if (ModelItem.getPegawai().jenisPegawai.qjenispegawai == 0) {
+                console.log(medifirstService.getKelompokUser());
+                if (medifirstService.getKelompokUser() != 'diklit') {
                     usr = "user=" + medifirstService.getUserLogin().kdUser;
+                    // console.log(medifirstService.getUserLogin().kdUser);
                 }
+
+
+
+                // console.log(medifirstService.getPegawai());
+
+
+
+
                 var modelid = "&modelid="+ModelItem.getPegawai().id;
                 medifirstService.get("sdm/penelitian/get-daftar-penelitian-eksternal?"+ usr+tglAwal+tglAkhir+InstitusiPendidikan+modelid, true).then(function (dat) {
                         $scope.isRouteLoading = false;

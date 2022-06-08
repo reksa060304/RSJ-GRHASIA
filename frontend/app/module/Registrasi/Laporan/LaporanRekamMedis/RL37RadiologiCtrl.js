@@ -28,13 +28,35 @@ define(['initialize'], function (initialize) {
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir).then(function (data) {
                         var data = data.data
+                        var tot = 0;
                         for (var i = 0; i < data.data.length; i++) {
                             data.data[i].kdprov = '24'
                             data.data[i].kabkota = 'Kab. Sleman'
                             data.data[i].koders = '3404022'
                             data.data[i].namars = 'RSJ. Grhasia'
                             data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
+                            tot += data.data[i].jumlahtotal
                         }
+
+                        for (var j = 1; j <= 9; j++){
+                            data.data[j].no = j;
+                        }
+
+                        data.data[11].no = 1;
+                        data.data[12].no = 2;
+
+                        data.data[14].no = 1;
+                        data.data[15].no = 2;
+                        data.data[16].no = 3;
+                        
+                        data.data[18].no = 1;
+                        data.data[19].no = 2;
+                        data.data[20].no = 3;
+
+                        data.data[21].no = 99;
+                        data.data[21].jumlahtotal = tot;
+
+                        data.data[1].no = 1;
                         $scope.isRouteLoading = false;
                         $scope.ambildataexcel = data.data
                         $scope.dataRL52 = new kendo.data.DataSource({
@@ -132,17 +154,17 @@ define(['initialize'], function (initialize) {
                             width: "80px"
                         },
                         {
-                            field: "namaruangan",
+                            field: "no",
                             title: "NO",
                             width: "80px"
                         },
                         {
-                            field: "namaproduk",
+                            field: "namaruangan",
                             title: "JENIS KEGIATAN",
                             width: "80px"
                         },
                         {
-                            field: "jumlah",
+                            field: "jumlahtotal",
                             title: "JUMLAH",
                             width: "80px"
                         },

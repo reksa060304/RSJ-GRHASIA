@@ -1254,6 +1254,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // POST //
             Route::post('logistik/get-stok-ruangan-so-from-file', 'Logistik\LogistikController@getStokRuanganSOFromFile');
             Route::post('logistik/get-stok-ruangan-so-from-fileexcel', 'Logistik\LogistikController@getStokRuanganSOFromFileExcel');
+            Route::post('gaji/get-gaji-pegawai', 'SDM\SumberDayaManusiaController@gajiPegawaiV2');
+            Route::post('gaji/save-data-gaji-pegawai', 'SDM\SumberDayaManusiaController@saveGajiPegawaiV2');
             Route::post('logistik/delete-terima-barang-suplier', 'Logistik\LogistikController@DeletePenerimaanSuplier');
             Route::post('logistik/delete-data-usulan-ruangan', 'Logistik\LogistikController@saveBatalUsulanPermintaanBarang');
             Route::post('logistik/delete-data-rencana-usulan-ruangan', 'Logistik\LogistikController@hapusDataRUPB');
@@ -2048,6 +2050,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('sdm/delete-data-hukuman-disiplin', 'SDM\SumberDayaManusiaController@deleteDataHukumanDisiplin');
             Route::post('sdm/delete-data-cuti', 'SDM\SumberDayaManusiaController@deleteDataCuti');
             Route::post('sdm/delete-data-pangkat-golongan', 'SDM\SumberDayaManusiaController@deleteDataPangkatGolongan');
+            Route::post('sdm/delete-data-gaji-berkala', 'SDM\SumberDayaManusiaController@deleteDataGajiBerkala');
             Route::post('sdm/delete-data-sipstr', 'SDM\SumberDayaManusiaController@deleteDataSipStr');
             Route::post('sdm/save-rekam-data-pegawai', 'SDM\SumberDayaManusiaController@saveDataRekamDataPegawai');
             Route::post('sdm/upload-data-sipstr', 'SDM\SumberDayaManusiaController@simpanSipStr');

@@ -192,6 +192,10 @@
     {
       "nameDep": "LaporanDiklatKaryawanCtrl",
       "urlDep": "module/SDM/Pelatihan/LaporanDiklatKaryawanCtrl"
+    },
+    {
+      "nameDep": "GajiPegawaiV2Ctrl",
+      "urlDep": "module/TataRekening/GajiPegawaiV2Ctrl"
     }
   ]
 }

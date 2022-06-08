@@ -19,7 +19,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.model.tglSEP = $scope.now;
             $scope.model.tglRujukan = $scope.now;
             $scope.model.tglPelayanan = $scope.now;
-            $scope.norecScr = "-"
+            $scope.norecScr = "-";
             $scope.Alsan = false;
             var datas = [];
             var chacePenunjang = cacheHelper.get('isPenunjang');
@@ -1509,24 +1509,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // do something with response
                 });
             }
-
             $scope.ScreeningPasien = function(){
                 if ($scope.cacheNoRegistrasi == undefined) {
                     toastr.error("Data Tidak Ditemukan");
                     return;
                 }
+
                 medifirstService.get('registrasi/get-data-skrining-awal-pasien?noregistrasi=' + $scope.cacheNoRegistrasi).then(function (dat) {                    
-                    var dataScr = dat.data;
-                    if(dataScr != undefined){
-                        $scope.norecScr = dataScr.norec;
-                        $scope.listKesadaran = dataScr.kesadaran;
-                        $scope.listTransportasi = dataScr.transportasi;
-                        $scope.listTeruskan = dataScr.teruskanke;
-                        $scope.listAlasan = dataScr.ketkhusus;
-                        $scope.listTb = dataScr.screentb;
-                        $scope.item.KeteranganAlasan = dataScr.keterangankhusus;
-                        $scope.listDataPegawai = [{id: dataScr.pegawaifk, namalengkap: dataScr.namalengkap}];
-                        $scope.item.petugasScreening = {id: dataScr.pegawaifk, namalengkap: dataScr.namalengkap};
+                    var dataScr = dat.data.data;
+                        console.log(dataScr);
+                        // return
+                    if(dataScr != 'undefined'){
+                        $scope.norecScr = dataScr[0].norec;
+                        $scope.listKesadaran = dataScr[0].kesadaran;
+                        $scope.listTransportasi = dataScr[0].transportasi;
+                        $scope.listTeruskan = dataScr[0].teruskanke;
+                        $scope.listAlasan = dataScr[0].ketkhusus;
+                        $scope.listTb = dataScr[0].screentb;
+                        $scope.item.KeteranganAlasan = dataScr[0].keterangankhusus;
+                        $scope.listDataPegawai = [{id: dataScr[0].pegawaifk, namalengkap: dataScr[0].namalengkap}];
+                        $scope.item.petugasScreening = {id: dataScr[0].pegawaifk, namalengkap: dataScr[0].namalengkap};
                         if ($scope.item.KeteranganAlasan != undefined || $scope.item.KeteranganAlasan != "") {
                             $scope.Alsan = true;
                         }else{
@@ -1551,7 +1553,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error("Petugas Skrining Tidak Boleh Kosong!");
                     return;
                 }            
-
                 var objSave = {
                     'norec': $scope.norecScr,
                     'noregistrasi': $scope.cacheNoRegistrasi,
@@ -1563,7 +1564,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     'tb': $scope.listTb != undefined ? $scope.listTb : null,
                     'keterangan': $scope.item.KeteranganAlasan != undefined ? $scope.item.KeteranganAlasan : null,                    
                 }
-
+                console.log(objSave);
                 $scope.hideScr = true
                 medifirstService.post('registrasi/save-skrining-awal-pasien', objSave).then(function (e) {                    
                     $scope.norecScr = e.data.data.norec;

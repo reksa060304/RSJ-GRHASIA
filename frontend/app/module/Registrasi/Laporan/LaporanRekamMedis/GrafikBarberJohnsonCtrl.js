@@ -42,15 +42,23 @@ define(['initialize'], function (initialize) {
                                     pointStyle: 'line',
                                 }, {// 'line' dataset default does not affect this dataset since it's a 'scatter'
                                     label: 'Daerah Efisien',
-                                    data: [{x:1, y:12}, {x:1, y:0}],
+                                    data: [{x:1, y:datas[0].ybto + 5}, {x:1, y:0}],
                                     showLine: true,
                                     mode: "vertical",
                                     fill: true,
                                     borderColor: 'red',
                                     pointStyle: 'line',
+                                },{// 'line' dataset default does not affect this dataset since it's a 'scatter'
+                                    label: 'Daerah Efisien',
+                                    data: [{x:2.5, y:datas[0].ybto + 5}, {x:2.5, y:0}],
+                                    showLine: true,
+                                    mode: "vertical",
+                                    fill: '-1',
+                                    borderColor: 'red',
+                                    pointStyle: 'line',
                                 }, {// 'line' dataset default does not affect this dataset since it's a 'scatter'
                                     label: 'BOR',
-                                    data: [{x:0, y:0},{x:datas[0].xbor, y:datas[0].ybor}],
+                                    data: [{x:0, y:0},{x:(datas[0].ybto/datas[0].xbor)*datas[0].xbor, y:(datas[0].ybto/datas[0].ybor)*datas[0].ybor}],
                                     showLine: true,
                                     fill: false,
                                     borderColor: 'black',
@@ -62,14 +70,16 @@ define(['initialize'], function (initialize) {
                                     fill: false,
                                     borderColor: 'green',
                                     pointStyle: 'line',
-                                }, {// 'line' dataset default does not affect this dataset since it's a 'scatter'
-                                    label: 'TOI, ALOS',
-                                    data: [{x:0, y:0},{x:datas[0].xtoi, y:datas[0].yalos}],
-                                    showLine: true,
-                                    fill: false,
-                                    borderColor: 'blue',
-                                    pointStyle: 'line',
-                                }]
+                                }, 
+                                // {// 'line' dataset default does not affect this dataset since it's a 'scatter'
+                                //     label: 'TOI, ALOS',
+                                //     data: [{x:0, y:0},{x:datas[0].xtoi, y:datas[0].yalos}],
+                                //     showLine: true,
+                                //     fill: false,
+                                //     borderColor: 'blue',
+                                //     pointStyle: 'line',
+                                // }
+                            ]
                             },
                             options: {
                                 responsive: true,
