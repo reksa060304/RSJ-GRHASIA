@@ -68,6 +68,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				console.log('okray');
 				$scope.nondiklat = true
 			}
+			
 			$scope.ListPenyelenggara = [
 				{
 					"id": 1,
@@ -444,7 +445,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 									$scope.item.masakerjakeseluruhan = ($scope.item.masakerjatambahan + $scope.sum) + " Thn"
 									console.log($scope.item.masakerjakeseluruhan);
 								}
-	
+								
 							}
 							$scope.gridCuti = new kendo.data.DataSource({
 								data: dataCuti
@@ -877,8 +878,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					},
 					{
 						"field": "nominal",
-						"title": "Nominal Gaji",
+						"title": "Gaji Pokok",
 						"width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: nominal #', '')}}</span>"
 					},
 					
 					{
@@ -898,7 +900,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					}
 				]
 			}
-
+$scope.formatRupiah = function (value, currency) {
+	return currency + "Rp. " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+}
 			$scope.opsiGridRiwayatGajiBerkala = {
 				toolbar: [{
 					name: "create",
@@ -2564,7 +2568,30 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					ModelItem.showMessages(isValid.messages);
 				}
 			}
-
+			$scope.panggoltmt = function () {
+				console.log('okray');
+				console.log($scope.itemPandG.golongan.id);
+				console.log($scope.itemPandG.tanggaltmt);
+				if (dataRiwayatPangkatGolongan.length > 0) {
+					console.log('bisa');
+					var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), new Date($scope.itemPandG.tanggaltmt));
+					var nominal = umur.year
+					medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemPandG.golongan.id+ '&mkg='+nominal).then(function (data) {
+						console.log(data);
+						$scope.itemPandG.nominal = data.data.gajigolongan[0].gajipokok
+					})
+				}else{
+					var umur = dateHelper.CountAge(new Date($scope.itemPandG.tanggaltmt), new Date($scope.now));
+					var nominal = umur.year
+					console.log(nominal);
+					medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemPandG.golongan.id + '&mkg=' + nominal).then(function (data) {
+						console.log(data);
+						$scope.itemPandG.nominal = data.data.gajigolongan[0].gajipokok
+					})
+				}
+			}
+			console.log('daftar kenaikan gaji berkala');
+			console.log(medifirstService.getPegawai().id);
 			$scope.tambahRiwayatPangkatGolongan = function () {
 				var listRawRequired = [
 					"itemPandG.golongan|k-ng-model|Golongan",

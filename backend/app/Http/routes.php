@@ -2117,6 +2117,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('sdm/pendidikan/get-cbo-tenagapengajar', 'SDM\SumberDayaManusiaController@getDataComboTenagaPengajar');
               Route::get('sdm/pendidikan/get-daftar-tenagapengajar', 'SDM\SumberDayaManusiaController@getDaftarTenagaPengajar');
               Route::get('sdm/pendidikan/get-detail-tenagapengajar', 'SDM\SumberDayaManusiaController@getDetailTenagaPengajar');
+              Route::get('nominal/get-nominal', 'SDM\SumberDayaManusiaController@nominal');
 
               Route::post('sdm/pendidikan/save-tenagapengajar', 'SDM\SumberDayaManusiaController@saveTenagaPengajar');
               Route::post('sdm/pendidikan/hapus-tenagapengajar', 'SDM\SumberDayaManusiaController@hapusTenagaPengajar');
