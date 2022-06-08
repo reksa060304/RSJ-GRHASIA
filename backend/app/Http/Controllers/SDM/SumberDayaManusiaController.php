@@ -598,6 +598,15 @@ class SumberDayaManusiaController extends ApiController {
         $datacuti = \DB::table('riwayatcuti_t')->select("*")
         ->where("objectpegawaifk",$request['idPegawai'])
         ->get();
+
+        $dataRiwayatGajiBerkala = \DB::table("riwayatgajiberkala_t as gb")
+        // ->leftjoin("riwayatgolongan_t as rg","rg.objectpegawaifk","=","gb.id") 
+        ->join("sdm_golongan_m as gol","gol.id","=","gb.objectgolonganfk")
+        ->select(DB::raw("gb.objectgolonganfk,gb.norec,gb.tglsk::date,gb.gajiawal, gb.gajiakhir, gb.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, gb.nosk, gb.pejabatmenetapkan"))
+        ->where("gb.objectpegawaifk",$request['idPegawai'])
+        ->orderBy('gb.tgltmt','asc')
+        ->get();
+        
         $result = array(
             'datapegawai' => $data,
             'datakeluarga' => $dataKeluarga,
@@ -612,6 +621,7 @@ class SumberDayaManusiaController extends ApiController {
             'datahukumandisiplin'=> $dataHukumanDisiplin,
             'datapangkatgolongan'=> $dataPangkatGolongan,
             'datacuti'=> $datacuti,
+            'datagajiberkala'=> $dataRiwayatGajiBerkala,
             "createby : " => 'ea@epic',
 
         );
@@ -654,6 +664,40 @@ class SumberDayaManusiaController extends ApiController {
     }
     //end pangkat golongan sdm
 
+
+    //delete gaji berkala
+     public function deleteDataGajiBerkala(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        try {
+            \DB::table('riwayatgajiberkala_t')->where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
+            $transMessage = "Hapus Data Gaji Berkala Sukses ";
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Hapus Data Gaji Berkala Gagal";
+        }
+
+        if ($transStatus != 'false') {
+
+            \DB::commit();
+            $result = array(
+
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'fizi',
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'fizi',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
     //riwayat pelatihan
     public function deleteDataPelatihan(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
@@ -712,6 +756,7 @@ class SumberDayaManusiaController extends ApiController {
             $dataHukumanDisiplin= $request['hukumandisiplin'];
             $dataRiwayatPangkatGolongan = $request['pangkatgolongan'];
             $dataRiwayatcuti = $request['cuti'];
+            $dataRiwayatGajiBerkala = $request['gajiberkala'];
 //            return $this->respond($dataKeluargaPegawai);
 
 
@@ -1122,6 +1167,43 @@ class SumberDayaManusiaController extends ApiController {
                 }
             }
 
+            if ($dataRiwayatGajiBerkala != "") {
+                foreach ($dataRiwayatGajiBerkala as $gb) {
+                    
+                    if ($gb['norec'] == "") {
+                        \DB::table("riwayatgajiberkala_t")->insert([
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'objectpegawaifk'=> $IdPegawais,
+                        'gajiawal'=> $gb['gajiawal'],
+                        'gajiakhir'=> $gb['gajiakhir'],
+                        'tglsk'=>$gb['tglsk'],
+                        'tgltmt'=>$gb['tgltmt'],
+                        'pejabatmenetapkan'=> $gb['pejabatmenetapkan'] ,
+                        'nosk'=> $gb['nosk'],
+                        'objectgolonganfk'=>$gb['objectgolonganfk'],
+                        ]);
+                    }else{
+                        \DB::table("riwayatgajiberkala_t")
+                        ->where('norec', $gb['norec'])
+                        ->where('kdprofile', $kdProfile)
+                        ->where('objectpegawaifk', $IdPegawais)
+                        ->update([
+                            // 'statusenabled'=> true,
+                            'gajiawal'=> $gb['gajiawal'],
+                            'gajiakhir'=> $gb['gajiakhir'],
+                            'tglsk'=>$gb['tglsk'],
+                            'tgltmt'=>$gb['tgltmt'],
+                            'pejabatmenetapkan'=> $gb['pejabatmenetapkan'] ,
+                            'nosk'=> $gb['nosk'],
+                            'objectgolonganfk'=>$gb['objectgolonganfk'],
+                        ]);
+                    }
+                }
+                # code...
+            }
+
             //## Logging User
 //                if ($dataPegawai['id'] == ""){
 //                    $newId = LoggingUser::max('id');
@@ -1181,6 +1263,7 @@ class SumberDayaManusiaController extends ApiController {
                 'hukumandisiplin' => $dataHukumanDisiplin,
                 'riwayatpangkatgolongan' => $dataRiwayatPangkatGolongan,
                 'datariwayatcuti' => $dataRiwayatcuti,
+                'datariwayatgajiberkala' => $dataRiwayatGajiBerkala,
                 "as" => 'ea@epic',
             );
         } else {
@@ -1201,6 +1284,7 @@ class SumberDayaManusiaController extends ApiController {
                 'datakomponendel' => $dataKomponenGajiDel,                
                 'hukumandisiplin' => $dataHukumanDisiplin,
                 'riwayatpangkatgolongan' => $dataRiwayatPangkatGolongan,
+                'datariwayatgajiberkala' => $dataRiwayatGajiBerkala,
                 "as" => 'ea@epic',
             );
         }
