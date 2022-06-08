@@ -163,6 +163,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					$scope.ListAgama = dataCombo.agama;
 					$scope.ListStatusKawin = dataCombo.statuskawin;
 					$scope.ListPendidikan = dataCombo.pendidikan;
+					$scope.ListPendidikanPegawai = dataCombo.pendidikanpegawai;
 					// $scope.UsiaPensiun =dataCombo.usiapensiun.nilaifield;
 					$scope.ListKedudukanPegawai = dataCombo.kedudukan;
 					$scope.ListKategoriPegawai = dataCombo.kategorypegawai;
@@ -245,6 +246,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 								$scope.item.unitKerja =  { id: dataCachePegawai.objectunitkerjapegawaifk, name: dataCachePegawai.unitkerja };
 							$scope.item.jenisKelamin = { id: dataCachePegawai.objectjeniskelaminfk, jeniskelamin: dataCachePegawai.jeniskelamin };
 							$scope.item.pendidikan = { id: dataCachePegawai.objectpendidikanterakhirfk, pendidikan: dataCachePegawai.pendidikan };
+							$scope.item.pendidikanpegawai = { id: dataCachePegawai.objectpendidikanpegawaifk, pendidikanpegawai: dataCachePegawai.pendidikanpegawai };
 							$scope.item.statusPerkawinanPegawai = { id: dataCachePegawai.objectstatusperkawinanpegawaifk, statusperkawinan: dataCachePegawai.statusperkawinan };
 							$scope.item.npwp = dataCachePegawai.npwp
 							$scope.item.agama = { id: dataCachePegawai.objectagamafk, agama: dataCachePegawai.agama };
@@ -2171,7 +2173,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					"itemKeluarga.nipIstriSuami|ng-model|Nip Istri / Suami",
 					"itemKeluarga.statusTanggungan|k-ng-model|Status Tanggungan",
 					"itemKeluarga.alamat|ng-model|Alamat Anggota Keluarga",
-					"itemKeluarga.pendidikan|k-ng-model|Pendidikan Terkahir"
+					"itemKeluarga.pendidikan|k-ng-model|Pendidikan Terkahir",
 				];
 
 				var noSuratKuliah = "-";
@@ -2262,7 +2264,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							id: $scope.item.id,
 							alamat: $scope.itemKeluarga.alamat,
 							objectpendidikanterakhirfk: $scope.itemKeluarga.pendidikan.id,
-							pendidikan: $scope.itemKeluarga.pendidikan.pendidikan
+							pendidikan: $scope.itemKeluarga.pendidikan.pendidikan,
 
 						}
 
@@ -3075,6 +3077,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					// "item.tglLahir|k-ng-model|Tgl Lahir Pegawai",
 					"item.jenisKelamin|k-ng-model|Jenis Kelamin Pegawai",
 					"item.pendidikan|k-ng-model|Pendidikan Terakhir",
+					"item.pendidikanpegawai|k-ng-model|Pendidikan Pegawai",
 					"item.statusPerkawinanPegawai|k-ng-model|Status Perkawinan",
 					"item.agama|k-ng-model|Agama",
 					// Data Pegawai
@@ -3227,6 +3230,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						tgllahir: $scope.item.tglLahir != undefined? moment($scope.item.tglLahir).format('YYYY-MM-DD 00:00:00'):null,
 						jeniskelamin: $scope.item.jenisKelamin.id,
 						pendidikan: $scope.item.pendidikan.id,
+						pendidikanpegawai: $scope.item.pendidikanpegawai.id,
 						statusperkawinan: $scope.item.statusPerkawinanPegawai.id,
 						npwp: Npwp,
 						agama: $scope.item.agama.id,
