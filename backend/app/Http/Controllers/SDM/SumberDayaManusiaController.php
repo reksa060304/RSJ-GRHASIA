@@ -448,7 +448,8 @@ class SumberDayaManusiaController extends ApiController {
         $dataPendidikan=\DB::table('riwayatpendidikan_t as rp')
             ->leftJoin('pegawai_m as pg','pg.id','=','rp.objectpegawaifk')
             ->leftJoin('pendidikan_m as pend','pend.id','=','rp.objectpendidikanfk')
-            ->select(DB::raw("rp.*,pend.pendidikan,pg.namalengkap"))
+            ->leftJoin('pendidikanpegawai_m as pendpg','pendpg.id','=','rp.objectpendidikanpegawaifk')
+            ->select(DB::raw("rp.*,pend.pendidikan,pg.namalengkap, pendpg.pendidikanpegawai"))
             ->where('rp.kdprofile', $kdProfile)
             ->where('pg.statusenabled',true)
             ->orderBy('rp.tgllulus');
@@ -835,7 +836,7 @@ class SumberDayaManusiaController extends ApiController {
                     }
                     $dataSavePendidikan->namatempatpendidikan = $items['namatempatpendidikan'];
                     $dataSavePendidikan->alamattempatpendidikan = $items['alamattempatpendidikan'];
-                    $dataSavePendidikan->objectpendidikanfk =$items['objectpendidikanfk'];
+                    $dataSavePendidikan->objectpendidikanpegawaifk =$items['objectpendidikanpegawaifk'];
                     $dataSavePendidikan->jurusan = $items['jurusan'];
                     $dataSavePendidikan->tglmasuk = $items['tglmasuk'];
                     $dataSavePendidikan->tgllulus = $items['tgllulus'];

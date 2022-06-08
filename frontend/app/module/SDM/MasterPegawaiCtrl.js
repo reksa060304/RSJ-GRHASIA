@@ -650,7 +650,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						"width": "5%"
 					},
 					{
-						"field": "pendidikan",
+						"field": "pendidikanpegawai",
 						"title": "Pendidikan",
 						"width": "20%"
 					},
@@ -1438,7 +1438,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				};
 				$scope.item.norecPend = dataItem.norec;
 				$scope.item.nomor = dataItem.no;
-				$scope.itemPendidikan.pendidikan = { id: dataItem.objectpendidikanfk, pendidikan: dataItem.pendidikan };
+				//$scope.itemPendidikan.pendidikan = { id: dataItem.objectpendidikanfk, pendidikan: dataItem.pendidikan };
+				$scope.itemPendidikan.pendidikanpegawai = { id: dataItem.objectpendidikanpegawaifk, pendidikanpegawai: dataItem.pendidikanpegawai };
 				$scope.itemPendidikan.NamaInstitusi = dataItem.namatempatpendidikan;
 				$scope.itemPendidikan.alamat = dataItem.alamattempatpendidikan;
 				$scope.itemPendidikan.jurusan = dataItem.jurusan;
@@ -2203,7 +2204,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 			$scope.tambahRiwayatPendidikan = function () {
 				var listRawRequired = [
-					"itemPendidikan.pendidikan|k-ng-model|Pendidikan",
+					//"itemPendidikan.pendidikan|k-ng-model|Pendidikan",
+					"itemPendidikan.pendidikanpegawai|k-ng-model|Pendidikan Pegawai",
 					"itemPendidikan.NamaInstitusi|ng-model|Nama Institusi",
 					"itemPendidikan.alamat|ng-model|Alamat Institusi",
 					"itemPendidikan.tglMasukPend|k-ng-model|Tgl Masuk",
@@ -2244,8 +2246,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						for (var i = dataRiwayatPendidikan.length - 1; i >= 0; i--) {
 							if (dataRiwayatPendidikan[i].no == $scope.item.nomor) {
 								data.no = $scope.item.nomor
-								data.objectpendidikanfk = $scope.itemPendidikan.pendidikan.id
-								data.pendidikan = $scope.itemPendidikan.pendidikan.pendidikan
+								//data.objectpendidikanfk = $scope.itemPendidikan.pendidikan.id
+								//data.pendidikan = $scope.itemPendidikan.pendidikan.pendidikan
+								data.pendidikanpegawai = $scope.itemPendidikan.pendidikanpegawai.pendidikanpegawai
+								data.objectpendidikanpegawaifk = $scope.itemPendidikan.pendidikanpegawai.id
 								data.namatempatpendidikan = $scope.itemPendidikan.NamaInstitusi
 								data.alamattempatpendidikan = $scope.itemPendidikan.alamat
 								data.tglmasuk = moment($scope.itemPendidikan.tglMasukPend).format('YYYY-MM-DD HH:mm')
@@ -2267,8 +2271,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 						data = {
 							no: nomor,
-							objectpendidikanfk: $scope.itemPendidikan.pendidikan.id,
-							pendidikan: $scope.itemPendidikan.pendidikan.pendidikan,
+							// objectpendidikanfk: $scope.itemPendidikan.pendidikan.id,
+							// pendidikan: $scope.itemPendidikan.pendidikan.pendidikan,
+							pendidikanpegawai: $scope.itemPendidikan.pendidikanpegawai.pendidikanpegawai,
+							objectpendidikanpegawaifk: $scope.itemPendidikan.pendidikanpegawai.id,
 							namatempatpendidikan: $scope.itemPendidikan.NamaInstitusi,
 							alamattempatpendidikan: $scope.itemPendidikan.alamat,
 							tglmasuk: moment($scope.itemPendidikan.tglMasukPend).format('YYYY-MM-DD HH:mm'),
