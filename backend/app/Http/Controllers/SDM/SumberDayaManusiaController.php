@@ -405,6 +405,7 @@ class SumberDayaManusiaController extends ApiController {
             ->leftJoin('statusperkawinanpegawai_m as spp','spp.id','=','pg.objectstatusperkawinanpegawaifk')
             ->leftJoin('eselon_m as ese','ese.id','=','pg.objecteselonfk')
             ->leftJoin('pendidikan_m as pend','pend.id', '=','pg.objectpendidikanterakhirfk')
+            ->leftJoin('pendidikanpegawai_m as pendpg','pendpg.id', '=','pg.objectpendidikanpegawaifk')
             ->leftJoin('jeniskelamin_m as jk','jk.id','=','pg.objectjeniskelaminfk')
             ->leftJoin('sdm_golongan_m as gol','gol.id','=','pg.objectgolonganfk')
             ->leftJoin('nilaikelompokjabatan_m as nkj','nkj.id','=','pg.objectkelompokjabatanfk')
@@ -416,7 +417,7 @@ class SumberDayaManusiaController extends ApiController {
 			                        jb1.namajabatan as jbstruktural,gp.golonganpegawai,uk.name as unitkerja,sp.statuspegawai,
 			                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,pend.pendidikan,jk.jeniskelamin,
 			                        gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,
-			                        kp.kategorypegawai as namakategorypegawai,kdd.name as kedudukan,pg.objectjenispegawaifk,jp.jenispegawai"))
+			                        kp.kategorypegawai as namakategorypegawai,kdd.name as kedudukan,pg.objectjenispegawaifk,jp.jenispegawai, pendpg.pendidikanpegawai, pg.objectpendidikanpegawaifk"))
             ->where('pg.kdprofile', $kdProfile)
             ->where('pg.statusenabled',true)
             ->orderBy('pg.namalengkap');
@@ -754,6 +755,7 @@ class SumberDayaManusiaController extends ApiController {
             $dataSavePegawai->objectgolonganfk=  $dataPegawai['golongan'];
             $dataSavePegawai->objectjabatanfungsionalfk= $dataPegawai['jabatan'];
             $dataSavePegawai->objectpendidikanterakhirfk=  $dataPegawai['pendidikan'];
+            $dataSavePegawai->objectpendidikanpegawaifk=  $dataPegawai['pendidikanpegawai'];
             $dataSavePegawai->objectkelompokjabatanfk=  $dataPegawai['kelompokjabatan'];
             $dataSavePegawai->objectstatusperkawinanpegawaifk= $dataPegawai['statusperkawinan'];
             $dataSavePegawai->objecteselonfk=  $dataPegawai['eselon'];
