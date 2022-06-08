@@ -769,6 +769,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-riwayatcppt-rajalranap', 'EMR\EMRController@getRiwayatCPPTRajalRanap');
           Route::get('emr/get-data-perawatan', 'EMR\EMRController@getDataPerawatan');
 
+
+          Route::post('bsre-esign/sign/pdf', 'Bridging\BridgingBSREController@signDokumen');
+          Route::get('bsre-esign/sign/download/{id_dokumen}', 'Bridging\BridgingBSREController@downloadDokumen');
+          Route::post('bsre-esign/sign/verify', 'Bridging\BridgingBSREController@verifyDokumen');
+          Route::get('bsre-esign/user/status/{nik}', 'Bridging\BridgingBSREController@cekStatusUser');
+          Route::post('bsre-esign/user/registrasi', 'Bridging\BridgingBSREController@registrasi');
         // });
 
           Route::post('cp/save-cp-dinamis', 'ClinicalPathway\CPController@SaveTransaksiCP');
