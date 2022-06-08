@@ -722,7 +722,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
         
                                         if (norecPD == '' && isRegisOnline == '') {
                                            saveAntrol($scope.Noregistrasi,$scope.resultAPD)
-                                           saveAntrol($scope.Noregistrasi,$scope.resultAPD)
+                                           // saveAntrol($scope.Noregistrasi,$scope.resultAPD)
                                         }
         
                                     }
@@ -1775,6 +1775,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                     //var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm
                     var noref= $scope.item.pasien.nobpjs+$scope.item.pasien.nocm+noregistrasi+noregistrasi
+                    $scope.dataAntrol ={}
                     var data = {
                         "url": "antrean/add",
                         "jenis": "antrean",
@@ -1805,7 +1806,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                            "keterangan": ""
                         }
                     }
+                    $scope.dataAntrol = data
                     medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                         $scope.saveLogging('Antrol Task ID', 'norec Pasien Daftar',
+                         noregistrasi, 'Tambah Antrean Kode ' + noregistrasi +' | '+
+                         JSON.stringify($scope.dataAntrol) + ' | '+ JSON.stringify(e.data))
                         if(e.data.metaData.code == 201)return
                          var data = {
                             "url": "antrean/updatewaktu",
@@ -1818,6 +1823,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                "waktu": new Date().getTime()  - 300000//kurangi 8 menit
                             }
                         }
+                        $scope.saveLogging('Antrol Task ID', 'norec Pasien Daftar',
+                         noregistrasi, 'TASK ID 1 : ' + noregistrasi +' | '+
+                         JSON.stringify(data))
                         medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
                             var data = {
                                 "url": "antrean/updatewaktu",
