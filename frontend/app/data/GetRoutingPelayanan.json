@@ -17867,5 +17867,46 @@
         "define": "RekamMedisCtrl"
       }
     ]
-  }
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.SuratBuktiPengembalianPenerimaanKembali",
+    "url": "/SuratBuktiPengembalianPenerimaanKembali",
+    "templateurl": "module/EMR/SuratBuktiPengembalianPenerimaanKembali.html",
+    "controller": "SuratBuktiPengembalianPenerimaanKembaliCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.RencanaIntegrasiAsuhan",
+    "url": "/RencanaIntegrasiAsuhan",
+    "templateurl": "module/EMR/RencanaIntegrasiAsuhan.html",
+    "controller": "RencanaIntegrasiAsuhanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+    }
 ]
