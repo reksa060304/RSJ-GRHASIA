@@ -28,14 +28,129 @@ define(['initialize'], function (initialize) {
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir).then(function (data) {
                         var data = data.data
+                        var j = 0;
+                        var k = 0;
+                        var l = 0;
+                        var m = 0;
+                        var n = 0;
+                        var o = 0;
+                        var p = 0;
+                        var q = 0;
+                        var r = 0;
+                        var s = 0;
+                        var t = 0;
+                        var u = 0;
+                        var v = 0;
+                        var w = 0;
+                        var x = 0;
+                        var length = data.data.length - 1
+                        var tot = 0
                         for (var i = 0; i < data.data.length; i++) {
                             data.data[i].kdprov = '24'
                             data.data[i].kabkota = 'Kab. Sleman'
                             data.data[i].koders = '3404022'
                             data.data[i].namars = 'RSJ. Grhasia'
-                            data.data[i].no = 1
                             data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
+                            tot += data.data[i].jumlahtotal
                         }
+
+                        data.data[0].no = "1";
+                        data.data[1].no = "1.1";
+                        data.data[10].no = "1.2";
+                        data.data[17].no = "1.3";
+                        data.data[21].no = "1.4";
+                        data.data[26].no = "1.5";
+                        data.data[49].no = "1.6";
+                        data.data[58].no = "2";
+                        data.data[59].no = "2.1";
+                        data.data[81].no = "2.2";
+                        data.data[87].no = "2.3";
+                        data.data[97].no = "2.4";
+                        data.data[114].no = "2.5";
+                        data.data[136].no = "2.6";
+                        data.data[143].no = "2.7";
+                        data.data[153].no = "2.8";
+                        data.data[186].no = "2.9";
+                        data.data[length].no = 99
+                        data.data[length].jumlahtotal = tot
+
+                        for(i = 2; i <= 9; i++){
+                            j++
+                            data.data[i].no = "1.1."+j
+                        }
+
+                        for(i = 11; i <= 16; i++){
+                            k++
+                            data.data[i].no = "1.2."+k
+                        }
+
+                        for(i = 18; i <= 20; i++){
+                            l++
+                            data.data[i].no = "1.3."+l
+                        }
+
+                        for(i = 22; i <= 25; i++){
+                            m++
+                            data.data[i].no = "1.4."+m
+                        }
+
+                        for(i = 27; i <= 48; i++){
+                            n++
+                            data.data[i].no = "1.5."+n
+                        }
+
+                        for(i = 50; i <= 57; i++){
+                            o++
+                            data.data[i].no = "1.6."+o
+                        }
+
+                        for(i = 60; i <= 80; i++){
+                            p++
+                            data.data[i].no = "2.1."+p
+                        }
+
+                        for(i = 82; i <= 86; i++){
+                            q++
+                            data.data[i].no = "2.2."+q
+                        }
+
+                        for(i = 88; i <= 96; i++){
+                            r++
+                            data.data[i].no = "2.3."+r
+                        }
+
+                        for(i = 98; i <= 113; i++){
+                            s++
+                            data.data[i].no = "2.4."+s
+                        }
+
+                        for(i = 115; i <= 135; i++){
+                            t++
+                            data.data[i].no = "2.5."+t
+                        }
+
+                        for(i = 137; i <= 142; i++){
+                            u++
+                            data.data[i].no = "2.6."+u
+                        }
+
+                        for(i = 144; i <= 152; i++){
+                            v++
+                            data.data[i].no = "2.7."+v
+                        }
+
+                        for(i = 154; i <= 185; i++){
+                            w++
+                            data.data[i].no = "2.8."+w
+                        }
+
+                        for(i = 187; i <= 200; i++){
+                            x++
+                            data.data[i].no = "2.9."+x
+                        }
+
+                        console.log(data.data.no);
+
                         $scope.isRouteLoading = false;
                         $scope.ambildataexcel = data.data;
                         $scope.panggil($scope.ambildataexcel);
@@ -175,6 +290,11 @@ define(['initialize'], function (initialize) {
                     width: "80px"
                 },
                 {
+                    field: "koders",
+                    title: "KODE RS",
+                    width: "80px"
+                },
+                {
                     field: "namars",
                     title: "NAMA RS",
                     width: "80px"
@@ -185,17 +305,17 @@ define(['initialize'], function (initialize) {
                     width: "80px"
                 },
                 {
-                    field: "namaruangan",
+                    field: "no",
                     title: "NO",
                     width: "80px"
                 },
                 {
-                    field: "namaproduk",
+                    field: "namaruangan",
                     title: "JENIS KEGIATAN",
                     width: "80px"
                 },
                 {
-                    field: "jumlah",
+                    field: "jumlahtotal",
                     title: "JUMLAH",
                     width: "80px"
                 },

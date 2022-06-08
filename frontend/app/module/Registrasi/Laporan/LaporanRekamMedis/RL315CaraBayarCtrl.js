@@ -18,23 +18,7 @@ define(['initialize'], function (initialize) {
 
             function LoadData() {
                 var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');;
-                //   var tempRuanganId = "";
-                //   if ($scope.item.ruangan != undefined) {
-                //       tempRuanganId = "&idRuangan=" + $scope.item.ruangan.id;
-                //   }
-                //   var tempDepartemen = "";
-                //   if ($scope.item.departement != undefined) {
-                //       tempDepartemen = "&idDept=" + $scope.item.departement.id;
-                //   }
-                //   var tempKelPasienId = "";
-                //   if ($scope.item.namaPenjamin != undefined) {
-                //       tempKelPasienId = "&kelompokPasien=" + $scope.item.namaPenjamin.id;
-                //   }
-                //   var tempRekananId = "";
-                //   if ($scope.item.institusiAsalPasien != undefined) {
-                //       tempRekananId = "&institusiAsalPasien=" + $scope.item.institusiAsalPasien.id;
-                //   }  
+                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
                 var chacePeriode = {
                     0: tglAwal,
                     1: tglAkhir
@@ -46,9 +30,41 @@ define(['initialize'], function (initialize) {
                     + "&tglAkhir=" + tglAkhir
                 ).then(function (data) {
                     var data = data.data
+                    var totalpasienranapjpk = 0;
+                    var totalpasienranapjld = 0;
+                    var totalpasienrajal = 0;
+                    var totalpasienrajallab = 0;
+                    var totalpasienrajalrad = 0;
+                    var totalpasienrajallain = 0;
                     for (var i = 0; i < data.data.length; i++) {
-                        data.data[i].no = i + 1
+                        data.data[i].kdprov = '24'
+                        data.data[i].kabkota = 'Kab. Sleman'
+                        data.data[i].koders = '3404022'
+                        data.data[i].namars = 'RSJ. Grhasia'
+                        data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
+                        totalpasienranapjpk += data.data[i].pasienranapjpk;
+                        totalpasienranapjld += data.data[i].pasienranapjld;
+                        totalpasienrajal += data.data[i].pasienrajal;
+                        totalpasienrajallab += data.data[i].pasienrajallab;
+                        totalpasienrajalrad += data.data[i].pasienrajalrad;
+                        totalpasienrajallain += data.data[i].pasienrajallain;
                     }
+                    data.data[9].pasienranapjpk = totalpasienranapjpk
+                    data.data[9].pasienranapjld = totalpasienranapjld
+                    data.data[9].pasienrajal = totalpasienrajal
+                    data.data[9].pasienrajallab = totalpasienrajallab
+                    data.data[9].pasienrajalrad = totalpasienrajalrad
+                    data.data[9].pasienrajallain = totalpasienrajallain
+                    data.data[0].no = 1
+                    data.data[1].no = 2
+                    data.data[2].no = 2.1
+                    data.data[3].no = 2.2
+                    data.data[4].no = 3
+                    data.data[5].no = 4
+                    data.data[6].no = 4.1
+                    data.data[7].no = 4.2
+                    data.data[8].no = 4.3
+                    data.data[9].no = 99
                     $scope.isRouteLoading = false;
                     $scope.ambildataexcel = data.data;
                     $scope.panggil($scope.ambildataexcel);
@@ -84,14 +100,39 @@ define(['initialize'], function (initialize) {
                     pageable: true,
                     columns: [
                         {
-                            field: "idbayar",
+                            field: "kdprov",
+                            title: "KODE PROPINSI",
+                            width: "80px"
+                        },
+                        {
+                            field: "kabkota",
+                            title: "KAB / KOTA",
+                            width: "80px"
+                        },
+                        {
+                            field: "koders",
+                            title: "KODE RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "namars",
+                            title: "NAMA RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "tahun",
+                            title: "TAHUN",
+                            width: "80px"
+                        },
+                        {
+                            field: "no",
                             title: "No",
-                            Template: "<span class='style-center'>#: idbayar #</span>",
+                            Template: "<span class='style-center'>#: no #</span>",
                             width: "70px"
                         },
                         {
-                            field: "golbayar",
-                            title: "Cara Pembayaran",
+                            field: "carabayar",
+                            title: "CARA PEMBAYARAN",
                             headerAttributes: { style: "text-align : center" },
                         },
                         {
@@ -99,36 +140,36 @@ define(['initialize'], function (initialize) {
                             headerAttributes: { style: "text-align : center" },
                             columns: [
                                 {
-                                    "field": "pasienKeluarRI",
-                                    "title": "Jumlah Pasien Keluar"
+                                    "field": "pasienranapjpk",
+                                    "title": "JUMLAH PASIEN KELUAR"
 
                                 },
                                 {
-                                    "field": "pasienDirawatRI",
-                                    "title": "Jumlah Pasien Dirawat"
+                                    "field": "pasienranapjld",
+                                    "title": "JUMLAH LAMA DIRAWAT"
                                 }
                             ]
                         },
                         {
-                            field: "pasienRawatJalan",
-                            title: "PASIEN RAWAT JALAN",
+                            field: "pasienrajal",
+                            title: "JUMLAH PASIEN RAWAT JALAN",
                             headerAttributes: { style: "text-align : center" },
                         },
                         {
-                            title: "PASIEN RAWAT JALAN",
+                            title: "JUMLAH PASIEN RAWAT JALAN",
                             headerAttributes: { style: "text-align : center" },
                             columns: [
                                 {
-                                    "field": "pasienLab",
-                                    "title": "Laboratorium"
+                                    "field": "pasienrajallab",
+                                    "title": "LABORATORIUM"
                                 },
                                 {
-                                    "field": "pasienRad",
-                                    "title": "Radiologi"
+                                    "field": "pasienrajalrad",
+                                    "title": "RADIOLOGI"
                                 },
                                 {
-                                    "field": "pasienLain",
-                                    "title": "Lain-Lain"
+                                    "field": "pasienrajallain",
+                                    "title": "LAIN-LAIN"
                                 }
                             ]
                         }
@@ -152,49 +193,76 @@ define(['initialize'], function (initialize) {
 
             $scope.columndataRL53 = [
                 {
-                    field: "idbayar",
-                    title: "No",
-                    headerAttributes: { style: "text-align : center" },
+                    field: "kdprov",
+                    title: "KODE PROPINSI",
+                    width: "80px"
                 },
                 {
-                    field: "golbayar",
-                    title: "Cara Pembayaran"
-                    // "headerAttributes":"{style:"text-align : center"}",
+                    field: "kabkota",
+                    title: "KAB / KOTA",
+                    width: "80px"
+                },
+                {
+                    field: "koders",
+                    title: "KODE RS",
+                    width: "80px"
+                },
+                {
+                    field: "namars",
+                    title: "NAMA RS",
+                    width: "80px"
+                },
+                {
+                    field: "tahun",
+                    title: "TAHUN",
+                    width: "80px"
+                },
+                {
+                    field: "no",
+                    title: "No",
+                    Template: "<span class='style-center'>#: no #</span>",
+                    width: "70px"
+                },
+                {
+                    field: "carabayar",
+                    title: "CARA PEMBAYARAN",
+                    headerAttributes: { style: "text-align : center" },
                 },
                 {
                     title: "PASIEN RAWAT INAP",
                     headerAttributes: { style: "text-align : center" },
                     columns: [
                         {
-                            "field": "",
-                            "title": "Jumlah Pasien Keluar"
+                            "field": "pasienranapjpk",
+                            "title": "JUMLAH PASIEN KELUAR"
+
                         },
                         {
-                            "field": "",
-                            "title": "Jumlah Pasien Dirawat"
+                            "field": "pasienranapjld",
+                            "title": "JUMLAH LAMA DIRAWAT"
                         }
                     ]
                 },
                 {
-                    "field": "",
-                    "title": "PASIEN RAWAT JALAN"
-                    // "headerAttributes":"{style:"text-align : center"}",
+                    field: "pasienrajal",
+                    title: "JUMLAH PASIEN RAWAT JALAN",
+                    headerAttributes: { style: "text-align : center" },
                 },
                 {
-                    title: "PASIEN RAWAT JALAN",
+                    title: "JUMLAH PASIEN RAWAT JALAN",
                     headerAttributes: { style: "text-align : center" },
                     columns: [
                         {
-                            "field": "",
-                            "title": "Laboratorium"
+                            "field": "pasienrajallab",
+                            "title": "LABORATORIUM"
                         },
                         {
-                            "field": "",
-                            "title": "Radiologi"
+                            "field": "pasienrajalrad",
+                            "title": "RADIOLOGI"
                         },
                         {
-                            "field": "",
-                            "title": "Lain-Lain"
+                            "field": "pasienrajallain",
+                            "title": "LAIN-LAIN"
                         }
                     ]
                 }

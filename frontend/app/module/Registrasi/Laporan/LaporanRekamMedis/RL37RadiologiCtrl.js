@@ -28,12 +28,14 @@ define(['initialize'], function (initialize) {
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir).then(function (data) {
                         var data = data.data
+                        var tot = 0;
                         for (var i = 0; i < data.data.length; i++) {
                             data.data[i].kdprov = '24'
                             data.data[i].kabkota = 'Kab. Sleman'
                             data.data[i].koders = '3404022'
                             data.data[i].namars = 'RSJ. Grhasia'
                             data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
+                            tot += data.data[i].jumlahtotal
                         }
 
                         for (var j = 1; j <= 9; j++){
@@ -52,6 +54,7 @@ define(['initialize'], function (initialize) {
                         data.data[20].no = 3;
 
                         data.data[21].no = 99;
+                        data.data[21].jumlahtotal = tot;
 
                         data.data[1].no = 1;
                         $scope.isRouteLoading = false;

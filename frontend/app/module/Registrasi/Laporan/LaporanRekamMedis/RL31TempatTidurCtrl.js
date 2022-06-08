@@ -22,11 +22,53 @@ define(['initialize'], function (initialize) {
                     "tglAwal=" + tglAwal
                 ).then(function (data) {
                     var data = data.data
+                    var subtottotaltt = 0
+                    var subtotjumlahkelasvvip = 0
+                    var subtotjumlahkelasvip = 0
+                    var subtotjumlahkelassatu = 0
+                    var subtotjumlahkelasdua = 0
+                    var subtotjumlahkelastiga = 0
+                    var tottotaltt = 0
+                    var totjumlahkelasvvip = 0
+                    var totjumlahkelasvip = 0
+                    var totjumlahkelassatu = 0
+                    var totjumlahkelasdua = 0
+                    var totjumlahkelastiga = 0
+                    console.log(data.data.length)
                     for(var i = 0; i < data.data.length; i++){
                         data.data[i].koders = '3404022';
                         data.data[i].kdprov = '24';
                         data.data[i].kabkota = 'Kab. Sleman';
+                        if(data.data[i].pelayanan != 'Perinatologi'){
+                            subtottotaltt += data.data[i].totaltt
+                            subtotjumlahkelasvvip += data.data[i].jumlahkelasvvip
+                            subtotjumlahkelasvip += data.data[i].jumlahkelasvip
+                            subtotjumlahkelassatu += data.data[i].jumlahkelassatu
+                            subtotjumlahkelasdua += data.data[i].jumlahkelasdua
+                            subtotjumlahkelastiga += data.data[i].jumlahkelastiga
+                        }
+                        tottotaltt += data.data[i].totaltt
+                        totjumlahkelasvvip += data.data[i].jumlahkelasvvip
+                        totjumlahkelasvip += data.data[i].jumlahkelasvip
+                        totjumlahkelassatu += data.data[i].jumlahkelassatu
+                        totjumlahkelasdua += data.data[i].jumlahkelasdua
+                        totjumlahkelastiga += data.data[i].jumlahkelastiga
                     }
+                    data.data[29].no = 77
+                    data.data[29].totaltt = subtottotaltt  
+                    data.data[29].jumlahkelasvvip = subtotjumlahkelasvvip 
+                    data.data[29].jumlahkelasvip = subtotjumlahkelasvip 
+                    data.data[29].jumlahkelassatu = subtotjumlahkelassatu 
+                    data.data[29].jumlahkelasdua = subtotjumlahkelasdua 
+                    data.data[29].jumlahkelastiga = subtotjumlahkelastiga 
+                    data.data[31].totaltt = tottotaltt  
+                    data.data[31].jumlahkelasvvip = totjumlahkelasvvip 
+                    data.data[31].jumlahkelasvip = totjumlahkelasvip 
+                    data.data[31].jumlahkelassatu = totjumlahkelassatu 
+                    data.data[31].jumlahkelasdua = totjumlahkelasdua 
+                    data.data[31].jumlahkelastiga = totjumlahkelastiga 
+                    data.data[30].no = 88
+                    data.data[31].no = 99
                     $scope.isRouteLoading = false;
                     $scope.sourceLaporan = new kendo.data.DataSource({
                         data: data.data,
