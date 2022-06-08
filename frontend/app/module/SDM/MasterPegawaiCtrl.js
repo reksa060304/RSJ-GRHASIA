@@ -433,15 +433,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 									console.log($scope.item.masakerjakeseluruhan);
 								}else{
 									var mkgtotal = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), $scope.now)
-									var cutitotal = dateHelper.CountAge(new Date(dataCuti[0].tgldari), new Date(dataCuti[dataCuti.length - 1].tglsampai))
+									// var cutitotal = dateHelper.CountAge(new Date(dataCuti[0].tgldari), new Date(dataCuti[dataCuti.length - 1].tglsampai))
 									var mkgbln = mkgtotal.month,
 										mkgthn = mkgtotal.year
-									var cutibln = cutitotal.month,
-										cutithn = cutitotal.year
-									console.log(mkgbln, mkgthn);
-									console.log(mkgtotal, cutitotal);
-									var sumthn = mkgthn - cutithn,
-										sumbln = mkgbln - cutibln
+									
+									var sumthn = mkgthn - 0,
+										sumbln = mkgbln - 0
 									console.log(sumthn, sumbln);
 									$scope.sum = sumthn
 									$scope.item.masakerjakeseluruhan = ($scope.item.masakerjatambahan + $scope.sum) + " Thn"
@@ -876,6 +873,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					{
 						"field": "mkgt",
 						"title": "Masa Kerja Golongan",
+						"width": "100px",
+					},
+					{
+						"field": "nominal",
+						"title": "Nominal Gaji",
 						"width": "100px",
 					},
 					
@@ -1674,6 +1676,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.itemPandG.tanggalsk = moment(dataItem.tglsk).format('YYYY-MM-DD HH:mm');
 				$scope.itemPandG.pejabatmenetapkan = dataItem.pejabatmenetapkan;
 				$scope.itemPandG.nosk = dataItem.nosk;
+				$scope.itemPandG.nominal = dataItem.nominal;
 				$scope.popUpRiwayatPangkatGolongan.center().open();
 			}
 
@@ -2569,7 +2572,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					"itemPandG.nosk|ng-model|NO SK",
 					"itemPandG.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
 					"itemPandG.tanggaltmt|k-ng-model|Tanggal TMT",
-					// "itemPandG.ttdSK|k-ng-model|Penandatangan SK",
+					"itemPandG.nominal|ng-model|Nominal",
 					// "itemPandG.jabatanTtd|k-ng-model|Penandatangan Jabatan",
 				];
 
@@ -2595,7 +2598,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 								data.pejabatmenetapkan= $scope.itemPandG.pejabatmenetapkan;
 								data.objectgolonganfk= $scope.itemPandG.golongan.id;
 								data.golongan= $scope.itemPandG.golongan.golongan;
-								data.nosk= $scope.itemPandG.nosk
+								data.nosk = $scope.itemPandG.nosk
+								data.nominal = $scope.itemPandG.nominal
 								dataRiwayatPangkatGolongan[i] = data;
 								console.log(data);
 								$scope.gridRiwayatPangkatGolongan = new kendo.data.DataSource({
@@ -2612,7 +2616,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							pejabatmenetapkan: $scope.itemPandG.pejabatmenetapkan,
 							objectgolonganfk: $scope.itemPandG.golongan.id,
 							golongan: $scope.itemPandG.golongan.golongan,
-							nosk: $scope.itemPandG.nosk
+							nosk: $scope.itemPandG.nosk,
+							nominal: $scope.itemPandG.nominal
 						}
 						console.log(data);
 						dataRiwayatPangkatGolongan.push(data)
