@@ -23,6 +23,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.item.no = undefined;
 			$scope.item.idPegawai = undefined;
 			$scope.item.PasswordDefault = undefined;
+			$scope.item.masakerjatambahan = 0;
+			console.log($scope.item.masakerjatambahan);
 			$scope.now = new Date();
 			var dataKeluarga = [];
 			var dataPegawai = [];
@@ -877,6 +879,73 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					}
 				]
 			}
+
+			$scope.opsiGridRiwayatGajiBerkala = {
+				toolbar: [{
+					name: "create",
+					text: "Buat Riwayat Gaji Berkala",
+					template: '<button ng-click="createGajiBerkala()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Buat Riwayat Gaji Berkala</button>'
+				}],
+				sortable: false,
+				reorderable: true,
+				filterable: false,
+				pageable: true,
+				columnMenu: false,
+				resizable: true,
+				selectable: 'row',
+				columns: [{
+						"field": "no",
+						"title": "No",
+						"width": "20px"
+					},
+					{
+						"field": "nosk",
+						"title": "NO SK",
+						"width": "70px",
+						// "template": "<span class='style-left'>{{formatTanggal('#: tglsk #')}}</span>"
+					},
+					{
+						"field": "tglsk",
+						"title": "Tanggal SK",
+						"width": "50px",
+						"template": "<span class='style-left'>{{formatTanggal('#: tglsk #')}}</span>"
+					},
+					{
+						"field": "golongan",
+						"title": "Gaji Awal",
+						"width": "100px",
+						// "template": "#:namaexternal #, #:name #"
+					},
+					{
+						"field": "golongan",
+						"title": "Gaji Akhir",
+						"width": "100px",
+						// "template": "#:namaexternal #, #:name #"
+					},
+					
+					{
+						"field": "tgltmt",
+						"title": "Tanggal TMT",
+						"width": "70px"
+					},
+					{
+						"command": [{
+								text: "Edit",
+								click: EditPangkatGolongan,
+								imageClass: "k-icon k-i-pencil"
+							},
+							{
+								text: "Hapus",
+								click: HapusPangkatGolongan,
+								imageClass: "k-icon k-i-delete"
+							},
+						],
+						title: "",
+						width: "185px",
+					}
+				]
+			}
+
 			$scope.opsiGridKomponenGajiAdd = {
 				toolbar: [{
 					name: "create",
@@ -1896,6 +1965,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				actions.splice(actions.indexOf("Close"), 1);
 				$scope.popUpKomponenGajiAdd.setOptions({ actions: actions });
 			}
+
+			$scope.createGajiBerkala = function () {
+				$scope.item.norecGajiBerkala = "";
+				$scope.item.IdGajiBerkala = undefined;
+				$scope.popUpRiwayatGajiBerkala.center().open();
+				var actions = $scope.popUpRiwayatGajiBerkala.options.actions;
+				actions.splice(actions.indexOf("Close"), 1);
+				$scope.popUpRiwayatGajiBerkala.setOptions({ actions: actions });
+			}
+
 			$scope.createHukumanDisiplin = function () {
 				$scope.item.norechudis = "";
 				$scope.item.nomorIdh = undefined;
@@ -2459,6 +2538,72 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					ModelItem.showMessages(isValid.messages);
 				}
 			}
+
+			$scope.tambahRiwayatGajiBerkala = function () {
+				var listRawRequired = [
+					"itemGajiBerkala.gajiawal|ng-model|gajiawal",
+					"itemGajiBerkala.gajiakhir|ng-model|gaji akhir",
+					"itemGajiBerkala.tanggalsk|k-ng-model|Tanggal SK",
+					"itemGajiBerkala.nosk|ng-model|NO SK",
+					"itemGajiBerkala.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
+					"itemGajiBerkala.tanggaltmt|k-ng-model|Tanggal TMT",
+					// "itemPandG.ttdSK|k-ng-model|Penandatangan SK",
+					// "itemPandG.jabatanTtd|k-ng-model|Penandatangan Jabatan",
+				];
+
+				var isValid = ModelItem.setValidation($scope, listRawRequired);
+				console.log(isValid);
+				if (isValid.status) {
+					var nomorId = 0
+					console.log($scope.gridRiwayatGajiBerkala);
+					if ($scope.gridRiwayatGajiBerkala == undefined) {
+						nomorId = 1
+					} else {
+						nomorId = dataRiwayatGajiBerkala.length + 1
+					}
+					var data = {};
+					if ($scope.item.nomorId != undefined) {
+						for (var i = dataRiwayatGajiBerkala.length - 1; i >= 0; i--) {
+							if (dataRiwayatGajiBerkala[i].no == $scope.item.nomorId) {
+								data.no = $scope.item.nomorId
+								data.tglsk = moment($scope.itemPandG.tanggalsk).format('YYYY-MM-DD HH:mm');
+								data.tgltmt = moment($scope.itemPandG.tanggaltmt).format('YYYY-MM-DD HH:mm');
+								data.norec = $scope.item.norecPG;
+								data.pejabatmenetapkan = $scope.itemPandG.pejabatmenetapkan;
+								data.objectgolonganfk = $scope.itemPandG.golongan.id;
+								data.golongan = $scope.itemPandG.golongan.golongan;
+								data.nosk = $scope.itemPandG.nosk
+								dataRiwayatGajiBerkala[i] = data;
+								console.log(data);
+								$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
+									data: dataRiwayatGajiBerkala
+								});
+							}
+						}
+					} else {
+						data = {
+							no: nomorId,
+							tglsk: moment($scope.itemPandG.tanggalsk).format('YYYY-MM-DD HH:mm'),
+							tgltmt: moment($scope.itemPandG.tanggaltmt).format('YYYY-MM-DD HH:mm'),
+							norec: $scope.item.norecPG,
+							pejabatmenetapkan: $scope.itemPandG.pejabatmenetapkan,
+							objectgolonganfk: $scope.itemPandG.golongan.id,
+							golongan: $scope.itemPandG.golongan.golongan,
+							nosk: $scope.itemPandG.nosk
+						}
+						console.log(data);
+						dataRiwayatGajiBerkala.push(data)
+						$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
+							data: dataRiwayatGajiBerkala
+						});
+					}
+					ClearDataRiwayatPangkatGolongan();
+					$scope.popUpRiwayatPangkatGolongan.close();
+				} else {
+					ModelItem.showMessages(isValid.messages);
+				}
+			}
+
 
 			$scope.tambahKomponenAdd = function () {
 				var listRawRequired = [
