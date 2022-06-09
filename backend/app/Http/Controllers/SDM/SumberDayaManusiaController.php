@@ -619,7 +619,7 @@ class SumberDayaManusiaController extends ApiController {
         $dataPangkatGolongan = \DB::table("pegawai_m as pg")
         ->leftjoin("riwayatgolongan_t as rg","rg.objectpegawaifk","=","pg.id") 
         ->join("sdm_golongan_m as gol","gol.id","=","rg.objectgolonganfk")
-        ->select(DB::raw("rg.objectgolonganfk,rg.norec,rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, rg.nosk, rg.pejabatmenetapkan"))
+        ->select(DB::raw("rg.nominal,rg.objectgolonganfk,rg.norec,rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, rg.nosk, rg.pejabatmenetapkan"))
         ->where("pg.id",$request['idPegawai'])
         ->orderBy('rg.tgltmt','asc')
         ->get();
@@ -656,7 +656,19 @@ class SumberDayaManusiaController extends ApiController {
         return $this->respond($result);
     }
 
+    public function nominal(Request $request){
+        $gajigolongan = \DB::table("gajigolongan_m as gg")
+        ->where("gg.golonganfk",$request['golongan'])
+        ->where("gg.mkg",$request['mkg'])
+        ->get();
+        
+        $result = array(
+            'gajigolongan'=> $gajigolongan,
+            "createby : " => 'IziFizi',
 
+        );
+        return $this->respond($result);
+    }
     //pangkat golongan sdm
     public function deleteDataPangkatGolongan(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
@@ -1141,6 +1153,7 @@ class SumberDayaManusiaController extends ApiController {
                         'tgltmt'=>$rpg['tgltmt'],
                         'pejabatmenetapkan'=> $rpg['pejabatmenetapkan'] ,
                         'nosk'=> $rpg['nosk'],
+                        'nominal'=> $rpg['nominal'],
                         ]);
                     }else{
                         \DB::table("riwayatgolongan_t")
@@ -1154,6 +1167,7 @@ class SumberDayaManusiaController extends ApiController {
                             'tgltmt'=>$rpg['tgltmt'],
                             'pejabatmenetapkan'=> $rpg['pejabatmenetapkan'] ,
                             'nosk'=> $rpg['nosk'],
+                            'nominal'=> $rpg['nominal'],
                         ]);
                     }
                 }
