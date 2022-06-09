@@ -2000,6 +2000,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             /*GET*/
             Route::get('sdm/get-data-combo-sdm', 'SDM\SumberDayaManusiaController@getComboPegawaiSdm');
             Route::get('sdm/get-data-pegawai-all-sdm', 'SDM\SumberDayaManusiaController@getDaftarPegawai');
+            Route::get('sdm/get-data-abk', 'SDM\SumberDayaManusiaController@getDaftarABK');
             Route::get('sdm/get-data-detail-pegawai', 'SDM\SumberDayaManusiaController@getDetailPegawai');
             Route::get('sdm/get-data-urut-kepangakatan-pegawai', 'SDM\SumberDayaManusiaController@getDataDaftarUrutKepangkatan');
             Route::get('sdm/get-data-jadwal-kerja-pegawai-ruangan', 'SDM\SumberDayaManusiaController@getDataJadwalKerjaRuangan');
@@ -2037,6 +2038,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             /*POST*/
             
             Route::post('sdm/simpan-bayar-gaji-detail', 'SDM\SumberDayaManusiaController@simpanPembayaranGajiArray');
+            Route::post('sdm/save-data-abk', 'SDM\SumberDayaManusiaController@simpanDataABK');
             Route::post('sdm/simpan-data-pembayaran-gaji', 'SDM\SumberDayaManusiaController@simpanPembayaranGaji');
             Route::post('sdm/update-false-pegawai', 'SDM\SumberDayaManusiaController@deleteDataPegawai');
             Route::post('sdm/update-idfinger-pegawai', 'SDM\SumberDayaManusiaController@updateDataIdFingerPrint');

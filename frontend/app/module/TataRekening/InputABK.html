@@ -1,0 +1,43 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header  {
+        white-space: normal;
+    }
+    .k-grid .k-grid-header .k-header  {
+        text-align: center;
+    }
+    #grid{
+        height: 100%;
+    }
+</style>
+<div class="panel panel-default container_12">
+	<div class="panel-heading" c-translate>Data ABK (Analisis Beban Kerja)</div>
+	<div class="grid_12" style="margin-top:10px">
+			
+		<div class="grid_12 borderBox" style="margin-top: 50px;">
+			<kendo-grid  
+                        k-data-source="sourceLaporan" 
+                        k-selectable="'row'" 
+                        k-groupable="'false'"
+                        k-options="columnLaporan"
+                        k-ng-model="current" 
+                        ng-click="kl(current)"
+                        id="grid" 
+                        >
+            </kendo-grid> 		 
+		</div>
+	</div>
+    <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="saveABK()" style="float:right;margin-top:40px;margin-right: 10px;">
+        <span class="k-icon k-update"></span>Simpan
+    </button>
+	<div class="grid_12" style="margin-top:60px"  ng-show="isLoadingData">
+		<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+	</div>
+    
+</div>
+<!-- <script>
+    
+</script> -->
