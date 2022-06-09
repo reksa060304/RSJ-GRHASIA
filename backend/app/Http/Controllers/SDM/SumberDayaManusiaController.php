@@ -334,7 +334,7 @@ class SumberDayaManusiaController extends ApiController {
     public function getDaftarABK (Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
         
-        $data = DB::select(DB::raw("select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.id, abt.kebutuhan, abt.kekurangan
+        $data = DB::select(DB::raw("select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
         from pendidikanpegawai_m ppg
         inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
         left join (
@@ -5818,12 +5818,14 @@ END as januari
             ->where('kdprofile',$idProfile)
             ->first();
 
-            $dataSPDK->kebutuhan = $item['kebutuhan'];
-            $dataSPDK->kekurangan = $item['kekurangan'];
+            $dataSPDK->kebutuhanl = $item['kebutuhanl'];
+            $dataSPDK->kekuranganl = $item['kekuranganl'];
+            $dataSPDK->kebutuhanp = $item['kebutuhanp'];
+            $dataSPDK->kekuranganp = $item['kekuranganp'];
             $dataSPDK->save();
         }
 
-        $data = DB::select(DB::raw("select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.id, abt.kebutuhan, abt.kekurangan
+        $data = DB::select(DB::raw("select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
         from pendidikanpegawai_m ppg
         inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
         left join (

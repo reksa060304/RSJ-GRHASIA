@@ -139,7 +139,7 @@ define(['initialize'], function (initialize) {
                         columns[i].width = 30;
                     }
 
-                    for(let i = 0; i < 1; i++){
+                    for(let i = 0; i < 2; i++){
                         for(let j = 0; j <= 20; j++){
                             sheet.rows[i].cells[j].background = '#ffffff';
                             sheet.rows[i].cells[j].color = '#000000';
@@ -202,12 +202,18 @@ define(['initialize'], function (initialize) {
                         title: "PASIEN KELUAR HIDUP",
                     },
                     {
-                        field: "jumlahpasienkurang",
-                        title: "< 48 JAM",
-                    },
-                    {
-                        field: "jumlahpasienlebih",
-                        title: ">= 48 JAM",
+                        "title": "PASIEN KELUAR MATI",
+                        
+                        columns: [
+                            {
+                                field: "jumlahpasienkurang",
+                                title: "< 48 JAM",
+                            },
+                            {
+                                field: "jumlahpasienlebih",
+                                title: ">= 48 JAM",
+                            },
+                        ],
                     },
                     {
                         field: "jumlahlamadirawat",
@@ -222,29 +228,36 @@ define(['initialize'], function (initialize) {
                         title: "JUMLAH HARI PERAWATAN",
                     },
                     {
-                        field: "jumlahvvip",
-                        title: "VVIP",
+                        "title": "RINCIAN HARI PERAWATAN PER KELAS",
+                        
+                        columns: [
+                            {
+                                field: "jumlahvvip",
+                                title: "VVIP",
+                            },
+                            {
+                                field: "jumlahvip",
+                                title: "VIP",
+                            },
+                            {
+                                field: "jumlahsatu",
+                                title: "I",
+                            },
+                            {
+                                field: "jumlahdua",
+                                title: "II",
+                            },
+                            {
+                                field: "jumlahtiga",
+                                title: "III",
+                            },
+                            {
+                                field: "jumlahkhusus",
+                                title: "KELAS KHUSUS",
+                            }
+                        ],
                     },
-                    {
-                        field: "jumlahvip",
-                        title: "VIP",
-                    },
-                    {
-                        field: "jumlahsatu",
-                        title: "I",
-                    },
-                    {
-                        field: "jumlahdua",
-                        title: "II",
-                    },
-                    {
-                        field: "jumlahtiga",
-                        title: "III",
-                    },
-                    {
-                        field: "jumlahkhusus",
-                        title: "KELAS KHUSUS",
-                    }
+                    
 
                 ]
 

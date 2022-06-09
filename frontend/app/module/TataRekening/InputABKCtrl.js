@@ -31,6 +31,10 @@ define(['initialize'], function (initialize) {
                                     pendidikanpegawai: { editable: false},
                                     kategorifk: { editable: false},
                                     subkategorifk: { editable: false},
+                                    kekuranganl: { editable: true},
+                                    kebutuhanl: { editable: true},
+                                    kekuranganp: { editable: true},
+                                    kebutuhanp: { editable: true},
                                 }
                             }
                         },
@@ -40,11 +44,15 @@ define(['initialize'], function (initialize) {
                             console.log("change :" + e.action);
                             if (e.field && e.action === "itemchange") {
                                 //debugger;
-                                $scope.current.kebutuhan = $scope.current.kebutuhan;
-                                $scope.current.kekurangan = $scope.current.kekurangan;
+                                $scope.current.kebutuhanl = $scope.current.kebutuhanl;
+                                $scope.current.kekuranganl = $scope.current.kekuranganl;
+                                $scope.current.kebutuhanp = $scope.current.kebutuhanp;
+                                $scope.current.kekuranganp = $scope.current.kekuranganp;
                                 // if ($scope.current.selisih<0)
                                 //     $scope.current.selisih = $scope.current.selisih*=-1;
                                 $scope.sourceLaporan.fetch();
+                                // console.log($scope.current);
+                                // console.log($scope.sourceLaporan);
                             }
                         }
                     });
@@ -89,28 +97,46 @@ define(['initialize'], function (initialize) {
                     {
                         "field": "kategorifk",
                         "title": "Kategori",
-                        "width": "150px",    
+                        "width": 250,
                     },                    
                     {
                         "field": "subkategorifk",
                         "title": "Sub Kategori",
-                        "width": "120px"
+                        "width": 300,
                     },
                     {
                         "field": "pendidikanpegawai",
                         "title": "Pendidikan",
-                        "width": "100px"
-                    },                    
+                        "width": 400,
+                    },       
                     {
-                        "field": "kebutuhan",
                         "title": "Kebutuhan",
-                        "width": "110px",
-                    },
+                        
+                        columns: [
+                            {
+                                field: "kebutuhanl",
+                                title: "Laki-Laki",
+                            },
+                            {
+                                field: "kebutuhanp",
+                                title: "Perempuan",
+                            },
+                        ],
+                    }, 
                     {
-                        "field": "kekurangan",
                         "title": "Kekurangan",
-                        "width": "110px"
-                    },
+                        
+                        columns: [
+                            {
+                                field: "kekuranganl",
+                                title: "Laki-Laki",
+                            },
+                            {
+                                field: "kekuranganp",
+                                title: "Perempuan",
+                            },
+                        ],
+                    }, 
                 ]
             }; 
 
@@ -119,11 +145,13 @@ define(['initialize'], function (initialize) {
                 $scope.isRouteLoading = true;
                 var dataArray = [];
                 for (var i = $scope.sourceLaporan._data.length - 1; i >= 0; i--) {
-                    if ($scope.sourceLaporan._data[i].kebutuhan != undefined && $scope.sourceLaporan._data[i].kekurangan != undefined)
+                    if ($scope.sourceLaporan._data[i].kebutuhanl != undefined && $scope.sourceLaporan._data[i].kekuranganl != undefined && $scope.sourceLaporan._data[i].kebutuhanp != undefined && $scope.sourceLaporan._data[i].kekuranganp != undefined)
                         dataArray.push({
                             "id": $scope.sourceLaporan._data[i].id,
-                            "kebutuhan": $scope.sourceLaporan._data[i].kebutuhan,
-                            "kekurangan": $scope.sourceLaporan._data[i].kekurangan,
+                            "kebutuhanl": $scope.sourceLaporan._data[i].kebutuhanl,
+                            "kekuranganl": $scope.sourceLaporan._data[i].kekuranganl,
+                            "kebutuhanp": $scope.sourceLaporan._data[i].kebutuhanp,
+                            "kekuranganp": $scope.sourceLaporan._data[i].kekuranganp,
                         });
                 }
 
@@ -159,8 +187,10 @@ define(['initialize'], function (initialize) {
                             console.log("change :" + e.action);
                             if (e.field && e.action === "itemchange") {
                                 //debugger;
-                                $scope.current.kebutuhan = $scope.current.kebutuhan;
-                                $scope.current.kekurangan = $scope.current.kekurangan;
+                                $scope.current.kebutuhanl = $scope.current.kebutuhanl;
+                                $scope.current.kekuranganl = $scope.current.kekuranganl;
+                                $scope.current.kebutuhanp = $scope.current.kebutuhanp;
+                                $scope.current.kekuranganp = $scope.current.kekuranganp;
                                 // if ($scope.current.selisih<0)
                                 //     $scope.current.selisih = $scope.current.selisih*=-1;
                                 $scope.sourceLaporan.fetch();

@@ -8,6 +8,8 @@ define(['initialize'], function (initialize) {
             $scope.now = new Date();
             $scope.dataSelected = {};
             $scope.item = {};
+            $scope.item.tglawal = $scope.now;
+            $scope.item.tglakhir = $scope.now;
             $scope.dataLogin = JSON.parse(window.localStorage.getItem('pegawai'));
             //debugger
             $scope.CariRL54 = function () {
@@ -23,15 +25,17 @@ define(['initialize'], function (initialize) {
 
 
             function LoadData() {
-                var tglAwal = moment($scope.item.tglawal).format('YYYY');
-
+                var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
+                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
                 var chacePeriode = {
                     0: tglAwal,
+                    1: tglAkhir,
                 }
                 cacheHelper.set('LaporanRL_54Ctrl', chacePeriode);
 
                 medifirstService.get("registrasi/laporan/get-laporan-rl54?"
-                    + "tglAwal=" + tglAwal
+                + "tglAwal=" + tglAwal
+                + "&tglAkhir=" + tglAkhir
                 ).then(function (dat) {
                     var datas = dat.data.data
                     $scope.isRouteLoading = false;
