@@ -4224,6 +4224,7 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataLaporanRL51(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
 
 
         $data = DB::select(DB::raw("select *, (case when x.statuspasienfix = 'LAMA' THEN 'Pengunjung Lama' else 'Pengunjung Baru' end) as statuspasienfixbanget from(
@@ -4234,7 +4235,7 @@ class LaporanRekamMedisController extends   ApiController
                     inner join profile_m pr on pr.id = pd.kdprofile
                     inner join pasien_m as pm on pm.id = pd.nocmfk
                     where pd.statusenabled = true and pd.kdprofile = $kdProfile
-                    and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
+                    and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
                     group by to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'), (case when pd.statuspasien is null then 'LAMA' else pd.statuspasien end), pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
                     order by to_char(pd.tglregistrasi, 'YYYY'), to_char(pd.tglregistrasi, 'mm')) as x"));
 
@@ -4247,6 +4248,7 @@ class LaporanRekamMedisController extends   ApiController
     public function getDataLaporanRL52(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
         $bulan = [];
 
         $data = DB::select(DB::raw("select pd.tglregistrasi::date, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ') as month, ru.namaruangan, ru.id, count(apd.objectruanganfk) jumlahkunjungan, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id as idprofile
@@ -4259,7 +4261,7 @@ class LaporanRekamMedisController extends   ApiController
         inner join profile_m pr on pr.id = pd.kdprofile
         where pd.statusenabled = true and pd.kdprofile = $kdProfile
         and ru.objectdepartemenfk <> 16
-        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
         group by pd.tglregistrasi::date, ru.namaruangan, ru.id, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ')
         order by pd.tglregistrasi::date"));
 
@@ -4271,7 +4273,7 @@ class LaporanRekamMedisController extends   ApiController
                 inner join ruangan_m ru on ru.id = apd.objectruanganfk
                 where pd.statusenabled = true and pd.kdprofile = $kdProfile
                 and ru.objectdepartemenfk <> 16
-                and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
+                and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
                         group by rtrim(to_char(pd.tglregistrasi, 'Month'), ' '), to_char(pd.tglregistrasi, 'mm')
                 order by idmonth"));
 
@@ -4465,7 +4467,7 @@ class LaporanRekamMedisController extends   ApiController
         and pd.kdprofile = $kdProfile 
         and ru.objectdepartemenfk = 16
         --and (jd.id = 1 or jd.id = 7)
-        and pd.tglregistrasi between '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
                 group by to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'), dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
         ) as x
         group by x.month, x.idmonth, x.year,x.nodaftarterperinci, x.golongansebabpenyakit, x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile
@@ -4510,7 +4512,7 @@ class LaporanRekamMedisController extends   ApiController
         and pd.kdprofile = $kdProfile 
         and ru.objectdepartemenfk <> 16
         --and (jd.id = 1 or jd.id = 7)
-        and pd.tglregistrasi between '$tglAwal-01-01 00:00' and '$tglAwal-12-31 23:59'
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
         group by to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'), dm.kddiagnosa, dm.namadiagnosa, jk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, dp.iskasusbaru
         ) as x
         group by x.month, x.idmonth, x.year,x.nodaftarterperinci, x.golongansebabpenyakit, x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile, x.iskasusbaru

@@ -61,6 +61,7 @@ use App\Transaksi\JadwalKerjaPegawai;
 use App\Transaksi\StrukBuktiPengeluaran;
 use App\Transaksi\StrukBuktiPengeluaranCaraBayar;
 use App\Transaksi\PendidikanPegawai;
+use App\Transaksi\ABKPegawai;
 use Illuminate\Http\Request;
 use DB;
 use App\Transaksi\LoggingUser;
@@ -327,6 +328,33 @@ class SumberDayaManusiaController extends ApiController {
             $data = $data->where('pg.id','=',$request['idPegawai']);
         }
         $data = $data->get();
+        return $this->respond($data);
+    }
+
+    public function getDaftarABK (Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        
+        $data = DB::select(DB::raw("select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+        from pendidikanpegawai_m ppg
+        inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+        left join (
+            select distinct on(kategorifk) nourut, kategorifk
+            from pendidikanpegawai_m
+            where kdprofile = 30
+            and statusenabled = true
+            order by kategorifk asc, nourut asc
+        ) as a on a.nourut = ppg.nourut
+        left join (
+            select distinct on(subkategorifk) nourut, subkategorifk
+            from pendidikanpegawai_m
+            where kdprofile = 30
+            and statusenabled = true
+            order by subkategorifk asc, nourut asc
+        ) as b on b.nourut = ppg.nourut
+        where ppg.kdprofile = 30
+        and ppg.statusenabled = true
+        order by ppg.nourut asc;"));
+        
         return $this->respond($data);
     }
 
@@ -5778,8 +5806,7 @@ END as januari
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
-    
-    public function daftarKenaikanGajiBerkala(Request $request){
+public function daftarKenaikanGajiBerkala(Request $request){
          $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
@@ -5877,5 +5904,46 @@ END as januari
         );
         return $this->respond($result);
 
+    }
+	public function simpanDataABK(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        //ini_set('max_execution_time', 300); //6 minutes
+        $dataReq = $request->all();
+
+        foreach($request['stokProduk'] as $item) {
+            $dataSPDK =ABKPegawai::where('objectpendidikanpegawaifk', $item['id'])
+            ->where('kdprofile',$idProfile)
+            ->first();
+
+            $dataSPDK->kebutuhanl = $item['kebutuhanl'];
+            $dataSPDK->kekuranganl = $item['kekuranganl'];
+            $dataSPDK->kebutuhanp = $item['kebutuhanp'];
+            $dataSPDK->kekuranganp = $item['kekuranganp'];
+            $dataSPDK->save();
+        }
+
+        $data = DB::select(DB::raw("select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+        from pendidikanpegawai_m ppg
+        inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+        left join (
+            select distinct on(kategorifk) nourut, kategorifk
+            from pendidikanpegawai_m
+            where kdprofile = 30
+            and statusenabled = true
+            order by kategorifk asc, nourut asc
+        ) as a on a.nourut = ppg.nourut
+        left join (
+            select distinct on(subkategorifk) nourut, subkategorifk
+            from pendidikanpegawai_m
+            where kdprofile = 30
+            and statusenabled = true
+            order by subkategorifk asc, nourut asc
+        ) as b on b.nourut = ppg.nourut
+        where ppg.kdprofile = 30
+        and ppg.statusenabled = true
+        order by ppg.nourut asc;"));
+        
+        return $this->respond($data);
     }
 }

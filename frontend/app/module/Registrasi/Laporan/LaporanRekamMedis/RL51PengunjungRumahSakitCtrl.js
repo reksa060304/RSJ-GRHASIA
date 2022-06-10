@@ -8,6 +8,8 @@ define(['initialize'], function (initialize) {
             $scope.now = new Date();
             $scope.dataSelected = {};
             $scope.item = {};
+            $scope.item.tglawal = $scope.now;
+            $scope.item.tglakhir = $scope.now;
             $scope.dataLogin = JSON.parse(window.localStorage.getItem('pegawai'));
             $scope.CariRegistrasiPasien = function () {
                 $scope.isRouteLoading = true;
@@ -15,14 +17,17 @@ define(['initialize'], function (initialize) {
             }
 
             function LoadData() {
-                var tglAwal = moment($scope.item.tglawal).format('YYYY');
+                var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
+                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
                 var chacePeriode = {
                     0: tglAwal,
+                    1: tglAkhir,
                 }
                 cacheHelper.set('LaporanRl52Ctrl', chacePeriode);
 
                  medifirstService.get("registrasi/laporan/get-laporan-rl51?"
-                    + "tglAwal=" + tglAwal).then(function (dat) {
+                 + "tglAwal=" + tglAwal
+                 + "&tglAkhir=" + tglAkhir).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var datas = dat.data.data
                         for (var i = 0; i < datas.length; i++) {
