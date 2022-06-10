@@ -257,75 +257,99 @@ define(['initialize'], function(initialize) {
 			}
 
 			$scope.Save = function(){
-                $scope.isRouteLoading = true;
-                //bikin if untuk tanggal mulai dan selesai
-                var tanggalmulai = null
-                if ($scope.item.tanggalMulai != undefined) {
-                    tanggalmulai = moment($scope.item.tanggalMulai).format('YYYY-MM-DD HH:mm')
-                }
-                var tanggalselesai = null
-                if ($scope.item.tanggalSelesai != undefined) {
-                    tanggalselesai = moment($scope.item.tanggalSelesai).format('YYYY-MM-DD HH:mm')
-                }
-                $scope.tglregistrasi = ''
-                if ($scope.tglregistrasiedit != undefined) {
-                    $scope.tglregistrasi = moment($scope.tglregistrasiedit).format('YYYY-MM-DD HH:mm')
-                } else{
-                    $scope.tglregistrasi = moment($scope.now).format('YYYY-MM-DD HH:mm')
-                }
-                var judulpenelitian = "";
-                var namapendamping = "";
-                var namapengawas = "";
-                if ($scope.item.judulpenelitian != undefined) {
-                    judulpenelitian = $scope.item.judulpenelitian
-                }
-                if ($scope.item.namapendamping != undefined) {
-                    namapendamping = $scope.item.namapendamping
-                }
-                if ($scope.item.namapengawas != undefined) {
-                    namapengawas = $scope.item.namapengawas
-                }
-                var nosertifikat = "";
-                if ($scope.item.nosertifikat != undefined) {
-                    nosertifikat = $scope.item.nosertifikat
-                }
-                var pengesah = null;
-                if ($scope.item.pengesah != undefined) {
-                    pengesah = $scope.item.pengesah.id
-                }
-				var data = {
-					"norec_kpe":norec_kpe,
-					"namauser": $scope.item.namauser,
-                    "institusipendidikan": $scope.item.namainstansi,
-                    "notelp": $scope.item.notelp,
-                    "objectdiklatkategorifk": $scope.item.jenis.id,
-                    "objectdetailjenisprodukfk": $scope.item.layanan.id,
-                    "objectprodukfk": $scope.item.levelpendidikan.id,
-                    "jumlahpeserta": $scope.item.jumlahpeserta,
-                    "qty": $scope.item.qty,
-                    "satuan": $scope.item.satuan,
-                    "biayapenelitian": $scope.item.biaya,
-                    "tglregistrasi": $scope.tglregistrasi,
-                    "tanggalmulai": tanggalmulai,
-                    "tanggalselesai": tanggalselesai,
-                    "hargasatuan": $scope.item.hargasatuan,
-                    "judulpenelitian": judulpenelitian,
-                    "namapendamping": namapendamping,
-                    "namapengawas": namapengawas,
-                    "nosertifikat": nosertifikat,
-                    "pengesah": pengesah
-				};	
+                var listRawRequired = [
+                    "item.notelp|ng-model|No Telp",
+                    "item.jenis|k-ng-model|Jenis Layanan",
+                    "item.levelpendidikan|k-ng-model|Level Pendidikan",
+                    "item.layanan|k-ng-model|Layanan",
+                    "item.jumlahpeserta|ng-model|Jumlah Peserta",
+                    "item.qty|ng-model|Quantity",
+                    "item.satuan|ng-model|Satuan",
+                    "item.hargasatuan|ng-model|Harga Satuan",
+                    "item.tanggalMulai|k-ng-model|tanggal Mulai",
+                    "item.tanggalSelesai|k-ng-model|Tanggal Selesai",
+                    "item.biaya|ng-model|Perkiraan Biaya",
+                    // "item.desaKelurahan|k-ng-model|Kelurahan",
+                    // "item.noHp|ng-model|No. HP / Ponsel",
+                ];
+                var isValid = ModelItem.setValidation($scope, listRawRequired);
+                console.log(isValid);
 
-				var objSave = {
-                    data: data,
+                if(isValid.status == true){
+
+
+                    $scope.isRouteLoading = true;
+                    //bikin if untuk tanggal mulai dan selesai
+                    var tanggalmulai = null
+                    if ($scope.item.tanggalMulai != undefined) {
+                        tanggalmulai = moment($scope.item.tanggalMulai).format('YYYY-MM-DD HH:mm')
+                    }
+                    var tanggalselesai = null
+                    if ($scope.item.tanggalSelesai != undefined) {
+                        tanggalselesai = moment($scope.item.tanggalSelesai).format('YYYY-MM-DD HH:mm')
+                    }
+                    $scope.tglregistrasi = ''
+                    if ($scope.tglregistrasiedit != undefined) {
+                        $scope.tglregistrasi = moment($scope.tglregistrasiedit).format('YYYY-MM-DD HH:mm')
+                    } else {
+                        $scope.tglregistrasi = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                    }
+                    var judulpenelitian = "";
+                    var namapendamping = "";
+                    var namapengawas = "";
+                    if ($scope.item.judulpenelitian != undefined) {
+                        judulpenelitian = $scope.item.judulpenelitian
+                    }
+                    if ($scope.item.namapendamping != undefined) {
+                        namapendamping = $scope.item.namapendamping
+                    }
+                    if ($scope.item.namapengawas != undefined) {
+                        namapengawas = $scope.item.namapengawas
+                    }
+                    var nosertifikat = "";
+                    if ($scope.item.nosertifikat != undefined) {
+                        nosertifikat = $scope.item.nosertifikat
+                    }
+                    var pengesah = null;
+                    if ($scope.item.pengesah != undefined) {
+                        pengesah = $scope.item.pengesah.id
+                    }
+                    var data = {
+                        "norec_kpe": norec_kpe,
+                        "namauser": $scope.item.namauser,
+                        "institusipendidikan": $scope.item.namainstansi,
+                        "notelp": $scope.item.notelp,
+                        "objectdiklatkategorifk": $scope.item.jenis.id,
+                        "objectdetailjenisprodukfk": $scope.item.layanan.id,
+                        "objectprodukfk": $scope.item.levelpendidikan.id,
+                        "jumlahpeserta": $scope.item.jumlahpeserta,
+                        "qty": $scope.item.qty,
+                        "satuan": $scope.item.satuan,
+                        "biayapenelitian": $scope.item.biaya,
+                        "tglregistrasi": $scope.tglregistrasi,
+                        "tanggalmulai": tanggalmulai,
+                        "tanggalselesai": tanggalselesai,
+                        "hargasatuan": $scope.item.hargasatuan,
+                        "judulpenelitian": judulpenelitian,
+                        "namapendamping": namapendamping,
+                        "namapengawas": namapengawas,
+                        "nosertifikat": nosertifikat,
+                        "pengesah": pengesah
+                    };
+
+                    var objSave = {
+                        data: data,
+                    }
+                    console.log(objSave);
+                    // return
+                    medifirstService.post('sdm/penelitian/save-kegiatan-penelitian-eksternal', objSave).then(function (e) {
+                        $scope.item = {};
+                        // $state.go('DaftarPenelitianEksternal')
+                        $state.go('DaftarPenelitianEksternal')
+                    })
+
                 }
-                console.log(objSave);
-                // return
-                medifirstService.post('sdm/penelitian/save-kegiatan-penelitian-eksternal',objSave).then(function (e) {
-                    $scope.item = {};  
-                    // $state.go('DaftarPenelitianEksternal')
-                    $state.go('DaftarPenelitianEksternal')
-                })
+                
 
 			}
 

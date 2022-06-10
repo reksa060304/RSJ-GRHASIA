@@ -43,7 +43,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     init()
                 }
             }
-            if (ModelItem.getPegawai().jenisPegawai.qjenispegawai != 0) {
+            if (medifirstService.getKelompokUser() == 'diklit') {
                 $scope.tgl = false;
                 $scope.pemb = false;
                 $scope.ru = false;
@@ -104,7 +104,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             // var imageData = 
                         gambar = '../../../../../backend/public/DIKLAT/FileFoto/DIKLAT-MuhamadFazriAnnafi2-1709142-fazri@gmail.com.jpg'
-            if (ModelItem.getPegawai().jenisPegawai.qjenispegawai != 0) {
+            if (medifirstService.getKelompokUser() == 'diklit') {
                 $scope.columnGridDiagnosapasien = {
                     toolbar: ["excel", ],
                     excel: {
