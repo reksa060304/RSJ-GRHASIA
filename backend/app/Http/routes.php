@@ -2114,6 +2114,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sdm/save-sd-pelatihan', 'SDM\SumberDayaManusiaController@saveSDPelatihan');
                 Route::get('sdm/get-nama-pelatihan', 'SDM\SumberDayaManusiaController@getNamaPelatihan');
                 Route::get('sdm/pendidikan/get-mapkategoripendidikan-to-programpendidikan', 'SDM\PelatihanController@getMapKatPendidikanTOprogram');
+                Route::get('sdm/daftar-kenaikan-gaji-berkala', 'SDM\SumberDayaManusiaController@daftarKenaikanGajiBerkala');
+
                 /*END POST*/
             // });
             // Route::group(['prefix' => 'pendidikan'], function () {

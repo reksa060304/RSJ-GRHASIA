@@ -200,6 +200,10 @@
     {
       "nameDep": "InputABKCtrl",
       "urlDep": "module/TataRekening/InputABKCtrl"
+    },
+    {
+      "nameDep": "DaftarKenaikanGajiBerkalaCtrl",
+      "urlDep": "module/TataRekening/DaftarKenaikanGajiBerkalaCtrl"
     }
   ]
 }
