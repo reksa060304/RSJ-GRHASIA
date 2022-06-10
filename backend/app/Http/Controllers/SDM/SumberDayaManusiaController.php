@@ -95,6 +95,7 @@ class SumberDayaManusiaController extends ApiController {
         $StatusPegawai = StatusPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $KategoryPegawai = KategoryPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
+        $jabatanbaru = Jabatan::where('statusenabled', true)->where('objectjenisjabatanfk', $request['jabatan'])->where('kdprofile', $kdProfile)->get();
         $jenisJabatan = JenisJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $GolonganPegawai = GolonganPegawai::where('statusenabled', true)
                             ->select(DB::raw("id, namaexternal || ', ' || reportdisplay as golongan"))
@@ -154,22 +155,22 @@ class SumberDayaManusiaController extends ApiController {
             );
         }
         $DataJabatan=[];
-        foreach ($jenisJabatan as $datas){
-            $details=[];
-            foreach ($jabatan as $data){
-                if ($datas->id = $data->objectjenisjabatanfk){
-                    $details[]=array(
-                        'id' => $data->id,
-                        'namajabatan' => $data->namajabatan
-                    );
-                }
-            }
-            $DataJabatan[] = array(
-                'id' => $datas->id,
-                'jenisjabatan' => $datas->jenisjabatan,
-                'jabatan' => $details
-            );
-        }
+        // foreach ($jenisJabatan as $datas){
+        //     $details=[];
+        //     foreach ($jabatan as $data){
+        //         if ($datas->id = $data->objectjenisjabatanfk){
+        //             $details[]=array(
+        //                 'id' => $data->id,
+        //                 'namajabatan' => $data->namajabatan
+        //             );
+        //         }
+        //     }
+        //     $DataJabatan[] = array(
+        //         'id' => $datas->id,
+        //         'jenisjabatan' => $datas->jenisjabatan,
+        //         'jabatan' => $details
+        //     );
+        // }
         $deptPelayanan = explode (',',$this->settingDataFixed('kdDepartemenPelayanan',$kdProfile));
         $kdDepartemenRawatPelayanan = [];
         foreach ($deptPelayanan as $itemPelayanan){
@@ -272,7 +273,7 @@ class SumberDayaManusiaController extends ApiController {
             'hubungankeluarga' => $HubunganKeluarga,
             'pekerjaan' => $Pekerjaan,
             'tanggungan' => $Tanggungan,
-            'datajabatan' => $DataJabatan,
+            'datajabatan' => $jenisJabatan,
             'kedudukan' => $Kedudukan,
             'kelompokuser' => $KelompokUser,
             'passwordawal' => $SettingPasswordAwal,
@@ -287,6 +288,7 @@ class SumberDayaManusiaController extends ApiController {
             'komponengajidel' => $KomponenGajiDel,
             'jenishukuman'=> $jenishukuman,
             'pendidikanpegawai'=> $pendidikanpegawai,
+            'jabatanbaru'=> $jabatanbaru,
             'by' => 'ea@epic',
         );
 
@@ -445,7 +447,7 @@ class SumberDayaManusiaController extends ApiController {
 			                        jb1.namajabatan as jbstruktural,gp.golonganpegawai,uk.name as unitkerja,sp.statuspegawai,
 			                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,pend.pendidikan,jk.jeniskelamin,
 			                        gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,
-			                        kp.kategorypegawai as namakategorypegawai,kdd.name as kedudukan,pg.objectjenispegawaifk,jp.jenispegawai, pendpg.pendidikanpegawai, pendpg.namaexternal, pg.objectpendidikanpegawaifk"))
+			                        kp.kategorypegawai as namakategorypegawai,kdd.name as kedudukan,pg.objectjenispegawaifk,jp.jenispegawai, pendpg.pendidikanpegawai, pg.objectpendidikanpegawaifk"))
             ->where('pg.kdprofile', $kdProfile)
             ->where('pg.statusenabled',true)
             ->orderBy('pg.namalengkap');
@@ -477,7 +479,7 @@ class SumberDayaManusiaController extends ApiController {
             ->leftJoin('pegawai_m as pg','pg.id','=','rp.objectpegawaifk')
             ->leftJoin('pendidikan_m as pend','pend.id','=','rp.objectpendidikanfk')
             ->leftJoin('pendidikanpegawai_m as pendpg','pendpg.id','=','rp.objectpendidikanpegawaifk')
-            ->select(DB::raw("rp.*,pend.pendidikan,pg.namalengkap, pendpg.pendidikanpegawai, pendpg.namaexternal"))
+            ->select(DB::raw("rp.*,pend.pendidikan,pg.namalengkap, pendpg.pendidikanpegawai"))
             ->where('rp.kdprofile', $kdProfile)
             ->where('pg.statusenabled',true)
             ->orderBy('rp.tgllulus');
