@@ -303,8 +303,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.Hapus = function () {
                 $scope.isRouteLoading = true
-                console.log($scope.count);
-                console.log($scope.isverifikasi);
+                // console.log($scope.count);
+                // console.log($scope.isverifikasi);
                 if ($scope.count > 0) {
                 $scope.isRouteLoading = false
                     toastr.error("Informasi, Sudah ada data mahasiswa record tidak bisa dihapus....!")
