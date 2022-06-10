@@ -1544,6 +1544,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rawatjalan/get-daftar-konsul-from-order', 'RawatJalan\RawatJalanController@getDaftarKonsulFromOrder');
           Route::post('rawatjalan/save-periksa', 'RawatJalan\RawatJalanController@saveSelesaiPeriksa');
           Route::post('rawatjalan/simpan-meninggal-pasien', 'RawatJalan\RawatJalanController@SimpanMeninggalPasien');
+          Route::post('rawatjalan/simpan-pulang-pasien', 'RawatJalan\RawatJalanController@SimpanPulangPasien');
         // });
         // Route::group(['prefix' => 'registrasi'], function () {
             // 2019-12 penambahan arif awal
@@ -2389,6 +2390,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sysadmin/general/save-map-administrasi','SysAdmin\GeneralController@saveMappingAdminstrasiCuy');
                 Route::post('sysadmin/general/save-map-laporankeuanganlingkuppelayanan','SysAdmin\GeneralController@saveMappingLaporanKeuanganToLingkupPelayanan');
                 Route::get('sysadmin/logging/save-log-meninggal-pasien-rj', 'SysAdmin\LoggingController@saveLogMeninggalPasienRJ');
+                Route::get('sysadmin/logging/save-log-pulang-pasien-rj', 'SysAdmin\LoggingController@saveLogPulangPasienRJ');
                 // POST //
 
                 // Route::group(['prefix' => 'rensar'], function () {

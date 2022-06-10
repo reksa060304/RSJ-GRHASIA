@@ -1483,4 +1483,62 @@ class RawatJalanController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function SimpanPulangPasien(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAyeuna = date('Y-m-d H:i:s');
+        $r_NewPD=$request['pasiendaftar'];
+        DB::beginTransaction();
+        try{
+
+            $updatePD= PasienDaftar::where('noregistrasi', $r_NewPD['noregistrasi'])
+                ->where('kdprofile', $kdProfile)
+                ->update([
+                    'objectkondisipasienfk' => $r_NewPD['objectkondisipasienfk'],
+                    'objectstatuskeluarfk' => $r_NewPD['objectstatuskeluarfk'],
+                    'objectstatuspulangfk' => $r_NewPD['objectstatuspulangfk'],
+                    // 'objectpenyebabkematianfk' => $r_NewPD['objectpenyebabkematianfk'],
+                    // 'tglmeninggal' => $r_NewPD['tglmeninggal'],
+                    // 'keteranganpenyebabkematian' => $r_NewPD['keterangankematian'],
+//                    'objectruanganlastfk' => $r_NewPD['ruangantujuan'],
+                ]);
+
+            // if ($r_NewPD['nocmfk'] != 'undefined' && $r_NewPD['objectstatuskeluarfk']== 5) {
+            //     $updatePS= Pasien::where('id', $r_NewPD['nocmfk'])
+            //         ->update([
+            //                 'tglmeninggal' => $r_NewPD['tglmeninggal'],
+            //             ]
+            //         );
+            // }
+
+            // $updateAPD= AntrianPasienDiperiksa::where('norec', $r_NewPD['norec_apd'])->where('kdprofile', $kdProfile)
+            //     ->update([
+            //             'tglkeluar' => $r_NewPD['tglmeninggal'],
+            //         ]
+            //     );
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = 'SUKSES';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = "GAGAL";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

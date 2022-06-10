@@ -34,7 +34,7 @@
                                     </div>
                                     <div class="grid_12">
                                         <input c-text-box type="text" filter="'varchar'" class="k-textbox"
-                                            ng-model="item.notelp" ng-disabled="peneliti"/>
+                                            ng-model="item.notelp" ng-disabled="peneliti" required/>
                                     </div>
                                 </div>
                                 <div class="grid_3">
@@ -45,7 +45,7 @@
                                         <input style="width: 100%;" kendo-combo-box k-ng-model="item.jenis"
                                             k-data-text-field="'diklatkategori'" k-data-value-field="'id'"
                                             k-filter="'contains'" k-auto-bind="false" k-data-source="ListJenisDiklat"
-                                            ng-disabled="peneliti" ng-disabled="peneliti" />
+                                            ng-disabled="peneliti" ng-disabled="peneliti" required/>
                                     </div>
                                 </div>
                             </div>
@@ -59,7 +59,7 @@
                                         <input style="width: 100%;" kendo-combo-box k-ng-model="item.layanan"
                                             k-data-text-field="'detailjenisproduk'" k-data-value-field="'id'"
                                             k-filter="'contains'" k-auto-bind="false" k-data-source="ListJenisLayanan"
-                                            k-on-change="GetLevelPendidikan()" ng-disabled="peneliti"/>
+                                            k-on-change="GetLevelPendidikan()" ng-disabled="peneliti"required/>
                                             
                                     </div>
                                 </div>
@@ -71,9 +71,9 @@
                                         <input ng-show="idlvlpendidikan" style="width: 100%;" kendo-combo-box k-ng-model="item.levelpendidikan"
                                             k-data-text-field="'namaproduk'" k-data-value-field="'id'"
                                             k-filter="'contains'" k-auto-bind="false"
-                                            k-data-source="ListLevelPendidikan" k-on-change="GetHarga()" />
+                                            k-data-source="ListLevelPendidikan" k-on-change="GetHarga()"required />
                                         <input ng-show="lvlpendidikan" c-text-box type="input" filter="'varchar'"
-                                                class="k-textbox" ng-model="item.look" ng-disabled = "true" />
+                                                class="k-textbox" ng-model="item.look" ng-disabled = "true"/>
                                     </div>
                                 </div>
                                 <div class="grid_3">
@@ -83,7 +83,7 @@
                                     <div class="grid_12">
                                         <input c-text-box type="number" filter="'varchar'" class="k-textbox"
                                             ng-model="item.jumlahpeserta" min="0" ng-change="GetBiaya()"
-                                            ng-disabled="peneliti" />
+                                            ng-disabled="peneliti" required />
                                     </div>
                                 </div>
                                 <div class="grid_3">
@@ -92,7 +92,8 @@
                                     </div>
                                     <div class="grid_12">
                                         <input c-text-box type="number" filter="'varchar'" class="k-textbox"
-                                            ng-model="item.qty" min="0" ng-change="GetBiaya()" ng-disabled="peneliti" />
+                                            ng-model="item.qty" min="0" ng-change="GetBiaya()" ng-disabled="peneliti"
+                                            required/>
                                     </div>
                                 </div>
                                 <div class="grid_3">
@@ -101,7 +102,7 @@
                                     </div>
                                     <div class="grid_12">
                                         <input c-text-box type="input" filter="'varchar'" class="k-textbox"
-                                            ng-model="item.satuan" disabled />
+                                            ng-model="item.satuan" disabled required/>
                                     </div>
                                 </div>
                                 <div class="grid_3">
@@ -110,7 +111,7 @@
                                     </div>
                                     <div class="grid_12">
                                         <input c-text-box type="text" filter="'varchar'" class="k-textbox"
-                                            ng-model="item.hargasatuan"disabled />
+                                            ng-model="item.hargasatuan"disabled required />
                                     </div>
                                     
                                 </div>
@@ -121,7 +122,7 @@
                                     <div class="grid_12">
                                         <!-- <input kendo-date-picker k-ng-model="item.tanggalMulai" k-format="'dd-MM-yyyy'" style="width: 100%" /> -->
                                         <input style="width: 100%" k-ng-model="item.tanggalMulai" kendo-datetimepicker
-                                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
+                                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" required />
                                     </div>
                                 </div>
                                 <div class="grid_3">
@@ -131,7 +132,7 @@
                                     <div class="grid_12">
                                         <!-- <input kendo-date-picker k-ng-model="item.tanggalMulai" k-format="'dd-MM-yyyy'" style="width: 100%" /> -->
                                         <input style="width: 100%" k-ng-model="item.tanggalSelesai" kendo-datetimepicker
-                                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'"  />
+                                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" required />
                                     </div>
                                 </div>
                             </div>
@@ -403,15 +404,15 @@
             <div class="grid_12">
                 <div class="grid_8"></div>
                 <div class="grid_2">
-                    <c-button ng-show="!isLoading"
-                        style="width: 99.5%; font-size: 24px; padding:0px, margin:0px; text-align: center;" item="item"
-                        size="36" position=" 'right'" class="cancel" ng-click="Batal()" ng-disabled="peneliti">
+                    <button ng-show="!isLoading"
+                        style="width: 99.5%; font-size: 24px; padding:0px; margin:0px; text-align: center;" item="item"
+                        size="36" position=" 'right'" class="c-button cancel" ng-click="Batal()" ng-disabled="peneliti">
                         <span class="title">Batal</span>
-                    </c-button>
+                    </button>
                 </div>
                 <div class="grid_2">
                     <button ng-show="!isLoading" class="c-button success"
-                        style="width: 99.5%; font-size: 24px; padding:0px, margin: 0px; text-align: center;" item="item"
+                        style="width: 99.5%; font-size: 24px; padding:0px; margin: 0px; text-align: center;" item="item"
                         size="36" position=" 'right'" is-validate ng-click="Save()" ng-disabled="peneliti">
                         <span class="title">Simpan</span>
                     </c-button>

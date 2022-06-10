@@ -1593,4 +1593,57 @@ class LoggingController extends ApiController
         }
         return $this->respond($result);
     }
+
+    public function saveLogPulangPasienRJ(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $transStatus = true;
+        $dataLogin = $request->all();
+        $pasien= DB::table('pasiendaftar_t as pd')
+            ->join('ruangan_m as ru','pd.objectruanganlastfk','=','ru.id')
+            ->join('departemen_m as dept','dept.id','=','ru.objectdepartemenfk')
+            ->select('pd.noregistrasi','ru.namaruangan','pd.tglpulang','dept.namadepartemen')
+            ->where('pd.norec','=',$request['norec_pd'])
+            ->where('pd.kdprofile', $kdProfile)
+            ->first();
+        $newId = LoggingUser::max('id');
+        $newId = $newId +1;
+        $logUser = new LoggingUser();
+        $logUser->id = $newId;
+        $logUser->norec = $logUser->generateNewId();
+        $logUser->kdprofile= $kdProfile;
+        $logUser->statusenabled=true;
+        $logUser->jenislog = 'Pasien Pulang '. $pasien->namadepartemen;
+        $logUser->noreff = $request['norec_pd'];
+        $logUser->referensi='norec Pasien Daftar';
+        $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+        $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
+        if(!empty($pasien) ){
+            $logUser->keterangan ='Pulang dari Ruangan '.$pasien->namaruangan .' tgl '.$pasien->tglpulang. ' dengan No Registrasi '.$pasien->noregistrasi;
+        }
+        //            try {
+        $logUser->save();
+        $transMsg = "Simpan Log Sukses ";
+        //
+        //            } catch (\Exception $e) {
+        //                $transStatus = false;
+        //                $transMsg = "Simpan Log Gagal ";
+        //
+        //            }
+
+        if ($transStatus == true) {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMsg
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMsg
+            );
+        }
+        return $this->respond($result);
+    }
 }

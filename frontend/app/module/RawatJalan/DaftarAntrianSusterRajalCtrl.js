@@ -72,7 +72,9 @@ define(['initialize'], function (initialize) {
                     $scope.item.statusKeluar = $scope.listStatusKeluar[1];
                     $scope.listPenyebabKematian = e.data.penyebabkematian;
                     $scope.listRuanganJenazah = e.data.ruangankematian;
+                    $scope.liststatusPulang = e.data.statuspulang;
                     $scope.item.statusKeluarJ = $scope.listStatusKeluar[0];
+                    $scope.item.statusKeluarP = $scope.listStatusKeluar[2];
                 })
 
                 medifirstService.get("rawatjalan/get-data-combo-dokter", false).then(function (data) {
@@ -2061,6 +2063,13 @@ define(['initialize'], function (initialize) {
                     $scope.winPasienMeninggal.center().open()
                 }
             }
+            $scope.pasienPulang = function () {
+                if ($scope.item == undefined) {
+                    toastr.error('Pilih data dulu', 'Informasi');
+                } else {
+                    $scope.winPasienPulang.center().open()
+                }
+            }
 
             $scope.BatalMeninggal = function(){
                 $scope.item.statusKeluarJ = undefined;
@@ -2069,6 +2078,12 @@ define(['initialize'], function (initialize) {
                 $scope.item.penyebabKematian = undefined;               
                 $scope.winPasienMeninggal.close();
             }
+            $scope.BatalPulang = function () {
+                $scope.item.statusKeluarP = undefined;
+                $scope.item.kondisiKeluarP = undefined;
+                $scope.winPasienPulang.close();
+            }
+
 
             $scope.$watch('item.penyebabKematian', function (e) {
                 if (e === undefined) return;
@@ -2167,6 +2182,70 @@ define(['initialize'], function (initialize) {
                      })    
                  })
             }
+            
+            $scope.SimpanPulang = function () {
+             
+
+                var statusKeluarId = null;
+                if ($scope.item.statusKeluarP != undefined) {
+                    statusKeluarId = $scope.item.statusKeluarP.id;
+                }
+
+                var hubungankeluargaId = null;
+                var hubunganKeluarga = null;
+                if ($scope.item.hubunganKeluarga != undefined) {
+                    hubungankeluargaId = $scope.item.hubunganKeluarga.id;
+                    hubunganKeluarga = $scope.item.hubunganKeluarga.hubungankeluarga;
+                }
+
+                var kondisiKeluarId = null;
+                var kondisiKeluar = null;
+                if ($scope.item.kondisiKeluarP != undefined) {
+                    kondisiKeluarId = $scope.item.kondisiKeluarP.id;
+                    kondisiKeluar = $scope.item.kondisiKeluarP.kondisipasien
+                }
+
+                var namaPembawaPulang = null;
+                if ($scope.item.namaPembawaPulang != undefined) {
+                    namaPembawaPulang = $scope.item.namaPembawaPulang;
+                }
+
+                var PenyebabKematianText = ""
+                if ($scope.item.PenyebabKematianText != undefined) {
+                    PenyebabKematianText = $scope.item.PenyebabKematianText
+                }
+
+                var penyebabkematianId = null;
+                if ($scope.item.penyebabKematian != undefined) {
+                    penyebabkematianId = $scope.item.penyebabKematian.id;
+                }
+
+                var pasiendaftar = {
+                    tglregistrasidate: moment($scope.dataPasienSelected.tglregistrasi).format('YYYY-MM-DD'),
+                    objectkelompokpasienlastfk: $scope.dataPasienSelected.objectkelompokpasienlastfk,
+                    noregistrasi: $scope.dataPasienSelected.noregistrasi,
+                    objectkondisipasienfk: kondisiKeluarId,
+                    objectstatuskeluarfk: statusKeluarId,
+                    norec_pd: $scope.dataPasienSelected.norec_pd,
+                    objectstatuspulangfk: $scope.item.statusPulang.id
+                }
+
+                var objSave = {
+                    pasiendaftar: pasiendaftar,
+                }
+                console.log(objSave);
+                // return 
+                medifirstService.post('rawatjalan/simpan-pulang-pasien', objSave).then(function (e) {
+                    medifirstService.get("sysadmin/logging/save-log-pulang-pasien-rj?norec_pd=" +
+                        $scope.dataPasienSelected.norec_pd).then(function (data) {
+                        $scope.item.statusPulang = undefined;
+                        $scope.item.kondisiKeluarP = undefined;
+                        $scope.winPasienPulang.close();
+                        loadData()
+                    })
+                })
+            }
+
              $scope.emr = function () {
                 if ($scope.dataPasienSelected.nocm == null && $scope.dataPasienSelected.norec_apd == null) {
                     window.messageContainer.error("Pilih Dahulu Pasien!")

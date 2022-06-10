@@ -275,6 +275,10 @@
             <button class="btnTemplate1 red" style="margin-left: 0;" ng-click="emr()"><i
                     class="fa fa-stethoscope"></i>EMR</button>
         </div>
+         <div class="grid_2" style="margin-top:-10px">
+             <button class="btnTemplate1" style="margin-left: 0;" ng-click="pasienPulang()"><i
+                     class="fa fa-bed"></i>Pulang</button>
+         </div>
     </div>
 
     <div class="grid_12">
@@ -559,6 +563,54 @@
                 &nbsp;
                 <input type="button" class="confirm_yes k-button" value="Simpan" style="width: 70px" ng-click="SimpanMeninggal()"/>
             </div> 
+        </div>
+    </div>
+
+    <div kendo-window="winPasienPulang" k-title="'Pasien Pulang'" k-width="750" k-visible="false"
+        k-on-open="win2visible = true" k-on-close="win2visible = false">
+        <div class="panel panel-default container_12" style="padding: 0px 10px;">
+            <div class="grid_12">
+                <div class="grid_6">
+                    <!-- Status keluar -->
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="statusKeluar"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusKeluarP"
+                            k-data-text-field="'statuskeluar'" k-filter="'contains'" k-data-value-field="'id'" disabled
+                            k-auto-bind="false" k-data-source="listStatusKeluar" k-on-change="loadKelas()" />
+                    </div>
+                </div>
+                <div class="grid_6">
+                    <!-- Kondisi Keluar -->
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="kondisiKeluar"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.kondisiKeluarP"
+                            k-data-text-field="'kondisipasien'" k-filter="'contains'" k-data-value-field="'id'"
+                            k-auto-bind="false" k-data-source="listKondisiPasien" />
+                    </div>
+                </div>
+                <div class="grid_6">
+                    <!-- Kondisi Keluar -->
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="statusPulang"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusPulang"
+                            k-data-text-field="'statuspulang'" k-filter="'contains'" k-data-value-field="'id'"
+                            k-auto-bind="false" k-data-source="liststatusPulang" />
+                    </div>
+                </div>
+            </div>
+            <div class="dialog_buttons pull-right" style="margin-top: 15px;">
+                <input type="button" class="confirm_no k-button" value="Batal" style="width: 70px"
+                    ng-click="BatalPulang()" />
+                &nbsp;
+                <input type="button" class="confirm_yes k-button" value="Simpan" style="width: 70px"
+                    ng-click="SimpanPulang()" />
+            </div>
         </div>
     </div>
     <style>
