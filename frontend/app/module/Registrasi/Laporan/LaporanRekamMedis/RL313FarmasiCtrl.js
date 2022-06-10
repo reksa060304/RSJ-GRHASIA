@@ -9,7 +9,7 @@ define(['initialize'], function (initialize) {
       $scope.dataSelected = {};
       $scope.dataSelected1 = {};
       $scope.item = {};
-      // LoadData()
+      LoadData()
       $scope.dataLogin = JSON.parse(window.localStorage.getItem('pegawai'));
 
       $scope.CariRegistrasiPasien = function () {
@@ -41,8 +41,15 @@ define(['initialize'], function (initialize) {
           var data = data.data
           for (var i = 0; i < data.data.length; i++) {
             data.data[i].no = i + 1
+            data.data[i].kdprov = '24'
+            data.data[i].kabkota = 'Kab. Sleman'
+            data.data[i].koders = '3404022'
+            data.data[i].namars = 'RSJ. Grhasia'
+            data.data[i].tahun = moment($scope.now).format('YYYY');
           }
-
+          data.data[0].kategori = 'Obat Generik (Formularium+Non Formularium)'
+          data.data[1].kategori = 'Obat Non Generik Formularium'
+          data.data[2].kategori = 'Obat Non Generik Non Formularium'
           $scope.ambildataexcel = data.data;
           $scope.panggil($scope.ambildataexcel);
           $scope.dataRL52 = new kendo.data.DataSource({
@@ -78,7 +85,16 @@ define(['initialize'], function (initialize) {
             $scope.isRouteLoading = false;
             for (var i = 0; i < data.data.length; i++) {
               data.data[i].no = i + 1
+              data.data[i].kdprov = '24'
+              data.data[i].kabkota = 'Kab. Sleman'
+              data.data[i].koders = '3404022'
+              data.data[i].namars = 'RSJ. Grhasia'
+              data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
             }
+
+            data.data[0].kategori = 'Obat Generik (Formularium+Non Formularium)'
+            data.data[1].kategori = 'Obat Non Generik Formularium'
+            data.data[2].kategori = 'Obat Non Generik Non Formularium'
 
             $scope.getdataexcel = data.data;
             $scope.callExcel($scope.calldataexcel);
@@ -114,34 +130,57 @@ define(['initialize'], function (initialize) {
           resizable: true,
           sortable: true,
           columns: [
-            {
-              title: "A.Pengadaan Obat",
-              Template: "<span class='style-left'>#: no #</span>",
-              columns: [
+                {
+                  field: "kdprov",
+                  title: "KODE PROPINSI",
+                  width: "150px"
+                },
+                {
+                    field: "kabkota",
+                    title: "KAB / KOTA",
+                    width: "150px"
+                },
+                {
+                    field: "koders",
+                    title: "KODE RS",
+                    width: "150px"
+                },
+                {
+                    field: "namars",
+                    title: "NAMA RS",
+                    width: "150px"
+                },
+                {
+                    field: "tahun",
+                    title: "TAHUN",
+                    width: "150px"
+                },
                 {
                   field: "no",
-                  title: "No",
+                  title: "NO",
                   Template: "<span class='style-center'>#: no #</span>",
-                  width: "50px"
+                  width: "150px"
                 },
                 {
-                  field: "detailobat",
-                  title: "Golongan Obat"
+                  field: "kategori",
+                  title: "GOLONGAN OBAT",
+                  width: "150px"
                 },
                 {
-                  field: "jumlah",
-                  title: "Jumlah Item Obat"
+                  field: "jumlahitem",
+                  title: "JUMLAH ITEM OBAT",
+                  width: "150px"
                 },
                 {
                   field: "jumlahtersedia",
-                  title: "Jumlah Item Obat Yang Tersedia Di Rumah Sakit"
+                  title: "JUMLAH ITEM OBAT YANG TERSEDIA DI RUMAH SAKIT",
+                  width: "150px"
                 },
                 {
-                  field: "jumlahfortersedia",
-                  title: "Jumlah Item Obat Formulatorium Tersedia Di rumah Sakit"
+                  field: "jumlahtersediafor",
+                  title: "JUMLAH ITEM OBAT FORMULATORIUM TERSEDIA DIRUMAH SAKIT",
+                  width: "150px"
                 }
-              ]
-            }
           ]
         });
       }
@@ -163,32 +202,55 @@ define(['initialize'], function (initialize) {
           resizable: true,
           columns: [
             {
-              title: "B.Penulisan dan Pelayanan Resep",
-              Template: "<span class='style-left'>#: no #</span>",
-              columns: [
-                {
-                  field: "no",
-                  title: "No",
-                  Template: "<span class='style-center'>#: no #</span>",
-                  width: "50px"
-                },
-                {
-                  field: "detailobat",
-                  title: "Golongan Obat"
-                },
-                {
-                  field: "Jmlrj",
-                  title: "Rawat Jalan"
-                },
-                {
-                  field: "JmlIGD",
-                  title: "IGD"
-                },
-                {
-                  field: "JmlRawatInap",
-                  title: "Rawat Inap"
-                }
-              ]
+              field: "kdprov",
+              title: "KODE PROPINSI",
+              width: "150px"
+            },
+            {
+                field: "kabkota",
+                title: "KAB / KOTA",
+                width: "150px"
+            },
+            {
+                field: "koders",
+                title: "KODE RS",
+                width: "150px"
+            },
+            {
+                field: "namars",
+                title: "NAMA RS",
+                width: "150px"
+            },
+            {
+                field: "tahun",
+                title: "TAHUN",
+                width: "150px"
+            },
+            {
+              field: "no",
+              title: "NO",
+              Template: "<span class='style-center'>#: no #</span>",
+              width: "150px"
+            },
+            {
+              field: "kategori",
+              title: "GOLONGAN OBAT",
+              width: "150px"
+            },
+            {
+              field: "jumlahrajal",
+              title: "RAWAT JALAN",
+              width: "150px"
+            },
+            {
+              field: "jumlahigd",
+              title: "IGD",
+              width: "150px"
+            },
+            {
+              field: "jumlahranap",
+              title: "RAWAT INAP",
+              width: "150px"
             }
           ]
         });
@@ -206,64 +268,109 @@ define(['initialize'], function (initialize) {
 
       $scope.columnRL52 = [
         {
-          title: "A.Pengadaan Obat",
-          Template: "<span class='style-left'>#: no #</span>",
-          columns: [
-            {
-              field: "no",
-              title: "No",
-              Template: "<span class='style-center'>#: no #</span>",
-              width: "50px"
-            },
-            {
-              field: "",
-              title: "Golongan Obat"
-            },
-            {
-              field: "",
-              title: "Jumlah Item Obat"
-            },
-            {
-              field: "",
-              title: "Jumlah Item Obat Yang Tersedia DiRumah Sakit"
-            },
-            {
-              field: "",
-              title: "Jumlah Item Obat Formulatorium Tersedia Dirumah Sakit"
-            }
-
-          ]
+          field: "kdprov",
+          title: "KODE PROPINSI",
+          width: "150px"
+        },
+        {
+            field: "kabkota",
+            title: "KAB / KOTA",
+            width: "150px"
+        },
+        {
+            field: "koders",
+            title: "KODE RS",
+            width: "150px"
+        },
+        {
+            field: "namars",
+            title: "NAMA RS",
+            width: "150px"
+        },
+        {
+            field: "tahun",
+            title: "TAHUN",
+            width: "150px"
+        },
+        {
+          field: "no",
+          title: "NO",
+          Template: "<span class='style-center'>#: no #</span>",
+          width: "150px"
+        },
+        {
+          field: "kategori",
+          title: "GOLONGAN OBAT",
+          width: "150px"
+        },
+        {
+          field: "jumlahitem",
+          title: "JUMLAH ITEM OBAT",
+          width: "150px"
+        },
+        {
+          field: "jumlahtersedia",
+          title: "JUMLAH ITEM OBAT YANG TERSEDIA DI RUMAH SAKIT",
+          width: "150px"
+        },
+        {
+          field: "jumlahtersediafor",
+          title: "JUMLAH ITEM OBAT FORMULATORIUM TERSEDIA DIRUMAH SAKIT",
+          width: "150px"
         }
       ];
 
       $scope.columnRL3_13 = [
         {
-          title: "B.Penulisan dan Pelayanan Resep",
-          Template: "<span class='style-left'>#: no #</span>",
-          columns: [
-            {
-              field: "no",
-              title: "No",
-              Template: "<span class='style-center'>#: no #</span>",
-              width: "50px"
-            },
-            {
-              field: "",
-              title: "Golongan Obat"
-            },
-            {
-              field: "",
-              title: "Jumlah Item Obat"
-            },
-            {
-              field: "",
-              title: "Jumlah Item Obat Yang Tersedia DiRumah Sakit"
-            },
-            {
-              field: "",
-              title: "Jumlah Item Obat Formulatorium Tersedia Dirumah Sakit"
-            }
-          ]
+            field: "kdprov",
+            title: "KODE PROPINSI",
+            width: "150px"
+        },
+        {
+            field: "kabkota",
+            title: "KAB / KOTA",
+            width: "150px"
+        },
+        {
+            field: "koders",
+            title: "KODE RS",
+            width: "150px"
+        },
+        {
+            field: "namars",
+            title: "NAMA RS",
+            width: "150px"
+        },
+        {
+            field: "tahun",
+            title: "TAHUN",
+            width: "150px"
+        },
+        {
+          field: "no",
+          title: "NO",
+          Template: "<span class='style-center'>#: no #</span>",
+          width: "150px"
+        },
+        {
+          field: "kategori",
+          title: "GOLONGAN OBAT",
+          width: "150px"
+        },
+        {
+          field: "jumlahrajal",
+          title: "RAWAT JALAN",
+          width: "150px"
+        },
+        {
+          field: "jumlahigd",
+          title: "IGD",
+          width: "150px"
+        },
+        {
+          field: "jumlahranap",
+          title: "RAWAT INAP",
+          width: "150px"
         }
       ];
 

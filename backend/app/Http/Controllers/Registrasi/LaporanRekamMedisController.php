@@ -3308,150 +3308,58 @@ class LaporanRekamMedisController extends   ApiController
     }
     public function getPengadaanObat(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $KdJenisLapFarmasi = (int) $this->settingDataFixed('KdJenisLapFarmasi', $kdProfile);
-//        $dataLogin = $request->all();
-//
-//        $data = \DB::table('produk_m as prd')
-//            ->join('stokprodukdetail_t as spd','spd.objectprodukfk','=','prd.id')
-//            ->join('ruangan_m as ru','ru.id','=','spd.objectruanganfk')
-//            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
-//
-//            ->select('prd.namaproduk', 'spd.qtyproduk','spd.objectruanganfk','ru.namaruangan','ru.objectdepartemenfk',
-//                'prd.id as idproduk', 'prd.isgeneric', 'spd.tglpelayanan',
-//
-////            case when prd.isgeneric = true then 'Obat Generik(Formularium + Non Formularium)'
-//                DB::raw('(case when prd.objectstatusprodukfk = 1 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Non Formularium\'
-//                          when prd.objectstatusprodukfk = 2 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Formularium\'
-//                          else \'Obat Generik(Formularium + Non Formularium)\' end) as detailobat'
-//                )
-//            )
-//
-//            ->where('prd.objectdetailjenisprodukfk', 474);
-//
-//        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-//            $data = $data->where('spd.tglpelayanan', '>=', $request['tglAwal']);
-//        }
-//        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-//            $tgl = $request['tglAkhir'];
-//            $data = $data->where('spd.tglpelayanan', '<=', $tgl);
-//        }
-//        $data = $data->get();
-//
-//        $data10 = [];
-//        $jml = 0;
-//        $sama = false;
-//
-//        $JmlGenerik = 0;
-//        $stokFormula = 0;
-//        $stokObat =0;
-//
-//        foreach ($data as $item) {
-//            $sama = false;
-//            $i = 0;
-//            foreach ($data10 as $hideung) {
-//                if ($item->detailobat == $data10[$i]['detailobat']) {
-//                    $sama = true;
-//                    $jml = (float)$hideung['jumlah'] + 1;
-//                    $data10[$i]['jumlah'] = $jml;
-//
-//                    if ($item->isgeneric == true)
-//                    {
-//                        $data10[$i]['JmlGeneric'] = (float)$hideung['JmlGeneric'] + 1;
-//                    }
-//                    $data10[$i]['Total'] = (float)$hideung['Total'] + 1;
-//                    $data10[$i]['Totalitem'] = (float)$hideung['Total'] + $data10[$i]['JmlGeneric'];
-//
-//                }
-//                $i = $i + 1;
-//            }
-//
-//            if ($sama == false) {
-//
-//                if ($item->isgeneric == true)
-//                {
-//                    $JmlGenerik = 1;
-//                    $stokFormula = 0;
-//                    $stokObat =0;
-//                }
-//
-//                $data10[] = array(
-//                    'detailobat' => $item->detailobat,
-//                    'Total' => 1,
-//                    'JmlGeneric' => $JmlGenerik,
-//                    'Totalitem' => 1 + $JmlGenerik,
-//                    'jumlah' => 1,
-//                );
-//            }
-//
-//            foreach ($data10 as $key => $row) {
-//                $count[$key] = $row['jumlah'];
-//            }
-//
-//            array_multisort($count, SORT_DESC, $data10);
-//        }
-//
-//        $result = array(
-//            'data' => $data10,
-//            'message' => 'as@cepot',
-//        );
-//        return $this->respond($result);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
 
+        $datas = DB::select(DB::raw("select sum(item1) item1, sum(item2) item2, sum(item3) item3, sum(tersedia1) tersedia1, sum(tersedia2) tersedia2, sum(tersedia3) tersedia3,
+        sum(tersediafor1) tersediafor1, sum(tersediafor2) tersediafor2, sum(tersediafor3) tersediafor3 
+        from(
+            select
+            case when isgeneric = true and isfornas is not null and isforrs is not null then count(namaproduk) else 0 end as item1,
+            case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as item2,
+            case when isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then count(namaproduk) else 0 end as item3,
+        
+            case when isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as tersedia1,
+            case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as tersedia2,
+            case when isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as tersedia3,
+            
+            case when isgeneric = true and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as tersediafor1,
+            case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as tersediafor2,
+            0 as tersediafor3
+        
+            from(
+                    select pr.namaproduk, sum(spd.qtyproduk) as jumlahproduk, ru.namaruangan, dp.id, pr.isfornas, pr.isforrs, pr.isgeneric
+                            FROM stokprodukdetail_t as spd
+                            INNER JOIN strukpelayanan_t as sp on sp.norec = spd.nostrukterimafk
+                            INNER JOIN produk_m as pr on pr.id = spd.objectprodukfk
+                            LEFT JOIN ruangan_m AS ru ON ru.id = spd.objectruanganfk
+                            LEFT JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
+                    where pr.statusenabled = true
+                    and spd.statusenabled = true
+                    and pr.kdprofile = 30
+                    and spd.kdprofile = 30
+                    group by pr.isfornas, pr.isforrs, pr.isgeneric, ru.namaruangan, dp.id, pr.namaproduk
+            ) as x group by isgeneric, isforrs, isfornas
+        ) as y;"));
 
-//    #with Mapping
-        $data = \DB::table('produk_m as prd')
-            ->join('stokprodukdetail_t as spd','spd.objectprodukfk','=','prd.id')
-            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','spd.objectprodukfk')
-            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
-            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
-            ->join('ruangan_m as ru','ru.id','=','spd.objectruanganfk')
-            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
-            ->select('prd.namaproduk',
-                'kl.kelompoklaporan as detailobat',
-                DB::raw('count(prd.id) as jumlahitem,sum(spd.qtyproduk) as jumlahtersedia'))
-            ->groupBy('prd.namaproduk','prd.id','kl.kelompoklaporan')
-            ->where('prd.kdprofile', $kdProfile)
-            ->where('jl.id', $KdJenisLapFarmasi);
+        $data10[0] = array(
+            'jumlahitem' => $datas[0]->item1,
+            'jumlahtersedia' => $datas[0]->tersedia1,
+            'jumlahtersediafor' => $datas[0]->tersediafor1,
+        );
 
-        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $data = $data->where('spd.tglpelayanan', '>=', $request['tglAwal']);
-        }
-        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $tgl = $request['tglAkhir'];
-            $data = $data->where('spd.tglpelayanan', '<=', $tgl);
-        }
-        $data = $data->get();
+        $data10[1] = array(
+            'jumlahitem' => $datas[0]->item2,
+            'jumlahtersedia' => $datas[0]->tersedia2,
+            'jumlahtersediafor' => $datas[0]->tersediafor2,
+        );
 
-        $data10 = [];
-        foreach ($data as $item) {
-            $sama = false;
-            $i = 0;
-            foreach ($data10 as $hideung) {
-                if ($item->detailobat == $data10[$i]['detailobat']) {
-                    $sama = true;
-                    $jml = (float)$hideung['jumlah'] + 1;
-                    $data10[$i]['jumlah'] = $jml;
-                }
-                $i = $i + 1;
-            }
+        $data10[2] = array(
+            'jumlahitem' => $datas[0]->item3,
+            'jumlahtersedia' => $datas[0]->tersedia3,
+            'jumlahtersediafor' => $datas[0]->tersediafor3,
+        );
 
-            if ($sama == false) {
-
-                $data10[] = array(
-                    'detailobat' => $item->detailobat,
-                    'jumlahtersedia' => $item->jumlahtersedia,
-                    'jumlahfortersedia'=>0,
-//                    'Total' => 1,
-//                    'JmlGeneric' => $JmlGenerik,
-//                    'Totalitem' => 1 + $JmlGenerik,
-                    'jumlah' => 1,
-                );
-            }
-
-            foreach ($data10 as $key => $row) {
-                $count[$key] = $row['jumlah'];
-            }
-            array_multisort($count, SORT_DESC, $data10);
-        }
         $result = array(
             'data' => $data10,
             'message' => 'as@lancelot',
@@ -3769,215 +3677,57 @@ class LaporanRekamMedisController extends   ApiController
     }
     public function getPelayananResep(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $KdJenisLapFarmasi = (int) $this->settingDataFixed('KdJenisLapFarmasi', $kdProfile);
-//        $dataLogin = $request->all();
-//
-//        $data = \DB::table('pasiendaftar_t as pd')
-//            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
-//            ->leftJoin('pelayananpasien_t as pp','pp.noregistrasifk','=','apd.norec')
-//            ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
-//            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
-//            ->join('produk_m as prd','prd.id','=','pp.produkfk')
-//            ->select('prd.namaproduk','apd.objectruanganfk','ru.namaruangan','ru.objectdepartemenfk',
-//                'prd.id as idproduk', 'prd.objectdetailjenisprodukfk',
-//
-//                DB::raw('(case when ru.objectdepartemenfk in (16, 17, 35, 26) then \'Rawat Inap\'
-//                        when ru.objectdepartemenfk in (18, 27, 3, 28) then \'Rawat Jalan\'
-//                        when prd.id = 24 then \'IGD\'
-//                        else null end) as deptpelayanan,
-//                        (case when prd.objectstatusprodukfk = 1 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Non Formularium\'
-//                        when prd.objectstatusprodukfk = 2 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Formularium\'
-//                        else \'Obat Generik(Formularium + Non Formularium)\' end) as detailobat'
-//                )
-//            )
-//
-//            ->where('prd.objectdetailjenisprodukfk', 474);
-//
-////        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-////            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
-////        }
-////        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-////            $tgl = $request['tglAkhir'];
-////            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
-////        }
-//        $data = $data->get();
-//
-//        $data10 = [];
-//        $jml = 0;
-//        $sama = false;
-//
-//        $JmlRajal = 0;
-//        $JmlRI = 0;
-//        $JmlIGD = 0;
-//
-//        foreach ($data as $item) {
-//            $sama = false;
-//            $i = 0;
-//            foreach ($data10 as $hideung) {
-//                if ($item->detailobat == $data10[$i]['detailobat']) {
-//                    $sama = true;
-//                    $jml = (float)$hideung['jumlah'] + 1;
-//                    $data10[$i]['jumlah'] = $jml;
-//
-//                    if ($item->deptpelayanan == 'Rawat Inap')
-//                    {
-//                        $data10[$i]['JmlRawatInap'] = (float)$hideung['JmlRawatInap'] + 1;
-//                    }
-//                    elseif ($item->deptpelayanan == 'Rawat Jalan')
-//                    {
-//                        $data10[$i]['Jmlrj'] = (float)$hideung['Jmlrj'] + 1;
-//                    }
-//                    elseif ($item->deptpelayanan == 'IGD')
-//                    {
-//                        $data10[$i]['JmlIGD'] = (float)$hideung['JmlIGD'] + 1;
-//                    }
-//                }
-//                $i = $i + 1;
-//            }
-//
-//            if ($sama == false) {
-//
-//                if ($item->deptpelayanan == 'Rawat Inap')
-//                {
-//                    $JmlRajal = 0;
-//                    $JmlRI = 1;
-//                    $JmlIGD = 0;
-//                }
-//                elseif ($item->deptpelayanan == 'Rawat Jalan')
-//                {
-//                    $JmlRajal = 1;
-//                    $JmlRI = 0;
-//                    $JmlIGD = 0;
-//                }
-//                elseif ($item->deptpelayanan == 'IGD')
-//                {
-//                    $JmlRajal = 0;
-//                    $JmlRI = 0;
-//                    $JmlIGD = 1;
-//                }
-//                $data10[] = array(
-//                    'detailobat' => $item->detailobat,
-//                    'JmlRawatInap' => $JmlRI,
-//                    'Jmlrj' => $JmlRajal,
-//                    'JmlIGD' => $JmlIGD,
-//                    'jumlah' => 1,
-//                );
-//            }
-//
-//            foreach ($data10 as $key => $row) {
-//                $count[$key] = $row['jumlah'];
-//            }
-//
-//            array_multisort($count, SORT_DESC, $data10);
-//        }
-//
-//        $result = array(
-//            'data' => $data10,
-//            'message' => 'as@cepot',
-//        );
-//        return $this->respond($result);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
 
-        //#WITH MAPPING
-        $data = \DB::table('pasiendaftar_t as pd')
-            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
-            ->leftJoin('pelayananpasien_t as pp','pp.noregistrasifk','=','apd.norec')
-            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','pp.produkfk')
-            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
-            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
-            ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
-            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
-            ->join('produk_m as prd','prd.id','=','pp.produkfk')
-            ->select('prd.namaproduk','apd.objectruanganfk','ru.namaruangan','kl.kelompoklaporan as detailobat',
-                'pp.tglpelayanan',
-                DB::raw('(case when ru.objectdepartemenfk in (16, 17, 35, 26) then \'Rawat Inap\'
-                        when ru.objectdepartemenfk in (18, 27, 3, 28) then \'Rawat Jalan\'
-                        when ru.objectdepartemenfk = 24 then \'IGD\'
-                        else null end) as deptpelayanan'
-                )
-            )
-            ->where('pd.kdprofile', $kdProfile)
-            ->where('jl.id', $KdJenisLapFarmasi);
+        $datas = DB::select(DB::raw("select sum(rajal1) rajal1, sum(rajal2) rajal2, sum(rajal3) rajal3, sum(igd1) igd1, sum(igd2) igd2, sum(igd3) igd3, sum(ranap1) ranap1, sum(ranap2) ranap2, sum(ranap3) ranap3 
+        from(
+            select 
+            case when id <> 16 and isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as rajal1,
+            case when id <> 16 and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as rajal2,
+            case when id <> 16 and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as rajal3,
+            case when namaruangan ilike '%ugd%'  and isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as igd1,
+            case when namaruangan ilike '%ugd%' and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as igd2,
+            case when namaruangan ilike '%ugd%' and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as igd3,
+            case when id = 16 and isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as ranap1,
+            case when id = 16 and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as ranap2,
+            case when id = 16 and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as ranap3
+        
+            from(
+                    select sum(pp.jumlah) as jumlahproduk, ru.namaruangan, dp.id, pr.isfornas, pr.isforrs, pr.isgeneric
+                            FROM strukresep_t as sr
+                            INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
+                            INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
+                            INNER JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m AS ps ON ps.id=pd.nocmfk
+                    inner  join produk_m pr on pr.id=pp.produkfk
+                    LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                    LEFT JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
+                    where sr.tglresep between '$tglAwal' and '$tglAkhir'
+                    and pd.kdprofile = 30
+                    and pd.statusenabled = true
+                    and pp.isobat = true
+                    group by pr.isfornas, pr.isforrs, pr.isgeneric, ru.namaruangan, dp.id
+            ) as x group by id, namaruangan, isgeneric, isforrs, isfornas
+        ) as y;"));
 
-        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
-        }
-        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $tgl = $request['tglAkhir'];
-            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
-        }
-        $data = $data->get();
+        $data10[0] = array(
+            'jumlahrajal' => $datas[0]->rajal1,
+            'jumlahigd' => $datas[0]->igd1,
+            'jumlahranap' => $datas[0]->ranap1,
+        );
 
-        $data10 = [];
-        $jml = 0;
-        $sama = false;
+        $data10[1] = array(
+            'jumlahrajal' => $datas[0]->rajal2,
+            'jumlahigd' => $datas[0]->igd2,
+            'jumlahranap' => $datas[0]->ranap2,
+        );
 
-        $JmlRajal = 0;
-        $JmlRI = 0;
-        $JmlIGD = 0;
-
-        foreach ($data as $item) {
-            $sama = false;
-            $i = 0;
-            foreach ($data10 as $hideung) {
-                if ($item->detailobat == $data10[$i]['detailobat']) {
-                    $sama = true;
-                    $jml = (float)$hideung['jumlah'] + 1;
-                    $data10[$i]['jumlah'] = $jml;
-
-                    if ($item->deptpelayanan == 'Rawat Inap')
-                    {
-                        $data10[$i]['JmlRawatInap'] = (float)$hideung['JmlRawatInap'] + 1;
-                    }
-                    elseif ($item->deptpelayanan == 'Rawat Jalan')
-                    {
-                        $data10[$i]['Jmlrj'] = (float)$hideung['Jmlrj'] + 1;
-                    }
-                    elseif ($item->deptpelayanan == 'IGD')
-                    {
-                        $data10[$i]['JmlIGD'] = (float)$hideung['JmlIGD'] + 1;
-                    }
-                }
-                $i = $i + 1;
-            }
-
-            if ($sama == false) {
-
-                if ($item->deptpelayanan == 'Rawat Inap')
-                {
-                    $JmlRajal = 0;
-                    $JmlRI = 1;
-                    $JmlIGD = 0;
-                }
-                elseif ($item->deptpelayanan == 'Rawat Jalan')
-                {
-                    $JmlRajal = 1;
-                    $JmlRI = 0;
-                    $JmlIGD = 0;
-                }
-                elseif ($item->deptpelayanan == 'IGD')
-                {
-                    $JmlRajal = 0;
-                    $JmlRI = 0;
-                    $JmlIGD = 1;
-                }
-                $data10[] = array(
-                    'detailobat' => $item->detailobat,
-//                    'namaruangan' => $item->namaruangan,
-//                    'namaproduk' => $item->namaproduk,
-//                    'tglpelayanan' => $item->tglpelayanan,
-                    'JmlRawatInap' => $JmlRI,
-                    'Jmlrj' => $JmlRajal,
-                    'JmlIGD' => $JmlIGD,
-                    'jumlah' => 1,
-                );
-            }
-
-            foreach ($data10 as $key => $row) {
-                $count[$key] = $row['jumlah'];
-            }
-
-            array_multisort($count, SORT_DESC, $data10);
-        }
+        $data10[2] = array(
+            'jumlahrajal' => $datas[0]->rajal3,
+            'jumlahigd' => $datas[0]->igd3,
+            'jumlahranap' => $datas[0]->ranap3,
+        );
 
         $result = array(
             'data' => $data10,
