@@ -942,12 +942,16 @@ $scope.formatRupiah = function (value, currency) {
 						"field": "gajiawal",
 						"title": "Gaji Pokok Lama",
 						"width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: gajiawal #', '')}}</span>"
+
 						// "template": "#:namaexternal #, #:name #"
 					},
 					{
 						"field": "gajiakhir",
 						"title": "Gaji Pokok Baru",
 						"width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: gajiakhir #', '')}}</span>"
+
 						// "template": "#:namaexternal #, #:name #"
 					},
 					

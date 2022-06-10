@@ -5778,4 +5778,104 @@ END as januari
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    
+    public function daftarKenaikanGajiBerkala(Request $request){
+         $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = \DB::select(DB::raw("
+            SELECT x.idg,x.idx, x.apalah, x.namalengkap, x.nippns, 
+            x.pangkat, x.golongan, x.gajiakhir,x.tgltmt, y.tgltmt as awal, EXTRACT(year from age(current_date, y.tgltmt)) +1 as mkg 
+            from(SELECT gol.id as idg,  ROW_NUMBER()over(PARTITION by rgb.objectpegawaifk ORDER BY rgb.tgltmt desc)as apalah, pg.id as idx,
+            pg.namalengkap, pg.nippns, gol.namaexternal as pangkat,gol.name as golongan, rgb.gajiakhir, rgb.tgltmt from riwayatgajiberkala_t rgb  
+            INNER JOIN pegawai_m pg on pg.id = rgb.objectpegawaifk 
+            INNER JOIN sdm_golongan_m gol on gol.id = rgb.objectgolonganfk
+						
+            where pg.kdprofile = 30
+            and pg.statusenabled = true
+            and rgb.kdprofile = 30
+            and rgb.statusenabled= true
+            )as x
+						
+						inner join (SELECT gol.id as idg, pg.id as idy, ROW_NUMBER()over(PARTITION by rgb.objectpegawaifk ORDER BY rgb.tgltmt asc)as apalah, 
+            pg.namalengkap, pg.nippns, gol.namaexternal as pangkat,gol.name as golongan, rgb.gajiakhir, rgb.tgltmt from riwayatgajiberkala_t rgb  
+            INNER JOIN pegawai_m pg on pg.id = rgb.objectpegawaifk 
+            INNER JOIN sdm_golongan_m gol on gol.id = rgb.objectgolonganfk
+            where pg.kdprofile = 30
+            and pg.statusenabled = true
+            and rgb.kdprofile = 30
+            and rgb.statusenabled= true
+            )as y on x.idx = y.idy
+						
+            where x.apalah = 1 and y.apalah=1
+-- 						GROUP BY x.apalah, x.namalengkap, x.nippns, x.pangkat, x.golongan, x.gajiakhir ,x.tgltmt, y.tgltmt, x.id
+						order by x.tgltmt asc 
+        "));
+        $data2 = '';
+        $data3 = '';
+        $namalengkap = '';
+        $nippns = '';
+        $tgltmt = '';
+        $pangkat = '';
+        $golongan = '';
+        $gajiakhir = '';
+        $gajibaru = '';
+        $mkg = '';
+        $detail = [];
+        
+        foreach ($data as $dt) {
+            $namalengkap = '';
+            $nippns = '';
+            $tgltmt = '';
+            $pangkat = '';
+            $golongan = '';
+            $gajiakhir = '';
+            $gajibaru = '';
+        $mkg = '';
+
+            $gajigolongan = \DB::table("gajigolongan_m as gg")
+            ->where("gg.golonganfk",$dt->idg)
+            ->where("gg.mkg",$dt->mkg)
+            ->select('gg.gajipokok')
+            ->get();
+            // var_dump($gajigolongan);
+
+            
+            $namalengkap = $dt->namalengkap;
+            $nippns = $dt->nippns;
+            $tgltmt = $dt->tgltmt;
+            $pangkat = $dt->pangkat;
+            $golongan = $dt->golongan;
+            $gajiakhir = $dt->gajiakhir;
+            $data2 = $dt->idg;
+            $data3 = $dt->mkg;
+            $mkg = $dt->mkg;
+            foreach ($gajigolongan as $gg) {
+                $gajibaru = $gg->gajipokok;
+            }
+
+            $detail[]= array(
+            'namalengkap' => $namalengkap,
+            'nippns' => $nippns,
+            'tgltmt' => $tgltmt,
+            'pangkat' => $pangkat,
+            'golongan' => $golongan,
+            'gajiakhir' => $gajiakhir,
+            'gajibaru' => $gajibaru,
+            'mkg'=> $mkg,
+        );
+        }
+        
+
+        $result = array(
+            "data" => $data,
+            "detail"=> $detail,
+            // 'idgol'=> $data2,
+            // 'mkgplus'=>$data3,
+            // 'mkg'=>$data4,
+            "by" => 'as@epic',
+        );
+        return $this->respond($result);
+
+    }
 }
