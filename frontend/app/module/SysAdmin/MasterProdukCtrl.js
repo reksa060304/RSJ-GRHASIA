@@ -1,36 +1,49 @@
 define(['initialize'], function (initialize) {
 	'use strict';
-	initialize.controller('MasterProdukCtrl', ['$scope', '$state', 'CacheHelper', 'MedifirstService',
-		function ($scope, $state, cacheHelper, medifirstService) {
+	initialize.controller('MasterProdukCtrl', ['$scope', '$state', 'CacheHelper', 'MedifirstService','$timeout',
+		function ($scope, $state, cacheHelper, medifirstService, $timeout) {
 			$scope.item = {};
 			$scope.now = new Date();
 			$scope.item.jumlahRows = 50;
+			$scope.item.jenisProdukDetail = [];
 
 			loadCombo();
 
 			var init = function () {
-				var chacePeriode = cacheHelper.get('MasterProdukCtrl');
-				if (chacePeriode != undefined) {
-					var arrPeriode = chacePeriode.split('~');
-					if (arrPeriode[0] != 'undefined') {
-						$scope.item.kdProdukScr = arrPeriode[0];
-					}
+				var chace = cacheHelper.get('MasterProdukCtrl');
+				if (chace != undefined) {
+					var arrPeriode = chace.split('~');
+					
 					if (arrPeriode[1] != 'undefined') {
-						$scope.item.namaProdukScr = arrPeriode[1];
+						$scope.item.Status = arrPeriode[1];
 					}
-					if (arrPeriode[2] != 'undefined') {
-						$scope.item.kdProdukInternScr = arrPeriode[2];
+					if (arrPeriode[0] != 'undefined') {
+						$scope.item.jenisProdukDetail = arrPeriode[0];
 					}
-					if (arrPeriode[3] != 'undefined') {
-						$scope.item.kdBarcodeScr = arrPeriode[3];
-					}
-					if (arrPeriode[4] != 'undefined') {
-						$scope.item.kodeBmnScr = arrPeriode[4];
-					}
+
+					$scope.item.Status = {id:true,status:'True'}
+					$scope.item.jenisProdukDetail = [
+						{ "id": 474, "nama": "Obat", "no" : 1 },
+						{ "id": 1365, "nama": "Analgesic", "no" : 3 }, 
+						{ "id": 1847, "nama": "Psikotropika", "no" : 4 }, 
+						{ "id": 1598, "nama": "NARKOTIKA", "no" : 5 }, 
+						{ "id": 1597, "nama": "OBAT KERAS", "no" : 6 }, 
+						{ "id": 522, "nama": "HEMATOLOGI", "no" : 7 },
+						{ "id": 1444, "nama": "Antibiotika", "no" : 8 },
+						{ "id": 167, "nama": "Antelmintik", "no" : 9 },
+						{ "id": 1450, "nama": "Anti Hipertensi", "no" : 10 },
+						{ "id": 1318, "nama": "Barang Umum", "no" : 11 },
+						{ "id": 1479, "nama": "Cetakan", "no" : 12 },
+						{ "id": 1556, "nama": "-", "no" : 13 },
+						{ "id": 1346, "nama": "Alkes", "no" : 14 }, 
+					];
+					
+					
 					loadData()
 				} else {
 					loadData()
 				}
+				//loadData()
 			}
 			
 
@@ -41,6 +54,17 @@ define(['initialize'], function (initialize) {
 				
 				loadData()
 			}
+
+			$scope.selectDetailJenisProduk = {
+				placeholder: "Pilih Detail Jenis Produk...",
+				dataTextField: "nama",
+				dataValueField: "id",
+				// dataSource:{
+				//     data: $scope.listRuangan
+				// },
+				autoBind: false,
+
+			};
 			
 			function searchProdukFilter(status,jmlRows){
 				var strFilter ="";
@@ -61,12 +85,37 @@ define(['initialize'], function (initialize) {
 				medifirstService.getPart("sysadmin/master/get-data-produk?test=true" + searchProdukFilter($scope.item.Status,$scope.item.jumlahRows), true, true, 20).then(function (data) {
 					$scope.listProduk = data;
 				});
+				$scope.listJenisProdukDetail = [
+							{ "id": 474, "nama": "Obat", "no" : 1 },
+							{ "id": 1365, "nama": "Analgesic", "no" : 3 }, 
+							{ "id": 1847, "nama": "Psikotropika", "no" : 4 }, 
+							{ "id": 1598, "nama": "NARKOTIKA", "no" : 5 }, 
+							{ "id": 1597, "nama": "OBAT KERAS", "no" : 6 }, 
+							{ "id": 522, "nama": "HEMATOLOGI", "no" : 7 },
+							{ "id": 1444, "nama": "Antibiotika", "no" : 8 },
+							{ "id": 167, "nama": "Antelmintik", "no" : 9 },
+							{ "id": 1450, "nama": "Anti Hipertensi", "no" : 10 },
+							{ "id": 1318, "nama": "Barang Umum", "no" : 11 },
+							{ "id": 1479, "nama": "Cetakan", "no" : 12 },
+							{ "id": 1556, "nama": "-", "no" : 13 },
+							{ "id": 1346, "nama": "Alkes", "no" : 14 }, 
+				];
 
 			}
 
 			medifirstService.getPart("sysadmin/master/get-data-produk?test=true" + searchProdukFilter($scope.item.Status,$scope.item.jumlahRows), true, true, 20).then(function (data) {
 				$scope.listProduk = data;
 			});
+
+			// var timeoutPromise;
+			// $scope.$watch('item.jenisProdukDetail', function (newVal, oldVal) {
+			// 	$timeout.cancel(timeoutPromise);
+			// 	timeoutPromise = $timeout(function () {
+			// 		if (newVal != oldVal) {
+			// 			loadData("jenisProdukDetail", newVal)
+			// 		}
+			// 	}, 500)
+			// })
 					
 
 			function loadData() {
@@ -109,17 +158,45 @@ define(['initialize'], function (initialize) {
 				} else {
 					jmlRows = '&jmlRows=' + $scope.item.jumlahRows;
 				}
+				var cachestatus = ''
 				if ($scope.item.Status === undefined || $scope.item.Status == null) {
 					status = "";
 				} else {
 					status = '&status=' + $scope.item.Status.id;
+					cachestatus = {id:$scope.item.Status.id,status:$scope.item.Status.status}
 				}
+
+				// var jenisproduk = ''
+				// if ($scope.item.jenisProdukDetail != undefined && $scope.item.jenisProdukDetail != null && $scope.item.jenisProdukDetail != '') {
+				// 	jenisproduk = $scope.item.jenisProdukDetail;
+				// }
+
+				var listJenis = ""
+				if ($scope.item.jenisProdukDetail.length != 0) {
+					var a = ""
+					var b = ""
+					for (var i = $scope.item.jenisProdukDetail.length - 1; i >= 0; i--) {
+
+						var c = $scope.item.jenisProdukDetail[i].id
+						b = "," + c
+						a = a + b
+					}
+					listJenis = a.slice(1, a.length)
+                }
+
+				var chacePeriode = {
+                    0: listJenis,
+					1: status,
+                }
+                cacheHelper.set('MasterProdukCtrl', chacePeriode);
 
 
 				medifirstService.get('sysadmin/master/get-data-produk?kdProduk=' + kode
 					+ '&kdInternal=' + kodeintern
 					+ '&kdBarcode=' + kdBarcode
 					+ '&kdBmn=' + kdBmn
+					//+ '&detailjenisproduk=' + jenisproduk
+					+ "&JenisArr=" + listJenis
 					+ '&nmProduk=' + NamaProduk + jmlRows + status + idProduk).then(function (e) {
 						for (var i = 0; i < e.data.length; i++) {
 							e.data[i].no = i + 1
@@ -136,7 +213,8 @@ define(['initialize'], function (initialize) {
 										deskripsiproduk: { editable: false, type: "string" },
 										namaproduk: { editable: false, type: "string" }
 									}
-								}
+								},
+								
 							},
 							pageSize: 20,
 						});
@@ -186,6 +264,31 @@ define(['initialize'], function (initialize) {
 					init();
 				})
 			};
+
+			// function removeDuplicates(items, field) {
+			// 	if(field.indexOf(".") > 0){
+			// 	  field = field.substring(0, field.indexOf("."));
+			// 	}
+			// 	var getter = function(item){return item[field]},
+			// 		result = [],
+			// 		index = 0,
+			// 		seen = {};
+	
+			// 	while (index < items.length) {
+			// 	  var item = items[index++],
+			// 		  text = getter(item);
+			// 	  if(field === "detailjenisproduk"){
+			// 		text = text.detailjenisproduk;
+			// 	  }
+	
+			// 	  if(text !== undefined && text !== null && !seen.hasOwnProperty(text)){
+			// 		result.push(item);
+			// 		seen[text] = true;
+			// 	  }
+			// 	}
+	
+			// 	return result;
+			//   }
 
 			$scope.edit = function () {
 				if ($scope.item.idx == undefined) {
@@ -268,7 +371,8 @@ define(['initialize'], function (initialize) {
 					attributes: {
 						"class": "table-cell",
 						// style: "text-align: center;"
-					}					
+					},
+					filterable: { multi: true, search: true, required: true, dataSource: $scope.dataSource },					
 				},
 				{
 					"command": [
@@ -285,6 +389,27 @@ define(['initialize'], function (initialize) {
 				editable: "popup",
 				selectable: "row",
 				scrollable: false,
+				filterable: true,
+				// filterMenuInit: function (e){
+				// var grid = e.sender;
+				// e.container.data("kendoPopup").bind("open", function() {
+
+				// 	$scope.dataSource.sort({field: e.field, dir: "asc"});
+
+
+				// 	var filter = e.sender.dataSource.filter();
+
+				// 	var query = new kendo.data.Query(grid.dataSource.data());
+				// 	var data = query.filter(filter).data;
+
+				// 	var uniqueDsResult = removeDuplicates(data, e.field);
+
+
+				// 	$scope.dataSource.data(uniqueDsResult);
+
+
+				// })
+				// },
 				toolbar: [
                     "excel",
 
