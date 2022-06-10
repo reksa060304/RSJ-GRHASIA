@@ -17908,5 +17908,25 @@
         "define": "MedifirstService"
       }
     ]
-    }
+  },
+  {
+    "name": "RL2Ketenagaan",
+    "url": "/UkwyS2V0ZW5hZ2Fhbg==",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL2Ketenagaan.html",
+    "controller": "RL2KetenagaanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  }
 ]

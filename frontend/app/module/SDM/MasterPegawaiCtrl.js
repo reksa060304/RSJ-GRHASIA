@@ -247,7 +247,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 								$scope.item.unitKerja =  { id: dataCachePegawai.objectunitkerjapegawaifk, name: dataCachePegawai.unitkerja };
 							$scope.item.jenisKelamin = { id: dataCachePegawai.objectjeniskelaminfk, jeniskelamin: dataCachePegawai.jeniskelamin };
 							$scope.item.pendidikan = { id: dataCachePegawai.objectpendidikanterakhirfk, pendidikan: dataCachePegawai.pendidikan };
-							$scope.item.pendidikanpegawai = { id: dataCachePegawai.objectpendidikanpegawaifk, pendidikanpegawai: dataCachePegawai.pendidikanpegawai };
+							$scope.item.pendidikanpegawai = { id: dataCachePegawai.objectpendidikanpegawaifk, namaexternal: dataCachePegawai.namaexternal };
 							$scope.item.statusPerkawinanPegawai = { id: dataCachePegawai.objectstatusperkawinanpegawaifk, statusperkawinan: dataCachePegawai.statusperkawinan };
 							$scope.item.npwp = dataCachePegawai.npwp
 							$scope.item.agama = { id: dataCachePegawai.objectagamafk, agama: dataCachePegawai.agama };
@@ -663,7 +663,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						"width": "5%"
 					},
 					{
-						"field": "pendidikanpegawai",
+						"field": "namaexternal",
 						"title": "Pendidikan",
 						"width": "20%"
 					},
@@ -1467,7 +1467,7 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.item.norecPend = dataItem.norec;
 				$scope.item.nomor = dataItem.no;
 				//$scope.itemPendidikan.pendidikan = { id: dataItem.objectpendidikanfk, pendidikan: dataItem.pendidikan };
-				$scope.itemPendidikan.pendidikanpegawai = { id: dataItem.objectpendidikanpegawaifk, pendidikanpegawai: dataItem.pendidikanpegawai };
+				$scope.itemPendidikan.pendidikanpegawai = { id: dataItem.objectpendidikanpegawaifk, namaexternal: dataItem.namaexternal };
 				$scope.itemPendidikan.NamaInstitusi = dataItem.namatempatpendidikan;
 				$scope.itemPendidikan.alamat = dataItem.alamattempatpendidikan;
 				$scope.itemPendidikan.jurusan = dataItem.jurusan;
@@ -2335,7 +2335,7 @@ $scope.formatRupiah = function (value, currency) {
 								data.no = $scope.item.nomor
 								//data.objectpendidikanfk = $scope.itemPendidikan.pendidikan.id
 								//data.pendidikan = $scope.itemPendidikan.pendidikan.pendidikan
-								data.pendidikanpegawai = $scope.itemPendidikan.pendidikanpegawai.pendidikanpegawai
+								data.pendidikanpegawai = $scope.itemPendidikan.pendidikanpegawai.namaexternal
 								data.objectpendidikanpegawaifk = $scope.itemPendidikan.pendidikanpegawai.id
 								data.namatempatpendidikan = $scope.itemPendidikan.NamaInstitusi
 								data.alamattempatpendidikan = $scope.itemPendidikan.alamat
@@ -2360,7 +2360,7 @@ $scope.formatRupiah = function (value, currency) {
 							no: nomor,
 							// objectpendidikanfk: $scope.itemPendidikan.pendidikan.id,
 							// pendidikan: $scope.itemPendidikan.pendidikan.pendidikan,
-							pendidikanpegawai: $scope.itemPendidikan.pendidikanpegawai.pendidikanpegawai,
+							pendidikanpegawai: $scope.itemPendidikan.pendidikanpegawai.namaexternal,
 							objectpendidikanpegawaifk: $scope.itemPendidikan.pendidikanpegawai.id,
 							namatempatpendidikan: $scope.itemPendidikan.NamaInstitusi,
 							alamattempatpendidikan: $scope.itemPendidikan.alamat,

@@ -445,7 +445,7 @@ class SumberDayaManusiaController extends ApiController {
 			                        jb1.namajabatan as jbstruktural,gp.golonganpegawai,uk.name as unitkerja,sp.statuspegawai,
 			                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,pend.pendidikan,jk.jeniskelamin,
 			                        gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,
-			                        kp.kategorypegawai as namakategorypegawai,kdd.name as kedudukan,pg.objectjenispegawaifk,jp.jenispegawai, pendpg.pendidikanpegawai, pg.objectpendidikanpegawaifk"))
+			                        kp.kategorypegawai as namakategorypegawai,kdd.name as kedudukan,pg.objectjenispegawaifk,jp.jenispegawai, pendpg.pendidikanpegawai, pendpg.namaexternal, pg.objectpendidikanpegawaifk"))
             ->where('pg.kdprofile', $kdProfile)
             ->where('pg.statusenabled',true)
             ->orderBy('pg.namalengkap');
@@ -477,7 +477,7 @@ class SumberDayaManusiaController extends ApiController {
             ->leftJoin('pegawai_m as pg','pg.id','=','rp.objectpegawaifk')
             ->leftJoin('pendidikan_m as pend','pend.id','=','rp.objectpendidikanfk')
             ->leftJoin('pendidikanpegawai_m as pendpg','pendpg.id','=','rp.objectpendidikanpegawaifk')
-            ->select(DB::raw("rp.*,pend.pendidikan,pg.namalengkap, pendpg.pendidikanpegawai"))
+            ->select(DB::raw("rp.*,pend.pendidikan,pg.namalengkap, pendpg.pendidikanpegawai, pendpg.namaexternal"))
             ->where('rp.kdprofile', $kdProfile)
             ->where('pg.statusenabled',true)
             ->orderBy('rp.tgllulus');

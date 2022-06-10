@@ -826,6 +826,655 @@ class LaporanRekamMedisController extends   ApiController
         );
         return $this->respond($result);
     }
+
+    public function getDataRL2(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile; 
+        
+        $data10 = DB::select(DB::raw("select 'TENAGA KESEHATAN' as pendidikanpegawai, 1 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select 'TENAGA MEDIS' as pendidikanpegawai, 2 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select pendidikanpegawai, nourut + 2, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 1 and 34
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        union all
+        
+        select 'Total (1.00-1.34)' as pendidikanpegawai, 37 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select pendidikanpegawai, nourut + 3, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 35 and 37
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        union all
+        
+        select 'TENAGA KEPERAWATAN' as pendidikanpegawai, 41 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union ALL
+        
+        select pendidikanpegawai, nourut + 4, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 38 and 49
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        union ALL
+        
+        select 'Total (2.00-2.88)' as pendidikanpegawai, 54 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select 'KEFARMASIAN' as pendidikanpegawai, 55 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union ALL
+        
+        select pendidikanpegawai, nourut + 6, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 50 and 59
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        union ALL
+        
+        select 'Total (3.00-3.88)' as pendidikanpegawai, 66 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select 'KESEHATAN MASYARAKAT' as pendidikanpegawai, 67 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        
+        union ALL
+        
+        select pendidikanpegawai, nourut + 8, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 60 and 72
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        union all
+        
+        select 'Total (4.00-4.88)' as pendidikanpegawai, 81 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union ALL
+        
+        select 'GIZI' as pendidikanpegawai, 82 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select pendidikanpegawai, nourut + 10, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 73 and 79
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        union all
+        
+        select 'Total (5.00-5.88)' as pendidikanpegawai, 90 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union ALL
+        
+        select 'KETERAPIAN FISIK' as pendidikanpegawai, 91 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select pendidikanpegawai, nourut + 12, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 80 and 86
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        union all
+        
+        select 'Total (6.00-6.88)' as pendidikanpegawai, 99 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union ALL
+        
+        select 'KETEKNISAN MEDIS' as pendidikanpegawai, 100 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select pendidikanpegawai, nourut + 14, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 87 and 109
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        union all
+        
+        select 'Total (7.00-7.88)' as pendidikanpegawai, 124 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union ALL
+        
+        select 'TENAGA NON KESEHATAN' as pendidikanpegawai, 125 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select 'DOKTORAL' as pendidikanpegawai, 126 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select pendidikanpegawai, nourut + 17, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 110 and 120
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        
+        union all
+        
+        select 'Total (8.00-8.88)' as pendidikanpegawai, 138 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union ALL
+        
+        select 'PASCA SARJANA' as pendidikanpegawai, 139 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select pendidikanpegawai, nourut + 17, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 121 and 132
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        union all
+        
+        select 'Total (9.00-9.88)' as pendidikanpegawai, 152 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union ALL
+        
+        select 'SARJANA' as pendidikanpegawai, 153 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select pendidikanpegawai, nourut + 21, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 133 and 143
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        union all
+        
+        select 'Total (10.00-10.88)' as pendidikanpegawai, 167 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union ALL
+        
+        select 'SARJANA MUDA' as pendidikanpegawai, 168 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select pendidikanpegawai, nourut + 25, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 144 and 154
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut 
+        
+        union all
+        
+        select 'Total (11.00-11.88)' as pendidikanpegawai, 182 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union ALL
+        
+        select 'SMU SEDERAJAT DAN DIBAWAHNYA' as pendidikanpegawai, 183 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp
+        
+        union all
+        
+        select pendidikanpegawai, nourut + 29, sum(keadaanl) keadaanl, sum(keadaanp) keadaanp, sum(kebutuhanl) kebutuhanl,
+        sum(kebutuhanp) kebutuhanp, sum(kekuranganl) kekuranganl, sum(kekuranganp) kekuranganp  
+        from (
+            select x.pendidikanpegawai, x.nourut, 
+            case when pg.namalengkap is not null and jk.id = 1 then count(pg.namalengkap) else 0 end as keadaanl,
+            case when pg.namalengkap is not null and jk.id = 2 then count(pg.namalengkap) else 0 end as keadaanp,
+            x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp  
+            from
+            (
+                select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.nourut, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                where ppg.kdprofile = 30
+                and ppg.id between 155 and 162
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+            ) as x
+            left JOIN pegawai_m as pg on pg.objectpendidikanpegawaifk = x.id 
+            left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+            group by x.pendidikanpegawai, x.kebutuhanl, x.kebutuhanp, x.kekuranganl, x.kekuranganp, pg.namalengkap, jk.id, x.nourut
+            order by x.nourut
+        ) as y group by pendidikanpegawai, nourut
+        
+        union all
+        
+        select 'Total (12.00-12.88)' as pendidikanpegawai, 194 nourut, 0 keadaanl, 0 keadaanp, 0 kebutuhanl, 0 kebutuhanp,
+        0 kekuranganl, 0 kekuranganp order by nourut;"));
+
+        $result = array(
+            'data' => $data10,
+            'message' => 'as@cepot',
+        );
+        return $this->respond($result);
+    }
+
     public function getDataRL31YangRawatInap(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

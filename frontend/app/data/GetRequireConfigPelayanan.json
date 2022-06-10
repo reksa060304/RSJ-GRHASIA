@@ -3219,6 +3219,10 @@
         {
             "nameDep": "RencanaIntegrasiAsuhanCtrl",
             "urlDep": "module/EMR/RencanaIntegrasiAsuhanCtrl"
+        },
+        {
+            "nameDep": "RL2KetenagaanCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL2KetenagaanCtrl"
         }
     ]
 }
