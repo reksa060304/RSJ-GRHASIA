@@ -1671,6 +1671,7 @@ class SumberDayaManusiaController extends ApiController {
             ->select(\DB::raw("pg.*,gp.golonganpegawai,uk.name as unitkerja, uk2.name as subunit"))
             ->where('pg.kdprofile', $kdProfile)
             ->where('pg.statusenabled',false)
+            ->where('pg.ispensiun',true)
             ->orderBy('pg.namalengkap');
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
@@ -1706,7 +1707,11 @@ class SumberDayaManusiaController extends ApiController {
             ->select(\DB::raw("pg.*,gp.golonganpegawai,uk.name as unitkerja, uk2.name as subunit"))
             ->where('pg.kdprofile', $kdProfile)
             ->where('pg.statusenabled',true)
-            ->orderBy('pg.namalengkap');
+            ->where('pg.namalengkap','NOT ILIKE', '-')
+            ->where('pg.usereksternal',null)
+            ->orderBy('pg.tglpensiun','asc')
+            ->orderBy('pg.namalengkap', 'asc')
+            ;
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
             $data = $data->where('pg.tglpensiun', '>=', $request['tglAwal']);
@@ -1824,6 +1829,7 @@ class SumberDayaManusiaController extends ApiController {
 //            $dataPegawai=$request['datapegawai'];
             $pensiunkanPegawai = Pegawai::where('id', $request['id'])->where('kdprofile', $kdProfile)->first();
             $pensiunkanPegawai->statusenabled = $request['statusenabled'];
+            $pensiunkanPegawai->ispensiun = $request['ispensiun'];
 
             $pensiunkanPegawai->save();
 
