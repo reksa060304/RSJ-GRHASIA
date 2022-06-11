@@ -843,7 +843,7 @@ class SumberDayaManusiaController extends ApiController {
             $dataSavePegawai->objectgolonganfk=  $dataPegawai['golongan'];
             $dataSavePegawai->objectjabatanfungsionalfk= $dataPegawai['jabatan'];
             $dataSavePegawai->objectpendidikanterakhirfk=  $dataPegawai['pendidikan'];
-            $dataSavePegawai->objectpendidikanpegawaifk=  $dataPegawai['pendidikanpegawai'];
+            
             $dataSavePegawai->objectkelompokjabatanfk=  $dataPegawai['kelompokjabatan'];
             $dataSavePegawai->objectstatusperkawinanpegawaifk= $dataPegawai['statusperkawinan'];
             $dataSavePegawai->objecteselonfk=  $dataPegawai['eselon'];
@@ -923,6 +923,7 @@ class SumberDayaManusiaController extends ApiController {
                     }
                     $dataSavePendidikan->namatempatpendidikan = $items['namatempatpendidikan'];
                     $dataSavePendidikan->alamattempatpendidikan = $items['alamattempatpendidikan'];
+                    $dataSavePegawai->objectpendidikanpegawaifk =$items['objectpendidikanpegawaifk'];
                     $dataSavePendidikan->objectpendidikanpegawaifk =$items['objectpendidikanpegawaifk'];
                     $dataSavePendidikan->jurusan = $items['jurusan'];
                     $dataSavePendidikan->tglmasuk = $items['tglmasuk'];
@@ -933,6 +934,7 @@ class SumberDayaManusiaController extends ApiController {
                         $dataSavePendidikan->tglijazah = $items['tglijazah'];
                     }
                     $dataSavePendidikan->save();
+                    $dataSavePegawai->save();
                 }
             }
 
