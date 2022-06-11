@@ -64,11 +64,16 @@ define(['initialize'], function (initialize) {
                 pageable: true,
                 excelExport: function (e) {
                     var sheet = e.workbook.sheets[0];
-                    
+                    var columns = e.workbook.sheets[0].columns;
                     for (var i = 0; i < 1; i++) {
                         for (var j = 0; j < 6; j++) {
                             sheet.rows[i].cells[j].background = '#ffffff';
                         }
+                    }
+
+                    for(let i = 0; i <= 5; i++){
+                        delete columns[i].width;
+                        columns[i].width = 200;
                     }
 
                     //sheet.rows[0].cells[35].fontWeight = 'bold';

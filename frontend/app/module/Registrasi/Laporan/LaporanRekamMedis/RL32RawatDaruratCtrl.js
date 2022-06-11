@@ -31,6 +31,7 @@ define(['initialize'], function (initialize) {
                     var totaljumlahdirujukfix = 0;
                     var totaljumlahpulangfix = 0;
                     var totaljumlahmeninggalfix = 0;
+                    var totaljumlahdoafix = 0;
                     for(var i = 0; i < data.data.length; i++){
 
                         if(data.data[i].namaruangan != 'TOTAL'){
@@ -39,12 +40,19 @@ define(['initialize'], function (initialize) {
                             data.data[i].no = 99;
                         }
 
+                        data.data[i].kdprov = '24'
+                        data.data[i].kabkota = 'Kab. Sleman'
+                        data.data[i].koders = '3404022'
+                        data.data[i].namars = 'RSJ. Grhasia'
+                        data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
+
                         totaljumlahrujukanfix += parseInt(data.data[i].jumlahrujukanfix)
                         totaljumlahnonrujukanfix += parseInt(data.data[i].jumlahnonrujukanfix)
                         totaljumlahdirawatfix += parseInt(data.data[i].jumlahdirawatfix)
                         totaljumlahdirujukfix += parseInt(data.data[i].jumlahdirujukfix)
                         totaljumlahpulangfix += parseInt(data.data[i].jumlahpulangfix)
                         totaljumlahmeninggalfix += parseInt(data.data[i].jumlahmeninggalfix)
+                        totaljumlahdoafix += parseInt(data.data[i].jumlahdoafix)
 
                         if(data.data[i].namaruangan == 'TOTAL'){
                             data.data[i].jumlahrujukanfix = totaljumlahrujukanfix 
@@ -53,9 +61,8 @@ define(['initialize'], function (initialize) {
                             data.data[i].jumlahdirujukfix = totaljumlahdirujukfix 
                             data.data[i].jumlahpulangfix = totaljumlahpulangfix 
                             data.data[i].jumlahmeninggalfix = totaljumlahmeninggalfix 
+                            data.data[i].jumlahdoafix = totaljumlahdoafix 
                         }
-
-                        data.data[i].doa = '0';
                     }
                     $scope.isRouteLoading = false;
                     $scope.sourceLaporan = new kendo.data.DataSource({
@@ -96,14 +103,75 @@ define(['initialize'], function (initialize) {
                 pageable: true,
                 excelExport: function (e) {
                     var rows = e.workbook.sheets[0].rows;
-                    rows.unshift({
-                        cells: [{
-                            value: "RL1.3_TempatTidur",
-                            background: "#fffff"
-                        }]
-                    });
+                    var columns = e.workbook.sheets[0].columns;
+                    var sheet = e.workbook.sheets[0];
+                    console.log(sheet.rows.length)
+                    sheet.rows[0].cells[0].background = '#6fde78';
+                    sheet.rows[0].cells[0].color = '#000000'; 
+                    sheet.rows[0].cells[1].background = '#6fde78'; 
+                    sheet.rows[0].cells[1].color = '#000000'; 
+                    sheet.rows[0].cells[2].background = '#6fde78'; 
+                    sheet.rows[0].cells[2].color = '#000000'; 
+                    sheet.rows[0].cells[3].background = '#6fde78'; 
+                    sheet.rows[0].cells[3].color = '#000000'; 
+                    sheet.rows[0].cells[4].background = '#6fde78'; 
+                    sheet.rows[0].cells[4].color = '#000000'; 
+                    sheet.rows[0].cells[5].background = '#6fde78'; 
+                    sheet.rows[0].cells[5].color = '#000000'; 
+                    sheet.rows[0].cells[6].background = '#6fde78'; 
+                    sheet.rows[0].cells[6].color = '#000000'; 
+                    sheet.rows[0].cells[7].background = '#6fde78'; 
+                    sheet.rows[0].cells[7].color = '#000000';
+                    sheet.rows[0].cells[8].background = '#6fde78'; 
+                    sheet.rows[0].cells[8].color = '#000000';
+                    sheet.rows[0].cells[9].background = '#6fde78'; 
+                    sheet.rows[0].cells[9].color = '#000000';
+                    sheet.rows[0].cells[10].background = '#6fde78'; 
+                    sheet.rows[0].cells[10].color = '#000000';
+                    sheet.rows[1].cells[0].background = '#6fde78'; 
+                    sheet.rows[1].cells[0].color = '#000000';
+                    sheet.rows[1].cells[1].background = '#6fde78'; 
+                    sheet.rows[1].cells[1].color = '#000000';
+                    sheet.rows[1].cells[2].background = '#6fde78'; 
+                    sheet.rows[1].cells[2].color = '#000000';
+                    sheet.rows[1].cells[3].background = '#6fde78'; 
+                    sheet.rows[1].cells[3].color = '#000000';
+                    sheet.rows[1].cells[4].background = '#6fde78'; 
+                    sheet.rows[1].cells[4].color = '#000000';
+                    for(var i = 0; i < e.workbook.sheets[0].columns.length; i++){
+                        delete columns[i].width;
+                        columns[i].width = 100;
+                    }
+
+                    
+                    
                 },
                 columns: [
+                    {
+                        field: "kdprov",
+                        title: "KODE PROPINSI",
+                        width: "80px"
+                    },
+                    {
+                        field: "kabkota",
+                        title: "KAB / KOTA",
+                        width: "80px"
+                    },
+                    {
+                        field: "koders",
+                        title: "KODE RS",
+                        width: "80px"
+                    },
+                    {
+                        field: "namars",
+                        title: "NAMA RS",
+                        width: "80px"
+                    },
+                    {
+                        field: "tahun",
+                        title: "TAHUN",
+                        width: "80px"
+                    },
                     {
                         field: "no",
                         title: "No. Urut",
@@ -168,7 +236,7 @@ define(['initialize'], function (initialize) {
                         headerAttributes: { style: "text-align : center" },
                     },
                     {
-                        field: "doa",
+                        field: "jumlahdoafix",
                         title: "DOA",
                         width: "80px",
                         headerAttributes: { style: "text-align : center" },

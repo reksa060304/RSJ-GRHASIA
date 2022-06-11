@@ -87,10 +87,10 @@ define(['initialize'], function (initialize) {
             $scope.panggil = function (cokot) {
 
                 $("#kGrid").kendoGrid({
+
                     toolbar: ["excel"],
                     excel: {
                         fileName: "Cara Bayar.xlsx",
-                        filterable: true,
                         allPages: true,
                     },
                     dataSource: $scope.ambildataexcel,
@@ -98,37 +98,77 @@ define(['initialize'], function (initialize) {
                     resizable: true,
                     sortable: true,
                     pageable: true,
+
+                    excelExport: function (e) {
+                        var rows = e.workbook.sheets[0].rows;
+                        var columns = e.workbook.sheets[0].columns;
+                        var sheet = e.workbook.sheets[0];
+                        sheet.rows[0].cells[0].background = '#6fde78';
+                        sheet.rows[0].cells[0].color = '#000000'; 
+                        sheet.rows[0].cells[1].background = '#6fde78'; 
+                        sheet.rows[0].cells[1].color = '#000000'; 
+                        sheet.rows[0].cells[2].background = '#6fde78'; 
+                        sheet.rows[0].cells[2].color = '#000000'; 
+                        sheet.rows[0].cells[3].background = '#6fde78'; 
+                        sheet.rows[0].cells[3].color = '#000000'; 
+                        sheet.rows[0].cells[4].background = '#6fde78'; 
+                        sheet.rows[0].cells[4].color = '#000000'; 
+                        sheet.rows[0].cells[5].background = '#6fde78'; 
+                        sheet.rows[0].cells[5].color = '#000000'; 
+                        sheet.rows[0].cells[6].background = '#6fde78'; 
+                        sheet.rows[0].cells[6].color = '#000000'; 
+                        sheet.rows[0].cells[7].background = '#6fde78'; 
+                        sheet.rows[0].cells[7].color = '#000000';
+                        sheet.rows[0].cells[8].background = '#6fde78'; 
+                        sheet.rows[0].cells[8].color = '#000000';
+                        sheet.rows[0].cells[9].background = '#6fde78'; 
+                        sheet.rows[0].cells[9].color = '#000000';
+
+                        sheet.rows[1].cells[0].background = '#6fde78'; 
+                        sheet.rows[1].cells[0].color = '#000000';
+                        sheet.rows[1].cells[1].background = '#6fde78'; 
+                        sheet.rows[1].cells[1].color = '#000000';
+                        sheet.rows[1].cells[2].background = '#6fde78'; 
+                        sheet.rows[1].cells[2].color = '#000000';
+                        sheet.rows[1].cells[3].background = '#6fde78'; 
+                        sheet.rows[1].cells[3].color = '#000000';
+                        sheet.rows[1].cells[4].background = '#6fde78'; 
+                        sheet.rows[1].cells[4].color = '#000000';
+                        
+                        for(var i = 0; i < e.workbook.sheets[0].columns.length; i++){
+                            delete columns[i].width;
+                            columns[i].width = 30;
+                        }
+    
+                        
+                        
+                    },
+
                     columns: [
                         {
                             field: "kdprov",
                             title: "KODE PROPINSI",
-                            width: "80px"
                         },
                         {
                             field: "kabkota",
                             title: "KAB / KOTA",
-                            width: "80px"
                         },
                         {
                             field: "koders",
                             title: "KODE RS",
-                            width: "80px"
                         },
                         {
                             field: "namars",
                             title: "NAMA RS",
-                            width: "80px"
                         },
                         {
                             field: "tahun",
                             title: "TAHUN",
-                            width: "80px"
                         },
                         {
                             field: "no",
                             title: "No",
                             Template: "<span class='style-center'>#: no #</span>",
-                            width: "70px"
                         },
                         {
                             field: "carabayar",
@@ -142,7 +182,7 @@ define(['initialize'], function (initialize) {
                                 {
                                     "field": "pasienranapjpk",
                                     "title": "JUMLAH PASIEN KELUAR"
-
+        
                                 },
                                 {
                                     "field": "pasienranapjld",
@@ -195,33 +235,27 @@ define(['initialize'], function (initialize) {
                 {
                     field: "kdprov",
                     title: "KODE PROPINSI",
-                    width: "80px"
                 },
                 {
                     field: "kabkota",
                     title: "KAB / KOTA",
-                    width: "80px"
                 },
                 {
                     field: "koders",
                     title: "KODE RS",
-                    width: "80px"
                 },
                 {
                     field: "namars",
                     title: "NAMA RS",
-                    width: "80px"
                 },
                 {
                     field: "tahun",
                     title: "TAHUN",
-                    width: "80px"
                 },
                 {
                     field: "no",
                     title: "No",
                     Template: "<span class='style-center'>#: no #</span>",
-                    width: "70px"
                 },
                 {
                     field: "carabayar",
