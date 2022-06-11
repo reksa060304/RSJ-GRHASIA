@@ -691,6 +691,7 @@ class RegistrasiController extends ApiController
             ->LEFTJOIN ('kamar_m as kmr','kmr.id','=','rpp.objectkamarfk')
             ->leftjoin ('tempattidur_m as tt','tt.id','=','rpp.objecttempattidurfk')
             ->leftjoin ('asalrujukan_m as ar','ar.id','=','apd.objectasalrujukanfk')
+            ->leftjoin ('jeniskasus_m as jen','jen.id','=','pd.objectjeniskasusfk')
             ->leftjoin ('kelompokpasien_m as kps','kps.id','=','pd.objectkelompokpasienlastfk')
             ->leftjoin ('rekanan_m as rk','rk.id','=','pd.objectrekananfk')
             ->leftjoin ('pegawai_m as pg','pg.id','=','apd.objectpegawaifk')
@@ -699,7 +700,7 @@ class RegistrasiController extends ApiController
                 'rpp.objectkamarfk','kmr.namakamar','rpp.objecttempattidurfk','apd.objectasalrujukanfk','ar.asalrujukan',
                 'pd.objectkelompokpasienlastfk','kps.kelompokpasien','pd.objectrekananfk','rk.namarekanan',
                 'jpl.kodeinternal as objectjenispelayananfk','jpl.jenispelayanan','pd.objectpegawaifk','pg.namalengkap as dokter','ru.objectdepartemenfk',
-                'tt.reportdisplay',
+                'tt.reportdisplay','apd.objectasalrujukanfk','pd.objectjeniskasusfk','jen.jeniskasus',
                 DB::raw('case when ru.objectdepartemenfk in (16,35,17) then \'true\'
                 when ru.objectdepartemenfk =45 then \'edelweis\' else \'false\' end as israwatinap'))
             ->where('pd.norec', $request['norecPD'])
@@ -4897,6 +4898,11 @@ class RegistrasiController extends ApiController
             ->select('id','pekerjaan')
             ->where('statusenabled',true)
             ->get();
+        $jeniskasus = DB::table('jeniskasus_m')
+        ->select('id', 'jeniskasus')
+        ->where('statusenabled',true)
+        ->where('kdprofile',(int)$kdProfile)
+        ->get();
 
         $result = array(
             'ruanganranap' => $dataRuanganInap,
@@ -4908,6 +4914,7 @@ class RegistrasiController extends ApiController
             'hubunganpeserta' => $dataHubunganPeserta,
             'jenispelayanan' => $jenisPelayanan,
             'pekerjaan' => $pekerjaan,
+            'jeniskasus' => $jeniskasus,
             'message' => 'ramdanegie',
         );
 
@@ -7154,7 +7161,8 @@ class RegistrasiController extends ApiController
                         'objectpegawaifk' => $request['pegawai']['id'],
                         'objectkelasfk' => $request['kelas']['id'],
                         'nostruklastfk' => null,
-                        'nosbmlastfk' => null
+                        'nosbmlastfk' => null,
+                        'objectjeniskasusfk' => $request['jeniskasus']['id'],
 
                     ]
                 );
