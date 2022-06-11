@@ -314,10 +314,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                var jenisKasus = "";
-                if ($scope.item.jenisPasien != undefined)
+                var jenisKasus = null;
+                if ($scope.item.jenisKasus != undefined){
                     jenisKasus = $scope.item.jenisKasus.id
-
+                }
                 var tmpData = {
                     "jeniskasus": {
                         "id": jenisKasus
