@@ -2601,7 +2601,6 @@ $scope.formatRupiah = function (value, currency) {
 				}
 			}
 			console.log('daftar kenaikan gaji berkala');
-			console.log(medifirstService.getPegawai().id);
 			$scope.tambahRiwayatPangkatGolongan = function () {
 				var listRawRequired = [
 					"itemPandG.golongan|k-ng-model|Golongan",
@@ -3125,7 +3124,7 @@ $scope.formatRupiah = function (value, currency) {
 					// "item.tglLahir|k-ng-model|Tgl Lahir Pegawai",
 					"item.jenisKelamin|k-ng-model|Jenis Kelamin Pegawai",
 					"item.pendidikan|k-ng-model|Pendidikan Terakhir",
-					"item.pendidikanpegawai|k-ng-model|Pendidikan Pegawai",
+					//"item.pendidikanpegawai|k-ng-model|Pendidikan Pegawai",
 					"item.statusPerkawinanPegawai|k-ng-model|Status Perkawinan",
 					"item.agama|k-ng-model|Agama",
 					// Data Pegawai
@@ -3278,7 +3277,7 @@ $scope.formatRupiah = function (value, currency) {
 						tgllahir: $scope.item.tglLahir != undefined? moment($scope.item.tglLahir).format('YYYY-MM-DD 00:00:00'):null,
 						jeniskelamin: $scope.item.jenisKelamin.id,
 						pendidikan: $scope.item.pendidikan.id,
-						pendidikanpegawai: $scope.item.pendidikanpegawai.id,
+						//pendidikanpegawai: $scope.item.pendidikanpegawai.id,
 						statusperkawinan: $scope.item.statusPerkawinanPegawai.id,
 						npwp: Npwp,
 						agama: $scope.item.agama.id,
