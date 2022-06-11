@@ -40,6 +40,7 @@ define(['initialize'], function (initialize) {
                                     fill: false,
                                     borderColor: 'red',
                                     pointStyle: 'line',
+                                    type: 'scatter',
                                 }, {// 'line' dataset default does not affect this dataset since it's a 'scatter'
                                     label: 'Daerah Efisien',
                                     data: [{x:1, y:datas[0].ybto + 5}, {x:1, y:0}],
@@ -48,6 +49,7 @@ define(['initialize'], function (initialize) {
                                     fill: true,
                                     borderColor: 'red',
                                     pointStyle: 'line',
+                                    type: 'scatter',
                                 },{// 'line' dataset default does not affect this dataset since it's a 'scatter'
                                     label: 'Daerah Efisien',
                                     data: [{x:2.5, y:datas[0].ybto + 5}, {x:2.5, y:0}],
@@ -56,6 +58,7 @@ define(['initialize'], function (initialize) {
                                     fill: '-1',
                                     borderColor: 'red',
                                     pointStyle: 'line',
+                                    type: 'scatter',
                                 }, {// 'line' dataset default does not affect this dataset since it's a 'scatter'
                                     label: 'BOR',
                                     data: [{x:0, y:0},{x:(datas[0].ybto/datas[0].xbor)*datas[0].xbor, y:(datas[0].ybto/datas[0].ybor)*datas[0].ybor}],
@@ -63,6 +66,7 @@ define(['initialize'], function (initialize) {
                                     fill: false,
                                     borderColor: 'black',
                                     pointStyle: 'line',
+                                    type: 'scatter',
                                 }, {
                                     label: 'BTO',
                                     data: [{x:0, y:datas[0].ybto}, {y:0, x:datas[0].ybto}],
@@ -70,7 +74,35 @@ define(['initialize'], function (initialize) {
                                     fill: false,
                                     borderColor: 'green',
                                     pointStyle: 'line',
+                                    type: 'scatter',
+                                }, {
+                                    label: 'AVLOS',
+                                    data: [{x:0, y:datas[0].yalos}, {y:datas[0].yalos, x:datas[0].xtoi}],
+                                    showLine: true,
+                                    fill: false,
+                                    borderColor: 'blue',
+                                    pointStyle: 'line',
+                                    type: 'scatter',
+                                    borderDash: [10,10]
+                                },  {
+                                    label: 'TOI',
+                                    data: [{y:0, x:datas[0].xtoi}, {y:datas[0].yalos, x:datas[0].xtoi}],
+                                    showLine: true,
+                                    fill: false,
+                                    borderColor: 'blue',
+                                    pointStyle: 'line',
+                                    type: 'scatter',
+                                    borderDash: [10,10]
                                 }, 
+                                {// 'line' dataset default does not affect this dataset since it's a 'scatter'
+                                    label: 'Grafik Line',
+                                    data: [1, 2, 3, 5, 10, 15, 20],
+                                    showLine: true,
+                                    fill: false,
+                                    borderColor: 'red',
+                                    type: 'line',
+                                    pointStyle: 'line',
+                                }
                                 // {// 'line' dataset default does not affect this dataset since it's a 'scatter'
                                 //     label: 'TOI, ALOS',
                                 //     data: [{x:0, y:0},{x:datas[0].xtoi, y:datas[0].yalos}],
@@ -79,7 +111,7 @@ define(['initialize'], function (initialize) {
                                 //     borderColor: 'blue',
                                 //     pointStyle: 'line',
                                 // }
-                            ]
+                                ]
                             },
                             options: {
                                 responsive: true,
@@ -89,13 +121,21 @@ define(['initialize'], function (initialize) {
                                        fontSize: 15,
                                        fontColor: "black",
                                     }
-                                },tooltips: {
-                                    mode: 'nearest',
-                                    intersect: true
-                                  }
-                            }
-                            
+                                },
+
+                                plugins: {
+                                title: {
+                                        display: true,
+                                        text: 'Chart.js Line Chart'
+                                    }
+                                }
+                            },
+                            //plugins: [customText]
                         });
+
+
+
+                        
                     }
                     $scope.isRouteLoading = false;
                 })

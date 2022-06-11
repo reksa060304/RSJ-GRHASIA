@@ -139,25 +139,63 @@ define(['initialize'], function (initialize) {
                         columns[i].width = 30;
                     }
 
-                    for(let i = 0; i < 2; i++){
-                        for(let j = 0; j <= 20; j++){
-                            sheet.rows[i].cells[j].background = '#ffffff';
-                            sheet.rows[i].cells[j].color = '#000000';
-                            sheet.rows[i].cells[j].textAlign = 'center';
-                        }
-                        sheet.rows[0].height = 50;
-                    }
+                    // for(let i = 0; i < 1; i++){
+                    //     for(let j = 0; j <= 17; j++){
+                    //         sheet.rows[i].cells[j].background = '#ffffff';
+                    //         sheet.rows[i].cells[j].color = '#000000';
+                    //         sheet.rows[i].cells[j].textAlign = 'center';
+                    //     }
+                    //     sheet.rows[0].height = 50;
+                    // }
 
-                    for (var i = 0; i < e.workbook.sheets[0].rows.length; i++) {
-                        var $row = e.workbook.sheets[0].rows[i];
-                        for (var j = 0; j < $row.cells.length; j++) {
-                            var $cell = $row.cells[j];
-                            $cell["borderTop"] = { color: "#000000", size: 1 };
-                            $cell["borderRight"] = { color: "#000000", size: 1 };
-                            $cell["borderBottom"] = { color: "#000000", size: 1 };
-                            $cell["borderLeft"] = { color: "#000000", size: 1 };
-                        }
-                    }
+                    sheet.rows[0].cells[0].background = '#6fde78';
+                    sheet.rows[0].cells[0].color = '#000000'; 
+                    sheet.rows[0].cells[1].background = '#6fde78'; 
+                    sheet.rows[0].cells[1].color = '#000000'; 
+                    sheet.rows[0].cells[2].background = '#6fde78'; 
+                    sheet.rows[0].cells[2].color = '#000000'; 
+                    sheet.rows[0].cells[3].background = '#6fde78'; 
+                    sheet.rows[0].cells[3].color = '#000000'; 
+                    sheet.rows[0].cells[4].background = '#6fde78'; 
+                    sheet.rows[0].cells[4].color = '#000000'; 
+                    sheet.rows[0].cells[5].background = '#6fde78'; 
+                    sheet.rows[0].cells[5].color = '#000000'; 
+                    sheet.rows[0].cells[6].background = '#6fde78'; 
+                    sheet.rows[0].cells[6].color = '#000000'; 
+                    sheet.rows[0].cells[7].background = '#6fde78'; 
+                    sheet.rows[0].cells[7].color = '#000000';
+                    sheet.rows[0].cells[8].background = '#6fde78'; 
+                    sheet.rows[0].cells[8].color = '#000000';
+                    sheet.rows[0].cells[9].background = '#6fde78'; 
+                    sheet.rows[0].cells[9].color = '#000000';
+                    sheet.rows[0].cells[10].background = '#6fde78'; 
+                    sheet.rows[0].cells[10].color = '#000000'; 
+                    sheet.rows[0].cells[11].background = '#6fde78'; 
+                    sheet.rows[0].cells[11].color = '#000000'; 
+                    sheet.rows[0].cells[12].background = '#6fde78'; 
+                    sheet.rows[0].cells[12].color = '#000000';
+                    sheet.rows[0].cells[13].background = '#6fde78'; 
+                    sheet.rows[0].cells[13].color = '#000000'; 
+                    sheet.rows[0].cells[14].background = '#6fde78'; 
+                    sheet.rows[0].cells[14].color = '#000000';
+                    
+                    sheet.rows[1].cells[0].background = '#6fde78'; 
+                    sheet.rows[1].cells[0].color = '#000000';
+                    sheet.rows[1].cells[1].background = '#6fde78'; 
+                    sheet.rows[1].cells[1].color = '#000000';
+                    sheet.rows[1].cells[2].background = '#6fde78'; 
+                    sheet.rows[1].cells[2].color = '#000000';
+                    sheet.rows[1].cells[3].background = '#6fde78'; 
+                    sheet.rows[1].cells[3].color = '#000000';
+                    sheet.rows[1].cells[4].background = '#6fde78'; 
+                    sheet.rows[1].cells[4].color = '#000000';
+                    sheet.rows[1].cells[5].background = '#6fde78'; 
+                    sheet.rows[1].cells[5].color = '#000000';
+                    sheet.rows[1].cells[6].background = '#6fde78'; 
+                    sheet.rows[1].cells[6].color = '#000000';
+                    sheet.rows[1].cells[7].background = '#6fde78'; 
+                    sheet.rows[1].cells[7].color = '#000000';
+                    
                    
                 },
                 columns: [
