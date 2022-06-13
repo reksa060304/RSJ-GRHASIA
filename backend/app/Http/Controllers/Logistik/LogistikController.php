@@ -132,19 +132,19 @@ class LogistikController extends ApiController{
             ->where('jk.statusenabled',true)
             ->get();
 
-        $dataAnggaran = \DB::table('mataanggaran_m as ma')
-            ->select('ma.id','ma.namamataanggaran')
-            ->where('ma.kdprofile', $idProfile)
-            ->where('ma.statusenabled',true)
-            ->orderBy('ma.namamataanggaran')
-            ->get();
+        // $dataAnggaran = \DB::table('mataanggaran_m as ma')
+        //     ->select('ma.id','ma.namamataanggaran')
+        //     ->where('ma.kdprofile', $idProfile)
+        //     ->where('ma.statusenabled',true)
+        //     ->orderBy('ma.namamataanggaran')
+        //     ->get();
 
-        $dataAnggaranT = \DB::table('mataanggaran_t as ma')
-            ->select('ma.norec','ma.mataanggaran','ma.saldoawalblu','ma.saldoawalrm')
-            ->where('ma.statusenabled',true)
-            ->where('ma.kdprofile', $idProfile)
-            ->orderBy('ma.mataanggaran')
-            ->get();
+        // $dataAnggaranT = \DB::table('mataanggaran_t as ma')
+        //     ->select('ma.norec','ma.mataanggaran','ma.saldoawalblu','ma.saldoawalrm')
+        //     ->where('ma.statusenabled',true)
+        //     ->where('ma.kdprofile', $idProfile)
+        //     ->orderBy('ma.mataanggaran')
+        //     ->get();
 
         $dataJabatan = \DB::table('jabatan_m as kp')
             ->select('kp.id','kp.namajabatan')
@@ -324,8 +324,8 @@ class LogistikController extends ApiController{
             'detailjenisproduk' =>$detailJenis,
             'jenisproduk' =>$dataJenisProduk,
             'jenisusulan' => $dataJenisUsulan,
-            'dataAnggaran' => $dataAnggaran,
-            'mataanggaran' => $dataAnggaranT,
+            // 'dataAnggaran' => $dataAnggaran,
+            // 'mataanggaran' => $dataAnggaranT,
             'jabatanpengelolaurusan' => $JabatanPengelolaUrusan,
             'kainstalasi' =>$JenisJabatanKaInstalasi,
             'bulanromawi' => $bulanromawi,

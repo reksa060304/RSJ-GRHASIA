@@ -22,11 +22,54 @@ define(['initialize'], function (initialize) {
                     "tglAwal=" + tglAwal
                 ).then(function (data) {
                     var data = data.data
+                    var subtottotaltt = 0
+                    var subtotjumlahkelasvvip = 0
+                    var subtotjumlahkelasvip = 0
+                    var subtotjumlahkelassatu = 0
+                    var subtotjumlahkelasdua = 0
+                    var subtotjumlahkelastiga = 0
+                    var tottotaltt = 0
+                    var totjumlahkelasvvip = 0
+                    var totjumlahkelasvip = 0
+                    var totjumlahkelassatu = 0
+                    var totjumlahkelasdua = 0
+                    var totjumlahkelastiga = 0
+                    console.log(data.data)
                     for(var i = 0; i < data.data.length; i++){
                         data.data[i].koders = '3404022';
                         data.data[i].kdprov = '24';
                         data.data[i].kabkota = 'Kab. Sleman';
+                        data.data[i].year = moment($scope.item.tglakhir).format('YYYY');
+                        if(data.data[i].pelayanan != 'Perinatologi'){
+                            subtottotaltt += parseInt(data.data[i].totaltt)
+                            subtotjumlahkelasvvip += parseInt(data.data[i].jumlahkelasvvip)
+                            subtotjumlahkelasvip += parseInt(data.data[i].jumlahkelasvip)
+                            subtotjumlahkelassatu += parseInt(data.data[i].jumlahkelassatu)
+                            subtotjumlahkelasdua += parseInt(data.data[i].jumlahkelasdua)
+                            subtotjumlahkelastiga += parseInt(data.data[i].jumlahkelastiga)
+                        }
+                        tottotaltt += parseInt(data.data[i].totaltt)
+                        totjumlahkelasvvip += parseInt(data.data[i].jumlahkelasvvip)
+                        totjumlahkelasvip += parseInt(data.data[i].jumlahkelasvip)
+                        totjumlahkelassatu += parseInt(data.data[i].jumlahkelassatu)
+                        totjumlahkelasdua += parseInt(data.data[i].jumlahkelasdua)
+                        totjumlahkelastiga += parseInt(data.data[i].jumlahkelastiga)
                     }
+                    data.data[29].no = 77
+                    data.data[29].totaltt = subtottotaltt
+                    data.data[29].jumlahkelasvvip = subtotjumlahkelasvvip 
+                    data.data[29].jumlahkelasvip = subtotjumlahkelasvip
+                    data.data[29].jumlahkelassatu = subtotjumlahkelassatu 
+                    data.data[29].jumlahkelasdua = subtotjumlahkelasdua 
+                    data.data[29].jumlahkelastiga = subtotjumlahkelastiga 
+                    data.data[31].totaltt = tottotaltt
+                    data.data[31].jumlahkelasvvip = totjumlahkelasvvip 
+                    data.data[31].jumlahkelasvip = totjumlahkelasvip
+                    data.data[31].jumlahkelassatu = totjumlahkelassatu 
+                    data.data[31].jumlahkelasdua = totjumlahkelasdua 
+                    data.data[31].jumlahkelastiga = totjumlahkelastiga
+                    data.data[30].no = 88
+                    data.data[31].no = 99
                     $scope.isRouteLoading = false;
                     $scope.sourceLaporan = new kendo.data.DataSource({
                         data: data.data,
@@ -75,13 +118,50 @@ define(['initialize'], function (initialize) {
                 // columnMenu: true,
                 // resizable: true,
                 excelExport: function (e) {
-                    var rows = e.workbook.sheets[0].rows;
-                    rows.unshift({
-                        cells: [{
-                            value: "RL1.3_TempatTidur",
-                            background: "#fffff"
-                        }]
-                    });
+                    var columns = e.workbook.sheets[0].columns;
+                    var sheet = e.workbook.sheets[0];
+                    for(var i = 0; i < e.workbook.sheets[0].columns.length; i++){
+                        delete columns[i].width;
+                        columns[i].width = 200;
+                    }
+
+                    for (var i = 0; i < 1; i++) {
+                        var $row = e.workbook.sheets[0].rows[i];
+                        for (var j = 0; j < $row.cells.length; j++) {
+                            var $cell = $row.cells[j];
+                            $cell["borderTop"] = { color: "#000000", size: 2 };
+                            $cell["borderRight"] = { color: "#000000", size: 2 };
+                            $cell["borderBottom"] = { color: "#000000", size: 2 };
+                            $cell["borderLeft"] = { color: "#000000", size: 2 };
+                        }
+                        console.log(e.workbook.sheets[0].rows.length);
+                        console.log(e.workbook.sheets[0].rows[i].cells.length);
+                    }
+
+                    sheet.rows[0].cells[0].background = '#6fde78';
+                    sheet.rows[0].cells[0].color = '#000000'; 
+                    sheet.rows[0].cells[1].background = '#6fde78'; 
+                    sheet.rows[0].cells[1].color = '#000000'; 
+                    sheet.rows[0].cells[2].background = '#6fde78'; 
+                    sheet.rows[0].cells[2].color = '#000000'; 
+                    sheet.rows[0].cells[3].background = '#6fde78'; 
+                    sheet.rows[0].cells[3].color = '#000000'; 
+                    sheet.rows[0].cells[4].background = '#6fde78'; 
+                    sheet.rows[0].cells[4].color = '#000000'; 
+                    sheet.rows[0].cells[5].background = '#6fde78'; 
+                    sheet.rows[0].cells[5].color = '#000000'; 
+                    sheet.rows[0].cells[6].background = '#6fde78'; 
+                    sheet.rows[0].cells[6].color = '#000000'; 
+                    sheet.rows[0].cells[7].background = '#6fde78'; 
+                    sheet.rows[0].cells[7].color = '#000000';
+                    sheet.rows[0].cells[8].background = '#6fde78'; 
+                    sheet.rows[0].cells[8].color = '#000000';
+                    sheet.rows[0].cells[9].background = '#6fde78'; 
+                    sheet.rows[0].cells[9].color = '#000000';
+                    sheet.rows[0].cells[10].background = '#6fde78'; 
+                    sheet.rows[0].cells[10].color = '#000000'; 
+                    sheet.rows[0].cells[11].background = '#6fde78'; 
+                    sheet.rows[0].cells[11].color = '#000000'; 
                 },
                 columns: [
                     // {

@@ -353,6 +353,7 @@ define(['initialize'], function(initialize) {
                 var objSave = {
                     "id":id,
                     "statusenabled": 1,
+                    "ispensiun": null,
                 }
                 medifirstService.post('sdm/save-data-pensiun-pegawai',objSave).then(function (e) {
                     loadData2();

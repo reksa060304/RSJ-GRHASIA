@@ -189,8 +189,8 @@ Dim JamRegis As String
     adocmd.CommandType = adCmdText
     With Report
         .database.AddADOCommand CN_String, adocmd
-        .txtNamaRs.SetText UCase(strNamaLengkapRs)
-        .txtAlamatRs.SetText stralmtLengkapRs
+'        .txtNamaRs.SetText UCase(strNamaLengkapRs)
+'        .txtAlamatRs.SetText stralmtLengkapRs
         If Not RS2.EOF Then
              .txtNorm.SetText IIf(IsNull(RS2("nocm")), "", RS2("nocm"))
              .txtNoRM1.SetText IIf(IsNull(RS2("nocm")), "", RS2("nocm"))

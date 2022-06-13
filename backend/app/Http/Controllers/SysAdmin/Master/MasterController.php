@@ -92,6 +92,15 @@ class MasterController extends ApiController{
         if (isset($filter['nmProduk']) && !empty($filter['nmProduk'])) {
             $data = $data->where('p.namaproduk','ilike','%'.$filter['nmProduk'].'%');
         }
+        if (isset($filter['detailjenisproduk']) && !empty($filter['detailjenisproduk'])) {
+            $data = $data->where('dj.id','=', $filter['detailjenisproduk']);
+        }
+
+        if(isset($filter['JenisArr']) && $filter['JenisArr']!="" && $filter['JenisArr']!="undefined"){
+            $arrRuang = explode(',',$request['JenisArr']) ;
+            $data = $data->whereIn('dj.id', $arrRuang);
+        }
+
         if (isset($filter['status']) && !empty($filter['status'])) {            
             if($filter['status'] == "true"){
                 $data = $data->where('p.statusenabled','=',true);
@@ -2322,6 +2331,8 @@ class MasterController extends ApiController{
         //get request
         $filter = $request->all();
         $kdProfile = (int) $this->getDataKdProfile($request);
+        
+        
         //get data
         $data = \DB::table('produk_m as p')
             ->select('p.id','p.kdproduk','p.kdbarcode','p.deskripsiproduk','p.namaproduk','dj.detailjenisproduk','dp.namadepartemen','p.statusenabled')

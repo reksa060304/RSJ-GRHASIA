@@ -28,13 +28,69 @@ define(['initialize'], function (initialize) {
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir).then(function (data) {
                         var data = data.data
+                        var j =0;
+                        var k =0;
+                        var l =0;
+                        var m =0;
+                        var n =0;
+                        var o =0;
+                        var p =0;
+                        var length = data.data.length - 1
+                        var tot = 0
                         for (var i = 0; i < data.data.length; i++) {
                             data.data[i].kdprov = '24'
                             data.data[i].kabkota = 'Kab. Sleman'
                             data.data[i].koders = '3404022'
                             data.data[i].namars = 'RSJ. Grhasia'
                             data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
+                            tot += data.data[i].jumlahtotal
                         }
+
+                        data.data[0].no = 1
+                        data.data[11].no = 2
+                        data.data[18].no = 3
+                        data.data[28].no = 4
+                        data.data[33].no = 5
+                        data.data[37].no = 6
+                        data.data[42].no = 7
+                        data.data[46].no = 8
+                        data.data[length].no = 99
+                        data.data[length].jumlahtotal = tot
+                        for(i = 1; i <= 10; i++){
+                            j++
+                            data.data[i].no = "1."+j
+                        }
+
+                        for(i = 12; i <= 17; i++){
+                            k++
+                            data.data[i].no = "2."+k
+                        }
+
+                        for(i = 19; i <= 27; i++){
+                            l++
+                            data.data[i].no = "3."+l
+                        }
+
+                        for(i = 29; i <= 32; i++){
+                            m++
+                            data.data[i].no = "4."+m
+                        }
+
+                        for(i = 34; i <= 36; i++){
+                            n++
+                            data.data[i].no = "5."+n
+                        }
+
+                        for(i = 38; i <= 41; i++){
+                            o++
+                            data.data[i].no = "6."+o
+                        }
+
+                        for(i = 43; i <= 45; i++){
+                            p++
+                            data.data[i].no = "7."+p
+                        }
+
                         $scope.isRouteLoading = false;
                         $scope.ambildataexcel = data.data;
                         $scope.panggil($scope.ambildataexcel);
@@ -61,8 +117,46 @@ define(['initialize'], function (initialize) {
                     toolbar: ["excel"],
                     excel: {
                         fileName: "Laporan Pelayanan Rehabilitasi Medik.xlsx",
-                        filterable: true,
+                        //filterable: true,
                         allPages: true
+                    },
+                    excelExport: function (e) {
+                        var columns = e.workbook.sheets[0].columns;
+                        var sheet = e.workbook.sheets[0];
+                        for(var i = 0; i < e.workbook.sheets[0].columns.length; i++){
+                            delete columns[i].width;
+                            columns[i].width = 200;
+                        }
+
+                        for (var i = 0; i < 1; i++) {
+                            var $row = e.workbook.sheets[0].rows[i];
+                            for (var j = 0; j < $row.cells.length; j++) {
+                                var $cell = $row.cells[j];
+                                $cell["borderTop"] = { color: "#000000", size: 2 };
+                                $cell["borderRight"] = { color: "#000000", size: 2 };
+                                $cell["borderBottom"] = { color: "#000000", size: 2 };
+                                $cell["borderLeft"] = { color: "#000000", size: 2 };
+                            }
+                            console.log(e.workbook.sheets[0].rows.length);
+                            console.log(e.workbook.sheets[0].rows[i].cells.length);
+                        }
+
+                        sheet.rows[0].cells[0].background = '#6fde78';
+                        sheet.rows[0].cells[0].color = '#000000'; 
+                        sheet.rows[0].cells[1].background = '#6fde78'; 
+                        sheet.rows[0].cells[1].color = '#000000'; 
+                        sheet.rows[0].cells[2].background = '#6fde78'; 
+                        sheet.rows[0].cells[2].color = '#000000'; 
+                        sheet.rows[0].cells[3].background = '#6fde78'; 
+                        sheet.rows[0].cells[3].color = '#000000'; 
+                        sheet.rows[0].cells[4].background = '#6fde78'; 
+                        sheet.rows[0].cells[4].color = '#000000'; 
+                        sheet.rows[0].cells[5].background = '#6fde78'; 
+                        sheet.rows[0].cells[5].color = '#000000'; 
+                        sheet.rows[0].cells[6].background = '#6fde78'; 
+                        sheet.rows[0].cells[6].color = '#000000'; 
+                        sheet.rows[0].cells[7].background = '#6fde78'; 
+                        sheet.rows[0].cells[7].color = '#000000'; 
                     },
                     dataSource: $scope.ambildataexcel,
                     filterable: true,
@@ -96,17 +190,17 @@ define(['initialize'], function (initialize) {
                             width: "80px"
                         },
                         {
-                            field: "namaruangan",
+                            field: "no",
                             title: "NO",
                             width: "80px"
                         },
                         {
-                            field: "namaproduk",
+                            field: "namaruangan",
                             title: "JENIS KEGIATAN",
                             width: "80px"
                         },
                         {
-                            field: "jumlah",
+                            field: "jumlahtotal",
                             title: "JUMLAH",
                             width: "80px"
                         },
@@ -114,7 +208,7 @@ define(['initialize'], function (initialize) {
                 })
             };
 
-            $scope.panggil();
+            //$scope.panggil();
 
             $scope.click = function (dataPasienSelected) {
                 var data = dataPasienSelected;
@@ -140,6 +234,11 @@ define(['initialize'], function (initialize) {
                     width: "80px"
                 },
                 {
+                    field: "koders",
+                    title: "KODE RS",
+                    width: "80px"
+                },
+                {
                     field: "namars",
                     title: "NAMA RS",
                     width: "80px"
@@ -150,17 +249,17 @@ define(['initialize'], function (initialize) {
                     width: "80px"
                 },
                 {
-                    field: "namaruangan",
+                    field: "no",
                     title: "NO",
                     width: "80px"
                 },
                 {
-                    field: "namaproduk",
+                    field: "namaruangan",
                     title: "JENIS KEGIATAN",
                     width: "80px"
                 },
                 {
-                    field: "jumlah",
+                    field: "jumlahtotal",
                     title: "JUMLAH",
                     width: "80px"
                 },

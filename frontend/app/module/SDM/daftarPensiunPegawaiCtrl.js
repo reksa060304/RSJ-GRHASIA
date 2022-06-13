@@ -179,9 +179,63 @@ define(['initialize'], function(initialize) {
                     $scope.isRouteLoading = false;
                 });
             };
+            $scope.formatTanggal = function (tanggal) {
+                return moment(tanggal).format('DD-MMM-YYYY');
+            }
 
+            var onDataBound = function (e) {
+                
+                var kendoGrid = $("#gridPensiun").data("kendoGrid"); // get the grid widget
+                var rows = e.sender.element.find("tbody tr"); // get all rows
+                var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+                var dateNow = new Date();
+                // iterate over the rows and if the undelying dataitem's Status field is PPT add class to the cell
+                for (var i = 0; i < rows.length; i++) {
+                    
+                    var row = rows[i];
+                    console.log(row);
+                    var tglpensiun = kendoGrid.dataItem(row).tglpensiun;
+                    // var umur = dateHelper.CountAge(new Date(tglpensiun), new Date());
+
+                    var thnTglPensiun = moment(tglpensiun).format("YYYY");
+                    var thnTglnow = moment(new Date()).format("YYYY");
+
+                    var ThnConv = thnTglPensiun - thnTglnow
+                    var SUMThnConv = ThnConv * 12
+                    console.log("SUMThnConv"+ SUMThnConv);
+                    var blnTglPensiun = moment(tglpensiun).format("MM");
+                    var blnTglnow = moment(new Date()).format("MM");
+                    var blnConv = blnTglPensiun - blnTglnow
+                    var sumBlnThn = SUMThnConv + blnConv
+                    console.log(sumBlnThn);
+                    if (sumBlnThn <= 6) {
+                        if (sumBlnThn <1) {
+                            $(row.cells[0]).addClass("red");
+                            $(row.cells[1]).addClass("red");
+                            $(row.cells[2]).addClass("red");
+                            $(row.cells[3]).addClass("red");
+                            $(row.cells[4]).addClass("red");
+                            $(row.cells[5]).addClass("red");
+                            $(row.cells[6]).addClass("red");
+                            $(row.cells[7]).addClass("red");
+                            $(row.cells[8]).addClass("red");
+                        } else{
+                            $(row.cells[0]).addClass("koneng");
+                            $(row.cells[1]).addClass("koneng");
+                            $(row.cells[2]).addClass("koneng");
+                            $(row.cells[3]).addClass("koneng");
+                            $(row.cells[4]).addClass("koneng");
+                            $(row.cells[5]).addClass("koneng");
+                            $(row.cells[6]).addClass("koneng");
+                            $(row.cells[7]).addClass("koneng");
+                            $(row.cells[8]).addClass("koneng");
+                        }
+                    }
+                }
+            }
             // $scope.loadData();
             $scope.opsiDataPensiun = {
+                dataBound: onDataBound,
                 toolbar: ["excel",
                 ],
                 excel: {
@@ -218,10 +272,12 @@ define(['initialize'], function(initialize) {
                     // {field: "golongan", title: "Golongan",template: "# if (golonganpegawai == null){ # #: '-' # # }else{# #= golonganpegawai # #}#"},
                     {field: "unitkerja", title: "Unit Kerja", template: "# if (unitkerja == null){ # #: '-' # # }else{# #= unitkerja # #}#"},
                     {field: "subunit", title: "Sub Unit Kerja", template: "# if (subunit == null){ # #: '-' # # }else{# #= subunit # #}#"},
-                    {field: "tgllahir", title: "Tgl Lahir", template: "# if (tgllahir == null){ # #: '-' # # }else{# #= kendo.toString(new Date(tgllahir), \"dd/MM/yyyy\") # #}#"},
+                    {field: "tgllahir", title: "Tgl Lahir", template: "# if (tgllahir == null){ # #: '-' # # }else{# #= kendo.toString(new Date(tgllahir), \"dd MMMM yyyy\") # #}#"},
                     {field: "pensiun", title: "Umur Pensiun",template: "# if (pensiun == null){ # #: '-' # # }else{# #= pensiun # #}#"},
                     {field: "tglpensiun", title: "Tgl Pensiun", 
-                            template: "# if (tglpensiun == null){ # #: '-' # # }else{# #= kendo.toString(new Date(tglpensiun), \"dd/MM/yyyy\") # #}#"},
+                    // "template": "<span class='style-left'>{{formatTanggal('#: tgllahir #')}}</span>",
+                            template: "# if (tglpensiun == null){ # #: '-' # # }else{# #= kendo.toString(new Date(tglpensiun), \"dd-MMM-yyyy\") # #}#"
+                        },
                             // template: "#= kendo.toString(new Date(tglpensiun), \"dd/MM/yyyy\") #"},
                     {
                         "command": [{
@@ -350,6 +406,7 @@ define(['initialize'], function(initialize) {
                 var objSave = {
                     "id":id,
                     "statusenabled": 0,
+                    "ispensiun":1,
                 }
                 medifirstService.post('sdm/save-data-pensiun-pegawai', objSave).then(function (e) {
                     loadData2();

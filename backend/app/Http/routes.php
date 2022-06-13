@@ -769,6 +769,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-riwayatcppt-rajalranap', 'EMR\EMRController@getRiwayatCPPTRajalRanap');
           Route::get('emr/get-data-perawatan', 'EMR\EMRController@getDataPerawatan');
 
+
+          Route::post('bsre-esign/sign/pdf', 'Bridging\BridgingBSREController@signDokumen');
+          Route::get('bsre-esign/sign/download/{id_dokumen}', 'Bridging\BridgingBSREController@downloadDokumen');
+          Route::post('bsre-esign/sign/verify', 'Bridging\BridgingBSREController@verifyDokumen');
+          Route::get('bsre-esign/user/status/{nik}', 'Bridging\BridgingBSREController@cekStatusUser');
+          Route::post('bsre-esign/user/registrasi', 'Bridging\BridgingBSREController@registrasi');
         // });
 
           Route::post('cp/save-cp-dinamis', 'ClinicalPathway\CPController@SaveTransaksiCP');
@@ -1248,6 +1254,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // POST //
             Route::post('logistik/get-stok-ruangan-so-from-file', 'Logistik\LogistikController@getStokRuanganSOFromFile');
             Route::post('logistik/get-stok-ruangan-so-from-fileexcel', 'Logistik\LogistikController@getStokRuanganSOFromFileExcel');
+            Route::post('gaji/get-gaji-pegawai', 'SDM\SumberDayaManusiaController@gajiPegawaiV2');
+            Route::post('gaji/save-data-gaji-pegawai', 'SDM\SumberDayaManusiaController@saveGajiPegawaiV2');
             Route::post('logistik/delete-terima-barang-suplier', 'Logistik\LogistikController@DeletePenerimaanSuplier');
             Route::post('logistik/delete-data-usulan-ruangan', 'Logistik\LogistikController@saveBatalUsulanPermintaanBarang');
             Route::post('logistik/delete-data-rencana-usulan-ruangan', 'Logistik\LogistikController@hapusDataRUPB');
@@ -1541,6 +1549,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rawatjalan/get-daftar-konsul-from-order', 'RawatJalan\RawatJalanController@getDaftarKonsulFromOrder');
           Route::post('rawatjalan/save-periksa', 'RawatJalan\RawatJalanController@saveSelesaiPeriksa');
           Route::post('rawatjalan/simpan-meninggal-pasien', 'RawatJalan\RawatJalanController@SimpanMeninggalPasien');
+          Route::post('rawatjalan/simpan-pulang-pasien', 'RawatJalan\RawatJalanController@SimpanPulangPasien');
         // });
         // Route::group(['prefix' => 'registrasi'], function () {
             // 2019-12 penambahan arif awal
@@ -1758,6 +1767,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-combo-mapping-rl', 'Registrasi\LaporanRekamMedisController@getComboMappingRL');
 
               Route::get('registrasi/laporan/get-laporan-rl12', 'Registrasi\LaporanRekamMedisController@getDataRL31RawatInap');
+              Route::get('registrasi/laporan/get-laporan-rl2', 'Registrasi\LaporanRekamMedisController@getDataRL2');
               Route::get('registrasi/laporan/get-grafik-barber-johnson', 'Registrasi\LaporanRekamMedisController@getGrafikBarberJohnson');
               Route::get('registrasi/laporan/get-laporan-rl13', 'Registrasi\LaporanRekamMedisController@getDataRL13TempatTidur');
               Route::get('registrasi/laporan/get-laporan-rl11', 'Registrasi\LaporanRekamMedisController@getDataRL11DataDasarRumahSakit');
@@ -1862,6 +1872,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('remunerasi/get-list-pegawai-perdetailjenispagu', 'Remunerasi\RemunerasiController@getPegawaiByDetailJenisPagu');
         Route::get('remunerasi/get-hitung-jasa-pelayanan-satu', 'Remunerasi\RemunerasiController@getHitungJP1');
         Route::get('remunerasi/get-daftar-remunerasi-pegawai', 'Remunerasi\RemunerasiController@getDaftarRemunPegawai');
+        Route::get('remunerasi/get-daftar-remunerasi-pegawaiv2', 'Remunerasi\RemunerasiController@getDaftarRemunPegawaiV2');
         Route::get('remunerasi/get-daftar-closing', 'Remunerasi\RemunerasiController@getDataClosing');
         Route::get('remunerasi/get-detail-remun_rc', 'Remunerasi\RemunerasiController@getDetailRemunRCCC');
         Route::get('remunerasi/get-komponenharga-pelayanan', 'Remunerasi\RemunerasiController@getKomponenHargaPelayanan');
@@ -1908,6 +1919,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('remunerasi/save-detail-kelompok', 'Remunerasi\RemunerasiController@saveDetailKelompok');
         Route::post('remunerasi/save-map-jenis-pagu-topegawai', 'Remunerasi\RemunerasiController@saveMapJenisPaguToPegawai');
         Route::post('remunerasi/save-index-pegawai', 'Remunerasi\RemunerasiController@updateIndexPegawai');
+        Route::post('remunerasi/save-index-pegawaiv2', 'Remunerasi\RemunerasiController@updateIndexPegawaiV2');
 
         //master pagu
         Route::get('remunerasi/get-jenis-pagu', 'Remunerasi\RemunerasiController@getJenisPagu');
@@ -2003,6 +2015,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             /*GET*/
             Route::get('sdm/get-data-combo-sdm', 'SDM\SumberDayaManusiaController@getComboPegawaiSdm');
             Route::get('sdm/get-data-pegawai-all-sdm', 'SDM\SumberDayaManusiaController@getDaftarPegawai');
+            Route::get('sdm/get-data-abk', 'SDM\SumberDayaManusiaController@getDaftarABK');
             Route::get('sdm/get-data-detail-pegawai', 'SDM\SumberDayaManusiaController@getDetailPegawai');
             Route::get('sdm/get-data-urut-kepangakatan-pegawai', 'SDM\SumberDayaManusiaController@getDataDaftarUrutKepangkatan');
             Route::get('sdm/get-data-jadwal-kerja-pegawai-ruangan', 'SDM\SumberDayaManusiaController@getDataJadwalKerjaRuangan');
@@ -2040,6 +2053,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             /*POST*/
             
             Route::post('sdm/simpan-bayar-gaji-detail', 'SDM\SumberDayaManusiaController@simpanPembayaranGajiArray');
+            Route::post('sdm/save-data-abk', 'SDM\SumberDayaManusiaController@simpanDataABK');
             Route::post('sdm/simpan-data-pembayaran-gaji', 'SDM\SumberDayaManusiaController@simpanPembayaranGaji');
             Route::post('sdm/update-false-pegawai', 'SDM\SumberDayaManusiaController@deleteDataPegawai');
             Route::post('sdm/update-idfinger-pegawai', 'SDM\SumberDayaManusiaController@updateDataIdFingerPrint');
@@ -2047,6 +2061,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('sdm/delete-data-hukuman-disiplin', 'SDM\SumberDayaManusiaController@deleteDataHukumanDisiplin');
             Route::post('sdm/delete-data-cuti', 'SDM\SumberDayaManusiaController@deleteDataCuti');
             Route::post('sdm/delete-data-pangkat-golongan', 'SDM\SumberDayaManusiaController@deleteDataPangkatGolongan');
+            Route::post('sdm/delete-data-gaji-berkala', 'SDM\SumberDayaManusiaController@deleteDataGajiBerkala');
             Route::post('sdm/delete-data-sipstr', 'SDM\SumberDayaManusiaController@deleteDataSipStr');
             Route::post('sdm/save-rekam-data-pegawai', 'SDM\SumberDayaManusiaController@saveDataRekamDataPegawai');
             Route::post('sdm/upload-data-sipstr', 'SDM\SumberDayaManusiaController@simpanSipStr');
@@ -2108,6 +2123,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sdm/save-sd-pelatihan', 'SDM\SumberDayaManusiaController@saveSDPelatihan');
                 Route::get('sdm/get-nama-pelatihan', 'SDM\SumberDayaManusiaController@getNamaPelatihan');
                 Route::get('sdm/pendidikan/get-mapkategoripendidikan-to-programpendidikan', 'SDM\PelatihanController@getMapKatPendidikanTOprogram');
+                Route::get('sdm/daftar-kenaikan-gaji-berkala', 'SDM\SumberDayaManusiaController@daftarKenaikanGajiBerkala');
+
                 /*END POST*/
             // });
             // Route::group(['prefix' => 'pendidikan'], function () {
@@ -2119,6 +2136,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('sdm/pendidikan/get-cbo-tenagapengajar', 'SDM\SumberDayaManusiaController@getDataComboTenagaPengajar');
               Route::get('sdm/pendidikan/get-daftar-tenagapengajar', 'SDM\SumberDayaManusiaController@getDaftarTenagaPengajar');
               Route::get('sdm/pendidikan/get-detail-tenagapengajar', 'SDM\SumberDayaManusiaController@getDetailTenagaPengajar');
+              Route::get('nominal/get-nominal', 'SDM\SumberDayaManusiaController@nominal');
 
               Route::post('sdm/pendidikan/save-tenagapengajar', 'SDM\SumberDayaManusiaController@saveTenagaPengajar');
               Route::post('sdm/pendidikan/hapus-tenagapengajar', 'SDM\SumberDayaManusiaController@hapusTenagaPengajar');
@@ -2379,6 +2397,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sysadmin/general/save-map-administrasi','SysAdmin\GeneralController@saveMappingAdminstrasiCuy');
                 Route::post('sysadmin/general/save-map-laporankeuanganlingkuppelayanan','SysAdmin\GeneralController@saveMappingLaporanKeuanganToLingkupPelayanan');
                 Route::get('sysadmin/logging/save-log-meninggal-pasien-rj', 'SysAdmin\LoggingController@saveLogMeninggalPasienRJ');
+                Route::get('sysadmin/logging/save-log-pulang-pasien-rj', 'SysAdmin\LoggingController@saveLogPulangPasienRJ');
                 // POST //
 
                 // Route::group(['prefix' => 'rensar'], function () {
@@ -2546,6 +2565,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
           // Route::group(['prefix' => 'tatarekening'], function () {
           Route::post('tatarekening/save-akomodasi-tea', 'TataRekening\TagihanController@saveAkomodasiOtomatis');
+          Route::post('tatarekening/save-poin-remun', 'TataRekening\TagihanController@saveImportRemun');
           Route::get('tatarekening/get-detail_apd', 'TataRekening\TagihanController@getDetailpasien');
           Route::get('tatarekening/get-combo-detail-regis', 'TataRekening\TagihanController@getDataComboDetailRegis');
           Route::get('tatarekening/get-detail-pasien', 'TataRekening\TagihanController@getAPD');

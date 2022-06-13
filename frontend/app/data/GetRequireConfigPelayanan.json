@@ -3203,6 +3203,26 @@
         {
             "nameDep": "PerjanjianPasienMelarikanDiriCtrl",
             "urlDep": "module/EMR/PerjanjianPasienMelarikanDiriCtrl"
+        },
+        {
+            "nameDep": "SuratPermohonanPersetujuanPembiayaanPerawatanCtrl",
+            "urlDep": "module/EMR/SuratPermohonanPersetujuanPembiayaanPerawatanCtrl"
+        },
+        {
+            "nameDep": "LembarMasukKeluarCtrl",
+            "urlDep": "module/EMR/LembarMasukKeluarCtrl"
+        },
+        {
+            "nameDep": "SuratBuktiPengembalianPenerimaanKembaliCtrl",
+            "urlDep": "module/EMR/SuratBuktiPengembalianPenerimaanKembaliCtrl"
+        },
+        {
+            "nameDep": "RencanaIntegrasiAsuhanCtrl",
+            "urlDep": "module/EMR/RencanaIntegrasiAsuhanCtrl"
+        },
+        {
+            "nameDep": "RL2KetenagaanCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL2KetenagaanCtrl"
         }
     ]
 }

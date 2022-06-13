@@ -62,6 +62,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     $scope.listAsalRujukan = dat.data.asalrujukan;
                     $scope.listKelompokPasien = dat.data.kelompokpasien;
+                    $scope.listJenisKasus = dat.data.jeniskasus;
                     // $scope.listDokter = dat.data.dokter;
                     $scope.listRuangan = dat.data.ruanganranap;
 
@@ -112,7 +113,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             // $scope.listJenisPelayanan =([ {id:parseInt(his.data[0].objectjenispelayananfk),jenispelayanan:his.data[0].jenispelayanan}])
                             // $scope.item.jenisPasien = {id:parseInt(his.data[0].objectjenispelayananfk),jenispelayanan:his.data[0].jenispelayanan}      
                             $scope.item.dokter = { id: his.data[0].objectpegawaifk, namalengkap: his.data[0].dokter }
-
+                            $scope.item.jenisKasus ={ id:his.data[0].objectjeniskasusfk, jeniskasus: his.data[0].jeniskasus}
                             $scope.isInputAsuransi = true;
                             $scope.isNext = false;
                             $scope.isBatal = true;
@@ -149,6 +150,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("registrasi/get-pasienbynorec-pd?norecPD=" + $scope.currentNorec + "&norecAPD=" + $scope.currentNorecAntrian)
                     .then(function (his) {
                         $scope.item.historyPasien = his.data.data[0];
+                            $scope.item.asalRujukan = {
+                                id: his.data.data[0].objectasalrujukanfk,
+                                asalrujukan: his.data.data[0].asalrujukan
+                            }
 
 
                     });
@@ -269,6 +274,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
+                if ($scope.item.jenisKasus == undefined) {
+                    toastr.error('Jenis kasus harus di isi')
+                    return
+                }
+
                 var kelasId = "";
                 if ($scope.item.kelas == undefined) {
                     kelasId = null;
@@ -309,7 +319,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
+                var jenisKasus = null;
+                if ($scope.item.jenisKasus != undefined){
+                    jenisKasus = $scope.item.jenisKasus.id
+                }
                 var tmpData = {
+                    "jeniskasus": {
+                        "id": jenisKasus
+                    },
                     "pegawai": {
                         "id": dokterId
                     },
@@ -389,6 +406,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 messageContainer.error("Pasien dengan nocm " + nocm + " masih aktif dirawat di " + ruangan);
                             } else{
                                 $scope.isSimpan = true;
+                                console.log(tmpData);
                                 medifirstService.post('registrasi/simpan-mutasi-pasien', tmpData).then(function (e) {
                                     $scope.resultAPD = e.data.data;
                                     responData = e.data;

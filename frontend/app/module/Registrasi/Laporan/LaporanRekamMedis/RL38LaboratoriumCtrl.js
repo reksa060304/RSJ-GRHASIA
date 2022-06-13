@@ -17,35 +17,140 @@ define(['initialize'], function (initialize) {
             function LoadData() {
                 var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
                 var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
-                // var tempRuanganId = "";
-                // if ($scope.item.ruangan != undefined) {
-                //     tempRuanganId = "&idRuangan=" + $scope.item.ruangan.id;
-                // }
-                // var tempDepartemen = "";
-                // if ($scope.item.departement != undefined) {
-                //     tempDepartemen = "&idDept=" + $scope.item.departement.id;
-                // }
-                // var tempKelPasienId = "";
-                // if ($scope.item.kelompokPasien != undefined) {
-                // if ($scope.item.kelompokPasien.kelompokpasien == 'Non BPJS') {
-                //   tempKelPasienId = "&kelompokPasien=153"
-                // } else {
-                //   tempKelPasienId = "&kelompokPasien=" + $scope.item.kelompokPasien.id;
-                // }
-                // }
+              
                 var chacePeriode = {
                     0: tglAwal,
                     1: tglAkhir
                 }
-                cacheHelper.set('LaporanRl38Ctrl', chacePeriode);
+                cacheHelper.set('LaporanRl39Ctrl', chacePeriode);
 
                 medifirstService.get("registrasi/laporan/get-laporan-rl38?"
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir).then(function (data) {
-                        for (var i = 0; i < data.data.length; i++) {
-                            data.data[i].no = i + 1
-                        }
                         var data = data.data
+                        var j = 0;
+                        var k = 0;
+                        var l = 0;
+                        var m = 0;
+                        var n = 0;
+                        var o = 0;
+                        var p = 0;
+                        var q = 0;
+                        var r = 0;
+                        var s = 0;
+                        var t = 0;
+                        var u = 0;
+                        var v = 0;
+                        var w = 0;
+                        var x = 0;
+                        var length = data.data.length - 1
+                        var tot = 0
+                        for (var i = 0; i < data.data.length; i++) {
+                            data.data[i].kdprov = '24'
+                            data.data[i].kabkota = 'Kab. Sleman'
+                            data.data[i].koders = '3404022'
+                            data.data[i].namars = 'RSJ. Grhasia'
+                            data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
+                            tot += data.data[i].jumlahtotal
+                        }
+
+                        data.data[0].no = "1";
+                        data.data[1].no = "1.1";
+                        data.data[10].no = "1.2";
+                        data.data[17].no = "1.3";
+                        data.data[21].no = "1.4";
+                        data.data[26].no = "1.5";
+                        data.data[49].no = "1.6";
+                        data.data[58].no = "2";
+                        data.data[59].no = "2.1";
+                        data.data[81].no = "2.2";
+                        data.data[87].no = "2.3";
+                        data.data[97].no = "2.4";
+                        data.data[114].no = "2.5";
+                        data.data[136].no = "2.6";
+                        data.data[143].no = "2.7";
+                        data.data[153].no = "2.8";
+                        data.data[186].no = "2.9";
+                        data.data[length].no = 99
+                        data.data[length].jumlahtotal = tot
+
+                        for(i = 2; i <= 9; i++){
+                            j++
+                            data.data[i].no = "1.1."+j
+                        }
+
+                        for(i = 11; i <= 16; i++){
+                            k++
+                            data.data[i].no = "1.2."+k
+                        }
+
+                        for(i = 18; i <= 20; i++){
+                            l++
+                            data.data[i].no = "1.3."+l
+                        }
+
+                        for(i = 22; i <= 25; i++){
+                            m++
+                            data.data[i].no = "1.4."+m
+                        }
+
+                        for(i = 27; i <= 48; i++){
+                            n++
+                            data.data[i].no = "1.5."+n
+                        }
+
+                        for(i = 50; i <= 57; i++){
+                            o++
+                            data.data[i].no = "1.6."+o
+                        }
+
+                        for(i = 60; i <= 80; i++){
+                            p++
+                            data.data[i].no = "2.1."+p
+                        }
+
+                        for(i = 82; i <= 86; i++){
+                            q++
+                            data.data[i].no = "2.2."+q
+                        }
+
+                        for(i = 88; i <= 96; i++){
+                            r++
+                            data.data[i].no = "2.3."+r
+                        }
+
+                        for(i = 98; i <= 113; i++){
+                            s++
+                            data.data[i].no = "2.4."+s
+                        }
+
+                        for(i = 115; i <= 135; i++){
+                            t++
+                            data.data[i].no = "2.5."+t
+                        }
+
+                        for(i = 137; i <= 142; i++){
+                            u++
+                            data.data[i].no = "2.6."+u
+                        }
+
+                        for(i = 144; i <= 152; i++){
+                            v++
+                            data.data[i].no = "2.7."+v
+                        }
+
+                        for(i = 154; i <= 185; i++){
+                            w++
+                            data.data[i].no = "2.8."+w
+                        }
+
+                        for(i = 187; i <= 200; i++){
+                            x++
+                            data.data[i].no = "2.9."+x
+                        }
+
+                        console.log(data.data.no);
+
                         $scope.isRouteLoading = false;
                         $scope.ambildataexcel = data.data;
                         $scope.panggil($scope.ambildataexcel);
@@ -67,39 +172,99 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.panggil = function (cokot) {
-
                 $("#kGrid").kendoGrid({
                     toolbar: ["excel"],
                     excel: {
-                        fileName: "Laporan Pemeriksaan Laboratorium.xlsx",
-                        filterable: true,
+                        fileName: "Laporan RL3.8 Laboratorium.xlsx",
                         allPages: true
+                    },
+                    excelExport: function (e) {
+                        var columns = e.workbook.sheets[0].columns;
+                        var sheet = e.workbook.sheets[0];
+                        for(var i = 0; i < e.workbook.sheets[0].columns.length; i++){
+                            delete columns[i].width;
+                            columns[i].width = 200;
+                        }
+
+                        for (var i = 0; i < 1; i++) {
+                            var $row = e.workbook.sheets[0].rows[i];
+                            for (var j = 0; j < $row.cells.length; j++) {
+                                var $cell = $row.cells[j];
+                                $cell["borderTop"] = { color: "#000000", size: 2 };
+                                $cell["borderRight"] = { color: "#000000", size: 2 };
+                                $cell["borderBottom"] = { color: "#000000", size: 2 };
+                                $cell["borderLeft"] = { color: "#000000", size: 2 };
+                            }
+                            console.log(e.workbook.sheets[0].rows.length);
+                            console.log(e.workbook.sheets[0].rows[i].cells.length);
+                        }
+
+                        sheet.rows[0].cells[0].background = '#6fde78';
+                        sheet.rows[0].cells[0].color = '#000000'; 
+                        sheet.rows[0].cells[1].background = '#6fde78'; 
+                        sheet.rows[0].cells[1].color = '#000000'; 
+                        sheet.rows[0].cells[2].background = '#6fde78'; 
+                        sheet.rows[0].cells[2].color = '#000000'; 
+                        sheet.rows[0].cells[3].background = '#6fde78'; 
+                        sheet.rows[0].cells[3].color = '#000000'; 
+                        sheet.rows[0].cells[4].background = '#6fde78'; 
+                        sheet.rows[0].cells[4].color = '#000000'; 
+                        sheet.rows[0].cells[5].background = '#6fde78'; 
+                        sheet.rows[0].cells[5].color = '#000000'; 
+                        sheet.rows[0].cells[6].background = '#6fde78'; 
+                        sheet.rows[0].cells[6].color = '#000000'; 
+                        sheet.rows[0].cells[7].background = '#6fde78'; 
+                        sheet.rows[0].cells[7].color = '#000000'; 
                     },
                     dataSource: $scope.ambildataexcel,
                     filterable: true,
                     pageable: true,
                     resizable: true,
-                    // columnMenu: true,
                     columns: [
                         {
+                            field: "kdprov",
+                            title: "KODE PROPINSI",
+                            width: "80px"
+                        },
+                        {
+                            field: "kabkota",
+                            title: "KAB / KOTA",
+                            width: "80px"
+                        },
+                        {
+                            field: "koders",
+                            title: "KODE RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "namars",
+                            title: "NAMA RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "tahun",
+                            title: "TAHUN",
+                            width: "80px"
+                        },
+                        {
                             field: "no",
-                            title: "No",
-                            Template: "<span class='style-center'>#: no #</span>",
-                            width: "50px"
+                            title: "NO",
+                            width: "80px"
                         },
                         {
-                            field: "namaproduk",
-                            title: "Jenis Kegiatan"
+                            field: "namaruangan",
+                            title: "JENIS KEGIATAN",
+                            width: "80px"
                         },
                         {
-                            field: "jmlproduk",
-                            title: "Jumlah"
-                        }
+                            field: "jumlahtotal",
+                            title: "JUMLAH",
+                            width: "80px"
+                        },
                     ]
                 })
             };
-
-            $scope.panggil();
+            
 
             $scope.click = function (dataPasienSelected) {
                 var data = dataPasienSelected;
@@ -115,19 +280,45 @@ define(['initialize'], function (initialize) {
             $scope.columnRL52 = [
 
                 {
+                    field: "kdprov",
+                    title: "KODE PROPINSI",
+                    width: "80px"
+                },
+                {
+                    field: "kabkota",
+                    title: "KAB / KOTA",
+                    width: "80px"
+                },
+                {
+                    field: "koders",
+                    title: "KODE RS",
+                    width: "80px"
+                },
+                {
+                    field: "namars",
+                    title: "NAMA RS",
+                    width: "80px"
+                },
+                {
+                    field: "tahun",
+                    title: "TAHUN",
+                    width: "80px"
+                },
+                {
                     field: "no",
-                    title: "No",
-                    Template: "<span class='style-center'>#: no #</span>",
-                    width: "50px"
+                    title: "NO",
+                    width: "80px"
                 },
                 {
-                    title: "Jenis Kegiatan",
-                    field: "namaruangan"
+                    field: "namaruangan",
+                    title: "JENIS KEGIATAN",
+                    width: "80px"
                 },
                 {
-                    title: "Jumlah",
-                    field: "jumlahkunjungan"
-                }
+                    field: "jumlahtotal",
+                    title: "JUMLAH",
+                    width: "80px"
+                },
             ];
 
             $scope.Perbaharui = function () {
@@ -180,55 +371,6 @@ define(['initialize'], function (initialize) {
             $scope.pegawai = medifirstService.getPegawai();
 
 
-            $scope.Cetak = function () {
-                // if($scope.item.format == undefined){
-                // 	alert('format file harus dipilih terlebih dahulu !!!')
-                // }
-                if ($scope.item.tglawal == $scope.tglawal)
-                    var tglawal = $scope.item.tglawal;
-                else
-                    var tglawal = DateHelper.getDateTimeFormatted2($scope.item.tglawal, "dd-MM-yyyy HH:mm");
-                if ($scope.item.tglakhir == $scope.tglakhir)
-                    var tglakhir = $scope.item.tglakhir;
-                else
-                    var tglakhir = DateHelper.getDateTimeFormatted2($scope.item.tglakhir, "dd-MM-yyyy HH:mm");
-                if ($scope.item.departement == undefined)
-                    var departement = "";
-                else
-                    var departement = $scope.item.departement.id;
-                if ($scope.item.namaPenjamin == undefined)
-                    var kelompokPasien = "";
-                else
-                    var kelompokPasien = $scope.item.namaPenjamin.id;
-                if ($scope.item.ruangan == undefined)
-                    var ruangan = "";
-                else
-                    var ruangan = $scope.item.ruangan.id;
-                if ($scope.item.institusiAsalPasien == undefined || $scope.item.institusiAsalPasien.id == undefined)
-                    var perusahaan = "";
-                else
-                    var perusahaan = $scope.item.institusiAsalPasien.id;
-                var stt = 'false'
-                if (confirm('View Laporan Pasien Pulang? ')) {
-                    // Save it!
-                    stt = 'true';
-                } else {
-                    // Do nothing!
-                    stt = 'false'
-                }
-                var client = new HttpClient();
-                client.get('http://127.0.0.1:1237/printvb/kasir?cetak-LaporanPasienPulang=1&tglAwal=' + tglawal + '&tglAkhir=' + tglakhir + '&strIdDepartement=' + departement + '&strIdRuangan=' + ruangan + '&strIdKelompokPasien=' + kelompokPasien + '&strIdPegawai=' + $scope.pegawai.id + '&strIdPerusahaan=' + perusahaan + '&view=' + stt, function (response) {
-                    // do something with response
-                });
-                // if(client.status==0){
-                //     if($scope.item.format == undefined){
-                //         alert('format file harus dipilih terlebih dahulu !!!');
-                //     }else{
-                //         var urlLaporan = ReportPelayanan.open('preporting/lapPelayananPasien?startDate=''+tglawal+'+tglawal+'&tglAkhir='+tglakhir+'&strIdRuangan='+ruangan+'&strIdDepartement='+departement+'&strIdKelompokPasien='+kelompokPasien+'&strIdDokter='+namaPegawai+'&format='+$scope.item.format.format);
-                //         window.open(urlLaporan, '_blank');
-                //     }
-                // }   
-            }
 
         }
     ]);

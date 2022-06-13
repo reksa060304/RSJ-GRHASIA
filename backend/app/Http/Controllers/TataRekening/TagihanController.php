@@ -12850,4 +12850,429 @@ $result = array(
         return $this->respond($data);
     }
 
+
+    public function saveImportRemun(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin=$request->all();
+//        $kode='';
+        $arr = $dataLogin['data'] ;
+
+        $iki = 0;
+        $iku = 0;
+        $prosen = 0;
+        $grade = 0;
+        $mk = 0;
+        $point_tt = 0;
+        try{
+        foreach ($arr as $array_data){
+            $id = $array_data['kd'];
+            $tgl = $array_data['tglinput'];
+
+            $datas = DB::select(DB::raw("select namalengkap from pegawai_m where id = $id"));
+            $cek = DB::select(DB::raw("select * from pointjaspel_t where objectpegawaifk = $id"));
+            $cektgl = DB::select(DB::raw("select iki, iku, prosen, grade, mk, point_tt from pointjaspel_t where objectpegawaifk = $id"));
+
+            if(!empty($cek)){
+                if(!empty($array_data['iki'])){
+                    $data2[] = array(
+                        'iki' => $array_data['iki'],
+                        'iku' => $cektgl[0]->iku,
+                        'prosen' => $cektgl[0]->prosen,
+                        'grade' => $cektgl[0]->grade,
+                        'mk' => $cektgl[0]->mk,
+                        'point_tt' => $cektgl[0]->point_tt,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->where('objectpegawaifk', $id)->update([
+                        // 'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'iki' => $array_data['iki'],
+                        'iku' => $cektgl[0]->iku,
+                        'prosen' => $cektgl[0]->prosen,
+                        'grade' => $cektgl[0]->grade,
+                        'mk' => $cektgl[0]->mk,
+                        'point_tt' => $cektgl[0]->point_tt,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+    
+                if(!empty($array_data['iku'])){
+                    $data2[] = array(
+                        'iku' => $array_data['iku'],
+                        'iki' => $cektgl[0]->iki,
+                        'prosen' => $cektgl[0]->prosen,
+                        'grade' => $cektgl[0]->grade,
+                        'mk' => $cektgl[0]->mk,
+                        'point_tt' => $cektgl[0]->point_tt,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->where('objectpegawaifk', $id)->update([
+                        // 'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'iku' => $array_data['iku'],
+                        'iki' => $cektgl[0]->iki,
+                        'prosen' => $cektgl[0]->prosen,
+                        'grade' => $cektgl[0]->grade,
+                        'mk' => $cektgl[0]->mk,
+                        'point_tt' => $cektgl[0]->point_tt,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+    
+                if(!empty($array_data['prosen'])){
+                    $data2[] = array(
+                        'prosen' => $array_data['prosen'],
+                        'iku' => $cektgl[0]->iku,
+                        'iki' => $cektgl[0]->iki,
+                        'grade' => $cektgl[0]->grade,
+                        'mk' => $cektgl[0]->mk,
+                        'point_tt' => $cektgl[0]->point_tt,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->where('objectpegawaifk', $id)->update([
+                        // 'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'prosen' => $array_data['prosen'],
+                        'iku' => $cektgl[0]->iku,
+                        'iki' => $cektgl[0]->iki,
+                        'grade' => $cektgl[0]->grade,
+                        'mk' => $cektgl[0]->mk,
+                        'point_tt' => $cektgl[0]->point_tt,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+    
+                if(!empty($array_data['grade'])){
+                    $data2[] = array(
+                        'grade' => $array_data['grade'],
+                        'iku' => $cektgl[0]->iku,
+                        'prosen' => $cektgl[0]->prosen,
+                        'iki' => $cektgl[0]->iki,
+                        'mk' => $cektgl[0]->mk,
+                        'point_tt' => $cektgl[0]->point_tt,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->where('objectpegawaifk', $id)->update([
+                        // 'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'grade' => $array_data['grade'],
+                        'iku' => $cektgl[0]->iku,
+                        'prosen' => $cektgl[0]->prosen,
+                        'iki' => $cektgl[0]->iki,
+                        'mk' => $cektgl[0]->mk,
+                        'point_tt' => $cektgl[0]->point_tt,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+    
+                if(!empty($array_data['mk'])){
+                    $data2[] = array(
+                        'mk' => $array_data['mk'],
+                        'iku' => $cektgl[0]->iku,
+                        'prosen' => $cektgl[0]->prosen,
+                        'grade' => $cektgl[0]->grade,
+                        'iki' => $cektgl[0]->iki,
+                        'point_tt' => $cektgl[0]->point_tt,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->where('objectpegawaifk', $id)->update([
+                        // 'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'mk' => $array_data['mk'],
+                        'iku' => $cektgl[0]->iku,
+                        'prosen' => $cektgl[0]->prosen,
+                        'grade' => $cektgl[0]->grade,
+                        'iki' => $cektgl[0]->iki,
+                        'point_tt' => $cektgl[0]->point_tt,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+    
+                if(!empty($array_data['point_tt'])){
+                    $data2[] = array(
+                        'point_tt' => $array_data['point_tt'],
+                        'iku' => $cektgl[0]->iku,
+                        'prosen' => $cektgl[0]->prosen,
+                        'grade' => $cektgl[0]->grade,
+                        'mk' => $cektgl[0]->mk,
+                        'iki' => $cektgl[0]->iki,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->where('objectpegawaifk', $id)->update([
+                        // 'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'point_tt' => $array_data['point_tt'],
+                        'iku' => $cektgl[0]->iku,
+                        'prosen' => $cektgl[0]->prosen,
+                        'grade' => $cektgl[0]->grade,
+                        'mk' => $cektgl[0]->mk,
+                        'iki' => $cektgl[0]->iki,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+            }
+
+
+            //-----------------------------------------------
+
+            if(empty($cek)){
+                if(!empty($array_data['iki'])){
+                    $data2[] = array(
+                        'iki' => $array_data['iki'],
+                        'iku' => null,
+                        'prosen' => null,
+                        'grade' => null,
+                        'mk' => null,
+                        'point_tt' => null,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->insert([
+                        'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'iki' => $array_data['iki'],
+                        'iku' => null,
+                        'prosen' => null,
+                        'grade' => null,
+                        'mk' => null,
+                        'point_tt' => null,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+    
+                if(!empty($array_data['iku'])){
+                    $data2[] = array(
+                        'iku' => $array_data['iku'],
+                        'iki' => null,
+                        'prosen' => null,
+                        'grade' => null,
+                        'mk' => null,
+                        'point_tt' => null,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->insert([
+                        'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'iku' => $array_data['iku'],
+                        'iki' => null,
+                        'prosen' => null,
+                        'grade' => null,
+                        'mk' => null,
+                        'point_tt' => null,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+    
+                if(!empty($array_data['prosen'])){
+                    $data2[] = array(
+                        'prosen' => $array_data['prosen'],
+                        'iku' => null,
+                        'iki' => null,
+                        'grade' => null,
+                        'mk' => null,
+                        'point_tt' => null,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->insert([
+                        'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'prosen' => $array_data['prosen'],
+                        'iku' => null,
+                        'iki' => null,
+                        'grade' => null,
+                        'mk' => null,
+                        'point_tt' => null,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+    
+                if(!empty($array_data['grade'])){
+                    $data2[] = array(
+                        'grade' => $array_data['grade'],
+                        'iku' => null,
+                        'prosen' => null,
+                        'iki' => null,
+                        'mk' => null,
+                        'point_tt' => null,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->insert([
+                        'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'grade' => $array_data['grade'],
+                        'iku' => null,
+                        'prosen' => null,
+                        'iki' => null,
+                        'mk' => null,
+                        'point_tt' => null,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+    
+                if(!empty($array_data['mk'])){
+                    $data2[] = array(
+                        'mk' => $array_data['mk'],
+                        'iku' => null,
+                        'prosen' => null,
+                        'grade' => null,
+                        'iki' => null,
+                        'point_tt' => null,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->insert([
+                        'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'mk' => $array_data['mk'],
+                        'iku' => null,
+                        'prosen' => null,
+                        'grade' => null,
+                        'iki' => null,
+                        'point_tt' => null,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+    
+                if(!empty($array_data['point_tt'])){
+                    $data2[] = array(
+                        'point_tt' => $array_data['point_tt'],
+                        'iku' => null,
+                        'prosen' => null,
+                        'grade' => null,
+                        'mk' => null,
+                        'iki' => null,
+                        'namalengkap' => $datas[0]->namalengkap,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                    );
+
+                    $pointjaspel = \DB::table('pointjaspel_t')->insert([
+                        'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'point_tt' => $array_data['point_tt'],
+                        'iku' => null,
+                        'prosen' => null,
+                        'grade' => null,
+                        'mk' => null,
+                        'iki' => null,
+                        'objectpegawaifk' => $array_data['kd'],
+                        'tglinput' => $array_data['tglinput'],
+                        ]);
+                        $transStatus = 'true';
+                        $transMessage = 'Sukses' ;
+                }
+
+                
+            }
+            
+        }
+    } catch (\Exception $e) {
+        $transStatus = 'false';
+    }
+
+        
+
+        if ($transStatus == 'true') {
+            $transMessage = 'Sukses' ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "by" => 'er@epic',
+                'detail' => $data2,
+                'datalogin' => $dataLogin,
+                'arr_req' => $arr,
+            );
+        } else {
+            $transMessage = 'Simpan Gagal';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                'detail' => $data2,
+                'datalogin' => $dataLogin,
+                'arr_req' => $arr,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                "by" => 'er@epic',
+            );
+        }
+        return $this->respond($result);
+    }
+
 }

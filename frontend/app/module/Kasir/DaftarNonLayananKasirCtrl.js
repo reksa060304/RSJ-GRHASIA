@@ -36,6 +36,12 @@ define(['initialize'], function (initialize) {
                                     }
                                 }
                             }
+                            $scope.aggregate = [
+                                {
+                                    field: "totalDibayar",
+                                    aggregate: "sum"
+                                }
+                            ]
                             $scope.dataDaftarNonLayanan = new kendo.data.DataSource({
                                 data: dataFilter,
                                 pageSize: 10,
@@ -44,10 +50,14 @@ define(['initialize'], function (initialize) {
                                 schema: {
                                     model: {
                                         fields: {
-                                            tglTransaksi: { type: "date" }
+                                            tglTransaksi: { type: "date" },
+                                           
                                         }
                                     }
-                                }
+                                },
+                                aggregate: [
+								    { field: 'totalDibayar', aggregate: 'sum' },
+							    ]   
                             });
                             // $scope.listKelompokTransaksi = data[1];
                             // $scope.listKelompokTransaksi = data[1].kelompoktransaksi;
@@ -81,7 +91,29 @@ define(['initialize'], function (initialize) {
 				return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
 			}
 
-            $scope.columnDaftarNonLayanan = [
+            $scope.columnDaftarNonLayanan = {
+                toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "RekapDaftarTagihanNonLayan.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                        var sheet = e.workbook.sheets[0];
+                        sheet.mergedCells = ["A1:F1"];
+                        sheet.frozenRows = 2;
+                        sheet.name = "Report";
+                        var myHeaders = [{
+                            value: "Laporan Tagihan Non Layanan",
+                            fontSize: 20,
+                            textAlign: "center",
+                            background: "#ffffff",
+                        }];
+                        sheet.rows.splice(0, 0, { cells: myHeaders, height: 70, fontSize: 20, textAlign: "center" });
+                    },
+				pageable: true,
+                columns:[
                 {
                     "field": "tglTransaksi",
                     "title": "Tanggal",
@@ -100,12 +132,8 @@ define(['initialize'], function (initialize) {
                     "width": "150px",
                     "template": "<span class='style-center'>#: jenisTagihan #</span>"
                 },
-                {
-                    "field": "total",
-                    "title": "Jumlah",
-                    "width": "150px",
-                    "template": "<span class='style-right'>{{formatRupiah('#: total #', 'Rp.')}}</span>"
-                },
+                
+                
                 {
                     "field": "keterangan",
                     "title": "Keterangan",
@@ -117,8 +145,18 @@ define(['initialize'], function (initialize) {
                     "title": "Status",
                     "width": "150px",
                     "template": "<span class='style-center'>#: statusBayar #</span>"
-                }
-            ];
+                },
+                {
+                    "field": "totalDibayar",
+                    "title": "Jumlah",
+                    "width": "150px",
+                    template: "<span class='style-right'>{{formatRupiah('#: totalDibayar #', 'Rp.')}}</span>",
+                    aggregates: ["sum"],
+                    // footerTemplate: "#: data.totalDibayar.sum #",
+                    footerTemplate: "{{formatRupiah('#: data.totalDibayar.sum #', 'Rp.')}}",
+                },
+            ]
+            }
 
             $scope.Bayar = function () {                
                 if ($scope.dataPasienSelected.statusBayar == "Lunas") {
@@ -276,6 +314,12 @@ define(['initialize'], function (initialize) {
 
             var init = function (a, b, c, d, e) {
                 $scope.isRouteLoading = true;
+                 $scope.aggregate = [
+                                {
+                                    field: "totalDibayar",
+                                    aggregate: "sum"
+                                }
+                            ]
                 medifirstService.get("kasir/daftar-tagihan-non-layanan?namaPelanggan=" + a + "&status=" + b + "&tglAwal=" + c + "&tglAkhir=" + d + "&jenisTagihanId=" + e).then(function (data) {                 
                     var dataFilter = []
                     var data = data.data;
@@ -303,10 +347,12 @@ define(['initialize'], function (initialize) {
                         schema: {
                             model: {
                                 fields: {
-                                    tglTransaksi: { type: "date" }
+                                    tglTransaksi: { type: "date" },
+                                    totalDibayar: { type: "number" }
                                 }
                             }
-                        }
+                        },
+                        aggregate: $scope.aggregate
                     });
                 });
                 return $scope.dataDaftarNonLayanan;

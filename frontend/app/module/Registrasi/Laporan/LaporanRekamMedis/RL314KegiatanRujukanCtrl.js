@@ -31,9 +31,43 @@ define(['initialize'], function (initialize) {
                     + "&tglAkhir=" + tglAkhir
                 ).then(function (data) {
                     var data = data.data
+                    var length = data.data.length - 1
+                    var diterimadaripuskesmas = 0;
+                    var diterimadarifaskeslain = 0;
+                    var diterimadarirslain = 0;
+                    var dirujukbalikkepuskesmas = 0;
+                    var dirujukbalikkefaskeslain = 0;
+                    var dirujukbalikkersasal = 0;
+                    var pasienrujukan = 0;
+                    var datangsendiri = 0;
+                    var diterimakembali = 0;
                     for (var i = 0; i < data.data.length; i++) {
                         data.data[i].no = i + 1
+                        data.data[i].kdprov = '24'
+                        data.data[i].kabkota = 'Kab. Sleman'
+                        data.data[i].koders = '3404022'
+                        data.data[i].namars = 'RSJ. Grhasia'
+                        data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
+                        diterimadaripuskesmas += data.data[i].diterimadaripuskesmas;
+                        diterimadarifaskeslain += data.data[i].diterimadarifaskeslain;
+                        diterimadarirslain += data.data[i].diterimadarirslain;
+                        dirujukbalikkepuskesmas += data.data[i].dirujukbalikkepuskesmas;
+                        dirujukbalikkefaskeslain += data.data[i].dirujukbalikkefaskeslain;
+                        dirujukbalikkersasal += data.data[i].dirujukbalikkersasal;
+                        pasienrujukan += data.data[i].pasienrujukan;
+                        datangsendiri += data.data[i].datangsendiri;
+                        diterimakembali += data.data[i].diterimakembali;
                     }
+                    data.data[length].no = 99
+                    data.data[length].diterimadaripuskesmas = diterimadaripuskesmas
+                    data.data[length].diterimadarifaskeslain = diterimadarifaskeslain
+                    data.data[length].diterimadarirslain = diterimadarirslain
+                    data.data[length].dirujukbalikkepuskesmas = dirujukbalikkepuskesmas
+                    data.data[length].dirujukbalikkefaskeslain = dirujukbalikkefaskeslain
+                    data.data[length].dirujukbalikkersasal = dirujukbalikkersasal
+                    data.data[length].pasienrujukan = pasienrujukan
+                    data.data[length].datangsendiri = datangsendiri
+                    data.data[length].diterimakembali = diterimakembali
                     $scope.isRouteLoading = false;
                     $scope.ambildataexcel = data.data;
                     $scope.panggil($scope.ambildataexcel);
@@ -69,13 +103,38 @@ define(['initialize'], function (initialize) {
                     pageable: true,
                     columns: [
                         {
+                            field: "kdprov",
+                            title: "KODE PROPINSI",
+                            width: "80px"
+                        },
+                        {
+                            field: "kabkota",
+                            title: "KAB / KOTA",
+                            width: "80px"
+                        },
+                        {
+                            field: "koders",
+                            title: "KODE RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "namars",
+                            title: "NAMA RS",
+                            width: "80px"
+                        },
+                        {
+                            field: "tahun",
+                            title: "TAHUN",
+                            width: "80px"
+                        },
+                        {
                             field: "no",
                             title: "No",
                             Template: "<span class='style-center'>#: no #</span>",
                             width: "70px"
                         },
                         {
-                            field: "jenis_spesialisasi",
+                            field: "namaruangan",
                             title: "JENIS SPESIALIS",
                             headerAttributes: { style: "text-align : center" },
                         },
@@ -84,47 +143,47 @@ define(['initialize'], function (initialize) {
                             headerAttributes: { style: "text-align : center" },
                             columns: [
                                 {
-                                    "field": "puskesmas",
-                                    "title": "Diterima Dari Puskesmas"
+                                    "field": "diterimadaripuskesmas",
+                                    "title": "DITERIMA DARI PUSKESMAS"
 
                                 },
                                 {
-                                    "field": "klinik",
-                                    "title": "Diterima Dari Fasilitas Kes.Lain"
+                                    "field": "diterimadarifaskeslain",
+                                    "title": "DITERIMA DARI FASILITAS KES. LAIN"
                                 },
                                 {
-                                    "field": "hospital",
-                                    "title": "Diterima Dari Rs Lain"
+                                    "field": "diterimadarirslain",
+                                    "title": "DITERIMA DARI RS LAIN"
                                 },
                                 {
-                                    "field": "DKembalikanKPuskes",
-                                    "title": "Dikembalikan Ke Puskesmas"
+                                    "field": "dirujukbalikkepuskesmas",
+                                    "title": "DIKEMBALIKAN KE PUSKESMAS"
                                 },
                                 {
-                                    "field": "DKembalikanKKlinik",
-                                    "title": "Dikembalikan Ke Fasilitas Kes.Lain"
+                                    "field": "dirujukbalikkefaskeslain",
+                                    "title": "DIKEMBALIKAN KE FASILITAS KES. LAIN"
                                 },
                                 {
-                                    "field": "DKembalikanKRs",
-                                    "title": "Dikembalikan Ke RS. Asal"
+                                    "field": "dirujukbalikkersasal",
+                                    "title": "DIKEMBALIKAN KE RS ASAL"
                                 },
                             ]
                         },
                         {
-                            title: "Dirujuk",
+                            title: "DIRUJUK",
                             headerAttributes: { style: "text-align : center" },
                             columns: [
                                 {
-                                    "field": "PasienRujukan",
-                                    "title": "Pasien Rujukan"
+                                    "field": "pasienrujukan",
+                                    "title": "PASIEN RUJUKAN"
                                 },
                                 {
-                                    "field": "dtgsendiri",
-                                    "title": "Pasien Datang Sendiri"
+                                    "field": "datangsendiri",
+                                    "title": "PASIEN DATANG SENDIRI"
                                 },
                                 {
-                                    "field": "DTrmaKembali",
-                                    "title": "Diterima Kembali"
+                                    "field": "diterimakembali",
+                                    "title": "DITERIMA KEMBALI"
                                 }
                             ]
                         }
@@ -132,7 +191,7 @@ define(['initialize'], function (initialize) {
                 })
             };
 
-            $scope.panggil();
+            //$scope.panggil();
 
             $scope.click = function (dataPasienSelected) {
                 var data = dataPasienSelected;
@@ -148,13 +207,38 @@ define(['initialize'], function (initialize) {
 
             $scope.columndataRL53 = [
                 {
+                    field: "kdprov",
+                    title: "KODE PROPINSI",
+                    width: "80px"
+                },
+                {
+                    field: "kabkota",
+                    title: "KAB / KOTA",
+                    width: "80px"
+                },
+                {
+                    field: "koders",
+                    title: "KODE RS",
+                    width: "80px"
+                },
+                {
+                    field: "namars",
+                    title: "NAMA RS",
+                    width: "80px"
+                },
+                {
+                    field: "tahun",
+                    title: "TAHUN",
+                    width: "80px"
+                },
+                {
                     field: "no",
                     title: "No",
                     Template: "<span class='style-center'>#: no #</span>",
-                    width: "50px"
+                    width: "70px"
                 },
                 {
-                    field: "jenis_spesialisasi",
+                    field: "namaruangan",
                     title: "JENIS SPESIALIS",
                     headerAttributes: { style: "text-align : center" },
                 },
@@ -163,47 +247,47 @@ define(['initialize'], function (initialize) {
                     headerAttributes: { style: "text-align : center" },
                     columns: [
                         {
-                            "field": "puskesmas",
-                            "title": "Diterima Dari Puskesmas"
+                            "field": "diterimadaripuskesmas",
+                            "title": "DITERIMA DARI PUSKESMAS"
 
                         },
                         {
-                            "field": "klinik",
-                            "title": "Diterima Dari Fasilitas Kes.Lain"
+                            "field": "diterimadarifaskeslain",
+                            "title": "DITERIMA DARI FASILITAS KES. LAIN"
                         },
                         {
-                            "field": "hospital",
-                            "title": "Diterima Dari Rs Lain"
+                            "field": "diterimadarirslain",
+                            "title": "DITERIMA DARI RS LAIN"
                         },
                         {
-                            "field": "",
-                            "title": "Dikembalikan Ke Puskesmas"
+                            "field": "dirujukbalikkepuskesmas",
+                            "title": "DIKEMBALIKAN KE PUSKESMAS"
                         },
                         {
-                            "field": "",
-                            "title": "Dikembalikan Ke Fasilitas Kes.Lain"
+                            "field": "dirujukbalikkefaskeslain",
+                            "title": "DIKEMBALIKAN KE FASILITAS KES. LAIN"
                         },
                         {
-                            "field": "",
-                            "title": "Dikembalikan Ke RS. Asal"
+                            "field": "dirujukbalikkersasal",
+                            "title": "DIKEMBALIKAN KE RS ASAL"
                         },
                     ]
                 },
                 {
-                    title: "Dirujuk",
+                    title: "DIRUJUK",
                     headerAttributes: { style: "text-align : center" },
                     columns: [
                         {
-                            "field": "PasienRujukan",
-                            "title": "Paien Rujukan"
+                            "field": "pasienrujukan",
+                            "title": "PASIEN RUJUKAN"
                         },
                         {
-                            "field": "dtgsendiri",
-                            "title": "Paien Datang Sendiri"
+                            "field": "datangsendiri",
+                            "title": "PASIEN DATANG SENDIRI"
                         },
                         {
-                            "field": "",
-                            "title": "Diterima Kembali"
+                            "field": "diterimakembali",
+                            "title": "DITERIMA KEMBALI"
                         }
                     ]
                 }

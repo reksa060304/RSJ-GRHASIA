@@ -147,11 +147,13 @@ class IPSRSController extends ApiController
         $KdKelTransIPSRS = (int) $this->settingDataFixed('KdKelTransIPSRS', $kdProfile);
         try {
             if ($request['norec'] == ''){
+                
                 $newCOA = new StrukPlanning();
                 $norecHead = $newCOA->generateNewId();
                 $newCOA->kdprofile = $kdProfile;
                 $newCOA->norec = $norecHead;
                 $newCOA->statusenabled = 1;
+
             }else{
 
                 $newCOA =  StrukPlanning::where('norec',$request['norec'])->first();
@@ -166,6 +168,30 @@ class IPSRSController extends ApiController
             $newCOA->save();
 
             $norecHead2 = $newCOA->norec;
+            $ruanganHead2 = $newCOA->objectruanganfk;
+            $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
+            $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
+
+            //bot Father
+            $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
+            $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
+            $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
+            // $jenislayann =  DB::table('jenispekerjaan_m')->where('id',$request['jenisKerusakan'])->first();
+            $secret_token = "5446769474:AAFjx5jWWWTTvDKLskXL8xZ4Ry7NrhNhnvQ";
+            $telegram_id = '-730865432';//'-498979335';
+            $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
+            $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan IPSRS </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
+                    "</b>  \n Pelapor: <b>".$pelapor->pelapor."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
+                    "</b> \n Ruangan Tujuan: <b>".$ruanganTujuan->namaruangan."</b>");
+            // return $url;
+            $ch = curl_init();
+            $optArray = array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true
+            );
+            curl_setopt_array($ch, $optArray);
+            $result = curl_exec($ch);
+            curl_close($ch);
 
             $transStatus = 'true';
         } catch (\Exception $e) {

@@ -294,7 +294,7 @@ class KasirController extends ApiController{
                 'tglTransaksi' => $item->tglstruk,
                 'namaPelanggan' => $item->namapasien_klien,
                 'jenisTagihan' => $item->jenistagihan,
-                'total' => $item->totalharusdibayar,
+                'totalDibayar' => $item->totalharusdibayar,
                 'keterangan' => $item->keteranganlainnya,
                 'jenisTagihanId' => $item->jenisTagihanId,
                 'statusBayar' =>$statusBayar

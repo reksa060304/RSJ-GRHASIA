@@ -33,13 +33,110 @@ define(['initialize'], function (initialize) {
 
                 ).then(function (dat) {
                     var datas = dat.data.data
+                    var subtotaljumlahpasienawal = 0;
+                    var subtotaljumlahpasienmasuk = 0;
+                    var subtotaljumlahpasienhidup = 0;
+                    var subtotaljumlahpasienkurang = 0;
+                    var subtotaljumlahpasienlebih = 0;
+                    var subtotaljumlahlamadirawat = 0;
+                    var subtotaljumlahpasienakhir = 0;
+                    var subtotaljumlahhariperawatan = 0;
+                    var subtotaljumlahvvip = 0;
+                    var subtotaljumlahvip = 0;
+                    var subtotaljumlahsatu = 0;
+                    var subtotaljumlahdua = 0;
+                    var subtotaljumlahtiga = 0;
+                    var subtotaljumlahkhusus = 0;
+
+                    var totaljumlahpasienawal = 0;
+                    var totaljumlahpasienmasuk = 0;
+                    var totaljumlahpasienhidup = 0;
+                    var totaljumlahpasienkurang = 0;
+                    var totaljumlahpasienlebih = 0;
+                    var totaljumlahlamadirawat = 0;
+                    var totaljumlahpasienakhir = 0;
+                    var totaljumlahhariperawatan = 0;
+                    var totaljumlahvvip = 0;
+                    var totaljumlahvip = 0;
+                    var totaljumlahsatu = 0;
+                    var totaljumlahdua = 0;
+                    var totaljumlahtiga = 0;
+                    var totaljumlahkhusus = 0;
+                    
                     for (var i = 0; i < datas.length; i++) {
                         datas[i].no = i + 1;
                         datas[i].kdprov = '24';
                         datas[i].kode = '3404022';
                         datas[i].year = new Date(tglAwal).getFullYear();
+
+                        if(i != 31){
+                            subtotaljumlahpasienawal = datas[i].jumlahpasienawal;
+                            subtotaljumlahpasienmasuk += datas[i].jumlahpasienmasuk ;
+                            subtotaljumlahpasienhidup += datas[i].jumlahpasienhidup ;
+                            subtotaljumlahpasienkurang += datas[i].jumlahpasienkurang ;
+                            subtotaljumlahpasienlebih += datas[i].jumlahpasienlebih ;
+                            subtotaljumlahlamadirawat += datas[i].jumlahlamadirawat ;
+                            subtotaljumlahpasienakhir += datas[i].jumlahpasienakhir ;
+                            subtotaljumlahhariperawatan += datas[i].jumlahhariperawatan ;
+                            subtotaljumlahvvip += datas[i].jumlahvvip ;
+                            subtotaljumlahvip += datas[i].jumlahvip ;
+                            subtotaljumlahsatu += datas[i].jumlahsatu ;
+                            subtotaljumlahdua += datas[i].jumlahdua ;
+                            subtotaljumlahtiga += datas[i].jumlahtiga ;
+                            subtotaljumlahkhusus += datas[i].jumlahkhusus ;
+                        }
+
+                            totaljumlahpasienawal = datas[i].jumlahpasienawal;
+                            totaljumlahpasienmasuk += datas[i].jumlahpasienmasuk ;
+                            totaljumlahpasienhidup += datas[i].jumlahpasienhidup ;
+                            totaljumlahpasienkurang += datas[i].jumlahpasienkurang ;
+                            totaljumlahpasienlebih += datas[i].jumlahpasienlebih ;
+                            totaljumlahlamadirawat += datas[i].jumlahlamadirawat ;
+                            totaljumlahpasienakhir += datas[i].jumlahpasienakhir ;
+                            totaljumlahhariperawatan += datas[i].jumlahhariperawatan ;
+                            totaljumlahvvip += datas[i].jumlahvvip ;
+                            totaljumlahvip += datas[i].jumlahvip ;
+                            totaljumlahsatu += datas[i].jumlahsatu ;
+                            totaljumlahdua += datas[i].jumlahdua ;
+                            totaljumlahtiga += datas[i].jumlahtiga ;
+                            totaljumlahkhusus += datas[i].jumlahkhusus ;
                     }
+                    console.log(datas);
                     $scope.isRouteLoading = false;
+
+                    datas[30].jumlahpasienawal = subtotaljumlahpasienawal
+                    datas[30].jumlahpasienmasuk = subtotaljumlahpasienmasuk
+                    datas[30].jumlahpasienhidup = subtotaljumlahpasienhidup
+                    datas[30].jumlahpasienkurang = subtotaljumlahpasienkurang
+                    datas[30].jumlahpasienlebih = subtotaljumlahpasienlebih
+                    datas[30].jumlahlamadirawat = subtotaljumlahlamadirawat
+                    datas[30].jumlahpasienakhir = subtotaljumlahpasienakhir
+                    datas[30].jumlahhariperawatan = subtotaljumlahhariperawatan
+                    datas[30].jumlahvvip = subtotaljumlahvvip
+                    datas[30].jumlahvip = subtotaljumlahvip
+                    datas[30].jumlahsatu = subtotaljumlahsatu
+                    datas[30].jumlahdua = subtotaljumlahdua
+                    datas[30].jumlahtiga = subtotaljumlahtiga
+                    datas[30].jumlahkhusus = subtotaljumlahkhusus
+
+                    datas[32].jumlahpasienawal = totaljumlahpasienawal
+                    datas[32].jumlahpasienmasuk = totaljumlahpasienmasuk
+                    datas[32].jumlahpasienhidup = totaljumlahpasienhidup
+                    datas[32].jumlahpasienkurang = totaljumlahpasienkurang
+                    datas[32].jumlahpasienlebih = totaljumlahpasienlebih
+                    datas[32].jumlahlamadirawat = totaljumlahlamadirawat
+                    datas[32].jumlahpasienakhir = totaljumlahpasienakhir
+                    datas[32].jumlahhariperawatan = totaljumlahhariperawatan
+                    datas[32].jumlahvvip = totaljumlahvvip
+                    datas[32].jumlahvip = totaljumlahvip
+                    datas[32].jumlahsatu = totaljumlahsatu
+                    datas[32].jumlahdua = totaljumlahdua
+                    datas[32].jumlahtiga = totaljumlahtiga
+                    datas[32].jumlahkhusus = totaljumlahkhusus
+
+                    datas[30].no = 77;
+                    datas[31].no = 88;
+                    datas[32].no = 99;
 
                     $scope.sourceLaporan = new kendo.data.DataSource({
 
@@ -139,25 +236,63 @@ define(['initialize'], function (initialize) {
                         columns[i].width = 30;
                     }
 
-                    for(let i = 0; i < 1; i++){
-                        for(let j = 0; j <= 20; j++){
-                            sheet.rows[i].cells[j].background = '#ffffff';
-                            sheet.rows[i].cells[j].color = '#000000';
-                            sheet.rows[i].cells[j].textAlign = 'center';
-                        }
-                        sheet.rows[0].height = 50;
-                    }
+                    // for(let i = 0; i < 1; i++){
+                    //     for(let j = 0; j <= 17; j++){
+                    //         sheet.rows[i].cells[j].background = '#ffffff';
+                    //         sheet.rows[i].cells[j].color = '#000000';
+                    //         sheet.rows[i].cells[j].textAlign = 'center';
+                    //     }
+                    //     sheet.rows[0].height = 50;
+                    // }
 
-                    for (var i = 0; i < e.workbook.sheets[0].rows.length; i++) {
-                        var $row = e.workbook.sheets[0].rows[i];
-                        for (var j = 0; j < $row.cells.length; j++) {
-                            var $cell = $row.cells[j];
-                            $cell["borderTop"] = { color: "#000000", size: 1 };
-                            $cell["borderRight"] = { color: "#000000", size: 1 };
-                            $cell["borderBottom"] = { color: "#000000", size: 1 };
-                            $cell["borderLeft"] = { color: "#000000", size: 1 };
-                        }
-                    }
+                    sheet.rows[0].cells[0].background = '#6fde78';
+                    sheet.rows[0].cells[0].color = '#000000'; 
+                    sheet.rows[0].cells[1].background = '#6fde78'; 
+                    sheet.rows[0].cells[1].color = '#000000'; 
+                    sheet.rows[0].cells[2].background = '#6fde78'; 
+                    sheet.rows[0].cells[2].color = '#000000'; 
+                    sheet.rows[0].cells[3].background = '#6fde78'; 
+                    sheet.rows[0].cells[3].color = '#000000'; 
+                    sheet.rows[0].cells[4].background = '#6fde78'; 
+                    sheet.rows[0].cells[4].color = '#000000'; 
+                    sheet.rows[0].cells[5].background = '#6fde78'; 
+                    sheet.rows[0].cells[5].color = '#000000'; 
+                    sheet.rows[0].cells[6].background = '#6fde78'; 
+                    sheet.rows[0].cells[6].color = '#000000'; 
+                    sheet.rows[0].cells[7].background = '#6fde78'; 
+                    sheet.rows[0].cells[7].color = '#000000';
+                    sheet.rows[0].cells[8].background = '#6fde78'; 
+                    sheet.rows[0].cells[8].color = '#000000';
+                    sheet.rows[0].cells[9].background = '#6fde78'; 
+                    sheet.rows[0].cells[9].color = '#000000';
+                    sheet.rows[0].cells[10].background = '#6fde78'; 
+                    sheet.rows[0].cells[10].color = '#000000'; 
+                    sheet.rows[0].cells[11].background = '#6fde78'; 
+                    sheet.rows[0].cells[11].color = '#000000'; 
+                    sheet.rows[0].cells[12].background = '#6fde78'; 
+                    sheet.rows[0].cells[12].color = '#000000';
+                    sheet.rows[0].cells[13].background = '#6fde78'; 
+                    sheet.rows[0].cells[13].color = '#000000'; 
+                    sheet.rows[0].cells[14].background = '#6fde78'; 
+                    sheet.rows[0].cells[14].color = '#000000';
+                    
+                    sheet.rows[1].cells[0].background = '#6fde78'; 
+                    sheet.rows[1].cells[0].color = '#000000';
+                    sheet.rows[1].cells[1].background = '#6fde78'; 
+                    sheet.rows[1].cells[1].color = '#000000';
+                    sheet.rows[1].cells[2].background = '#6fde78'; 
+                    sheet.rows[1].cells[2].color = '#000000';
+                    sheet.rows[1].cells[3].background = '#6fde78'; 
+                    sheet.rows[1].cells[3].color = '#000000';
+                    sheet.rows[1].cells[4].background = '#6fde78'; 
+                    sheet.rows[1].cells[4].color = '#000000';
+                    sheet.rows[1].cells[5].background = '#6fde78'; 
+                    sheet.rows[1].cells[5].color = '#000000';
+                    sheet.rows[1].cells[6].background = '#6fde78'; 
+                    sheet.rows[1].cells[6].color = '#000000';
+                    sheet.rows[1].cells[7].background = '#6fde78'; 
+                    sheet.rows[1].cells[7].color = '#000000';
+                    
                    
                 },
                 columns: [
@@ -202,12 +337,18 @@ define(['initialize'], function (initialize) {
                         title: "PASIEN KELUAR HIDUP",
                     },
                     {
-                        field: "jumlahpasienkurang",
-                        title: "< 48 JAM",
-                    },
-                    {
-                        field: "jumlahpasienlebih",
-                        title: ">= 48 JAM",
+                        "title": "PASIEN KELUAR MATI",
+                        
+                        columns: [
+                            {
+                                field: "jumlahpasienkurang",
+                                title: "< 48 JAM",
+                            },
+                            {
+                                field: "jumlahpasienlebih",
+                                title: ">= 48 JAM",
+                            },
+                        ],
                     },
                     {
                         field: "jumlahlamadirawat",
@@ -222,29 +363,36 @@ define(['initialize'], function (initialize) {
                         title: "JUMLAH HARI PERAWATAN",
                     },
                     {
-                        field: "jumlahvvip",
-                        title: "VVIP",
+                        "title": "RINCIAN HARI PERAWATAN PER KELAS",
+                        
+                        columns: [
+                            {
+                                field: "jumlahvvip",
+                                title: "VVIP",
+                            },
+                            {
+                                field: "jumlahvip",
+                                title: "VIP",
+                            },
+                            {
+                                field: "jumlahsatu",
+                                title: "I",
+                            },
+                            {
+                                field: "jumlahdua",
+                                title: "II",
+                            },
+                            {
+                                field: "jumlahtiga",
+                                title: "III",
+                            },
+                            {
+                                field: "jumlahkhusus",
+                                title: "KELAS KHUSUS",
+                            }
+                        ],
                     },
-                    {
-                        field: "jumlahvip",
-                        title: "VIP",
-                    },
-                    {
-                        field: "jumlahsatu",
-                        title: "I",
-                    },
-                    {
-                        field: "jumlahdua",
-                        title: "II",
-                    },
-                    {
-                        field: "jumlahtiga",
-                        title: "III",
-                    },
-                    {
-                        field: "jumlahkhusus",
-                        title: "KELAS KHUSUS",
-                    }
+                    
 
                 ]
 

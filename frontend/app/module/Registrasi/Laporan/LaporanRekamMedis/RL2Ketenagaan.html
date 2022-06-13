@@ -1,0 +1,46 @@
+<!-- <div ng-controller="LaporanKematianRsCtrl"> -->
+
+    <style>
+        .k-grid .k-grid-header .k-header .k-link {
+            height: auto;
+        }
+    
+        .k-grid .k-grid-header .k-header {
+            white-space: normal;
+        }
+    
+        .k-grid .k-grid-header .k-header {
+            text-align: center;
+        }
+    </style>
+    <div ng-show="dataVOloaded">
+        <!-- <c-panel item="item" header="'Daftar Tagihan Rekanan'" disabled> -->
+        <div class="grid_12 headerBox">
+            <h2 style="color: white;">
+                <p>Formulir RL 2</p>
+                <p>KETENAGAAN</p>
+            </h2>
+        </div>
+        <div class="grid_12" style="margin-top:50px">
+            <div class="grid_12 headerBox">
+            </div>
+            <div class="clear"></div>
+            <div class="grid_12 borderBox">
+                <div id="kGrid" kendo-grid k-groupable="'true'" k-aggregate='aggregate' k-data-source="sourceLaporan"
+                    k-selectable="'row'" k-columns="columnLaporan" k-pageable="'true'" k-sortable="'true'"
+                    k-ng-model="dataPasienSelected" ng-click="click(dataPasienSelected)">
+                </div>
+            </div>
+        </div>
+        <div class="grid_12">
+            <div class="grid_12" style="float:right">
+                <div class="grid_10"></div>
+            </div>
+        </div>
+        <br />
+    </div>
+    <br />
+    </div>
+    <div class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>

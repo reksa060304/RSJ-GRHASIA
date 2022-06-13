@@ -130,6 +130,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         if (diffDays <= 3) {
                             $(row.cells[3]).addClass("red");
                         }
+                        else if (diffDays <= 6) {
+                            toastr.warning("SIP dan STR " + kendoGrid.dataItem(row).namapegawai + " akan berakhir dalam "+diffDays+" bulan");
+                            $(row.cells[3]).addClass("koneng");
+                        }
+                        console.log(diffDays);
                     }
                     if (berakhirstr != null) {
                         var dateExx = new Date(berakhirstr);
@@ -140,6 +145,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         );
                         if (diffDayss <= 3) {
                             $(row.cells[6]).addClass("red");
+                        }else if (diffDays <= 6) {
+                            $(row.cells[6]).addClass("koneng");
                         }
                     }
                 }

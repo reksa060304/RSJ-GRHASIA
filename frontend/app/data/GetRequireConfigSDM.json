@@ -192,6 +192,22 @@
     {
       "nameDep": "LaporanDiklatKaryawanCtrl",
       "urlDep": "module/SDM/Pelatihan/LaporanDiklatKaryawanCtrl"
+    },
+    {
+      "nameDep": "GajiPegawaiV2Ctrl",
+      "urlDep": "module/TataRekening/GajiPegawaiV2Ctrl"
+    },
+    {
+      "nameDep": "InputABKCtrl",
+      "urlDep": "module/TataRekening/InputABKCtrl"
+    },
+    {
+      "nameDep": "DaftarKenaikanGajiBerkalaCtrl",
+      "urlDep": "module/TataRekening/DaftarKenaikanGajiBerkalaCtrl"
+    },
+    {
+      "nameDep": "RemunerasiCtrl",
+      "urlDep": "module/TataRekening/RemunerasiCtrl"
     }
   ]
 }

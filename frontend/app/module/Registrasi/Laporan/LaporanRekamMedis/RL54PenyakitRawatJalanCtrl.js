@@ -8,6 +8,8 @@ define(['initialize'], function (initialize) {
             $scope.now = new Date();
             $scope.dataSelected = {};
             $scope.item = {};
+            $scope.item.tglawal = $scope.now;
+            $scope.item.tglakhir = $scope.now;
             $scope.dataLogin = JSON.parse(window.localStorage.getItem('pegawai'));
             //debugger
             $scope.CariRL54 = function () {
@@ -23,15 +25,17 @@ define(['initialize'], function (initialize) {
 
 
             function LoadData() {
-                var tglAwal = moment($scope.item.tglawal).format('YYYY');
-
+                var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
+                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
                 var chacePeriode = {
                     0: tglAwal,
+                    1: tglAkhir,
                 }
                 cacheHelper.set('LaporanRL_54Ctrl', chacePeriode);
 
                 medifirstService.get("registrasi/laporan/get-laporan-rl54?"
-                    + "tglAwal=" + tglAwal
+                + "tglAwal=" + tglAwal
+                + "&tglAkhir=" + tglAkhir
                 ).then(function (dat) {
                     var datas = dat.data.data
                     $scope.isRouteLoading = false;
@@ -127,6 +131,38 @@ define(['initialize'], function (initialize) {
                                 $cell["borderLeft"] = { color: "#000000", size: 1 };
                             }
                         }
+
+                        for(var i = 0; i < e.workbook.sheets[0].columns.length; i++){
+                            delete columns[i].width;
+                            columns[i].width = 15;
+                        }
+
+                        sheet.rows[0].cells[0].background = '#6fde78';
+                        sheet.rows[0].cells[0].color = '#000000'; 
+                        sheet.rows[0].cells[1].background = '#6fde78'; 
+                        sheet.rows[0].cells[1].color = '#000000'; 
+                        sheet.rows[0].cells[2].background = '#6fde78'; 
+                        sheet.rows[0].cells[2].color = '#000000'; 
+                        sheet.rows[0].cells[3].background = '#6fde78'; 
+                        sheet.rows[0].cells[3].color = '#000000'; 
+                        sheet.rows[0].cells[4].background = '#6fde78'; 
+                        sheet.rows[0].cells[4].color = '#000000'; 
+                        sheet.rows[0].cells[5].background = '#6fde78'; 
+                        sheet.rows[0].cells[5].color = '#000000'; 
+                        sheet.rows[0].cells[6].background = '#6fde78'; 
+                        sheet.rows[0].cells[6].color = '#000000'; 
+                        sheet.rows[0].cells[7].background = '#6fde78'; 
+                        sheet.rows[0].cells[7].color = '#000000'; 
+                        sheet.rows[0].cells[8].background = '#6fde78'; 
+                        sheet.rows[0].cells[8].color = '#000000'; 
+                        sheet.rows[0].cells[9].background = '#6fde78'; 
+                        sheet.rows[0].cells[9].color = '#000000'; 
+                        sheet.rows[0].cells[10].background = '#6fde78'; 
+                        sheet.rows[0].cells[10].color = '#000000'; 
+                        sheet.rows[0].cells[11].background = '#6fde78'; 
+                        sheet.rows[0].cells[11].color = '#000000'; 
+                        sheet.rows[0].cells[12].background = '#6fde78'; 
+                        sheet.rows[0].cells[12].color = '#000000'; 
                        
                     },
                     // groupable: true,
@@ -189,7 +225,7 @@ define(['initialize'], function (initialize) {
                 })
             };
 
-            $scope.panggil();
+            //$scope.panggil();
 
             $scope.click = function (dataPasienSelected) {
                 var data = dataPasienSelected;

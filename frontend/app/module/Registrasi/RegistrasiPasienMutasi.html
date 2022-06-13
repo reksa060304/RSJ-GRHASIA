@@ -149,6 +149,17 @@
                                 k-data-text-field=" 'namalengkap' " k-filter=" 'contains' " k-data-value-field=" 'id' "
                                 k-auto-bind="false " k-data-source="listDokter " />
                         </div>
+                        
+                        <div class="grid_4 " style="margin-top: 13px">
+                            <label c-label item="item " c-label-text="Jenis Kasus "></label>
+                        </div>
+
+
+                        <div class="grid_8 ">
+                            <input style="width: 100%; " kendo-combo-box k-ng-model="item.jenisKasus"
+                                k-data-text-field=" 'jeniskasus' " k-filter=" 'contains' " k-data-value-field=" 'id' "
+                                k-auto-bind="false " k-data-source="listJenisKasus" />
+                        </div>
                         <!-- Dokter Pemeriksaan Rawat Inap-->
                         <!--    <div class="grid_12" ng-show="model.rawatInap">
                                 <div class="grid_4 " ng-show="item.jenisPasien">
