@@ -2484,6 +2484,34 @@ class RemunerasiController extends ApiController
 
         return $this->respond($result);
     }
+    public function getDaftarRemunPegawaiV2(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $bulan = $request['bulan'];
+        $tahun = $request['tahun'];
+        $paramBln = "";
+        $paramThn = "";
+
+        if(isset($bulan)){
+            $paramBln = " and date_part('month', pj.tglinput) =". $bulan;
+        }
+        if(isset($tahun)){
+            $paramThn = "and date_part('year', pj.tglinput) =". $tahun;
+        }
+        $data = \DB::select(DB::raw("
+        select pj.iki,pj.iku,pj.prosen,pj.grade, pj.mk, pj.point_tt, pg.namalengkap, pg.id as idpegawai, pj.norec
+        from pegawai_m pg left join pointjaspel_t pj on pg.id= pj.objectpegawaifk where pg.statusenabled = true and pg.kdprofile = $kdProfile
+        
+        "));
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
+    }
     public function getDaftarRemunPegawai(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
@@ -6435,6 +6463,67 @@ class RemunerasiController extends ApiController
         $res['unitkerja'] =$unit;
         $res['ruangan'] =$dataRuangan;
         return $this->respond($res);
+    }
+    public function updateIndexPegawaiV2(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try{
+            // $pegawai = Pegawai::where('id', $request['id'])->where('kdprofile', $kdProfile)->get();
+            if ($request['norec'] == "") {
+                $pointjaspel = \DB::table('pointjaspel_t')->insert([
+                'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                'kdprofile'=> $kdProfile,
+                'statusenabled'=>true,
+                'iki'=>$request['iki'],
+                'iku'=>$request['iku'],
+                'prosen'=>$request['prosen'],
+                'grade'=>$request['grade'],
+                'mk'=>$request['mk'],
+                'point_tt'=>$request['point_tt'],
+                'tglinput'=>$request['tglmasuk'],
+                'objectpegawaifk'=>$request['idpegawai'],
+                ]);
+            } else {
+                $pointjaspel = \DB::table('pointjaspel_t')->where('norec', $request['norec'])->update([
+                // 'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                'kdprofile'=> $kdProfile,
+                'statusenabled'=>true,
+                'iki'=>$request['iki'],
+                'iku'=>$request['iku'],
+                'prosen'=>$request['prosen'],
+                'grade'=>$request['grade'],
+                'mk'=>$request['mk'],
+                'point_tt'=>$request['point_tt'],
+                'tglinput'=>$request['tglmasuk'],
+                'objectpegawaifk'=>$request['idpegawai'],
+                ]);
+            }
+            
+            $transStatus = 'true';
+            $transMessage = 'Sukses' ;
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = 'Sukses' ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "by" => 'er@epic',
+            );
+        } else {
+            $transMessage = 'Simpan Gagal';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                "by" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
     public function updateIndexPegawai(Request $request)
     {

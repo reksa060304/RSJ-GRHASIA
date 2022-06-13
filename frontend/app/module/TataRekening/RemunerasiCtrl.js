@@ -3,82 +3,141 @@ define(['initialize'], function (initialize) {
 	initialize.controller('RemunerasiCtrl', ['$scope', '$state', 'CacheHelper', 'MedifirstService','$timeout',
 		function ($scope, $state, cacheHelper, medifirstService, $timeout) {
 			$scope.item = {};
+			$scope.iteminput = {};
 			$scope.now = new Date();
+			$scope.item.tglmasuk = moment($scope.now).format('YYYY-MM-DD');
+			$scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD');
+			// var tgl = dateHelper.getDaysofMonth()
+			// console.log(tgl);
+			 $scope.monthUngkul = {
+			 	start: "year",
+			 	depth: "year"
+			 }
+			 $scope.yearUngkul = {
+			 	start: "decade",
+			 	depth: "decade"
+			 }
 			$scope.item.jumlahRows = 50;
+			var norec = "";
+				loadData()
 
-			//loadCombo();
-
-			// var init = function () {
-			// 	var chace = cacheHelper.get('MasterProdukCtrl');
-			// 	if (chace != undefined) {
-			// 		var arrPeriode = chace.split('~');
-					
-			// 		if (arrPeriode[1] != 'undefined') {
-			// 			$scope.item.Status = arrPeriode[1];
-			// 		}
-			// 		if (arrPeriode[0] != 'undefined') {
-			// 			$scope.item.jenisProdukDetail = arrPeriode[0];
-			// 		}
-
-			// 		$scope.item.Status = {id:true,status:'True'}
-			// 		$scope.item.jenisProdukDetail = [
-			// 			{ "id": 474, "nama": "Obat", "no" : 1 },
-			// 			{ "id": 1365, "nama": "Analgesic", "no" : 3 }, 
-			// 			{ "id": 1847, "nama": "Psikotropika", "no" : 4 }, 
-			// 			{ "id": 1598, "nama": "NARKOTIKA", "no" : 5 }, 
-			// 			{ "id": 1597, "nama": "OBAT KERAS", "no" : 6 }, 
-			// 			{ "id": 522, "nama": "HEMATOLOGI", "no" : 7 },
-			// 			{ "id": 1444, "nama": "Antibiotika", "no" : 8 },
-			// 			{ "id": 167, "nama": "Antelmintik", "no" : 9 },
-			// 			{ "id": 1450, "nama": "Anti Hipertensi", "no" : 10 },
-			// 			{ "id": 1318, "nama": "Barang Umum", "no" : 11 },
-			// 			{ "id": 1479, "nama": "Cetakan", "no" : 12 },
-			// 			{ "id": 1556, "nama": "-", "no" : 13 },
-			// 			{ "id": 1346, "nama": "Alkes", "no" : 14 }, 
-			// 		];
-					
-					
-			// 		loadData()
-			// 	} else {
-			// 		loadData()
-			// 	}
-			// 	//loadData()
-			// }
-			
-
-			//init();
-			
-
-			$scope.cariFilter = function () {
-				
+			$scope.SearchData = function () {
 				loadData()
 			}
+			function loadData(){
+				var bulan = moment($scope.item.bulan).format('MM');
+				var tahun = moment($scope.item.tahun).format('YYYY');
+				console.log(bulan);
+				console.log(tahun);
+				medifirstService.get('remunerasi/get-daftar-remunerasi-pegawaiv2?bulan='+ bulan + "&tahun="+ tahun).then(function (e) {
+					console.log(e.data.data);
+					$scope.dataSource = new kendo.data.DataSource({
+						data: e.data.data,
+						pageSize: 10,
+						total: e.data.data.length,
+						serverPaging: false,
+						schema: {
+							model: {
+								fields: {
+								
+								}
+							}
+						}
+					});
+				})
+			}
+			$scope.ubahDataIndex = function () {
+			console.log($scope.current.namalengkap);
+				if ($scope.current == undefined) {
+					toastr.error('Pilih data dulu')
+					return
+				}
+				$scope.item.iki = $scope.current.iki;
+				$scope.item.iku = $scope.current.iku;
+				$scope.item.prosen = $scope.current.prosen;
+				$scope.item.grade = $scope.current.grade;
+				$scope.item.mk = $scope.current.mk;
+				$scope.item.point_tt = $scope.current.point_tt;
 
-			$scope.selectDetailJenisProduk = {
-				placeholder: "Pilih Detail Jenis Produk...",
-				dataTextField: "nama",
-				dataValueField: "id",
-				// dataSource:{
-				//     data: $scope.listRuangan
-				// },
-				autoBind: false,
+				$scope.item.pegawai = {
+					idpegawai: $scope.current.idpegawai,
+					namalengkap: $scope.current.namalengkap
+				}
+				$scope.popupDetailIndex.center().open();
+				
+			}
 
-			};
-			
-			// function searchProdukFilter(status,jmlRows){
-			// 	var strFilter ="";
-			// 	if(status === undefined){
-			// 		//strFilter = "";
-			// 	}else{
-			// 		strFilter = strFilter + "&status=" + status.id;
-			// 	}
-			// 	if(jmlRows === undefined){
+			$scope.inputDataIndex = function () {
+				console.log($scope.current.namalengkap);
+				if ($scope.current == undefined) {
+					toastr.error('Pilih data dulu')
+					return
+				}
+				
+				$scope.iteminput.pegawai = {
+					idpegawai: $scope.current.idpegawai,
+					namalengkap: $scope.current.namalengkap
+				}
+				$scope.popupInputDetailIndex.center().open();
 
-			// 	}else{
-			// 		strFilter = strFilter + "&jmlRows=" + jmlRows;
-			// 	}
-			// 	return strFilter;
-			// }
+			}
+			$scope.batal = function () {
+				$scope.current = undefined
+				$scope.popupDetailIndex.close();
+				$scope.item = {}
+			}
+			$scope.batalinput = function () {
+				$scope.current = undefined
+				$scope.popupInputDetailIndex.close();
+				$scope.iteminput = {}
+			}
+
+			$scope.save = function () {
+				let json = {
+					'norec': norec,
+					'idpegawai': $scope.item.pegawai.idpegawai,
+					'tglmasuk': $scope.item.tglmasuk != undefined ? moment($scope.item.tglmasuk).format('YYYY-MM-DD') : null,
+					'iki': $scope.item.iki != undefined ? $scope.item.iki : null,
+					'iku': $scope.item.iku != undefined ? $scope.item.iku : null,
+					'prosen': $scope.item.prosen != undefined ? $scope.item.prosen : null,
+					'grade': $scope.item.grade != undefined ? $scope.item.grade : null,
+					'mk': $scope.item.mk != undefined ? $scope.item.mk : null,
+					'point_tt': $scope.item.point_tt != undefined ? $scope.item.point_tt : null,
+				}
+				console.log(json);
+				medifirstService.post('remunerasi/save-index-pegawaiv2', json).then(function (e) {
+					// medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
+					// 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
+					// 	$scope.itm.pegawai.namalengkap).then(function (res) {})
+					loadData()
+					$scope.batal()
+
+				})
+
+			}
+			$scope.saveInput = function () {
+				let json = {
+					'norec': "",
+					'idpegawai': $scope.iteminput.pegawai.idpegawai,
+					'tglmasuk': $scope.iteminput.tglmasuk != undefined ? moment($scope.iteminput.tglmasuk).format('YYYY-MM-DD') : null,
+					'iki': $scope.iteminput.iki != undefined ? $scope.iteminput.iki : null,
+					'iku': $scope.iteminput.iku != undefined ? $scope.iteminput.iku : null,
+					'prosen': $scope.iteminput.prosen != undefined ? $scope.iteminput.prosen : null,
+					'grade': $scope.iteminput.grade != undefined ? $scope.iteminput.grade : null,
+					'mk': $scope.iteminput.mk != undefined ? $scope.iteminput.mk : null,
+					'point_tt': $scope.iteminput.point_tt != undefined ? $scope.iteminput.point_tt : null,
+				}
+				console.log(json);
+				medifirstService.post('remunerasi/save-index-pegawaiv2', json).then(function (e) {
+					// medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
+					// 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
+					// 	$scope.itm.pegawai.namalengkap).then(function (res) {})
+					loadData()
+					$scope.batalinput()
+
+				})
+
+			}
 			function loadCombo(){
 				$scope.listStatus = [{id:true,status:'True'},{id:false,status:'False'}];
 				medifirstService.getPart("sysadmin/master/get-data-produk?test=true" + searchProdukFilter($scope.item.Status,$scope.item.jumlahRows), true, true, 20).then(function (data) {
@@ -102,130 +161,11 @@ define(['initialize'], function (initialize) {
 
 			}
 
-			// medifirstService.getPart("sysadmin/master/get-data-produk?test=true" + searchProdukFilter($scope.item.Status,$scope.item.jumlahRows), true, true, 20).then(function (data) {
-			// 	$scope.listProduk = data;
-			// });
-
-			// var timeoutPromise;
-			// $scope.$watch('item.jenisProdukDetail', function (newVal, oldVal) {
-			// 	$timeout.cancel(timeoutPromise);
-			// 	timeoutPromise = $timeout(function () {
-			// 		if (newVal != oldVal) {
-			// 			loadData("jenisProdukDetail", newVal)
-			// 		}
-			// 	}, 500)
-			// })
-					
-
-			// function loadData() {
-			// 	var kode, kodeintern, kdBarcode, kdBmn, NamaProduk, idProduk, jmlRows,status;
-			// 	if ($scope.item.kdProdukScr === undefined || $scope.item.kdProdukScr == null) {
-			// 		kode = "";
-			// 	} else {
-			// 		kode = $scope.item.kdProdukScr
-			// 	}
-			// 	if ($scope.item.kdProdukInternScr === undefined || $scope.item.kdProdukInternScr == null) {
-			// 		kodeintern = "";
-			// 	} else {
-			// 		kodeintern = $scope.item.kdProdukInternScr
-			// 	}
-			// 	if ($scope.item.kdBarcodeScr === undefined  || $scope.item.kdBarcodeScr == null) {
-			// 		kdBarcode = "";
-			// 	} else {
-			// 		kdBarcode = $scope.item.kdBarcodeScr
-			// 	}
-			// 	if ($scope.item.kodeBmnScr === undefined || $scope.item.kodeBmnScr == null) {
-			// 		kdBmn = "";
-			// 	} else {
-			// 		kdBmn = $scope.item.kodeBmnScr
-			// 	}
-			// 	if ($scope.item.namaProdukScr === undefined || $scope.item.namaProdukScr == null) {
-			// 		NamaProduk = "";
-			// 	} else {
-			// 		NamaProduk = $scope.item.namaProdukScr
-			// 	}
-			// 	if($scope.item.produk === undefined || $scope.item.produk == null){
-			// 		idProduk = "";
-
-			// 	}else{
-			// 		idProduk = '&idProduk=' + $scope.item.produk.id;
-
-			// 	}
-
-			// 	if ($scope.item.jumlahRows === undefined || $scope.item.jumlahRows == null) {
-			// 		jmlRows = "";
-			// 	} else {
-			// 		jmlRows = '&jmlRows=' + $scope.item.jumlahRows;
-			// 	}
-			// 	var cachestatus = ''
-			// 	if ($scope.item.Status === undefined || $scope.item.Status == null) {
-			// 		status = "";
-			// 	} else {
-			// 		status = '&status=' + $scope.item.Status.id;
-			// 		cachestatus = {id:$scope.item.Status.id,status:$scope.item.Status.status}
-			// 	}
-
-			// 	// var jenisproduk = ''
-			// 	// if ($scope.item.jenisProdukDetail != undefined && $scope.item.jenisProdukDetail != null && $scope.item.jenisProdukDetail != '') {
-			// 	// 	jenisproduk = $scope.item.jenisProdukDetail;
-			// 	// }
-
-			// 	var listJenis = ""
-			// 	if ($scope.item.jenisProdukDetail.length != 0) {
-			// 		var a = ""
-			// 		var b = ""
-			// 		for (var i = $scope.item.jenisProdukDetail.length - 1; i >= 0; i--) {
-
-			// 			var c = $scope.item.jenisProdukDetail[i].id
-			// 			b = "," + c
-			// 			a = a + b
-			// 		}
-			// 		listJenis = a.slice(1, a.length)
-            //     }
-
-			// 	var chacePeriode = {
-            //         0: listJenis,
-			// 		1: status,
-            //     }
-            //     cacheHelper.set('MasterProdukCtrl', chacePeriode);
-
-
-			// 	medifirstService.get('sysadmin/master/get-data-produk?kdProduk=' + kode
-			// 		+ '&kdInternal=' + kodeintern
-			// 		+ '&kdBarcode=' + kdBarcode
-			// 		+ '&kdBmn=' + kdBmn
-			// 		//+ '&detailjenisproduk=' + jenisproduk
-			// 		+ "&JenisArr=" + listJenis
-			// 		+ '&nmProduk=' + NamaProduk + jmlRows + status + idProduk).then(function (e) {
-			// 			for (var i = 0; i < e.data.length; i++) {
-			// 				e.data[i].no = i + 1
-			// 			}
-			// 			$scope.dataSource = new kendo.data.DataSource({
-			// 				data: e.data,
-
-			// 				schema: {
-			// 					model: {
-			// 						id: "id",
-			// 						fields: {
-			// 							kdproduk: { editable: false, type: "number" },
-			// 							kdbarcode: { editable: false, type: "number" },
-			// 							deskripsiproduk: { editable: false, type: "string" },
-			// 							namaproduk: { editable: false, type: "string" }
-			// 						}
-			// 					},
-								
-			// 				},
-			// 				pageSize: 20,
-			// 			});
-			// 		})
-			// 	var chacePeriode = $scope.item.kdProdukScr + "~" + $scope.item.namaProdukScr + "~" + $scope.item.kdProdukInternScr
-			// 		+ "~" + $scope.item.kdBarcodeScr + "~" + $scope.item.kodeBmnScr;
-			// 	cacheHelper.set('MasterProdukCtrl', chacePeriode);
-			// }
+		
 
 			$scope.klik = function (current) {
-				current = $scope.current;
-				$scope.item.idx = current.id;
+				console.log(current);
+				norec=current.norec
 			}
 
 			function disableData(e) {
@@ -263,77 +203,39 @@ define(['initialize'], function (initialize) {
 					init();
 				})
 			};
-
-			// function removeDuplicates(items, field) {
-			// 	if(field.indexOf(".") > 0){
-			// 	  field = field.substring(0, field.indexOf("."));
-			// 	}
-			// 	var getter = function(item){return item[field]},
-			// 		result = [],
-			// 		index = 0,
-			// 		seen = {};
-	
-			// 	while (index < items.length) {
-			// 	  var item = items[index++],
-			// 		  text = getter(item);
-			// 	  if(field === "detailjenisproduk"){
-			// 		text = text.detailjenisproduk;
-			// 	  }
-	
-			// 	  if(text !== undefined && text !== null && !seen.hasOwnProperty(text)){
-			// 		result.push(item);
-			// 		seen[text] = true;
-			// 	  }
-			// 	}
-	
-			// 	return result;
-			//   }
-
-			// $scope.edit = function () {
-			// 	if ($scope.item.idx == undefined) {
-			// 		alert("Pilih 1 Data Untuk di edit!!")
-			// 	} else {
-			// 		$state.go("InputProduk", { idx: $scope.item.idx })
-			// 	}
-			// }
-
-			// $scope.tambah = function () {
-			// 	$state.go("InputProduk")
-			// }				
-
 			$scope.columnProduk = [
 				{
-					"field": "",
+					"field": "namalengkap",
 					"title": "Nama Pegawai",
                     "width": '150px'			
 				},
 				{
-					"field": "",
+					"field": "iki",
 					"title": "IKI",
                     "width": '150px'
 				},
 				{
-					"field": "",
+					"field": "iku",
 					"title": "IKU",
                     "width": '150px'
 				},
 				{
-					"field": "",
+					"field": "prosen",
 					"title": "Prosen",
                     "width": '150px'
 				},
 				{
-					"field": "",
+					"field": "grade",
 					"title": "Grade",
                     "width": '150px'
 				},
 				{
-					"field": "",
+					"field": "mk",
 					"title": "MK",
                     "width": '150px'
 				},
 				{
-					"field": "",
+					"field": "point_tt",
 					"title": "Point TT",
                     "width": '150px'
 				},			
