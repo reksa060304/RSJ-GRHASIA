@@ -19,6 +19,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var norec_kpe = '';
             var norecmhs = '';
             var gambar = ""
+            var norecMs= "";
             // var images = ""
             loadDataCombo();
             LoadCache();
@@ -89,7 +90,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         // /../../../../../backend/public/DIKLAT/FileFoto/DIKLAT-MuhamadFazriAnnafi2-1709142-fazri@gmail.com.jpg
                     }
                     $scope.dataSourceGridDiagnosapasien = new kendo.data.DataSource({
-                        data: datas.data.me,
+                        data: datas.data.me2,
                         // group: $scope.group,
                         pageSize: 100,
                         total: datas.data.me.length,
@@ -182,8 +183,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         {
                             field: "image",
                             title: "Image",
-                            width: "50px",
-                            template: "<span class='center'>#: image == null ? 'noimage': '✔'#</span>"
+                            width: "80px",
+                            // template: "<span class='center'>#: image == null ? 'noimage': '✔'#</span>"
+                            template: '<img src="#:image#" width="75" height="100" class="center"/>',
                             // template: '<img src="../../../../../../../backend/public/DIKLAT/FileFoto/#:images#" width="70" height="90" class="center"/>',
                             // template: "<div class='customer-photo' style='background-image: url(../../../../../backend/public/DIKLAT/FileFoto/DIKLAT-MuhamadFazriAnnafi2-1709142-fazri@gmail.com.jpg);'></div>",
                         },
@@ -285,8 +287,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             field: "image",
                             title: "Image",
                             width: "50px",
-                            template: "<span class='center'>#: image == null ? 'noimage': '✔'#</span>"
-                            // template: '<img src="../../../../../../../backend/public/DIKLAT/FileFoto/#:images#" width="70" height="90" class="center"/>',
+                            // template: "<span class='center'>#: image == null ? 'noimage': '✔'#</span>"
+                            template: '<img src="#:image#" width="75" height="100" class="center"/>',
                             // template: "<div class='customer-photo' style='background-image: url(../../../../../backend/public/DIKLAT/FileFoto/DIKLAT-MuhamadFazriAnnafi2-1709142-fazri@gmail.com.jpg);'></div>",
                         },
 
@@ -303,16 +305,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             
                 $scope.klikGrid = function (dataSelected) {
+                    // dataSelected.src = "/img/DIKLAT/FileFoto/"+dataSelected.email +"/"+dataSelected.image;
+                    // dataSelected.src = "/img/DIKLAT/FileFoto/aqwe@gmsdfil.com/DIKLAT-asd-123-aqwe@gmsdfil.com.png"
+                    // http: //localhost:8000/img/DIKLAT/FileFoto/aqwe@gmsdfil.com/DIKLAT-asd-123-aqwe@gmsdfil.com.png
                     $scope.isRouteLoading =true
                     var noregistrasi = "";
                     if (dataSelected != undefined) {
                         noregistrasi = "norec=" + dataSelected.norec_eks;
-                       
+                        
                     }else{
-                         $scope.isRouteLoading = false
-                         return
+                        $scope.isRouteLoading = false
+                        return
                     }
-
+                    norecMs = dataSelected.norec_eks;
                 medifirstService.get("sdm/pendidikan/get-detail-pdruangan?" + noregistrasi, true).then(function (datas) {
                     var dat = datas.data.nor
                     $scope.item.nim = dat[0].nim;
@@ -385,64 +390,159 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             
             
             $scope.tambahMhs = function () {
-                const url = baseTransaksi + 'sdm/pendidikan/save-pesertadidik'
+                var gambar = document.querySelectorAll('[type=file]')[0].files[0]
+                console.log(gambar);
 
-                const form = document.querySelector('form')
-
-                const formData = new FormData()
-                var image = "noimage"
-                
-                $scope.isRouteLoading = true;
-                //bikin if untuk ruangan dan pegawai
-                var ruangan = null
-                var pegawai = null
-                if (document.querySelectorAll('[type=file]')[0].files[0] != undefined) {
-                image = document.querySelectorAll('[type=file]')[0].files[0]
-                }
-                formData.append('norec', false)
-                formData.append('noregistrasifk', $state.params.norec)
-                formData.append('nama', $scope.item.namapeneliti)
-                formData.append('nim', $scope.item.nim)
-                formData.append('nomorhp', $scope.item.telp)
-                formData.append('jeniskelaminfk', $scope.item.jeniskelamin.id)
-                formData.append('objectruanganlastfk', ruangan)
-                formData.append('objectpegawailastfk', pegawai)
-                formData.append('email', $scope.item.email)
-                formData.append('image', image)
-
-                if ($scope.norec < $scope.kendo + 1) {
-                    window.messageContainer.error("Data tidak berhasil disimpan Quota Peserta sudah Terpenuhi.");
-                    $scope.isRouteLoading = false;
-                    $scope.item = {};
+                if (gambar == undefined) {
+                        toastr.error("Foto Wajib diisi !")
+                        return;
+                    
+                } 
+                if (gambar.type != 'image/png' && gambar.type != 'image/jpeg') {
+                    toastr.error("Foto menggunakan Format jpg atau png!")
                     return;
                 }
-                var arr = document.cookie.split(';')
-                var authorization;
-                for (var i = 0; i < arr.length; i++) {
-                    var element = arr[i].split('=');
-                    if (element[0].indexOf('authorization') > 0) {
-                        authorization = element[1];
+                
+                
+                var listRawRequired = [
+                    "item.namapeneliti|ng-model|Nama Mahasiswa",
+                    "item.nim|ng-model|NIM",
+                    "item.jeniskelamin|k-ng-model|Jenis Kelamin",
+                    "item.email|ng-model|Email",
+                ];
+
+                var isValid = ModelItem.setValidation($scope, listRawRequired);
+
+                if (isValid.status == true) {
+                    if (norecMs == '') {
+                        console.log('no norec');
+                        const url = baseTransaksi + 'sdm/pendidikan/save-pesertadidik'
+                        const form = document.querySelector('form')
+                        const formData = new FormData()
+                        var image = "noimage"
+                        var gambar = document.querySelectorAll('[type=file]')[0].files[0]
+                        if (gambar.type != 'image/png') {
+                            toastr.error("Informasi, Data Sudah Diverifikasi !")
+                            return;
+                        } else {
+                            
+                        }
+
+                        $scope.isRouteLoading = true;
+                        //bikin if untuk ruangan dan pegawai
+                        var ruangan = null
+                        var pegawai = null
+                        console.log(document.querySelectorAll('[type=file]')[0].files[0]);
+                        if (document.querySelectorAll('[type=file]')[0].files[0] != undefined) {
+                            image = document.querySelectorAll('[type=file]')[0].files[0]
+                        }
+                        formData.append('norec', false)
+                        formData.append('noregistrasifk', $state.params.norec)
+                        formData.append('nama', $scope.item.namapeneliti)
+                        formData.append('nim', $scope.item.nim)
+                        formData.append('nomorhp', $scope.item.telp)
+                        formData.append('jeniskelaminfk', $scope.item.jeniskelamin.id)
+                        formData.append('objectruanganlastfk', ruangan)
+                        formData.append('objectpegawailastfk', pegawai)
+                        formData.append('email', $scope.item.email)
+                        formData.append('image', image)
+
+                        if ($scope.norec < $scope.kendo + 1) {
+                            window.messageContainer.error("Data tidak berhasil disimpan Quota Peserta sudah Terpenuhi.");
+                            $scope.isRouteLoading = false;
+                            $scope.item = {};
+                            return;
+                        }
+                        var arr = document.cookie.split(';')
+                        var authorization;
+                        for (var i = 0; i < arr.length; i++) {
+                            var element = arr[i].split('=');
+                            if (element[0].indexOf('authorization') > 0) {
+                                authorization = element[1];
+                            }
+                        }
+                        fetch(url, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-AUTH-TOKEN': authorization
+                            }
+                        }).then(response => {
+                            // console.log(response)
+                            if (response.status == 201) {
+                                toastr.info('Sukses');
+                                $scope.item = {};
+                                $scope.isRouteLoading = false;
+                                loadDataCombo();
+                            } else {
+                                toastr.info('Simpan Gagal');
+                            }
+                            // $scope.loadDataSip();
+                            // $scope.batalSip();
+                        })
+
+                    } else {
+                        console.log('norec');
+                        const url = baseTransaksi + 'sdm/pendidikan/update-pesertadidik'
+
+                        const form = document.querySelector('form')
+
+                        const formData = new FormData()
+                        var image = "noimage"
+
+                        $scope.isRouteLoading = true;
+                        //bikin if untuk ruangan dan pegawai
+                        var ruangan = null
+                        var pegawai = null
+                        if (document.querySelectorAll('[type=file]')[0].files[0] != undefined) {
+                            image = document.querySelectorAll('[type=file]')[0].files[0]
+                        }
+                        console.log(image);
+                        formData.append('norec', $scope.dataSelected.norec_eks)
+                        formData.append('noregistrasifk', $state.params.norec)
+                        formData.append('nama', $scope.item.namapeneliti)
+                        formData.append('nim', $scope.item.nim)
+                        formData.append('nomorhp', $scope.item.telp)
+                        formData.append('jeniskelaminfk', $scope.item.jeniskelamin.id)
+                        formData.append('objectruanganlastfk', ruangan)
+                        formData.append('objectpegawailastfk', pegawai)
+                        formData.append('email', $scope.item.email)
+                        formData.append('image', image)
+
+                        var arr = document.cookie.split(';')
+                        var authorization;
+                        for (var i = 0; i < arr.length; i++) {
+                            var element = arr[i].split('=');
+                            if (element[0].indexOf('authorization') > 0) {
+                                authorization = element[1];
+                            }
+                        }
+                        // console.log(formData);
+                        // return
+                        fetch(url, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-AUTH-TOKEN': authorization
+                            }
+                        }).then(response => {
+                            // console.log(response)
+                            if (response.status == 201) {
+                                toastr.info('Sukses');
+                                $scope.item = {};
+                                $scope.isRouteLoading = false;
+                                loadDataCombo();
+                            } else {
+                                toastr.info('Simpan Gagal');
+                            }
+                            // $scope.loadDataSip();
+                            // $scope.batalSip();
+                        })
+
                     }
                 }
-                fetch(url, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-AUTH-TOKEN': authorization
-                    }
-                }).then(response => {
-                    // console.log(response)
-                    if (response.status == 201) {
-                        toastr.info('Sukses');
-                        $scope.item = {};
-                        $scope.isRouteLoading = false;
-                        loadDataCombo();}
-                    else{
-                        toastr.info('Simpan Gagal');
-                    }
-                    // $scope.loadDataSip();
-                    // $scope.batalSip();
-                })
+                
+                
                 // // var base64String = "";
                 // const formData = new FormData()
                 // const image = document.querySelectorAll('[type=file]')[0].files[0]
@@ -548,61 +648,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.updated = function () {
-                const url = baseTransaksi + 'sdm/pendidikan/update-pesertadidik'
-
-                const form = document.querySelector('form')
-
-                const formData = new FormData()
-                var image = "noimage"
-
-                $scope.isRouteLoading = true;
-                //bikin if untuk ruangan dan pegawai
-                var ruangan = null
-                var pegawai = null
-                if (document.querySelectorAll('[type=file]')[0].files[0] != undefined) {
-                    image = document.querySelectorAll('[type=file]')[0].files[0]
-                }
-                console.log(image);
-                formData.append('norec', $scope.dataSelected.norec_eks)
-                formData.append('noregistrasifk', $state.params.norec)
-                formData.append('nama', $scope.item.namapeneliti)
-                formData.append('nim', $scope.item.nim)
-                formData.append('nomorhp', $scope.item.telp)
-                formData.append('jeniskelaminfk', $scope.item.jeniskelamin.id)
-                formData.append('objectruanganlastfk', ruangan)
-                formData.append('objectpegawailastfk', pegawai)
-                formData.append('email', $scope.item.email)
-                formData.append('image', image)
-
-                var arr = document.cookie.split(';')
-                var authorization;
-                for (var i = 0; i < arr.length; i++) {
-                    var element = arr[i].split('=');
-                    if (element[0].indexOf('authorization') > 0) {
-                        authorization = element[1];
-                    }
-                }
-                // console.log(formData);
-                // return
-                fetch(url, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-AUTH-TOKEN': authorization
-                    }
-                }).then(response => {
-                    // console.log(response)
-                    if (response.status == 201) {
-                        toastr.info('Sukses');
-                        $scope.item = {};
-                        $scope.isRouteLoading = false;
-                        loadDataCombo();
-                    } else {
-                        toastr.info('Simpan Gagal');
-                    }
-                    // $scope.loadDataSip();
-                    // $scope.batalSip();
-                })
+                
 
 
                 // $scope.isRouteLoading = true;
@@ -803,9 +849,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             })
             }
 
-            $scope.klikGridDetail= function(dataPasienSelectedDetail){
-            }
-
             $scope.deletedRow = function() {
                     $scope.isRouteLoading = true;
                 var datasend = {
@@ -817,8 +860,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 console.log(datasend);
                 // return
                 $scope.isRouteLoading = true;
+
                 medifirstService.post("sdm/pendidikan/hapus-peserta-didik", datasend).then(function (e) {
                     $scope.isRouteLoading = false;
+                    $scope.item = {};
+
                     loadDataCombo();
                 });
             }
