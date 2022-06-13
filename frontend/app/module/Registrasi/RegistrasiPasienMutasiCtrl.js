@@ -274,6 +274,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
+                if ($scope.item.jenisKasus == undefined) {
+                    toastr.error('Jenis kasus harus di isi')
+                    return
+                }
+
                 var kelasId = "";
                 if ($scope.item.kelas == undefined) {
                     kelasId = null;
