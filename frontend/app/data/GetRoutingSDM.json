@@ -1009,5 +1009,24 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "Remunerasi",
+    "url": "/UmVtdW5lcmFzaQ==",
+    "templateurl": "module/TataRekening/Remunerasi.html",
+    "controller": "RemunerasiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
