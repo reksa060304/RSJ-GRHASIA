@@ -9,7 +9,7 @@ define(['initialize'], function (initialize) {
       $scope.dataSelected = {};
       $scope.dataSelected1 = {};
       $scope.item = {};
-      LoadData()
+      //LoadData()
       $scope.dataLogin = JSON.parse(window.localStorage.getItem('pegawai'));
 
       $scope.CariRegistrasiPasien = function () {
@@ -39,6 +39,9 @@ define(['initialize'], function (initialize) {
         ).then(function (data) {
           $scope.isRouteLoading = false;
           var data = data.data
+          var totaljumlahrajalfix = 0
+          var totaljumlahigdfix = 0
+          var totaljumlahranapfix = 0
           for (var i = 0; i < data.data.length; i++) {
             data.data[i].no = i + 1
             data.data[i].kdprov = '24'
@@ -46,10 +49,21 @@ define(['initialize'], function (initialize) {
             data.data[i].koders = '3404022'
             data.data[i].namars = 'RSJ. Grhasia'
             data.data[i].tahun = moment($scope.now).format('YYYY');
+
+            totaljumlahrajalfix += parseInt(data.data[i].jumlahitem)
+            totaljumlahigdfix += parseInt(data.data[i].jumlahtersedia)
+            totaljumlahranapfix += parseInt(data.data[i].jumlahtersediafor)
           }
           data.data[0].kategori = 'Obat Generik (Formularium+Non Formularium)'
           data.data[1].kategori = 'Obat Non Generik Formularium'
           data.data[2].kategori = 'Obat Non Generik Non Formularium'
+          data.data[3].kategori = 'TOTAL'
+          data.data[3].no = 99
+
+          data.data[3].jumlahitem = totaljumlahrajalfix
+          data.data[3].jumlahtersedia = totaljumlahigdfix
+          data.data[3].jumlahtersediafor = totaljumlahranapfix
+
           $scope.ambildataexcel = data.data;
           $scope.panggil($scope.ambildataexcel);
           $scope.dataRL52 = new kendo.data.DataSource({
@@ -82,6 +96,9 @@ define(['initialize'], function (initialize) {
           + "tglAwal=" + tglAwal1
           + "&tglAkhir=" + tglAkhir1).then(function (data) {
             var data = data.data
+            var totaljumlahrajal = 0
+            var totaljumlahigd = 0
+            var totaljumlahranap = 0
             $scope.isRouteLoading = false;
             for (var i = 0; i < data.data.length; i++) {
               data.data[i].no = i + 1
@@ -90,11 +107,23 @@ define(['initialize'], function (initialize) {
               data.data[i].koders = '3404022'
               data.data[i].namars = 'RSJ. Grhasia'
               data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
+
+              totaljumlahrajal += parseInt(data.data[i].jumlahrajal)
+              totaljumlahigd += parseInt(data.data[i].jumlahigd)
+              totaljumlahranap += parseInt(data.data[i].jumlahranap)
+
             }
+
+            data.data[3].no = 99
+
+            data.data[3].jumlahrajal = totaljumlahrajal
+            data.data[3].jumlahigd = totaljumlahigd
+            data.data[3].jumlahranap = totaljumlahranap
 
             data.data[0].kategori = 'Obat Generik (Formularium+Non Formularium)'
             data.data[1].kategori = 'Obat Non Generik Formularium'
             data.data[2].kategori = 'Obat Non Generik Non Formularium'
+            data.data[3].kategori = 'TOTAL'
 
             $scope.getdataexcel = data.data;
             $scope.callExcel($scope.calldataexcel);

@@ -746,8 +746,8 @@ class LaporanRekamMedisController extends   ApiController
 
         $main = array("Penyakit Dalam", "Kesehatan Anak", "Obstetri", "Ginekologi", "Bedah", "Bedah Ortopedhi", "Bedah Saraf", "Luka Bakar", "Saraf", "Jiwa", "Psikologi", "Penatalaksanaan Penyalahgunaan NAPZA", "THT", "Mata", "Kulit dan Kelamin", "Kardiologi", "Paru-paru", "Geriatri", "Radioterapi", "Kedokteran Nuklir", "Kusta", "Rehabilitasi Medik", "Isolasi", "ICU", "ICCU", "NICU / PICU", "Umum", "Gigi & Mulut", "Pelayanan Rawat Darurat", "SUB TOTAL", "Perinatologi/Bayi", "TOTAL");
         
-        $jumlahperkelas = DB::select(DB::raw("select extract(year from x.tanggal::date) as year, sum(x.kelasvip) jumlahkelasvip, sum(x.kelassatu) jumlahkelassatu, sum(x.kelasdua) jumlahkelasdua, sum(x.kelastiga) jumlahkelastiga, sum(x.kelaskhusus) jumlahkelaskhusus, sum(x.kelasvip) + sum(x.kelassatu) + sum(x.kelasdua) + sum(x.kelastiga) + sum(x.kelaskhusus) totaltt from(
-            select '$tglAwal-01' as tanggal,
+        $jumlahperkelas = DB::select(DB::raw("select namaruangan, sum(x.kelasvip) jumlahkelasvip, sum(x.kelassatu) jumlahkelassatu, sum(x.kelasdua) jumlahkelasdua, sum(x.kelastiga) jumlahkelastiga, sum(x.kelaskhusus) jumlahkelaskhusus, sum(x.kelasvip) + sum(x.kelassatu) + sum(x.kelasdua) + sum(x.kelastiga) + sum(x.kelaskhusus) totaltt from(
+            select ru.namaruangan,
             case when ks.id = 4 then sum(rm.jumlah_tt) else 0 end as kelasvip,
             case when ks.id = 3 then sum(rm.jumlah_tt) else 0 end as kelassatu,
             case when ks.id = 2 then sum(rm.jumlah_tt) else 0 end as kelasdua,
@@ -768,9 +768,11 @@ class LaporanRekamMedisController extends   ApiController
             and rm.objectkamarfk=x.objectkamarfk 
             and rm.tanggalawal = x.tanggal
             and ks.id in (1, 2, 3, 4, 6)
-            where rm.kdprofile = $idProfile 
+            where rm.kdprofile = 30 
             and rm.statusenabled = true
-            group by ks.id) as x group by extract(year from x.tanggal::date)"));
+            group by ks.id, ru.namaruangan) as x group by namaruangan;"));
+
+            //var_dump($jumlahperkelas);
 
         $currentmain = "Larasatizka";
 
@@ -792,20 +794,37 @@ class LaporanRekamMedisController extends   ApiController
             $kelaskhusus = 0;
             if($row != $currentmain){
                 foreach($jumlahperkelas as $jml){
-                    $year = $jml->year;
-                    if($row == "Jiwa" || $row == "Umum" || $row == "Penatalaksanaan Penyalahgunaan NAPZA"){
-                        $jumlahtt = $jml->totaltt;
-                        $kelasvip = $jml->jumlahkelasvip;
-                        $kelassatu = $jml->jumlahkelassatu; 
-                        $kelasdua = $jml->jumlahkelasdua; 
-                        $kelastiga = $jml->jumlahkelastiga; 
-                        $kelaskhusus = $jml->jumlahkelaskhusus;
+                    
+                    if($row == "Umum" && $jml->namaruangan == 'WISMA KRESNA'){
+                        $jumlahtt += $jml->totaltt;
+                        $kelasvip += $jml->jumlahkelasvip;
+                        $kelassatu += $jml->jumlahkelassatu; 
+                        $kelasdua += $jml->jumlahkelasdua; 
+                        $kelastiga += $jml->jumlahkelastiga; 
+                        $kelaskhusus += $jml->jumlahkelaskhusus;
+                    } 
+                    
+                    if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $jml->namaruangan == 'WISMA ABIMANYU'){
+                        $jumlahtt += $jml->totaltt;
+                        $kelasvip += $jml->jumlahkelasvip;
+                        $kelassatu += $jml->jumlahkelassatu; 
+                        $kelasdua += $jml->jumlahkelasdua; 
+                        $kelastiga += $jml->jumlahkelastiga; 
+                        $kelaskhusus += $jml->jumlahkelaskhusus;
+                    } 
+                    
+                    if($row == "Jiwa" && $jml->namaruangan != 'WISMA ABIMANYU' && $jml->namaruangan != 'WISMA KRESNA'){
+                        $jumlahtt += $jml->totaltt;
+                        $kelasvip += $jml->jumlahkelasvip;
+                        $kelassatu += $jml->jumlahkelassatu; 
+                        $kelasdua += $jml->jumlahkelasdua; 
+                        $kelastiga += $jml->jumlahkelastiga; 
+                        $kelaskhusus += $jml->jumlahkelaskhusus;
                     }
                 }
 
                 $data10[] = array(
                     'pelayanan' => $row,
-                    'year' => $year,
                     'jumlahkelasvvip' => $kelasvvip,
                     'jumlahkelasvip' => $kelasvip,
                     'jumlahkelassatu' => $kelassatu,
@@ -3515,6 +3534,12 @@ class LaporanRekamMedisController extends   ApiController
             'jumlahtersediafor' => $datas[0]->tersediafor3,
         );
 
+        $data10[3] = array(
+            'jumlahitem' => 0,
+            'jumlahtersedia' => 0,
+            'jumlahtersediafor' => 0,
+        );
+
         $result = array(
             'data' => $data10,
             'message' => 'as@lancelot',
@@ -3854,6 +3879,12 @@ class LaporanRekamMedisController extends   ApiController
             'jumlahrajal' => $datas[0]->rajal3,
             'jumlahigd' => $datas[0]->igd3,
             'jumlahranap' => $datas[0]->ranap3,
+        );
+
+        $data10[3] = array(
+            'jumlahrajal' => 0,
+            'jumlahigd' => 0,
+            'jumlahranap' => 0,
         );
 
         $result = array(
