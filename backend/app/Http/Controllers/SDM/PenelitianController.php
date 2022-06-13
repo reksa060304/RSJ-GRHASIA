@@ -98,6 +98,7 @@ class PenelitianController extends ApiController {
             ->orderBy('jk.id', 'asc')
             ->get();
             $noreg = $request['noregistrasi'];
+            $me=[];
             $mahasiswaeksternal = \DB::select(DB::raw("SELECT
             sdpd.nama,
             jk.jeniskelamin,
@@ -118,6 +119,27 @@ class PenelitianController extends ApiController {
             sdpd.kdprofile = $kdProfile and sdpd.statusenabled = true and 
             sdpd.noregistrasifk ILIKE'$noreg'
             "));
+            $img = '';
+            if(stripos(\Request::url(), 'localhost') !== FALSE){
+                $img = \Request::root() ."/img/DIKLAT/FileFoto/";
+            }else{
+                $img = \Request::root() ."/service/img/DIKLAT/FileFoto/" ;
+            }
+            foreach ($mahasiswaeksternal as $mhs) {
+                $me[]= array(
+                'nama' => $mhs->nama,
+                'jeniskelamin' => $mhs->jeniskelamin,
+                'nim' => $mhs->nim,
+                'namaruangan' => $mhs->namaruangan,
+                'namalengkap' => $mhs->namalengkap,
+                'norec_eks' => $mhs->norec_eks,
+                'nomorhp' => $mhs->nomorhp,
+                'norec_pe' => $mhs->norec_pe,
+                'email' => $mhs->email,
+                'image' => $img . $mhs->email . "/" . $mhs->image,
+                'jeniskelaminfk' => $mhs->jeniskelaminfk,
+            );
+            }
             $norec = \DB::table('sdm_penelitianeksternal_t as sdpd')
             ->select('sdpd.norec','sdpd.jumlahpeserta')
             ->where('sdpd.kdprofile', $kdProfile)
@@ -144,6 +166,7 @@ class PenelitianController extends ApiController {
             'sp' => $norec_sp,
             'norec' => $norec,
             'me' => $mahasiswaeksternal,
+            'me2'=> $me,
             'pegawai' => $pegawai,
             'jeniskelamin' => $jeniskelamin,
             'lynn'=>$lynn,

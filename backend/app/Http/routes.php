@@ -1867,6 +1867,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('remunerasi/get-list-pegawai-perdetailjenispagu', 'Remunerasi\RemunerasiController@getPegawaiByDetailJenisPagu');
         Route::get('remunerasi/get-hitung-jasa-pelayanan-satu', 'Remunerasi\RemunerasiController@getHitungJP1');
         Route::get('remunerasi/get-daftar-remunerasi-pegawai', 'Remunerasi\RemunerasiController@getDaftarRemunPegawai');
+        Route::get('remunerasi/get-daftar-remunerasi-pegawaiv2', 'Remunerasi\RemunerasiController@getDaftarRemunPegawaiV2');
         Route::get('remunerasi/get-daftar-closing', 'Remunerasi\RemunerasiController@getDataClosing');
         Route::get('remunerasi/get-detail-remun_rc', 'Remunerasi\RemunerasiController@getDetailRemunRCCC');
         Route::get('remunerasi/get-komponenharga-pelayanan', 'Remunerasi\RemunerasiController@getKomponenHargaPelayanan');
@@ -1913,6 +1914,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('remunerasi/save-detail-kelompok', 'Remunerasi\RemunerasiController@saveDetailKelompok');
         Route::post('remunerasi/save-map-jenis-pagu-topegawai', 'Remunerasi\RemunerasiController@saveMapJenisPaguToPegawai');
         Route::post('remunerasi/save-index-pegawai', 'Remunerasi\RemunerasiController@updateIndexPegawai');
+        Route::post('remunerasi/save-index-pegawaiv2', 'Remunerasi\RemunerasiController@updateIndexPegawaiV2');
 
         //master pagu
         Route::get('remunerasi/get-jenis-pagu', 'Remunerasi\RemunerasiController@getJenisPagu');

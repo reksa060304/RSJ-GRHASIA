@@ -41,6 +41,7 @@
                                     <div class="panel-body">
                                         <div class="grid_12">
                                             <div class="grid_6">
+                                                <img ng-src="" alt="">
                                                 <div class="grid_12">
                                                     <label c-label item="item" c-label-text="Nama"></label>
                                                 </div>
@@ -94,11 +95,11 @@
                                                     <label c-label item="item">Unggah File</label>
                                                     <br>
                                                 </div>
-                                                <form class="grid_9" method="post" enctype="multipart/form-data"
+                                                <form class="grid_6" method="post" enctype="multipart/form-data"
                                                     id="coba">
                                                     <!-- <input type="file" name="files[]" multiple /> -->
                                                     <div class="grid_12">
-                                                        <input type="file" name="image"  id="files" class="mySip" />
+                                                        <input type="file" ng-model="item.image" name="image"  id="files" class="mySip" required/>
                                                         <!-- <input type="submit" value="Upload File" name="submit" /> -->
                                                     </div>
                                                 </form>
@@ -126,15 +127,15 @@
                                                 </button>
                                                 <!-- <button class="c-button success" ng-click="tambahTindakans()">Tambah Tindakan</button> -->
                                             </div>
-                                            <div class="grid_2">
+                                            <!-- <div class="grid_2">
                                                 <button ng-show="!isLoading" class="c-button primary"
                                                     style="width: 99.5%; font-size: 20px; padding:0px; margin:0px; text-align: center;"
                                                     item="item" size="20" position=" 'right'" is-validate
                                                     ng-click="updated()" ng-disabled="peneliti" >
                                                     <span class="title">Ubah</span>
                                                 </button>
-                                                <!-- <button class="c-button success" ng-click="tambahTindakans()">Tambah Tindakan</button> -->
-                                            </div>
+                                                <button class="c-button success" ng-click="tambahTindakans()">Tambah Tindakan</button>
+                                            </div> -->
                                             <div class="grid_2">
                                                 <button ng-show="!isLoading" class="c-button success"
                                                     style="width: 99.5%; font-size: 20px; padding:0px; margin:0px; text-align: center;"
