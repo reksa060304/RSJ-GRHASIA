@@ -34,6 +34,9 @@ use App\Transaksi\OrderPelayanan;
 use App\Transaksi\OrderProduk;
 use App\Master\Pegawai;
 use App\Traits\Valet;
+use App\Transaksi\KegiatanAnggaran;
+use App\Transaksi\KegiatanBelanja;
+use App\Transaksi\KeteranganBelanja;
 use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Parent_;
 use Webpatser\Uuid\Uuid;
@@ -365,70 +368,91 @@ class PerencanaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataLogin = $request->all();
-        $head = \DB::table('kelompokanggaranhead_m as dp')
-            ->select('dp.id','dp.kdkelompokhead','dp.kelompokhead','dp.kodeexternal','dp.namaexternal')
+
+        $kegiatan = \DB::table('kegiatananggaran_m as dp')
+            ->leftjoin('tahapanggaran_m as thp','dp.tahap','=','thp.id')
+            ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
+            ->select('dp.*','thp.tahap','kp.namakelompok','dp.tahap as thpid')
             ->where('dp.kdprofile', $idProfile)
             ->where('dp.statusenabled', true)
-            ->orderBy('dp.kelompokhead')
-            ->get();
-        $pertama = \DB::table('kelompokanggaranpertama_m as ru')
-            ->select('ru.id','ru.kdchildpertama','ru.childpertama','ru.kodeexternal','ru.namaexternal')
-            ->where('ru.kdprofile', $idProfile)
-            ->where('ru.statusenabled', true)
-            ->orderBy('ru.childpertama')
-            ->get();
-        $kedua = \DB::table('kelompokanggarankedua_m as ru')
-            ->select('ru.id','ru.kdchildkedua','ru.childkedua','ru.kodeexternal','ru.namaexternal')
-            ->where('ru.kdprofile', $idProfile)
-            ->where('ru.statusenabled', true)
-            ->orderBy('ru.childkedua')
-            ->get();
-        $ketiga = \DB::table('kelompokanggaranketiga_m as ru')
-            ->select('ru.id','ru.childketiga','ru.kdchildketiga','ru.kodeexternal','ru.namaexternal')
-            ->where('ru.kdprofile', $idProfile)
-            ->where('ru.statusenabled', true)
-            ->orderBy('ru.childketiga')
+            ->orderBy('dp.kode')
             ->get();
 
-        $keempat = \DB::table('kelompokanggarankeempat_m as ru')
-            ->select('ru.id','ru.kdchildkeempat','ru.childkeempat','ru.kodeexternal','ru.namaexternal')
-            ->where('ru.kdprofile', $idProfile)
-            ->where('ru.statusenabled', true)
-            ->orderBy('ru.childkeempat')
-            ->get();
-        $kelima = \DB::table('kelompokanggarankelima_m as ru')
-            ->select('ru.id','ru.kdchildkelima','ru.childkelima','ru.kodeexternal','ru.namaexternal')
-            ->where('ru.kdprofile', $idProfile)
-            ->where('ru.statusenabled', true)
-            ->orderBy('ru.childkelima')
-            ->get();
+        // $mata = \DB::table('mataanggaran_m as dp')
+        //     ->select('dp.*')
+        //     ->where('dp.kdprofile', $idProfile)
+        //     ->where('dp.statusenabled', true)
+        //     ->orderBy('dp.kodemataanggaran')
+        //     ->get();
+        $mata = DB::select(DB::raw("
+        select v.id, v.kodemataanggaran,v.namamataanggaran,cast(v.total as float) as total from (
+            select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+            left join
+            (select left(ma.kodemataanggaran,9) as kode,sum(kt.subtotal) as total 
+            from mataanggaran_m ma
+            left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+            group by left(ma.kodemataanggaran,9)) as x on x.kode=ma.kodemataanggaran
+            where length(ma.kodemataanggaran)=9
+            union all
+            select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+            left join
+            (select left(ma.kodemataanggaran,5) as kode,sum(kt.subtotal) as total 
+            from mataanggaran_m ma
+            left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+            group by left(ma.kodemataanggaran,5)) as x on x.kode=ma.kodemataanggaran
+            where length(ma.kodemataanggaran)=5
+            union all
+            select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+            left join
+            (select left(ma.kodemataanggaran,3) as kode,sum(kt.subtotal) as total 
+            from mataanggaran_m ma
+            left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+            group by left(ma.kodemataanggaran,3)) as x on x.kode=ma.kodemataanggaran
+            where length(ma.kodemataanggaran)=3
+            union all
+            select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+            left join
+            (select left(ma.kodemataanggaran,1) as kode,sum(kt.subtotal) as total 
+            from mataanggaran_m ma
+            left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+            group by left(ma.kodemataanggaran,1)) as x on x.kode=ma.kodemataanggaran
+            where length(ma.kodemataanggaran)=1
+            
+            ) as v
+            order by v.kodemataanggaran
+            ")
+        );
 
-       $keenam = \DB::table('kelompokanggarankeenam_m as ru')
-                ->select('ru.id','ru.kdchildkeenam','ru.childkeenam','ru.kodeexternal','ru.namaexternal')
-                ->where('ru.kdprofile', $idProfile)
-                ->where('ru.statusenabled', true)
-                ->orderBy('ru.childkeenam')
-                ->get();
-
-        $Pengendali = \DB::table('pengendali_m as ru')
-            ->select('ru.id','ru.pengendali')
-            ->where('ru.kdprofile', $idProfile)
-            ->where('ru.statusenabled', true)
-            ->orderBy('ru.pengendali')
+        
+        $kelompok='keteranganAnggaran';
+        $keterangan = \DB::table('settingdatafixed_m')
+            ->select('namafield','nilaifield')
+            ->where('kdprofile', $idProfile)
+            ->where('statusenabled', 't')
+            ->where('kelompok', '=',$kelompok)
             ->get();
+        
+
+
+    //     $Pengendali = \DB::table('pengendali_m as ru')
+    //         ->select('ru.id','ru.pengendali')
+    //         ->where('ru.kdprofile', $idProfile)
+    //         ->where('ru.statusenabled', true)
+    //         ->orderBy('ru.pengendali')
+    //         ->get();
 
 
         $result = array(
-            'kelompokhead' => $head,
-            'kelompokpertama' => $pertama,
-            'kelompokkedua' => $kedua,
-            'kelompokketiga' => $ketiga,
-            'kelompokkeempat' => $keempat,
-            'kelompokkelima' => $kelima,
-            'kelompokkeenam' => $keenam,
+            'kegiatan' => $kegiatan,
+            'mataanggaran' => $mata,
+            'keterangan' => $keterangan,
+            // 'kelompokketiga' => $ketiga,
+            // 'kelompokkeempat' => $keempat,
+            // 'kelompokkelima' => $kelima,
+            // 'kelompokkeenam' => $keenam,
+            // 'datalogin' => $dataLogin,
             'datalogin' => $dataLogin,
-            'pengendali' => $Pengendali,
-            'message' => 'ramdanegie',
+            'message' => 'epic',
         );
 
         return $this->respond($result);
@@ -541,125 +565,125 @@ class PerencanaanController extends ApiController {
         }
 
         $data = DB::select(DB::raw("select x.kode, x.kd,x.desk,x.totalblu,x.totalrm,x.tahun,x.revisidivake,x.objectpengendalifk from
-                    (
-											select left(mat.kode,1) + '00000000000000' as kode, ka.kdkelompokhead as kd, upper(ka.kelompokhead) as desk,
-											sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,
-											mat.objectpengendalifk
-											from mataanggaran_t as mat
-											INNER JOIN kelompokanggaranhead_m as ka on ka.id =mat.objectheadfk
-											group by left(mat.kode,1),ka.kdkelompokhead,ka.kelompokhead,mat.tahun,mat.revisidivake,
-											mat.objectpengendalifk
-											--- *** ---
-											union all
-											--- *** ---
-											select left(mat.kode,1)+ '000000000000' as kode,'--' + ka.kdchildpertama as kd,upper(ka.childpertama) as desk,
-											sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
-											from mataanggaran_t as mat
-											INNER JOIN kelompokanggaranpertama_m ka on ka.id =mat.objectchildpertamafk
-											group by left(mat.kode,1),ka.kdchildpertama,ka.childpertama,mat.tahun,mat.revisidivake,mat.objectpengendalifk
-										--- *** ---
-											union all
-											--- *** ---
-											select  left(mat.kode,1) + '0000000000'as kode,
-											case when ka.kodeexternal is not null and  ka.kdchildkedua is not NULL then '----' + ka.kodeexternal + ' || ' + ka.kdchildkedua 
-											when ka.kodeexternal is not null and  ka.kdchildkedua is NULL then '----' + ka.kodeexternal 
-											when ka.kodeexternal is  null and  ka.kdchildkedua is not NULL then '----' + ka.kdchildkedua end 
-											as kd,
+                (
+                        select left(mat.kode,1) + '00000000000000' as kode, ka.kdkelompokhead as kd, upper(ka.kelompokhead) as desk,
+                        sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,
+                        mat.objectpengendalifk
+                        from mataanggaran_t as mat
+                        INNER JOIN kelompokanggaranhead_m as ka on ka.id =mat.objectheadfk
+                        group by left(mat.kode,1),ka.kdkelompokhead,ka.kelompokhead,mat.tahun,mat.revisidivake,
+                        mat.objectpengendalifk
+                        --- *** ---
+                        union all
+                        --- *** ---
+                        select left(mat.kode,1)+ '000000000000' as kode,'--' + ka.kdchildpertama as kd,upper(ka.childpertama) as desk,
+                        sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
+                        from mataanggaran_t as mat
+                        INNER JOIN kelompokanggaranpertama_m ka on ka.id =mat.objectchildpertamafk
+                        group by left(mat.kode,1),ka.kdchildpertama,ka.childpertama,mat.tahun,mat.revisidivake,mat.objectpengendalifk
+                    --- *** ---
+                        union all
+                        --- *** ---
+                        select  left(mat.kode,1) + '0000000000'as kode,
+                        case when ka.kodeexternal is not null and  ka.kdchildkedua is not NULL then '----' + ka.kodeexternal + ' || ' + ka.kdchildkedua 
+                        when ka.kodeexternal is not null and  ka.kdchildkedua is NULL then '----' + ka.kodeexternal 
+                        when ka.kodeexternal is  null and  ka.kdchildkedua is not NULL then '----' + ka.kdchildkedua end 
+                        as kd,
 
-											case when ka.childkedua is not null and  ka.namaexternal is not NULL then  ka.childkedua  + ka.namaexternal 
-											when ka.childkedua is not null and  ka.namaexternal is NULL then  ka.childkedua
-											when ka.childkedua is  null and  ka.namaexternal is not NULL then  ka.namaexternal end 
-											as desk,
-									
-											sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
-											from mataanggaran_t as mat
-											INNER JOIN kelompokanggarankedua_m ka on ka.id =mat.objectchildkeduafk
-											group by left(mat.kode,1),ka.kdchildkedua,ka.childkedua,mat.tahun,mat.revisidivake,ka.kodeexternal,mat.objectpengendalifk,ka.namaexternal
-											--- *** ---
-										 union all
-											--- *** ---
-											 select  left(mat.kode,1) + '00000000'as kode,
-											case when ka.kodeexternal is not null and  ka.kdchildketiga is not NULL then '------' + ka.kodeexternal + ' || ' + ka.kdchildketiga 
-											when ka.kodeexternal is not null and  ka.kdchildketiga is NULL then '------' + ka.kodeexternal 
-											when ka.kodeexternal is  null and  ka.kdchildketiga is not NULL then '------' + ka.kdchildketiga end 
-											as kd,
+                        case when ka.childkedua is not null and  ka.namaexternal is not NULL then  ka.childkedua  + ka.namaexternal 
+                        when ka.childkedua is not null and  ka.namaexternal is NULL then  ka.childkedua
+                        when ka.childkedua is  null and  ka.namaexternal is not NULL then  ka.namaexternal end 
+                        as desk,
+                
+                        sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
+                        from mataanggaran_t as mat
+                        INNER JOIN kelompokanggarankedua_m ka on ka.id =mat.objectchildkeduafk
+                        group by left(mat.kode,1),ka.kdchildkedua,ka.childkedua,mat.tahun,mat.revisidivake,ka.kodeexternal,mat.objectpengendalifk,ka.namaexternal
+                        --- *** ---
+                        union all
+                        --- *** ---
+                            select  left(mat.kode,1) + '00000000'as kode,
+                        case when ka.kodeexternal is not null and  ka.kdchildketiga is not NULL then '------' + ka.kodeexternal + ' || ' + ka.kdchildketiga 
+                        when ka.kodeexternal is not null and  ka.kdchildketiga is NULL then '------' + ka.kodeexternal 
+                        when ka.kodeexternal is  null and  ka.kdchildketiga is not NULL then '------' + ka.kdchildketiga end 
+                        as kd,
 
-											case when ka.childketiga is not null and  ka.namaexternal is not NULL then  ka.childketiga  + ka.namaexternal 
-											when ka.childketiga is not null and  ka.namaexternal is NULL then  ka.childketiga
-											when ka.childketiga is  null and  ka.namaexternal is not NULL then  ka.namaexternal end 
-											as desk,
-											
-											sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
-											from mataanggaran_t as mat
-											INNER JOIN kelompokanggaranketiga_m ka on ka.id =mat.objectchildketigafk
-											group by left(mat.kode,1),ka.kdchildketiga,ka.childketiga,mat.tahun,mat.revisidivake,ka.kodeexternal,mat.objectpengendalifk,ka.namaexternal
+                        case when ka.childketiga is not null and  ka.namaexternal is not NULL then  ka.childketiga  + ka.namaexternal 
+                        when ka.childketiga is not null and  ka.namaexternal is NULL then  ka.childketiga
+                        when ka.childketiga is  null and  ka.namaexternal is not NULL then  ka.namaexternal end 
+                        as desk,
+                        
+                        sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
+                        from mataanggaran_t as mat
+                        INNER JOIN kelompokanggaranketiga_m ka on ka.id =mat.objectchildketigafk
+                        group by left(mat.kode,1),ka.kdchildketiga,ka.childketiga,mat.tahun,mat.revisidivake,ka.kodeexternal,mat.objectpengendalifk,ka.namaexternal
 
-									 union all
-					
-											select  left(mat.kode,1) + '000000'as kode,
-										  case when ka.kodeexternal is not null and  ka.kdchildkeempat is not NULL then '----------' + ka.kodeexternal + ' || ' + ka.kdchildkeempat 
-											when ka.kodeexternal is not null and  ka.kdchildkeempat is NULL then '----------' + ka.kodeexternal 
-											when ka.kodeexternal is  null and  ka.kdchildkeempat is not NULL then '----------' + ka.kdchildkeempat end 
-											as kd,
+                    union all
 
-											case when ka.childkeempat is not null and  ka.namaexternal is not NULL then  ka.childkeempat  + ka.namaexternal 
-											when ka.childkeempat is not null and  ka.namaexternal is NULL then  ka.childkeempat
-											when ka.childkeempat is  null and  ka.namaexternal is not NULL then  ka.namaexternal end 
-											as desk,
-				
-											sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
-											from mataanggaran_t as mat
-											INNER JOIN kelompokanggarankeempat_m ka on ka.id =mat.objectchildkeempatfk
-											group by left(mat.kode,1),ka.kdchildkeempat,ka.childkeempat,mat.tahun,mat.revisidivake,ka.kodeexternal,mat.objectpengendalifk,ka.namaexternal
-											
-										union ALL
+                        select  left(mat.kode,1) + '000000'as kode,
+                        case when ka.kodeexternal is not null and  ka.kdchildkeempat is not NULL then '----------' + ka.kodeexternal + ' || ' + ka.kdchildkeempat 
+                        when ka.kodeexternal is not null and  ka.kdchildkeempat is NULL then '----------' + ka.kodeexternal 
+                        when ka.kodeexternal is  null and  ka.kdchildkeempat is not NULL then '----------' + ka.kdchildkeempat end 
+                        as kd,
 
-											select  left(mat.kode,1) + '0000'as kode,
-									   	case when ka.kodeexternal is not null and  ka.kdchildkelima is not NULL then '------------' + ka.kodeexternal + ' || ' + ka.kdchildkelima 
-											when ka.kodeexternal is not null and  ka.kdchildkelima is NULL then '------------' + ka.kodeexternal 
-											when ka.kodeexternal is  null and  ka.kdchildkelima is not NULL then '------------' + ka.kdchildkelima end 
-											as kd,
+                        case when ka.childkeempat is not null and  ka.namaexternal is not NULL then  ka.childkeempat  + ka.namaexternal 
+                        when ka.childkeempat is not null and  ka.namaexternal is NULL then  ka.childkeempat
+                        when ka.childkeempat is  null and  ka.namaexternal is not NULL then  ka.namaexternal end 
+                        as desk,
 
-											case when ka.childkelima is not null and  ka.namaexternal is not NULL then  ka.childkelima  + ka.namaexternal 
-											when ka.childkelima is not null and  ka.namaexternal is NULL then  ka.childkelima
-											when ka.childkelima is  null and  ka.namaexternal is not NULL then  ka.namaexternal end 
-											as desk,
-														--'--------' + ka.kodeexternal + ' || ' + ka.kdchildkelima as kd,ka.childkelima + ka.namaexternal as desk,
-											sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
-											from mataanggaran_t as mat
-											INNER JOIN kelompokanggarankelima_m ka on ka.id =mat.objectchildkelimafk
-											group by left(mat.kode,1),ka.kdchildkelima,ka.childkelima,mat.tahun,mat.revisidivake,ka.kodeexternal,mat.objectpengendalifk,ka.namaexternal
+                        sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
+                        from mataanggaran_t as mat
+                        INNER JOIN kelompokanggarankeempat_m ka on ka.id =mat.objectchildkeempatfk
+                        group by left(mat.kode,1),ka.kdchildkeempat,ka.childkeempat,mat.tahun,mat.revisidivake,ka.kodeexternal,mat.objectpengendalifk,ka.namaexternal
+                        
+                    union ALL
 
-										union ALL
+                        select  left(mat.kode,1) + '0000'as kode,
+                    case when ka.kodeexternal is not null and  ka.kdchildkelima is not NULL then '------------' + ka.kodeexternal + ' || ' + ka.kdchildkelima 
+                        when ka.kodeexternal is not null and  ka.kdchildkelima is NULL then '------------' + ka.kodeexternal 
+                        when ka.kodeexternal is  null and  ka.kdchildkelima is not NULL then '------------' + ka.kdchildkelima end 
+                        as kd,
 
-											 select  left(mat.kode,1) + '00'as kode,
-										case when ka.kodeexternal is not null and  ka.kdchildkeenam is not NULL then '--------------' + ka.kodeexternal + ' || ' + ka.kdchildkeenam 
-											when ka.kodeexternal is not null and  ka.kdchildkeenam is NULL then '--------------' + ka.kodeexternal 
-											when ka.kodeexternal is  null and  ka.kdchildkeenam is not NULL then '--------------' + ka.kdchildkeenam end 
-											as kd,
+                        case when ka.childkelima is not null and  ka.namaexternal is not NULL then  ka.childkelima  + ka.namaexternal 
+                        when ka.childkelima is not null and  ka.namaexternal is NULL then  ka.childkelima
+                        when ka.childkelima is  null and  ka.namaexternal is not NULL then  ka.namaexternal end 
+                        as desk,
+                                    --'--------' + ka.kodeexternal + ' || ' + ka.kdchildkelima as kd,ka.childkelima + ka.namaexternal as desk,
+                        sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
+                        from mataanggaran_t as mat
+                        INNER JOIN kelompokanggarankelima_m ka on ka.id =mat.objectchildkelimafk
+                        group by left(mat.kode,1),ka.kdchildkelima,ka.childkelima,mat.tahun,mat.revisidivake,ka.kodeexternal,mat.objectpengendalifk,ka.namaexternal
 
-											case when ka.childkeenam is not null and  ka.namaexternal is not NULL then  ka.childkeenam  + ka.namaexternal 
-											when ka.childkeenam is not null and  ka.namaexternal is NULL then  ka.childkeenam
-											when ka.childkeenam is  null and  ka.namaexternal is not NULL then  ka.namaexternal end 
-											as desk,
-									--'----------' + ka.kodeexternal + ' || ' + ka.kdchildkeenam as kd,ka.childkeenam + ka.namaexternal as desk,
-											sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
-											from mataanggaran_t as mat
-											INNER JOIN kelompokanggarankeenam_m ka on ka.id =mat.objectchildkeenamfk
-											group by left(mat.kode,1),ka.kdchildkeenam,ka.childkeenam,mat.tahun,mat.revisidivake,ka.kodeexternal,mat.objectpengendalifk,ka.namaexternal  
-								union ALL
-										select left(mat.kode,9) + '~' + norec as kode,'---------------'  as kd,mat.mataanggaran as desk,
-                    sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
-                    from mataanggaran_t as mat
-                    group by left(mat.kode,9) + '~' +  norec,mat.kode,mat.mataanggaran,mat.tahun,mat.revisidivake,mat.objectpengendalifk
-                  ) as x
-                    $tahun
-                    $revisiDiva
-                    $Pengendali      
-                GROUP BY x.kode,x.kd,x.desk,x.totalblu,x.totalrm,x.tahun,x.revisidivake,x.objectpengendalifk
+                    union ALL
+
+                            select  left(mat.kode,1) + '00'as kode,
+                    case when ka.kodeexternal is not null and  ka.kdchildkeenam is not NULL then '--------------' + ka.kodeexternal + ' || ' + ka.kdchildkeenam 
+                        when ka.kodeexternal is not null and  ka.kdchildkeenam is NULL then '--------------' + ka.kodeexternal 
+                        when ka.kodeexternal is  null and  ka.kdchildkeenam is not NULL then '--------------' + ka.kdchildkeenam end 
+                        as kd,
+
+                        case when ka.childkeenam is not null and  ka.namaexternal is not NULL then  ka.childkeenam  + ka.namaexternal 
+                        when ka.childkeenam is not null and  ka.namaexternal is NULL then  ka.childkeenam
+                        when ka.childkeenam is  null and  ka.namaexternal is not NULL then  ka.namaexternal end 
+                        as desk,
+                --'----------' + ka.kodeexternal + ' || ' + ka.kdchildkeenam as kd,ka.childkeenam + ka.namaexternal as desk,
+                        sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
+                        from mataanggaran_t as mat
+                        INNER JOIN kelompokanggarankeenam_m ka on ka.id =mat.objectchildkeenamfk
+                        group by left(mat.kode,1),ka.kdchildkeenam,ka.childkeenam,mat.tahun,mat.revisidivake,ka.kodeexternal,mat.objectpengendalifk,ka.namaexternal  
+            union ALL
+                    select left(mat.kode,9) + '~' + norec as kode,'---------------'  as kd,mat.mataanggaran as desk,
+                sum(mat.saldoawalblu) as totalblu,sum(mat.saldoawalrm) as totalrm ,mat.tahun as tahun,mat.revisidivake,mat.objectpengendalifk
+                from mataanggaran_t as mat
+                group by left(mat.kode,9) + '~' +  norec,mat.kode,mat.mataanggaran,mat.tahun,mat.revisidivake,mat.objectpengendalifk
+                ) as x
+                $tahun
+                $revisiDiva
+                $Pengendali      
+            GROUP BY x.kode,x.kd,x.desk,x.totalblu,x.totalrm,x.tahun,x.revisidivake,x.objectpengendalifk
             order by x.kd asc;
-            
-            "));
+        
+        "));
 
         foreach ($data as $key => $row) {
             $count[$key] = $row->kd;
@@ -1422,8 +1446,7 @@ class PerencanaanController extends ApiController {
             if ($request['strukverifikasi']['norec'] != '') {
 
                 //#struk Verifikasi
-                $noVerifikasi = $this->generateCode(new StrukVerifikasi(),
-                    'noverifikasi', 10, 'CA'.$this->getDateTime()->format('Y'));
+                $noVerifikasi = $this->generateCode(new StrukVerifikasi(),'noverifikasi', 10, 'CA'.$this->getDateTime()->format('Y'));
                 $dataSV = new StrukVerifikasiAnggaran();
                 $dataSV->norec = $dataSV->generateNewId();
                 $dataSV->noverifikasi = $noVerifikasi;
@@ -1776,5 +1799,216 @@ class PerencanaanController extends ApiController {
             );
         }
         return $this->respond($data);
+    }
+    public function saveKegiatanAnggaran(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+       try{
+            if ($request['id']==''){
+                $newID = KegiatanAnggaran::max('id');
+
+                $MA = new KegiatanAnggaran();
+                $MA->id =  $newID + 1;
+                $MA->norec = $newID + 1;
+                $MA->kdprofile = $idProfile;
+                $MA->statusenabled = true;
+
+            }else{
+                $MA= KegiatanAnggaran::where('id',$request['id'])
+                    ->where('kdprofile', $idProfile)
+                    ->first();
+            }
+            $MA->kode = $request['kode'];
+            $MA->keterangan = $request['keterangan'];
+            $MA->kodeexternal = $request['kodeexternal'];
+            $MA->namaexternal = $request['namaexternal'];
+            $MA->reportdisplay = $request['reportdisplay'];
+            $MA->tahun = $request['tahun'];
+            $MA->tahap = $request['tahap'];
+            $MA->indikatormasuk = $request['indikatormasuk'];
+            $MA->indikatorkeluaran = $request['indikatorkeluaran'];
+            $MA->indikatorhasil = $request['indikatorhasil'];
+            $MA->targetmasuk = $request['targetmasuk'];
+            $MA->targetkeluaran = $request['targetkeluaran'];
+            $MA->targethasil = $request['targethasil'];
+            $MA->div = $request['div'];
+
+            $MA->save();
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    
+    public function saveMataAnggaran(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+       try{
+            if ($request['id']==''){
+                $newID = MataAnggaran::max('id');
+
+                $MA = new MataAnggaran();
+                $MA->id =  $newID + 1;
+                $MA->norec = $newID + 1;
+                $MA->kdprofile = $idProfile;
+                $MA->statusenabled = true;
+
+            }else{
+                $MA= MataAnggaran::where('id',$request['id'])
+                    ->where('kdprofile', $idProfile)
+                    ->first();
+            }
+            $MA->reportdisplay = $request['reportdisplay'];
+            $MA->kodemataanggaran = $request['kodemataanggaran'];
+            $MA->namamataanggaran = $request['namamataanggaran'];
+            $MA->keterangan = $request['keterangan'];
+            $MA->kodeexternal = $request['kodeexternal'];
+            $MA->namaexternal = $request['namaexternal'];
+
+            $MA->save();
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveKeteranganBelanja(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+       try{
+            if ($request['norec']==''){
+                $MA = new KeteranganBelanja();
+                $norecKS = $MA->generateNewId();
+                $MA->norec = $norecKS + 1;
+                $MA->kdprofile = $idProfile;
+                $MA->statusenabled = true;
+
+            }else{
+                $MA= KeteranganBelanja::where('norec',$request['norec'])
+                    ->where('kdprofile', $idProfile)
+                    ->first();
+            }
+            $MA->objectkegiatanfk = $request['objectkegiatanfk'];
+            $MA->objectmataanggaranfk = $request['objectmataanggaranfk'];
+            $MA->keteranganbelanja = $request['keteranganbelanja'];
+            $MA->nourut = $request['nourut'];
+            $MA->jml = $request['jml'];
+            $MA->hargasatuan = $request['hargasatuan'];
+            $MA->subtotal = $request['subtotal'];
+            $MA->objectasalbarangfk = $request['objectasalbarangfk'];
+
+            $MA->save();
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getTotalMataAnggaran(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = DB::select(DB::raw("
+                select ma.kodemataanggaran,ma.namamataanggaran,cast(sum(kt.subtotal) as float) as total 
+                from mataanggaran_m ma
+                left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+                where length(ma.kodemataanggaran)= 9 and ma.kdprofile=$idProfile
+                group by  ma.kodemataanggaran,ma.namamataanggaran;
+            ")
+        );
+        $dataAsalProduk = \DB::table('asalproduk_m as ap')
+            ->select('ap.id','ap.asalproduk')
+            ->where('ap.statusenabled',true)
+            ->orderBy('ap.asalproduk')
+            ->get();
+
+        $result = array(
+            'data' => $data,
+            'asalproduk' => $dataAsalProduk,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+    public function getKeteranganBelanja(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+       
+        $data = \DB::table('keteranganbelanja_t as ap')
+        ->JOIN ('asalproduk_m as ad','ad.id','=','ap.objectasalprodukfk')
+            ->select('ap.*','ad.asalproduk')
+            ->where('ap.statusenabled',true)
+            ->where('ap.objectkegiatanfk',$request['objectkegiatanfk'])
+            ->get();
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
     }
 }
