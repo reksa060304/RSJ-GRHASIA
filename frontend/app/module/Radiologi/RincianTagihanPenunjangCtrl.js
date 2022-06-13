@@ -212,8 +212,41 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.hideDokterPengirim2 = true;
                 }
             }
+            var onDataBound = function (e) {
+
+                var kendoGrid = $("#kGrids").data("kendoGrid"); // get the grid widget
+                var rows = e.sender.element.find("tbody tr"); // get all rows
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    var expertise = kendoGrid.dataItem(row).expertise;
+                    console.log(expertise);
+                    if (expertise != null) {
+                        if (expertise == '✔') {
+                            $(row.cells[0]).addClass("green");
+                            $(row.cells[1]).addClass("green");
+                            $(row.cells[2]).addClass("green");
+                            $(row.cells[3]).addClass("green");
+                            $(row.cells[4]).addClass("green");
+                            $(row.cells[5]).addClass("green");
+                            $(row.cells[6]).addClass("green");
+                            $(row.cells[7]).addClass("green");
+                            $(row.cells[8]).addClass("green");
+                            $(row.cells[9]).addClass("green");
+                            $(row.cells[10]).addClass("green");
+                            $(row.cells[11]).addClass("green");
+                            $(row.cells[12]).addClass("green");
+                            $(row.cells[13]).addClass("green");
+                            $(row.cells[14]).addClass("green");
+                            $(row.cells[15]).addClass("green");
+                            $(row.cells[16]).addClass("green");
+                            
+                        }
+                    }
+                }
+            }
 
             $scope.columnGrid = {
+                dataBound: onDataBound,
                 columns: [
                     {
                         "title": "<input type='checkbox' class='checkbox' ng-click='selectUnselectAllRow()' />",
