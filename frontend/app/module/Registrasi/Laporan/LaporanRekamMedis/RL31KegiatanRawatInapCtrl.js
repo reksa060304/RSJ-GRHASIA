@@ -134,6 +134,10 @@ define(['initialize'], function (initialize) {
                     datas[32].jumlahtiga = totaljumlahtiga
                     datas[32].jumlahkhusus = totaljumlahkhusus
 
+                    datas[30].no = 77;
+                    datas[31].no = 88;
+                    datas[32].no = 99;
+
                     $scope.sourceLaporan = new kendo.data.DataSource({
 
                         data: datas,
