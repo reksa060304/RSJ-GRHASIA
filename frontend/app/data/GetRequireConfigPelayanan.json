@@ -3223,6 +3223,10 @@
         {
             "nameDep": "RL2KetenagaanCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL2KetenagaanCtrl"
+        },
+        {
+            "nameDep": "AsesmenAwalKeperawatanRIGrhCtrl",
+            "urlDep": "module/EMR/AsesmenAwalKeperawatanRIGrhCtrl"
         }
     ]
 }
