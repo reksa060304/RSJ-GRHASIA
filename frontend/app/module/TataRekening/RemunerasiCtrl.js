@@ -5,6 +5,7 @@ define(['initialize'], function (initialize) {
 			$scope.item = {};
 			$scope.now = new Date();
 			$scope.item.jumlahRows = 50;
+            $scope.dataRemun = [];
 
 			//loadCombo();
 
@@ -303,38 +304,43 @@ define(['initialize'], function (initialize) {
 
 			$scope.columnProduk = [
 				{
-					"field": "",
+					"field": "namalengkap",
 					"title": "Nama Pegawai",
                     "width": '150px'			
 				},
 				{
-					"field": "",
+					"field": "iki",
 					"title": "IKI",
                     "width": '150px'
 				},
 				{
-					"field": "",
+					"field": "iku",
 					"title": "IKU",
                     "width": '150px'
 				},
 				{
-					"field": "",
+					"field": "prosen",
 					"title": "Prosen",
                     "width": '150px'
 				},
 				{
-					"field": "",
+					"field": "grade",
 					"title": "Grade",
                     "width": '150px'
 				},
 				{
-					"field": "",
+					"field": "mk",
 					"title": "MK",
                     "width": '150px'
 				},
 				{
-					"field": "",
+					"field": "point_tt",
 					"title": "Point TT",
+                    "width": '150px'
+				},
+                {
+					"field": "tglinput",
+					"title": "Tanggal Input",
                     "width": '150px'
 				},			
 			];
@@ -393,6 +399,103 @@ define(['initialize'], function (initialize) {
 			$scope.KelBPJS = function () {
 				$state.go('KelompokProdukBPJS')
 			}
+
+            $("#upload").kendoUpload({
+                localization: {
+                    "select": "Import"
+                },
+
+                select: function (e) {
+                    var ALLOWED_EXTENSIONS = [".xlsx"];
+                    var extension = e.files[0].extension.toLowerCase();
+                    if (ALLOWED_EXTENSIONS.indexOf(extension) == -1) {
+                        toastr.error('Mohon Pilih File Excel (.xls)')
+                        e.preventDefault();
+                        // return
+                    }
+                    var file = e.files[0];
+                    var stringFile = e.files[0].name
+                    var strFile = stringFile.split('.')
+                    var nmFileArr = strFile[0].split('_')
+                    // if (nmFileArr[1] != undefined && nmFileArr[2] != undefined && nmFileArr[3] != undefined) {
+                    //     $scope.item.tanggal = new Date(moment(nmFileArr[1]).format('YYYY-MM-DD HH:mm'));
+                    //     $scope.item.ruangan = { id: nmFileArr[2], namaruangan: nmFileArr[3] }
+                    // } else {
+                    //     toastr.info('SO_Tgl_KodeRuangan_NamaRuangan.xls', 'Contoh Nama File');
+                    //     toastr.error('Nama File Tidak Sesuai', 'Info');
+
+                    //     return;
+                    // }
+
+                    for (var i = 0; i < e.files.length; i++) {
+                        var file = e.files[i].rawFile;
+
+                        if (file) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                var data = e.target.result;
+                                var workbook = XLSX.read(data, {
+                                    type: 'binary'
+                                });
+
+                                workbook.SheetNames.forEach(function (sheetName) {
+                                    // Here is your object
+                                    var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                                    var json_object = JSON.stringify(XL_row_object);
+                                    console.log(XL_row_object);
+                                    var objSave =
+                                    {
+                                        data: XL_row_object,
+                                        // ruanganfk: $scope.item.ruangan.id
+                                    }
+
+                                    console.log(XL_row_object)
+
+                                    medifirstService.post('tatarekening/save-poin-remun', objSave).then(function (data) {
+                                        $scope.isEdit = true;
+                                        // data.data.detail.forEach(function(x){
+                                        //     x.stokReal = x.qtyProduk;
+                                        // })
+                                        $scope.btnTombol = data.data.save_cmd
+                                        $scope.dataSource = new kendo.data.DataSource({
+                                            data: data.data.detail,
+                                            schema: {
+                                                model: {
+                                                    fields: {
+                                                        
+                                                    }
+                                                }
+                                            },
+                                            // pageSize: 20,
+                                            change: function (e) {
+                                                console.log("change :" + e.action);
+                                                if (e.field && e.action === "itemchange") {
+                                                    //debugger;
+                                                    //$scope.current.selisih = $scope.current.stokReal - $scope.current.qtyProduk;
+                                                    // if ($scope.current.selisih<0)
+                                                    //     $scope.current.selisih = $scope.current.selisih*=-1;
+                                                    $scope.dataRemun.fetch();
+                                                }
+                                            }
+
+                                            
+                                        });
+                                        console.log($scope.dataRemun)
+                                    })
+                                })
+
+                            };
+
+                            reader.onerror = function (ex) {
+                                console.log(ex);
+                            };
+
+                            reader.readAsBinaryString(file);
+                        }
+                    }
+                },
+
+            })
 		}
 	]);
 });

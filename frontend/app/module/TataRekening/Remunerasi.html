@@ -36,9 +36,17 @@
 	</div>
 	<div class="grid_12" style="margin-top: 20px;">		
 		<div class="grid_8"></div>
-		<div class="grid_2">
-			<button class="c-button" ng-click="import()">Import</button>
-		</div>
+		<!-- <div class="grid_2">
+			<button class="c-button" ng-click="import()">
+                
+            </button>
+		</div> -->
+        <div class="grid_2">
+            <input id="upload" type="file" kendo-upload
+                k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }" k-multiple="false"
+                k-select="onUploadExcel" />
+        </div>
+        
 		<div class="grid_2">
 			<button class="c-button" ng-click="input()">Input</button>
 		</div>
