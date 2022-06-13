@@ -208,6 +208,10 @@
     {
       "nameDep": "RemunerasiCtrl",
       "urlDep": "module/TataRekening/RemunerasiCtrl"
+    },
+    {
+      "nameDep": "DanaPaguCtrl",
+      "urlDep": "module/TataRekening/DanaPaguCtrl"
     }
   ]
 }

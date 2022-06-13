@@ -1,0 +1,307 @@
+define(['initialize'], function (initialize) {
+	'use strict';
+	initialize.controller('DanaPaguCtrl', ['$scope', '$state', 'CacheHelper', 'MedifirstService','$timeout',
+		function ($scope, $state, cacheHelper, medifirstService, $timeout) {
+			$scope.item = {};
+			$scope.iteminput = {};
+			$scope.now = new Date();
+			
+			// var tgl = dateHelper.getDaysofMonth()
+			// console.log(tgl);
+			 $scope.monthUngkul = {
+			 	start: "year",
+			 	depth: "year"
+			 }
+			 $scope.yearUngkul = {
+			 	start: "decade",
+			 	depth: "decade"
+			 }
+			$scope.item.jumlahRows = 50;
+
+            $scope.dataRemun = [];
+			var norec = "";
+			loadData()
+
+			$scope.SearchData = function () {
+				loadData()
+			}
+			function loadData(){
+				var bulan = moment($scope.item.bulan).format('MM');
+				var tahun = moment($scope.item.tahun).format('YYYY');
+				console.log(bulan);
+				console.log(tahun);
+				medifirstService.get('tatarekening/get-daftar-dana-pagu?bulan='+ bulan + "&tahun="+ tahun).then(function (e) {
+					console.log(e.data.data);
+					$scope.dataSource = new kendo.data.DataSource({
+						data: e.data.data,
+						pageSize: 10,
+						total: e.data.data.length,
+						serverPaging: false,
+						schema: {
+							model: {
+								fields: {
+								
+								}
+							}
+						}
+					});
+				})
+			}
+			$scope.ubahDataIndex = function () {
+				$scope.popupDetailIndex.center().open();
+				
+			}
+			$scope.batal = function () {
+				$scope.current = undefined
+				$scope.popupDetailIndex.close();
+				$scope.item = {}
+			}
+
+			$scope.save = function () {
+				let json = {
+					'dana': $scope.item.dana,
+					'diklat': $scope.item.diklat,
+                    'periode': moment($scope.item.periode).format('YYYY-MM-DD'),
+				}
+                
+                        medifirstService.post('tatarekening/save-dana-pagu', json).then(function (e) {
+                            // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
+                            // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
+                            // 	$scope.itm.pegawai.namalengkap).then(function (res) {})
+                            
+                            loadData()
+                            $scope.batal()
+        
+                        })
+				
+				
+
+			}
+		
+
+			$scope.klik = function (current) {
+				console.log(current);
+				norec=current.norec
+			}
+			$scope.columnProduk = [
+				{
+					"field": "dana",
+					"title": "DANA",
+                    "width": '200px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: dana #', 'Rp.')}}</span>",			
+				},
+				{
+					"field": "diklat",
+					"title": "DIKLAT",
+                    "width": '200px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: diklat #', 'Rp.')}}</span>",
+				},
+				{
+					"field": "p1",
+					"title": "P1",
+                    "width": '150px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: p1 #', 'Rp.')}}</span>",
+				},
+				{
+					"field": "iki",
+					"title": "IKI",
+                    "width": '150px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: iki #', 'Rp.')}}</span>",
+				},
+				{
+					"field": "iku",
+					"title": "IKU",
+                    "width": '150px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: iku #', 'Rp.')}}</span>",
+				},
+				{
+					"field": "tt",
+					"title": "PointTT",
+                    "width": '150px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: tt #', 'Rp.')}}</span>",
+				},
+				{
+					"field": "ffs",
+					"title": "FFS",
+                    "width": '150px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: ffs #', 'Rp.')}}</span>",
+				},
+                {
+					"field": "struk",
+					"title": "STRUK",
+                    "width": '150px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: struk #', 'Rp.')}}</span>",
+				},
+                {
+					"field": "jtl",
+					"title": "JTL",
+                    "width": '150px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: jtl #', 'Rp.')}}</span>",
+				},			
+                {
+					"field": "p3",
+					"title": "P3",
+                    "width": '150px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: p3 #', 'Rp.')}}</span>",
+				},
+			];
+			$scope.mainGridOptions = {
+				pageable: true,
+				columns: $scope.columnProduk,
+				editable: "popup",
+				selectable: "row",
+				scrollable: false,
+				filterable: true,
+				// filterMenuInit: function (e){
+				// var grid = e.sender;
+				// e.container.data("kendoPopup").bind("open", function() {
+
+				// 	$scope.dataSource.sort({field: e.field, dir: "asc"});
+
+
+				// 	var filter = e.sender.dataSource.filter();
+
+				// 	var query = new kendo.data.Query(grid.dataSource.data());
+				// 	var data = query.filter(filter).data;
+
+				// 	var uniqueDsResult = removeDuplicates(data, e.field);
+
+
+				// 	$scope.dataSource.data(uniqueDsResult);
+
+
+				// })
+				// },
+				toolbar: [
+                    "excel",
+
+                ],
+                excel: {
+                    fileName: "MasterProduk.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    // sheet.frozenRows = 2;
+                    //sheet.mergedCells = ["A1:H1"];
+                    sheet.name = "Master Produk";
+
+                    // var myHeaders = [{
+                    //     value: "Master Produk",
+                    //     fontSize: 20,
+                    //     textAlign: "center",
+                    //     background: "#ffffff",
+                    //     // color:"#ffffff"
+                    // }];
+
+                    // sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+                }				
+			};
+			$scope.KelBPJS = function () {
+				$state.go('KelompokProdukBPJS')
+			}
+
+            $scope.formatRupiah = function (value, currency) {
+                return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            }
+
+            $("#upload").kendoUpload({
+                localization: {
+                    "select": "Import"
+                },
+
+                select: function (e) {
+                    var ALLOWED_EXTENSIONS = [".xlsx"];
+                    var extension = e.files[0].extension.toLowerCase();
+                    if (ALLOWED_EXTENSIONS.indexOf(extension) == -1) {
+                        toastr.error('Mohon Pilih File Excel (.xls)')
+                        e.preventDefault();
+                        // return
+                    }
+                    var file = e.files[0];
+                    var stringFile = e.files[0].name
+                    var strFile = stringFile.split('.')
+                    var nmFileArr = strFile[0].split('_')
+                    // if (nmFileArr[1] != undefined && nmFileArr[2] != undefined && nmFileArr[3] != undefined) {
+                    //     $scope.item.tanggal = new Date(moment(nmFileArr[1]).format('YYYY-MM-DD HH:mm'));
+                    //     $scope.item.ruangan = { id: nmFileArr[2], namaruangan: nmFileArr[3] }
+                    // } else {
+                    //     toastr.info('SO_Tgl_KodeRuangan_NamaRuangan.xls', 'Contoh Nama File');
+                    //     toastr.error('Nama File Tidak Sesuai', 'Info');
+
+                    //     return;
+                    // }
+
+                    for (var i = 0; i < e.files.length; i++) {
+                        var file = e.files[i].rawFile;
+
+                        if (file) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                var data = e.target.result;
+                                var workbook = XLSX.read(data, {
+                                    type: 'binary'
+                                });
+
+                                workbook.SheetNames.forEach(function (sheetName) {
+                                    // Here is your object
+                                    var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                                    var json_object = JSON.stringify(XL_row_object);
+                                    console.log(XL_row_object);
+                                    var objSave =
+                                    {
+                                        data: XL_row_object,
+                                        // ruanganfk: $scope.item.ruangan.id
+                                    }
+
+                                    console.log(XL_row_object)
+
+                                    medifirstService.post('tatarekening/save-poin-remun', objSave).then(function (data) {
+                                        loadData()
+                                        // $scope.isEdit = true;
+                                        // // data.data.detail.forEach(function(x){
+                                        // //     x.stokReal = x.qtyProduk;
+                                        // // })
+                                        // $scope.btnTombol = data.data.save_cmd
+                                        // $scope.dataSource = new kendo.data.DataSource({
+                                        //     data: data.data.detail,
+                                        //     schema: {
+                                        //         model: {
+                                        //             fields: {
+                                                        
+                                        //             }
+                                        //         }
+                                        //     },
+                                        //     // pageSize: 20,
+                                        //     change: function (e) {
+                                        //         console.log("change :" + e.action);
+                                        //         if (e.field && e.action === "itemchange") {
+                                        //             //debugger;
+                                        //             //$scope.current.selisih = $scope.current.stokReal - $scope.current.qtyProduk;
+                                        //             // if ($scope.current.selisih<0)
+                                        //             //     $scope.current.selisih = $scope.current.selisih*=-1;
+                                        //             $scope.dataRemun.fetch();
+                                        //         }
+                                        //     }
+
+                                            
+                                        // });
+                                        // console.log($scope.dataRemun)
+                                    })
+                                })
+
+                            };
+
+                            reader.onerror = function (ex) {
+                                console.log(ex);
+                            };
+
+                            reader.readAsBinaryString(file);
+                        }
+                    }
+                },
+
+            })
+		}
+	]);
+});
