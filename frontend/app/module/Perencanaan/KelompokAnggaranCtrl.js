@@ -7,210 +7,808 @@ define(['initialize'], function (initialize) {
             $scope.now = new Date();
             $scope.item = {};
             $scope.dataAnggaranSelected = {};
+            var DataKegiatan= [];
+            var DataMataAnggaran= [];
+            var DataTotalMataAnggaran = [];
+            var DataKeteranganBelanja = [];
+
+            $scope.rcn = {};
+            $scope.rcn.mataAnggaranlv1 = ""
+            $scope.rcn.mataAnggaranlv2 = ""
+            $scope.rcn.mataAnggaranlv3 = ""
+            $scope.rcn.totallv1 = ""
+            $scope.rcn.totallv2 = ""
+            $scope.rcn.totallv3 = ""
+            
+            $scope.yearUngkul = {
+                start: "decade",
+                depth: "decade"
+            }
             loadDataGrid();
             function loadDataGrid() {
                 $scope.isRouteLoading = true;
+                medifirstService.get("perencanaan/get-total-mata-anggaran").then(function (e) {
+                    DataTotalMataAnggaran = e.data.data
+                    $scope.listAsalProduk = e.data.asalproduk
+                    $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                        data: DataTotalMataAnggaran
+                    });
+                    
+                })
                 medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                     $scope.isRouteLoading = false
-                    $scope.dataSourceHead = e.data.kelompokhead
-                    $scope.dataSourcePertama = e.data.kelompokpertama
-                    $scope.dataSourceKedua = e.data.kelompokkedua
-                    $scope.dataSourceKetiga = e.data.kelompokketiga
-                    $scope.dataSourceKeempat = e.data.kelompokkeempat
-                     $scope.dataSourceLima = e.data.kelompokkelima
-                    $scope.dataSourceEnam = e.data.kelompokkeenam
+                    $scope.dataSourceKegiatan = e.data.kegiatan
+                    // $scope.dataSourceDetailMT = e.data.mataanggaran
+                    DataKegiatan = e.data.kegiatan
+                    DataMataAnggaran = e.data.mataanggaran
+                    $scope.dataSourceMataAnggaran = e.data.mataanggaran
+                    for (let index = 0; index < e.data.keterangan.length; index++) {
+                        const element = e.data.keterangan[index];
+                        if(element.namafield == "namaPemda"){
+                           $scope.item.namaPemda = element.nilaifield
+                        }
+                        if(element.namafield == "kepalaDaerah"){
+                           $scope.item.kepalaDaerah  = element.nilaifield
+                        }
+                        if(element.namafield == "namaKepalaDaerah"){
+                           $scope.item.namaKepalaDaerah  = element.nilaifield
+                        }
+                        if(element.namafield == "namaSekda"){
+                           $scope.item.namaSekda  = element.nilaifield
+                        }
+                        if(element.namafield == "nipSekda"){
+                           $scope.item.nipSekda  = element.nilaifield
+                        }
+                        if(element.namafield == "namaPpkd"){
+                           $scope.item.namaPpkd  = element.nilaifield
+                        }
+                        if(element.namafield == "nipPpkd"){
+                           $scope.item.nipPpkd  = element.nilaifield
+                        }
+                        if(element.namafield == "pengelolaKeuanganBlud"){
+                           $scope.item.pengelolaKeuanganBlud  = element.nilaifield
+                           $scope.item.organisasi  = element.nilaifield
+                        }
+                        if(element.namafield == "namaKepalaBlud"){
+                           $scope.item.namaKepalaBlud  = element.nilaifield
+                        }
+                        if(element.namafield == "alamat"){
+                           $scope.item.alamat  = element.nilaifield
+                        }
+                        if(element.namafield == "kota"){
+                           $scope.item.kota  = element.nilaifield
+                        }
+                        if(element.namafield == "telepon"){
+                           $scope.item.telepon  = element.nilaifield
+                        }
+                        if(element.namafield == "faximile"){
+                           $scope.item.faximile  = element.nilaifield
+                        }
+                        if(element.namafield == "tahunAnggaran"){
+                           $scope.item.tahunAnggaran  = element.nilaifield
+                        }
+                        if(element.namafield == "tahapAktiv"){
+                           $scope.item.tahapAktiv  = element.nilaifield
+                        }
+                        if(element.namafield == "nomorNpwp"){
+                           $scope.item.nomorNpwp = element.nilaifield
+                        }
+
+                    }
+                    // $scope.dataSourceKedua = e.data.kelompokkedua
+                    // $scope.dataSourceKetiga = e.data.kelompokketiga
+                    // $scope.dataSourceKeempat = e.data.kelompokkeempat
+                    //  $scope.dataSourceLima = e.data.kelompokkelima
+                    // $scope.dataSourceEnam = e.data.kelompokkeenam
                 })
             }    
-            $scope.columnKelompokHead = [
-                {
-                    "field": "id",
-                    "title": "Id",
-                    "width": "50px"
-                },
-                {
-                    "field": "kdkelompokhead",
-                    "title": "Kode",
-                    "width": "80px"
-                },
-                {
-                    "field": "kelompokhead",
-                    "title": "Kelompok Head",
-                    "width": "200px"
-                },
-                {
-                    "field": "kodeexternal",
-                    "title": "Kode External",
-                    "width": "80px"
-                },
-                {
-                    "field": "namaexternal",
-                    "title": "Nama External",
-                    "width": "200px"
-                }
-            ];
-            $scope.columnKelompokPertama = [
-                {
-                    "field": "id",
-                    "title": "Id",
-                    "width": "50px"
-                },
-                {
-                    "field": "kdchildpertama",
-                    "title": "Kode",
-                    "width": "80px"
-                },
-                {
-                    "field": "childpertama",
-                    "title": "Kelompok Pertama",
-                    "width": "200px"
-                },
-                {
-                    "field": "kodeexternal",
-                    "title": "Kode External",
-                    "width": "80px"
-                },
-                {
-                    "field": "namaexternal",
-                    "title": "Nama External",
-                    "width": "200px"
-                }
-            ];
-            $scope.columnKelompokKedua = [
-                {
-                    "field": "id",
-                    "title": "Id",
-                    "width": "50px"
-                },
-                {
-                    "field": "kdchildkedua",
-                    "title": "Kode",
-                    "width": "80px"
-                },
-                {
-                    "field": "childkedua",
-                    "title": "Kelompok Kedua",
-                    "width": "200px"
-                },
-                {
-                    "field": "kodeexternal",
-                    "title": "Kode External",
-                    "width": "80px"
-                },
-                {
-                    "field": "namaexternal",
-                    "title": "Nama External",
-                    "width": "200px"
-                }
-            ];
-            $scope.columnKelompokKetiga = [
-                {
-                    "field": "id",
-                    "title": "Id",
-                    "width": "50px"
-                },
-                {
-                    "field": "kdchildketiga",
-                    "title": "Kode",
-                    "width": "80px"
-                },
-                {
-                    "field": "childketiga",
-                    "title": "Kelompok Ketiga",
-                    "width": "200px"
-                },
-                {
-                    "field": "kodeexternal",
-                    "title": "Kode External",
-                    "width": "80px"
-                },
-                {
-                    "field": "namaexternal",
-                    "title": "Nama External",
-                    "width": "200px"
-                }
-            ];
-            $scope.columnKelompokKeempat = [
-                {
-                    "field": "id",
-                    "title": "Id",
-                    "width": "50px"
-                },
-                {
-                    "field": "kdchildkeempat",
-                    "title": "Kode",
-                    "width": "80px"
-                },
-                {
-                    "field": "childkeempat",
-                    "title": "Kelompok Keempat",
-                    "width": "200px"
-                },
-                {
-                    "field": "kodeexternal",
-                    "title": "Kode External",
-                    "width": "80px"
-                },
-                {
-                    "field": "namaexternal",
-                    "title": "Nama External",
-                    "width": "200px"
-                }
-            ];
-              $scope.columnKelompokLima = [
-                {
-                    "field": "id",
-                    "title": "Id",
-                    "width": "50px"
-                },
-                {
-                    "field": "kdchildkelima",
-                    "title": "Kode",
-                    "width": "80px"
-                },
-                {
-                    "field": "childkelima",
-                    "title": "Kelompok Kelima",
-                    "width": "200px"
-                },
-                {
-                    "field": "kodeexternal",
-                    "title": "Kode External",
-                    "width": "80px"
-                },
-                {
-                    "field": "namaexternal",
-                    "title": "Nama External",
-                    "width": "200px"
-                }
-            ];
+            
+            // $scope.popupEntry.center().open();
+            $scope.addKegiatan = function(){
+                $scope.popupKegiatan.center().open();
+            }
+            $scope.addSubKegiatan = function(){
+                $scope.popupSubKegiatan.center().open();
+            }
+            $scope.addSubSubKegiatan = function(){
+                $scope.popupSubSubKegiatan.center().open();
+            }
+            $scope.addProgram = function(){
+                $scope.popupProgram.center().open();
+            }
+            $scope.Tambah = function(){
+                $scope.item.id = ''
+                $scope.popupTambah.center().open()
+            }
+            $scope.TambahMT = function(){
+                $scope.item.id = ''
+                $scope.popupTambahMT.center().open()
+            }
+            function editKegiatanT(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
- $scope.columnKelompokEnam = [
+				})
+                
+                $scope.item.id = dataItem.id
+                const kodeArr = dataItem.kode.split(" ");
+                const kodeArr2 = kodeArr[0].split(".");
+                let a1 = kodeArr2[0] + '.' + kodeArr2[1]
+                let b1 = kodeArr2[2]
+                let c1 = kodeArr2[3]  + '.' + kodeArr2[4]
+                let d1 = kodeArr2[5]  
+                if(dataItem.div == 1){
+                    $scope.popupProgram.center().open()
+                    // a1 = kodeArr2[0] + '.' + kodeArr2[1]
+                    $scope.item.kodeHead = a1
+                //    b1 = kodeArr2[2]
+                    $scope.item.kode = b1
+                    
+                    // $scope.item.kodeHead = dataItem.kode.substring(0,4)
+                    // $scope.item.kode = dataItem.kode.substring(5,7)
+                }else if(dataItem.div == 2){
+                    $scope.popupKegiatan.center().open();
+                    $scope.item.kodeHead = a1 + '.' + b1
+                    // c1 = kodeArr2[3]  + '.' + kodeArr2[4]
+                    $scope.item.kode = c1
+                    // $scope.item.kodeHead =dataItem.kode.substring(0,4) + '.' + dataItem.kode.substring(5,7)
+                    // $scope.item.kode = dataItem.kode.substring(8,12)
+                }else if(dataItem.div == 3){
+                    $scope.popupSubKegiatan.center().open();
+                    $scope.item.kodeHead =  a1 +'.'+ b1 +'.'+c1
+                    // d1 = kodeArr2[5]  
+                    $scope.item.kode = d1 
+                    // $scope.item.kodeHead = dataItem.kode.substring(0,4) + '.' + dataItem.kode.substring(5,7) + '.' + dataItem.kode.substring(8,12)
+                    // $scope.item.kode = dataItem.kode.substring(13,15)
+                }else if(dataItem.div == 4){
+                    $scope.popupSubSubKegiatan.center().open();  
+                    for (let index = 0; index < $scope.dataSourceKegiatan.length; index++) {
+                        const element = $scope.dataSourceKegiatan[index];
+                        if(element.kode == a1){
+                            $scope.item.urusanPemerintahan = element.kode + ' ' + element.keterangan
+                        }
+                        if(element.kode == a1 + '.' + b1){
+                            $scope.item.program = element.kode + ' ' + element.keterangan
+                        }
+                        if(element.kode == a1 +'.'+ b1 +'.'+ c1){
+                            $scope.item.kegiatan = element.kode + ' ' + element.keterangan
+                        }
+                        if(element.kode == a1 +'.'+ b1 +'.'+ c1+'.'+ d1){
+                            $scope.item.subKegiatan = element.kode + ' ' + element.keterangan
+                        }
+                        // if(element.kode == dataItem.kode.substring(0,4)){
+                        //     $scope.item.urusanPemerintahan = element.kode + ' ' + element.keterangan
+                        // }
+                        // if(element.kode == dataItem.kode.substring(0,4) + '.' + dataItem.kode.substring(5,7)){
+                        //     $scope.item.program = element.kode + ' ' + element.keterangan
+                        // }
+                        // if(element.kode == dataItem.kode.substring(0,4) + '.' + dataItem.kode.substring(5,7) + '.' + dataItem.kode.substring(8,12)){
+                        //     $scope.item.kegiatan = element.kode + ' ' + element.keterangan
+                        // }
+                        // if(element.kode == dataItem.kode.substring(0,4) + '.' + dataItem.kode.substring(5,7) + '.' + dataItem.kode.substring(8,12) + '.' + dataItem.kode.substring(13,15)){
+                        //     $scope.item.subKegiatan = element.kode + ' ' + element.keterangan
+                        // }
+                        
+                    }
+                    $scope.item.subSubKegiatankode = kodeArr[1]//dataItem.kode//.substring(16) 
+                    $scope.item.subSubKegiatan =  dataItem.keterangan
+                    $scope.item.thnAnggaran = dataItem.tahun
+                    $scope.item.tahap = dataItem.tahap
+                    $scope.item.thpid = dataItem.thpid
+
+                    $scope.rcn.judulKegiatan =  dataItem.keterangan
+
+                    $scope.item.tolokUkurMasukan = dataItem.indikatormasuk
+                    $scope.item.targetKinerjaMasukan = dataItem.targetmasuk
+                    $scope.item.tolokUkurKeluaran = dataItem.indikatorkeluaran
+                    $scope.item.targetKinerjaKeluaran = dataItem.targetkeluaran
+                    $scope.item.tolokUkurHasil = dataItem.indikatorhasil
+                    $scope.item.targetKinerjaHasil = dataItem.targethasil
+                }
+                
+                $scope.item.keterangan = dataItem.keterangan
+                $scope.item.div = dataItem.div
+            }
+            function editMataT(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                $scope.item.id = dataItem.id
+                $scope.item.kodeAddMT = dataItem.kodemataanggaran
+                $scope.item.keteranganAddMT = dataItem.namamataanggaran
+                $scope.popupTambahMT.center().open();
+            }
+           $scope.klikKegiatan = function(dataKegiatanSelected){
+                
+            }
+            
+            $scope.columnKegiatan = {
+				toolbar:[
+                    {
+                        name: "add", 
+                        text: "Tambah",
+                        template: '<div class="grid_2"><button ng-click="Tambah()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                    },
+                    {
+                        name: "ads", 
+                        text: "asd",
+                        template: '<div class="grid_6"></div>'
+                    },
+                    {
+                        name: "src", 
+                        text: "src",
+                        template:  '<div class="grid_4" style="margin-top: -8px;"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Search"></label></div><div class="grid_11"><input c-text-box type="input" class="k-textbox" ng-model="item.search" /></div></div>'
+                    }
+                ],
+                columns:[
                 {
-                    "field": "id",
-                    "title": "Id",
-                    "width": "50px"
+                  "command": [
+                        {
+                           text: "Detail",
+                           click: editKegiatanT,
+                           imageClass: "clinic fa"
+                        },
+                    ],
+                       title: "",
+                       width: "30px",
                 },
+                // {
+                //     "field": "id",
+                //     "title": "Id",
+                //     "width": "30px"
+                // },
                 {
-                    "field": "kdchildkeenam",
+                    "field": "kode",
                     "title": "Kode",
                     "width": "80px"
                 },
                 {
-                    "field": "childkeenam",
-                    "title": "Kelompok Keenam",
-                    "width": "200px"
+                    "field": "keterangan",
+                    "title": "Keterangan",
+                    "width": "250px"
                 },
                 {
-                    "field": "kodeexternal",
-                    "title": "Kode External",
+                    "field": "tahun",
+                    "title": "Tahun Angaran",
                     "width": "80px"
                 },
                 {
-                    "field": "namaexternal",
-                    "title": "Nama External",
-                    "width": "200px"
+                    "field": "tahap",
+                    "title": "Tahap",
+                    "width": "100px"
+                },
+                {
+                    "field": "targetmasuk",
+                    "title": "Target Kinerja",
+                    "width": "100px"
+                },
+                {
+                    "field": "namakelompok",
+                    "title": "div",
+                    "width": "80px"
                 }
-            ];
+            ]};
+            $scope.$watch('item.search', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    
+                    var data = []
+                    for (let index = 0; index < DataKegiatan.length; index++) {
+                        const element = DataKegiatan[index];
+                        if (element.keterangan.match($scope.item.search)) {
+                            data.push(element)
+                        }else if (element.kode.match($scope.item.search)) {
+                            data.push(element)
+                        }
+                    }
+                    $scope.dataSourceKegiatan = new kendo.data.DataSource({
+                        data: data
+                    });
+                }
+            });
+            
+
+            $scope.$watch('item.searchMata', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    
+                    var data = []
+                    for (let index = 0; index < DataMataAnggaran.length; index++) {
+                        const element = DataMataAnggaran[index];
+                        if (element.namamataanggaran.match(newValue)) {
+                            data.push(element)
+                        }else if (element.kodemataanggaran.match(newValue)) {
+                            data.push(element)
+                        }
+                    }
+                    $scope.dataSourceMataAnggaran = new kendo.data.DataSource({
+                        data: data
+                    });
+                }
+            });
+            $scope.SimpanPopUpTambah = function(){
+                var jmlkode = $scope.item.kodeAdd.length
+                var divS = 0;
+                if(jmlkode == 7){
+                    divS = 1
+                }else 
+                if(jmlkode == 12){
+                    divS = 2
+                }else if(jmlkode == 15){
+                    divS = 3
+                }else if(jmlkode > 15){
+                    divS = 4
+                }
+                var objSave =
+                    {
+                        id: '',
+                        kode: $scope.item.kodeAdd,
+                        keterangan: $scope.item.keteranganAdd,
+                        kodeexternal: null,
+                        namaexternal: null,
+                        reportdisplay: null,
+                        tahun: null,
+                        tahap: null,
+                        indikatormasuk: null,
+                        indikatorkeluaran: null,
+                        indikatorhasil: null,
+                        targetmasuk: null,
+                        targetkeluaran: null,
+                        targethasil: null,
+                        div: divS
+                    }
+                medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupTambah.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.SimpanPopUpProgram = function(){
+                var jmlkode = $scope.item.kodeHead + '.' + $scope.item.kode
+                jmlkode = jmlkode.length
+                var divS = 0;
+                if(jmlkode == 7){
+                    divS = 1
+                }else 
+                if(jmlkode == 12){
+                    divS = 2
+                }else if(jmlkode == 15){
+                    divS = 3
+                }else if(jmlkode > 15){
+                    divS = 4
+                }
+                var objSave =
+                    {
+                        id: $scope.item.id,
+                        kode: $scope.item.kodeHead + '.' + $scope.item.kode,
+                        keterangan: $scope.item.keterangan,
+                        kodeexternal: null,
+                        namaexternal: null,
+                        reportdisplay: null,
+                        tahun: null,
+                        tahap: null,
+                        indikatormasuk: null,
+                        indikatorkeluaran: null,
+                        indikatorhasil: null,
+                        targetmasuk: null,
+                        targetkeluaran: null,
+                        targethasil: null,
+                        div: divS
+                    }
+                medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupProgram.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.SimpanPopUpKegiatan = function(){
+                var jmlkode = $scope.item.kodeHead + '.' + $scope.item.kode
+                jmlkode = jmlkode.length
+                var divS = 0;
+                if(jmlkode == 7){
+                    divS = 1
+                }else 
+                if(jmlkode == 12){
+                    divS = 2
+                }else if(jmlkode == 15){
+                    divS = 3
+                }else if(jmlkode > 15){
+                    divS = 4
+                }
+                var objSave =
+                    {
+                        id: $scope.item.id,
+                        kode: $scope.item.kodeHead + '.' + $scope.item.kode,
+                        keterangan: $scope.item.keterangan,
+                        kodeexternal: null,
+                        namaexternal: null,
+                        reportdisplay: null,
+                        tahun: null,
+                        tahap: null,
+                        indikatormasuk: null,
+                        indikatorkeluaran: null,
+                        indikatorhasil: null,
+                        targetmasuk: null,
+                        targetkeluaran: null,
+                        targethasil: null,
+                        div: divS
+                    }
+                medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupKegiatan.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.SimpanPopUpSubKegiatan = function(){
+                var jmlkode = $scope.item.kodeHead + '.' + $scope.item.kode
+                jmlkode = jmlkode.length
+                var divS = 0;
+                if(jmlkode == 7){
+                    divS = 1
+                }else 
+                if(jmlkode == 12){
+                    divS = 2
+                }else if(jmlkode == 15){
+                    divS = 3
+                }else if(jmlkode > 15){
+                    divS = 4
+                }
+                var objSave =
+                    {
+                        id: $scope.item.id,
+                        kode: $scope.item.kodeHead + '.' + $scope.item.kode,
+                        keterangan: $scope.item.keterangan,
+                        kodeexternal: null,
+                        namaexternal: null,
+                        reportdisplay: null,
+                        tahun: null,
+                        tahap: null,
+                        indikatormasuk: null,
+                        indikatorkeluaran: null,
+                        indikatorhasil: null,
+                        targetmasuk: null,
+                        targetkeluaran: null,
+                        targethasil: null,
+                        div: divS
+                    }
+                medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupSubKegiatan.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.SimpanPopUpSubSubKegiatan = function(){
+                var jmlkode = $scope.item.kodeHead + '.' + $scope.item.kode
+                jmlkode = jmlkode.length
+                var divS = 0;
+                if(jmlkode == 7){
+                    divS = 1
+                }else 
+                if(jmlkode == 12){
+                    divS = 2
+                }else if(jmlkode == 15){
+                    divS = 3
+                }else if(jmlkode > 15){
+                    divS = 4
+                }
+                var objSave =
+                    {
+                        id: $scope.item.id,
+                        kode: $scope.item.subSubKegiatankode,
+                        keterangan: $scope.item.subSubKegiatan,
+                        kodeexternal: null,
+                        namaexternal: null,
+                        reportdisplay: null,
+                        tahun: $scope.item.thnAnggaran,
+                        tahap: $scope.item.thpid,
+                        indikatormasuk: $scope.item.tolokUkurMasukan,
+                        indikatorkeluaran:  $scope.item.tolokUkurKeluaran,
+                        indikatorhasil:  $scope.item.tolokUkurHasil,
+                        targetmasuk:  $scope.item.targetKinerjaMasukan,
+                        targetkeluaran:  $scope.item.targetKinerjaKeluaran,
+                        targethasil:  $scope.item.targetKinerjaHasil,
+                        div: divS
+                    }
+                medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupSubSubKegiatan.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.columnMataAnggaran = {
+                toolbar:[
+                    {
+                        name: "add", 
+                        text: "Tambah",
+                        template: '<div class="grid_2"><button ng-click="TambahMT()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                    },
+                    {
+                        name: "ads", 
+                        text: "asd",
+                        template: '<div class="grid_6"></div>'
+                    },
+                    {
+                        name: "src", 
+                        text: "src",
+                        template:  '<div class="grid_4" style="margin-top: -8px;"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Search"></label></div><div class="grid_11"><input c-text-box type="input" class="k-textbox" ng-model="item.searchMata" /></div></div>'
+                    }
+                ],
+                columns:[
+                    {
+                        "command": [
+                              {
+                                 text: "Detail",
+                                 click: editMataT,
+                                 imageClass: "clinic fa"
+                              },
+                          ],
+                             title: "",
+                             width: "30px",
+                      },
+                    {
+                        "field": "id",
+                        "title": "Id",
+                        "width": "50px"
+                    },
+                    {
+                        "field": "kodemataanggaran",
+                        "title": "Kode",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "namamataanggaran",
+                        "title": "Mata Anggaran",
+                        "width": "200px"
+                    },
+                    // {
+                    //     "field": "kodeexternal",
+                    //     "title": "Kode External",
+                    //     "width": "80px"
+                    // },
+                    // {
+                    //     "field": "namaexternal",
+                    //     "title": "Nama External",
+                    //     "width": "200px"
+                    // }
+                ]
+            };
+            
+            $scope.columnKeteranganBelanja = {
+                toolbar:[
+                    {
+                        name: "add", 
+                        text: "Tambah",
+                        template: '<div class="grid_2"><button ng-click="TambahMT()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                    },
+                    {
+                        name: "ads", 
+                        text: "asd",
+                        template: '<div class="grid_6"></div>'
+                    },
+                    {
+                        name: "src", 
+                        text: "src",
+                        template:  '<div class="grid_4" style="margin-top: -8px;"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Search"></label></div><div class="grid_11"><input c-text-box type="input" class="k-textbox" ng-model="item.searchKeteranganBelanja" /></div></div>'
+                    }
+                ],
+                columns:[
+                    {
+                        "command": [
+                              {
+                                 text: "Detail",
+                                 click: editMataT,
+                                 imageClass: "clinic fa"
+                              },
+                          ],
+                             title: "",
+                             width: "30px",
+                      },
+                    {
+                        "field": "id",
+                        "title": "Id",
+                        "width": "50px"
+                    },
+                    {
+                        "field": "kodemataanggaran",
+                        "title": "Kode",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "namamataanggaran",
+                        "title": "Mata Anggaran",
+                        "width": "200px"
+                    },
+                    {
+                        "field": "kodeexternal",
+                        "title": "Kode External",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "namaexternal",
+                        "title": "Nama External",
+                        "width": "200px"
+                    }
+                ]
+            };
+            
+            $scope.SimpanPopUpTambahMT = function(){
+                var jmlkode = $scope.item.kodeAddMT.length
+                var divS = 0;
+                var IDD = undefined
+
+                if($scope.item.id == undefined){
+                    IDD = ''
+                }else{
+                    IDD = $scope.item.id
+                }
+                if(jmlkode == 7){
+                    divS = 1
+                }else 
+                if(jmlkode == 12){
+                    divS = 2
+                }else if(jmlkode == 15){
+                    divS = 3
+                }else if(jmlkode > 15){
+                    divS = 4
+                }
+                var objSave =
+                    {
+                        id: IDD,
+                        reportdisplay: null,
+                        kodemataanggaran: $scope.item.kodeAddMT,
+                        namamataanggaran: $scope.item.keteranganAddMT,
+                        keterangan: null,
+                        kodeexternal: null,
+                        namaexternal: null,
+                    }
+                medifirstService.post('perencanaan/save-mata-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupTambahMT.center().close()
+                }, function (error) {
+
+                })
+            }
+            
+            $scope.columnRincianAnggaran = {
+                toolbar:[
+                    {
+                        name: "add", 
+                        text: "Tambah",
+                        template: '<div class="grid_2"><button ng-click="TambahKeterangan()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                    },
+                    {
+                        name: "src", 
+                        text: "src",
+                        template:  '<div class="grid_6" style="margin-top: 10px;margin-left: -80px;">{{rcn.mataAnggaranDipilih}}</div>'
+                    }
+                ],
+                columns:[
+                    {
+                        "field": "nourut",
+                        "title": "No. Urut",
+                        "width": "60px"
+                    },
+                    {
+                        "field": "keteranganbelanja",
+                        "title": "Keterangan",
+                        "width": "100px"
+                    },
+                    {
+                        "field": "jml",
+                        "title": "Jml",
+                        "width": "80px",
+						"template": "<span class='style-right'>{{formatRupiah2('#: jml #', '')}}</span>",
+                    },
+                    {
+                        "field": "satuan",
+                        "title": "Satuan",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "hargasatuan",
+                        "title": "Harga Satuan",
+                        "width": "80px",
+						"template": "<span class='style-right'>{{formatRupiah2('#: hargasatuan #', '')}}</span>",
+                    },
+                    {
+                        "field": "subtotal",
+                        "title": "Sub Total",
+                        "width": "80px",
+						"template": "<span class='style-right'>{{formatRupiah2('#: subtotal #', '')}}</span>",
+                    },
+                    {
+                        "field": "asalproduk",
+                        "title": "Sumber Dana",
+                        "width": "80px"
+                    }
+                ]
+            };
+            $scope.columnDetailMT = {
+                toolbar:[
+                    {
+                        name: "src", 
+                        text: "src",
+                        template:  '<div class="grid_1" style="margin-top: 10px;">' +
+                                        '<label c-label item="item" c-label-text="Search"></label>' +
+                                    '</div>' +
+                                    '<div class="grid_4">'+
+                                        '<input c-text-box type="input" class="k-textbox" ng-model="item.searchMataMT" /></div>' +
+                                    '</div>'
+                    }
+                    
+                ],
+                columns:[
+                    {
+                        "field": "kodemataanggaran",
+                        "title": "Kode rek.",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "namamataanggaran",
+                        "title": "Nama Rekening",
+                        "width": "120px"
+                    },
+                    {
+                        "field": "total",
+                        "title": "Sub Total",
+                        "width": "80px",
+						"template": "<span class='style-right'>{{formatRupiah2('#: total #', '')}}</span>",
+                    }
+                ]
+            };
+            $scope.formatRupiah2 = function (value, currency) {
+				return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+			}
+            // $scope.columnRincianAnggaran = {
+            //     toolbar:[
+
+            //     ],
+            //     columns:[
+                   
+            //         {
+            //             "field": "id",
+            //             "title": "No. Urut",
+            //             "width": "30px"
+            //         },
+            //         {
+            //             "field": "kodemataanggaran",
+            //             "title": "Keterangan",
+            //             "width": "100px"
+            //         },
+            //         {
+            //             "field": "namamataanggaran",
+            //             "title": "Jml",
+            //             "width": "40px"
+            //         },
+            //         {
+            //             "field": "kodeexternal",
+            //             "title": "Satuan",
+            //             "width": "40px"
+            //         },
+            //         {
+            //             "field": "namaexternal",
+            //             "title": "Harga Satuan",
+            //             "width": "40px"
+            //         },
+            //         {
+            //             "field": "namaexternal",
+            //             "title": "Sub Total",
+            //             "width": "40px"
+            //         },
+            //         {
+            //             "field": "namaexternal",
+            //             "title": "Sumber Dana",
+            //             "width": "40px"
+            //         }
+            //     ]
+            // };
 
 
 
@@ -443,7 +1041,51 @@ define(['initialize'], function (initialize) {
                 $scope.idKeempat = ""
 
             }
+            $scope.klikDetailMT = function (dataMataAnggaranSelected) {
+                if (dataMataAnggaranSelected != undefined) {
+                    
+                    const kodeArr = dataMataAnggaranSelected.kodemataanggaran.split(".");
+                    let a1 = kodeArr[0] 
+                    let b1 = kodeArr[1]
+                    let c1 = kodeArr[2] 
+                    let d1 = dataMataAnggaranSelected.kodemataanggaran
+                    for (let index = 0; index < DataMataAnggaran.length; index++) {
+                        const element = DataMataAnggaran[index];
+                        if(element.kodemataanggaran == a1){
+                            $scope.rcn.mataAnggaranlv1 = element.kodemataanggaran + ' - ' + element.namamataanggaran
+                            $scope.rcn.totallv1 = formatRupiah(element.total, "Rp. ")
+                        }
+                        if(element.kodemataanggaran == a1 + '.' + b1){
+                            $scope.rcn.mataAnggaranlv2 = element.kodemataanggaran + ' - ' + element.namamataanggaran
+                            $scope.rcn.totallv2 = formatRupiah(element.total, "Rp. ")
+                        }
+                        if(element.kodemataanggaran == a1 + '.' + b1 + '.' + c1){
+                            $scope.rcn.mataAnggaranlv3 = element.kodemataanggaran + ' - ' + element.namamataanggaran
+                            $scope.rcn.totallv3 = formatRupiah(element.total, "Rp. ")
+                        }
+                    }
+                    $scope.rcn.mataAnggaranDipilih= dataMataAnggaranSelected.kodemataanggaran + " " + dataMataAnggaranSelected.namamataanggaran
+                    // $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
+                    // $scope.rcn.totalAnggaran = formatRupiah(dataMataAnggaranSelected.total, "Rp. ")
+                    // $scope.rcn.sisaAnggaran = formatRupiah(dataMataAnggaranSelected.total - 0, "Rp. ")
+                }
+            }
+            //perencanaan/save-keterangan-belanja
+            $scope.SimpanPopUpAddKeterangan = function(){
+                medifirstService.post('perencanaan/save-keterangan-belanja', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupTambah.center().close()
+                }, function (error) {
 
+                })
+            }
+            function formatRupiah(value, currency) {
+                return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            }
+            $scope.TambahKeterangan = function(){
+                $scope.item.noUrutKT = DataKeteranganBelanja.length + 1
+                $scope.popupTambahKeteranganBelanja.center().open()
+            }
 
             $scope.klik = function (dataHeadSelected) {
                 if (dataHeadSelected != undefined) {
@@ -633,21 +1275,26 @@ define(['initialize'], function (initialize) {
                     })
                 }
             }
-            $scope.hapusKelKeempat = function () {
-                if ($scope.idKeempat == undefined) {
-                    toastr.error('Pilih Data Dulu', 'Informasi');
-                    return
-                } else {
-                    var itemDelete = {
-                        "id": $scope.idKeempat,
+            $scope.nextSubSubKegiatan = function () {
+                $scope.popupRincianAnggaran.center().open()
+                medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id).then(function (e) {
+                    DataKeteranganBelanja = e.data.data
+                    $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                        data: DataKeteranganBelanja
+                    });
+                    let TotalAnggaran = 0;
+                    for (let index = 0; index < DataKeteranganBelanja.length; index++) {
+                        const element = DataKeteranganBelanja[index];
+                        TotalAnggaran = TotalAnggaran + element.subtotal
                     }
-                    medifirstService.post('perencanaan/delete-kel-keempat-anggaran', itemDelete).then(function (e) {
-                        loadDataGrid();
-                        $scope.idKeempat = ""
-                        $scope.batal()
-                    })
-                }
+                    $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
+                    $scope.rcn.totalAnggaran = formatRupiah(TotalAnggaran, "Rp. ")
+                    $scope.rcn.sisaAnggaran = formatRupiah(TotalAnggaran - 0, "Rp. ")
+                    
+                })
             }
+
+
 
 
 

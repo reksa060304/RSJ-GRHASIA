@@ -1341,8 +1341,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                       Route::post('perencanaan/delete-kel-ketiga-anggaran','Perencanaan\PerencanaanController@deleteKelompokKetiga');
                       Route::post('perencanaan/delete-kel-keempat-anggaran','Perencanaan\PerencanaanController@deleteKelompokKeempat');
 
-                       Route::post('perencanaan/delete-kel-anggaran','Perencanaan\PerencanaanController@deleteKelompokAnggaran');
-                          Route::post('perencanaan/save-kel-anggaran','Perencanaan\PerencanaanController@saveKelompokAnggaran');
+                      Route::post('perencanaan/delete-kel-anggaran','Perencanaan\PerencanaanController@deleteKelompokAnggaran');
+                      Route::post('perencanaan/save-kel-anggaran','Perencanaan\PerencanaanController@saveKelompokAnggaran');
+                      Route::post('perencanaan/save-kegiatan-anggaran','Perencanaan\PerencanaanController@saveKegiatanAnggaran');
+                      Route::post('perencanaan/save-mata-anggaran','Perencanaan\PerencanaanController@saveMataAnggaran');
+                      Route::post('perencanaan/save-keterangan-belanja','Perencanaan\PerencanaanController@saveKeteranganBelanja');
+                      Route::get('perencanaan/get-total-mata-anggaran', 'Perencanaan\PerencanaanController@getTotalMataAnggaran');
+                      Route::get('perencanaan/get-keterangan-belanja', 'Perencanaan\PerencanaanController@getKeteranganBelanja');
 
         // });
         // Route::group(['prefix' => 'piutang'], function () {
