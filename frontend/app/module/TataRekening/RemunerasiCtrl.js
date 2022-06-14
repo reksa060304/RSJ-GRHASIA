@@ -116,6 +116,14 @@ define(['initialize'], function (initialize) {
 				})
 
 			}
+			$scope.postingGrade = function () {
+				medifirstService.get('get/save-posting-grade').then(function (e) {
+					loadData()
+					$scope.batal()
+
+				})
+
+			}
 			$scope.saveInput = function () {
 				let json = {
 					'norec': "",

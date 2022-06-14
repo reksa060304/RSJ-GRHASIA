@@ -12872,9 +12872,9 @@ $result = array(
             $datas = DB::select(DB::raw("select namalengkap from pegawai_m where id = $id"));
             $cek = DB::select(DB::raw("select * from pointjaspel_t where objectpegawaifk = $id"));
             $cektgl = DB::select(DB::raw("select iki, iku, prosen, grade, mk, point_tt from pointjaspel_t where objectpegawaifk = $id"));
-            var_dump($cek);
+            //var_dump($array_data['iki']);
             if(!empty($cek)){
-                if(!empty($array_data['iki'])){
+                if(!empty($array_data['iki']) || $array_data['iki'] >= 0){
                     $data2[] = array(
                         'iki' => $array_data['iki'],
                         'iku' => $cektgl[0]->iku,
@@ -12904,7 +12904,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['iku'])){
+                if(!empty($array_data['iku']) || $array_data['iku'] >= 0){
                     $data2[] = array(
                         'iku' => $array_data['iku'],
                         'iki' => $cektgl[0]->iki,
@@ -12934,7 +12934,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['prosen'])){
+                if(!empty($array_data['prosen']) || $array_data['prosen'] >= 0){
                     $data2[] = array(
                         'prosen' => $array_data['prosen'],
                         'iku' => $cektgl[0]->iku,
@@ -12964,7 +12964,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['grade'])){
+                if(!empty($array_data['grade']) || $array_data['grade'] >= 0){
                     $data2[] = array(
                         'grade' => $array_data['grade'],
                         'iku' => $cektgl[0]->iku,
@@ -12994,7 +12994,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['mk'])){
+                if(!empty($array_data['mk']) || $array_data['mk'] >= 0){
                     $data2[] = array(
                         'mk' => $array_data['mk'],
                         'iku' => $cektgl[0]->iku,
@@ -13024,7 +13024,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['point_tt'])){
+                if(!empty($array_data['point_tt']) || $array_data['point_tt'] >= 0){
                     $data2[] = array(
                         'point_tt' => $array_data['point_tt'],
                         'iku' => $cektgl[0]->iku,
@@ -13059,7 +13059,7 @@ $result = array(
             //-----------------------------------------------
 
             if(empty($cek)){
-                if(!empty($array_data['iki'])){
+                if(!empty($array_data['iki']) || $array_data['iki'] >= 0){
                     $data2[] = array(
                         'iki' => $array_data['iki'],
                         'iku' => null,
@@ -13089,7 +13089,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['iku'])){
+                if(!empty($array_data['iku']) || $array_data['iku'] >= 0){
                     $data2[] = array(
                         'iku' => $array_data['iku'],
                         'iki' => null,
@@ -13119,7 +13119,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['prosen'])){
+                if(!empty($array_data['prosen']) || $array_data['prosen'] >= 0){
                     $data2[] = array(
                         'prosen' => $array_data['prosen'],
                         'iku' => null,
@@ -13149,7 +13149,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['grade'])){
+                if(!empty($array_data['grade']) || $array_data['grade'] >= 0){
                     $data2[] = array(
                         'grade' => $array_data['grade'],
                         'iku' => null,
@@ -13179,7 +13179,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['mk'])){
+                if(!empty($array_data['mk']) || $array_data['mk'] >= 0){
                     $data2[] = array(
                         'mk' => $array_data['mk'],
                         'iku' => null,
@@ -13209,7 +13209,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['point_tt'])){
+                if(!empty($array_data['point_tt']) || $array_data['point_tt'] >= 0){
                     $data2[] = array(
                         'point_tt' => $array_data['point_tt'],
                         'iku' => null,

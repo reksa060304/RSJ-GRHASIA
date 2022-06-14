@@ -2502,8 +2502,13 @@ class RemunerasiController extends ApiController
         }
         $data = \DB::select(DB::raw("
         select pj.iki,pj.iku,pj.prosen,pj.grade, pj.mk, pj.point_tt, pg.namalengkap, pg.id as idpegawai, pj.norec
-        from pegawai_m pg left join pointjaspel_t pj on pg.id= pj.objectpegawaifk where pg.statusenabled = true and pg.kdprofile = $kdProfile
-        and pg.usereksternal is null and pg.namalengkap <>'-' 
+        from pegawai_m pg 
+        left join pointjaspel_t pj on pg.id= pj.objectpegawaifk 
+        where pg.statusenabled = true and pg.kdprofile = $kdProfile
+        and pg.namalengkap <>'-' 
+        and pg.usereksternal is null 
+        and pg.isos is null 
+        and pg.istubel is null
         "));
         $result = array(
             'data' => $data,
@@ -7586,6 +7591,51 @@ class RemunerasiController extends ApiController
             );
         } else {
             $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'e'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    
+
+    public function getSavePostingGrade(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $patokan = DB::select(DB::raw("select jp.mk, pg.id, pg.namalengkap, pgm.pointgrade
+        from pointjaspel_t jp 
+        inner join pegawai_m pg on pg.id = jp.objectpegawaifk
+        inner join pointgrade_m pgm on pgm.id = pg.grade 
+        where jp.mk is not null"));
+
+        DB::beginTransaction();
+        try {
+            foreach ($patokan as $item){
+                \DB::table('pointjaspel_t')->where('objectpegawaifk',$item->id)->where('kdprofile',$kdProfile)->update([
+                    'grade' => ((((float)$item->mk*(float)$item->pointgrade)/1000) + (float)$item->pointgrade)
+                ]);
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Posting Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+//                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Posting Gagal";
             DB::rollBack();
             $result = array(
                 'status' => 400,
