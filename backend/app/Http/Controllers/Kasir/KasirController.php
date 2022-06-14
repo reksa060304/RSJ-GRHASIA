@@ -38,6 +38,7 @@ use App\Traits\BniTrait;
 use App\Transaksi\BNITransaction;
 use App\Transaksi\BniEnc;
 use App\Transaksi\VirtualAccount;
+use Webpatser\Uuid\Uuid;
 
 class KasirController extends ApiController{
     use Valet, InternalList, PelayananPasienTrait, SettingDataFixedTrait,BniTrait;
@@ -135,6 +136,27 @@ class KasirController extends ApiController{
             ->where('ru.objectjenispegawaifk', 1)
             ->orderBy('ru.namalengkap')
             ->get();
+
+            $pegawai = \DB::table('pegawai_m as ru')
+            ->where('ru.kdprofile', $kdProfile)
+            ->where('ru.statusenabled', true)
+            ->whereNull('ru.usereksternal')
+            ->where('ru.namalengkap', '<>','-')
+            // ->where('ru.objectjenispegawaifk', 1)
+            ->orderBy('ru.namalengkap')
+            ->get();
+            $jenisperan = \DB::table('jenisperan_m')
+            ->where('objectdetailjenisprodukfk', $request['detailjenisprodukfk'])
+            ->orderBy('id', 'asc')
+            ->get();
+            $detailkegiatandiklat = \DB::table('detailkegiatandiklat_t as dkd')
+            ->select('pg.namalengkap','jp.jenisperan', 'dkd.*')
+            ->join('pegawai_m as pg', 'pg.id','=','dkd.objectpegawaifk')
+            ->join('jenisperan_m as jp', 'jp.id','=','dkd.objectjenisperanfk')
+            ->where('dkd.norec_pp', $request['norec_pp'])
+            ->where('dkd.kdprofile', $kdProfile)
+            ->where('dkd.statusenabled', true)
+            ->get();
         foreach ($dataInstalasi as $item) {
             $detail = [];
             foreach ($dataRuangan as $item2) {
@@ -182,6 +204,9 @@ class KasirController extends ApiController{
             'departemen' => $dataDepartemen,
             'diklit' => $diklit,
             'kelnon' => $kelTransNon,
+            'pegawai' => $pegawai,
+            'jenisperan'=>$jenisperan,
+            'detailkegiatandiklat'=> $detailkegiatandiklat,
             'message' => 'ihuman@epic'
         );
         return $this->respond($result);
@@ -5857,18 +5882,179 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
     }
     public function detailTagihanDiklat(Request $request)
     {
-        $kdProfile = (int) $this->getDataKdProfile($request);
-        $dataStrukPelayanan= \DB::table('strukpelayanan_t as sp')
-            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'sp.noregistrasifk')
-            ->join('pasien_m as p', 'p.id', '=', 'pd.nocmfk')
-            ->leftJoin('ruangan_m as r', 'r.id', '=', 'pd.objectruanganlastfk')
-            ->leftJoin('departemen_m as dept', 'dept.id', '=', 'r.objectdepartemenfk')
-            ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
-            ->leftJoin('kelas_m as k', 'k.id', '=', 'pd.objectkelasfk')
-            ->select('pd.noregistrasi', 'p.nocm','p.namapasien','pd.tglregistrasi','pd.tglpulang','r.namaruangan',
-                'kp.kelompokpasien','sp.totalharusdibayar','sp.norec', 'sp.nostruk', 'k.namakelas', 'sp.tglstruk',
-                'sp.totalprekanan', 'r.id as ruanganId', 'dept.id as departmentId')
-            ->where('sp.kdprofile', $kdProfile);
+       $kdProfile = (int) $this->getDataKdProfile($request);
+        $filter=$request->all();
+        // $list = explode (',',$this->settingDataFixed('kdTransaksiNonLayanan', $kdProfile));
+        // $KdList = [];
+        // foreach ($list as $item){
+        //     $KdList []=  (int)$item;
+        // }
+        // $datakelompokuser= \DB::table('loginuser_s as lu')
+        //     ->select('lu.objectkelompokuserfk')
+        //     ->where('lu.kdprofile', $kdProfile)
+        //     ->where('lu.id','=',$filter['userData']['id'])
+        //     ->get();
 
+            $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
+                ->leftjoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
+                ->join('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
+                ->join('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
+                ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
+                ->select('sp.norec', 'sp.tglstruk', 'sp.namapasien_klien', 'kt.reportdisplay as jenistagihan','sp.isverifikasi',
+                        'sp.keteranganlainnya', 'sp.nosbklastfk', 'sp.nosbmlastfk', 'kt.id as jenisTagihanId','djp.detailjenisproduk', 'djp.id as iddjp','spd.norec as norec_spd',
+                    \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar "))
+                ->where('sp.kdprofile', $kdProfile)
+                ->whereNotNull('sp.totalharusdibayar')
+                // ->whereIn('sp.objectkelompoktransaksifk', $KdList)
+                ->whereNotNull('sp.nosbmlastfk')
+                // ->whereNotNull('sp.nosbklastfk')
+                ->where('kt.id','=',13);
+        
+
+        if(isset($filter['tglAwal']) && $filter['tglAwal']!=""){
+            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk','>=', $filter['tglAwal']);
+        }
+
+        if(isset($filter['tglAkhir']) && $filter['tglAkhir']!=""){
+            $tgl= $filter['tglAkhir'];//." 23:59:59";
+            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk','<=', $tgl);
+        }
+//
+        if(isset($filter['jenisTagihanId']) && $filter['jenisTagihanId']!=""){
+            $dataNonLayanan = $dataNonLayanan->where('kt.id','=', $filter['jenisTagihanId']);
+        }
+
+        if(isset($filter['namaPelanggan']) && $filter['namaPelanggan']!=""){
+            $dataNonLayanan = $dataNonLayanan->where('sp.namapasien_klien','ilike','%'. $filter['namaPelanggan'] . '%');
+        }
+
+
+//        $dataPiutang=$dataPiutang->groupBy('kp.kelompokpasien', 'spp.norec','sp.tglstruk', 'pd.noregistrasi', 'pd.tglregistrasi','p.nocm','p.namapasien','spp.totalppenjamin','spp.totalharusdibayar',
+//            'spp.totalsudahdibayar', 'r.namarekanan', 'spp.totalbiaya', 'spp.noverifikasi');
+        $dataNonLayanan =$dataNonLayanan->where('sp.statusenabled','=',true);
+        $dataNonLayanan =$dataNonLayanan->whereNull('sp.isverifikasi');
+        $dataNonLayanan =$dataNonLayanan->get();
+        $result = array();
+        foreach ($dataNonLayanan as $item) {
+            $statusBayar = "Belum Bayar";
+            if($item->nosbmlastfk!=null ||$item->nosbklastfk!=null){
+                $statusBayar = "Lunas";
+            }
+            $result[] = array(
+                'noRec' => $item->norec,
+                'tglTransaksi' => $item->tglstruk,
+                'namaPelanggan' => $item->namapasien_klien,
+                'jenisTagihan' => $item->jenistagihan,
+                'totalDibayar' => $item->totalharusdibayar,
+                'keterangan' => $item->keteranganlainnya,
+                'jenisTagihanId' => $item->jenisTagihanId,
+                'statusBayar' =>$statusBayar,
+                'detailjenisproduk' => $item->detailjenisproduk,
+                'detailjenisprodukId' => $item->iddjp,
+                'norec_spd' => $item->norec_spd,
+
+            );
+        }
+         return $this->respond($result, 'Data Tagihan Penunjang');
+    }
+    public function SaveTagihanDiklat(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $transMessage='';
+        $req = $request->all();
+//        return $this->respond($req);
+        try {
+        if($req['norec'] == ''){
+            $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->insert([
+                'norec'=> substr(Uuid::generate(), 0, 32),
+                'kdprofile'=> $kdProfile,
+                'statusenabled'=>true,
+                'kodeexternal'=>$req['kodeexternal'],
+                'namaexternal'=> $req['namaexternal'],
+                'objectpegawaifk'=> $req['objectpegawaifk'],
+                'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                'norec_pp'=> $req['norec_pp'],
+            ]);
+        }
+        else{
+           $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->where('norec', $req['norec'])->update([
+                'norec'=> substr(Uuid::generate(), 0, 32),
+                'kdprofile'=> $kdProfile,
+                'statusenabled'=>true,
+                'kodeexternal'=>$req['kodeexternal'],
+                'namaexternal'=> $req['namaexternal'],
+                'objectpegawaifk'=> $req['objectpegawaifk'],
+                'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                'norec_pp'=> $req['norec_pp'],
+            ]);
+        }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                // "data" => $SP,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                'e'=> $e->getLine(),
+                'messafe'=>$e->getMessage(),
+                // "data" => $SP,
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function HapusTagihanDiklat(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $transMessage='';
+        $req = $request->all();
+        try {
+            $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->where('norec', $req['norec'])->update([
+                'statusenabled'=>false,
+                
+            ]);
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                // "data" => $SP,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                'e'=> $e->getLine(),
+                'messafe'=>$e->getMessage(),
+                // "data" => $SP,
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

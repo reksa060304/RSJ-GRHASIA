@@ -1051,6 +1051,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // GET
 
             // POST
+            Route::post('tagihan/save-tagihan-diklat', 'Kasir\KasirController@SaveTagihanDiklat');
+            Route::post('tagihan/hapus-tagihan-diklat', 'Kasir\KasirController@HapusTagihanDiklat');
             Route::post('kasir/save-input-non-layanan', 'Kasir\KasirController@SaveInputTagihan');
             Route::post('kasir/save-log-batal-bayar','Kasir\KasirController@saveLogBatalBayar');
             Route::post('kasir/save-ubah-cara-bayar', 'Kasir\KasirController@UbahCaraBayar');
