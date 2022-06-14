@@ -1047,5 +1047,43 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "MapPegawaitoJTL",
+    "url": "/MapPegawaitoJTL",
+    "templateurl": "module/TataRekening/MapPegawaitoJTL.html",
+    "controller": "MapPegawaitoJTLCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  }, 
+  {
+    "name": "TagihanDiklat",
+    "url": "/TagihanDiklat",
+    "templateurl": "module/SDM/Penelitian/TagihanDiklat.html",
+    "controller": "TagihanDiklatCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
