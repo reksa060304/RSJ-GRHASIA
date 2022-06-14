@@ -12864,7 +12864,7 @@ $result = array(
         $grade = 0;
         $mk = 0;
         $point_tt = 0;
-        try{
+    try{
         foreach ($arr as $array_data){
             $id = $array_data['kd'];
             $tgl = $array_data['tglinput'];
@@ -12872,7 +12872,7 @@ $result = array(
             $datas = DB::select(DB::raw("select namalengkap from pegawai_m where id = $id"));
             $cek = DB::select(DB::raw("select * from pointjaspel_t where objectpegawaifk = $id"));
             $cektgl = DB::select(DB::raw("select iki, iku, prosen, grade, mk, point_tt from pointjaspel_t where objectpegawaifk = $id"));
-
+            var_dump($cek);
             if(!empty($cek)){
                 if(!empty($array_data['iki'])){
                     $data2[] = array(
@@ -13280,7 +13280,7 @@ $result = array(
         $kdProfile = (int) $this->getDataKdProfile($request);
         $bulan = $request['bulan'];
         $tahun = $request['tahun'];
-        $periode = $request['periode'];
+        $periodebulan = $request['periodebulan'];
         $paramBln = "";
         $paramThn = "";
         $paramperiode = "";
@@ -13291,8 +13291,8 @@ $result = array(
         if(isset($tahun)){
             $paramThn = "and date_part('year', periode) =". $tahun;
         }
-        if(isset($periode)){
-            $paramperiode = "and date_part('year', periode) = extract(year from '$periode'::date)";
+        if(isset($periodebulan)){
+            $paramperiode = "and date_part('year', periode) = extract(year from '$periodebulan'::date)";
         }
         $data = \DB::select(DB::raw("
         select dana, diklat, p1, iki, iku, tt, ffs, struk, jtl, p3
