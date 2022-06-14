@@ -7378,4 +7378,113 @@ class RemunerasiController extends ApiController
         $res['data'] =$data;
         return $this->respond($res);
     }
+    public function saveMapKelompokJTL(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            foreach ( $request['details'] as $item){
+                $map = Pegawai::where('id', $item['id'])->first();
+                $map->isjtl= true;
+                $map->save();
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getMappingJTL(Request $request)
+    {
+         $kdProfile = (int) $this->getDataKdProfile($request);
+        $tgAwal = '';
+        $tglAkhir = '';
+        $ruangId = '';
+        $pegawai = '';
+        $jmlRow = '';
+        if(isset($request['pegawai']) && $request['pegawai'] !='' ){
+            $pegawai = " and pg.namalengkap ilike '%".$request['pegawai']."%'";
+        }
+        if(isset($request['jmlRow']) && $request['jmlRow'] !='' ){
+            $jmlRow = " limit ".$request['jmlRow'];
+        }
+        $paket = DB::select(DB::raw("SELECT
+                pg.namalengkap,
+                pg.isjtl,pg.id
+            FROM
+            pegawai_m AS pg 
+                WHERE
+                pg.statusenabled = true
+            AND pg.kdprofile = $kdProfile
+            and pg.namalengkap <> '-'
+            and pg.usereksternal is null
+            and pg.isjtl = true
+           $tgAwal
+           $tglAkhir
+           $ruangId
+           $pegawai
+            ORDER BY
+                pg.namalengkap asc
+                $jmlRow"));
+        $result = array(
+            'data' => $paket,
+            'as' => 'er@epic'
+        );
+        return $this->respond($result);
+    }
+    public function deletemapJTL(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+            foreach ($request['data'] as $item){
+                Pegawai::where('id',$item['id'])->where('kdprofile',$kdProfile)->update([
+                    'isjtl' => null
+                ]);
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+//                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'e'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

@@ -1249,9 +1249,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-daftar-penerimaan-harga', 'Logistik\LogistikController@getDaftarPenerimaanSuplierHarga');
             Route::get('logistik/get-daftar-pemakaian-bhp', 'Logistik\LogistikController@getDaftarPemakaianBarangBHP');
             Route::get('logistik/get-detail-pemakaian-bhp', 'Logistik\LogistikController@getPemakaianStokRuanganByNorec');
+            Route::get('sdm/penelitian/daftar-tagihan-diklat', 'Kasir\KasirController@detailTagihanDiklat');
             // GET //
 
             // POST //
+            Route::post('remunerasi/delete-map-jtl', 'Remunerasi\RemunerasiController@deletemapJTL');
+            Route::post('remunerasi/save-map-jtl', 'Remunerasi\RemunerasiController@saveMapKelompokJTL');
+            Route::get('remunerasi/get-mapping-jtl', 'Remunerasi\RemunerasiController@getMappingJTL');
             Route::post('logistik/get-stok-ruangan-so-from-file', 'Logistik\LogistikController@getStokRuanganSOFromFile');
             Route::post('logistik/get-stok-ruangan-so-from-fileexcel', 'Logistik\LogistikController@getStokRuanganSOFromFileExcel');
             Route::post('gaji/get-gaji-pegawai', 'SDM\SumberDayaManusiaController@gajiPegawaiV2');

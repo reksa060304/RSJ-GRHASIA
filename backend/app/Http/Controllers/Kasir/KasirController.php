@@ -5855,4 +5855,20 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         return $this->respond($result);   
     }
+    public function detailTagihanDiklat(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $dataStrukPelayanan= \DB::table('strukpelayanan_t as sp')
+            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'sp.noregistrasifk')
+            ->join('pasien_m as p', 'p.id', '=', 'pd.nocmfk')
+            ->leftJoin('ruangan_m as r', 'r.id', '=', 'pd.objectruanganlastfk')
+            ->leftJoin('departemen_m as dept', 'dept.id', '=', 'r.objectdepartemenfk')
+            ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
+            ->leftJoin('kelas_m as k', 'k.id', '=', 'pd.objectkelasfk')
+            ->select('pd.noregistrasi', 'p.nocm','p.namapasien','pd.tglregistrasi','pd.tglpulang','r.namaruangan',
+                'kp.kelompokpasien','sp.totalharusdibayar','sp.norec', 'sp.nostruk', 'k.namakelas', 'sp.tglstruk',
+                'sp.totalprekanan', 'r.id as ruanganId', 'dept.id as departmentId')
+            ->where('sp.kdprofile', $kdProfile);
+
+    }
 }
