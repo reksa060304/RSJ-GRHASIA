@@ -220,6 +220,10 @@
     {
       "nameDep": "TagihanDiklatCtrl",
       "urlDep": "module/SDM/Penelitian/TagihanDiklatCtrl"
+    },
+    {
+      "nameDep": "MapPegawaitoTubelCtrl",
+      "urlDep": "module/TataRekening/MapPegawaitoTubelCtrl"
     }
   ]
 }

@@ -1254,8 +1254,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
             // POST //
             Route::post('remunerasi/delete-map-jtl', 'Remunerasi\RemunerasiController@deletemapJTL');
+            Route::post('remunerasi/delete-map-tubel', 'Remunerasi\RemunerasiController@deletemapTubel');
             Route::post('remunerasi/save-map-jtl', 'Remunerasi\RemunerasiController@saveMapKelompokJTL');
+            Route::post('remunerasi/save-map-tubel', 'Remunerasi\RemunerasiController@saveMapKelompokTubel');
             Route::get('remunerasi/get-mapping-jtl', 'Remunerasi\RemunerasiController@getMappingJTL');
+            Route::get('remunerasi/get-mapping-tubel', 'Remunerasi\RemunerasiController@getMappingTubel');
             Route::post('logistik/get-stok-ruangan-so-from-file', 'Logistik\LogistikController@getStokRuanganSOFromFile');
             Route::post('logistik/get-stok-ruangan-so-from-fileexcel', 'Logistik\LogistikController@getStokRuanganSOFromFileExcel');
             Route::post('gaji/get-gaji-pegawai', 'SDM\SumberDayaManusiaController@gajiPegawaiV2');
