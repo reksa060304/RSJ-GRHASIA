@@ -224,6 +224,10 @@
     {
       "nameDep": "MapPegawaitoTubelCtrl",
       "urlDep": "module/TataRekening/MapPegawaitoTubelCtrl"
+    },
+    {
+      "nameDep": "RemunerasiPegawaiCtrl",
+      "urlDep": "module/TataRekening/RemunerasiPegawaiCtrl"
     }
   ]
 }

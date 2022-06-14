@@ -103,6 +103,52 @@ define(['initialize'], function (initialize) {
 				
 
 			}
+
+            $scope.postingUang = function () {
+				
+                medifirstService.get('tatarekening/get-daftar-remun-pegawai-fix?bulan='+ moment($scope.item.bulan).format('MM') + "&tahun=" + + moment($scope.item.tahun).format('YYYY') ).then(function (e) {
+                    if(e.data.data.length > 0){
+                        $scope.popupDetailIndex.close();
+                        var confirm = $mdDialog.confirm()
+                            .title('Peringatan')
+                            .textContent('Pada Bulan Tersebut Remun Pegawai sudah diposting apakah mau posting kembali?')
+                            .ariaLabel('Lucky day')
+                            .cancel('Tidak')
+                            .ok('Ya')
+                        $mdDialog.show(confirm).then(function () {
+                            let json = {
+                                'bulan': moment($scope.item.bulan).format('MM'),
+                                'tahun': moment($scope.item.tahun).format('YYYY'),
+                            }
+                            //$scope.SaveKirim();
+                            medifirstService.post('tatarekening/save-dana-remun', json).then(function (e) {
+                                // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
+                                // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
+                                // 	$scope.itm.pegawai.namalengkap).then(function (res) {})
+                                
+                                loadData()
+                                
+            
+                            })
+                        })
+                    } else {
+                        let json = {
+                                'bulan': moment($scope.item.bulan).format('MM'),
+                                'tahun': moment($scope.item.tahun).format('YYYY'),
+                            }
+                        medifirstService.post('tatarekening/save-dana-remun', json).then(function (e) {
+                            
+                            // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
+                            // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
+                            // 	$scope.itm.pegawai.namalengkap).then(function (res) {})
+                            
+                            loadData()
+                            
+        
+                        })
+                    }
+                });
+			}
 		
 
 			$scope.klik = function (current) {
@@ -169,6 +215,36 @@ define(['initialize'], function (initialize) {
 					"title": "P3",
                     "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: p3 #', 'Rp.')}}</span>",
+				},
+                {
+					"field": "pirp1",
+					"title": "PIR P1",
+                    "width": '150px'
+				},
+                {
+					"field": "piriki",
+					"title": "PIR IKI",
+                    "width": '150px'
+				},
+                {
+					"field": "piriku",
+					"title": "PIR IKU",
+                    "width": '150px'
+				},
+				{
+					"field": "pirtt",
+					"title": "PIR TT",
+                    "width": '150px'
+				},
+				{
+					"field": "pirstruk",
+					"title": "PIR Struk",
+                    "width": '150px'
+				},
+				{
+					"field": "pirjtl",
+					"title": "PIR JTL",
+                    "width": '150px'
 				},
 			];
 			$scope.mainGridOptions = {
