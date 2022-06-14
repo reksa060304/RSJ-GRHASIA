@@ -3493,26 +3493,23 @@ class LaporanRekamMedisController extends   ApiController
             case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as item2,
             case when isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then count(namaproduk) else 0 end as item3,
         
-            case when isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as tersedia1,
-            case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as tersedia2,
-            case when isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as tersedia3,
+            case when isgeneric = true and isfornas is not null and isforrs is not null then count(namaproduk) else 0 end as tersedia1,
+            case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as tersedia2,
+            case when isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then count(namaproduk) else 0 end as tersedia3,
             
-            case when isgeneric = true and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as tersediafor1,
-            case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as tersediafor2,
+            case when isgeneric = true and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as tersediafor1,
+            case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as tersediafor2,
             0 as tersediafor3
         
             from(
-                    select pr.namaproduk, sum(spd.qtyproduk) as jumlahproduk, ru.namaruangan, dp.id, pr.isfornas, pr.isforrs, pr.isgeneric
+                    select pr.namaproduk, sum(spd.qtyproduk) as jumlahproduk, pr.isfornas, pr.isforrs, pr.isgeneric
                             FROM stokprodukdetail_t as spd
-                            INNER JOIN strukpelayanan_t as sp on sp.norec = spd.nostrukterimafk
                             INNER JOIN produk_m as pr on pr.id = spd.objectprodukfk
-                            LEFT JOIN ruangan_m AS ru ON ru.id = spd.objectruanganfk
-                            LEFT JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
                     where pr.statusenabled = true
                     and spd.statusenabled = true
                     and pr.kdprofile = 30
                     and spd.kdprofile = 30
-                    group by pr.isfornas, pr.isforrs, pr.isgeneric, ru.namaruangan, dp.id, pr.namaproduk
+                    group by pr.isfornas, pr.isforrs, pr.isgeneric, pr.namaproduk
             ) as x group by isgeneric, isforrs, isfornas
         ) as y;"));
 
@@ -3835,18 +3832,18 @@ class LaporanRekamMedisController extends   ApiController
         $datas = DB::select(DB::raw("select sum(rajal1) rajal1, sum(rajal2) rajal2, sum(rajal3) rajal3, sum(igd1) igd1, sum(igd2) igd2, sum(igd3) igd3, sum(ranap1) ranap1, sum(ranap2) ranap2, sum(ranap3) ranap3 
         from(
             select 
-            case when id <> 16 and isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as rajal1,
-            case when id <> 16 and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as rajal2,
-            case when id <> 16 and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as rajal3,
-            case when namaruangan ilike '%ugd%'  and isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as igd1,
-            case when namaruangan ilike '%ugd%' and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as igd2,
-            case when namaruangan ilike '%ugd%' and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as igd3,
-            case when id = 16 and isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as ranap1,
-            case when id = 16 and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as ranap2,
-            case when id = 16 and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as ranap3
+            case when id <> 16 and isgeneric = true and isfornas is not null and isforrs is not null then count(namaproduk) else 0 end as rajal1,
+            case when id <> 16 and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as rajal2,
+            case when id <> 16 and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then count(namaproduk) else 0 end as rajal3,
+            case when namaruangan ilike '%ugd%'  and isgeneric = true and isfornas is not null and isforrs is not null then count(namaproduk) else 0 end as igd1,
+            case when namaruangan ilike '%ugd%' and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as igd2,
+            case when namaruangan ilike '%ugd%' and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then count(namaproduk) else 0 end as igd3,
+            case when id = 16 and isgeneric = true and isfornas is not null and isforrs is not null then count(namaproduk) else 0 end as ranap1,
+            case when id = 16 and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as ranap2,
+            case when id = 16 and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then count(namaproduk) else 0 end as ranap3
         
             from(
-                    select sum(pp.jumlah) as jumlahproduk, ru.namaruangan, dp.id, pr.isfornas, pr.isforrs, pr.isgeneric
+                    select pr.namaproduk, sr.noresep, sum(pp.jumlah) as jumlahproduk, ru.namaruangan, dp.id, pr.isfornas, pr.isforrs, pr.isgeneric
                             FROM strukresep_t as sr
                             INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
                             INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
@@ -3859,7 +3856,7 @@ class LaporanRekamMedisController extends   ApiController
                     and pd.kdprofile = 30
                     and pd.statusenabled = true
                     and pp.isobat = true
-                    group by pr.isfornas, pr.isforrs, pr.isgeneric, ru.namaruangan, dp.id
+                    group by pr.isfornas, pr.isforrs, pr.isgeneric, ru.namaruangan, dp.id, pr.namaproduk, sr.noresep
             ) as x group by id, namaruangan, isgeneric, isforrs, isfornas
         ) as y;"));
 

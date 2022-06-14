@@ -1051,6 +1051,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // GET
 
             // POST
+            Route::post('tagihan/save-tagihan-diklat', 'Kasir\KasirController@SaveTagihanDiklat');
+            Route::post('tagihan/hapus-tagihan-diklat', 'Kasir\KasirController@HapusTagihanDiklat');
             Route::post('kasir/save-input-non-layanan', 'Kasir\KasirController@SaveInputTagihan');
             Route::post('kasir/save-log-batal-bayar','Kasir\KasirController@saveLogBatalBayar');
             Route::post('kasir/save-ubah-cara-bayar', 'Kasir\KasirController@UbahCaraBayar');
@@ -1249,9 +1251,16 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-daftar-penerimaan-harga', 'Logistik\LogistikController@getDaftarPenerimaanSuplierHarga');
             Route::get('logistik/get-daftar-pemakaian-bhp', 'Logistik\LogistikController@getDaftarPemakaianBarangBHP');
             Route::get('logistik/get-detail-pemakaian-bhp', 'Logistik\LogistikController@getPemakaianStokRuanganByNorec');
+            Route::get('sdm/penelitian/daftar-tagihan-diklat', 'Kasir\KasirController@detailTagihanDiklat');
             // GET //
 
             // POST //
+            Route::post('remunerasi/delete-map-jtl', 'Remunerasi\RemunerasiController@deletemapJTL');
+            Route::post('remunerasi/delete-map-tubel', 'Remunerasi\RemunerasiController@deletemapTubel');
+            Route::post('remunerasi/save-map-jtl', 'Remunerasi\RemunerasiController@saveMapKelompokJTL');
+            Route::post('remunerasi/save-map-tubel', 'Remunerasi\RemunerasiController@saveMapKelompokTubel');
+            Route::get('remunerasi/get-mapping-jtl', 'Remunerasi\RemunerasiController@getMappingJTL');
+            Route::get('remunerasi/get-mapping-tubel', 'Remunerasi\RemunerasiController@getMappingTubel');
             Route::post('logistik/get-stok-ruangan-so-from-file', 'Logistik\LogistikController@getStokRuanganSOFromFile');
             Route::post('logistik/get-stok-ruangan-so-from-fileexcel', 'Logistik\LogistikController@getStokRuanganSOFromFileExcel');
             Route::post('gaji/get-gaji-pegawai', 'SDM\SumberDayaManusiaController@gajiPegawaiV2');
@@ -1861,6 +1870,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         // Route::group(['prefix' => 'remunerasi'], function () {
         Route::get('remunerasi/get-combo','Remunerasi\RemunerasiController@getCombo');
 //          Route::get('remunerasi/get-jasa-layanan-pagu-rev2','Remunerasi\RemunerasiController@getRemunerasiJP1_rev2');
+        Route::get('get/save-posting-grade','Remunerasi\RemunerasiController@getSavePostingGrade');
         Route::get('remunerasi/get-jasa-layanan-pagu-rev2','Remunerasi\RemunerasiController@getRemunerasiJP1_rev3');
         Route::get('remunerasi/get-hitung-jasa-pelayanan-satu-rev2', 'Remunerasi\RemunerasiController@getHitungJP1Rev2');
         Route::get('remunerasi/get-daftar-jasa-layanan-pagu-rev2', 'Remunerasi\RemunerasiController@getDaftarJP1Rev2');
@@ -2565,8 +2575,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
           // Route::group(['prefix' => 'tatarekening'], function () {
           Route::post('tatarekening/save-akomodasi-tea', 'TataRekening\TagihanController@saveAkomodasiOtomatis');
+          Route::post('tatarekening/save-dana-pagu', 'TataRekening\TagihanController@saveDanaPagu');
           Route::post('tatarekening/save-poin-remun', 'TataRekening\TagihanController@saveImportRemun');
           Route::get('tatarekening/get-detail_apd', 'TataRekening\TagihanController@getDetailpasien');
+          Route::get('tatarekening/get-daftar-dana-pagu', 'TataRekening\TagihanController@getDanaPagu');
           Route::get('tatarekening/get-combo-detail-regis', 'TataRekening\TagihanController@getDataComboDetailRegis');
           Route::get('tatarekening/get-detail-pasien', 'TataRekening\TagihanController@getAPD');
           Route::get('tatarekening/get-data-master', 'TataRekening\TagihanController@getTableMaster');  //done

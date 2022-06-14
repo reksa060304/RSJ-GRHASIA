@@ -12864,7 +12864,7 @@ $result = array(
         $grade = 0;
         $mk = 0;
         $point_tt = 0;
-        try{
+    try{
         foreach ($arr as $array_data){
             $id = $array_data['kd'];
             $tgl = $array_data['tglinput'];
@@ -12872,9 +12872,9 @@ $result = array(
             $datas = DB::select(DB::raw("select namalengkap from pegawai_m where id = $id"));
             $cek = DB::select(DB::raw("select * from pointjaspel_t where objectpegawaifk = $id"));
             $cektgl = DB::select(DB::raw("select iki, iku, prosen, grade, mk, point_tt from pointjaspel_t where objectpegawaifk = $id"));
-
+            //var_dump($array_data['iki']);
             if(!empty($cek)){
-                if(!empty($array_data['iki'])){
+                if(!empty($array_data['iki']) || $array_data['iki'] >= 0){
                     $data2[] = array(
                         'iki' => $array_data['iki'],
                         'iku' => $cektgl[0]->iku,
@@ -12904,7 +12904,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['iku'])){
+                if(!empty($array_data['iku']) || $array_data['iku'] >= 0){
                     $data2[] = array(
                         'iku' => $array_data['iku'],
                         'iki' => $cektgl[0]->iki,
@@ -12934,7 +12934,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['prosen'])){
+                if(!empty($array_data['prosen']) || $array_data['prosen'] >= 0){
                     $data2[] = array(
                         'prosen' => $array_data['prosen'],
                         'iku' => $cektgl[0]->iku,
@@ -12964,7 +12964,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['grade'])){
+                if(!empty($array_data['grade']) || $array_data['grade'] >= 0){
                     $data2[] = array(
                         'grade' => $array_data['grade'],
                         'iku' => $cektgl[0]->iku,
@@ -12994,7 +12994,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['mk'])){
+                if(!empty($array_data['mk']) || $array_data['mk'] >= 0){
                     $data2[] = array(
                         'mk' => $array_data['mk'],
                         'iku' => $cektgl[0]->iku,
@@ -13024,7 +13024,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['point_tt'])){
+                if(!empty($array_data['point_tt']) || $array_data['point_tt'] >= 0){
                     $data2[] = array(
                         'point_tt' => $array_data['point_tt'],
                         'iku' => $cektgl[0]->iku,
@@ -13059,7 +13059,7 @@ $result = array(
             //-----------------------------------------------
 
             if(empty($cek)){
-                if(!empty($array_data['iki'])){
+                if(!empty($array_data['iki']) || $array_data['iki'] >= 0){
                     $data2[] = array(
                         'iki' => $array_data['iki'],
                         'iku' => null,
@@ -13089,7 +13089,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['iku'])){
+                if(!empty($array_data['iku']) || $array_data['iku'] >= 0){
                     $data2[] = array(
                         'iku' => $array_data['iku'],
                         'iki' => null,
@@ -13119,7 +13119,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['prosen'])){
+                if(!empty($array_data['prosen']) || $array_data['prosen'] >= 0){
                     $data2[] = array(
                         'prosen' => $array_data['prosen'],
                         'iku' => null,
@@ -13149,7 +13149,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['grade'])){
+                if(!empty($array_data['grade']) || $array_data['grade'] >= 0){
                     $data2[] = array(
                         'grade' => $array_data['grade'],
                         'iku' => null,
@@ -13179,7 +13179,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['mk'])){
+                if(!empty($array_data['mk']) || $array_data['mk'] >= 0){
                     $data2[] = array(
                         'mk' => $array_data['mk'],
                         'iku' => null,
@@ -13209,7 +13209,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['point_tt'])){
+                if(!empty($array_data['point_tt']) || $array_data['point_tt'] >= 0){
                     $data2[] = array(
                         'point_tt' => $array_data['point_tt'],
                         'iku' => null,
@@ -13273,6 +13273,129 @@ $result = array(
             );
         }
         return $this->respond($result);
+    }
+
+    public function getDanaPagu(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $bulan = $request['bulan'];
+        $tahun = $request['tahun'];
+        $periodebulan = $request['periodebulan'];
+        $paramBln = "";
+        $paramThn = "";
+        $paramperiode = "";
+
+        if(isset($bulan)){
+            $paramBln = " and date_part('month', periode) =". $bulan;
+        }
+        if(isset($tahun)){
+            $paramThn = "and date_part('year', periode) =". $tahun;
+        }
+        if(isset($periodebulan)){
+            $paramperiode = "and date_part('year', periode) = extract(year from '$periodebulan'::date)";
+        }
+        $data = \DB::select(DB::raw("
+        select dana, diklat, p1, iki, iku, tt, ffs, struk, jtl, p3
+        from danapagu_t 
+        where statusenabled = true and kdprofile = 30
+        $paramBln
+        $paramThn
+        $paramperiode
+        "));
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function saveDanaPagu(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+
+        $periode = $request['periode'];
+        $cek = DB::select(DB::raw("select * from danapagu_t where extract(month from periode) = extract(month from '$periode'::date)"));
+        $id = DB::select(DB::raw("select max(id) as id from danapagu_t"));
+        $idmax = (int) $id[0]->id;
+        $patokan = $request['dana'] - $request['diklat'];
+        //var_dump($patokan);
+        try{
+            // $pegawai = Pegawai::where('id', $request['id'])->where('kdprofile', $kdProfile)->get();
+            if (empty($cek)) {
+                $danapagu = \DB::table('danapagu_t')->insert([
+                'id'=> $idmax+1,
+                'kodeexternal'=> $idmax+1,
+                'namaexternal'=> $idmax+1,
+                'kdprofile'=> $kdProfile,
+                'statusenabled'=>true,
+                'dana'=>$request['dana'],
+                'diklat'=>$request['diklat'],
+                'dibagi'=>$patokan,
+                'tigaperempatdiklat'=>75/100*$request['diklat'],
+                'seperempatdiklat'=>25/100*$request['diklat'],
+                'p1'=>0.35*($request['dana'] - $request['diklat']),
+                'iki'=>(($patokan)*(0.59)*(0.55)*(0.6)) + (0.25*$request['diklat']),
+                'iku'=>($patokan)*(0.59)*(0.55)*(0.2),
+                'tt'=>($patokan)*(0.59)*(0.55)*(0.2),
+
+                'ffs'=>($patokan)*(0.59)*(0.45)*(0.7),
+                'struk'=>($patokan)*(0.59)*(0.45)*(0.15),
+                'jtl'=>($patokan)*(0.59)*(0.45)*(0.15),
+
+                'p3'=>($patokan)*(0.06)*(0.5),
+
+                'periode'=>$request['periode'],
+                ]);
+            } else {
+                $pointjaspel = \DB::table('danapagu_t')->where('id', $cek[0]->id)->update([
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=>true,
+                    'dana'=>$request['dana'],
+                    'diklat'=>$request['diklat'],
+                    'dibagi'=>$request['dana'] - $request['diklat'],
+                    'tigaperempatdiklat'=>75/100*$request['diklat'],
+                    'seperempatdiklat'=>25/100*$request['diklat'],
+                    'p1'=>0.35*($request['dana'] - $request['diklat']),
+                    'iki'=>(($request['dana'] - $request['diklat'])*(0.59)*(0.55)*(0.6)) + (0.25*$request['diklat']),
+                    'iku'=>($request['dana'] - $request['diklat'])*(0.59)*(0.55)*(0.2),
+                    'tt'=>($request['dana'] - $request['diklat'])*(0.59)*(0.55)*(0.2),
+
+                    'ffs'=>($request['dana'] - $request['diklat'])*(0.59)*(0.45)*(0.7),
+                    'struk'=>($request['dana'] - $request['diklat'])*(0.59)*(0.45)*(0.15),
+                    'jtl'=>($request['dana'] - $request['diklat'])*(0.59)*(0.45)*(0.15),
+
+                    'p3'=>($request['dana'] - $request['diklat'])*(0.06)*(0.5),
+    
+                    //'periode'=>$request['periode'],
+                ]);
+            }
+            
+            $transStatus = 'true';
+            $transMessage = 'Sukses' ;
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = 'Sukses' ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "by" => 'er@epic',
+            );
+        } else {
+            $transMessage = 'Simpan Gagal';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                "by" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
 }

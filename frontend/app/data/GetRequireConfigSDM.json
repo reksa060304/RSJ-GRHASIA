@@ -208,6 +208,22 @@
     {
       "nameDep": "RemunerasiCtrl",
       "urlDep": "module/TataRekening/RemunerasiCtrl"
+    },
+    {
+      "nameDep": "DanaPaguCtrl",
+      "urlDep": "module/TataRekening/DanaPaguCtrl"
+    },
+    {
+      "nameDep": "MapPegawaitoJTLCtrl",
+      "urlDep": "module/TataRekening/MapPegawaitoJTLCtrl"
+    }, 
+    {
+      "nameDep": "TagihanDiklatCtrl",
+      "urlDep": "module/SDM/Penelitian/TagihanDiklatCtrl"
+    },
+    {
+      "nameDep": "MapPegawaitoTubelCtrl",
+      "urlDep": "module/TataRekening/MapPegawaitoTubelCtrl"
     }
   ]
 }
