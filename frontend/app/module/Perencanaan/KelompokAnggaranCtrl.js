@@ -177,6 +177,7 @@ define(['initialize'], function (initialize) {
                         if(element.kode == a1 +'.'+ b1 +'.'+ c1+'.'+ d1){
                             $scope.item.subKegiatan = element.kode + ' ' + element.keterangan
                         }
+                        $scope.item.kode4 = a1 +'.'+ b1 +'.'+ c1+'.'+ d1
                         // if(element.kode == dataItem.kode.substring(0,4)){
                         //     $scope.item.urusanPemerintahan = element.kode + ' ' + element.keterangan
                         // }
@@ -191,6 +192,23 @@ define(['initialize'], function (initialize) {
                         // }
                         
                     }
+                    let TotalAnggaran = 0;
+                    medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id).then(function (e) {
+                        DataKeteranganBelanja = e.data.data
+                        $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                            data: DataKeteranganBelanja
+                        });
+                        for (let index = 0; index < DataKeteranganBelanja.length; index++) {
+                            const element = DataKeteranganBelanja[index];
+                            TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
+                        }
+                        TotalAnggaran = parseFloat(TotalAnggaran)
+                        $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
+                        $scope.rcn.totalAnggaran = formatRupiah(TotalAnggaran, "Rp. ")
+                        $scope.rcn.sisaAnggaran = formatRupiah(TotalAnggaran - 0, "Rp. ")
+                        $scope.item.targetKinerjaMasukan = formatRupiah(TotalAnggaran, "Rp. ")
+                        
+                    })
                     $scope.item.subSubKegiatankode = kodeArr[1]//dataItem.kode//.substring(16) 
                     $scope.item.subSubKegiatan =  dataItem.keterangan
                     $scope.item.thnAnggaran = dataItem.tahun
@@ -200,7 +218,7 @@ define(['initialize'], function (initialize) {
                     $scope.rcn.judulKegiatan =  dataItem.keterangan
 
                     $scope.item.tolokUkurMasukan = dataItem.indikatormasuk
-                    $scope.item.targetKinerjaMasukan = dataItem.targetmasuk
+                    // $scope.item.targetKinerjaMasukan = formatRupiah(TotalAnggaran, "Rp. ")//dataItem.targetmasuk
                     $scope.item.tolokUkurKeluaran = dataItem.indikatorkeluaran
                     $scope.item.targetKinerjaKeluaran = dataItem.targetkeluaran
                     $scope.item.tolokUkurHasil = dataItem.indikatorhasil
@@ -221,6 +239,36 @@ define(['initialize'], function (initialize) {
                 $scope.item.kodeAddMT = dataItem.kodemataanggaran
                 $scope.item.keteranganAddMT = dataItem.namamataanggaran
                 $scope.popupTambahMT.center().open();
+            }
+            function editKeteranganBelanja(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                // $scope.item.id = dataItem.id
+                // $scope.item.kodeAddMT = dataItem.kodemataanggaran
+                // $scope.item.keteranganAddMT = dataItem.namamataanggaran
+                // $scope.popupTambahMT.center().open();
+            }
+            function editDetailMT(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                $scope.item.norecKT = dataItem.norec
+                $scope.item.keteranganKT = dataItem.keteranganbelanja
+                $scope.item.noUrutKT = dataItem.nourut
+                $scope.item.jmlKT = dataItem.jml
+                $scope.item.hargaSatuanKT = dataItem.hargasatuan
+                $scope.item.subTotalKT = dataItem.subtotal
+                $scope.item.satuanKT = dataItem.satuan
+                $scope.item.sumberDanaKT = {id:dataItem.objectasalprodukfk,asalproduk:dataItem.asalproduk}
+                $scope.rcn.idmataanggaran = dataItem.objectmataanggaranfk
+                $scope.popupTambahKeteranganBelanja.center().open();
             }
            $scope.klikKegiatan = function(dataKegiatanSelected){
                 
@@ -324,6 +372,24 @@ define(['initialize'], function (initialize) {
                         }
                     }
                     $scope.dataSourceMataAnggaran = new kendo.data.DataSource({
+                        data: data
+                    });
+                }
+            });
+            
+            $scope.$watch('item.searchMataMT', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    
+                    var data = []
+                    for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
+                        const element = DataTotalMataAnggaran[index];
+                        if (element.namamataanggaran.match(newValue)) {
+                            data.push(element)
+                        }else if (element.kodemataanggaran.match(newValue)) {
+                            data.push(element)
+                        }
+                    }
+                    $scope.dataSourceDetailMT = new kendo.data.DataSource({
                         data: data
                     });
                 }
@@ -500,7 +566,7 @@ define(['initialize'], function (initialize) {
                 var objSave =
                     {
                         id: $scope.item.id,
-                        kode: $scope.item.subSubKegiatankode,
+                        kode: $scope.item.kode4 + ' ' + $scope.item.subSubKegiatankode,
                         keterangan: $scope.item.subSubKegiatan,
                         kodeexternal: null,
                         namaexternal: null,
@@ -582,16 +648,16 @@ define(['initialize'], function (initialize) {
             
             $scope.columnKeteranganBelanja = {
                 toolbar:[
-                    {
-                        name: "add", 
-                        text: "Tambah",
-                        template: '<div class="grid_2"><button ng-click="TambahMT()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
-                    },
-                    {
-                        name: "ads", 
-                        text: "asd",
-                        template: '<div class="grid_6"></div>'
-                    },
+                    // {
+                    //     name: "add", 
+                    //     text: "Tambah",
+                    //     template: '<div class="grid_2"><button ng-click="TambahMT()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                    // },
+                    // {
+                    //     name: "ads", 
+                    //     text: "asd",
+                    //     template: '<div class="grid_6"></div>'
+                    // },
                     {
                         name: "src", 
                         text: "src",
@@ -603,17 +669,12 @@ define(['initialize'], function (initialize) {
                         "command": [
                               {
                                  text: "Detail",
-                                 click: editMataT,
+                                 click: editKeteranganBelanja,
                                  imageClass: "clinic fa"
                               },
                           ],
                              title: "",
                              width: "30px",
-                      },
-                    {
-                        "field": "id",
-                        "title": "Id",
-                        "width": "50px"
                     },
                     {
                         "field": "kodemataanggaran",
@@ -691,9 +752,20 @@ define(['initialize'], function (initialize) {
                 ],
                 columns:[
                     {
+                        "command": [
+                              {
+                                 text: "Detail",
+                                 click: editDetailMT,
+                                 imageClass: "clinic fa"
+                              },
+                          ],
+                             title: "",
+                             width: "30px",
+                    },
+                    {
                         "field": "nourut",
                         "title": "No. Urut",
-                        "width": "60px"
+                        "width": "30px"
                     },
                     {
                         "field": "keteranganbelanja",
@@ -703,30 +775,30 @@ define(['initialize'], function (initialize) {
                     {
                         "field": "jml",
                         "title": "Jml",
-                        "width": "80px",
+                        "width": "40px",
 						"template": "<span class='style-right'>{{formatRupiah2('#: jml #', '')}}</span>",
                     },
                     {
                         "field": "satuan",
                         "title": "Satuan",
-                        "width": "80px"
+                        "width": "50px"
                     },
                     {
                         "field": "hargasatuan",
                         "title": "Harga Satuan",
-                        "width": "80px",
+                        "width": "50px",
 						"template": "<span class='style-right'>{{formatRupiah2('#: hargasatuan #', '')}}</span>",
                     },
                     {
                         "field": "subtotal",
                         "title": "Sub Total",
-                        "width": "80px",
+                        "width": "50px",
 						"template": "<span class='style-right'>{{formatRupiah2('#: subtotal #', '')}}</span>",
                     },
                     {
                         "field": "asalproduk",
                         "title": "Sumber Dana",
-                        "width": "80px"
+                        "width": "100px"
                     }
                 ]
             };
@@ -1065,6 +1137,23 @@ define(['initialize'], function (initialize) {
                         }
                     }
                     $scope.rcn.mataAnggaranDipilih= dataMataAnggaranSelected.kodemataanggaran + " " + dataMataAnggaranSelected.namamataanggaran
+                    $scope.rcn.idmataanggaran = dataMataAnggaranSelected.id 
+                    // DataKeteranganBelanja = e.data.data
+                    // $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                    //     data: DataKeteranganBelanja
+                    // });
+
+                    var data = []
+                    for (let index = 0; index < DataKeteranganBelanja.length; index++) {
+                        const element = DataKeteranganBelanja[index];
+                        if (element.kodemataanggaran.match(dataMataAnggaranSelected.kodemataanggaran)) {
+                            data.push(element)
+                        }
+                    }
+                    $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                        data: data
+                    });
+
                     // $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
                     // $scope.rcn.totalAnggaran = formatRupiah(dataMataAnggaranSelected.total, "Rp. ")
                     // $scope.rcn.sisaAnggaran = formatRupiah(dataMataAnggaranSelected.total - 0, "Rp. ")
@@ -1072,9 +1161,47 @@ define(['initialize'], function (initialize) {
             }
             //perencanaan/save-keterangan-belanja
             $scope.SimpanPopUpAddKeterangan = function(){
+                var $idasalproduk = 0;
+                if($scope.item.sumberDanaKT != undefined){
+                    $idasalproduk = $scope.item.sumberDanaKT.id;
+                }
+                var norecKT = ''
+                if($scope.item.norecKT != ''){
+                    norecKT = $scope.item.norecKT
+                }
+                var objSave =
+                    {
+                        norec: norecKT,
+                        objectkegiatanfk: $scope.item.id,
+                        objectmataanggaranfk: $scope.rcn.idmataanggaran,
+                        keteranganbelanja: $scope.item.keteranganKT,
+                        nourut: $scope.item.noUrutKT,
+                        jml: $scope.item.jmlKT,
+                        hargasatuan: $scope.item.hargaSatuanKT,
+                        subtotal: $scope.item.subTotalKT,
+                        satuan: $scope.item.satuanKT,
+                        objectasalprodukfk: $idasalproduk
+                    }
                 medifirstService.post('perencanaan/save-keterangan-belanja', objSave).then(function (e) {
-                    loadDataGrid();
-                    $scope.popupTambah.center().close()
+                    
+                    let TotalAnggaran = 0;
+                    medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id).then(function (e) {
+                        DataKeteranganBelanja = e.data.data
+                        $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                            data: DataKeteranganBelanja
+                        });
+                        for (let index = 0; index < DataKeteranganBelanja.length; index++) {
+                            const element = DataKeteranganBelanja[index];
+                            TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
+                        }
+                        TotalAnggaran = parseFloat(TotalAnggaran)
+                        $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
+                        $scope.rcn.totalAnggaran = formatRupiah(TotalAnggaran, "Rp. ")
+                        $scope.rcn.sisaAnggaran = formatRupiah(TotalAnggaran - 0, "Rp. ")
+                        $scope.item.targetKinerjaMasukan = formatRupiah(TotalAnggaran, "Rp. ")
+                        
+                    })
+                    $scope.popupTambahKeteranganBelanja.center().close()
                 }, function (error) {
 
                 })
@@ -1084,6 +1211,7 @@ define(['initialize'], function (initialize) {
             }
             $scope.TambahKeterangan = function(){
                 $scope.item.noUrutKT = DataKeteranganBelanja.length + 1
+                $scope.item.norecKT = ''
                 $scope.popupTambahKeteranganBelanja.center().open()
             }
 
@@ -1277,21 +1405,21 @@ define(['initialize'], function (initialize) {
             }
             $scope.nextSubSubKegiatan = function () {
                 $scope.popupRincianAnggaran.center().open()
-                medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id).then(function (e) {
-                    DataKeteranganBelanja = e.data.data
-                    $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
-                        data: DataKeteranganBelanja
-                    });
-                    let TotalAnggaran = 0;
-                    for (let index = 0; index < DataKeteranganBelanja.length; index++) {
-                        const element = DataKeteranganBelanja[index];
-                        TotalAnggaran = TotalAnggaran + element.subtotal
-                    }
-                    $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
-                    $scope.rcn.totalAnggaran = formatRupiah(TotalAnggaran, "Rp. ")
-                    $scope.rcn.sisaAnggaran = formatRupiah(TotalAnggaran - 0, "Rp. ")
+                // medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id).then(function (e) {
+                //     DataKeteranganBelanja = e.data.data
+                //     $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                //         data: DataKeteranganBelanja
+                //     });
+                //     let TotalAnggaran = 0;
+                //     for (let index = 0; index < DataKeteranganBelanja.length; index++) {
+                //         const element = DataKeteranganBelanja[index];
+                //         TotalAnggaran = TotalAnggaran + element.subtotal
+                //     }
+                //     $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
+                //     $scope.rcn.totalAnggaran = formatRupiah(TotalAnggaran, "Rp. ")
+                //     $scope.rcn.sisaAnggaran = formatRupiah(TotalAnggaran - 0, "Rp. ")
                     
-                })
+                // })
             }
 
 

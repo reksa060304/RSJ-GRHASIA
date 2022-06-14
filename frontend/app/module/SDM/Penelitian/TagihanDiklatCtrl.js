@@ -1,463 +1,474 @@
-define(['initialize', 'Configuration'], function (initialize, configuration) {
+define(['initialize'], function (initialize) {
     'use strict';
-    var baseTransaksi = configuration.baseApiBackend;
-
-    initialize.controller('TagihanDiklatCtrl', ['$scope', '$state', 'DateHelper', 'CacheHelper', 'MedifirstService', 'ModelItem',
-        function ($scope, $state, dateHelper, cacheHelper, medifirstService, ModelItem) {
-            $scope.item = {};
+    initialize.controller('TagihanDiklatCtrl', ['CacheHelper', '$timeout', '$state', '$q', '$scope', 'DateHelper', 'MedifirstService',
+        function (cacheHelper, $timeout, $state, $q, $scope, dateHelper, medifirstService) {
             $scope.isRouteLoading = false;
             $scope.now = new Date();
-            $scope.item.tglawal = new moment($scope.now).format('YYYY-MM-DD 00:00');
-            $scope.item.tglakhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
-            var norec = "";
-            var dataProduk = [];
-            // LoadCombo();
-            GetData()
-            console.log(medifirstService.getPegawai());
-            $scope.tambahmahasiswa = function (current) {
-                if ($scope.current == undefined) {
-                    toastr.error('Data Kegiatan Belum Dipilih', 'Info');
+            $scope.item = {};
+            $scope.dataPasienSelected = {};
+            $scope.showBayar = false;
+            var norec_dkd = ""
+            function showButton() {
+                // $scope.showBtnBayarTagihan = true;
+                // $scope.showBtnPerbaharui = true;
+                // $scope.showBtnDetail = true;
+            }
+            FormLoad();
+            function detailDiklatTable() {
+                medifirstService.get("sdm/diklat/get-data-detail-diklat?norec=" + norec_dkd).then(function (data) {
+                    $scope.dataDetailDiklat = data.data.data;
+                })
+            }
+            function FormLoad() {
+                showButton();
+                $scope.item.periodeAwal = dateHelper.setJamAwal(new Date());
+                $scope.item.periodeAkhir = dateHelper.setJamAkhir(new Date());
+                $q.all([
+                    medifirstService.get("sdm/penelitian/daftar-tagihan-diklat?namaPelanggan=" + $scope.item.namaPelanggan + "&status=" + $scope.item.status + "&tglAwal=" + moment($scope.item.periodeAwal).format('YYYY-MM-DD') + "&tglAkhir=" + moment($scope.item.periodeAkhir).format('YYYY-MM-DD')),
+                    medifirstService.get("kasir/get-data-combo-kasir")
+                ]).then(function (data) {
+                    $scope.listKelompokTransaksi = data[1].data.kelompoktransaksi
+                    $scope.KelompokUserDiklit = data[1].data.diklit;
+                    $scope.listPegawai = data[1].data.pegawai;
+                    
+                    console.log(data[1].data.pegawai);
+                    $scope.KelompokUser = medifirstService.getKelompokUser();
+                    if (data[0].statResponse) {
+                        var dataFilter = []
+                        for (var i = 0; i < data[0].data.length; i++) {
+                            if (data[0][i].data.jenisTagihanId != 70) {
+                                if (data[0][i].data.jenisTagihanId != 71) {
+                                    if (data[0][i].data.jenisTagihanId != 62) {
+                                        dataFilter.push(data[0].data[i])
+                                    }
+                                }
+                            }
+                        }
+                        $scope.aggregate = [{
+                            field: "totalDibayar",
+                            aggregate: "sum"
+                        }]
+                        $scope.dataDaftarNonLayanan = new kendo.data.DataSource({
+                            data: dataFilter,
+                            pageSize: 10,
+                            total: dataFilter.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                        tglTransaksi: {
+                                            type: "date"
+                                        },
+
+                                    }
+                                }
+                            },
+                            aggregate: [{
+                                field: 'totalDibayar',
+                                aggregate: 'sum'
+                            }, ]
+                        });
+                        // $scope.listKelompokTransaksi = data[1];
+                        // $scope.listKelompokTransaksi = data[1].kelompoktransaksi;
+                    }
+
+                    $scope.listStatus = [{
+                            id: 1,
+                            namaExternal: "Lunas"
+                        },
+                        {
+                            id: 2,
+                            namaExternal: "Belum Bayar"
+                        }
+                    ]
+                    var data = cacheHelper.get('DaftarNonLayananKasirCtrl');
+                    if (data !== undefined) {
+                        var splitResultData = data.split("#");
+                        $scope.item.periodeAwal = dateHelper.setJamAwal(new Date(splitResultData[0]));
+                        $scope.item.periodeAkhir = dateHelper.setJamAkhir(new Date(splitResultData[1]));
+                    }
+                    $timeout($scope.SearchData, 500);
+                    if ($scope.KelompokUser != $scope.KelompokUserDiklit) {
+                        $scope.showBayar = true
+                    } else {
+                        $scope.showBayar = false
+                    }
+                });
+
+            }
+
+            $scope.formatTanggal = function (tanggal) {
+                return moment(tanggal).format('DD-MMM-YYYY HH:mm');
+            }
+
+            $scope.formatRupiah = function (value, currency) {
+                return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            }
+
+            $scope.columnDaftarNonLayanan = {
+                toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "RekapDaftarTagihanNonLayan.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.mergedCells = ["A1:F1"];
+                    sheet.frozenRows = 2;
+                    sheet.name = "Report";
+                    var myHeaders = [{
+                        value: "Laporan Tagihan Non Layanan",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                    }];
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        height: 70,
+                        fontSize: 20,
+                        textAlign: "center"
+                    });
+                },
+                pageable: true,
+                columns: [{
+                        "field": "tglTransaksi",
+                        "title": "Tanggal",
+                        "width": "150px",
+                        "template": "<span class='style-left'>{{formatTanggal('#: tglTransaksi #')}}</span>"
+                    },
+                    {
+                        "field": "namaPelanggan",
+                        "title": "Nama Pelanggan",
+                        "width": "150px",
+                        "template": "<span class='style-left'>#: namaPelanggan #</span>"
+                    },
+                    {
+                        "field": "jenisTagihan",
+                        "title": "Jenis Tagihan",
+                        "width": "150px",
+                        "template": "<span class='style-center'>#: jenisTagihan #</span>"
+                    },
+
+
+                    {
+                        "field": "keterangan",
+                        "title": "Keterangan",
+                        "width": "150px",
+                        "template": "<span class='style-left'>#: keterangan #</span>"
+                    },
+                    {
+                        "field": "statusBayar",
+                        "title": "Status",
+                        "width": "150px",
+                        "template": "<span class='style-center'>#: statusBayar #</span>"
+                    },
+                    {
+                        "field": "totalDibayar",
+                        "title": "Jumlah",
+                        "width": "150px",
+                        template: "<span class='style-right'>{{formatRupiah('#: totalDibayar #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        // footerTemplate: "#: data.totalDibayar.sum #",
+                        footerTemplate: "{{formatRupiah('#: data.totalDibayar.sum #', 'Rp.')}}",
+                    },
+                ]
+            }
+
+            $scope.Bayar = function () {
+                if ($scope.dataPasienSelected.statusBayar == "Lunas") {
+                    toastr.error("Informasi, Tagihan Sudah Lunas !")
+                    return;
+                    // var alertDialog = modelItemAkuntansi.showAlertDialog("Informasi",
+                    //     "Tagihan sudah Lunas", "Ok");
+
+                    // $mdDialog.show(alertDialog).then(function () {
+
+                    // });
+                } else {
+                    $scope.changePage2("PembayaranTagihanNonLayananKasir");
+                }
+            }
+
+            $scope.changePage2 = function (stateName) {
+                if ($scope.dataPasienSelected.noRec != undefined) {
+                    var obj = {
+                        noRegistrasi: $scope.dataPasienSelected.noRec
+                    }
+                    var tempCache = $scope.dataPasienSelected.noRec + "#0#DaftarNonLayananKasir";
+                    cacheHelper.set('PembayaranTagihanNonLayananKasir', tempCache);
+                    $state.go(stateName, {
+                        dataPasien: JSON.stringify(obj)
+                    });
+                } else {
+                    toastr.error("Informasi, Silahkan pilih data terlebih dahulu !");
+                    return;
+                    // var alertDialog = modelItemAkuntansi.showAlertDialog("Informasi",
+                    //     "Silahkan pilih data terlebih dahulu", "Ok");
+
+                    // $mdDialog.show(alertDialog).then(function () {
+
+                    // });
+                }
+            }
+
+            $scope.changePage = function (stateName) {
+                if ($scope.dataPasienSelected.noRec != undefined) {
+                    $state.go(stateName, {
+                        //ataPasien: JSON.stringify($scope.dataPasienSelected)
+                    });
+                } else {
+                    toastr.error("Informasi, Silahkan pilih data terlebih dahulu !");
                     return;
                 }
-                var chacePeriode = {
-                    0: $scope.current,
-                    1: 'EditPenelitianEksternal',
-                    2: '',
-                    3: '',
-                    4: '',
-                    5: '',
-                    6: ''
-                }
-
-                cacheHelper.set('DaftarPenelitianEkstenalCtrl', chacePeriode);
-                $state.go('TambahMahasiswa', {
-                    norec: $scope.current,
-                    noOrder: 'EditPenelitianEksternal'
-                });
             }
 
-            if (medifirstService.getKelompokUser() != 'diklit') {
-                $scope.verif = false
-                $scope.tagih = false
-                $scope.columnPenelitian = {
-                    toolbar: ["excel"],
-                    excel: {
-                        fileName: "Data Penelitian Eksternal" + moment($scope.now).format('DD/MMM/YYYY'),
-                        allPages: true,
-                    },
-                    selectable: 'row',
-                    pageable: true,
-                    columns: [{
-                            "field": "no",
-                            "title": "No",
-                            "width": "10%"
-                        },
-                        {
-                            "field": "diklatkategori",
-                            "title": "Jenis Diklat",
-                            "width": "15%"
-                        },
-                        {
-                            "field": "detailjenisproduk",
-                            "title": "Kegiatan",
-                            "width": "20%"
-                        },
-                        {
-                            "field": "jumlahpeserta",
-                            "title": "Peserta",
-                            "width": "20%"
-                        },
-                        {
-                            "title": "Tanggal",
-                            "width": "20%",
-                            "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>"
-                        },
-                    ]
+            function checkValue(obj, param) {
+                var res = "";
+                var data = undefined;
+
+                if (param.length > 1) {
+                    if (obj[param[0]] != undefined)
+                        data = obj[param[0]][param[1]];
+                } else {
+                    data = obj[param[0]];
                 }
-            } else {
-                $scope.verif = true
-                $scope.tagih = true
-                $scope.columnPenelitian = {
-                    toolbar: ["excel"],
-                    excel: {
-                        fileName: "Data Penelitian Eksternal" + moment($scope.now).format('DD/MMM/YYYY'),
-                        allPages: true,
-                    },
-                    selectable: 'row',
-                    pageable: true,
-                    columns: [{
-                            "field": "no",
-                            "title": "No",
-                            "width": "10px"
-                        },
-                        {
-                            "field": "institusipendidikan",
-                            "title": "Institusi Pendidikan",
-                            "width": "50px"
-                        },
-                        {
-                            "field": "diklatkategori",
-                            "title": "Jenis Diklat",
-                            "width": "50px"
-                        },
-                        {
-                            "field": "detailjenisproduk",
-                            "title": "Kegiatan",
-                            "width": "50px"
-                        },
-                        {
-                            "field": "jumlahpeserta",
-                            "title": "Peserta",
-                            "width": "20px"
-                        },
-                        {
-                            "title": "Tanggal",
-                            "width": "50px",
-                            "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>"
-                        },
-                        {
-                            "title": "Verif",
-                            "width": "50px",
-                            "template": "<span class='style-center'>#: noregistrasifk != null ? 'Sudah diverif': 'Belum diverif' #</span>"
-                        },
-                        {
-                            "title": "Status Bayar",
-                            "width": "50px",
-                            "template": "<span class='style-center'>#: nosbmlastfk != null || nosbklastfk != null  ? 'Lunas': 'Belum Bayar' #</span>"
-                        },
-                        {
-                            'command': [{
-                                text: "nametag",
-                                click: cetaknametag,
-                            }],
-                            "width": 100
-                        },
-                    ],
-                }
+
+                if (data != undefined)
+                    var res = data;
+
+                return res;
             }
 
-            function GetData() {
+            function isInt(value) {
+                var er = /^-?[0-9]+$/;
+
+                return er.test(value);
+            }
+
+            //fungsi clear kriteria search
+            $scope.ClearSearch = function () {
+                $scope.item = {};
+                $scope.item.periodeAwal = dateHelper.setJamAwal(new Date());
+                $scope.item.periodeAkhir = dateHelper.setJamAkhir(new Date());
+
+                $scope.SearchData();
+            }
+
+            $scope.Detail = function () {
+                var tempCache = $scope.dataPasienSelected.noRec + "#1#DaftarNonLayananKasir";
+                cacheHelper.set('PembayaranTagihanNonLayananKasir', tempCache);
+                $state.go('PembayaranTagihanNonLayananKasir') //, {
+                //     dataPasien: JSON.stringify(obj)
+                // });
+            }
+
+            $scope.InputTagihan = function () {
+                $state.go('InputTagihanNonLayanan')
+            }
+
+            //fungsi search data
+            $scope.SearchData = function () {
+                //kriteria pencarian
+                var namaPelanggan = checkValue($scope.item, ["namaPelanggan"]);
+                var tanggalAwal = checkValue($scope.item, ["periodeAwal"]);
+                var tanggalAkhir = checkValue($scope.item, ["periodeAkhir"]);
+                var status = checkValue($scope.item, ["status", "namaExternal"]);
+                var jenisTagihan = checkValue($scope.item, ["kelompokTransaksi", "id"]);
+
+                tanggalAwal = moment(tanggalAwal).format('YYYY-MM-DD HH:mm');
+                tanggalAkhir = moment(tanggalAkhir).format('YYYY-MM-DD HH:mm');
+
+                var tempCache = tanggalAwal + "#" + tanggalAkhir;
+                cacheHelper.set('DaftarNonLayananKasirCtrl', tempCache);
+                init(namaPelanggan, status, tanggalAwal, tanggalAkhir, jenisTagihan);
+             
+            }
+
+            $scope.klikGridDetail = function (dataPasienDetailSelected) {
+                console.log(dataPasienDetailSelected);
+                $scope.item.jenisperan = {
+                    id: dataPasienDetailSelected.objectpegawaifk,
+                    jenisperan: dataPasienDetailSelected.jenisperan
+                }
+                $scope.item.pegawai = {
+                    id: dataPasienDetailSelected.objectpegawaifk,
+                    namalengkap: dataPasienDetailSelected.namalengkap
+                }
+                $scope.norecdkd = dataPasienDetailSelected.norec
+                console.log($scope.norecdkd);
+            }
+
+            function seacrhDetail(){
                 $scope.isRouteLoading = true;
-                var tglAwal = "&tglawal=" + moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = "&tglakhir=" + moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
-                var NamaPeneliti = "";
-                // if ($scope.item.NamaPeneliti !== undefined) {
-                //     NamaPeneliti = "&NamaPeneliti=" + $scope.item.NamaPeneliti
-                // }
-                // var Fakultas = "";
-                // if ($scope.item.Fakultas !== undefined) {
-                //     Fakultas = "&Fakultas=" + $scope.item.Fakultas.id;
-                // }
-                var InstitusiPendidikan = "";
-                if ($scope.item.institusipendidikan !== undefined) {
-                    InstitusiPendidikan = "&Fakultas=" + $scope.item.institusipendidikan;
+                medifirstService.get('kasir/get-data-combo-kasir?detailjenisprodukfk=' + $scope.dataPasienSelected.detailjenisprodukId + "&norec_pp=" + $scope.dataPasienSelected.norec_spd).then(function (e) {
+                    $scope.isRouteLoading = false
+                    $scope.listJenisPeran = e.data.jenisperan
+                    console.log(e.data.detailkegiatandiklat.length);
+
+                    $scope.dataDaftarDetailDiklat = new kendo.data.DataSource({
+                        data: e.data.detailkegiatandiklat, //data,
+                        pageSize: 10,
+                        total: e.data.detailkegiatandiklat,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {}
+                            }
+                        },
+                    });
+                    
+                   
+                })
+            }
+
+            $scope.JenisPeran = function(){
+                if ($scope.dataPasienSelected.noRec == undefined) {
+                    messageContainer.error("Data Belum Dipilih")
+                    return
                 }
-                var usr = ''
-                console.log(medifirstService.getKelompokUser());
-                if (medifirstService.getKelompokUser() != 'diklit') {
-                    usr = "user=" + medifirstService.getUserLogin().kdUser;
-                    // console.log(medifirstService.getUserLogin().kdUser);
-                }
+                seacrhDetail()
+                $scope.item.namaPelangganlook = $scope.dataPasienSelected.namaPelanggan;
+                $scope.popupInputDetailTagihan.center().open();
+            }
+            $scope.batal = function(){
+                $scope.item.pegawai = undefined;
+                $scope.item.jenisperan = undefined;
+                $scope.popupInputDetailTagihan.center().close();
 
+            }
+            var init = function (a, b, c, d, e) {
+                $scope.isRouteLoading = true;
+                $scope.aggregate = [{
+                    field: "totalDibayar",
+                    aggregate: "sum"
+                }]
+                medifirstService.get("sdm/penelitian/daftar-tagihan-diklat?namaPelanggan=" + a + "&status=" + b + "&tglAwal=" + c + "&tglAkhir=" + d + "&jenisTagihanId=" + e).then(function (data) {
+                    var dataFilter = []
+                    var data = data.data;
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].jenisTagihanId != 70) {
+                            if (data[i].jenisTagihanId != 71) {
+                                if (data[i].jenisTagihanId != 62) {
+                                    dataFilter.push(data[i])
+                                }
 
-
-                // console.log(medifirstService.getPegawai());
-
-
-
-
-                var modelid = "&modelid=" + ModelItem.getPegawai().id;
-                medifirstService.get("sdm/penelitian/daftar-tagihan-diklat?" + usr + tglAwal + tglAkhir + InstitusiPendidikan + modelid, true).then(function (dat) {
-                    $scope.isRouteLoading = false;
-                    var datas = dat.data.datas;
-                    for (var i = 0; i < datas.length; i++) {
-                        datas[i].no = i + 1
+                            }
+                        }
                     }
-                    $scope.idpegawai = dat.data.idpegawai[0].usereksternal;
-
-                    console.log($scope.idpegawai);
-                    $scope.DataPenelitian = new kendo.data.DataSource({
-                        data: datas,
-                        total: datas.length,
+                    $scope.isRouteLoading = false;
+                    $scope.dataDaftarNonLayanan = new kendo.data.DataSource({
+                        data: dataFilter, //data,
+                        pageSize: 10,
+                        //total: dat.data.length,
+                        serverPaging: false,
                         schema: {
                             model: {
                                 fields: {
-                                    institusipendidikan: {
-                                        type: "string"
+                                    tglTransaksi: {
+                                        type: "date"
                                     },
+                                    totalDibayar: {
+                                        type: "number"
+                                    }
                                 }
                             }
                         },
-                        pageSize: 20,
-                        serverPaging: true,
-                        serverFiltering: true,
-                        serverSorting: true
+                        aggregate: $scope.aggregate
                     });
-
-                    var chacePeriode = {
-                        0: tglAwal,
-                        1: tglAkhir,
-                        2: '',
-                        3: '',
-                        4: '',
-                        5: '',
-                        6: ''
-                    }
-                    console.log(medifirstService.getKelompokUser());
-                    cacheHelper.set('DaftarPenelitianEksternalCtrl', chacePeriode);
-
                 });
-
-
-
+                return $scope.dataDaftarNonLayanan;
             }
-
-            $scope.SearchData = function (e) {
-                GetData()
+            $scope.columnDaftarDetailDiklat = {
+                toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "RekapDaftarTagihanNonLayan.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.mergedCells = ["A1:F1"];
+                    sheet.frozenRows = 2;
+                    sheet.name = "Report";
+                    var myHeaders = [{
+                        value: "Laporan Tagihan Non Layanan",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                    }];
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        height: 70,
+                        fontSize: 20,
+                        textAlign: "center"
+                    });
+                },
+                pageable: true,
+                columns: [
+                    {
+                        "field": "jenisperan",
+                        "title": "Peran",
+                        "width": "150px",
+                        // "template": "<span class='style-left'>#: namaPelanggan #</span>"
+                    },
+                    {
+                        "field": "namalengkap",
+                        "title": "Pembimbing",
+                        "width": "150px",
+                        // "template": "<span class='style-center'>#: jenisTagihan #</span>"
+                    },
+                ]
             }
-
-            $scope.ClearData = function () {
-                $scope.item = {};
-            }
-
-            $scope.kl = function (current) {
-                console.log(current);
-                toastr.info(current.norec + " Terpilih");
-                $scope.current = current.norec;
-                $scope.biayapenelitian = current.biayapenelitian;
-                $scope.keteranganlainnya = current.detailjenisproduk;
-                $scope.notelp = current.notelp;
-                $scope.institusi = current.institusipendidikan;
-                $scope.objectprodukfk = current.objectprodukfk
-                $scope.jumlahpeserta = current.jumlahpeserta
-                $scope.qty = current.qty
-                $scope.hargasatuan = current.hargasatuan
-                $scope.norec_sp = current.norec_sp
-                $scope.statusBayar = current.nosbmlastfk
-                $scope.nostruk = current.nostruk
-                $scope.isverifikasi = current.isverifikasi
-                $scope.count = current.count
-                console.log(JSON.stringify($scope.current));
-                if (medifirstService.getKelompokUser() == 'diklit') {
-                    if (current.noregistrasifk != null) {
-                        $scope.verif = false;
-                        $scope.batalverif = true;
-                    } else {
-                        $scope.verif = true;
-                        $scope.batalverif = false;
-                    }
-
-                    if (current.isverifikasi == 0) {
-                        $scope.unveriftagih = false
-                        $scope.tagih = true
-                    } else if (current.isverifikasi == null && current.noregistrasifk != null) {
-                        $scope.unveriftagih = true
-                        $scope.tagih = false
-                    } else {
-                        $scope.tagih = true
-                        $scope.verif = true
-                        $scope.unveriftagih = false
-                        $scope.batalverif = false;
-                    }
+            $scope.klikGrid = function (dataPasienSelected) {
+                if (dataPasienSelected == undefined) {
+                    messageContainer.error("Data Belum Dipilih")
+                    return
                 }
-
+                
+                $scope.dataPasienSelected = dataPasienSelected;
 
             }
-
-            $scope.Ubah = function (current) {
-                if ($scope.current == undefined) {
-                    toastr.error('Data Kegiatan Belum Dipilih', 'Info');
-                    return;
-                }
-                // if ($scope.statusBayar != null) {
-                //     toastr.error("Informasi, Tagihan Sudah Lunas Tidak Bisa Diubah !")
-                //     return;
-                // }
-                var chacePeriode = {
-                    0: $scope.current,
-                    1: 'EditPenelitianEksternal',
-                    2: $scope.idpegawai,
-                    3: '',
-                    4: '',
-                    5: '',
-                    6: ''
-                }
-
-                cacheHelper.set('PenelitianEksternalCtrl', chacePeriode);
-                $state.go('PenelitianEksternal', {
-                    norec: $scope.current,
-                    noOrder: 'EditPenelitianEksternal'
-                });
-            }
-
-
-            $scope.Hapus = function () {
-                $scope.isRouteLoading = true
-                // console.log($scope.count);
-                // console.log($scope.isverifikasi);
-                if ($scope.count > 0) {
-                    $scope.isRouteLoading = false
-                    toastr.error("Informasi, Sudah ada data mahasiswa record tidak bisa dihapus....!")
-                    return;
-                }
-
-                if ($scope.isverifikasi != null) {
-                    $scope.isRouteLoading = false
-                    toastr.error("Informasi, Data Sudah Diverif Tidak Bisa Dihapus !")
-                    return;
+            $scope.save = function(){
+                if ($scope.norecdkd != undefined) {
+                    norec_dkd = $scope.norecdkd
                 }
                 var objSave = {
-                    norec: $scope.current
+                    norec: norec_dkd,
+                    norec_pp: $scope.dataPasienSelected.norec_spd,
+                    objectjenisperanfk: $scope.item.jenisperan.id,
+                    objectpegawaifk: $scope.item.pegawai.id,
+                    kodeexternal: $scope.dataPasienSelected.jenisTagihan,
+                    namaexternal: $scope.dataPasienSelected.keterangan,
                 }
-                // console.log(objSave);
-
-                medifirstService.post('sdm/penelitian/batal-kegiatan-penelitian-eksternal', objSave).then(function (e) {
-                    GetData()
+                console.log(objSave);
+                medifirstService.post('tagihan/save-tagihan-diklat', objSave).then(function (data) {
+                    // init();
+                // $scope.popupInputDetailTagihan.center().close();
+                seacrhDetail()
+                $scope.item.pegawai = undefined
+                $scope.item.jenisperan = undefined
                 })
             }
-            // console.log(ModelItem.getPegawai());
-
-
-            $scope.verifikasi = function () {
-                $scope.isRouteLoading = true
-                if ($scope.statusBayar != null) {
-                    $scope.isRouteLoading = false
-                    toastr.error("Informasi, Tagihan Sudah Lunas Tidak Bisa Verif Kembali !")
-                    return;
+            $scope.delete = function(){
+                if ($scope.norecdkd != undefined) {
+                    norec_dkd = $scope.norecdkd
                 }
-
-                dataProduk = [{
-                    id: $scope.objectprodukfk,
-                    harga: $scope.hargasatuan,
-                    jumlah: $scope.jumlahpeserta,
-                    qtyoranglast: $scope.qty,
-                    keterangan: $scope.keteranganlainnya
-                }]
                 var objSave = {
-                    norec: norec,
-                    kelompoktransaksifk: 13,
-                    keteranganlainnya: $scope.keteranganlainnya,
-                    namapasien_klien: $scope.institusi,
-                    notelp_klien: $scope.notelp,
-                    tglstruk: moment($scope.now).format('YYYY-MM-DD hh:mm:ss'),
-                    totalharusdibayar: parseFloat($scope.biayapenelitian), //parseFloat($scope.item.totalBilling),
-                    isverifikasi: false,
-                    details: dataProduk,
+                    norec: norec_dkd,
+                    statusenabled: false
                 }
-                medifirstService.post('kasir/save-input-non-layanan', objSave).then(function (data) {
-                    console.log(data.data.data.norec);
-                    var data = {
-                        "verif": 'true',
-                        norec: $scope.current,
-                        noregistrasifk: data.data.data.norec,
-                    }
-                    var objSave = {
-                        data: data,
-
-                    }
-                    console.log(objSave);
-
-                    medifirstService.post('sdm/penelitian/verif-kegiatan-penelitian-eksternal', objSave).then(function (e) {
-                        console.log(e);
-                        GetData();
-                        $scope.isRouteLoading = false
-                    })
+                console.log(objSave);
+                medifirstService.post('tagihan/hapus-tagihan-diklat', objSave).then(function (data) {
+                    // init();
+                    $scope.popupInputDetailTagihan.center().close();
+                    $scope.item = {};
                 })
             }
 
-            $scope.batalverifikasi = function () {
-                $scope.isRouteLoading = true
-                if ($scope.current == undefined || $scope.current == '') {
-                    toastr.error('Data Kegiatan Belum Dipilih', 'Info');
-                    return;
-
-                }
-                if ($scope.isverifikasi == null) {
-                    toastr.error('Sudah Verif Tagihan', 'Info');
-                    $scope.isRouteLoading = false
-                    return;
-                }
-                if ($scope.statusBayar != null) {
-                    $scope.isRouteLoading = false
-                    toastr.error("Informasi, Tagihan Sudah Lunas Tidak Bisa Unverifikasi !")
-                    return;
-                }
-
-                var objSave = {
-                    norec: $scope.norec_sp,
-                    nostruk: $scope.nostruk,
-                }
-
-                medifirstService.post('kasir/hapus-transaksi-non-layanan', objSave).then(function (data) {
-                    GetData();
-                    var data = {
-                        "verif": 'true',
-                        norec: $scope.current,
-                        noregistrasifk: null,
-                    }
-                    var objSave = {
-                        data: data,
-
-                    }
-                    console.log(objSave);
-
-                    medifirstService.post('sdm/penelitian/verif-kegiatan-penelitian-eksternal', objSave).then(function (e) {
-                        console.log(e);
-                        GetData();
-                        $scope.isRouteLoading = false
-                    })
-                })
-            }
-            $scope.tagihan = function () {
-                if ($scope.norec_sp == undefined || $scope.norec_sp == '') {
-                    toastr.error('Verifikasi Dulu', 'Info');
-                    return;
-                }
-                if ($scope.statusBayar != null) {
-                    toastr.error("Informasi, Tagihan Sudah Lunas Tidak Bisa Diverif lagi !")
-                    return;
-                }
-                $scope.isRouteLoading = true
-                var data = {
-                    norec: $scope.norec_sp,
-                    isverifikasi: null
-                }
-                medifirstService.post('sdm/penelitian/verif-tagihan-kegiatan-penelitian-eksternal', data).then(function (e) {
-                    GetData();
-                    $scope.isRouteLoading = false
-                })
-            }
-            $scope.unveriftagihan = function () {
-                if ($scope.norec_sp == undefined || $scope.norec_sp == '') {
-                    toastr.error('Data Kegiatan Belum Dipilih', 'Info');
-                    return;
-                }
-                if ($scope.statusBayar != null) {
-                    toastr.error("Informasi, Tagihan Sudah Lunas Tidak Bisa Unverif Tagihan !")
-                    return;
-                }
-                $scope.isRouteLoading = true
-                var data = {
-                    norec: $scope.norec_sp,
-                    isverifikasi: false
-                }
-
-                medifirstService.post('sdm/penelitian/verif-tagihan-kegiatan-penelitian-eksternal', data).then(function (e) {
-                    GetData();
-                    $scope.isRouteLoading = false
-                })
-            }
-
-            function cetaknametag(e) {
-                e.preventDefault();
-                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-                var datasend = {
-                    "norec": dataItem.norec
-                }
-                // return
-                window.open(baseTransaksi + "report/diklat-nametag?norec=" + dataItem.norec);
-
-            }
+            // BATAS //
         }
     ]);
 });

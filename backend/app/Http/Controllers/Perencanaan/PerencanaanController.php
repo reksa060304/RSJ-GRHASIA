@@ -385,41 +385,40 @@ class PerencanaanController extends ApiController {
         //     ->orderBy('dp.kodemataanggaran')
         //     ->get();
         $mata = DB::select(DB::raw("
-        select v.id, v.kodemataanggaran,v.namamataanggaran,cast(v.total as float) as total from (
-            select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
-            left join
-            (select left(ma.kodemataanggaran,9) as kode,sum(kt.subtotal) as total 
-            from mataanggaran_m ma
-            left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
-            group by left(ma.kodemataanggaran,9)) as x on x.kode=ma.kodemataanggaran
-            where length(ma.kodemataanggaran)=9
-            union all
-            select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
-            left join
-            (select left(ma.kodemataanggaran,5) as kode,sum(kt.subtotal) as total 
-            from mataanggaran_m ma
-            left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
-            group by left(ma.kodemataanggaran,5)) as x on x.kode=ma.kodemataanggaran
-            where length(ma.kodemataanggaran)=5
-            union all
-            select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
-            left join
-            (select left(ma.kodemataanggaran,3) as kode,sum(kt.subtotal) as total 
-            from mataanggaran_m ma
-            left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
-            group by left(ma.kodemataanggaran,3)) as x on x.kode=ma.kodemataanggaran
-            where length(ma.kodemataanggaran)=3
-            union all
-            select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
-            left join
-            (select left(ma.kodemataanggaran,1) as kode,sum(kt.subtotal) as total 
-            from mataanggaran_m ma
-            left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
-            group by left(ma.kodemataanggaran,1)) as x on x.kode=ma.kodemataanggaran
-            where length(ma.kodemataanggaran)=1
-            
-            ) as v
-            order by v.kodemataanggaran
+                select v.id, v.kodemataanggaran,v.namamataanggaran,cast(v.total as float) as total from (
+                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+                    left join
+                    (select left(ma.kodemataanggaran,9) as kode,sum(kt.subtotal) as total 
+                    from mataanggaran_m ma
+                    left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+                    group by left(ma.kodemataanggaran,9)) as x on x.kode=ma.kodemataanggaran
+                    where length(ma.kodemataanggaran)=9
+                    union all
+                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+                    left join
+                    (select left(ma.kodemataanggaran,5) as kode,sum(kt.subtotal) as total 
+                    from mataanggaran_m ma
+                    left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+                    group by left(ma.kodemataanggaran,5)) as x on x.kode=ma.kodemataanggaran
+                    where length(ma.kodemataanggaran)=5
+                    union all
+                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+                    left join
+                    (select left(ma.kodemataanggaran,3) as kode,sum(kt.subtotal) as total 
+                    from mataanggaran_m ma
+                    left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+                    group by left(ma.kodemataanggaran,3)) as x on x.kode=ma.kodemataanggaran
+                    where length(ma.kodemataanggaran)=3
+                    union all
+                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+                    left join
+                    (select left(ma.kodemataanggaran,1) as kode,sum(kt.subtotal) as total 
+                    from mataanggaran_m ma
+                    left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+                    group by left(ma.kodemataanggaran,1)) as x on x.kode=ma.kodemataanggaran
+                    where length(ma.kodemataanggaran)=1
+                    ) as v
+                order by v.kodemataanggaran
             ")
         );
 
@@ -1923,7 +1922,7 @@ class PerencanaanController extends ApiController {
             if ($request['norec']==''){
                 $MA = new KeteranganBelanja();
                 $norecKS = $MA->generateNewId();
-                $MA->norec = $norecKS + 1;
+                $MA->norec = $norecKS;
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
 
@@ -1939,7 +1938,8 @@ class PerencanaanController extends ApiController {
             $MA->jml = $request['jml'];
             $MA->hargasatuan = $request['hargasatuan'];
             $MA->subtotal = $request['subtotal'];
-            $MA->objectasalbarangfk = $request['objectasalbarangfk'];
+            $MA->satuan = $request['satuan'];
+            $MA->objectasalprodukfk = $request['objectasalprodukfk'];
 
             $MA->save();
            $transStatus = 'true';
@@ -1972,11 +1972,12 @@ class PerencanaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $data = DB::select(DB::raw("
-                select ma.kodemataanggaran,ma.namamataanggaran,cast(sum(kt.subtotal) as float) as total 
+                select ma.id, ma.kodemataanggaran,ma.namamataanggaran,cast(sum(kt.subtotal) as float) as total 
                 from mataanggaran_m ma
                 left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
                 where length(ma.kodemataanggaran)= 9 and ma.kdprofile=$idProfile
-                group by  ma.kodemataanggaran,ma.namamataanggaran;
+                group by  ma.id,ma.kodemataanggaran,ma.namamataanggaran
+                order by ma.kodemataanggaran;
             ")
         );
         $dataAsalProduk = \DB::table('asalproduk_m as ap')
@@ -1996,13 +1997,17 @@ class PerencanaanController extends ApiController {
     public function getKeteranganBelanja(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-       
-        $data = \DB::table('keteranganbelanja_t as ap')
-        ->JOIN ('asalproduk_m as ad','ad.id','=','ap.objectasalprodukfk')
-            ->select('ap.*','ad.asalproduk')
-            ->where('ap.statusenabled',true)
-            ->where('ap.objectkegiatanfk',$request['objectkegiatanfk'])
-            ->get();
+        $idkegiatanfk= $request['objectkegiatanfk'];
+        $data = DB::select(DB::raw("
+                select kt.norec	,kt.kdprofile	,kt.statusenabled	,kt.objectkegiatanfk	,kt.objectmataanggaranfk	
+                ,kt.keteranganbelanja	,kt.nourut	,kt.jml	,cast(kt.hargasatuan as float) as hargasatuan	 ,cast(kt.subtotal as float) as subtotal	,
+                kt.satuan	,kt.objectasalprodukfk,ap.asalproduk ,ma.namamataanggaran,ma.kodemataanggaran
+                from keteranganbelanja_t kt
+                INNER JOIN asalproduk_m ap on ap.id=kt.objectasalprodukfk
+                INNER JOIN mataanggaran_m ma on ma.id=kt.objectmataanggaranfk
+                where kt.objectkegiatanfk= $idkegiatanfk
+            ")
+        );
 
         $result = array(
             'data' => $data,

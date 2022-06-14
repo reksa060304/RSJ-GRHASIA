@@ -269,90 +269,6 @@
 									<kendo-grid id="kGrids" k-data-source="dataSourceKegiatan" k-selectable="'row'" class="max-height"
 										k-options="columnKegiatan" k-ng-model="dataKegiatanSelected" ng-click="klikKegiatan(dataKegiatanSelected)">
 									</kendo-grid>
-									<!-- <div id="kGrid" kendo-grid k-options="columnKegiatan" k-selectable="'row'" class="max-height"
-										k-pageable="true" k-sortable="true" k-data-source="dataSourceKegiatan"
-										k-ng-model="dataKegiatanSelected" ng-click="klikKegiatan(dataKegiatanSelected)">
-									</div> -->
-								<!-- </div>
-								<div class="grid_2">
-									<div class="grid_12">
-										<label>&nbsp;</label>
-									</div>
-									<div class="clear"></div>
-
-									<div class="grid_12">
-										<button class="btnTemplate1" style="margin-left: 0;"
-											ng-click="adasdas()">Add Urusan Pemerintahan / X.XX.00.0.00.00</button>
-									</div>
-								</div> -->
-								<!-- <div class="grid_1">
-									<div class="grid_12">
-										<label>&nbsp;</label>
-									</div>
-									<div class="clear"></div>
-
-									<div class="grid_12">
-										<button class="btnTemplate1" style="margin-left: 0;"
-											ng-click="adasdas()">Add Organisasi</button>
-									</div>
-								</div> -->
-								<!-- <div class="grid_2">
-									<div class="grid_12">
-										<label>&nbsp;</label>
-									</div>
-									<div class="clear"></div>
-
-									<div class="grid_12">
-										<button class="btnTemplate1" style="margin-left: 0;"
-											ng-click="addProgram()">Add Program  / 0.00.XX.0.00.00</button>
-									</div>
-								</div>
-								<div class="grid_2">
-									<div class="grid_12">
-										<label>&nbsp;</label>
-									</div>
-									<div class="clear"></div>
-
-									<div class="grid_12">
-										<button class="btnTemplate1" style="margin-left: 0;"
-											ng-click="addKegiatan()">Add Kegiatan  / 0.00.00.X.XX.00</button>
-									</div>
-								</div>
-								
-								<div class="grid_2">
-									<div class="grid_12">
-										<label>&nbsp;</label>
-									</div>
-									<div class="clear"></div>
-
-									<div class="grid_12">
-										<button class="btnTemplate1" style="margin-left: 0;"
-											ng-click="addSubKegiatan()">Add Sub Kegiatan   / 0.00.00.0.00.XX</button>
-									</div>
-								</div>
-								
-								<div class="grid_2">
-									<div class="grid_12">
-										<label>&nbsp;</label>
-									</div>
-									<div class="clear"></div>
-
-									<div class="grid_12">
-										<button class="btnTemplate1" style="margin-left: 0;"
-											ng-click="addSubSubKegiatan()">Add Sub Sub Kegiatan / YYYY-XXX</button>
-									</div>
-								</div>
-								<div class="grid_2">
-									<div class="grid_12">
-										<label>&nbsp;</label>
-									</div>
-									<div class="clear"></div>
-
-									<div class="grid_12">
-										<button class="btnTemplate1" style="margin-left: 0;"
-											ng-click="adasdas()">Add Keterangan Kegiatan</button>
-									</div>
-								</div> -->
 							</div>
 
 							<div class="clear"></div>
@@ -379,25 +295,6 @@
 										k-ng-model="dataMataAnggaranSelected" ng-click="klikMataAnggarant(dataMataAnggaranSelected)">
 									</div> -->
 								</div>
-								<!-- <div class="grid_12">
-
-									<div class="grid_2">
-										<button class="btnTemplate1" style="margin-left: 0;"
-											ng-click="asdsad()">Add Lvl 1 / X.0.0.0.0</button>
-									</div>
-									<div class="grid_2">
-										<button class="btnTemplate1" style="margin-left: 0;"
-											ng-click="asdsad()">Add Lvl 2 / 0.X.0.0.0</button>
-									</div>
-									<div class="grid_2">
-										<button class="btnTemplate1" style="margin-left: 0;"
-											ng-click="asdsad()">Add Lvl 3 / 0.0.X.0.0</button>
-									</div>
-									<div class="grid_2">
-										<button class="btnTemplate1" style="margin-left: 0;"
-											ng-click="asdsad()">Add Lvl 4 / 0.0.0.X.X</button>
-									</div>
-								</div> -->
 							</div>
 
 							<div class="clear"></div>
@@ -413,6 +310,23 @@
 								<div class="grid_12 borderBox">
 									<kendo-grid id="kGrids" k-data-source="dataSourceKeteranganBelanja" k-selectable="'row'"  class="max-height"
 										k-options="columnKeteranganBelanja" k-ng-model="dataKeteranganBelanjaSelected" ng-click="klikKeteranganBelanja(dataKeteranganBelanjaSelected)">
+									</kendo-grid>
+								</div>
+							</div>
+
+							<div class="clear"></div>
+						</md-content>
+					</md-tab>
+					<md-tab label="SPJ">
+						<!-- Setting keterangan blud -->
+						<md-content class="md-padding">
+
+							<br />
+							<div class="grid_12">
+
+								<div class="grid_12 borderBox">
+									<kendo-grid id="kGrids" k-data-source="dataSourceKeteranganBelanja2" k-selectable="'row'"  class="max-height"
+										k-options="columnKeteranganBelanja2" k-ng-model="dataKeteranganBelanjaSelected" ng-click="klikKeteranganBelanja(dataKeteranganBelanjaSelected)">
 									</kendo-grid>
 								</div>
 							</div>
@@ -662,10 +576,10 @@
 					Masukan
 				</div>
 				<div class="grid_4" style="margin-top: -10px;">
-					<input c-text-box type="input" class="k-textbox" ng-model="item.tolokUkurMasukan"  />
+					<input c-text-box type="input" class="k-textbox" ng-model="item.tolokUkurMasukan"  ng-disabled='true'/>
 				</div>
 				<div class="grid_4" style="margin-top: -10px;">
-					<input c-text-box type="input" class="k-textbox" ng-model="item.targetKinerjaMasukan" />
+					<input c-text-box type="input" class="k-textbox" ng-model="item.targetKinerjaMasukan" ng-disabled='true'/>
 				</div>
 			</div>
 			<div class="grid_12">

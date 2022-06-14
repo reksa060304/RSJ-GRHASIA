@@ -8,7 +8,7 @@ class KegiatanAnggaran extends Transaksi
     protected $fillable = [];
     public $timestamps = false;
     public $incrementing = false;
-    protected $primaryKey = "norec";
+    protected $primaryKey = "id";
 
 
 }
