@@ -1048,6 +1048,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('kasir/data-virtual-account', 'Kasir\KasirController@daftarVirtualAccount');
             Route::get('kasir/detail-piutang-pasien/{norecSPP}', 'Kasir\KasirController@detailPiutangPasien');
             Route::get('kasir/data-laporan-rekap-pendapatan', 'Kasir\KasirController@getDataLaporanRekapPendapatanRuangan');
+            Route::get('sdm/diklat/get-data-detail-diklat', 'Kasir\KasirController@getDataLaporanRekapPendapatanRuangan');
             // GET
 
             // POST

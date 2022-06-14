@@ -297,6 +297,12 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="grid_12 borderBox">
+                                <div id="kGrid" kendo-grid k-data-source="dataDaftarDetailDiklat" k-selectable="'row'"
+                                    options="columnDaftarDetailDiklat" k-sortable="'true'"
+                                    k-ng-model="dataPasienDetailSelected" ng-click="klikGridDetail(dataPasienDetailSelected)">
+                                </div>
+                            </div>
                             <div class="grid_12">
                                 <div class="grid_2" style="float: left;padding-left: 10px">
                                     <button class="btnTemplate1 red" ng-click="delete()"><i class="fa fa-trash"></i>
