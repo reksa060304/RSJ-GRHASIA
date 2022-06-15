@@ -3955,6 +3955,14 @@ class TagihanController  extends ApiController
             ->orderBy('kls.hubungankeluarga')
             ->get();
 
+        $dataPegawai=\DB::table('pointjaspel_t as pjs')
+            ->join('pegawai_m as pg', 'pg.id', '=', 'pjs.objectpegawaifk' )
+            ->select('pg.id','pg.namalengkap')
+            ->where('pjs.statusenabled', true)
+            ->where('pjs.kdprofile', 30)
+            ->orderBy('pg.id')
+            ->get();
+
         $result = array(
             'ruangan' => $dataRuangan,
             'dokter' => $dataPenulis2,
@@ -3965,6 +3973,7 @@ class TagihanController  extends ApiController
             'departemen' => $dataDepartemen,
             'jeniskelamin' => $dataJenisKelamin,
             'jabatan' => $dataJabatan,
+            'pegawai' => $dataPegawai,
             'hubungankeluarga' => $dataHubKeluarga,
             'nosurat' => $SuratKematian,
             'message' => 'as@epic',
@@ -13322,10 +13331,14 @@ $result = array(
         $kdProfile = (int) $this->getDataKdProfile($request);
         $bulan = $request['bulan'];
         $tahun = $request['tahun'];
+        $tglAwal = $request['tglawal'];
+        $tglAkhir = $request['tglakhir'];
+        $pegawai = $request['pegawai'];
         $periodebulan = $request['periodebulan'];
         $paramBln = "";
         $paramThn = "";
         $paramperiode = "";
+        $parampegawai = "";
 
         if(isset($bulan)){
             $paramBln = " and date_part('month', tglposting) =". $bulan;
@@ -13337,8 +13350,13 @@ $result = array(
             $paramperiode = "and date_part('year', tglposting) = extract(year from '$periodebulan'::date) 
             and date_part('month', tglposting) = extract(month from '$periodebulan'::date)";
         }
+        if(isset($pegawai)){
+            $parampegawai = "and date_part('year', tglposting) = extract(year from '$periodebulan'::date) 
+            and date_part('month', tglposting) = extract(month from '$periodebulan'::date)
+            and uangp3 is not null and objectpegawaifk = $pegawai";
+        }
         $data = \DB::select(DB::raw("
-        select pg.namalengkap, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting
+        select pg.namalengkap, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3
         from
         pointjaspel_t jps
         inner join pegawai_m pg on pg.id = jps.objectpegawaifk
@@ -13347,6 +13365,46 @@ $result = array(
         $paramBln
         $paramThn
         $paramperiode
+        $parampegawai
+        "));
+
+        if(isset($tglAwal) && isset($tglAkhir)){
+            $data = \DB::select(DB::raw("
+                select pg.namalengkap, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3
+                from
+                pointjaspel_t jps
+                inner join pegawai_m pg on pg.id = jps.objectpegawaifk
+                left join uangremun_t ut on ut.objectpegawaifk = jps.objectpegawaifk
+                where ut.kdprofile = 30 and ut.statusenabled = true
+                and ut.tglposting between '$tglAwal' and '$tglAkhir'
+            "));
+        }
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getDanaP3(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $bulan = $request['bulan'];
+        $tahun = $request['tahun'];
+        $pegawai = $request['pegawai'];
+
+        if(isset($pegawai)){
+            $parampegawai = "and date_part('year', tglposting) = '$tahun' 
+            and date_part('month', tglposting) = '$bulan'
+            and uangp3 != 0 and objectpegawaifk = $pegawai";
+        }
+        $data = \DB::select(DB::raw("
+        select *
+        from
+        uangremun_t
+        where kdprofile = 30 and statusenabled = true
+        $parampegawai
         "));
         $result = array(
             'data' => $data,
@@ -13405,7 +13463,8 @@ $result = array(
                 'struk'=>($patokan)*(0.59)*(0.45)*(0.15),
                 'jtl'=>($patokan)*(0.59)*(0.45)*(0.15),
 
-                'p3'=>($patokan)*(0.06)*(0.5),
+                'p3'=>($patokan)*(0.06),
+                'sisap3'=>($patokan)*(0.06),
 
                 'pirp1' => (0.35*($request['dana'] - $request['diklat']))/($jumlah[0]->jumlahp1),
                 'piriki' => ($iki)/((float)$jumlah[0]->jumlahiki),
@@ -13441,7 +13500,8 @@ $result = array(
                     'struk'=>($patokan)*(0.59)*(0.45)*(0.15),
                     'jtl'=>($patokan)*(0.59)*(0.45)*(0.15),
     
-                    'p3'=>($patokan)*(0.06)*(0.5),
+                    'p3'=>($patokan)*(0.06),
+                    'sisap3'=>($patokan)*(0.06),
     
                     'pirp1' => (0.35*($request['dana'] - $request['diklat']))/($jumlah[0]->jumlahp1),
                     'piriki' => ($iki)/((float)$jumlah[0]->jumlahiki),
@@ -13505,10 +13565,12 @@ $result = array(
 
 
         try{
+            $noposting = $this->generateCode(new UangRemun, 'noposting', 10, $this->getDateTime()->format('ymd'),$kdProfile);
             foreach ($main as $row){
                 $id = $row->objectpegawaifk;
                 $ids = DB::select(DB::raw("select max(id) as id from uangremun_t"));
                 $idmax = (int) $ids[0]->id;
+                
                 
                     if(!empty($cek)){
     
@@ -13533,8 +13595,9 @@ $result = array(
                                 'uangtt'=> $pir[0]->pirtt*$row->point_tt,
                                 'uangstruk'=> $pir[0]->pirstruk*$row->struktural,
                                 'uangjtl'=> $pir[0]->pirjtl*$row->jtl,
+                                'uangp3'=> 0,
                                 'tglposting' => "$tahun-$bulan-01",
-                                'noposting' => $this->generateCode(new UangRemun, 'noposting', 8, $this->getDateTime()->format('ymd'),$kdProfile),
+                                'noposting' => $noposting,
                                 ]);
                                 $transStatus = 'true';
                                 $transMessage = 'Sukses' ;
@@ -13559,13 +13622,100 @@ $result = array(
                             'uangtt'=> $pir[0]->pirtt*$row->point_tt,
                             'uangstruk'=> $pir[0]->pirstruk*$row->struktural,
                             'uangjtl'=> $pir[0]->pirjtl*$row->jtl,
+                            'uangp3'=> 0,
                             'tglposting' => "$tahun-$bulan-01",
-                            'noposting' => $this->generateCode(new UangRemun, 'noposting', 8, $this->getDateTime()->format('ymd'),$kdProfile),
+                            'noposting' => $noposting,
                             ]);
                             $transStatus = 'true';
                             $transMessage = 'Sukses' ;
                 }
             }
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = 'Sukses' ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "by" => 'er@epic',
+            );
+        } else {
+            $transMessage = 'Simpan Gagal';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                "by" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getSisaDanaP3(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $bulan = $request['bulan'];
+        $tahun = $request['tahun'];
+        $paramperiodep3 = "";
+        $paramperiodesum = "";
+
+        if(isset($bulan) && isset($tahun)){
+            $paramperiodep3 = "and date_part('year', periode) = '$tahun'
+            and date_part('month', periode) = '$bulan'";
+
+            $paramperiodesum = "and date_part('year', tglposting) = '$tahun'
+            and date_part('month', tglposting) = '$bulan'";
+        }
+        $data = \DB::select(DB::raw("
+        select p3 as danap3
+        from danapagu_t 
+        where statusenabled = true and kdprofile = 30
+        $paramperiodep3
+        "));
+        //var_dump($data);
+        $datas = \DB::select(DB::raw("
+        select sum(uangp3) as jumlah
+        from uangremun_t 
+        where statusenabled = true and kdprofile = 30
+        $paramperiodesum
+        "));
+        //var_dump($datas);
+        $total = $data[0]->danap3 - $datas[0]->jumlah;
+        $result = array(
+            'data' => $total,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+
+    public function saveDanaP3(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        //var_dump($request);
+        $bulan = $request['bulan'];
+        $tahun = $request['tahun'];
+        $pegawai = $request['pegawai'];
+        $cek = DB::select(DB::raw("select * from uangremun_t where date_part('year', tglposting) = '$tahun' and date_part('month', tglposting) = '$bulan' 
+        and statusenabled = true and kdprofile = 30 and objectpegawaifk = $pegawai"));
+        $cekpagu = DB::select(DB::raw("select id, sisap3 from danapagu_t where date_part('year', periode) = '$tahun' and date_part('month', periode) = '$bulan' and statusenabled = true"));
+        
+        try{
+                $uangremun = \DB::table('uangremun_t')->where('id', $cek[0]->id)->update([
+                'uangp3'=> $request['jumlah'],
+                ]);
+
+                // $danapagu = \DB::table('danapagu_t')->where('id', $cekpagu[0]->id)->update([
+                //     'sisap3'=> $cekpagu[0]->sisap3 - $request['jumlah'],
+                //     ]);
+            
+            $transStatus = 'true';
+            $transMessage = 'Sukses' ;
         } catch (\Exception $e) {
             $transStatus = 'false';
         }

@@ -2578,10 +2578,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/save-akomodasi-tea', 'TataRekening\TagihanController@saveAkomodasiOtomatis');
           Route::post('tatarekening/save-dana-pagu', 'TataRekening\TagihanController@saveDanaPagu');
           Route::post('tatarekening/save-dana-remun', 'TataRekening\TagihanController@saveDanaRemun');
+          Route::post('tatarekening/save-dana-p3', 'TataRekening\TagihanController@saveDanaP3');
           Route::post('tatarekening/save-poin-remun', 'TataRekening\TagihanController@saveImportRemun');
           Route::get('tatarekening/get-detail_apd', 'TataRekening\TagihanController@getDetailpasien');
+          Route::get('tatarekening/get-sisa-dana-p3', 'TataRekening\TagihanController@getSisaDanaP3');
           Route::get('tatarekening/get-daftar-dana-pagu', 'TataRekening\TagihanController@getDanaPagu');
           Route::get('tatarekening/get-daftar-remun-pegawai-fix', 'TataRekening\TagihanController@getDanaRemun');
+          Route::get('tatarekening/get-daftar-p3-pegawai-fix', 'TataRekening\TagihanController@getDanaP3');
           Route::get('tatarekening/get-combo-detail-regis', 'TataRekening\TagihanController@getDataComboDetailRegis');
           Route::get('tatarekening/get-detail-pasien', 'TataRekening\TagihanController@getAPD');
           Route::get('tatarekening/get-data-master', 'TataRekening\TagihanController@getTableMaster');  //done
