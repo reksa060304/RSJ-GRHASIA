@@ -1009,5 +1009,119 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "Remunerasi",
+    "url": "/UmVtdW5lcmFzaQ==",
+    "templateurl": "module/TataRekening/Remunerasi.html",
+    "controller": "RemunerasiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DanaPagu",
+    "url": "/RGFuYVBhZ3U=",
+    "templateurl": "module/TataRekening/DanaPagu.html",
+    "controller": "DanaPaguCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "MapPegawaitoJTL",
+    "url": "/MapPegawaitoJTL",
+    "templateurl": "module/TataRekening/MapPegawaitoJTL.html",
+    "controller": "MapPegawaitoJTLCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  }, 
+  {
+    "name": "TagihanDiklat",
+    "url": "/TagihanDiklat",
+    "templateurl": "module/SDM/Penelitian/TagihanDiklat.html",
+    "controller": "TagihanDiklatCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "MapPegawaitoTubel",
+    "url": "/TWFwUGVnYXdhaXRvVHVnYXNCZWxhamFy",
+    "templateurl": "module/TataRekening/MapPegawaitoTubel.html",
+    "controller": "MapPegawaitoTubelCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RemunerasiPegawai",
+    "url": "/UmVtdW5lcmFzaVBlZ2F3YWk=",
+    "templateurl": "module/TataRekening/RemunerasiPegawai.html",
+    "controller": "RemunerasiPegawaiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

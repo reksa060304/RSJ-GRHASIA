@@ -746,8 +746,8 @@ class LaporanRekamMedisController extends   ApiController
 
         $main = array("Penyakit Dalam", "Kesehatan Anak", "Obstetri", "Ginekologi", "Bedah", "Bedah Ortopedhi", "Bedah Saraf", "Luka Bakar", "Saraf", "Jiwa", "Psikologi", "Penatalaksanaan Penyalahgunaan NAPZA", "THT", "Mata", "Kulit dan Kelamin", "Kardiologi", "Paru-paru", "Geriatri", "Radioterapi", "Kedokteran Nuklir", "Kusta", "Rehabilitasi Medik", "Isolasi", "ICU", "ICCU", "NICU / PICU", "Umum", "Gigi & Mulut", "Pelayanan Rawat Darurat", "SUB TOTAL", "Perinatologi/Bayi", "TOTAL");
         
-        $jumlahperkelas = DB::select(DB::raw("select extract(year from x.tanggal::date) as year, sum(x.kelasvip) jumlahkelasvip, sum(x.kelassatu) jumlahkelassatu, sum(x.kelasdua) jumlahkelasdua, sum(x.kelastiga) jumlahkelastiga, sum(x.kelaskhusus) jumlahkelaskhusus, sum(x.kelasvip) + sum(x.kelassatu) + sum(x.kelasdua) + sum(x.kelastiga) + sum(x.kelaskhusus) totaltt from(
-            select '$tglAwal-01' as tanggal,
+        $jumlahperkelas = DB::select(DB::raw("select namaruangan, sum(x.kelasvip) jumlahkelasvip, sum(x.kelassatu) jumlahkelassatu, sum(x.kelasdua) jumlahkelasdua, sum(x.kelastiga) jumlahkelastiga, sum(x.kelaskhusus) jumlahkelaskhusus, sum(x.kelasvip) + sum(x.kelassatu) + sum(x.kelasdua) + sum(x.kelastiga) + sum(x.kelaskhusus) totaltt from(
+            select ru.namaruangan,
             case when ks.id = 4 then sum(rm.jumlah_tt) else 0 end as kelasvip,
             case when ks.id = 3 then sum(rm.jumlah_tt) else 0 end as kelassatu,
             case when ks.id = 2 then sum(rm.jumlah_tt) else 0 end as kelasdua,
@@ -768,9 +768,11 @@ class LaporanRekamMedisController extends   ApiController
             and rm.objectkamarfk=x.objectkamarfk 
             and rm.tanggalawal = x.tanggal
             and ks.id in (1, 2, 3, 4, 6)
-            where rm.kdprofile = $idProfile 
+            where rm.kdprofile = 30 
             and rm.statusenabled = true
-            group by ks.id) as x group by extract(year from x.tanggal::date)"));
+            group by ks.id, ru.namaruangan) as x group by namaruangan;"));
+
+            //var_dump($jumlahperkelas);
 
         $currentmain = "Larasatizka";
 
@@ -792,20 +794,37 @@ class LaporanRekamMedisController extends   ApiController
             $kelaskhusus = 0;
             if($row != $currentmain){
                 foreach($jumlahperkelas as $jml){
-                    $year = $jml->year;
-                    if($row == "Jiwa" || $row == "Umum" || $row == "Penatalaksanaan Penyalahgunaan NAPZA"){
-                        $jumlahtt = $jml->totaltt;
-                        $kelasvip = $jml->jumlahkelasvip;
-                        $kelassatu = $jml->jumlahkelassatu; 
-                        $kelasdua = $jml->jumlahkelasdua; 
-                        $kelastiga = $jml->jumlahkelastiga; 
-                        $kelaskhusus = $jml->jumlahkelaskhusus;
+                    
+                    if($row == "Umum" && $jml->namaruangan == 'WISMA KRESNA'){
+                        $jumlahtt += $jml->totaltt;
+                        $kelasvip += $jml->jumlahkelasvip;
+                        $kelassatu += $jml->jumlahkelassatu; 
+                        $kelasdua += $jml->jumlahkelasdua; 
+                        $kelastiga += $jml->jumlahkelastiga; 
+                        $kelaskhusus += $jml->jumlahkelaskhusus;
+                    } 
+                    
+                    if($row == "Penatalaksanaan Penyalahgunaan NAPZA" && $jml->namaruangan == 'WISMA ABIMANYU'){
+                        $jumlahtt += $jml->totaltt;
+                        $kelasvip += $jml->jumlahkelasvip;
+                        $kelassatu += $jml->jumlahkelassatu; 
+                        $kelasdua += $jml->jumlahkelasdua; 
+                        $kelastiga += $jml->jumlahkelastiga; 
+                        $kelaskhusus += $jml->jumlahkelaskhusus;
+                    } 
+                    
+                    if($row == "Jiwa" && $jml->namaruangan != 'WISMA ABIMANYU' && $jml->namaruangan != 'WISMA KRESNA'){
+                        $jumlahtt += $jml->totaltt;
+                        $kelasvip += $jml->jumlahkelasvip;
+                        $kelassatu += $jml->jumlahkelassatu; 
+                        $kelasdua += $jml->jumlahkelasdua; 
+                        $kelastiga += $jml->jumlahkelastiga; 
+                        $kelaskhusus += $jml->jumlahkelaskhusus;
                     }
                 }
 
                 $data10[] = array(
                     'pelayanan' => $row,
-                    'year' => $year,
                     'jumlahkelasvvip' => $kelasvvip,
                     'jumlahkelasvip' => $kelasvip,
                     'jumlahkelassatu' => $kelassatu,
@@ -3474,26 +3493,23 @@ class LaporanRekamMedisController extends   ApiController
             case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as item2,
             case when isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then count(namaproduk) else 0 end as item3,
         
-            case when isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as tersedia1,
-            case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as tersedia2,
-            case when isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as tersedia3,
+            case when isgeneric = true and isfornas is not null and isforrs is not null then count(namaproduk) else 0 end as tersedia1,
+            case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as tersedia2,
+            case when isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then count(namaproduk) else 0 end as tersedia3,
             
-            case when isgeneric = true and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as tersediafor1,
-            case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as tersediafor2,
+            case when isgeneric = true and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as tersediafor1,
+            case when isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as tersediafor2,
             0 as tersediafor3
         
             from(
-                    select pr.namaproduk, sum(spd.qtyproduk) as jumlahproduk, ru.namaruangan, dp.id, pr.isfornas, pr.isforrs, pr.isgeneric
+                    select pr.namaproduk, sum(spd.qtyproduk) as jumlahproduk, pr.isfornas, pr.isforrs, pr.isgeneric
                             FROM stokprodukdetail_t as spd
-                            INNER JOIN strukpelayanan_t as sp on sp.norec = spd.nostrukterimafk
                             INNER JOIN produk_m as pr on pr.id = spd.objectprodukfk
-                            LEFT JOIN ruangan_m AS ru ON ru.id = spd.objectruanganfk
-                            LEFT JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
                     where pr.statusenabled = true
                     and spd.statusenabled = true
                     and pr.kdprofile = 30
                     and spd.kdprofile = 30
-                    group by pr.isfornas, pr.isforrs, pr.isgeneric, ru.namaruangan, dp.id, pr.namaproduk
+                    group by pr.isfornas, pr.isforrs, pr.isgeneric, pr.namaproduk
             ) as x group by isgeneric, isforrs, isfornas
         ) as y;"));
 
@@ -3513,6 +3529,12 @@ class LaporanRekamMedisController extends   ApiController
             'jumlahitem' => $datas[0]->item3,
             'jumlahtersedia' => $datas[0]->tersedia3,
             'jumlahtersediafor' => $datas[0]->tersediafor3,
+        );
+
+        $data10[3] = array(
+            'jumlahitem' => 0,
+            'jumlahtersedia' => 0,
+            'jumlahtersediafor' => 0,
         );
 
         $result = array(
@@ -3810,18 +3832,18 @@ class LaporanRekamMedisController extends   ApiController
         $datas = DB::select(DB::raw("select sum(rajal1) rajal1, sum(rajal2) rajal2, sum(rajal3) rajal3, sum(igd1) igd1, sum(igd2) igd2, sum(igd3) igd3, sum(ranap1) ranap1, sum(ranap2) ranap2, sum(ranap3) ranap3 
         from(
             select 
-            case when id <> 16 and isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as rajal1,
-            case when id <> 16 and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as rajal2,
-            case when id <> 16 and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as rajal3,
-            case when namaruangan ilike '%ugd%'  and isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as igd1,
-            case when namaruangan ilike '%ugd%' and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as igd2,
-            case when namaruangan ilike '%ugd%' and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as igd3,
-            case when id = 16 and isgeneric = true and isfornas is not null and isforrs is not null then sum(jumlahproduk) else 0 end as ranap1,
-            case when id = 16 and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then sum(jumlahproduk) else 0 end as ranap2,
-            case when id = 16 and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then sum(jumlahproduk) else 0 end as ranap3
+            case when id <> 16 and isgeneric = true and isfornas is not null and isforrs is not null then count(namaproduk) else 0 end as rajal1,
+            case when id <> 16 and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as rajal2,
+            case when id <> 16 and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then count(namaproduk) else 0 end as rajal3,
+            case when namaruangan ilike '%ugd%'  and isgeneric = true and isfornas is not null and isforrs is not null then count(namaproduk) else 0 end as igd1,
+            case when namaruangan ilike '%ugd%' and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as igd2,
+            case when namaruangan ilike '%ugd%' and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then count(namaproduk) else 0 end as igd3,
+            case when id = 16 and isgeneric = true and isfornas is not null and isforrs is not null then count(namaproduk) else 0 end as ranap1,
+            case when id = 16 and isgeneric = false and (isfornas = true or isforrs = true or (isfornas = true and isforrs = true)) then count(namaproduk) else 0 end as ranap2,
+            case when id = 16 and isgeneric = false and (isfornas = false or isforrs = false or (isfornas = false and isforrs = false)) then count(namaproduk) else 0 end as ranap3
         
             from(
-                    select sum(pp.jumlah) as jumlahproduk, ru.namaruangan, dp.id, pr.isfornas, pr.isforrs, pr.isgeneric
+                    select pr.namaproduk, sr.noresep, sum(pp.jumlah) as jumlahproduk, ru.namaruangan, dp.id, pr.isfornas, pr.isforrs, pr.isgeneric
                             FROM strukresep_t as sr
                             INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
                             INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
@@ -3834,7 +3856,7 @@ class LaporanRekamMedisController extends   ApiController
                     and pd.kdprofile = 30
                     and pd.statusenabled = true
                     and pp.isobat = true
-                    group by pr.isfornas, pr.isforrs, pr.isgeneric, ru.namaruangan, dp.id
+                    group by pr.isfornas, pr.isforrs, pr.isgeneric, ru.namaruangan, dp.id, pr.namaproduk, sr.noresep
             ) as x group by id, namaruangan, isgeneric, isforrs, isfornas
         ) as y;"));
 
@@ -3854,6 +3876,12 @@ class LaporanRekamMedisController extends   ApiController
             'jumlahrajal' => $datas[0]->rajal3,
             'jumlahigd' => $datas[0]->igd3,
             'jumlahranap' => $datas[0]->ranap3,
+        );
+
+        $data10[3] = array(
+            'jumlahrajal' => 0,
+            'jumlahigd' => 0,
+            'jumlahranap' => 0,
         );
 
         $result = array(

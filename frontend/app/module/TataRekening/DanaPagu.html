@@ -1,0 +1,143 @@
+<style>
+	.btn-disabled {
+		background-color: red;
+	}
+	.btn-enabled {
+		background-color: green;
+	}
+</style>
+<div class="grid_12">
+	<div class="grid_12 headerBox">
+		<h1 style="color: white;"><b>Daftar Dana Pagu</b></h1>
+	</div>
+
+			<fieldset style="min-height:50px !important" align="left">
+				<legend>
+					<h2>Pencarian</h2>
+				</legend>
+				<div class="grid_12">
+					<div class="grid_4">
+						<div class="grid_7">
+							<div class="grid_12">
+								<label c-label item="item" c-label-text="Bulan"></label>
+							</div>
+							<div class="grid_12">
+								<div class="grid_12">
+									<input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulan" kendo-date-picker
+										placeholer="MMMM" k-format="'MMMM'" />
+								</div>
+							</div>
+						</div>
+						<div class="grid_3">
+							<div class="grid_12">
+								<label c-label item="item" c-label-text="Tahun"></label>
+							</div>
+							<div class="grid_12">
+								<div class="grid_12">
+									<input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
+										placeholer="YYYY" k-format="'yyyy'" />
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="grid_4 k-edit-buttons  k-state-default " style="margin-top:27px">
+						<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="SearchData()"
+							style="width:100px"><span class="k-sprite k-icon k-i-search"></span>Cari </button>
+						<button class="k-button  k-button-icontext" ng-click="ClearData()" style="width:100px"><span
+								class="k-sprite k-icon k-delete"></span>Clear</button>
+					</div>
+				</div>
+			</fieldset>
+
+	<div class="grid_12" style="margin-top: 10px;">
+		<div class="grid_12" style="margin-top: 20px;">
+			<div class="grid_12 borderBox">
+				<kendo-grid options="mainGridOptions" k-data-source="dataSource" k-sortable="'true'" k-ng-model="current"
+					ng-click="klik(current)">
+					
+				</kendo-grid>
+			</div>
+
+		</div>
+	</div>
+	<div class="grid_12" style="margin-top: 20px;">	
+		<div class="grid_1">
+			<button class="c-button" ng-click="ubahDataIndex()"><i class="fas fas-edit"></i>Input
+			</button>
+		</div>
+		<div class="grid_1">
+			<button class="c-button" ng-click="postingUang()"><i class="fas fas-edit"></i>Posting Uang
+			</button>
+		</div>
+	</div>
+</div>
+<div kendo-window="popupDetailIndex" k-title="'Input Dana Pagu'" k-visible="false" k-width="1000">
+	<div class="panel panel-default container_12">
+
+		<div ng-cloak>
+			<md-content>
+				<md-tabs md-dynamic-height md-border-bottom md-selected="myVar2">
+					<md-tab label="Dana Pagu">
+						<md-content class="md-padding">
+								<div class="grid_6">
+                                    <div class="grid_12">
+                                        <div class="grid_12">
+                                            <label c-label item="item">DANA</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" filter="" class="k-textbox"
+                                                ng-model="item.dana" style="text-align: right" />
+                                        </div>
+                                    </div>
+								</div>
+								<div class="grid_6">
+									<div class="grid_12">
+                                        <div class="grid_12">
+                                            <label c-label item="item">DIKLAT</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" filter="" class="k-textbox"
+                                                ng-model="item.diklat" style="text-align: right" />
+                                        </div>
+                                    </div>
+								</div>
+                                <div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item">Periode</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%" k-ng-model="item.periode" k-max="now"
+											kendo-datepicker placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" />
+
+									</div>
+								</div>
+
+							</div>
+							
+							<div class="grid_12">
+
+								<div class="grid_2" style="float: right;padding-left: 10px;">
+									<button class="btnTemplate1" ng-click="batal()"><i class="fa fa-close"></i> Batal
+									</button>
+								</div>
+
+								<div class="grid_2" style="float: right;">
+									<button class="btnTemplate1 success" ng-click="save()"><i class="fa fa-save"></i>
+										Simpan
+									</button>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+				</md-tabs>
+			</md-content>
+		</div>
+
+		<div class="grid_12">
+			<div class="grid_8">
+			</div>
+
+		</div>
+	</div>
+</div>

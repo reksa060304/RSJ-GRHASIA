@@ -93,24 +93,7 @@ define(['initialize'], function (initialize) {
                                     pointStyle: 'line',
                                     type: 'scatter',
                                     borderDash: [10,10]
-                                }, 
-                                {// 'line' dataset default does not affect this dataset since it's a 'scatter'
-                                    label: 'Grafik Line',
-                                    data: [1, 2, 3, 5, 10, 15, 20],
-                                    showLine: true,
-                                    fill: false,
-                                    borderColor: 'red',
-                                    type: 'line',
-                                    pointStyle: 'line',
-                                }
-                                // {// 'line' dataset default does not affect this dataset since it's a 'scatter'
-                                //     label: 'TOI, ALOS',
-                                //     data: [{x:0, y:0},{x:datas[0].xtoi, y:datas[0].yalos}],
-                                //     showLine: true,
-                                //     fill: false,
-                                //     borderColor: 'blue',
-                                //     pointStyle: 'line',
-                                // }
+                                },
                                 ]
                             },
                             options: {
