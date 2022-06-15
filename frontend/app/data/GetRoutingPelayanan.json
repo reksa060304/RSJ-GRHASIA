@@ -17928,5 +17928,119 @@
         "define": "MedifirstService"
       }
     ]
-  }
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenAwalKeperawatanRIGrh",
+    "url": "/AsesmenAwalKeperawatanRIGrh",
+    "templateurl": "module/EMR/AsesmenAwalKeperawatanRIGrh.html",
+    "controller": "AsesmenAwalKeperawatanRIGrhCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MonitorIntakeOutput",
+    "url": "/MonitorIntakeOutput",
+    "templateurl": "module/EMR/MonitorIntakeOutput.html",
+    "controller": "MonitorIntakeOutputCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+    },
+    {
+      "name": "RekamMedis.AsesmenMedis.MonitoringTindakanRawatIntensif",
+      "url": "/MonitoringTindakanRawatIntensif",
+      "templateurl": "module/EMR/MonitoringTindakanRawatIntensif.html",
+      "controller": "MonitoringTindakanRawatIntensifCtrl",
+      "deps": [{
+          "module": "Services",
+          "define": "Service"
+        },
+        {
+          "module": "LoginServices",
+          "define": "LoginService"
+        },
+        {
+          "module": "MedifirstService",
+          "define": "MedifirstService"
+        }
+      ]
+      },
+      {
+        "name": "RekamMedis.AsesmenMedis.CatatanPerkembangan",
+        "url": "/CatatanPerkembangan",
+        "templateurl": "module/EMR/CatatanPerkembangan.html",
+        "controller": "CatatanPerkembanganCtrl",
+        "deps": [{
+            "module": "Services",
+            "define": "Service"
+          },
+          {
+            "module": "LoginServices",
+            "define": "LoginService"
+          },
+          {
+            "module": "MedifirstService",
+            "define": "MedifirstService"
+          }
+        ]
+        },
+        {
+          "name": "RekamMedis.AsesmenMedis.AsuhanGiziAwalPasienRawatInap",
+          "url": "/AsuhanGiziAwalPasienRawatInap",
+          "templateurl": "module/EMR/AsuhanGiziAwalPasienRawatInap.html",
+          "controller": "AsuhanGiziAwalPasienRawatInapCtrl",
+          "deps": [{
+              "module": "Services",
+              "define": "Service"
+            },
+            {
+              "module": "LoginServices",
+              "define": "LoginService"
+            },
+            {
+              "module": "MedifirstService",
+              "define": "MedifirstService"
+            }
+          ]
+          },
+          {
+            "name": "RekamMedis.AsesmenMedis.AsuhanGiziLanjutPasienRawatInap",
+            "url": "/AsuhanGiziLanjutPasienRawatInap",
+            "templateurl": "module/EMR/AsuhanGiziLanjutPasienRawatInap.html",
+            "controller": "AsuhanGiziLanjutPasienRawatInapCtrl",
+            "deps": [{
+                "module": "Services",
+                "define": "Service"
+              },
+              {
+                "module": "LoginServices",
+                "define": "LoginService"
+              },
+              {
+                "module": "MedifirstService",
+                "define": "MedifirstService"
+              }
+            ]
+            }
 ]
