@@ -26,12 +26,16 @@ define(['initialize'], function (initialize) {
 				loadData()
 			}
 			function loadData(){
-				var bulan = moment($scope.item.bulan).format('MM');
-				var tahun = moment($scope.item.tahun).format('YYYY');
-				console.log(bulan);
-				console.log(tahun);
-				medifirstService.get('tatarekening/get-daftar-remun-pegawai-fix?bulan='+ bulan + "&tahun="+ tahun).then(function (e) {
+				var tglawal = moment($scope.item.tglAwal).format('YYYY-MM-DD');
+				var tglakhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD');
+				
+				medifirstService.get('tatarekening/get-daftar-remun-pegawai-fix?tglawal='+ tglawal + "&tglakhir="+ tglakhir).then(function (e) {
 					console.log(e.data.data);
+					for(var i =0; i<e.data.data.length; i++){
+						if(e.data.data[i].uangp3 == null){
+							e.data.data[i].uangp3 = 0
+						}
+					}
 					$scope.dataSource = new kendo.data.DataSource({
 						data: e.data.data,
 						pageSize: 10,
@@ -93,6 +97,12 @@ define(['initialize'], function (initialize) {
 					"title": "Uang Struk",
                     "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: uangstruk #', 'Rp.')}}</span>",
+				},
+				{
+					"field": "uangp3",
+					"title": "Uang P3",
+                    "width": '150px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: uangp3 #', 'Rp.')}}</span>",
 				},
                 {
 					"field": "noposting",

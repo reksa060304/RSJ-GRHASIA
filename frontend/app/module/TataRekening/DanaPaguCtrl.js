@@ -8,6 +8,11 @@ define(['initialize'], function (initialize) {
 			
 			// var tgl = dateHelper.getDaysofMonth()
 			// console.log(tgl);
+
+            medifirstService.get('tatarekening/get-combo-detail-regis').then(function (e) {
+                $scope.listPegawai = e.data.pegawai
+            })
+
 			 $scope.monthUngkul = {
 			 	start: "year",
 			 	depth: "year"
@@ -51,9 +56,21 @@ define(['initialize'], function (initialize) {
 				$scope.popupDetailIndex.center().open();
 				
 			}
+            $scope.bagip3 = function () {
+				$scope.popupP3Index.center().open();
+				medifirstService.get('tatarekening/get-sisa-dana-p3?bulan='+ moment($scope.item.bulan).format('MM') + "&tahun=" + moment($scope.item.tahun).format('YYYY')).then(function (e) {
+                    $scope.item.danap3 = e.data.data
+                })
+			}
 			$scope.batal = function () {
 				$scope.current = undefined
 				$scope.popupDetailIndex.close();
+				$scope.item = {}
+			}
+
+            $scope.batalp3 = function () {
+				$scope.current = undefined
+				$scope.popupP3Index.close();
 				$scope.item = {}
 			}
 
@@ -99,6 +116,63 @@ define(['initialize'], function (initialize) {
                             
                             loadData()
                             $scope.batal()
+        
+                        })
+                    }
+                });
+                
+                        
+				
+				
+
+			}
+
+
+            $scope.savep3 = function () {
+				
+
+                medifirstService.get('tatarekening/get-daftar-p3-pegawai-fix?bulan='+ moment($scope.item.bulan).format('MM') + "&tahun=" + moment($scope.item.tahun).format('YYYY') + "&pegawai=" + $scope.item.pegawai.id ).then(function (e) {
+                    if(e.data.data.length > 0){
+                        $scope.popupP3Index.close();
+                        var confirm = $mdDialog.confirm()
+                            .title('Peringatan')
+                            .textContent('Pada Bulan Tersebut P3 Pegawai sudah disetting apakah mau setting kembali?')
+                            .ariaLabel('Lucky day')
+                            .cancel('Tidak')
+                            .ok('Ya')
+                        $mdDialog.show(confirm).then(function () {
+                            //$scope.SaveKirim();
+                            let json = {
+                                'jumlah': $scope.item.jumlahp3,
+                                'pegawai': $scope.item.pegawai.id,
+                                'bulan' : moment($scope.item.bulan).format('MM'),
+				                'tahun' : moment($scope.item.tahun).format('YYYY'),
+                            }
+                            console.log(json)
+                            medifirstService.post('tatarekening/save-dana-p3', json).then(function (e) {
+                                // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
+                                // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
+                                // 	$scope.itm.pegawai.namalengkap).then(function (res) {})
+                                
+                                loadData()
+                                $scope.popupP3Index.close();
+            
+                            })
+                        })
+                    } else {
+                        let json = {
+                            'jumlah': $scope.item.jumlahp3,
+                            'pegawai': $scope.item.pegawai.id,
+                            'bulan' : moment($scope.item.bulan).format('MM'),
+				            'tahun' : moment($scope.item.tahun).format('YYYY'),
+                        }
+                        medifirstService.post('tatarekening/save-dana-p3', json).then(function (e) {
+                            // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
+                            // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
+                            // 	$scope.itm.pegawai.namalengkap).then(function (res) {})
+                            
+                            loadData()
+                            $scope.popupP3Index.close();
         
                         })
                     }

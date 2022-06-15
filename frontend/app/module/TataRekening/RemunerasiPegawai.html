@@ -17,26 +17,24 @@
 				</legend>
 				<div class="grid_12">
 					<div class="grid_4">
-						<div class="grid_7">
+						<div class="grid_4">
 							<div class="grid_12">
-								<label c-label item="item" c-label-text="Bulan"></label>
+								<label c-label item="item">Tgl Awal</label>
 							</div>
 							<div class="grid_12">
-								<div class="grid_12">
-									<input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulan" kendo-date-picker
-										placeholer="MMMM" k-format="'MMMM'" />
-								</div>
+								<input style="width: 100%" k-ng-model="item.tglAwal" k-max="now"
+									kendo-datepicker placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" />
+
 							</div>
 						</div>
-						<div class="grid_3">
+						<div class="grid_4">
 							<div class="grid_12">
-								<label c-label item="item" c-label-text="Tahun"></label>
+								<label c-label item="item">Tgl Akhir</label>
 							</div>
 							<div class="grid_12">
-								<div class="grid_12">
-									<input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
-										placeholer="YYYY" k-format="'yyyy'" />
-								</div>
+								<input style="width: 100%" k-ng-model="item.tglAkhir" k-max="now"
+									kendo-datepicker placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" />
+
 							</div>
 						</div>
 					</div>

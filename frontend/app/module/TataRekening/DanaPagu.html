@@ -70,8 +70,13 @@
 			<button class="c-button" ng-click="postingUang()"><i class="fas fas-edit"></i>Posting Uang
 			</button>
 		</div>
+		<div class="grid_1">
+			<button class="c-button" ng-click="bagip3()"><i class="fas fas-edit"></i>Bagi Dana P3
+			</button>
+		</div>
 	</div>
 </div>
+
 <div kendo-window="popupDetailIndex" k-title="'Input Dana Pagu'" k-visible="false" k-width="1000">
 	<div class="panel panel-default container_12">
 
@@ -124,6 +129,75 @@
 
 								<div class="grid_2" style="float: right;">
 									<button class="btnTemplate1 success" ng-click="save()"><i class="fa fa-save"></i>
+										Simpan
+									</button>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+				</md-tabs>
+			</md-content>
+		</div>
+
+		<div class="grid_12">
+			<div class="grid_8">
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<div kendo-window="popupP3Index" k-title="'Bagi Dana P3'" k-visible="false" k-width="1000">
+	<div class="panel panel-default container_12">
+
+		<div ng-cloak>
+			<md-content>
+				<md-tabs md-dynamic-height md-border-bottom md-selected="myVar2">
+					<md-tab label="Dana P3">
+						<md-content class="md-padding">
+								<div class="grid_4">
+                                    <div class="grid_12">
+                                        <div class="grid_12">
+                                            <label c-label item="item">Sisa Dana P3</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" filter="" class="k-textbox"
+                                                ng-model="item.danap3" style="text-align: right" disabled/>
+                                        </div>
+                                    </div>
+								</div>
+								<div class="grid_4">
+									<div class="grid_12">
+                                        <div class="grid_12">
+                                            <label c-label item="item">Pegawai</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.pegawai"
+												k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+												k-auto-bind="false" k-data-source="listPegawai" />
+                                        </div>
+                                    </div>
+								</div>
+                                <div class="grid_4">
+									<div class="grid_12">
+										<label c-label item="item">Jumlah P3</label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" filter="" class="k-textbox"
+											ng-model="item.jumlahp3" style="text-align: right" />
+									</div>
+								</div>
+							</div>
+							
+							<div class="grid_12">
+
+								<div class="grid_2" style="float: right;padding-left: 10px;">
+									<button class="btnTemplate1" ng-click="batalp3()"><i class="fa fa-close"></i> Batal
+									</button>
+								</div>
+
+								<div class="grid_2" style="float: right;">
+									<button class="btnTemplate1 success" ng-click="savep3()"><i class="fa fa-save"></i>
 										Simpan
 									</button>
 								</div>
