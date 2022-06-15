@@ -58,11 +58,7 @@ define(['initialize'], function (initialize) {
 			}
 
 			$scope.save = function () {
-				let json = {
-					'dana': $scope.item.dana,
-					'diklat': $scope.item.diklat,
-                    'periode': moment($scope.item.periode).format('YYYY-MM-DD'),
-				}
+				
 
                 medifirstService.get('tatarekening/get-daftar-dana-pagu?periodebulan='+ moment($scope.item.periode).format('YYYY-MM-DD') ).then(function (e) {
                     if(e.data.data.length > 0){
@@ -75,6 +71,11 @@ define(['initialize'], function (initialize) {
                             .ok('Ya')
                         $mdDialog.show(confirm).then(function () {
                             //$scope.SaveKirim();
+                            let json = {
+                                'dana': $scope.item.dana,
+                                'diklat': $scope.item.diklat,
+                                'periode': moment($scope.item.periode).format('YYYY-MM-DD'),
+                            }
                             medifirstService.post('tatarekening/save-dana-pagu', json).then(function (e) {
                                 // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
                                 // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
@@ -86,6 +87,11 @@ define(['initialize'], function (initialize) {
                             })
                         })
                     } else {
+                        let json = {
+                            'dana': $scope.item.dana,
+                            'diklat': $scope.item.diklat,
+                            'periode': moment($scope.item.periode).format('YYYY-MM-DD'),
+                        }
                         medifirstService.post('tatarekening/save-dana-pagu', json).then(function (e) {
                             // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
                             // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +

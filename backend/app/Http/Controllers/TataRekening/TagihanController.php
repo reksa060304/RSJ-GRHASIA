@@ -12865,6 +12865,7 @@ $result = array(
         $grade = 0;
         $mk = 0;
         $point_tt = 0;
+        $data2 = [];
         //$transStatus = 'true';
     try{
         foreach ($arr as $array_data){
@@ -12876,7 +12877,7 @@ $result = array(
             $cektgl = DB::select(DB::raw("select iki, iku, prosen, grade, mk, point_tt from pointjaspel_t where objectpegawaifk = $id"));
             //var_dump($array_data['iki']);
             if(!empty($cek)){
-                if(!empty($array_data['iki'])){
+                if(isset($array_data['iki']) && $array_data['iki'] >= 0){
                     $data2[] = array(
                         'iki' => $array_data['iki'],
                         'iku' => $cektgl[0]->iku,
@@ -12906,7 +12907,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['iku'])){
+                if(isset($array_data['iku']) && $array_data['iku'] >= 0){
                     $data2[] = array(
                         'iku' => $array_data['iku'],
                         'iki' => $cektgl[0]->iki,
@@ -12936,7 +12937,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['prosen'])){
+                if(isset($array_data['prosen']) && $array_data['prosen'] >= 0){
                     $data2[] = array(
                         'prosen' => $array_data['prosen'],
                         'iku' => $cektgl[0]->iku,
@@ -12966,7 +12967,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['grade'])){
+                if(isset($array_data['grade']) && $array_data['grade'] >= 0){
                     $data2[] = array(
                         'grade' => $array_data['grade'],
                         'iku' => $cektgl[0]->iku,
@@ -12996,7 +12997,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['mk'])){
+                if(isset($array_data['mk']) && $array_data['mk'] >= 0){
                     $data2[] = array(
                         'mk' => $array_data['mk'],
                         'iku' => $cektgl[0]->iku,
@@ -13026,7 +13027,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['point_tt'])){
+                if(isset($array_data['point_tt']) && $array_data['point_tt'] >= 0){
                     $data2[] = array(
                         'point_tt' => $array_data['point_tt'],
                         'iku' => $cektgl[0]->iku,
@@ -13061,7 +13062,7 @@ $result = array(
             //-----------------------------------------------
 
             if(empty($cek)){
-                if(!empty($array_data['iki'])){
+                if(isset($array_data['iki']) && $array_data['iki'] >= 0){
                     $data2[] = array(
                         'iki' => $array_data['iki'],
                         'iku' => null,
@@ -13091,7 +13092,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['iku'])){
+                if(isset($array_data['iku']) && $array_data['iku'] >= 0){
                     $data2[] = array(
                         'iku' => $array_data['iku'],
                         'iki' => null,
@@ -13121,7 +13122,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['prosen'])){
+                if(isset($array_data['prosen']) && $array_data['prosen'] >= 0){
                     $data2[] = array(
                         'prosen' => $array_data['prosen'],
                         'iku' => null,
@@ -13151,7 +13152,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['grade'])){
+                if(isset($array_data['grade']) && $array_data['grade'] >= 0){
                     $data2[] = array(
                         'grade' => $array_data['grade'],
                         'iku' => null,
@@ -13181,7 +13182,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['mk'])){
+                if(isset($array_data['mk']) && $array_data['mk'] >= 0){
                     $data2[] = array(
                         'mk' => $array_data['mk'],
                         'iku' => null,
@@ -13211,7 +13212,7 @@ $result = array(
                         $transMessage = 'Sukses' ;
                 }
     
-                if(!empty($array_data['point_tt'])){
+                if(isset($array_data['point_tt']) && $array_data['point_tt'] >= 0){
                     $data2[] = array(
                         'point_tt' => $array_data['point_tt'],
                         'iku' => null,
@@ -13250,9 +13251,12 @@ $result = array(
     }
 
         
-
+        if($data2 == []){
+            $transStatus = 'false';
+            $transMessage = 'Data Kosong' ;
+        }
         if ($transStatus == 'true') {
-            $transMessage = 'Sukses' ;
+            $transMessage = 'Simpan Sukses' ;
             DB::commit();
             $result = array(
                 "status" => 201,
@@ -13294,7 +13298,8 @@ $result = array(
             $paramThn = "and date_part('year', periode) =". $tahun;
         }
         if(isset($periodebulan)){
-            $paramperiode = "and date_part('year', periode) = extract(year from '$periodebulan'::date)";
+            $paramperiode = "and date_part('year', periode) = extract(year from '$periodebulan'::date) 
+            and date_part('month', periode) = extract(month from '$periodebulan'::date)";
         }
         $data = \DB::select(DB::raw("
         select dana, diklat, p1, iki, iku, tt, ffs, struk, jtl, p3, piriki, piriku, pirtt, pirjtl, pirstruk, pirp1
@@ -13329,7 +13334,8 @@ $result = array(
             $paramThn = "and date_part('year', tglposting) =". $tahun;
         }
         if(isset($periodebulan)){
-            $paramperiode = "and to_timestamp(tglposting, 'yyyy-mm') = '$tahun-$bulan'";
+            $paramperiode = "and date_part('year', tglposting) = extract(year from '$periodebulan'::date) 
+            and date_part('month', tglposting) = extract(month from '$periodebulan'::date)";
         }
         $data = \DB::select(DB::raw("
         select pg.namalengkap, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting
@@ -13356,7 +13362,7 @@ $result = array(
         DB::beginTransaction();
 
         $periode = $request['periode'];
-        $cek = DB::select(DB::raw("select * from danapagu_t where extract(year from periode) = extract(year from '$periode'::date) and extract(month from periode) = extract(month from '$periode'::date)"));
+        $cek = DB::select(DB::raw("select * from danapagu_t where date_part('year', periode) = extract(year from '$periode'::date) and date_part('month', periode) = extract(month from '$periode'::date) and statusenabled = true"));
         $id = DB::select(DB::raw("select max(id) as id from danapagu_t"));
         $idmax = (int) $id[0]->id;
         $patokan = $request['dana'] - $request['diklat'];
@@ -13412,33 +13418,40 @@ $result = array(
                 ]);
             } else {
                 $pointjaspel = \DB::table('danapagu_t')->where('id', $cek[0]->id)->update([
+                    'statusenabled'=>false,
+                ]);
+
+                $danapagu = \DB::table('danapagu_t')->insert([
+                    'id'=> $idmax+1,
+                    'kodeexternal'=> $idmax+1,
+                    'namaexternal'=> $idmax+1,
                     'kdprofile'=> $kdProfile,
                     'statusenabled'=>true,
                     'dana'=>$request['dana'],
                     'diklat'=>$request['diklat'],
-                    'dibagi'=>$request['dana'] - $request['diklat'],
+                    'dibagi'=>$patokan,
                     'tigaperempatdiklat'=>75/100*$request['diklat'],
                     'seperempatdiklat'=>25/100*$request['diklat'],
                     'p1'=>0.35*($request['dana'] - $request['diklat']),
-                    'iki'=>(($request['dana'] - $request['diklat'])*(0.59)*(0.55)*(0.6)) + (0.25*$request['diklat']),
-                    'iku'=>($request['dana'] - $request['diklat'])*(0.59)*(0.55)*(0.2),
-                    'tt'=>($request['dana'] - $request['diklat'])*(0.59)*(0.55)*(0.2),
-
-                    'ffs'=>($request['dana'] - $request['diklat'])*(0.59)*(0.45)*(0.7),
-                    'struk'=>($request['dana'] - $request['diklat'])*(0.59)*(0.45)*(0.15),
-                    'jtl'=>($request['dana'] - $request['diklat'])*(0.59)*(0.45)*(0.15),
-
-                    'p3'=>($request['dana'] - $request['diklat'])*(0.06)*(0.5),
-
+                    'iki'=>(($patokan)*(0.59)*(0.55)*(0.6)) + (0.25*$request['diklat']),
+                    'iku'=>($patokan)*(0.59)*(0.55)*(0.2),
+                    'tt'=>($patokan)*(0.59)*(0.55)*(0.2),
+    
+                    'ffs'=>($patokan)*(0.59)*(0.45)*(0.7),
+                    'struk'=>($patokan)*(0.59)*(0.45)*(0.15),
+                    'jtl'=>($patokan)*(0.59)*(0.45)*(0.15),
+    
+                    'p3'=>($patokan)*(0.06)*(0.5),
+    
                     'pirp1' => (0.35*($request['dana'] - $request['diklat']))/($jumlah[0]->jumlahp1),
                     'piriki' => ($iki)/((float)$jumlah[0]->jumlahiki),
-                    'piriku' => (($patokan)*(0.59)*(0.55)*(0.2))/((float)$jumlah[0]->jumlahiku),
-                    'pirtt' => (($patokan)*(0.59)*(0.55)*(0.2))/((float)$jumlah[0]->jumlahtt),
-                    'pirjtl' => (($patokan)*(0.59)*(0.45)*(0.15))/((float)$jumlah[0]->jumlahjtl),
-                    'pirstruk' => (($patokan)*(0.59)*(0.45)*(0.15))/((float)$jumlah[0]->jumlahstrukural),
+                    'piriku' => (($patokan)*(0.59)*(0.55)*(0.2))/($jumlah[0]->jumlahiku),
+                    'pirtt' => (($patokan)*(0.59)*(0.55)*(0.2))/($jumlah[0]->jumlahtt),
+                    'pirjtl' => (($patokan)*(0.59)*(0.45)*(0.15))/($jumlah[0]->jumlahjtl),
+                    'pirstruk' => (($patokan)*(0.59)*(0.45)*(0.15))/($jumlah[0]->jumlahstrukural),
     
-                    //'periode'=>$request['periode'],
-                ]);
+                    'periode'=>$request['periode'],
+                    ]);
             }
             
             $transStatus = 'true';
@@ -13476,7 +13489,7 @@ $result = array(
 
         $bulan = $request['bulan'];
         $tahun = $request['tahun'];
-        $cek = DB::select(DB::raw("select * from uangremun_t where date_part('month', tglposting) =  $bulan  and date_part('year', tglposting) =  $tahun"));
+        $cek = DB::select(DB::raw("select * from uangremun_t where date_part('month', tglposting) =  $bulan  and date_part('year', tglposting) =  $tahun and statusenabled = true"));
         
        
         $main = DB::select(DB::raw("select jps.objectpegawaifk, jps.iki, jps.iku, jps.grade, jps.point_tt, jps.struktural,
@@ -13488,7 +13501,7 @@ $result = array(
 
         $pir = DB::select(DB::raw("select pirp1, piriki, piriku, pirtt, pirstruk, pirjtl
         from danapagu_t
-        where date_part('month', periode) =  $bulan  and date_part('year', periode) = $tahun"));
+        where date_part('month', periode) =  $bulan  and date_part('year', periode) = $tahun and statusenabled = true"));
 
 
         try{
@@ -13499,19 +13512,32 @@ $result = array(
                 
                     if(!empty($cek)){
     
-                        $pointjaspel = \DB::table('uangremun_t')->where("date_part('month', tglposting)", '=', $bulan)
-                        ->where("date_part('year', tglposting)", '=', $tahun)
-                        ->where("objectpegawaifk", '=', $id)->update([
+                        $pointjaspel = \DB::table('uangremun_t')->whereRaw("date_part('month', tglposting) = $bulan")
+                        ->whereRaw("date_part('year', tglposting) = $tahun")
+                        ->where("objectpegawaifk", '=', $id)
+                        ->where("statusenabled", '=', true)->update([
                             // 'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
-                            'uangp1'=> $pir[0]->pirp1*$row->grade,
-                            'uangiki'=> $pir[0]->piriki*$row->iki,
-                            'uangiku'=> $pir[0]->piriku*$row->iku,
-                            'uangtt'=> $pir[0]->pirtt*$row->point_tt,
-                            'uangstruk'=> $pir[0]->pirstruk*$row->struktural,
-                            'uangjtl'=> $pir[0]->pirjtl*$row->jtl,
+                            'statusenabled'=>false,
                             ]);
-                            $transStatus = 'true';
-                            $transMessage = 'Sukses' ;
+                        
+                            $pointjaspel = \DB::table('uangremun_t')->insert([
+                                'id'=> $idmax+1,
+                                'kdprofile'=> $kdProfile,
+                                'statusenabled'=>true,
+                                'kodeexternal'=> $idmax+1,
+                                'namaexternal'=> $idmax+1,
+                                'objectpegawaifk' => $id,
+                                'uangp1'=> $pir[0]->pirp1*$row->grade,
+                                'uangiki'=> $pir[0]->piriki*$row->iki,
+                                'uangiku'=> $pir[0]->piriku*$row->iku,
+                                'uangtt'=> $pir[0]->pirtt*$row->point_tt,
+                                'uangstruk'=> $pir[0]->pirstruk*$row->struktural,
+                                'uangjtl'=> $pir[0]->pirjtl*$row->jtl,
+                                'tglposting' => "$tahun-$bulan-01",
+                                'noposting' => $this->generateCode(new UangRemun, 'noposting', 8, $this->getDateTime()->format('ymd'),$kdProfile),
+                                ]);
+                                $transStatus = 'true';
+                                $transMessage = 'Sukses' ;
                     }
 
     
