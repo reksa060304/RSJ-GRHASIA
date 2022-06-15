@@ -1,0 +1,182 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12"  disable-contents="allDisabled" >
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Monitoring Tindakan Rawat Intensif </div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+            <!-- <div>
+                <input type="checkbox" class="k-checkbox" id="item.obj{{15000020}}"
+                    ng-model="item.obj[15000020]">
+                <label class="k-checkbox-label" for="item.obj{{15000020}}">
+                    &nbsp;Informasi Pasien</label>
+
+            </div> -->
+        <div>
+                <!-- <div ng-show="item.obj[15000020]"> -->
+            <fieldset>     
+                <div class="grid_12">
+                        <table style="border: 0px">
+
+                        <tr>
+                            <!-- <th style="width: 3%">No</th> -->
+                            <th rowspan="3" style="width: 15%">JENIS <br> TINDAKAAN</th>
+                            <th colspan="24" style="width: 25% text-align center">
+                                <div class="grid_12 margin-top-30 text-center">TANGGAL</div></th>
+                        </tr>
+                        <tr>
+                            <th colspan="12" style="width: 25%">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[3005764]" kendo-datetimepicker
+                                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                        parsedate="yyyy-MM-dd HH:mm" />
+                                </div></th>
+                            <th colspan="12" style="width: 25%">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[3005765]" kendo-datetimepicker
+                                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                        parsedate="yyyy-MM-dd HH:mm" />
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
+                                <th>06</th>
+                                <th>08</th>
+                                <th>10</th>
+                                <th>12</th>
+                                <th>14</th>
+                                <th>16</th>
+                                <th>18</th>
+                                <th>20</th>
+                                <th>22</th>
+                                <th>00</th>
+                                <th>02</th>
+                                <th>04</th>
+                                <th>06</th>
+                                <th>08</th>
+                                <th>10</th>
+                                <th>12</th>
+                                <th>14</th>
+                                <th>16</th>
+                                <th>18</th>
+                                <th>20</th>
+                                <th>22</th>
+                                <th>00</th>
+                                <th>02</th>
+                                <th>04</th>
+
+                        </tr>
+                        <tr style="border: 0px" ng-repeat="list in listData1 | orderBy:'nourut'" ng-init="jawabIndex = $index">                            <td ng-if="$index == listData1.length-1"></td>
+                            <td >{{list.namaexternal}}</td>
+                            <td ng-repeat="jawab in list.details">
+                                <div class="grid_12">
+                                    <div ng-switch on="jawabIndex">
+                                    </div>
+                                    <div ng-switch on="jawab.type">
+                                        <div ng-switch-when="checkbox">
+                                            <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                ng-model="item.obj[jawab.id]" ng-click="getSkorNew($index,jawab)">
+                                            <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                &nbsp;{{jawab.reportdisplay}}</label>
+
+                                        </div>
+                                        <div ng-switch-when="textbox">
+                                            <textarea style="width: 100px;height: 30px" c-text-area type="input" filter="'string'" class="k-textbox"
+                                            ng-model="item.obj[jawab.id]" />
+                                        </div>
+                                        <div ng-switch-when="combobox">
+                                            <div class="grid_12">
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                    k-auto-bind="false" k-data-source="listPegawai" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr> 
+                           
+                        </table>
+                        
+                    </div>
+                    <div class="grid_12">
+                        <fieldset style="margin-top: 10px">
+                            <div class="grid_12" style="padding: 5pt 10pt">
+                                <div class="grid_12">
+                                    <b>KETERANGAN</b>
+                                    <div class="grid_12" style="padding: 5pt">
+                                        <div class="grid_12">
+                                            <div class="grid_6"><label>Berilah tanda centang (v) apabila tindakan dilakukan atau kejadian tak diinginkan terjadi. &nbsp; </label></div>
+                                           
+                                    </div>
+                                </div>
+                                
+                            </div>
+                </fieldset>
+                    </div>
+            </fieldset>
+        </div>
+        <div class="grid_12" style="margin-top: 10px;">
+            <fieldset style="margin-top:10px;">             
+                        <div class="grid_12" style="margin-top:10px">
+                            <div  class="grid_12">
+                                <label c-label item="item" class="margin-bottom">Perawat : </label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 250px;" kendo-combo-box k-ng-model="item.obj[3005766]"
+                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listPegawai" />
+                            </div>
+                        </div>
+            </fieldset>
+        </div>
+        <!--  -->
+
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>
