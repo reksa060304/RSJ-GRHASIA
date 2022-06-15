@@ -145,10 +145,37 @@ define(['initialize'], function (initialize) {
                             let json = {
                                 'jumlah': $scope.item.jumlahp3,
                                 'pegawai': $scope.item.pegawai.id,
+                                'sisa': $scope.item.danap3,
                                 'bulan' : moment($scope.item.bulan).format('MM'),
 				                'tahun' : moment($scope.item.tahun).format('YYYY'),
                             }
                             console.log(json)
+                            if($scope.item.jumlahp3 > $scope.item.danap3){
+                                toastr.error('Jumlah P3 Lebih Besar Dari Dana P3 Yang Tersisa')
+                            } else{
+                                medifirstService.post('tatarekening/save-dana-p3', json).then(function (e) {
+                                    // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
+                                    // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
+                                    // 	$scope.itm.pegawai.namalengkap).then(function (res) {})
+                                    
+                                    loadData()
+                                    $scope.popupP3Index.close();
+                
+                                })
+                            }
+                        })
+                    } else {
+                        let json = {
+                            'jumlah': $scope.item.jumlahp3,
+                            'pegawai': $scope.item.pegawai.id,
+                            'sisa': $scope.item.danap3,
+                            'bulan' : moment($scope.item.bulan).format('MM'),
+				            'tahun' : moment($scope.item.tahun).format('YYYY'),
+                        }
+
+                        if($scope.item.jumlahp3 > $scope.item.danap3){
+                            toastr.error('Jumlah P3 Lebih Besar Dari Dana P3 Yang Tersisa')
+                        } else{
                             medifirstService.post('tatarekening/save-dana-p3', json).then(function (e) {
                                 // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
                                 // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
@@ -158,23 +185,8 @@ define(['initialize'], function (initialize) {
                                 $scope.popupP3Index.close();
             
                             })
-                        })
-                    } else {
-                        let json = {
-                            'jumlah': $scope.item.jumlahp3,
-                            'pegawai': $scope.item.pegawai.id,
-                            'bulan' : moment($scope.item.bulan).format('MM'),
-				            'tahun' : moment($scope.item.tahun).format('YYYY'),
                         }
-                        medifirstService.post('tatarekening/save-dana-p3', json).then(function (e) {
-                            // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
-                            // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
-                            // 	$scope.itm.pegawai.namalengkap).then(function (res) {})
-                            
-                            loadData()
-                            $scope.popupP3Index.close();
-        
-                        })
+                        
                     }
                 });
                 

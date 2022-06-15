@@ -16,8 +16,8 @@
 					<h2>Pencarian</h2>
 				</legend>
 				<div class="grid_12">
-					<div class="grid_4">
-						<div class="grid_4">
+					<div class="grid_3">
+						<div class="grid_6">
 							<div class="grid_12">
 								<label c-label item="item">Tgl Awal</label>
 							</div>
@@ -27,7 +27,7 @@
 
 							</div>
 						</div>
-						<div class="grid_4">
+						<div class="grid_6">
 							<div class="grid_12">
 								<label c-label item="item">Tgl Akhir</label>
 							</div>
@@ -38,12 +38,37 @@
 							</div>
 						</div>
 					</div>
-
-					<div class="grid_4 k-edit-buttons  k-state-default " style="margin-top:27px">
+					<div class="grid_3 k-edit-buttons  k-state-default " style="margin-top:27px">
 						<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="SearchData()"
 							style="width:100px"><span class="k-sprite k-icon k-i-search"></span>Cari </button>
 						<button class="k-button  k-button-icontext" ng-click="ClearData()" style="width:100px"><span
 								class="k-sprite k-icon k-delete"></span>Clear</button>
+					</div>
+					<div class="grid_3"></div>
+
+					<div class="grid_3">
+						<div class="grid_6">
+							<div class="grid_12">
+								<label c-label item="item" c-label-text="Periode Posting"></label>
+							</div>
+							<div class="grid_12">
+								<div class="grid_12">
+									<input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulan" kendo-date-picker
+										placeholer="MMMM" k-format="'MMMM'" />
+								</div>
+							</div>
+						</div>
+						<div class="grid_6">
+							<div class="grid_12">
+								<label c-label item="item" c-label-text="a" style="color: #ffffff;"></label>
+							</div>
+							<div class="grid_12">
+								<div class="grid_12">
+									<input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
+										placeholer="YYYY" k-format="'yyyy'" />
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</fieldset>
@@ -59,5 +84,21 @@
 
 		</div>
 	</div>
+
+	<div class="grid_12">
+		<div class="grid_2" style="margin-top: 20px;">
+			<input id="upload" type="file" kendo-upload
+				k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }" k-multiple="false"
+				k-select="onUploadExcel" />
+		</div>
+
+		<div class="grid_2" style="margin-top: 20px;">
+			<button class="c-button" ng-click="postingTotalBersih()" style="height: 50px;"><i class="fas fas-edit"></i>Posting Total Bersih
+			</button>
+		</div>
+	</div>
+	
+	
+	
 	
 </div>

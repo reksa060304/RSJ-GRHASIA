@@ -7646,4 +7646,59 @@ class RemunerasiController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getSavePostingTotalBersih(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $bulan = $request['bulan'];
+        $tahun = $request['tahun'];
+        $kotor = 0;
+        $pajak = 0;
+
+        $patokan = DB::select(DB::raw("select ut.id, pg.id idpegawai, pg.namalengkap, sgm.persen, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.uangp3, ut.uangffs
+        from uangremun_t ut 
+        inner join pegawai_m pg on pg.id = ut.objectpegawaifk
+        inner join sdm_golongan_m sgm on sgm.id = pg.objectgolonganfk 
+        where ut.statusenabled = true and ut.kdprofile = 30
+		and date_part('month', ut.tglposting) = '$bulan' and date_part('year', ut.tglposting) = '$tahun'"));
+
+        
+
+        DB::beginTransaction();
+        try {
+            foreach ($patokan as $item){
+                $kotor = round($item->uangp1 + $item->uangiki + $item->uangiku + $item->uangtt + $item->uangjtl + $item->uangstruk + $item->uangp3 + $item->uangffs);
+                $pajak = $kotor*$item->persen;
+                \DB::table('uangremun_t')->where('id',$item->id)->update([
+                    'totalkotor' => $kotor,
+                    'totalpajak' => $pajak,
+                    'totalbersih' => $kotor - $pajak,
+                ]);
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Posting Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+//                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Posting Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'e'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

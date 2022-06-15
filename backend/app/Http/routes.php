@@ -1872,6 +1872,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('remunerasi/get-combo','Remunerasi\RemunerasiController@getCombo');
 //          Route::get('remunerasi/get-jasa-layanan-pagu-rev2','Remunerasi\RemunerasiController@getRemunerasiJP1_rev2');
         Route::get('get/save-posting-grade','Remunerasi\RemunerasiController@getSavePostingGrade');
+        Route::post('get/save-posting-total-bersih','Remunerasi\RemunerasiController@getSavePostingTotalBersih');
         Route::get('remunerasi/get-jasa-layanan-pagu-rev2','Remunerasi\RemunerasiController@getRemunerasiJP1_rev3');
         Route::get('remunerasi/get-hitung-jasa-pelayanan-satu-rev2', 'Remunerasi\RemunerasiController@getHitungJP1Rev2');
         Route::get('remunerasi/get-daftar-jasa-layanan-pagu-rev2', 'Remunerasi\RemunerasiController@getDaftarJP1Rev2');
@@ -2578,6 +2579,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/save-akomodasi-tea', 'TataRekening\TagihanController@saveAkomodasiOtomatis');
           Route::post('tatarekening/save-dana-pagu', 'TataRekening\TagihanController@saveDanaPagu');
           Route::post('tatarekening/save-dana-remun', 'TataRekening\TagihanController@saveDanaRemun');
+          Route::post('tatarekening/save-dana-ffs', 'TataRekening\TagihanController@saveDanaFFS');
           Route::post('tatarekening/save-dana-p3', 'TataRekening\TagihanController@saveDanaP3');
           Route::post('tatarekening/save-poin-remun', 'TataRekening\TagihanController@saveImportRemun');
           Route::get('tatarekening/get-detail_apd', 'TataRekening\TagihanController@getDetailpasien');
