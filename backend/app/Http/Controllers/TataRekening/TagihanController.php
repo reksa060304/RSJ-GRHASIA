@@ -13319,10 +13319,10 @@ $result = array(
         $data = \DB::select(DB::raw("
         select dp.dana, dp.diklat, dp.p1, dp.iki, dp.iku, dp.tt, dp.ffs, dp.struk, dp.jtl, dp.p3, dp.piriki, dp.piriku, dp.pirtt, dp.pirjtl, dp.pirstruk, dp.pirp1, ut.tglverif
         from danapagu_t dp
-        inner join uangremun_t ut on date_part('month', dp.periode) = date_part('month', ut.tglposting)
+        left join uangremun_t ut on date_part('month', dp.periode) = date_part('month', ut.tglposting) and ut.statusenabled = true and ut.kdprofile = 30
         and date_part('year', dp.periode) = date_part('year', ut.tglposting)
         where dp.statusenabled = true and dp.kdprofile = 30
-        and ut.statusenabled = true and ut.kdprofile = 30 
+         
         $paramBln
         $paramThn
         $paramperiode limit 1
@@ -13453,9 +13453,9 @@ $result = array(
             // $pegawai = Pegawai::where('id', $request['id'])->where('kdprofile', $kdProfile)->get();
             if (empty($cek)) {
                 $danapagu = \DB::table('danapagu_t')->insert([
-                'id'=> $idmax+1,
-                'kodeexternal'=> $idmax+1,
-                'namaexternal'=> $idmax+1,
+                'id'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                'kodeexternal'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                'namaexternal'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
                 'kdprofile'=> $kdProfile,
                 'statusenabled'=>true,
                 'dana'=>$request['dana'],
@@ -13490,9 +13490,9 @@ $result = array(
                 ]);
 
                 $danapagu = \DB::table('danapagu_t')->insert([
-                    'id'=> $idmax+1,
-                    'kodeexternal'=> $idmax+1,
-                    'namaexternal'=> $idmax+1,
+                    'id'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kodeexternal'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'namaexternal'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
                     'kdprofile'=> $kdProfile,
                     'statusenabled'=>true,
                     'dana'=>$request['dana'],
@@ -13592,11 +13592,11 @@ $result = array(
                             ]);
                         
                             $pointjaspel = \DB::table('uangremun_t')->insert([
-                                'id'=> $idmax+1,
+                                'id'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
                                 'kdprofile'=> $kdProfile,
                                 'statusenabled'=>true,
-                                'kodeexternal'=> $idmax+1,
-                                'namaexternal'=> $idmax+1,
+                                'kodeexternal'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                                'namaexternal'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
                                 'objectpegawaifk' => $id,
                                 'uangp1'=> $pir[0]->pirp1*$row->grade,
                                 'uangiki'=> $pir[0]->piriki*$row->iki,
@@ -13623,11 +13623,11 @@ $result = array(
                 if(empty($cek)){
     
                         $pointjaspel = \DB::table('uangremun_t')->insert([
-                            'id'=> $idmax+1,
+                            'id'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
                             'kdprofile'=> $kdProfile,
                             'statusenabled'=>true,
-                            'kodeexternal'=> $idmax+1,
-                            'namaexternal'=> $idmax+1,
+                            'kodeexternal'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                            'namaexternal'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
                             'objectpegawaifk' => $id,
                             'uangp1'=> $pir[0]->pirp1*$row->grade,
                             'uangiki'=> $pir[0]->piriki*$row->iki,

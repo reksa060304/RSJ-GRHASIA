@@ -37,12 +37,17 @@ define(['initialize'], function (initialize) {
 				console.log(bulan);
 				console.log(tahun);
 				medifirstService.get('tatarekening/get-daftar-dana-pagu?bulan='+ bulan + "&tahun="+ tahun).then(function (e) {
-					console.log(e.data.data[0].tglverif);
-                    if(e.data.data[0].tglverif != null){
-                        $scope.disposting = true;
-                    } else if(e.data.data[0].tglverif == null){
+					
+                    if(e.data.data.length > 0){
+                        if(e.data.data[0].tglverif != null){
+                            $scope.disposting = true;
+                        } else if(e.data.data[0].tglverif == null){
+                            $scope.disposting = false;
+                        }
+                    } else{
                         $scope.disposting = false;
                     }
+                    
 					$scope.dataSource = new kendo.data.DataSource({
 						data: e.data.data,
 						pageSize: 10,
