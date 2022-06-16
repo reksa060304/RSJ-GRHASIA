@@ -13770,12 +13770,17 @@ $result = array(
         $dataLogin=$request->all();
 //        $kode='';
         $arr = $dataLogin['data'] ;
+        $arrcek = $arr[0]['tglinput'];
         //$transStatus = 'true';
         
-        DB::beginTransaction();
-        //var_dump($request);
+        //var_dump($arr);
+        $ceks = DB::select(DB::raw("select tglverif from uangremun_t where date_part('year', tglposting) = extract(year from '$arrcek'::date) and date_part('month', tglposting) = extract(month from '$arrcek'::date) 
+                and statusenabled = true and kdprofile = 30 and tglverif is not null"));
+
+        if($ceks != null){
+            $transStatus = 'false';
+        } else{
         
-        try{
             foreach ($arr as $array_data){
                 $bulan =  $array_data['tglinput'];
                 $pegawai = $array_data['kd'];
@@ -13791,34 +13796,25 @@ $result = array(
                             ]);
                         
                         $transStatus = 'true';
-                        $transMessage = 'Sukses' ;
                     // }
             }
-        
-                
-            
-        } catch (\Exception $e) {
-            $transStatus = 'false';
         }
 
         if ($transStatus == 'true') {
-            $transMessage = 'Sukses' ;
-            DB::commit();
-            $result = array(
-                "status" => 201,
-                "by" => 'er@epic',
-            );
-        } else {
-            $transMessage = 'Simpan Gagal';
-            DB::rollBack();
-            $result = array(
-                "status" => 400,
-                'line'=> $e->getLine(),
-                'message'=> $e->getMessage(),
-                "by" => 'er@epic',
-            );
+            $transMessage = "Import Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "Data sudah diverif tidak bisa import";
+            $status = 400;
         }
-        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+        
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
     }
 
 }
