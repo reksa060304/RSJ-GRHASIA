@@ -5,6 +5,8 @@ define(['initialize'], function (initialize) {
 			$scope.item = {};
 			$scope.iteminput = {};
 			$scope.now = new Date();
+			$scope.noposting = '';
+			$scope.disposting = false;
 			
 			// var tgl = dateHelper.getDaysofMonth()
 			// console.log(tgl);
@@ -30,12 +32,16 @@ define(['initialize'], function (initialize) {
 				var tglakhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD');
 				
 				medifirstService.get('tatarekening/get-daftar-remun-pegawai-fix?tglawal='+ tglawal + "&tglakhir="+ tglakhir).then(function (e) {
-					console.log(e.data.data);
-					for(var i =0; i<e.data.data.length; i++){
-						if(e.data.data[i].uangp3 == null){
-							e.data.data[i].uangp3 = 0
-						}
-					}
+					
+					if(e.data.data[0].tglverif != null){
+                        $scope.disposting = true;
+                    } else if(e.data.data[0].tglverif == null){
+                        $scope.disposting = false;
+                    }
+					
+					$scope.noposting = e.data.data[0].noposting
+					console.log($scope.noposting)
+					console.log(e.data.data[0].tglverif)
 					$scope.dataSource = new kendo.data.DataSource({
 						data: e.data.data,
 						pageSize: 10,
@@ -123,11 +129,22 @@ define(['initialize'], function (initialize) {
 
 			$scope.postingTotalBersih = function () {
 				let json = {
-					'bulan' : moment($scope.item.bulan).format('MM'),
-					'tahun' : moment($scope.item.tahun).format('YYYY'),
+					'noposting' : $scope.noposting,
 				}
-				
+				console.log(json)
 				medifirstService.post('get/save-posting-total-bersih', json).then(function (e) {
+					loadData()
+
+				})
+
+			}
+
+			$scope.verif = function () {
+				let json = {
+					'noposting' : $scope.noposting,
+				}
+				console.log(json)
+				medifirstService.post('get/save-verif-remun', json).then(function (e) {
 					loadData()
 
 				})
@@ -213,6 +230,11 @@ define(['initialize'], function (initialize) {
                 {
 					"field": "noposting",
 					"title": "No Posting",
+                    "width": '150px',
+				},
+				{
+					"field": "tglverif",
+					"title": "Tgl Verif",
                     "width": '150px',
 				},
 			];

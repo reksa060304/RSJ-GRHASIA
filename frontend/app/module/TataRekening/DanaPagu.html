@@ -5,6 +5,9 @@
 	.btn-enabled {
 		background-color: green;
 	}
+	button:disabled {
+        background: #828079;
+    }
 </style>
 <div class="grid_12">
 	<div class="grid_12 headerBox">
@@ -67,11 +70,11 @@
 			</button>
 		</div>
 		<div class="grid_1">
-			<button class="c-button" ng-click="postingUang()"><i class="fas fas-edit"></i>Posting Uang
+			<button class="c-button" ng-click="postingUang()" ng-disabled="disposting"><i class="fas fas-edit"></i>Posting Uang
 			</button>
 		</div>
 		<div class="grid_1">
-			<button class="c-button" ng-click="bagip3()"><i class="fas fas-edit"></i>Bagi Dana P3
+			<button class="c-button" ng-click="bagip3()" ng-disabled="disposting"><i class="fas fas-edit"></i>Bagi Dana P3
 			</button>
 		</div>
 	</div>

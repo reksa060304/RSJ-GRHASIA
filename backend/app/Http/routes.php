@@ -1872,7 +1872,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('remunerasi/get-combo','Remunerasi\RemunerasiController@getCombo');
 //          Route::get('remunerasi/get-jasa-layanan-pagu-rev2','Remunerasi\RemunerasiController@getRemunerasiJP1_rev2');
         Route::get('get/save-posting-grade','Remunerasi\RemunerasiController@getSavePostingGrade');
+        Route::post('get/save-posting-mk','Remunerasi\RemunerasiController@getSavePostingMK');
         Route::post('get/save-posting-total-bersih','Remunerasi\RemunerasiController@getSavePostingTotalBersih');
+        Route::post('get/save-verif-remun','Remunerasi\RemunerasiController@getSaveVerifRemun');
         Route::get('remunerasi/get-jasa-layanan-pagu-rev2','Remunerasi\RemunerasiController@getRemunerasiJP1_rev3');
         Route::get('remunerasi/get-hitung-jasa-pelayanan-satu-rev2', 'Remunerasi\RemunerasiController@getHitungJP1Rev2');
         Route::get('remunerasi/get-daftar-jasa-layanan-pagu-rev2', 'Remunerasi\RemunerasiController@getDaftarJP1Rev2');

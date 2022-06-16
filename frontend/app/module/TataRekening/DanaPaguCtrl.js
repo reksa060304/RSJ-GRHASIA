@@ -5,6 +5,7 @@ define(['initialize'], function (initialize) {
 			$scope.item = {};
 			$scope.iteminput = {};
 			$scope.now = new Date();
+            $scope.disposting = false;
 			
 			// var tgl = dateHelper.getDaysofMonth()
 			// console.log(tgl);
@@ -36,7 +37,12 @@ define(['initialize'], function (initialize) {
 				console.log(bulan);
 				console.log(tahun);
 				medifirstService.get('tatarekening/get-daftar-dana-pagu?bulan='+ bulan + "&tahun="+ tahun).then(function (e) {
-					console.log(e.data.data);
+					console.log(e.data.data[0].tglverif);
+                    if(e.data.data[0].tglverif != null){
+                        $scope.disposting = true;
+                    } else if(e.data.data[0].tglverif == null){
+                        $scope.disposting = false;
+                    }
 					$scope.dataSource = new kendo.data.DataSource({
 						data: e.data.data,
 						pageSize: 10,
@@ -251,92 +257,85 @@ define(['initialize'], function (initialize) {
 				{
 					"field": "dana",
 					"title": "DANA",
-                    "width": '200px',
                     "template": "<span class='style-right'>{{formatRupiah('#: dana #', 'Rp.')}}</span>",			
 				},
 				{
 					"field": "diklat",
 					"title": "DIKLAT",
-                    "width": '200px',
                     "template": "<span class='style-right'>{{formatRupiah('#: diklat #', 'Rp.')}}</span>",
 				},
 				{
 					"field": "p1",
 					"title": "P1",
-                    "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: p1 #', 'Rp.')}}</span>",
 				},
 				{
 					"field": "iki",
 					"title": "IKI",
-                    "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: iki #', 'Rp.')}}</span>",
 				},
 				{
 					"field": "iku",
 					"title": "IKU",
-                    "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: iku #', 'Rp.')}}</span>",
 				},
 				{
 					"field": "tt",
 					"title": "PointTT",
-                    "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: tt #', 'Rp.')}}</span>",
 				},
 				{
 					"field": "ffs",
 					"title": "FFS",
-                    "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: ffs #', 'Rp.')}}</span>",
 				},
                 {
 					"field": "struk",
 					"title": "STRUK",
-                    "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: struk #', 'Rp.')}}</span>",
 				},
                 {
 					"field": "jtl",
 					"title": "JTL",
-                    "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: jtl #', 'Rp.')}}</span>",
 				},			
                 {
 					"field": "p3",
 					"title": "P3",
-                    "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: p3 #', 'Rp.')}}</span>",
 				},
                 {
 					"field": "pirp1",
 					"title": "PIR P1",
-                    "width": '150px'
 				},
                 {
 					"field": "piriki",
+                    "template": "<span class='style-right'>{{formatRupiah('#: p3 #', 'Rp.')}}</span>",
 					"title": "PIR IKI",
-                    "width": '150px'
 				},
                 {
 					"field": "piriku",
 					"title": "PIR IKU",
-                    "width": '150px'
+                    "template": "<span class='style-right'>{{formatRupiah('#: piriku #', 'Rp.')}}</span>",
 				},
 				{
 					"field": "pirtt",
 					"title": "PIR TT",
-                    "width": '150px'
+                    "template": "<span class='style-right'>{{formatRupiah('#: pirtt #', 'Rp.')}}</span>",
 				},
 				{
 					"field": "pirstruk",
 					"title": "PIR Struk",
-                    "width": '150px'
+                    "template": "<span class='style-right'>{{formatRupiah('#: pirstruk #', 'Rp.')}}</span>",
 				},
 				{
 					"field": "pirjtl",
 					"title": "PIR JTL",
-                    "width": '150px'
+                    "template": "<span class='style-right'>{{formatRupiah('#: pirjtl #', 'Rp.')}}</span>",
+				},
+                {
+					"field": "tglverif",
+					"title": "Tgl Verif",
 				},
 			];
 			$scope.mainGridOptions = {

@@ -5,6 +5,12 @@
 	.btn-enabled {
 		background-color: green;
 	}
+	button:disabled {
+        background: #828079;
+    }
+	input:disabled {
+        background: #828079;
+    }
 </style>
 <div class="grid_12">
 	<div class="grid_12 headerBox">
@@ -46,7 +52,7 @@
 					</div>
 					<div class="grid_3"></div>
 
-					<div class="grid_3">
+					<!-- <div class="grid_3">
 						<div class="grid_6">
 							<div class="grid_12">
 								<label c-label item="item" c-label-text="Periode Posting"></label>
@@ -69,7 +75,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 				</div>
 			</fieldset>
 
@@ -87,13 +93,18 @@
 
 	<div class="grid_12">
 		<div class="grid_2" style="margin-top: 20px;">
-			<input id="upload" type="file" kendo-upload
+			<input id="upload" type="file" kendo-upload k-disabled="disposting"
 				k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }" k-multiple="false"
 				k-select="onUploadExcel" />
 		</div>
 
 		<div class="grid_2" style="margin-top: 20px;">
-			<button class="c-button" ng-click="postingTotalBersih()" style="height: 50px;"><i class="fas fas-edit"></i>Posting Total Bersih
+			<button class="c-button" ng-click="postingTotalBersih()" style="height: 50px;" ng-disabled="disposting"><i class="fas fas-edit"></i>Posting Total Bersih
+			</button>
+		</div>
+
+		<div class="grid_2" style="margin-top: 20px;">
+			<button class="c-button" ng-click="verif()" style="height: 50px;" ng-disabled="disposting"><i class="fas fas-edit"></i>Verifikasi
 			</button>
 		</div>
 	</div>

@@ -124,6 +124,16 @@ define(['initialize'], function (initialize) {
 				})
 
 			}
+			$scope.postingMK = function () {
+				let json = {
+					'bulan' : moment($scope.item.bulan).format('M'),
+				}
+				console.log(json);
+				medifirstService.post('get/save-posting-mk', json).then(function (e) {
+					loadData()
+				})
+
+			}
 			$scope.saveInput = function () {
 				let json = {
 					'norec': "",

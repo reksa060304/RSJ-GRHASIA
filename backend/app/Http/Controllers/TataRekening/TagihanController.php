@@ -13096,6 +13096,7 @@ $result = array(
                         'point_tt' => null,
                         'objectpegawaifk' => $array_data['kd'],
                         'tglinput' => $array_data['tglinput'],
+                        'bulanlastupdatemk' => 0,
                         ]);
                         $transStatus = 'true';
                         $transMessage = 'Sukses' ;
@@ -13126,6 +13127,7 @@ $result = array(
                         'point_tt' => null,
                         'namalengkap' => $datas[0]->namalengkap,
                         'tglinput' => $array_data['tglinput'],
+                        'bulanlastupdatemk' => 0,
                         ]);
                         $transStatus = 'true';
                         $transMessage = 'Sukses' ;
@@ -13156,6 +13158,7 @@ $result = array(
                         'point_tt' => null,
                         'objectpegawaifk' => $array_data['kd'],
                         'tglinput' => $array_data['tglinput'],
+                        'bulanlastupdatemk' => 0,
                         ]);
                         $transStatus = 'true';
                         $transMessage = 'Sukses' ;
@@ -13186,6 +13189,7 @@ $result = array(
                         'point_tt' => null,
                         'objectpegawaifk' => $array_data['kd'],
                         'tglinput' => $array_data['tglinput'],
+                        'bulanlastupdatemk' => 0,
                         ]);
                         $transStatus = 'true';
                         $transMessage = 'Sukses' ;
@@ -13216,6 +13220,7 @@ $result = array(
                         'point_tt' => null,
                         'objectpegawaifk' => $array_data['kd'],
                         'tglinput' => $array_data['tglinput'],
+                        'bulanlastupdatemk' => 0,
                         ]);
                         $transStatus = 'true';
                         $transMessage = 'Sukses' ;
@@ -13246,6 +13251,7 @@ $result = array(
                         'iki' => null,
                         'objectpegawaifk' => $array_data['kd'],
                         'tglinput' => $array_data['tglinput'],
+                        'bulanlastupdatemk' => 0,
                         ]);
                         $transStatus = 'true';
                         $transMessage = 'Sukses' ;
@@ -13311,12 +13317,15 @@ $result = array(
             and date_part('month', periode) = extract(month from '$periodebulan'::date)";
         }
         $data = \DB::select(DB::raw("
-        select dana, diklat, p1, iki, iku, tt, ffs, struk, jtl, p3, piriki, piriku, pirtt, pirjtl, pirstruk, pirp1
-        from danapagu_t 
-        where statusenabled = true and kdprofile = 30
+        select dp.dana, dp.diklat, dp.p1, dp.iki, dp.iku, dp.tt, dp.ffs, dp.struk, dp.jtl, dp.p3, dp.piriki, dp.piriku, dp.pirtt, dp.pirjtl, dp.pirstruk, dp.pirp1, ut.tglverif
+        from danapagu_t dp
+        inner join uangremun_t ut on date_part('month', dp.periode) = date_part('month', ut.tglposting)
+        and date_part('year', dp.periode) = date_part('year', ut.tglposting)
+        where dp.statusenabled = true and dp.kdprofile = 30
+        and ut.statusenabled = true and ut.kdprofile = 30 
         $paramBln
         $paramThn
-        $paramperiode
+        $paramperiode limit 1
         "));
         $result = array(
             'data' => $data,
@@ -13356,7 +13365,7 @@ $result = array(
             and uangp3 is not null and objectpegawaifk = $pegawai";
         }
         $data = \DB::select(DB::raw("
-        select pg.namalengkap, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih
+        select pg.namalengkap, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih, ut.tglverif
         from
         pointjaspel_t jps
         inner join pegawai_m pg on pg.id = jps.objectpegawaifk
@@ -13370,7 +13379,7 @@ $result = array(
 
         if(isset($tglAwal) && isset($tglAkhir)){
             $data = \DB::select(DB::raw("
-                select pg.namalengkap, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih
+                select pg.namalengkap, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih, ut.tglverif
                 from
                 pointjaspel_t jps
                 inner join pegawai_m pg on pg.id = jps.objectpegawaifk
@@ -13565,7 +13574,7 @@ $result = array(
 
 
         try{
-            $noposting = $this->generateCode(new UangRemun, 'noposting', 10, $this->getDateTime()->format('ymd'),$kdProfile);
+            $noposting = $this->generateCodeBySeqTable(new UangRemun, 'noposting', 10, $this->getDateTime()->format('ymd'),$kdProfile);
             foreach ($main as $row){
                 $id = $row->objectpegawaifk;
                 $ids = DB::select(DB::raw("select max(id) as id from uangremun_t"));
@@ -13597,6 +13606,9 @@ $result = array(
                                 'uangjtl'=> $pir[0]->pirjtl*$row->jtl,
                                 'uangp3'=> 0,
                                 'uangffs'=> 0,
+                                'totalkotor'=> 0,
+                                'totalpajak'=> 0,
+                                'totalbersih'=> 0,
                                 'tglposting' => "$tahun-$bulan-01",
                                 'noposting' => $noposting,
                                 ]);
@@ -13625,6 +13637,9 @@ $result = array(
                             'uangjtl'=> $pir[0]->pirjtl*$row->jtl,
                             'uangp3'=> 0,
                             'uangffs'=> 0,
+                            'totalkotor'=> 0,
+                            'totalpajak'=> 0,
+                            'totalbersih'=> 0,
                             'tglposting' => "$tahun-$bulan-01",
                             'noposting' => $noposting,
                             ]);
