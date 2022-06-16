@@ -5972,6 +5972,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 'statusenabled'=>true,
                 'kodeexternal'=>$req['kodeexternal'],
                 'namaexternal'=> $req['namaexternal'],
+                'reportdisplay'=>$req['kodeexternal'],
                 'objectpegawaifk'=> $req['objectpegawaifk'],
                 'objectjenisperanfk'=> $req['objectjenisperanfk'],
                 'norec_pp'=> $req['norec_pp'],
@@ -5979,10 +5980,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         }
         else{
            $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->where('norec', $req['norec'])->update([
-                'norec'=> substr(Uuid::generate(), 0, 32),
-                'kdprofile'=> $kdProfile,
-                'statusenabled'=>true,
                 'kodeexternal'=>$req['kodeexternal'],
+                'reportdisplay'=>$req['kodeexternal'],
                 'namaexternal'=> $req['namaexternal'],
                 'objectpegawaifk'=> $req['objectpegawaifk'],
                 'objectjenisperanfk'=> $req['objectjenisperanfk'],
@@ -6024,11 +6023,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         $transMessage='';
         $req = $request->all();
         try {
-            $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->where('norec', $req['norec'])->update([
-                'statusenabled'=>false,
-                
-            ]);
-
+            $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->where('norec', $req['norec'])->delete();
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
