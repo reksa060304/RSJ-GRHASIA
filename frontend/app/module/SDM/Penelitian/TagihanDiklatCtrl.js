@@ -8,17 +8,18 @@ define(['initialize'], function (initialize) {
             $scope.dataPasienSelected = {};
             $scope.showBayar = false;
             var norec_dkd = ""
+            // var objSave = {}
             function showButton() {
                 // $scope.showBtnBayarTagihan = true;
                 // $scope.showBtnPerbaharui = true;
                 // $scope.showBtnDetail = true;
             }
             FormLoad();
-            function detailDiklatTable() {
-                medifirstService.get("sdm/diklat/get-data-detail-diklat?norec=" + norec_dkd).then(function (data) {
-                    $scope.dataDetailDiklat = data.data.data;
-                })
-            }
+            // function detailDiklatTable() {
+            //     medifirstService.get("sdm/diklat/get-data-detail-diklat?norec=" + norec_dkd).then(function (data) {
+            //         $scope.dataDetailDiklat = data.data.data;
+            //     })
+            // }
             function FormLoad() {
                 showButton();
                 $scope.item.periodeAwal = dateHelper.setJamAwal(new Date());
@@ -296,8 +297,9 @@ define(['initialize'], function (initialize) {
                     id: dataPasienDetailSelected.objectpegawaifk,
                     namalengkap: dataPasienDetailSelected.namalengkap
                 }
+                norec_dkd = ""
                 $scope.norecdkd = dataPasienDetailSelected.norec
-                console.log($scope.norecdkd);
+                // console.log($scope.norecdkd);
             }
 
             function seacrhDetail(){
@@ -335,8 +337,9 @@ define(['initialize'], function (initialize) {
             $scope.batal = function(){
                 $scope.item.pegawai = undefined;
                 $scope.item.jenisperan = undefined;
+                // objSave = {}
+                norec_dkd= ""
                 $scope.popupInputDetailTagihan.center().close();
-
             }
             var init = function (a, b, c, d, e) {
                 $scope.isRouteLoading = true;
@@ -444,9 +447,12 @@ define(['initialize'], function (initialize) {
                     namaexternal: $scope.dataPasienSelected.keterangan,
                 }
                 console.log(objSave);
+                // return
                 medifirstService.post('tagihan/save-tagihan-diklat', objSave).then(function (data) {
                     // init();
                 // $scope.popupInputDetailTagihan.center().close();
+                    norec_dkd = ""
+                    $scope.norecdkd = undefined
                 seacrhDetail()
                 $scope.item.pegawai = undefined
                 $scope.item.jenisperan = undefined
@@ -455,7 +461,7 @@ define(['initialize'], function (initialize) {
             $scope.delete = function(){
                 if ($scope.norecdkd != undefined) {
                     norec_dkd = $scope.norecdkd
-                }
+                }   
                 var objSave = {
                     norec: norec_dkd,
                     statusenabled: false
@@ -463,8 +469,14 @@ define(['initialize'], function (initialize) {
                 console.log(objSave);
                 medifirstService.post('tagihan/hapus-tagihan-diklat', objSave).then(function (data) {
                     // init();
-                    $scope.popupInputDetailTagihan.center().close();
-                    $scope.item = {};
+                    $scope.item.pegawai = undefined;
+                    $scope.item.jenisperan = undefined;
+                    $scope.norecdkd = undefined
+                    // objSave = {}
+                    norec_dkd = ""
+                    // $scope.popupInputDetailTagihan.center().close();
+                    // $scope.item = {};
+                    seacrhDetail()
                 })
             }
 
