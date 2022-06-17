@@ -47,10 +47,22 @@ define(['initialize'], function (initialize) {
                         schema: {
                             model: {
                                 fields: {
-
+                                    equ: { type: "number" },
+                                    pembilang: { type: "number" },
                                 }
                             }
+                        },
+                        aggregate: [{
+                            field: "equ",
+                            aggregate: "sum"
+                        },
+                        {
+                            field: "pembilang",
+                            aggregate: "sum"
                         }
+                    ]
+
+                        
                     });
                 })
 
@@ -64,12 +76,12 @@ define(['initialize'], function (initialize) {
             $scope.columnProduk = [{
                     "field": "namapegawai",
                     "title": "Nama Pegawai",
-                    "width": '200px',
+                    "width": '250px',
                 },
                 {
                     "field": "tglstruk",
-                    "title": "TGL Struk",
-                    "width": '200px',
+                    "title": "Tanggal Struk",
+                    "width": '150px',
                 },
                 {
                     "field": "jenisperan",
@@ -77,23 +89,29 @@ define(['initialize'], function (initialize) {
                     "width": '150px',
                 },
                 {
-                    "field": "tagihan",
-                    "title": "Tagihan",
+                    "field": "detailjenisproduk",
+                    "title": "Kegiatan",
                     "width": '150px',
-                    "template": "<span class='style-right'>{{formatRupiah('#: tagihan #', 'Rp.')}}</span>",
+                    // "template": "<span class='style-right'>{{formatRupiah('#: tagihan #', 'Rp.')}}</span>",
+                    "footerTemplate": "TOTAL"
 
                 },
                 {
                     "field": "pembilang",
                     "title": "Penerimaan",
                     "width": '150px',
+                    "aggreates": ['sum'],
                     "template": "<span class='style-right'>{{formatRupiah('#: pembilang #', 'Rp.')}}</span>",
+                    "footerTemplate": "<span class='style-right'>{{formatRupiah('#: data.pembilang.sum #', 'Rp.')}}</span>",
+                    
                 },
                 {
                     "field": "equ",
                     "title": "Equivalen",
                     "width": '150px',
+                    "aggreates": ['sum'],
                     "template": "<span class='style-right'>{{formatRupiah('#: equ #', 'Rp.')}}</span>",
+                    "footerTemplate": "<span class='style-right'>{{formatRupiah('#: data.equ.sum #', 'Rp.')}}</span>",
                 },
                
             ];
@@ -113,9 +131,9 @@ define(['initialize'], function (initialize) {
             $scope.mainGridOptions = {
                 pageable: true,
                 columns: $scope.columnProduk,
-                editable: "popup",
+                // editable: "popup",
                 selectable: "row",
-                scrollable: false,
+                scrollable: true,
                 // filterMenuInit: function (e){
                 // var grid = e.sender;
                 // e.container.data("kendoPopup").bind("open", function() {
