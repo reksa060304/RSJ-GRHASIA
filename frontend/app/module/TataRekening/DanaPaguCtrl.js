@@ -33,6 +33,15 @@ define(['initialize'], function (initialize) {
 			$scope.SearchData = function () {
 				loadData()
 			}
+            $scope.SearchDiklat = function () {
+                	var bulan = moment($scope.item.buland).format('MM');
+                	var tahun = moment($scope.item.tahund).format('YYYY');
+                	console.log(bulan);
+                	console.log(tahun);
+                    medifirstService.get('tatarekening/get-daftar-dana-diklatsum?bulan=' + bulan + "&tahun=" + tahun).then(function (e) {
+                        $scope.item.diklat = e.data.data[0].pagudiklat;
+                    })
+            }
 			function loadData(){
 				var bulan = moment($scope.item.bulan).format('MM');
 				var tahun = moment($scope.item.tahun).format('YYYY');
@@ -348,7 +357,7 @@ define(['initialize'], function (initialize) {
 				columns: $scope.columnProduk,
 				editable: "popup",
 				selectable: "row",
-				scrollable: false,
+				scrollable: true,
 				filterable: true,
 				// filterMenuInit: function (e){
 				// var grid = e.sender;

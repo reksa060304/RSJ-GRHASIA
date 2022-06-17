@@ -210,6 +210,12 @@ define(['initialize'], function (initialize) {
                     "template": "<span class='style-right'>{{formatRupiah('#: uangffs #', 'Rp.')}}</span>",
 				},
 				{
+					"field": "uangdiklat",
+					"title": "Uang Diklat",
+					"width": '150px',
+					"template": "<span class='style-right'>{{formatRupiah('#: uangdiklat #', 'Rp.')}}</span>",
+				},
+				{
 					"field": "totalkotor",
 					"title": "Total Kotor",
                     "width": '150px',

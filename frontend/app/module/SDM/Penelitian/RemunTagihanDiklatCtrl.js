@@ -3,6 +3,7 @@ define(['initialize'], function (initialize) {
     initialize.controller('RemunTagihanDiklatCtrl', ['$scope', '$state', 'CacheHelper', '$mdDialog', 'MedifirstService', '$timeout',
         function ($scope, $state, cacheHelper, $mdDialog, medifirstService, $timeout) {
             $scope.item = {};
+                $scope.isRouteLoading = false
             $scope.iteminput = {};
             $scope.now = new Date();
 
@@ -20,19 +21,24 @@ define(['initialize'], function (initialize) {
 
             $scope.dataRemun = [];
             var norec = "";
-            loadData()
+            // loadData()
 
             $scope.SearchData = function () {
                 loadData()
             }
 
             function loadData() {
-                var tglawal = moment($scope.item.tglAwal).format('YYYY-MM-DD');
-                var tglakhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD');
+                $scope.isRouteLoading = true
+                var bulan = moment($scope.item.bulan).format('MM');
+                var tahun = moment($scope.item.tahun).format('YYYY')
+                console.log(bulan, tahun);
+                medifirstService.get('tatarekening/get-daftar-remun-diklat?bulan=' + bulan + "&tahun=" + tahun).then(function (e) {
+                $scope.isRouteLoading = false
 
-                medifirstService.get('tatarekening/get-daftar-remun-diklat?tglawal=' + tglawal + "&tglakhir=" + tglakhir).then(function (e) {
                     console.log(e.data.data);
-                    
+                    $scope.data = {}
+                    $scope.data = e.data.data
+                    $scope.datasum = e.data.datasum
                     $scope.dataSource = new kendo.data.DataSource({
                         data: e.data.data,
                         pageSize: 10,
@@ -47,88 +53,9 @@ define(['initialize'], function (initialize) {
                         }
                     });
                 })
-            }
-
-            $("#upload").kendoUpload({
-                localization: {
-                    "select": "Import"
-                },
-
-                select: function (e) {
-                    var ALLOWED_EXTENSIONS = [".xlsx"];
-                    var extension = e.files[0].extension.toLowerCase();
-                    if (ALLOWED_EXTENSIONS.indexOf(extension) == -1) {
-                        toastr.error('Mohon Pilih File Excel (.xls)')
-                        e.preventDefault();
-                        // return
-                    }
-                    var file = e.files[0];
-                    var stringFile = e.files[0].name
-                    var strFile = stringFile.split('.')
-                    var nmFileArr = strFile[0].split('_')
-                    // if (nmFileArr[1] != undefined && nmFileArr[2] != undefined && nmFileArr[3] != undefined) {
-                    //     $scope.item.tanggal = new Date(moment(nmFileArr[1]).format('YYYY-MM-DD HH:mm'));
-                    //     $scope.item.ruangan = { id: nmFileArr[2], namaruangan: nmFileArr[3] }
-                    // } else {
-                    //     toastr.info('SO_Tgl_KodeRuangan_NamaRuangan.xls', 'Contoh Nama File');
-                    //     toastr.error('Nama File Tidak Sesuai', 'Info');
-
-                    //     return;
-                    // }
-
-                    for (var i = 0; i < e.files.length; i++) {
-                        var file = e.files[i].rawFile;
-
-                        if (file) {
-                            var reader = new FileReader();
-                            reader.onload = function (e) {
-                                var data = e.target.result;
-                                var workbook = XLSX.read(data, {
-                                    type: 'binary'
-                                });
-
-                                workbook.SheetNames.forEach(function (sheetName) {
-                                    // Here is your object
-                                    var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-                                    var json_object = JSON.stringify(XL_row_object);
-                                    console.log(XL_row_object);
-                                    var objSave = {
-                                        data: XL_row_object,
-                                        // ruanganfk: $scope.item.ruangan.id
-                                    }
-
-                                    console.log(XL_row_object)
-
-                                    medifirstService.post('tatarekening/save-dana-ffs', objSave).then(function (data) {
-                                        loadData()
-                                    })
-                                })
-
-                            };
-
-                            reader.onerror = function (ex) {
-                                console.log(ex);
-                            };
-
-                            reader.readAsBinaryString(file);
-                        }
-                    }
-                },
-
-            });
-
-            $scope.postingTotalBersih = function () {
-                let json = {
-                    'bulan': moment($scope.item.bulan).format('MM'),
-                    'tahun': moment($scope.item.tahun).format('YYYY'),
-                }
-
-                medifirstService.post('get/save-posting-total-bersih', json).then(function (e) {
-                    loadData()
-
-                })
 
             }
+
 
             $scope.klik = function (current) {
                 console.log(current);
@@ -162,8 +89,27 @@ define(['initialize'], function (initialize) {
                     "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: pembilang #', 'Rp.')}}</span>",
                 },
+                {
+                    "field": "equ",
+                    "title": "Equivalen",
+                    "width": '150px',
+                    "template": "<span class='style-right'>{{formatRupiah('#: equ #', 'Rp.')}}</span>",
+                },
                
             ];
+            $scope.postingTotalBersih = function () {
+                console.log($scope.data);
+                 var bulan = moment($scope.item.bulan).format('MM');
+                 var tahun = moment($scope.item.tahun).format('YYYY')
+                var objSave = {
+                    bulan: bulan,
+                    tahun: tahun,
+                    data: $scope.datasum
+                }
+                medifirstService.post('tatarekening/save-remun-diklat', objSave).then(function(){
+
+                })
+            }
             $scope.mainGridOptions = {
                 pageable: true,
                 columns: $scope.columnProduk,

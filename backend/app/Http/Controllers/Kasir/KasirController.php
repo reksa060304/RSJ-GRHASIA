@@ -6191,10 +6191,10 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
     public function DaftarRemunDiklat(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $tglawal = $request['tglawal'];
-        $tglakhir = $request['tglakhir'];
+        $tglawal = $request['bulan'];
+        $tglakhir = $request['tahun'];
         $data = \DB::select(DB::raw("
-            SELECT sp.tglstruk, dkd.norec_pp,jp.jenisperan,jp.persen, CASE 
+            SELECT sp.tglstruk, dkd.norec_pp,jp.jenisperan,jp.persen,pg.id as idpegawai, CASE 
 	    WHEN dkd.objectpegawaifk is null THEN
 		jp.jenisperan
 	    ELSE
@@ -6208,7 +6208,17 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen))
             WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai = true THEN
                 round( ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen))
-        END as pembilang
+        END as pembilang,
+        CASE 
+            WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai is null THEN
+            round(	(jp.poin/dkd2.totalindeks)*  ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.9)*0.3*0.75)
+            WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai = true THEN
+                round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.1)*0.3*0.75)
+            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai is null THEN
+            round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen)*0.3*0.75)
+            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai = true THEN
+                round( ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen)*0.3*0.75)
+        END as equ
 
         FROM detailkegiatandiklat_t dkd 
         inner join jenisperan_m jp on jp.id = dkd.objectjenisperanfk 
@@ -6216,12 +6226,40 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         inner join strukpelayanandetail_t spd on spd.norec = dkd.norec_pp
         inner join strukpelayanan_t sp on sp.norec=spd.nostrukfk
         inner join(SELECT dkd.norec_pp, sum(jp.poin)as totalindeks FROM detailkegiatandiklat_t dkd inner join jenisperan_m jp on jp.id=dkd.objectjenisperanfk  GROUP BY dkd.norec_pp)as dkd2  on dkd2.norec_pp = dkd.norec_pp
-        where sp.tglstruk::date between '$tglawal' and '$tglakhir'
+        where date_part('month', sp.tglstruk::date)= '$tglawal' and date_part('year', sp.tglstruk::date) = '$tglakhir'
         and dkd.kdprofile = 30 and dkd.statusenabled = true
         ORDER BY dkd.norec, jp.id asc
         "));
+
+         $datasum =\DB::select(DB::raw("
+            SELECT x.namapegawai, sum(x.pembilang)as penerimaan, round(sum(x.pembilang)*0.3*0.75)as equ from (SELECT 
+                    pg.id as namapegawai, 
+            CASE 
+                WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai is null THEN
+                round(	(jp.poin/dkd2.totalindeks)*  ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.9))
+                WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai = true THEN
+                    round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.1))
+                WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai is null THEN
+                round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen))
+                WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai = true THEN
+                    round( ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen))
+            END as pembilang
+            FROM detailkegiatandiklat_t dkd 
+            inner join jenisperan_m jp on jp.id = dkd.objectjenisperanfk 
+            left join pegawai_m pg on pg.id = dkd.objectpegawaifk
+            inner join strukpelayanandetail_t spd on spd.norec = dkd.norec_pp
+            inner join strukpelayanan_t sp on sp.norec=spd.nostrukfk
+            inner join(SELECT dkd.norec_pp, sum(jp.poin)as totalindeks FROM detailkegiatandiklat_t dkd inner join jenisperan_m jp on jp.id=dkd.objectjenisperanfk  GROUP BY dkd.norec_pp)as dkd2  on dkd2.norec_pp = dkd.norec_pp
+            where date_part('month', sp.tglstruk::date)= '$tglawal' and date_part('year', sp.tglstruk::date) = '$tglakhir'
+            and dkd.kdprofile = $kdProfile and dkd.statusenabled = true
+            
+            ORDER BY dkd.norec, jp.id asc ) as x
+
+            GROUP BY x.namapegawai
+            "));
     $result = array(
         'data'=> $data,
+        'datasum'=> $datasum,
         'as'=> 'fizi'
     );
         return $this->respond($result);

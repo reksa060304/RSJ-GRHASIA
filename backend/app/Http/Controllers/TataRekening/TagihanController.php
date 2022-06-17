@@ -13365,7 +13365,7 @@ $result = array(
             and uangp3 is not null and objectpegawaifk = $pegawai";
         }
         $data = \DB::select(DB::raw("
-        select pg.namalengkap, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih, ut.tglverif
+        select pg.namalengkap,ut.uangdiklat, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih, ut.tglverif
         from
         pointjaspel_t jps
         inner join pegawai_m pg on pg.id = jps.objectpegawaifk
@@ -13379,7 +13379,7 @@ $result = array(
 
         if(isset($tglAwal) && isset($tglAkhir)){
             $data = \DB::select(DB::raw("
-                select pg.namalengkap, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih, ut.tglverif
+                select pg.namalengkap,ut.uangdiklat, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih, ut.tglverif
                 from
                 pointjaspel_t jps
                 inner join pegawai_m pg on pg.id = jps.objectpegawaifk
@@ -13816,4 +13816,83 @@ $result = array(
         return $this->setStatusCode($result['status'])->respond($result, $result['message']);
     }
 
+    public function saveRemunDiklat(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+
+        $bulan = $request['bulan'];
+        $tahun = $request['tahun'];
+        $data = $request['data'];
+        $update = '';
+        try{
+            foreach($data as $dt){
+                $update = UangRemun::where('kdprofile', $kdProfile)->where('statusenabled', true)->where('objectpegawaifk', $dt['namapegawai'])
+                ->whereRaw("date_part('month', tglposting) = $bulan")
+                ->whereRaw("date_part('year', tglposting) = $tahun")
+                ->first();
+                $update->uangdiklat = $dt['equ'];
+                $update->save();
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = 'Sukses' ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                'data'=>$update,
+                "by" => 'fizi',
+            );
+        } else {
+            $transMessage = 'Simpan Gagal';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                "by" => 'fizi',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getDanaSumDiklatRemun(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $bulan = $request['bulan'];
+        $tahun = $request['tahun'];
+        $data = \DB::select(DB::raw("
+        select sum(y.penerimaan)*0.3 as pagudiklat from(SELECT x.namapegawai, round(sum(x.pembilang))as penerimaan from (SELECT 
+		pg.id as namapegawai, 
+        CASE 
+            WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai is null THEN
+            round(	(jp.poin/dkd2.totalindeks)*  ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.9))
+            WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai = true THEN
+                round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.1))
+            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai is null THEN
+            round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen))
+            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai = true THEN
+                round( ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen))
+        END as pembilang
+        FROM detailkegiatandiklat_t dkd 
+        inner join jenisperan_m jp on jp.id = dkd.objectjenisperanfk 
+        left join pegawai_m pg on pg.id = dkd.objectpegawaifk
+        inner join strukpelayanandetail_t spd on spd.norec = dkd.norec_pp
+        inner join strukpelayanan_t sp on sp.norec=spd.nostrukfk
+        inner join(SELECT dkd.norec_pp, sum(jp.poin)as totalindeks FROM detailkegiatandiklat_t dkd inner join jenisperan_m jp on jp.id=dkd.objectjenisperanfk  GROUP BY dkd.norec_pp)as dkd2  on dkd2.norec_pp = dkd.norec_pp
+        where date_part('month', sp.tglstruk::date)= '$bulan' and date_part('year', sp.tglstruk::date) = '$tahun'
+        and dkd.kdprofile = $kdProfile and dkd.statusenabled = true
+        ORDER BY dkd.norec, jp.id asc ) as x
+        GROUP BY x.namapegawai)as y
+        "));
+
+        $result = array(
+            'data'=> $data,
+            'as'=> 'fizi'
+        );
+        return $this->respond($result);
+    }
 }
