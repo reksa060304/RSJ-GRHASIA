@@ -13426,7 +13426,7 @@ $result = array(
     public function saveDanaPagu(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
-        DB::beginTransaction();
+        
 
         $periode = $request['periode'];
         $cek = DB::select(DB::raw("select * from danapagu_t where date_part('year', periode) = extract(year from '$periode'::date) and date_part('month', periode) = extract(month from '$periode'::date) and statusenabled = true"));
@@ -13449,7 +13449,12 @@ $result = array(
         // var_dump(($patokan)*(0.59)*(0.55)*(0.6)) + (0.25*$request['diklat']);
         
         //var_dump($patokan);
-        try{
+        $ceks = DB::select(DB::raw("select tglverif from uangremun_t where date_part('year', tglposting) = extract(year from '$periode'::date) and date_part('month', tglposting) = extract(month from '$periode'::date) 
+                and statusenabled = true and kdprofile = 30 and tglverif is not null"));
+
+        if($ceks != null){
+            $transStatus = 'false';
+        } else{
             // $pegawai = Pegawai::where('id', $request['id'])->where('kdprofile', $kdProfile)->get();
             if (empty($cek)) {
                 $danapagu = \DB::table('danapagu_t')->insert([
@@ -13524,29 +13529,23 @@ $result = array(
             }
             
             $transStatus = 'true';
-            $transMessage = 'Sukses' ;
-        } catch (\Exception $e) {
-            $transStatus = 'false';
-        }
+        } 
 
         if ($transStatus == 'true') {
-            $transMessage = 'Sukses' ;
-            DB::commit();
-            $result = array(
-                "status" => 201,
-                "by" => 'er@epic',
-            );
-        } else {
-            $transMessage = 'Simpan Gagal';
-            DB::rollBack();
-            $result = array(
-                "status" => 400,
-                'line'=> $e->getLine(),
-                'message'=> $e->getMessage(),
-                "by" => 'er@epic',
-            );
+            $transMessage = "Simpan Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "Dana sudah diverif tidak bisa i nput lagi";
+            $status = 400;
         }
-        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+        
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
     }
 
     

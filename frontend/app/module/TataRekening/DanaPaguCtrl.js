@@ -6,6 +6,8 @@ define(['initialize'], function (initialize) {
 			$scope.iteminput = {};
 			$scope.now = new Date();
             $scope.disposting = false;
+            $scope.posting = false;
+            $scope.tanggalv = '';
 			
 			// var tgl = dateHelper.getDaysofMonth()
 			// console.log(tgl);
@@ -41,6 +43,7 @@ define(['initialize'], function (initialize) {
                     if(e.data.data.length > 0){
                         if(e.data.data[0].tglverif != null){
                             $scope.disposting = true;
+                            $scope.tanggalv = e.data.data[0].tglverif
                         } else if(e.data.data[0].tglverif == null){
                             $scope.disposting = false;
                         }
@@ -86,19 +89,36 @@ define(['initialize'], function (initialize) {
 			}
 
 			$scope.save = function () {
-				
-
-                medifirstService.get('tatarekening/get-daftar-dana-pagu?periodebulan='+ moment($scope.item.periode).format('YYYY-MM-DD') ).then(function (e) {
-                    if(e.data.data.length > 0){
-                        $scope.popupDetailIndex.close();
-                        var confirm = $mdDialog.confirm()
-                            .title('Peringatan')
-                            .textContent('Pada Bulan Tersebut Dana Pagu sudah diinput apakah mau input kembali?')
-                            .ariaLabel('Lucky day')
-                            .cancel('Tidak')
-                            .ok('Ya')
-                        $mdDialog.show(confirm).then(function () {
-                            //$scope.SaveKirim();
+				// if(moment($scope.item.periode).format('MM') == moment($scope.tanggalv).format('MM') && moment($scope.item.periode).format('YYYY') == moment($scope.tanggalv).format('YYYY')){
+                //     toastr.error('Dana pada bulan tersebut sudah diverif')
+                // } else{
+                    medifirstService.get('tatarekening/get-daftar-dana-pagu?periodebulan='+ moment($scope.item.periode).format('YYYY-MM-DD') ).then(function (e) {
+                        if(e.data.data.length > 0){
+                            $scope.popupDetailIndex.close();
+                            var confirm = $mdDialog.confirm()
+                                .title('Peringatan')
+                                .textContent('Pada Bulan Tersebut Dana Pagu sudah diinput apakah mau input kembali?')
+                                .ariaLabel('Lucky day')
+                                .cancel('Tidak')
+                                .ok('Ya')
+                            $mdDialog.show(confirm).then(function () {
+                                //$scope.SaveKirim();
+                                let json = {
+                                    'dana': $scope.item.dana,
+                                    'diklat': $scope.item.diklat,
+                                    'periode': moment($scope.item.periode).format('YYYY-MM-DD'),
+                                }
+                                medifirstService.post('tatarekening/save-dana-pagu', json).then(function (e) {
+                                    // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
+                                    // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
+                                    // 	$scope.itm.pegawai.namalengkap).then(function (res) {})
+                                    
+                                    loadData()
+                                    $scope.batal()
+                
+                                })
+                            })
+                        } else {
                             let json = {
                                 'dana': $scope.item.dana,
                                 'diklat': $scope.item.diklat,
@@ -113,29 +133,9 @@ define(['initialize'], function (initialize) {
                                 $scope.batal()
             
                             })
-                        })
-                    } else {
-                        let json = {
-                            'dana': $scope.item.dana,
-                            'diklat': $scope.item.diklat,
-                            'periode': moment($scope.item.periode).format('YYYY-MM-DD'),
                         }
-                        medifirstService.post('tatarekening/save-dana-pagu', json).then(function (e) {
-                            // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
-                            // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
-                            // 	$scope.itm.pegawai.namalengkap).then(function (res) {})
-                            
-                            loadData()
-                            $scope.batal()
-        
-                        })
-                    }
-                });
-                
-                        
-				
-				
-
+                    });
+                // }
 			}
 
 
