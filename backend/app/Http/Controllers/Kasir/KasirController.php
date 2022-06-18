@@ -151,8 +151,8 @@ class KasirController extends ApiController{
             ->get();
             $detailkegiatandiklat = \DB::table('detailkegiatandiklat_t as dkd')
             ->select('pg.namalengkap','jp.jenisperan', 'dkd.*')
-            ->join('pegawai_m as pg', 'pg.id','=','dkd.objectpegawaifk')
-            ->join('jenisperan_m as jp', 'jp.id','=','dkd.objectjenisperanfk')
+            ->leftjoin('pegawai_m as pg', 'pg.id','=','dkd.objectpegawaifk')
+            ->leftjoin('jenisperan_m as jp', 'jp.id','=','dkd.objectjenisperanfk')
             ->where('dkd.norec_pp', $request['norec_pp'])
             ->where('dkd.kdprofile', $kdProfile)
             ->where('dkd.statusenabled', true)
@@ -5963,23 +5963,159 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         \DB::beginTransaction();
         $transMessage='';
         $req = $request->all();
-//        return $this->respond($req);
         try {
-        if($req['norec'] == ''){
-            $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->insert([
-                'norec'=> substr(Uuid::generate(), 0, 32),
-                'kdprofile'=> $kdProfile,
-                'statusenabled'=>true,
-                'kodeexternal'=>$req['kodeexternal'],
-                'namaexternal'=> $req['namaexternal'],
-                'reportdisplay'=>$req['kodeexternal'],
-                'objectpegawaifk'=> $req['objectpegawaifk'],
-                'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                'norec_pp'=> $req['norec_pp'],
-            ]);
+            if($req['norec'] == ''){
+                $ceknorec = \DB::table('detailkegiatandiklat_t')->select('norec_pp')->where('norec_pp', $req['norec_pp'])->get();
+                //orientasi
+                if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1951){
+                    $TagihanDiklat1 = \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                        //2912 id bu ami
+                        //100270 id mas toni
+                    $TagihanDiklat2 = \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 2912,
+                        'objectjenisperanfk'=> 20,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+
+                //pkk
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1947){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 2912,
+                        'objectjenisperanfk'=> 22,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 100270,
+                        'objectjenisperanfk'=> 23,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+                //ppk
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1960){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 2912,
+                        'objectjenisperanfk'=> 9,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+              
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+
+                //kunjungan sehari
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1950){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 2912,
+                        'objectjenisperanfk'=> 31,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+              
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+
+                else{
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+                }
         }
         else{
-           $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->where('norec', $req['norec'])->update([
+            $transMessage = "Simpan Berhasil";
+            $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->where('norec', $req['norec'])->update([
                 'kodeexternal'=>$req['kodeexternal'],
                 'reportdisplay'=>$req['kodeexternal'],
                 'namaexternal'=> $req['namaexternal'],
@@ -5994,7 +6130,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         }
 
         if ($transStatus == 'true') {
-            $transMessage = "Simpan Berhasil";
+            // $transMessage = "Simpan Berhasil";
             DB::commit();
             $result = array(
                 "status" => 201,
@@ -6051,5 +6187,82 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function DaftarRemunDiklat(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglawal = $request['bulan'];
+        $tglakhir = $request['tahun'];
+        $data = \DB::select(DB::raw("
+            SELECT sp.tglstruk, djp.detailjenisproduk, dkd.norec_pp,jp.jenisperan,jp.persen,pg.id as idpegawai,  CASE 
+	    WHEN dkd.objectpegawaifk is null THEN
+		jp.jenisperan
+	    ELSE
+		pg.namalengkap
+        END as namapegawai, jp.objectdetailjenisprodukfk, (spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)as tagihan, CASE 
+            WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai is null THEN
+            round(	(jp.poin/dkd2.totalindeks)*  ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.9))
+            WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai = true THEN
+                round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.1))
+            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai is null THEN
+            round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen))
+            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai = true THEN
+                round( ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen))
+        END as pembilang,
+        CASE 
+            WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai is null THEN
+            round(	(jp.poin/dkd2.totalindeks)*  ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.9)*0.3*0.75)
+            WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai = true THEN
+                round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.1)*0.3*0.75)
+            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai is null THEN
+            round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen)*0.3*0.75)
+            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai = true THEN
+                round( ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen)*0.3*0.75)
+        END as equ
+
+        FROM detailkegiatandiklat_t dkd 
+        inner join jenisperan_m jp on jp.id = dkd.objectjenisperanfk 
+        left join pegawai_m pg on pg.id = dkd.objectpegawaifk
+        inner join strukpelayanandetail_t spd on spd.norec = dkd.norec_pp
+        inner join strukpelayanan_t sp on sp.norec=spd.nostrukfk
+        inner join detailjenisproduk_m djp on djp.id = jp.objectdetailjenisprodukfk
+        inner join(SELECT dkd.norec_pp, sum(jp.poin)as totalindeks FROM detailkegiatandiklat_t dkd inner join jenisperan_m jp on jp.id=dkd.objectjenisperanfk  GROUP BY dkd.norec_pp)as dkd2  on dkd2.norec_pp = dkd.norec_pp
+        where date_part('month', sp.tglstruk::date)= '$tglawal' and date_part('year', sp.tglstruk::date) = '$tglakhir'
+        and dkd.kdprofile = 30 and dkd.statusenabled = true
+        ORDER BY dkd.norec, jp.id asc
+        "));
+
+         $datasum =\DB::select(DB::raw("
+            SELECT x.namapegawai, sum(x.pembilang)as penerimaan, round(sum(x.pembilang)*0.3*0.75)as equ from (SELECT 
+                    pg.id as namapegawai, 
+            CASE 
+                WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai is null THEN
+                round(	(jp.poin/dkd2.totalindeks)*  ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.9))
+                WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai = true THEN
+                    round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.1))
+                WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai is null THEN
+                round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen))
+                WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai = true THEN
+                    round( ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen))
+            END as pembilang
+            FROM detailkegiatandiklat_t dkd 
+            inner join jenisperan_m jp on jp.id = dkd.objectjenisperanfk 
+            left join pegawai_m pg on pg.id = dkd.objectpegawaifk
+            inner join strukpelayanandetail_t spd on spd.norec = dkd.norec_pp
+            inner join strukpelayanan_t sp on sp.norec=spd.nostrukfk
+            inner join(SELECT dkd.norec_pp, sum(jp.poin)as totalindeks FROM detailkegiatandiklat_t dkd inner join jenisperan_m jp on jp.id=dkd.objectjenisperanfk  GROUP BY dkd.norec_pp)as dkd2  on dkd2.norec_pp = dkd.norec_pp
+            where date_part('month', sp.tglstruk::date)= '$tglawal' and date_part('year', sp.tglstruk::date) = '$tglakhir'
+            and dkd.kdprofile = $kdProfile and dkd.statusenabled = true
+            
+            ORDER BY dkd.norec, jp.id asc ) as x
+
+            GROUP BY x.namapegawai
+            "));
+    $result = array(
+        'data'=> $data,
+        'datasum'=> $datasum,
+        'as'=> 'fizi'
+    );
+        return $this->respond($result);
     }
 }

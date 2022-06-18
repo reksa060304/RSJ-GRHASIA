@@ -1049,6 +1049,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('kasir/detail-piutang-pasien/{norecSPP}', 'Kasir\KasirController@detailPiutangPasien');
             Route::get('kasir/data-laporan-rekap-pendapatan', 'Kasir\KasirController@getDataLaporanRekapPendapatanRuangan');
             Route::get('sdm/diklat/get-data-detail-diklat', 'Kasir\KasirController@getDataLaporanRekapPendapatanRuangan');
+            Route::get('tatarekening/get-daftar-remun-diklat', 'Kasir\KasirController@DaftarRemunDiklat');
             // GET
 
             // POST
@@ -2582,6 +2583,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/save-akomodasi-tea', 'TataRekening\TagihanController@saveAkomodasiOtomatis');
           Route::post('tatarekening/save-dana-pagu', 'TataRekening\TagihanController@saveDanaPagu');
           Route::post('tatarekening/save-dana-remun', 'TataRekening\TagihanController@saveDanaRemun');
+          Route::post('tatarekening/save-remun-diklat', 'TataRekening\TagihanController@saveRemunDiklat');
           Route::post('tatarekening/save-dana-ffs', 'TataRekening\TagihanController@saveDanaFFS');
           Route::post('tatarekening/save-dana-p3', 'TataRekening\TagihanController@saveDanaP3');
           Route::post('tatarekening/save-poin-remun', 'TataRekening\TagihanController@saveImportRemun');
@@ -2589,6 +2591,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('tatarekening/get-sisa-dana-p3', 'TataRekening\TagihanController@getSisaDanaP3');
           Route::get('tatarekening/get-daftar-dana-pagu', 'TataRekening\TagihanController@getDanaPagu');
           Route::get('tatarekening/get-daftar-remun-pegawai-fix', 'TataRekening\TagihanController@getDanaRemun');
+          Route::get('tatarekening/get-daftar-dana-diklatsum','TataRekening\TagihanController@getDanaSumDiklatRemun');
           Route::get('tatarekening/get-daftar-p3-pegawai-fix', 'TataRekening\TagihanController@getDanaP3');
           Route::get('tatarekening/get-combo-detail-regis', 'TataRekening\TagihanController@getDataComboDetailRegis');
           Route::get('tatarekening/get-detail-pasien', 'TataRekening\TagihanController@getAPD');

@@ -445,6 +445,7 @@ define(['initialize'], function (initialize) {
                     objectpegawaifk: $scope.item.pegawai.id,
                     kodeexternal: $scope.dataPasienSelected.jenisTagihan,
                     namaexternal: $scope.dataPasienSelected.keterangan,
+                    objectdetailjenisproduk: $scope.dataPasienSelected.detailjenisprodukId
                 }
                 console.log(objSave);
                 // return
