@@ -975,7 +975,10 @@
         {
             "nameDep": "PemakaianBHPRuanganCtrl",
             "urlDep": "module/Logistik/PemakaianBHPRuanganCtrl"
+        },
+        {
+            "nameDep": "LaporanPerencanaanStokObatCtrl",
+            "urlDep": "module/Logistik/LaporanPerencanaanStokObatCtrl"
         }
-        
     ]
 }

@@ -4855,5 +4855,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LaporanPerencanaanStokObat",
+    "url": "/TGFwb3JhblBlcmVuY2FuYWFuU3Rva09iYXQ=",
+    "templateurl": "module/Logistik/LaporanPerencanaanStokObat.html",
+    "controller": "LaporanPerencanaanStokObatCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
