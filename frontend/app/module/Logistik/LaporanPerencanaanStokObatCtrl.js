@@ -6,6 +6,7 @@ define(['initialize'], function (initialize) {
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.isRouteLoading = false;
+            $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD HH:mm');
 
             function init() {
                 $scope.isRouteLoading = true;

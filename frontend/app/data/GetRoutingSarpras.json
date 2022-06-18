@@ -4875,5 +4875,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LaporanPelayananObatJKN",
+    "url": "/TGFwb3JhblBlbGF5YW5hbk9iYXRQZXNlcnRhSktO",
+    "templateurl": "module/Logistik/LaporanPelayananObatJKN.html",
+    "controller": "LaporanPelayananObatJKNCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

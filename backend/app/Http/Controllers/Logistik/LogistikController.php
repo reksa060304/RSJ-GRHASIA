@@ -13970,4 +13970,101 @@ class LogistikController extends ApiController{
 
         return $this->respond($result);
     }
+
+    public function getPelayananObatJKN(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $data = \DB::select(DB::raw("select a.namaproduk, a.satuanstandar, coalesce(b.saldoawal, 0) saldoawal, coalesce(c.saldomasuk,0) as saldomasuk, a.jumlahrajal, a.jumlahranap, a.total, a.harganetto1, a.totalharga
+        from(
+        select x.namaproduk, x.id, x.satuanstandar, sum(x.jumlahranap) jumlahranap, sum(x.jumlahrajal) jumlahrajal,
+        coalesce(sum(x.jumlahranap), 0) + coalesce(sum(x.jumlahrajal), 0) total, x.harganetto1, 
+        (coalesce(sum(x.jumlahranap), 0) + coalesce(sum(x.jumlahrajal), 0)) * x.harganetto1 as totalharga
+        from(
+        select pr.namaproduk, pr.id, ss.satuanstandar, 
+            case when dp.id = 16 then sum(pp.jumlah) else 0 end as jumlahranap,
+            case when dp.id <> 16 then sum(pp.jumlah) else 0 end as jumlahrajal, e.harganetto1
+                                    FROM strukresep_t as sr
+                                    INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
+                                    INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
+                                    INNER JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
+                                    inner  join produk_m pr on pr.id=pp.produkfk
+                                    inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                                    inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+                                    inner join satuanstandar_m ss on ss.id = pr.objectsatuanstandarfk
+                                    inner join (
+                                        select pr.namaproduk, pr.id, spd.harganetto1
+                                        from stokprodukdetail_t spd
+                                        inner join produk_m pr on pr.id = spd.objectprodukfk
+                                        inner join (
+                                            select pr.id, pr.namaproduk, max(spd.tglpelayanan) tglpelayanan
+                                                                        from stokprodukdetail_t spd
+                                                                        inner join produk_m pr on pr.id = spd.objectprodukfk
+                                                                        group by pr.id, pr.namaproduk
+                                                                        order by pr.namaproduk
+                                        ) as z on z.tglpelayanan = spd.tglpelayanan and z.id = pr.id
+                                        group by pr.namaproduk, pr.id, spd.harganetto1
+                                    ) as e on e.id = pr.id
+                                    where sr.tglresep between '$tglAwal' and '$tglAkhir'
+                                    and pd.kdprofile = 30 and pd.statusenabled = true
+                                    and pp.isobat = true
+                                    group by pr.namaproduk,  pr.id, ss.satuanstandar, dp.id, e.harganetto1
+        ) as x group by x.namaproduk, x.id, x.satuanstandar, x.harganetto1
+        ) as a
+        
+        left join (
+            select x.namaproduk, x.id, x.satuanstandar, sum(x.saldoawal) saldoawal 
+            from(
+                select pro.namaproduk, pro.id, ss.satuanstandar,
+                            case when ks.status = true 
+                            then ks.saldoawal - ks.jumlah else ks.saldoawal + ks.jumlah end as saldoawal
+                                    from kartustok_t as ks
+                                    inner join produk_m as pro on pro.id = ks.produkfk
+                                    inner join satuanstandar_m ss on ss.id = pro.objectsatuanstandarfk
+                                    inner join ruangan_m as ru on ru.id = ks.ruanganfk
+                                    inner join (
+                                            select pro.namaproduk, min(ks.tglkejadian) tglkejadian
+                                            from kartustok_t as ks
+                                            inner join produk_m as pro on pro.id = ks.produkfk
+                                            inner join ruangan_m as ru on ru.id = ks.ruanganfk
+                                            where ks.kdprofile = 30
+                                            and ks.statusenabled = TRUE
+                                            and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+                                            and ks.keterangan not like '%Ubah Resep%'
+                                            group by pro.namaproduk
+                                    ) as j on j.tglkejadian = ks.tglkejadian and j.namaproduk = pro.namaproduk
+                                    where ks.kdprofile = 30
+                                    and ks.statusenabled = TRUE
+                                    and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+                                    and ks.saldoawal >= 0
+                                    group by pro.namaproduk, pro.id,
+                                    ks.status,ks.saldoawal, ks.jumlah, ks.tglkejadian, ss.satuanstandar
+                                    order by pro.namaproduk, ks.tglkejadian
+            ) as x group by x.namaproduk, x.id, x.satuanstandar
+        ) as b on a.id = b.id
+        
+        left join (
+            select pr.namaproduk, pr.id, sum(spd.qtyproduk) AS saldomasuk 
+            from strukpelayanan_t as sp
+            inner join strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
+            inner join ruangan_m as ru on ru.id = sp.objectruanganfk
+            inner join produk_m as pr on pr.id = spd.objectprodukfk
+            where ru.id in(59, 94)
+            and sp.tglstruk between '$tglAwal' and '$tglAkhir'
+            and sp.statusenabled = true and sp.kdprofile = 30
+            and sp.keteranganlainnya = 'Penerimaan Barang Dari Supplier'
+            group by pr.namaproduk, pr.id
+        ) as c on a.id = c.id order by a.namaproduk;
+        "));
+        
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
+    }
+    
 }
