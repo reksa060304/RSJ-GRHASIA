@@ -76,12 +76,12 @@ class BendaharaPenerimaanController extends ApiController {
         }
         $kelompokTransaksi= $kelompokTransaksi ->get();
 
-        $mataAnggaran= \DB::table('mataanggaran_t as m')
-            ->select('m.mataanggaran','m.norec')
-            ->where('m.kdprofile',$idProfile)
-            ->where('m.statusenabled',true)
-            ->orderBy('m.mataanggaran')
-            ->get();
+        // $mataAnggaran= \DB::table('mataanggaran_t as m')
+        //     ->select('m.mataanggaran','m.norec')
+        //     ->where('m.kdprofile',$idProfile)
+        //     ->where('m.statusenabled',true)
+        //     ->orderBy('m.mataanggaran')
+        //     ->get();
 
         $caraBayar = \DB::table('carabayar_m')
             ->select('id','carabayar as caraBayar','carabayar as namaExternal')
@@ -112,7 +112,7 @@ class BendaharaPenerimaanController extends ApiController {
             'datalogin' => $dataLogin,
             'datakasir' => $dataKasir,
             'kelompoktransaksi' => $kelompokTransaksi,
-            'mataanggaran' => $mataAnggaran,
+            // 'mataanggaran' => $mataAnggaran,
             'carabayar' => $caraBayar,
             'listbank' => $listBank,
             'listbankaccount' => $listBankAccount,
