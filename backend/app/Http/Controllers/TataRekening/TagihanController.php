@@ -13365,7 +13365,7 @@ $result = array(
             and uangp3 is not null and objectpegawaifk = $pegawai";
         }
         $data = \DB::select(DB::raw("
-        select pg.namalengkap,ut.uangdiklat, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih, ut.tglverif
+        select pg.namalengkap, pg.id idpegawai, ut.uangdiklat, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih, ut.tglverif
         from
         pointjaspel_t jps
         inner join pegawai_m pg on pg.id = jps.objectpegawaifk
@@ -13379,7 +13379,7 @@ $result = array(
 
         if(isset($tglAwal) && isset($tglAkhir)){
             $data = \DB::select(DB::raw("
-                select pg.namalengkap,ut.uangdiklat, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih, ut.tglverif
+                select pg.namalengkap, pg.id idpegawai, ut.uangdiklat, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.noposting, ut.uangp3, ut.uangffs, ut.totalkotor, ut.totalpajak, ut.totalbersih, ut.tglverif
                 from
                 pointjaspel_t jps
                 inner join pegawai_m pg on pg.id = jps.objectpegawaifk

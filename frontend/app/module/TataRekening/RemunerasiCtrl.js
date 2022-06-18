@@ -229,6 +229,58 @@ define(['initialize'], function (initialize) {
                     "width": '150px'			
 				},
 				{
+					"field": "idpegawai",
+					"title": "Kd Pegawai",
+                    "width": '150px',		
+				},
+				{
+					"field": "iki",
+					"title": "IKI",
+                    "width": '150px'
+				},
+				{
+					"field": "iku",
+					"title": "IKU",
+                    "width": '150px'
+				},
+				{
+					"field": "prosen",
+					"title": "Prosen",
+                    "width": '150px'
+				},
+				{
+					"field": "grade",
+					"title": "Grade",
+                    "width": '150px'
+				},
+				{
+					"field": "mk",
+					"title": "MK",
+                    "width": '150px'
+				},
+				{
+					"field": "point_tt",
+					"title": "Point TT",
+                    "width": '150px'
+				},
+                {
+					"field": "tglinput",
+					"title": "Tanggal Input",
+                    "width": '150px'
+				},			
+			];
+			$scope.datacolumn = [
+				{
+					"field": "namalengkap",
+					"title": "Nama Pegawai",
+                    "width": '150px'			
+				},
+				{
+					"field": "idpegawai",
+					"title": "Kd Pegawai",
+                    "width": '150px',		
+				},
+				{
 					"field": "iki",
 					"title": "IKI",
                     "width": '150px'

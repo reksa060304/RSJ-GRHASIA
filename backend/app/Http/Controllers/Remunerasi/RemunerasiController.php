@@ -7690,7 +7690,7 @@ class RemunerasiController extends ApiController
         $kotor = 0;
         $pajak = 0;
 
-        $patokan = DB::select(DB::raw("select ut.id, pg.id idpegawai, pg.namalengkap, sgm.persen, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.uangp3, ut.uangffs
+        $patokan = DB::select(DB::raw("select ut.id, pg.id idpegawai, pg.namalengkap, sgm.persen, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.uangp3, ut.uangffs, ut.uangdiklat
         from uangremun_t ut 
         inner join pegawai_m pg on pg.id = ut.objectpegawaifk
         inner join sdm_golongan_m sgm on sgm.id = pg.objectgolonganfk 
@@ -7702,7 +7702,7 @@ class RemunerasiController extends ApiController
         DB::beginTransaction();
         try {
             foreach ($patokan as $item){
-                $kotor = round($item->uangp1 + $item->uangiki + $item->uangiku + $item->uangtt + $item->uangjtl + $item->uangstruk + $item->uangp3 + $item->uangffs);
+                $kotor = round($item->uangp1 + $item->uangiki + $item->uangiku + $item->uangtt + $item->uangjtl + $item->uangstruk + $item->uangp3 + $item->uangffs + $item->uangdiklat);
                 $pajak = $kotor*$item->persen;
                 \DB::table('uangremun_t')->where('id',$item->id)->update([
                     'totalkotor' => $kotor,

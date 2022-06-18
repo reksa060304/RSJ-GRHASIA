@@ -162,6 +162,11 @@ define(['initialize'], function (initialize) {
                     "width": '200px',			
 				},
 				{
+					"field": "idpegawai",
+					"title": "Kd Pegawai",
+                    "width": '200px',			
+				},
+				{
 					"field": "uangp1",
 					"title": "Uang P1",
                     "width": '200px',
