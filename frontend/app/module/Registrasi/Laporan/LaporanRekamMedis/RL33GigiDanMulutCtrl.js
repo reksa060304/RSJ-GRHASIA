@@ -35,9 +35,13 @@ define(['initialize'], function (initialize) {
                     + "&tglAkhir=" + tglAkhir
 
                 ).then(function (data) {
-                    var data = data.data
-                    for (var i = 0; i < data.data.length; i++) {
-                        data.data[i].no = i + 1
+                    var datas = data.data
+                    for (var i = 0; i < datas.data.length; i++) {
+                        if (i == 14) {
+                        datas.data[i].no = 99
+                        } else {
+                        datas.data[i].no = i + 1
+                        }
                         // var tanggal = $scope.now;
                         // var tanggalLahir = new Date(data.data[i].tglLahir);
                         // var umurzz = DateHelper.CountAge(tanggalLahir, tanggal);
@@ -48,10 +52,10 @@ define(['initialize'], function (initialize) {
 
                     $scope.sourceLaporan = new kendo.data.DataSource({
 
-                        data: data.data,
-                        group: $scope.group,
-                        pageSize: 10,
-                        total: data.length,
+                        data: datas.data,
+                        // group: $scope.group,
+                        pageSize: 20,
+                        total: datas.data.length,
                         serverPaging: false,
                         schema: {
                             model: {
@@ -130,21 +134,21 @@ define(['initialize'], function (initialize) {
                         field: "no",
                         title: "No",
                         "attributes": { align: "center" },
-                        Template: "<span class='style-center'>#: no #</span>",
+                        // Template: "<span class='style-center'>#: no #</span>",
                         width: "15px"
                     },
                     {
-                        field: "kelompoklaporan",
+                        field: "namaruangan",
                         title: "JENIS KEGIATAN",
                         width: "150px",
-                        template: "<span class='style-center'>#: kelompoklaporan #</span>",
+                        // template: "<span class='style-center'>#: kelompoklaporan #</span>",
                         // headerAttributes: { style: "text-align : center" },
                     },
                     {
-                        field: "jumlah",
+                        field: "jumlahtotal",
                         title: "JUMLAH",
                         width: "100px",
-                        template: "<span class='style-center'>#: jumlah #</span>",
+                        // template: "<span class='style-center'>#: jumlah #</span>",
                         // headerAttributes: { style: "text-align : center" },
                     },
 
