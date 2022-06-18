@@ -2,12 +2,13 @@ define(['initialize'], function (initialize) {
 	'use strict';
 	initialize.controller('RemunerasiPegawaiCtrl', ['$scope', '$state', 'CacheHelper', '$mdDialog', 'MedifirstService','$timeout',
 		function ($scope, $state, cacheHelper, $mdDialog, medifirstService, $timeout) {
+			$scope.isRouteLoading = false
 			$scope.item = {};
 			$scope.iteminput = {};
 			$scope.now = new Date();
 			$scope.noposting = '';
 			$scope.disposting = false;
-			
+			$scope.posting = false;
 			// var tgl = dateHelper.getDaysofMonth()
 			// console.log(tgl);
 			 $scope.monthUngkul = {
@@ -28,15 +29,18 @@ define(['initialize'], function (initialize) {
 				loadData()
 			}
 			function loadData(){
+				$scope.isRouteLoading = true
 				var tglawal = moment($scope.item.tglAwal).format('YYYY-MM-DD');
 				var tglakhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD');
 				
 				medifirstService.get('tatarekening/get-daftar-remun-pegawai-fix?tglawal='+ tglawal + "&tglakhir="+ tglakhir).then(function (e) {
-					
+					$scope.isRouteLoading = false
 					if(e.data.data[0].tglverif != null){
                         $scope.disposting = true;
+                        $scope.posting = false;
                     } else if(e.data.data[0].tglverif == null){
                         $scope.disposting = false;
+                        $scope.posting = true;
                     }
 					
 					$scope.noposting = e.data.data[0].noposting
@@ -57,7 +61,17 @@ define(['initialize'], function (initialize) {
 					});
 				})
 			}
-
+			$scope.batalverif = function(){
+			$scope.isRouteLoading = true
+				let json = {
+					'noposting': $scope.noposting,
+				}
+				console.log(json)
+				medifirstService.post('get/save-unverif-remun', json).then(function (e) {
+					loadData()
+					$scope.isRouteLoading = false
+				})
+			}
 			$("#upload").kendoUpload({
                 localization: {
                     "select": "Import"
@@ -140,11 +154,13 @@ define(['initialize'], function (initialize) {
 			}
 
 			$scope.verif = function () {
+			$scope.isRouteLoading = true
 				let json = {
 					'noposting' : $scope.noposting,
 				}
 				console.log(json)
 				medifirstService.post('get/save-verif-remun', json).then(function (e) {
+					$scope.isRouteLoading = false
 					loadData()
 
 				})
@@ -254,7 +270,7 @@ define(['initialize'], function (initialize) {
 				columns: $scope.columnProduk,
 				editable: "popup",
 				selectable: "row",
-				scrollable: false,
+				scrollable: true,
 				filterable: true,
 				// filterMenuInit: function (e){
 				// var grid = e.sender;
