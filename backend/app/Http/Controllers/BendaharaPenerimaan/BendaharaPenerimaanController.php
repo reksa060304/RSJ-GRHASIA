@@ -4891,6 +4891,8 @@ class BendaharaPenerimaanController extends ApiController {
                             where sts.statusenabled = true
                             and extract(year from sts.tglpenerimaan::date ) = ".$tahunx."
                             and extract(month from sts.tglpenerimaan::date ) = ".$bulanx."
+                            and sts.statusenabled = true and sts.kdprofile = 30
+                            and stsd.statusenabled = true and stsd.kdprofile = 30
                             $bayar
                             group by stsd.kdrekening, stsd.nomer, stsd.uraian, sts.tglpenerimaan::date
                             order by min(stsd.nourut)
