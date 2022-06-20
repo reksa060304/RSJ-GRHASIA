@@ -543,44 +543,60 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if (dataDel.length > 0) {
 
                     $scope.hideHapusTindakan = true
-                    medifirstService.post('radiologi/delete-pelayanan-pasien', objDelete).then(function (e) {
-                        if (e.status === 201) {
-                            var objLog = {
-                                pelayananpasiendelete: logData
-                            }
-                            medifirstService.postNonMessage('sysadmin/logging/save-log-hapus-tindakan', objLog).then(function (e) {
-                            })
-                            let deleteExt = []
-                            for (var i = 0; i < $scope.dataGrid._data.length; i++) {
-                                const elem = $scope.dataGrid._data[i]
-                                if (elem.statCheckbox) {
-                                    if (elem.statusbridging != '-' && elem.noorder != null) {
-                                        if (elem.nourutrad == null )
-                                        deleteExt.push({
-                                            'noorder': elem.noorder,
-                                            'produkfk': elem.produkfk,
-                                            'nourutrad': elem.nourutrad,
-                                            'nocm': elem.nocm
-                                        })
+                    medifirstService.get("farmasi/get-penjagaan-verif-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
+                    
 
-                                    }
-                                }
-                            }
-                            if (deleteExt.length > 0) {
-                                medifirstService.postNonMessage('bridging/penunjang/save-hapus-order-lab', { 'data': deleteExt }).then(function (e) {
-                                })
-
-                                medifirstService.postNonMessage('bridging/penunjang/save-hapus-order-rad', { 'data': deleteExt }).then(function (e) {
-                                })
-                            }
-
+                        if(e.data.detail[0].nostruk == null){
+                            var cek = 123;
+                        } else{
+                            var cek = 234;
                         }
-                        init()
-                        $scope.hideHapusTindakan = false
-                    }, function (error) {
-                        // $scope.isNext = false;
-                        $scope.hideHapusTindakan = false
-                    })
+              
+                        console.log(cek);
+              
+                        if(cek == 234){
+                            messageContainer.error("Data yang sudah diverif tidak bisa dihapus");
+                        } else if (cek == 123){
+                            medifirstService.post('radiologi/delete-pelayanan-pasien', objDelete).then(function (e) {
+                                if (e.status === 201) {
+                                    var objLog = {
+                                        pelayananpasiendelete: logData
+                                    }
+                                    medifirstService.postNonMessage('sysadmin/logging/save-log-hapus-tindakan', objLog).then(function (e) {
+                                    })
+                                    let deleteExt = []
+                                    for (var i = 0; i < $scope.dataGrid._data.length; i++) {
+                                        const elem = $scope.dataGrid._data[i]
+                                        if (elem.statCheckbox) {
+                                            if (elem.statusbridging != '-' && elem.noorder != null) {
+                                                if (elem.nourutrad == null )
+                                                deleteExt.push({
+                                                    'noorder': elem.noorder,
+                                                    'produkfk': elem.produkfk,
+                                                    'nourutrad': elem.nourutrad,
+                                                    'nocm': elem.nocm
+                                                })
+        
+                                            }
+                                        }
+                                    }
+                                    if (deleteExt.length > 0) {
+                                        medifirstService.postNonMessage('bridging/penunjang/save-hapus-order-lab', { 'data': deleteExt }).then(function (e) {
+                                        })
+        
+                                        medifirstService.postNonMessage('bridging/penunjang/save-hapus-order-rad', { 'data': deleteExt }).then(function (e) {
+                                        })
+                                    }
+        
+                                }
+                                init()
+                                $scope.hideHapusTindakan = false
+                            }, function (error) {
+                                // $scope.isNext = false;
+                                $scope.hideHapusTindakan = false
+                            })
+                        }
+                    });
                 }
                 else {
                     toastr.warning('Checklist yang mau dihapus.', 'Peringatan')

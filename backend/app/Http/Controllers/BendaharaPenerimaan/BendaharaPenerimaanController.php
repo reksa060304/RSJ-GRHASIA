@@ -2514,6 +2514,7 @@ class BendaharaPenerimaanController extends ApiController {
     public function saveSTS(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $produk = [];
         // $sts = '';
         $dataLogin = $request->all();
         $iduser = '';
@@ -2607,7 +2608,7 @@ class BendaharaPenerimaanController extends ApiController {
                         LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
                         inner join strukclosing_t as sc on sbm.noclosingfk = sc.norec
                         inner join strukclosingkasir_t as sck on sc.norec = sck.noclosingfk
-                        inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+                        left join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
                         left join jenisproduk_m jpr on jpr.id = djp.objectjenisprodukfk
                         left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
                         left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
@@ -2630,7 +2631,7 @@ class BendaharaPenerimaanController extends ApiController {
 		inner join strukbuktipenerimaancarabayar_t sbmcr on sbmcr.nosbmfk = sbm.norec
         inner join produk_m pr on pr.id=spd.objectprodukfk
         inner join carabayar_m as cb on cb.id = sck.carabayarfk
-        inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+        left join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
         left join jenisproduk_m jpr on jpr.id = djp.objectjenisprodukfk
         left join ruangan_m as ru on ru.id = spd.objectruanganasalfk
         left join pasiendaftar_t as pd on sp.noregistrasifk = pd.norec
@@ -2758,9 +2759,10 @@ class BendaharaPenerimaanController extends ApiController {
         $volhasilketrampilan = 0;
         $volparkir = 0;
         $vollainlain = 0;
+        $cekjumlah = '';
 
         foreach($data as $konten){
-
+            $cekjumlah = '';
             if($konten->idruangan == 752 && $konten->idproduk == 5006382){
                 $jumlahperiksajiwa += $konten->totaldibayarclosing;
                 $voljumlahperiksajiwa++;
@@ -3006,6 +3008,10 @@ class BendaharaPenerimaanController extends ApiController {
                 $voljumlahtindakanpolirajal++;
                 $cekjumlah = $konten->namaproduk;
             }
+
+            $produk[] = array(
+                'namaproduk' => $cekjumlah,
+            );
             
         }
 
@@ -3881,7 +3887,7 @@ class BendaharaPenerimaanController extends ApiController {
             'data' => $sts,
         );
         
-        return $this->setStatusCode(201)->respond($result, 'Simpan STS Berhasil');
+        return $this->setStatusCode(201)->respond($produk, 'Simpan STS Berhasil');
 
         
 
