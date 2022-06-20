@@ -1977,5 +1977,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "STSPertanggal",
+    "url": "/U1RTUGVydGFuZ2dhbA==",
+    "templateurl": "module/BendaharaPenerimaan/STSPertanggal.html",
+    "controller": "STSPertanggalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

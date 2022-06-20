@@ -4788,4 +4788,119 @@ class BendaharaPenerimaanController extends ApiController {
         
         return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
+
+    public function getSTSPertanggal(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $bulanx = $request['bulan'];
+        $tahunx = $request['tahun'];
+        $bayar = '';
+
+        if (isset($request['bayar']) && $request['bayar'] != "" && $request['bayar'] != "undefined" && $request['bayar']==2) {
+            $bayar = ' and sbmcr.objectcarabayarfk = 3';
+        } else if (isset($request['bayar']) && $request['bayar'] != "" && $request['bayar'] != "undefined" && $request['bayar']==1) {
+            $bayar = ' and sbmcr.objectcarabayarfk = 1';
+        } else if (isset($request['bayar']) && $request['bayar'] != "" && $request['bayar'] != "undefined" && $request['bayar']==3) {
+            $bayar = ' and sbmcr.objectcarabayarfk is null';
+        } else if (isset($request['bayar']) && $request['bayar'] != "" && $request['bayar'] != "undefined" && $request['bayar']==4) {
+            $bayar = ' and sbmcr.objectcarabayarfk in (1,3)';
+        } 
+
+        $data = DB::select(DB::raw("select extract(day from tanggal) as tanggal, sum(jumlahjiwa) jumlahjiwa, sum(jumlahnapza) jumlahnapza, sum(jumlahperiksadokterumum) jumlahperiksadokterumum,
+        sum(jumlahperiksadoktergigi) jumlahperiksadoktergigi, sum(jumlahperiksadokterpenydalam) jumlahperiksadokterpenydalam,
+        sum(jumlahperiksadokteranak) jumlahperiksadokteranak, sum(jumlahperiksadoktersyaraf) jumlahperiksadoktersyaraf,
+        sum(jumlahperiksadokterelektromedik) jumlahperiksadokterelektromedik, sum(jumlahperiksadokterigd) jumlahperiksadokterigd,
+        sum(jumlahdipam) jumlahdipam, sum(jumlahtmpoli) jumlahtmpoli, sum(jumlahtmigd) jumlahtmigd, sum(jumlahtmgigi) jumlahtmgigi,
+        sum(jumlahobatrajal) jumlahobatrajal, sum(jumlahkir) jumlahkir, sum(jumlahpsikolog) jumlahpsikolog, sum(jumlahlab) jumlahlab,
+        sum(jumlahtmelektromedik) jumlahtmelektromedik, sum(jumlahfisio) jumlahfisio, sum(jumlahradio) jumlahradio, sum(jumlahdiklat) jumlahdiklat,
+        sum(jumlahvip) jumlahvip, sum(jumlahkelas1) jumlahkelas1, sum(jumlahkelasuppi) jumlahkelasuppi, sum(jumlahkelas2) jumlahkelas2,
+        sum(jumlahkelas3) jumlahkelas3, sum(jumlahobatranap) jumlahobatranap, sum(jumlahtmranap) jumlahtmranap, sum(jumlahvisite) jumlahvisite,
+        sum(jumlahrehabmental) jumlahrehabmental, sum(jumlahjenazah) jumlahjenazah, sum(jumlahlegalisir) jumlahlegalisir, sum(jumlahgedungterapi) jumlahgedungterapi,
+        sum(jumlahsewalapangan) jumlahsewalapangan, sum(jumlahgedungdiklat) jumlahgedungdiklat, sum(jumlahgrhasiainn) jumlahgrhasiainn,
+        sum(jumlahpertanian) jumlahpertanian, sum(jumlahkalandra) jumlahkalandra, sum(jumlahsewatempatfc) jumlahsewatempatfc, sum(jumlahmanekin) jumlahmanekin,
+        sum(jumlahsewaambulan) jumlahsewaambulan, sum(jumlahsewabus) jumlahsewabus, sum(jumlahketerampilan) jumlahketerampilan, sum(jumlahparkir) jumlahparkir,
+        sum(jumlahlainlain) jumlahlainlain, sum(jumlahtotal) jumlahtotal
+        from(
+            select x.tanggal,
+            case when x.uraian = 'PERIKSA DOKTER SPESIALIS JIWA' then sum(x.totalfix) else 0 end as jumlahjiwa,
+            case when x.uraian = 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' then sum(x.totalfix) else 0 end as jumlahnapza,
+            case when x.uraian = 'PERIKSA DOKTER UMUM' then sum(x.totalfix) else 0 end as jumlahperiksadokterumum,
+            case when x.uraian = 'PERIKSA DOKTER GIGI' then sum(x.totalfix) else 0 end as jumlahperiksadoktergigi,
+            case when x.uraian = 'PERIKSA DOKTER PENYAKIT DALAM' then sum(x.totalfix) else 0 end as jumlahperiksadokterpenydalam,
+            case when x.uraian = 'PERIKSA DOKTER ANAK' then sum(x.totalfix) else 0 end as jumlahperiksadokteranak,
+            case when x.uraian = 'PERIKSA DOKTER SYARAF' then sum(x.totalfix) else 0 end as jumlahperiksadoktersyaraf,
+            case when x.uraian = 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' then sum(x.totalfix) else 0 end as jumlahperiksadokterelektromedik,
+            case when x.uraian = 'PERIKSA DOKTER IGD' then sum(x.totalfix) else 0 end as jumlahperiksadokterigd,
+            case when x.uraian = 'DIPAM/PENDAFTARAN' then sum(x.totalfix) else 0 end as jumlahdipam,
+            case when x.uraian = 'TINDAKAN MEDIK POLIKLINIK' then sum(x.totalfix) else 0 end as jumlahtmpoli,
+            case when x.uraian = 'TINDAKAN MEDIK IGD' then sum(x.totalfix) else 0 end as jumlahtmigd,
+            case when x.uraian = 'TINDAKAN MEDIK PASIEN GIGI' then sum(x.totalfix) else 0 end as jumlahtmgigi,
+            case when x.uraian = 'OBAT-OBATAN' then sum(x.totalfix) else 0 end as jumlahobatrajal,
+            case when x.uraian = 'SURAT KETERANGAN (KIR)' then sum(x.totalfix) else 0 end as jumlahkir,
+            case when x.uraian = 'PSIKOLOGI' then sum(x.totalfix) else 0 end as jumlahpsikolog,
+            case when x.uraian = 'KONSULTASI GIZI' then sum(x.totalfix) else 0 end as jumlahgizi,
+            case when x.uraian = 'LABORATORIUM' then sum(x.totalfix) else 0 end as jumlahlab,
+            case when x.uraian = 'ELEKTROMEDIK' then sum(x.totalfix) else 0 end as jumlahtmelektromedik,
+            case when x.uraian = 'FISIOTERAPY' then sum(x.totalfix) else 0 end as jumlahfisio,
+            case when x.uraian = 'RADIOLOGI' then sum(x.totalfix) else 0 end as jumlahradio,
+            case when x.uraian = 'DIKLAT' then sum(x.totalfix) else 0 end as jumlahdiklat,
+            case when x.uraian = 'VIP' then sum(x.totalfix) else 0 end as jumlahvip,
+            case when x.uraian = 'Kelas I' then sum(x.totalfix) else 0 end as jumlahkelas1,
+            case when x.uraian = 'Kelas UPPI' then sum(x.totalfix) else 0 end as jumlahkelasuppi,
+            case when x.uraian = 'Kelas II' then sum(x.totalfix) else 0 end as jumlahkelas2,
+            case when x.uraian = 'Kelas III' then sum(x.totalfix) else 0 end as jumlahkelas3,
+            case when x.uraian = 'OBAT-OBATAN RANAP' then sum(x.totalfix) else 0 end as jumlahobatranap,
+            case when x.uraian = 'TINDAKAN MEDIK RANAP' then sum(x.totalfix) else 0 end as jumlahtmranap,
+            case when x.uraian = 'VISITE DOKTER' then sum(x.totalfix) else 0 end as jumlahvisite,
+            case when x.uraian = 'REHABILITASI MENTAL' then sum(x.totalfix) else 0 end as jumlahrehabmental,
+            case when x.uraian = 'PERAWATAN JENAZAH' then sum(x.totalfix) else 0 end as jumlahjenazah,
+            case when x.uraian = 'LEGALISIR' then sum(x.totalfix) else 0 end as jumlahlegalisir,
+            case when x.uraian = 'SEWA GEDUNG TERAPI' then sum(x.totalfix) else 0 end as jumlahgedungterapi,
+            case when x.uraian = 'SEWA LAPANGAN SEPAK BOLA' then sum(x.totalfix) else 0 end as jumlahsewalapangan,
+            case when x.uraian = 'SEWA GEDUNG DIKLAT' then sum(x.totalfix) else 0 end as jumlahgedungdiklat,
+            case when x.uraian = 'SEWA GEDUNG GRHASIA INN' then sum(x.totalfix) else 0 end as jumlahgrhasiainn,
+            case when x.uraian = 'SEWA TANAH PERTANIAN' then sum(x.totalfix) else 0 end as jumlahpertanian,
+            case when x.uraian = 'SEWA KALANDRA' then sum(x.totalfix) else 0 end as jumlahkalandra,
+            case when x.uraian = 'SEWA TEMPAT FOTOCOPY' then sum(x.totalfix) else 0 end as jumlahsewatempatfc,
+            case when x.uraian = 'SEWA MANEKIN' then sum(x.totalfix) else 0 end as jumlahmanekin,
+            case when x.uraian = 'SEWA AMBULAN/MOBIL JENAZAH' then sum(x.totalfix) else 0 end as jumlahsewaambulan,
+            case when x.uraian = 'SEWA BUS' then sum(x.totalfix) else 0 end as jumlahsewabus,
+            case when x.uraian = 'HASIL KETRAMPILAN PASIEN' then sum(x.totalfix) else 0 end as jumlahketerampilan,
+            case when x.uraian = 'PARKIR' then sum(x.totalfix) else 0 end as jumlahparkir,
+            case when x.uraian = 'LAIN-LAIN' then sum(x.totalfix) else 0 end as jumlahlainlain,
+            case when x.uraian = 'JUMLAH' then sum(x.totalfix) else 0 end as jumlahtotal
+            from(
+                select sts.tglpenerimaan::date as tanggal, stsd.kdrekening, stsd.nomer, stsd.uraian, sum(stsd.vol) as totalvol, sum(stsd.kolom1) as totalkolom1, sum(stsd.kolom2) as totalkolom2,
+                            (
+                                    case 
+                                    when sum(stsd.kolom1) is null and sum(stsd.kolom2) is null then sum(stsd.kolom1)
+                                    when sum(stsd.kolom1) is null and sum(stsd.kolom2) is not null then sum(stsd.kolom2)
+                                    when sum(stsd.kolom1) is not null and sum(stsd.kolom2) is null then sum(stsd.kolom1)
+                                    else 0 
+                                    end
+                            ) as totalfix
+                            from surattandasetoran_t sts
+                            inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+                            left join ststosck_t as ssc on sts.norec = ssc.objectstsfk
+                            left join strukclosingkasir_t as sck on ssc.objectsckfk = sck.norec
+                            left join strukclosing_t as sc on sc.norec = sck.noclosingfk
+                            left join strukbuktipenerimaan_t AS sbm on sbm.noclosingfk = sc.norec
+                            left join strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
+                            left JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
+                            where sts.statusenabled = true
+                            and extract(year from sts.tglpenerimaan::date ) = ".$tahunx."
+                            and extract(month from sts.tglpenerimaan::date ) = ".$bulanx."
+                            $bayar
+                            group by stsd.kdrekening, stsd.nomer, stsd.uraian, sts.tglpenerimaan::date
+                            order by min(stsd.nourut)
+            ) as x group by x.tanggal, x.uraian
+        ) as y group by extract(day from tanggal) order by tanggal"));
+
+        $result = array(
+            'detail' => $data,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
 }
