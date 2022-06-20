@@ -11707,6 +11707,18 @@ GROUP BY y.KET
                         $PelPasien->status = 'admin otomatis';
                         $PelPasien->save();
                         $PPnorec = $PelPasien->norec;
+                        if(isset($PPnorec)){
+                                $ppp = new PelayananPasienPetugas();
+                                $ppp->norec = $ppp->generateNewId();
+                                $ppp->kdprofile = $kdProfile;
+                                $ppp->statusenabled = true;
+                                $ppp->nomasukfk = $request['norec_apd'];
+                                $ppp->objectjenispetugaspefk = 4;
+                                $ppp->pelayananpasien = $PPnorec;
+                                $ppp->tglpelayanan = date('Y-m-d H:i:s');
+                                $ppp->objectpegawaifk = $request['objectpegawaifk'];
+                                $ppp->save();
+                        }
                         foreach ($buntutMacan as $itemKomponen) {
                             if($itemKomponen->objectprodukfk == $k->objectprodukfk) {
                                 $PelPasienDetail = new PelayananPasienDetail();
@@ -11730,8 +11742,11 @@ GROUP BY y.KET
                                 $PelPasienDetail->tglpelayanan = date('Y-m-d H:i:s');
                                 $PelPasienDetail->harganetto = $itemKomponen->harganetto1;
                                 $PelPasienDetail->save();
-                            }
 
+                                
+                            }
+                            
+                            
                         }
                     }
 
@@ -11758,6 +11773,8 @@ GROUP BY y.KET
             $result = array(
                 "status" => 201,
 //                "data" => $data2,
+                'e'=> $e->getLine(),
+                'm'=> $e->getMessage(),
                 "as" => 'er@epic',
             );
         }

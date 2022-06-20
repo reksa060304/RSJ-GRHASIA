@@ -7784,4 +7784,51 @@ class RemunerasiController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function getSaveunVerifRemun(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $noposting = $request['noposting'];
+
+        $patokan = DB::select(DB::raw("select ut.id
+        from uangremun_t ut 
+        inner join pegawai_m pg on pg.id = ut.objectpegawaifk
+        inner join sdm_golongan_m sgm on sgm.id = pg.objectgolonganfk 
+        where ut.statusenabled = true and ut.kdprofile = 30
+		and ut.noposting = '$noposting'"));
+
+        
+
+        DB::beginTransaction();
+        try {
+            foreach ($patokan as $item){
+                \DB::table('uangremun_t')->where('id',$item->id)->update([
+                    'tglverif' => null,
+                ]);
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Unverif Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+//                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Unverif Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'e'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

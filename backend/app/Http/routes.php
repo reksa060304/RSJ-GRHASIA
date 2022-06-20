@@ -1648,6 +1648,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 //            Route::get('registrasi/identifikasi-label', 'Registrasi\RegistrasiController@IdentifikasiLabel');
             Route::get('registrasi/identifikasi-kartu-pasien', 'Registrasi\RegistrasiController@IdentifikasiKartuPasien');
             Route::get('registrasi/identifikasi-rmk', 'Registrasi\RegistrasiController@IdentifikasiRMK');
+            Route::post('get/save-unverif-remun','Remunerasi\RemunerasiController@getSaveunVerifRemun');
 
             Route::post('registrasi/save-diagnosa-rmk', 'Registrasi\RegistrasiController@saveDiagnosaPasienRMK');
             Route::post('registrasi/update-data-emrpasien', 'Registrasi\RegistrasiController@updateNoCmInEmrPasienReg');
