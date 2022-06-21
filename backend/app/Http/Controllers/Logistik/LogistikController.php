@@ -4373,7 +4373,7 @@ class LogistikController extends ApiController{
                 $dataSR->statusenabled = true;
                 $dataSR->norealisasi = $norealisasi;
                 $dataSR->tglrealisasi = date('Y-m-d H:i:s', strtotime($req['struk']['tglrealisasi']));//$req['struk']['tglrealisasi'];
-                $dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
+                //$dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
                 $dataSR->totalbelanja = $req['struk']['totalharusdibayar'];
                 $dataSR->save();
                 //            if (is_null($req['struk']['norecrealisasi'])) {
@@ -4382,7 +4382,7 @@ class LogistikController extends ApiController{
             } else {
                 $dataSR = StrukRealisasi::where('norec', $req['struk']['norecrealisasi'])->first();
                 $dataSR->tglrealisasi = date('Y-m-d H:i:s', strtotime($req['struk']['tglstruk']));//$req['struk']['tglstruk'];
-                $dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
+                //$dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
                 $dataSR->totalbelanja = $req['struk']['totalharusdibayar'];
                 $dataSR->save();
                 $datanorecSR = $req['struk']['norecrealisasi'];
@@ -4431,7 +4431,9 @@ class LogistikController extends ApiController{
             DB::rollBack();
             $result = array(
                 "status" => 400,
-                "message" => $transMessage,
+                //"message" => $transMessage,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
 //                "data" =>$SP,
 //                "datas" => $datanorecSR,
 //                "dataSR" => $dataSR,
@@ -13888,4 +13890,183 @@ class LogistikController extends ApiController{
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    
+    public function getPerencanaanKebutuhan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $periode = $request['periode'];
+        $kebutuhan = (int)$request['kebutuhan'];
+
+        $data = \DB::select(DB::raw("SELECT pr.namaproduk, ss.satuanstandar,
+        case when z.jumlahbulankesatu is not null then z.jumlahbulankesatu else 0 end as jumlahbulankesatu, 
+        case when z.jumlahbulankedua is not null then z.jumlahbulankedua else 0 end as jumlahbulankedua, 
+        case when z.jumlahbulanketiga is not null then z.jumlahbulanketiga else 0 end as jumlahbulanketiga, 
+        case when z.jumlahbulankeempat is not null then z.jumlahbulankeempat else 0 end as jumlahbulankeempat,
+        sum(spd.qtyproduk) stokakhir,
+        case when round((((coalesce(z.jumlahbulankesatu, 0) + coalesce(z.jumlahbulankedua, 0) + coalesce(z.jumlahbulanketiga, 0) + coalesce(z.jumlahbulankeempat, 0))/4)*$kebutuhan)-sum(spd.qtyproduk)) is not null then round((((coalesce(z.jumlahbulankesatu, 0) + coalesce(z.jumlahbulankedua, 0) + coalesce(z.jumlahbulanketiga, 0) + coalesce(z.jumlahbulankeempat, 0))/4)*$kebutuhan)-sum(spd.qtyproduk)) else 0 end as jumlahkebutuhan
+            from stokprodukdetail_t spd
+            inner join produk_m pr on pr.id = spd.objectprodukfk
+            inner join satuanstandar_m ss on pr.objectsatuanstandarfk = ss.id
+            left join (
+                select y.namaproduk, sum(jumlahbulankesatu) jumlahbulankesatu, sum(jumlahbulankedua) jumlahbulankedua, sum(jumlahbulanketiga) jumlahbulanketiga, sum(jumlahbulankeempat) jumlahbulankeempat
+                    from(
+                        select x.namaproduk, 
+                            case when x.bulan = extract (month from(('$periode'::date- INTERVAL '1 months'))) then sum(x.jumlah) else 0 end as jumlahbulankeempat,
+                            case when x.bulan = extract (month from(('$periode'::date- INTERVAL '2 months'))) then sum(x.jumlah) else 0 end as jumlahbulanketiga,
+                            case when x.bulan = extract (month from(('$periode'::date- INTERVAL '3 months'))) then sum(x.jumlah) else 0 end as jumlahbulankedua,
+                            case when x.bulan = extract (month from(('$periode'::date- INTERVAL '4 months'))) then sum(x.jumlah) else 0 end as jumlahbulankesatu
+                        from(
+                            select date_part('month', sp.tglstruk) as bulan, pr.namaproduk, sum(spd.qtyproduk) as jumlah
+                                from strukpelayanan_t as sp
+                                inner join strukpelayanandetail_t as spd on sp.norec = spd.nostrukfk
+                                inner join produk_m pr on pr.id=spd.objectprodukfk
+                                left join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+                                left join jenisproduk_m jpr on jpr.id = djp.objectjenisprodukfk
+                                left join ruangan_m as ru on ru.id = spd.objectruanganasalfk
+                                where sp.statusenabled = true and sp.kdprofile = 30
+                                and jpr.jenisproduk = 'Jenis Barang Farmasi'
+                                and sp.tglstruk between '$periode'::date - INTERVAL '4 months' and '$periode'
+                                group by pr.namaproduk, extract(month from sp.tglstruk) 
+        
+                            union all
+        
+                            select date_part('month', sr.tglresep) as bulan, pr.namaproduk, sum(pp.jumlah) as jumlah
+                                FROM strukresep_t as sr
+                                INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
+                                INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
+                                INNER JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
+                                inner  join produk_m pr on pr.id=pp.produkfk
+                                inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                                where sr.tglresep between '$periode'::date - INTERVAL '4 months' and '$periode'
+                                and pd.kdprofile = 30 and pd.statusenabled = true
+                                and pp.isobat = true
+                                group by date_part('month', sr.tglresep), pr.namaproduk 
+        
+                            union all
+        
+                            select date_part('month', sp.tglkirim) as bulan, pr.namaproduk, sum(kp.qtyproduk) as jumlah
+                                from strukkirim_t as sp
+                                left join ruangan_m as ru on ru.id = sp.objectruanganasalfk
+                                left join kirimproduk_t as kp on kp.nokirimfk = sp.norec
+                                left join produk_m as pr on pr.id = kp.objectprodukfk
+                                left join detailjenisproduk_m as djp on djp.id = pr.objectdetailjenisprodukfk
+                                left join jenisproduk_m as jp on jp.id = djp.objectjenisprodukfk
+                            where sp.statusenabled = true and sp.kdprofile = 30 
+                            and sp.tglkirim between '$periode'::date - INTERVAL '4 months' and '$periode'
+                            and sp.jenispermintaanfk = 1 and ru.id in(94,59)
+                            group by date_part('month', sp.tglkirim), pr.namaproduk order by bulan
+                        ) as x group by x.namaproduk, x.bulan order by x.namaproduk
+                    ) as y group by y.namaproduk order by y.namaproduk
+            ) as z on z.namaproduk = pr.namaproduk
+            where spd.statusenabled = true and spd.kdprofile = 30
+            and pr.statusenabled = true and pr.kdprofile = 30
+            and spd.objectruanganfk in(94,59)
+            group by pr.namaproduk, ss.satuanstandar, z.jumlahbulankesatu, z.jumlahbulankedua, z.jumlahbulanketiga, z.jumlahbulankeempat
+            order by pr.namaproduk;
+        "));
+        
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getPelayananObatJKN(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $data = \DB::select(DB::raw("select a.namaproduk, a.satuanstandar, coalesce(b.saldoawal, 0) saldoawal, coalesce(c.saldomasuk,0) as saldomasuk, a.jumlahrajal, a.jumlahranap, a.total, a.harganetto1, a.totalharga
+        from(
+        select x.namaproduk, x.id, x.satuanstandar, sum(x.jumlahranap) jumlahranap, sum(x.jumlahrajal) jumlahrajal,
+        coalesce(sum(x.jumlahranap), 0) + coalesce(sum(x.jumlahrajal), 0) total, x.harganetto1, 
+        (coalesce(sum(x.jumlahranap), 0) + coalesce(sum(x.jumlahrajal), 0)) * x.harganetto1 as totalharga
+        from(
+        select pr.namaproduk, pr.id, ss.satuanstandar, 
+            case when dp.id = 16 then sum(pp.jumlah) else 0 end as jumlahranap,
+            case when dp.id <> 16 then sum(pp.jumlah) else 0 end as jumlahrajal, e.harganetto1
+                                    FROM strukresep_t as sr
+                                    INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
+                                    INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
+                                    INNER JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
+                                    inner  join produk_m pr on pr.id=pp.produkfk
+                                    inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                                    inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+                                    inner join satuanstandar_m ss on ss.id = pr.objectsatuanstandarfk
+                                    inner join (
+                                        select pr.namaproduk, pr.id, spd.harganetto1
+                                        from stokprodukdetail_t spd
+                                        inner join produk_m pr on pr.id = spd.objectprodukfk
+                                        inner join (
+                                            select pr.id, pr.namaproduk, max(spd.tglpelayanan) tglpelayanan
+                                                                        from stokprodukdetail_t spd
+                                                                        inner join produk_m pr on pr.id = spd.objectprodukfk
+                                                                        group by pr.id, pr.namaproduk
+                                                                        order by pr.namaproduk
+                                        ) as z on z.tglpelayanan = spd.tglpelayanan and z.id = pr.id
+                                        group by pr.namaproduk, pr.id, spd.harganetto1
+                                    ) as e on e.id = pr.id
+                                    where sr.tglresep between '$tglAwal' and '$tglAkhir'
+                                    and pd.kdprofile = 30 and pd.statusenabled = true
+                                    and pp.isobat = true
+                                    group by pr.namaproduk,  pr.id, ss.satuanstandar, dp.id, e.harganetto1
+        ) as x group by x.namaproduk, x.id, x.satuanstandar, x.harganetto1
+        ) as a
+        
+        left join (
+            select x.namaproduk, x.id, x.satuanstandar, sum(x.saldoawal) saldoawal 
+            from(
+                select pro.namaproduk, pro.id, ss.satuanstandar,
+                            case when ks.status = true 
+                            then ks.saldoawal - ks.jumlah else ks.saldoawal + ks.jumlah end as saldoawal
+                                    from kartustok_t as ks
+                                    inner join produk_m as pro on pro.id = ks.produkfk
+                                    inner join satuanstandar_m ss on ss.id = pro.objectsatuanstandarfk
+                                    inner join ruangan_m as ru on ru.id = ks.ruanganfk
+                                    inner join (
+                                            select pro.namaproduk, min(ks.tglkejadian) tglkejadian
+                                            from kartustok_t as ks
+                                            inner join produk_m as pro on pro.id = ks.produkfk
+                                            inner join ruangan_m as ru on ru.id = ks.ruanganfk
+                                            where ks.kdprofile = 30
+                                            and ks.statusenabled = TRUE
+                                            and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+                                            and ks.keterangan not like '%Ubah Resep%'
+                                            group by pro.namaproduk
+                                    ) as j on j.tglkejadian = ks.tglkejadian and j.namaproduk = pro.namaproduk
+                                    where ks.kdprofile = 30
+                                    and ks.statusenabled = TRUE
+                                    and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+                                    and ks.saldoawal >= 0
+                                    group by pro.namaproduk, pro.id,
+                                    ks.status,ks.saldoawal, ks.jumlah, ks.tglkejadian, ss.satuanstandar
+                                    order by pro.namaproduk, ks.tglkejadian
+            ) as x group by x.namaproduk, x.id, x.satuanstandar
+        ) as b on a.id = b.id
+        
+        left join (
+            select pr.namaproduk, pr.id, sum(spd.qtyproduk) AS saldomasuk 
+            from strukpelayanan_t as sp
+            inner join strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
+            inner join ruangan_m as ru on ru.id = sp.objectruanganfk
+            inner join produk_m as pr on pr.id = spd.objectprodukfk
+            where ru.id in(59, 94)
+            and sp.tglstruk between '$tglAwal' and '$tglAkhir'
+            and sp.statusenabled = true and sp.kdprofile = 30
+            and sp.keteranganlainnya = 'Penerimaan Barang Dari Supplier'
+            group by pr.namaproduk, pr.id
+        ) as c on a.id = c.id order by a.namaproduk;
+        "));
+        
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
+    }
+    
 }

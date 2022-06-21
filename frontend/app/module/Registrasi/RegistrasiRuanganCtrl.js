@@ -651,7 +651,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         medifirstService.post('registrasi/save-registrasipasien', objSave).then(function (e) {
                             $scope.isSimpan = false;
                             $scope.resultAPD = e.data.dataAPD;
-        
+                            console.log($scope.resultAPD);
                             // responData = e.data;
                             $scope.resultPD = e.data.dataPD;
                             $scope.Noregistrasi = e.data.dataPD.noregistrasi;
@@ -703,7 +703,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         + $scope.model.norec_pd).then(function (x) {
                                             let json = {
                                                 norec: $scope.model.norec_pd,
-                                                norec_apd: $scope.resultAPD.norec
+                                                norec_apd: $scope.resultAPD.norec,
+                                                objectpegawaifk: $scope.resultAPD.objectpegawaifk
                                             }
                                             medifirstService.post("registrasi/save-adminsitrasi",json).then(function (z) {
                                                 

@@ -396,15 +396,23 @@ define(['initialize'], function (initialize) {
                 }
             }
             $scope.HapusPasien = function () {
+                
                 if ($scope.idPasien != undefined) {
-                    var item = {
-                        idpasien: $scope.idPasien
-                    }
-
-                    medifirstService.post('registrasi/update-false-pasien', item).then(function (e) {
-                        loadData();
+                    var confirm = $mdDialog.confirm()
+                        .title('Peringatan')
+                        .htmlContent('Apakah Anda yakin ingin menghapus pasien tersebut')
+                        .ariaLabel('Lucky day')
+                        .cancel('Tidak')
+                        .ok('Ya')
+                    $mdDialog.show(confirm).then(function () {
+                        var item = {
+                            idpasien: $scope.idPasien
+                        }
+                        medifirstService.post('registrasi/update-false-pasien', item).then(function (e) {
+                            loadData();
+                        })
                     })
-
+                    
                 } else {
                     messageContainer.error("Pilih data dulu!")
                 }

@@ -34,9 +34,13 @@ define(['initialize'], function (initialize) {
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir
                 ).then(function (data) {
-                    var data = data.data
-                    for (var i = 0; i < data.data.length; i++) {
-                        data.data[i].no = i + 1
+                    var datas = data.data
+                    for (var i = 0; i < datas.data.length; i++) {
+                        if (i == 14) {
+                            datas.data[i].no = 99
+                        } else {
+                            datas.data[i].no = i + 1
+                        }
                         // var tanggal = $scope.now;
                         // var tanggalLahir = new Date(data.data[i].tglLahir);
                         // var umurzz = DateHelper.CountAge(tanggalLahir, tanggal);
@@ -46,9 +50,9 @@ define(['initialize'], function (initialize) {
                     $scope.isRouteLoading = false;
                     $scope.sourceLaporan = new kendo.data.DataSource({
 
-                        data: data.data,
-                        group: $scope.group,
-                        pageSize: 10,
+                        data: datas.data,
+                        // group: $scope.group,
+                        pageSize: 20,
                         total: data.length,
                         serverPaging: false,
                         schema: {
@@ -136,10 +140,10 @@ define(['initialize'], function (initialize) {
                         // headerAttributes: { style: "text-align : center" },
                     },
                     {
-                        field: "jumlah",
+                        field: "total",
                         title: "TOTAL",
                         width: "80px",
-                        template: "<span class='style-center'>#: jumlah #</span>",
+                        template: "<span class='style-center'>#: total #</span>",
                         // headerAttributes: { style: "text-align : center" },
                     },
                     {

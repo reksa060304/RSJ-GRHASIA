@@ -7646,4 +7646,189 @@ class RemunerasiController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getSavePostingMK(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $patokan = DB::select(DB::raw("select norec, mk, bulanlastupdatemk from pointjaspel_t"));
+        $bulan = $request['bulan'];
+        
+            if((int)$bulan <= (int)$patokan[0]->bulanlastupdatemk){
+                $transStatus = 'false';
+            } else{
+                foreach($patokan as $row){
+                    \DB::table('pointjaspel_t')->where('statusenabled',true)->where('norec',$row->norec)->update([
+                        'mk' => $row->mk + 1,
+                        'bulanlastupdatemk' => $bulan
+                    ]);
+                }
+                $transStatus = 'true';
+            }
+                
+        
+        if ($transStatus == 'true') {
+            $transMessage = "Posting Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "MK Bulan tersebut sudah diposting";
+            $status = 400;
+        }
+
+        
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+    }
+
+    public function getSavePostingTotalBersih(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $noposting = $request['noposting'];
+        $kotor = 0;
+        $pajak = 0;
+
+        $patokan = DB::select(DB::raw("select ut.id, pg.id idpegawai, pg.namalengkap, sgm.persen, ut.uangp1, ut.uangiki, ut.uangiku, ut.uangtt, ut.uangjtl, ut.uangstruk, ut.uangp3, ut.uangffs, ut.uangdiklat
+        from uangremun_t ut 
+        inner join pegawai_m pg on pg.id = ut.objectpegawaifk
+        inner join sdm_golongan_m sgm on sgm.id = pg.objectgolonganfk 
+        where ut.statusenabled = true and ut.kdprofile = 30
+		and ut.noposting = '$noposting'"));
+
+        
+
+        DB::beginTransaction();
+        try {
+            foreach ($patokan as $item){
+                $kotor = round($item->uangp1 + $item->uangiki + $item->uangiku + $item->uangtt + $item->uangjtl + $item->uangstruk + $item->uangp3 + $item->uangffs + $item->uangdiklat);
+                $pajak = $kotor*$item->persen;
+                \DB::table('uangremun_t')->where('id',$item->id)->update([
+                    'totalkotor' => $kotor,
+                    'totalpajak' => $pajak,
+                    'totalbersih' => $kotor - $pajak,
+                ]);
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Posting Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+//                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Posting Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'e'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getSaveVerifRemun(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $noposting = $request['noposting'];
+
+        $patokan = DB::select(DB::raw("select ut.id
+        from uangremun_t ut 
+        inner join pegawai_m pg on pg.id = ut.objectpegawaifk
+        inner join sdm_golongan_m sgm on sgm.id = pg.objectgolonganfk 
+        where ut.statusenabled = true and ut.kdprofile = 30
+		and ut.noposting = '$noposting'"));
+
+        
+
+        DB::beginTransaction();
+        try {
+            foreach ($patokan as $item){
+                \DB::table('uangremun_t')->where('id',$item->id)->update([
+                    'tglverif' => date('Y-m-d H:i:s'),
+                ]);
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Verif Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+//                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Verif Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'e'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getSaveunVerifRemun(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $noposting = $request['noposting'];
+
+        $patokan = DB::select(DB::raw("select ut.id
+        from uangremun_t ut 
+        inner join pegawai_m pg on pg.id = ut.objectpegawaifk
+        inner join sdm_golongan_m sgm on sgm.id = pg.objectgolonganfk 
+        where ut.statusenabled = true and ut.kdprofile = 30
+		and ut.noposting = '$noposting'"));
+
+        
+
+        DB::beginTransaction();
+        try {
+            foreach ($patokan as $item){
+                \DB::table('uangremun_t')->where('id',$item->id)->update([
+                    'tglverif' => null,
+                ]);
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Unverif Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+//                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Unverif Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'e'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

@@ -395,6 +395,14 @@
         {
             "nameDep": "RealisasiPerTriwulanCtrl",
             "urlDep": "module/BendaharaPenerimaan/RealisasiPerTriwulanCtrl"
+        },
+        {
+            "nameDep": "RemunTagihanDiklatCtrl",
+            "urlDep": "module/SDM/Penelitian/RemunTagihanDiklatCtrl"
+        },
+        {
+            "nameDep": "STSPertanggalCtrl",
+            "urlDep": "module/BendaharaPenerimaan/STSPertanggalCtrl"
         }
     ]
 }

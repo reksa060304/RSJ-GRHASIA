@@ -8,10 +8,10 @@
 </style>
 <div class="grid_12">
 	<div class="grid_12 headerBox">
-		<h1 style="color: white;"><b>Daftar Remun</b></h1>
+		<h1 style="color: white;"><b>Daftar Poin Pegawai</b></h1>
 	</div>
 
-			<!-- <fieldset style="min-height:50px !important" align="left">
+			<fieldset style="min-height:50px !important" align="left">
 				<legend>
 					<h2>Pencarian</h2>
 				</legend>
@@ -41,19 +41,19 @@
 						</div>
 					</div>
 
-					<div class="grid_4 k-edit-buttons  k-state-default " style="margin-top:27px">
+					<!-- <div class="grid_4 k-edit-buttons  k-state-default " style="margin-top:27px">
 						<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="SearchData()"
 							style="width:100px"><span class="k-sprite k-icon k-i-search"></span>Cari </button>
 						<button class="k-button  k-button-icontext" ng-click="ClearData()" style="width:100px"><span
 								class="k-sprite k-icon k-delete"></span>Clear</button>
-					</div>
+					</div> -->
 				</div>
-			</fieldset> -->
+			</fieldset>
 
 	<div class="grid_12" style="margin-top: 10px;">
 		<div class="grid_12" style="margin-top: 20px;">
 			<div class="grid_12 borderBox">
-				<kendo-grid options="mainGridOptions" k-data-source="dataSource" k-sortable="'true'" k-ng-model="current"
+				<kendo-grid options="mainGridOptions" k-data-source="dataSource" k-columns="datacolumn" k-sortable="'true'" k-ng-model="current"
 					ng-click="klik(current)">
 					
 				</kendo-grid>
@@ -71,6 +71,11 @@
         
 		<div class="grid_1">
 			<button class="c-button" ng-click="postingGrade()" style="height: 50px;"><i class="fas fas-edit"></i>Posting Grade
+			</button>
+		</div>
+
+		<div class="grid_1">
+			<button class="c-button" ng-click="postingMK()" style="height: 50px;"><i class="fas fas-edit"></i>Posting MK
 			</button>
 		</div>
 		

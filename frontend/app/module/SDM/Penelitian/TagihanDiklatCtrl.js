@@ -8,13 +8,18 @@ define(['initialize'], function (initialize) {
             $scope.dataPasienSelected = {};
             $scope.showBayar = false;
             var norec_dkd = ""
+            // var objSave = {}
             function showButton() {
                 // $scope.showBtnBayarTagihan = true;
                 // $scope.showBtnPerbaharui = true;
                 // $scope.showBtnDetail = true;
             }
             FormLoad();
-
+            // function detailDiklatTable() {
+            //     medifirstService.get("sdm/diklat/get-data-detail-diklat?norec=" + norec_dkd).then(function (data) {
+            //         $scope.dataDetailDiklat = data.data.data;
+            //     })
+            // }
             function FormLoad() {
                 showButton();
                 $scope.item.periodeAwal = dateHelper.setJamAwal(new Date());
@@ -279,65 +284,62 @@ define(['initialize'], function (initialize) {
                 var tempCache = tanggalAwal + "#" + tanggalAkhir;
                 cacheHelper.set('DaftarNonLayananKasirCtrl', tempCache);
                 init(namaPelanggan, status, tanggalAwal, tanggalAkhir, jenisTagihan);
-                /*if (tanggalAwal != "") {
-                    //tanggalAwal = moment(tanggalAwal).format('DD-MM-YYYY')
-                    //tanggalAwal = new Date(new Date(tanggalAwal)).getTime();
-                }
-
-                if (tanggalAkhir != "") {
-                    //tanggalAkhir = moment(tanggalAkhir).format('DD-MM-YYYY')
-                    //tanggalAkhir = new Date(c(tanggalAkhir)).getTime();
-                }
-
-                var kriteriaFilter = [
-                    { text: "namaPelanggan", operator: "contains", value: namaPelanggan },
-                    { text: "status.namaExternal", operator: "eq", value: status },
-                    { text: "tglTransaksi", operator: "gte", value: tanggalAwal },
-                    { text: "tglTransaksi", operator: "lte", value: tanggalAkhir }
-                    ];*/
-
-                //prosesSearch(kriteriaFilter);
+             
             }
 
-            /*function prosesSearch(kriteriaFilter) {
-                var arrFilter = [];
-                for (var i = 0; i < kriteriaFilter.length; i++) {
-                    if (kriteriaFilter[i].value != "") {
-                        var obj = {
-                            field: kriteriaFilter[i].text,
-                            operator: kriteriaFilter[i].operator,
-                            value: kriteriaFilter[i].value
-                        };
-
-                        arrFilter.push(obj);
-                    }
+            $scope.klikGridDetail = function (dataPasienDetailSelected) {
+                console.log(dataPasienDetailSelected);
+                $scope.item.jenisperan = {
+                    id: dataPasienDetailSelected.objectpegawaifk,
+                    jenisperan: dataPasienDetailSelected.jenisperan
                 }
+                $scope.item.pegawai = {
+                    id: dataPasienDetailSelected.objectpegawaifk,
+                    namalengkap: dataPasienDetailSelected.namalengkap
+                }
+                norec_dkd = ""
+                $scope.norecdkd = dataPasienDetailSelected.norec
+                // console.log($scope.norecdkd);
+            }
 
-                var grid = $("#kGrid").data("kendoGrid");
-                grid.dataSource.query({
-                    page: 1,
-                    pageSize: 10,
-                    filter: {
-                        logic: "and",
-                        filters: arrFilter
-                    }
-                });
-            }*/
+            function seacrhDetail(){
+                $scope.isRouteLoading = true;
+                medifirstService.get('kasir/get-data-combo-kasir?detailjenisprodukfk=' + $scope.dataPasienSelected.detailjenisprodukId + "&norec_pp=" + $scope.dataPasienSelected.norec_spd).then(function (e) {
+                    $scope.isRouteLoading = false
+                    $scope.listJenisPeran = e.data.jenisperan
+                    console.log(e.data.detailkegiatandiklat.length);
+
+                    $scope.dataDaftarDetailDiklat = new kendo.data.DataSource({
+                        data: e.data.detailkegiatandiklat, //data,
+                        pageSize: 10,
+                        total: e.data.detailkegiatandiklat,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {}
+                            }
+                        },
+                    });
+                    
+                   
+                })
+            }
+
             $scope.JenisPeran = function(){
-                console.log($scope.dataPasienSelected.detailjenisprodukId);
-                
-                console.log($scope.dataPasienSelected.noRec);
                 if ($scope.dataPasienSelected.noRec == undefined) {
                     messageContainer.error("Data Belum Dipilih")
                     return
                 }
+                seacrhDetail()
                 $scope.item.namaPelangganlook = $scope.dataPasienSelected.namaPelanggan;
                 $scope.popupInputDetailTagihan.center().open();
             }
             $scope.batal = function(){
-                $scope.item = {};
+                $scope.item.pegawai = undefined;
+                $scope.item.jenisperan = undefined;
+                // objSave = {}
+                norec_dkd= ""
                 $scope.popupInputDetailTagihan.center().close();
-
             }
             var init = function (a, b, c, d, e) {
                 $scope.isRouteLoading = true;
@@ -381,30 +383,54 @@ define(['initialize'], function (initialize) {
                 });
                 return $scope.dataDaftarNonLayanan;
             }
-
+            $scope.columnDaftarDetailDiklat = {
+                toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "RekapDaftarTagihanNonLayan.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.mergedCells = ["A1:F1"];
+                    sheet.frozenRows = 2;
+                    sheet.name = "Report";
+                    var myHeaders = [{
+                        value: "Laporan Tagihan Non Layanan",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                    }];
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        height: 70,
+                        fontSize: 20,
+                        textAlign: "center"
+                    });
+                },
+                pageable: true,
+                columns: [
+                    {
+                        "field": "jenisperan",
+                        "title": "Peran",
+                        "width": "150px",
+                        // "template": "<span class='style-left'>#: namaPelanggan #</span>"
+                    },
+                    {
+                        "field": "namalengkap",
+                        "title": "Pembimbing",
+                        "width": "150px",
+                        // "template": "<span class='style-center'>#: jenisTagihan #</span>"
+                    },
+                ]
+            }
             $scope.klikGrid = function (dataPasienSelected) {
-                $scope.isRouteLoading=true
                 if (dataPasienSelected == undefined) {
                     messageContainer.error("Data Belum Dipilih")
                     return
                 }
-                medifirstService.get('kasir/get-data-combo-kasir?detailjenisprodukfk=' + $scope.dataPasienSelected.detailjenisprodukId+"&norec_pp="+$scope.dataPasienSelected.norec_spd).then(function (e) {
-                    $scope.isRouteLoading=false
-                    $scope.listJenisPeran = e.data.jenisperan
-                    console.log(e.data.detailkegiatandiklat.length);
-                    if (e.data.detailkegiatandiklat.length>0) {
-                        $scope.item.jenisperan = {
-                            id: e.data.detailkegiatandiklat[0].objectjenisperanfk,
-                            jenisperan: e.data.detailkegiatandiklat[0].jenisperan
-                        }
-                        $scope.item.pegawai = {
-                            id: e.data.detailkegiatandiklat[0].objectpegawaifk,
-                            namalengkap: e.data.detailkegiatandiklat[0].namalengkap
-                        }
-                        $scope.norecdkd = e.data.detailkegiatandiklat[0].norec_spd
-                        console.log($scope.norecdkd);
-                    }
-                })
+                
                 $scope.dataPasienSelected = dataPasienSelected;
 
             }
@@ -419,18 +445,24 @@ define(['initialize'], function (initialize) {
                     objectpegawaifk: $scope.item.pegawai.id,
                     kodeexternal: $scope.dataPasienSelected.jenisTagihan,
                     namaexternal: $scope.dataPasienSelected.keterangan,
+                    objectdetailjenisproduk: $scope.dataPasienSelected.detailjenisprodukId
                 }
                 console.log(objSave);
+                // return
                 medifirstService.post('tagihan/save-tagihan-diklat', objSave).then(function (data) {
                     // init();
-                $scope.popupInputDetailTagihan.center().close();
-                $scope.item = {};
+                // $scope.popupInputDetailTagihan.center().close();
+                    norec_dkd = ""
+                    $scope.norecdkd = undefined
+                seacrhDetail()
+                $scope.item.pegawai = undefined
+                $scope.item.jenisperan = undefined
                 })
             }
             $scope.delete = function(){
                 if ($scope.norecdkd != undefined) {
                     norec_dkd = $scope.norecdkd
-                }
+                }   
                 var objSave = {
                     norec: norec_dkd,
                     statusenabled: false
@@ -438,8 +470,14 @@ define(['initialize'], function (initialize) {
                 console.log(objSave);
                 medifirstService.post('tagihan/hapus-tagihan-diklat', objSave).then(function (data) {
                     // init();
-                    $scope.popupInputDetailTagihan.center().close();
-                    $scope.item = {};
+                    $scope.item.pegawai = undefined;
+                    $scope.item.jenisperan = undefined;
+                    $scope.norecdkd = undefined
+                    // objSave = {}
+                    norec_dkd = ""
+                    // $scope.popupInputDetailTagihan.center().close();
+                    // $scope.item = {};
+                    seacrhDetail()
                 })
             }
 

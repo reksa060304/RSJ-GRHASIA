@@ -1,0 +1,1940 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Monitor Intake Output</div>
+        </div>
+
+
+        <fieldset style="margin-top: 10px">
+            <LEGEND></LEGEND>
+            <div class="grid_12 margin-top-30 text-center">
+                <label c-label item="item" font size=""></label>
+            </div>
+            
+    <div class="grid_12" style="margin-top: 20px">
+        <table style="width:100%;color: #4c5356;">
+            <tr>
+                <th colspan="7">
+                    <div  class="grid_12">
+                        <label  c-label item="item" c-label-text="TANGGAL"></label>
+                    </div>
+                    <input style="width: 20%" k-ng-model="item.obj[3005200]" kendo-datetimepicker placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" />
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div class="grid_12 text-left ">
+                        
+                    </div>
+                </th>
+                <th>
+                    <div class="grid_12 text-left ">
+                        NO.
+                    </div>
+                </th>
+               <th>
+                    <div class="grid_12 text-left ">
+                        
+                    </div>
+                </th>
+                <th>
+                    <div class="grid_12 text-left ">
+                        DINAS PAGI
+                    </div>
+                </th>
+                <th>
+                    <div class="grid_12 text-left ">
+                        DINAS SIANG
+                    </div>
+                </th>
+                <th>
+                    <div class="grid_12 text-left ">
+                        DINAS MALAM
+                    </div>
+                </th>
+                <th>
+                    <div class="grid_12 text-left ">
+                        KETERANGAN
+                    </div>
+                </th>
+               
+            </tr>
+            <tr>
+                <td rowspan="5">
+                    <div class="grid_12 text-left ">
+                        INPUT
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        1. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        Minum / Sonde
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005201]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005202]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005203]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td rowspan="5">
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005204]"
+                                k-data-source=""
+                                style="height: 100px; width: 90%; "/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                        2. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        Makan
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005205]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005206]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005207]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    3. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        Infus
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005208]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005209]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005210]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    4. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        Injeksi
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005211]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005212]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005213]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    5. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        AM
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005214]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005215]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005216]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="5">
+                    <div class="grid_12 text-left ">
+                        OUTPUT
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        1. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        Urine
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005217]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005218]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005219]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td rowspan="5">
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005220]"
+                                k-data-source=""
+                                style="height: 100px; width: 90%; "/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                        2. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        BAB
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005221]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005222]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005223]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    3. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    Muntah
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005224]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005225]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005226]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    4. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    Pendarahan / Drain
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005227]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005228]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005229]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    5. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    IWL
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005230]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005231]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005232]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+                </table>
+            </fieldset>
+            </div>
+
+            
+        <fieldset style="margin-top: 10px">
+            <LEGEND></LEGEND>
+            <div class="grid_12 margin-top-30 text-center">
+                <label c-label item="item" font size=""></label>
+            </div>
+            
+    <div class="grid_12" style="margin-top: 20px">
+        <table style="width:100%;color: #4c5356;">
+            <tr>
+                <td rowspan="5">
+                    <div class="grid_12 text-left ">
+                        BALANCE  
+                        <br>
+                        24 JAM
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    1. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    INPUT
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005233]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">BC Target + / - </label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005234]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td rowspan="5">
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">CATATAN PERAWATAN :</label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005235]"
+                                k-data-source=""
+                                style="height: 100px; width: 90%; "/>
+                    </div>
+                </td>
+                </tr>
+                <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    2. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    OUTPUT
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005236]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td rowspan="2">
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">BC Total + / - </label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005237]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    3. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    IWL
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005238]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    4. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    BC Sebelumnya
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005239]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td rowspan="2">
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">BC Akhir + / - </label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005240]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    5. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    BC TOTAL 24 Jam
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005241]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                
+            </tr>
+        </table>
+    </fieldset>
+    </div>
+
+    <div class="grid_12" style="margin-top: 10px;">
+        <fieldset style="margin-top:10px;">             
+                    <div class="grid_12" style="margin-top:10px">
+                        <div  class="grid_12">
+                            <label c-label item="item" class="margin-bottom">Perawat : </label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 250px;" kendo-combo-box k-ng-model="item.obj[3005242]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+        </fieldset>
+    </div>
+                <br>
+                <br>
+                
+                <div class="grid_12 text-left ">
+                <br>
+                <br>
+                   KETERANGAN : IWL DEWASA = 15 cc/Kg BB/Hari <br>
+                   IWL ANAK ( 30 - Usia dalam Tahun ) x BB <br>
+                   IWL SUHU > 37,5°C  = IWL Normal + (Kenaikan Suhu x 200 cc) <br> <br>
+                   <b>KET : <I>ISILAH DENGAN JELAS</I></b>
+
+                </div>
+
+
+                <fieldset style="margin-top: 10px">
+                    <LEGEND></LEGEND>
+                    <div class="grid_12 margin-top-30 text-center">
+                        <label c-label item="item" font size=""></label>
+                    </div>
+                    
+            <div class="grid_12" style="margin-top: 20px">
+                <table style="width:100%;color: #4c5356;">
+                    <tr>
+                        <th colspan="7">
+                            <div  class="grid_12">
+                                <label  c-label item="item" c-label-text="TANGGAL"></label>
+                            </div>
+                            <input style="width: 20%" k-ng-model="item.obj[3005243]" kendo-datetimepicker placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" />
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <div class="grid_12 text-left ">
+                                
+                            </div>
+                        </th>
+                        <th>
+                            <div class="grid_12 text-left ">
+                                NO.
+                            </div>
+                        </th>
+                       <th>
+                            <div class="grid_12 text-left ">
+                                
+                            </div>
+                        </th>
+                        <th>
+                            <div class="grid_12 text-left ">
+                                DINAS PAGI
+                            </div>
+                        </th>
+                        <th>
+                            <div class="grid_12 text-left ">
+                                DINAS SIANG
+                            </div>
+                        </th>
+                        <th>
+                            <div class="grid_12 text-left ">
+                                DINAS MALAM
+                            </div>
+                        </th>
+                        <th>
+                            <div class="grid_12 text-left ">
+                                KETERANGAN
+                            </div>
+                        </th>
+                       
+                    </tr>
+                    <tr>
+                        <td rowspan="5">
+                            <div class="grid_12 text-left ">
+                                INPUT
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                1. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Minum / Sonde
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005244]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005245]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005246]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td rowspan="5">
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005247]"
+                                        k-data-source=""
+                                        style="height: 100px; width: 90%; "/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                2. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Makan
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005248]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005249]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005250]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            3. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Infus
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005251]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005252]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005253]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            4. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Injeksi
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005254]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005255]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005256]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            5. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                AM
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005257]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005258]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005259]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="5">
+                            <div class="grid_12 text-left ">
+                                OUTPUT
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                1. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                Urine
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005260]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005261]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005262]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td rowspan="5">
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005263]"
+                                        k-data-source=""
+                                        style="height: 100px; width: 90%; "/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                2. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                                BAB
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005264]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005265]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005266]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            3. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            Muntah
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005267]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005268]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005269]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            4. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            Pendarahan / Drain
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005270]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005271]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005272]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            5. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            IWL
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005273]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005274]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005275]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                    </tr>
+                        </table>
+                    </fieldset>
+                    </div>
+        
+                    
+                <fieldset style="margin-top: 10px">
+                    <LEGEND></LEGEND>
+                    <div class="grid_12 margin-top-30 text-center">
+                        <label c-label item="item" font size=""></label>
+                    </div>
+                    
+            <div class="grid_12" style="margin-top: 20px">
+                <table style="width:100%;color: #4c5356;">
+                    <tr>
+                        <td rowspan="5">
+                            <div class="grid_12 text-left ">
+                                BALANCE  
+                                <br>
+                                24 JAM
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            1. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            INPUT
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005276]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom">BC Target + / - </label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005277]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td rowspan="5">
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom">CATATAN PERAWATAN :</label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005278]"
+                                        k-data-source=""
+                                        style="height: 100px; width: 90%; "/>
+                            </div>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            2. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            OUTPUT
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005279]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td rowspan="2">
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom">BC Total + / - </label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005280]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            3. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            IWL
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005281]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            4. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            BC Sebelumnya
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005282]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        <td rowspan="2">
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom">BC Akhir + / - </label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005283]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            5. 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 text-left ">
+                            BC TOTAL 24 Jam
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12 margin-top-20 margin-bottom">
+                                <label c-label item="item" class="margin-bottom"></label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005284]"
+                                        k-data-source=""
+                                        style="height: 30px; width: 50%; "/>cc
+                            </div>
+                        </td>
+                        
+                    </tr>
+                </table>
+            </fieldset>
+            </div>
+        
+            <div class="grid_12" style="margin-top: 10px;">
+                <fieldset style="margin-top:10px;">             
+                            <div class="grid_12" style="margin-top:10px">
+                                <div  class="grid_12">
+                                    <label c-label item="item" class="margin-bottom">Perawat : </label>
+                                </div>
+                                <div class="grid_12">
+                                    <input style="width: 250px;" kendo-combo-box k-ng-model="item.obj[3005285]"
+                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                        k-auto-bind="false" k-data-source="listPegawai" />
+                                </div>
+                            </div>
+                </fieldset>
+            </div>
+                        <br>
+                        <br>
+                        
+                        <div class="grid_12 text-left ">
+                        <br>
+                        <br>
+                           KETERANGAN : IWL DEWASA = 15 cc/Kg BB/Hari <br>
+                           IWL ANAK ( 30 - Usia dalam Tahun ) x BB <br>
+                           IWL SUHU > 37,5°C  = IWL Normal + (Kenaikan Suhu x 200 cc) <br> <br>
+                           <b>KET : <I>ISILAH DENGAN JELAS</I></b>
+        
+                        </div>
+        
+                
+                        
+        <fieldset style="margin-top: 10px">
+            <LEGEND></LEGEND>
+            <div class="grid_12 margin-top-30 text-center">
+                <label c-label item="item" font size=""></label>
+            </div>
+            
+    <div class="grid_12" style="margin-top: 20px">
+        <table style="width:100%;color: #4c5356;">
+            <tr>
+                <th colspan="7">
+                    <div  class="grid_12">
+                        <label  c-label item="item" c-label-text="TANGGAL"></label>
+                    </div>
+                    <input style="width: 20%" k-ng-model="item.obj[3005286]" kendo-datetimepicker placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" />
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div class="grid_12 text-left ">
+                        
+                    </div>
+                </th>
+                <th>
+                    <div class="grid_12 text-left ">
+                        NO.
+                    </div>
+                </th>
+               <th>
+                    <div class="grid_12 text-left ">
+                        
+                    </div>
+                </th>
+                <th>
+                    <div class="grid_12 text-left ">
+                        DINAS PAGI
+                    </div>
+                </th>
+                <th>
+                    <div class="grid_12 text-left ">
+                        DINAS SIANG
+                    </div>
+                </th>
+                <th>
+                    <div class="grid_12 text-left ">
+                        DINAS MALAM
+                    </div>
+                </th>
+                <th>
+                    <div class="grid_12 text-left ">
+                        KETERANGAN
+                    </div>
+                </th>
+               
+            </tr>
+            <tr>
+                <td rowspan="5">
+                    <div class="grid_12 text-left ">
+                        INPUT
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        1. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        Minum / Sonde
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005287]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005288]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005289]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td rowspan="5">
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005290]"
+                                k-data-source=""
+                                style="height: 100px; width: 90%; "/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                        2. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        Makan
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005291]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005292]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005293]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    3. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        Infus
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005294]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005295]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005296]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    4. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        Injeksi
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005297]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005298]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005299]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    5. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        AM
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005300]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005301]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005302]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="5">
+                    <div class="grid_12 text-left ">
+                        OUTPUT
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        1. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        Urine
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005303]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005304]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005305]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td rowspan="5">
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005306]"
+                                k-data-source=""
+                                style="height: 100px; width: 90%; "/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                        2. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                        BAB
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005307]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005308]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005309]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    3. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    Muntah
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005310]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005311]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005312]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    4. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    Pendarahan / Drain
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005313]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005314]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005315]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    5. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    IWL
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005316]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005317]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005318]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+                </table>
+            </fieldset>
+            </div>
+
+            
+        <fieldset style="margin-top: 10px">
+            <LEGEND></LEGEND>
+            <div class="grid_12 margin-top-30 text-center">
+                <label c-label item="item" font size=""></label>
+            </div>
+            
+    <div class="grid_12" style="margin-top: 20px">
+        <table style="width:100%;color: #4c5356;">
+            <tr>
+                <td rowspan="5">
+                    <div class="grid_12 text-left ">
+                        BALANCE  
+                        <br>
+                        24 JAM
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    1. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    INPUT
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005319]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">BC Target + / - </label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005320]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td rowspan="5">
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">CATATAN PERAWATAN :</label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005321]"
+                                k-data-source=""
+                                style="height: 100px; width: 90%; "/>
+                    </div>
+                </td>
+                </tr>
+                <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    2. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    OUTPUT
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005322]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td rowspan="2">
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">BC Total + / - </label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005323]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    3. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    IWL
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005324]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    4. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    BC Sebelumnya
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005325]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                <td rowspan="2">
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom">BC Akhir + / - </label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005326]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <div class="grid_12 text-left ">
+                    5. 
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 text-left ">
+                    BC TOTAL 24 Jam
+                    </div>
+                </td>
+                <td>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3005327]"
+                                k-data-source=""
+                                style="height: 30px; width: 50%; "/>cc
+                    </div>
+                </td>
+                
+            </tr>
+        </table>
+    </fieldset>
+    </div>
+
+    <div class="grid_12" style="margin-top: 10px;">
+        <fieldset style="margin-top:10px;">             
+                    <div class="grid_12" style="margin-top:10px">
+                        <div  class="grid_12">
+                            <label c-label item="item" class="margin-bottom">Perawat : </label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 250px;" kendo-combo-box k-ng-model="item.obj[3005328]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+        </fieldset>
+    </div>
+                <br>
+                <br>
+                
+                <div class="grid_12 text-left ">
+                <br>
+                <br>
+                   KETERANGAN : IWL DEWASA = 15 cc/Kg BB/Hari <br>
+                   IWL ANAK ( 30 - Usia dalam Tahun ) x BB <br>
+                   IWL SUHU > 37,5°C  = IWL Normal + (Kenaikan Suhu x 200 cc) <br> <br>
+                   <b>KET : <I>ISILAH DENGAN JELAS</I></b>
+
+                </div>
+
+                
+         
+            
+
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

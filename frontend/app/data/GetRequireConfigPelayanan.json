@@ -3223,6 +3223,30 @@
         {
             "nameDep": "RL2KetenagaanCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL2KetenagaanCtrl"
+        },
+        {
+            "nameDep": "AsesmenAwalKeperawatanRIGrhCtrl",
+            "urlDep": "module/EMR/AsesmenAwalKeperawatanRIGrhCtrl"
+        },
+        {
+            "nameDep": "MonitorIntakeOutputCtrl",
+            "urlDep": "module/EMR/MonitorIntakeOutputCtrl"
+        },
+        {
+            "nameDep": "MonitoringTindakanRawatIntensifCtrl",
+            "urlDep": "module/EMR/MonitoringTindakanRawatIntensifCtrl"
+        },
+        {
+            "nameDep": "CatatanPerkembanganCtrl",
+            "urlDep": "module/EMR/CatatanPerkembanganCtrl"
+        },
+        {
+            "nameDep": "AsuhanGiziAwalPasienRawatInapCtrl",
+            "urlDep": "module/EMR/AsuhanGiziAwalPasienRawatInapCtrl"
+        },
+        {
+            "nameDep": "AsuhanGiziLanjutPasienRawatInapCtrl",
+            "urlDep": "module/EMR/AsuhanGiziLanjutPasienRawatInapCtrl"
         }
     ]
 }

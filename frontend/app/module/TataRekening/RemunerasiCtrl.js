@@ -124,6 +124,16 @@ define(['initialize'], function (initialize) {
 				})
 
 			}
+			$scope.postingMK = function () {
+				let json = {
+					'bulan' : moment($scope.item.bulan).format('M'),
+				}
+				console.log(json);
+				medifirstService.post('get/save-posting-mk', json).then(function (e) {
+					loadData()
+				})
+
+			}
 			$scope.saveInput = function () {
 				let json = {
 					'norec': "",
@@ -217,6 +227,58 @@ define(['initialize'], function (initialize) {
 					"field": "namalengkap",
 					"title": "Nama Pegawai",
                     "width": '150px'			
+				},
+				{
+					"field": "idpegawai",
+					"title": "Kd Pegawai",
+                    "width": '150px',		
+				},
+				{
+					"field": "iki",
+					"title": "IKI",
+                    "width": '150px'
+				},
+				{
+					"field": "iku",
+					"title": "IKU",
+                    "width": '150px'
+				},
+				{
+					"field": "prosen",
+					"title": "Prosen",
+                    "width": '150px'
+				},
+				{
+					"field": "grade",
+					"title": "Grade",
+                    "width": '150px'
+				},
+				{
+					"field": "mk",
+					"title": "MK",
+                    "width": '150px'
+				},
+				{
+					"field": "point_tt",
+					"title": "Point TT",
+                    "width": '150px'
+				},
+                {
+					"field": "tglinput",
+					"title": "Tanggal Input",
+                    "width": '150px'
+				},			
+			];
+			$scope.datacolumn = [
+				{
+					"field": "namalengkap",
+					"title": "Nama Pegawai",
+                    "width": '150px'			
+				},
+				{
+					"field": "idpegawai",
+					"title": "Kd Pegawai",
+                    "width": '150px',		
 				},
 				{
 					"field": "iki",
