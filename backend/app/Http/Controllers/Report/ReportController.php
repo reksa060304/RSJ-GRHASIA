@@ -2129,7 +2129,7 @@ class ReportController extends ApiController{
                 CASE WHEN ed.ID = 3003950 THEN epd.VALUE END AS nocm,
                 CASE WHEN ed.ID = 3003952 THEN epd.VALUE END AS nomor,
                 CASE WHEN ed.ID = 3003953 THEN epd.VALUE END AS ada,
-                CASE WHEN ed.ID = 3003953 THEN epd.VALUE END AS tidakada,
+                CASE WHEN ed.ID = 3003954 THEN epd.VALUE END AS tidakada,
                 CASE WHEN ed.ID = 3003957 THEN epd.VALUE END AS nama,
                 CASE WHEN ed.ID = 3003958 THEN epd.VALUE END AS tgllahir,
                 CASE WHEN ed.ID = 3003959 THEN epd.VALUE END AS jeniskelamin,
