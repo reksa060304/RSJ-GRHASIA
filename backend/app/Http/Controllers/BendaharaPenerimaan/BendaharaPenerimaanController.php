@@ -2587,48 +2587,53 @@ class BendaharaPenerimaanController extends ApiController {
         // konten STS Detail
 
         $data = DB::select(DB::raw("select sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
-        (((CASE WHEN pp.hargajual IS NULL THEN	0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
-                0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN	0 ELSE	pp.jasa	END	) AS totaldibayarclosing,				
-        ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
-                sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, sts.norec, djp.detailjenisproduk, jpr.id as jenisproduk
-                        
-                FROM   pasien_m ps 
-                        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
-                        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                        inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
-                        left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
-                        LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true  
-                        LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
-                        LEFT JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
-                        LEFT JOIN loginuser_s AS lu ON lu.id = sbm.objectpegawaipenerimafk  
-                        LEFT JOIN pegawai_m AS pg ON pg.id = lu.objectpegawaifk  
-                        LEFT JOIN pegawai_m AS pgdpjp ON pgdpjp.id = pd.objectpegawaifk
-                        LEFT JOIN produk_m AS pr ON pr.id = pp.produkfk  
-                        LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
-                        inner join strukclosing_t as sc on sbm.noclosingfk = sc.norec
-                        inner join strukclosingkasir_t as sck on sc.norec = sck.noclosingfk
-                        left join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
-                        left join jenisproduk_m jpr on jpr.id = djp.objectjenisprodukfk
-                        left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
-                        left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
-                where pd.statusenabled = true
-                and sts.statusenabled = true
-                        and pd.kdprofile = 30
-        and sc.noclosing IN('".implode("','",$noclosing)."') 
-
+        (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
+        0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END ) AS totaldibayarclosing,
+        ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
+        sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
+        
+        FROM pasien_m ps
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+        left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
+        LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true
+        LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
+        LEFT JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
+        LEFT JOIN loginuser_s AS lu ON lu.id = sbm.objectpegawaipenerimafk
+        LEFT JOIN pegawai_m AS pg ON pg.id = lu.objectpegawaifk
+        LEFT JOIN pegawai_m AS pgdpjp ON pgdpjp.id = pd.objectpegawaifk
+        LEFT JOIN produk_m AS pr ON pr.id = pp.produkfk
+        LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+        inner join strukclosing_t as sc on sbm.noclosingfk = sc.norec
+        inner join strukclosingkasir_t as sck on sc.norec = sck.noclosingfk
+        left join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+        left join jenisproduk_m jpr on jpr.id = djp.objectjenisprodukfk
+        left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
+        left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
+        where pd.statusenabled = true
+        and sts.statusenabled = true
+        and pd.kdprofile = 30
+        and sc.noclosing IN('".implode("','",$noclosing)."')
+        group by sc.tglclosing, ru.namaruangan, ru.id, pr.namaproduk, pr.id, pp.isobat,
+        (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
+        0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END ),
+        ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar, sc.noclosing, sc.tglclosing,
+        sck.totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id
+        
         union all
-
+        
         select sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
-                     (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast) as totaldibayarclosing, 
-				ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing, 
-        sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, sts.norec, djp.detailjenisproduk, jpr.id as jenisproduk
+        (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4 as totaldibayarclosing,
+        ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
+        sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
         from strukclosingkasir_t as sck
         inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
         inner join strukbuktipenerimaan_t as sbm on sbm.noclosingfk = sc.norec
         inner join strukpelayanan_t as sp on sbm.nostrukfk = sp.norec
         inner join strukpelayanandetail_t as spd on sp.norec = spd.nostrukfk
-		inner join strukbuktipenerimaancarabayar_t sbmcr on sbmcr.nosbmfk = sbm.norec
+        inner join strukbuktipenerimaancarabayar_t sbmcr on sbmcr.nosbmfk = sbm.norec
         inner join produk_m pr on pr.id=spd.objectprodukfk
         inner join carabayar_m as cb on cb.id = sck.carabayarfk
         left join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
@@ -2641,7 +2646,11 @@ class BendaharaPenerimaanController extends ApiController {
         left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
         where sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan'
         and sts.statusenabled = true
-        and sc.noclosing IN('".implode("','",$noclosing)."')"));
+        and sc.noclosing IN('".implode("','",$noclosing)."')
+        group by sc.tglclosing, ru.namaruangan, ru.id, pr.namaproduk, pr.id, pp.isobat,
+        (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4,
+        ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar, sc.noclosing, sc.tglclosing,
+        sck.totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id;"));
        
         $jumlahpoliklinik = 0;
         $jumlahperiksajiwa = 0;
@@ -2763,6 +2772,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         foreach($data as $konten){
             $cekjumlah = '';
+            $cekharga = 0;
             if($konten->idruangan == 752 && $konten->idproduk == 5006382){
                 $jumlahperiksajiwa += $konten->totaldibayarclosing;
                 $voljumlahperiksajiwa++;
@@ -3001,6 +3011,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $jumlahobatrajal += $konten->totaldibayarclosing;
                 $voljumlahobatrajal++;
                 $cekjumlah = $konten->namaproduk;
+                $cekharga = $konten->totaldibayarclosing;
             }
 
             else if($konten->objectdepartemenfk != 16 && $konten->isobat != 't'){
@@ -3011,6 +3022,7 @@ class BendaharaPenerimaanController extends ApiController {
 
             $produk[] = array(
                 'namaproduk' => $cekjumlah,
+                'harga' => $cekharga,
             );
             
         }

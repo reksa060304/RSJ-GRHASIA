@@ -817,6 +817,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('farmasi/save-stock-merger', 'Farmasi\PelayananResepController@StokMerger');
           Route::get('farmasi/get-jenis-obat', 'Farmasi\PelayananResepController@getJenisObat');
           Route::get('farmasi/get-penjagaan-closing-kasir', 'Farmasi\PelayananResepController@getPenjagaanClosingKasir');
+          Route::get('tatarekening/get-penjagaan-verif-piutang', 'Farmasi\PelayananResepController@getPenjagaanVerifPiutang');
           Route::get('farmasi/get-penjagaan-verif-kasir', 'Farmasi\PelayananResepController@getPenjagaanVerifKasir');
           Route::post('farmasi/save-pelayananobat', 'Farmasi\PelayananResepController@SimpanPelayananObat');
 
@@ -1216,6 +1217,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-detail-order-for-kirim-barang', 'Logistik\LogistikController@getDetailOrderBarangForKirim');
             Route::get('logistik/get-perencanaan-kebutuhan', 'Logistik\LogistikController@getPerencanaanKebutuhan');
             Route::get('logistik/get-pelayanan-obat-peserta-jkn', 'Logistik\LogistikController@getPelayananObatJKN');
+            Route::get('logistik/get-rekap-order-kirim-barang', 'Logistik\LogistikController@getOrderKirimBarang');
             Route::get('logistik/get-daftar-distribusi-barang', 'Logistik\LogistikController@getDaftarDistribusiBarang');
             Route::get('logistik/get-daftar-barang-batal', 'Logistik\LogistikController@getDaftarProdukToBatal');
             Route::get('logistik/get-daftar-distribusi-barang-perunit', 'Logistik\LogistikController@getDaftarDistribusiBarangPerUnit');
