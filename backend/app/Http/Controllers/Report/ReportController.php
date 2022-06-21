@@ -1992,4 +1992,171 @@ class ReportController extends ApiController{
         return view('report.cetak-sertifikat',compact('data','pageWidth'));
         // return $this->respond($data);
     }
+    
+    public function CetakSKDokter(Request $request)
+    {   
+        // $norec = $request['emr'];
+        $noemr = $request['noemr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $emrfk = $request['emfk'];
+        $data = \DB::select(DB::raw(
+            "SELECT string_agg(x.tgl, '' )tgl, string_agg(x.nocm, ' ' )nocm, string_agg(x.nomor, ' ' )nomor, 
+            string_agg(x.nama, ' ')nama, string_agg(x.tgllahir, ' ')tgllahir, string_agg(x.pekerjaan, ' ' )pekerjaan, 
+            string_agg(x.alamat, ' ' )alamat, string_agg(x.jeniskelamin, ' ' )jeniskelamin, string_agg(x.tb, ' ')tb,string_agg(x.td, ' ')td,
+            string_agg(x.bb, ' ')bb, string_agg(x.nadi, ' ')nadi, string_agg(x.keperluan, ' ')keperluan, string_agg(x.dokter, ' ')dokter, 
+            string_agg(x.kondisi, ' ')kondisi 
+            FROM (SELECT
+            CASE WHEN ed.ID = 3003991 THEN epd.VALUE END AS tgl,
+            CASE WHEN ed.ID = 3003990 THEN epd.VALUE END AS nocm,
+            CASE WHEN ed.ID = 3003992 THEN epd.VALUE END AS nomor,
+            CASE WHEN ed.ID = 3003982 THEN epd.VALUE END AS nama,
+            CASE WHEN ed.ID = 3003983 THEN epd.VALUE END AS tgllahir,
+            CASE WHEN ed.ID = 3003984 THEN epd.VALUE END AS jeniskelamin,
+            CASE WHEN ed.ID = 3003985 THEN epd.VALUE END AS pekerjaan,
+            CASE WHEN ed.ID = 3003986 THEN epd.VALUE END AS alamat,
+            CASE WHEN ed.ID = 3003993 THEN epd.VALUE END AS tb,
+            CASE WHEN ed.ID = 3003994 THEN epd.VALUE END AS td,
+            CASE WHEN ed.ID = 3003995 THEN epd.VALUE END AS bb,
+            CASE WHEN ed.ID = 3003996 THEN epd.VALUE END AS nadi,
+            CASE WHEN ed.ID = 3003997 THEN epd.VALUE END AS keperluan,
+            CASE WHEN ed.ID = 3003998 THEN epd.VALUE END AS dokter,
+            CASE WHEN ed.ID = 3003999 THEN epd.VALUE END AS kondisi
+            FROM emrpasien_t ep
+                    INNER JOIN emrpasiend_t epd ON ep.noemr = epd.emrpasienfk
+                    INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
+                WHERE ep.kdprofile = $kdProfile AND ep.statusenabled = TRUE 
+                    AND ep.noemr ILIKE'$noemr' 
+                    AND ed.statusenabled = TRUE 
+		AND ep.emrfk = $emrfk 
+		AND ed.emrfk = $emrfk
+        ORDER BY
+        ed.ID ASC)as x"
+        ));
+        foreach ($data as $z){
+            if (isset($z->tgllahir) ||isset($z->tgl)){
+                $z->tgllahir=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgllahir)));
+                $z->tgl=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgl)));
+            }
+            
+        }
+        $pageWidth = 950;
+        return view('report.EMR.suratketerangandokter',compact('data','pageWidth'));
+    }
+    function tanggal_indonesia($tanggal){
+        $bulan = array (
+        1 =>   'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember'
+        );
+        
+        $pecahkan = explode('-', $tanggal);
+        
+        // variabel pecahkan 0 = tanggal
+        // variabel pecahkan 1 = bulan
+        // variabel pecahkan 2 = tahun
+         
+        return $pecahkan[2] . ' ' . $bulan[ (int)$pecahkan[1] ] . ' ' . $pecahkan[0];
+    }
+
+    public function CetakSKNapza(Request $request)
+    {   
+        // $norec = $request['emr'];
+        $noemr = $request['noemr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $emrfk = $request['emfk'];
+        $data = \DB::select(DB::raw(
+            "SELECT string_agg(x.namalengkap, ' ')a,string_agg(x.tgl, '' )tgl, string_agg(x.nocm, ' ' )nocm, string_agg(x.nomor, ' ' )nomor, 
+                string_agg(x.nama, ' ')nama, string_agg(x.tgllahir, ' ')tgllahir, string_agg(x.pekerjaan, ' ' )pekerjaan, 
+                string_agg(x.alamat, ' ' )alamat, string_agg(x.jeniskelamin, ' ' )jeniskelamin, string_agg(x.ada, ' ')ada,string_agg(x.tidakada, ' ')tidakada,
+                string_agg(x.keperluan, ' ')keperluan, string_agg(x.dokter, ' ')dokter FROM (SELECT
+                pg.namalengkap,
+                CASE WHEN ed.ID = 3003971 THEN epd.VALUE END AS tgl,
+                CASE WHEN ed.ID = 3003970 THEN epd.VALUE END AS nocm,
+                CASE WHEN ed.ID = 3003972 THEN epd.VALUE END AS nomor,
+                CASE WHEN ed.ID = 3003973 THEN epd.VALUE END AS ada,
+                CASE WHEN ed.ID = 3003974 THEN epd.VALUE END AS tidakada,
+                CASE WHEN ed.ID = 3003977 THEN epd.VALUE END AS nama,
+                CASE WHEN ed.ID = 3003978 THEN epd.VALUE END AS tgllahir,
+                CASE WHEN ed.ID = 3003979 THEN epd.VALUE END AS jeniskelamin,
+                CASE WHEN ed.ID = 3003980 THEN epd.VALUE END AS pekerjaan,
+                CASE WHEN ed.ID = 3003981 THEN epd.VALUE END AS alamat,
+                CASE WHEN ed.ID = 3003975 THEN epd.VALUE END AS keperluan,
+                CASE WHEN ed.ID = 3003976 THEN epd.VALUE END AS dokter
+                FROM emrpasien_t ep
+                        INNER JOIN emrpasiend_t epd ON ep.noemr = epd.emrpasienfk
+                        INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
+                        INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
+                    WHERE ep.kdprofile = $kdProfile AND ep.statusenabled = TRUE 
+                        AND ep.noemr ILIKE'$noemr' 
+                        AND ed.statusenabled = TRUE 
+                        AND ep.emrfk = $emrfk 
+                        AND ed.emrfk = $emrfk
+                ORDER BY
+	ed.ID ASC)as x"
+        ));
+        foreach ($data as $z){
+            if (isset($z->tgllahir) ||isset($z->tgl)){
+                $z->tgllahir=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgllahir)));
+                $z->tgl=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgl)));
+            }
+            
+        }
+        $pageWidth = 950;
+        return view('report.EMR.suratketerangannapza',compact('data','pageWidth'));
+    }
+
+    public function CetakSKJiwa(Request $request)
+    {
+        $noemr = $request['noemr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $emrfk = $request['emfk'];
+        $data = \DB::select(DB::raw(
+            "SELECT string_agg(x.tgl, '' )tgl, string_agg(x.nocm, ' ' )nocm, string_agg(x.nomor, ' ' )nomor, 
+                string_agg(x.nama, ' ')nama, string_agg(x.tgllahir, ' ')tgllahir, string_agg(x.pekerjaan, ' ' )pekerjaan, 
+                string_agg(x.alamat, ' ' )alamat, string_agg(x.jeniskelamin, ' ' )jeniskelamin, string_agg(x.ada, ' ')ada,string_agg(x.tidakada, ' ')tidakada,
+                string_agg(x.keperluan, ' ')keperluan, string_agg(x.dokter, ' ')dokter FROM (SELECT
+                pg.namalengkap,
+                CASE WHEN ed.ID = 3003951 THEN epd.VALUE END AS tgl,
+                CASE WHEN ed.ID = 3003950 THEN epd.VALUE END AS nocm,
+                CASE WHEN ed.ID = 3003952 THEN epd.VALUE END AS nomor,
+                CASE WHEN ed.ID = 3003953 THEN epd.VALUE END AS ada,
+                CASE WHEN ed.ID = 3003954 THEN epd.VALUE END AS tidakada,
+                CASE WHEN ed.ID = 3003957 THEN epd.VALUE END AS nama,
+                CASE WHEN ed.ID = 3003958 THEN epd.VALUE END AS tgllahir,
+                CASE WHEN ed.ID = 3003959 THEN epd.VALUE END AS jeniskelamin,
+                CASE WHEN ed.ID = 3003960 THEN epd.VALUE END AS pekerjaan,
+                CASE WHEN ed.ID = 3003961 THEN epd.VALUE END AS alamat,
+                CASE WHEN ed.ID = 3003955 THEN epd.VALUE END AS keperluan,
+                CASE WHEN ed.ID = 3003956 THEN epd.VALUE END AS dokter
+                FROM emrpasien_t ep
+                        INNER JOIN emrpasiend_t epd ON ep.noemr = epd.emrpasienfk
+                        INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
+                        INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
+                    WHERE ep.kdprofile = $kdProfile AND ep.statusenabled = TRUE 
+                        AND ep.noemr ILIKE'$noemr' 
+                        AND ed.statusenabled = TRUE 
+                        AND ep.emrfk = $emrfk 
+                        AND ed.emrfk = $emrfk
+                ORDER BY
+	    ed.ID ASC)as x"
+        ));
+        foreach ($data as $z){
+            if (isset($z->tgllahir) ||isset($z->tgl)){
+                $z->tgllahir=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgllahir)));
+                $z->tgl=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgl)));
+            }
+            
+        }
+        $pageWidth = 950;
+        return view('report.EMR.suratketerangankesehatanjiwa',compact('data','pageWidth'));
+    }
 }

@@ -1,8 +1,9 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
+
     initialize.controller('SuratKeteranganDokterCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
-
 
             $scope.myVar = true
             $scope.noCM = $state.params.noCM;
@@ -14,6 +15,7 @@ define(['initialize'], function (initialize) {
             $scope.SkorSkalaFlacc = [];
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
+            $scope.isCetakV = true;
             $scope.cc = {}
             var nomorEMR = '-'
             $scope.cc.emrfk = 3000426
@@ -29,7 +31,7 @@ define(['initialize'], function (initialize) {
             medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000426).then(function (e) {
 
                 var datas = e.data.kolom4
-
+                $scope.datas = datas;
                 var detail = []
                 var arrayShiftJaga= []
                 var arrayShiftJaga2 = []
@@ -940,6 +942,16 @@ define(['initialize'], function (initialize) {
                 });
             }
 
+            $scope.cetakBlade = function () {
+                if (nomorEMR == '-') return
+
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangandokter?noemr=' + nomorEMR + '&emfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama, '_blank');
+            }
         }
         
     ]);

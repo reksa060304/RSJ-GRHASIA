@@ -1112,6 +1112,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/diklat-nametag','Report\ReportController@nametagDiklat');
           Route::get('report/cetak-hasil-lab-histopatologi','Report\ReportController@cetakHispatologi');
           Route::get('report/cetak-resep-dokter','Report\ReportController@cetakResepDokter');
+          Route::get('report/get-cetak-suratketerangandokter','Report\ReportController@CetakSKDokter');
+          Route::get('report/get-cetak-suratketerangannapza','Report\ReportController@CetakSKNapza');
+          Route::get('report/get-cetak-suratketerangankesehatanjiwa','Report\ReportController@CetakSKJiwa');
           Route::get('laboratorium/get-lap-kunjungan', 'Laboratorium\LaboratoriumController@getLaporanKunjungan');
           Route::get('laboratorium/get-combo-dokter-lab','Laboratorium\LaboratoriumController@getDokter');
 
@@ -1340,39 +1343,43 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         });
         // Route::group(['prefix' => 'perencanaan'], function () {
 
-                      Route::get('perencanaan/get-data-combo', 'Perencanaan\PerencanaanController@getDataCombo');
-                      Route::get('perencanaan/get-kel-keempat-part','Perencanaan\PerencanaanController@getKelAnggaranKeempat');
-                      Route::get('perencanaan/get-kel-ketiga-part','Perencanaan\PerencanaanController@getKelAnggaranKeTiga');
-                      Route::get('perencanaan/get-kel-kedua-part','Perencanaan\PerencanaanController@getKelAnggaranKedua');
-                      Route::get('perencanaan/get-child-bynorec','Perencanaan\PerencanaanController@getChildByNorec');
-                      Route::get('perencanaan/get-daftar-mataanggaran','Perencanaan\PerencanaanController@getDaftarMataAnggaran');
-                      Route::get('perencanaan/get-daftar-monitoring-mataanggaran','Perencanaan\PerencanaanController@getDaftarMonitoringAnggaran');
-                      Route::get('perencanaan/get-daftar-riwayat-realisasi','Perencanaan\PerencanaanController@getDaftarRiwayatRealisasi');
-                      Route::get('perencanaan/get-daftar-usulan-anggaran','Perencanaan\PerencanaanController@getDaftarUsulanAnggaran');
-                      Route::get('perencanaan/get-daftar-mataanggaran-upk','Perencanaan\PerencanaanController@getDaftarMataAnggaranForUpk');
-                      Route::get('perencanaan/get-kel-kelima-part','Perencanaan\PerencanaanController@getKelAnggaranKelima');
-                      Route::get('perencanaan/get-kel-keenam-part','Perencanaan\PerencanaanController@getKelAnggaranKeenam');
+            Route::get('perencanaan/get-data-combo', 'Perencanaan\PerencanaanController@getDataCombo');
+            Route::get('perencanaan/get-datacombo-part-rekanan', 'Perencanaan\PerencanaanController@getDataComboRekananPart');
+            Route::get('perencanaan/get-kel-keempat-part','Perencanaan\PerencanaanController@getKelAnggaranKeempat');
+            Route::get('perencanaan/get-kel-ketiga-part','Perencanaan\PerencanaanController@getKelAnggaranKeTiga');
+            Route::get('perencanaan/get-kel-kedua-part','Perencanaan\PerencanaanController@getKelAnggaranKedua');
+            Route::get('perencanaan/get-child-bynorec','Perencanaan\PerencanaanController@getChildByNorec');
+            Route::get('perencanaan/get-daftar-mataanggaran','Perencanaan\PerencanaanController@getDaftarMataAnggaran');
+            Route::get('perencanaan/get-daftar-monitoring-mataanggaran','Perencanaan\PerencanaanController@getDaftarMonitoringAnggaran');
+            Route::get('perencanaan/get-daftar-riwayat-realisasi','Perencanaan\PerencanaanController@getDaftarRiwayatRealisasi');
+            Route::get('perencanaan/get-daftar-usulan-anggaran','Perencanaan\PerencanaanController@getDaftarUsulanAnggaran');
+            Route::get('perencanaan/get-daftar-mataanggaran-upk','Perencanaan\PerencanaanController@getDaftarMataAnggaranForUpk');
+            Route::get('perencanaan/get-kel-kelima-part','Perencanaan\PerencanaanController@getKelAnggaranKelima');
+            Route::get('perencanaan/get-kel-keenam-part','Perencanaan\PerencanaanController@getKelAnggaranKeenam');
 
-                      Route::post('perencanaan/save-child','Perencanaan\PerencanaanController@saveChild');
-                      Route::post('perencanaan/delete-child','Perencanaan\PerencanaanController@deleteChildAnggaran');
-                      Route::post('perencanaan/save-kel-head-anggaran','Perencanaan\PerencanaanController@saveKelHead');
-                      Route::post('perencanaan/save-kel-pertama-anggaran','Perencanaan\PerencanaanController@saveKelPertama');
-                      Route::post('perencanaan/save-kel-kedua-anggaran','Perencanaan\PerencanaanController@saveKelKedua');
-                      Route::post('perencanaan/save-kel-ketiga-anggaran','Perencanaan\PerencanaanController@saveKelKetiga');
-                      Route::post('perencanaan/save-kel-keempat-anggaran','Perencanaan\PerencanaanController@saveKelKeempat');
-                      Route::post('perencanaan/delete-kel-head-anggaran','Perencanaan\PerencanaanController@deleteKelompokHead');
-                      Route::post('perencanaan/delete-kel-pertama-anggaran','Perencanaan\PerencanaanController@deleteKelompokPertama');
-                      Route::post('perencanaan/delete-kel-kedua-anggaran','Perencanaan\PerencanaanController@deleteKelompokKedua');
-                      Route::post('perencanaan/delete-kel-ketiga-anggaran','Perencanaan\PerencanaanController@deleteKelompokKetiga');
-                      Route::post('perencanaan/delete-kel-keempat-anggaran','Perencanaan\PerencanaanController@deleteKelompokKeempat');
+            Route::post('perencanaan/save-child','Perencanaan\PerencanaanController@saveChild');
+            Route::post('perencanaan/delete-child','Perencanaan\PerencanaanController@deleteChildAnggaran');
+            Route::post('perencanaan/save-kel-head-anggaran','Perencanaan\PerencanaanController@saveKelHead');
+            Route::post('perencanaan/save-kel-pertama-anggaran','Perencanaan\PerencanaanController@saveKelPertama');
+            Route::post('perencanaan/save-kel-kedua-anggaran','Perencanaan\PerencanaanController@saveKelKedua');
+            Route::post('perencanaan/save-kel-ketiga-anggaran','Perencanaan\PerencanaanController@saveKelKetiga');
+            Route::post('perencanaan/save-kel-keempat-anggaran','Perencanaan\PerencanaanController@saveKelKeempat');
+            Route::post('perencanaan/delete-kel-head-anggaran','Perencanaan\PerencanaanController@deleteKelompokHead');
+            Route::post('perencanaan/delete-kel-pertama-anggaran','Perencanaan\PerencanaanController@deleteKelompokPertama');
+            Route::post('perencanaan/delete-kel-kedua-anggaran','Perencanaan\PerencanaanController@deleteKelompokKedua');
+            Route::post('perencanaan/delete-kel-ketiga-anggaran','Perencanaan\PerencanaanController@deleteKelompokKetiga');
+            Route::post('perencanaan/delete-kel-keempat-anggaran','Perencanaan\PerencanaanController@deleteKelompokKeempat');
 
-                      Route::post('perencanaan/delete-kel-anggaran','Perencanaan\PerencanaanController@deleteKelompokAnggaran');
-                      Route::post('perencanaan/save-kel-anggaran','Perencanaan\PerencanaanController@saveKelompokAnggaran');
-                      Route::post('perencanaan/save-kegiatan-anggaran','Perencanaan\PerencanaanController@saveKegiatanAnggaran');
-                      Route::post('perencanaan/save-mata-anggaran','Perencanaan\PerencanaanController@saveMataAnggaran');
-                      Route::post('perencanaan/save-keterangan-belanja','Perencanaan\PerencanaanController@saveKeteranganBelanja');
-                      Route::get('perencanaan/get-total-mata-anggaran', 'Perencanaan\PerencanaanController@getTotalMataAnggaran');
-                      Route::get('perencanaan/get-keterangan-belanja', 'Perencanaan\PerencanaanController@getKeteranganBelanja');
+            Route::post('perencanaan/delete-kel-anggaran','Perencanaan\PerencanaanController@deleteKelompokAnggaran');
+            Route::post('perencanaan/save-kel-anggaran','Perencanaan\PerencanaanController@saveKelompokAnggaran');
+            Route::post('perencanaan/save-kegiatan-anggaran','Perencanaan\PerencanaanController@saveKegiatanAnggaran');
+            Route::post('perencanaan/save-mata-anggaran','Perencanaan\PerencanaanController@saveMataAnggaran');
+            Route::post('perencanaan/save-keterangan-belanja','Perencanaan\PerencanaanController@saveKeteranganBelanja');
+            Route::post('perencanaan/save-alokasi-keterangan-belanja','Perencanaan\PerencanaanController@saveAlokasiKeteranganBelanja');
+            Route::post('perencanaan/save-realisasi-spj','Perencanaan\PerencanaanController@saveRealisasiSPJ');
+            Route::get('perencanaan/get-total-mata-anggaran', 'Perencanaan\PerencanaanController@getTotalMataAnggaran');
+            Route::get('perencanaan/get-keterangan-belanja', 'Perencanaan\PerencanaanController@getKeteranganBelanja');
+            Route::get('perencanaan/get-spj', 'Perencanaan\PerencanaanController@getDataSPJ');
 
         // });
         // Route::group(['prefix' => 'piutang'], function () {
