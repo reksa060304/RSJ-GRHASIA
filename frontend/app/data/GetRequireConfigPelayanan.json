@@ -3247,6 +3247,10 @@
         {
             "nameDep": "AsuhanGiziLanjutPasienRawatInapCtrl",
             "urlDep": "module/EMR/AsuhanGiziLanjutPasienRawatInapCtrl"
+        },
+        {
+            "nameDep": "TerapiHarianPasienRawatInapCtrl",
+            "urlDep": "module/EMR/TerapiHarianPasienRawatInapCtrl"
         }
     ]
 }
