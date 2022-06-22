@@ -3251,6 +3251,10 @@
         {
             "nameDep": "AsesmenUlangNyeriCtrl",
             "urlDep": "module/EMR/AsesmenUlangNyeriCtrl"
+        },
+        {
+            "nameDep": "TerapiHarianPasienRawatInapCtrl",
+            "urlDep": "module/EMR/TerapiHarianPasienRawatInapCtrl"
         }
     ]
 }
