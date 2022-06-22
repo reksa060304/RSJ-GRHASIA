@@ -3247,6 +3247,10 @@
         {
             "nameDep": "AsuhanGiziLanjutPasienRawatInapCtrl",
             "urlDep": "module/EMR/AsuhanGiziLanjutPasienRawatInapCtrl"
+        },
+        {
+            "nameDep": "AsesmenUlangNyeriCtrl",
+            "urlDep": "module/EMR/AsesmenUlangNyeriCtrl"
         }
     ]
 }

@@ -3615,7 +3615,7 @@ class RegistrasiController extends ApiController
                     //     $extension = $runningNumber->reset . $runningNumber->extention;
                     // }
                     $noCmTerakhir = $runningNumber->nomer_terbaru + 1;
-                    $noCm = $extension . $noCmTerakhir;
+                    $noCm = '0'.$extension . $noCmTerakhir;
 
                     RunningNumber::where('id', $idRunningNumber)
                         ->update([

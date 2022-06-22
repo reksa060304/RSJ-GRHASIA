@@ -18042,5 +18042,27 @@
                 "define": "MedifirstService"
               }
             ]
+            },
+            {
+              "name": "RekamMedis.AsesmenMedis.AsesmenUlangNyeri",
+              "url": "/AsesmenUlangNyeri",
+              "templateurl": "module/EMR/AsesmenUlangNyeri.html",
+              "controller": "AsesmenUlangNyeriCtrl",
+              "deps": [{
+                  "module": "Services",
+                  "define": "Service"
+                },
+                {
+                  "module": "LoginServices",
+                  "define": "LoginService"
+                },
+                {
+                  "module": "MedifirstService",
+                  "define": "MedifirstService"
+                },
+                {
+                  "define": "RekamMedisCtrl"
+                }
+              ]
             }
 ]
