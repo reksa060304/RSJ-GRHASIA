@@ -2159,4 +2159,37 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         return view('report.EMR.suratketerangankesehatanjiwa',compact('data','pageWidth'));
     }
+    public function CetakHPPCFIT(Request $request)
+    {
+        $noemr = $request['noemr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $emrfk = $request['emfk'];
+        $data = \DB::select(DB::raw(
+            "SELECT epd.value, ed.type
+                FROM emrpasien_t ep
+                        INNER JOIN emrpasiend_t epd ON ep.noemr = epd.emrpasienfk
+                        INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
+                        INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
+                    WHERE ep.kdprofile = 30 AND ep.statusenabled = TRUE 
+                        AND ep.noemr ILIKE '$noemr' 
+                        AND ed.statusenabled = TRUE 
+                        AND ep.emrfk = $emrfk 
+                        AND ed.emrfk = $emrfk
+                ORDER BY
+	        ed.ID ASC
+            "
+        ));
+        foreach ($data as $z){
+            if ($z->type == 'datetime'){
+                $z->value=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->value)));
+                // $z->tgl=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgl)));
+            }
+            
+        }
+        // dd($data); 
+
+        $pageWidth = 950;
+        $res['d'] = $data;
+        return view('report.EMR.hppcfit',compact('res','pageWidth'));
+    }
 }
