@@ -1,51 +1,114 @@
-@extends('template.template')
+<html>
+<head>
+    <title>
+        Report
+    </title>
+        @if(stripos(\Request::url(), 'localhost') !== FALSE)
+         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+        @else
+         <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
+        @endif
+ 
+</head>
+<style type="text/css" media="print">
+    @page {
+        size: auto;   /* auto is the initial value */
+        margin: 0;  /* this affects the margin in the printer settings */
+    }
+</style>
+<style>
+    tr td {
+        padding: 2px 4px 2px 4px;
+    }
 
-@section('content')
+    .borderss {
+        border-bottom: 1px solid black;
+    }
+
+    body {
+        font-family: Arial;
+    }
+</style>
+<body style="background-color: #CCCCCC">
+<div align="center">
+    <table class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}">
+        <tbody>
+        <tr>
+            <td style="padding: 30px">
+                <div align="center">
+                    <p align="right">
+                        <!--                        <a href="#"><font face="Arial"><img src="image/report_print.png" onclick="window.print()" height="40" border="0" width="39"></font></a>-->
+                        <!--                        <a href="#"><font face="Arial"><img src="image/report_pdf.png" height="40" border="0" width="39"></font></a>-->
+                        <!--                        <a href="#"><font face="Arial"><img src="image/report_close.png" onclick="window.close()" height="40" border="0" width="39"></font></a>-->
+                        <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" height="133" border="0" width="100%"
+                               style="text-align: center">
+                            <tbody>
+                            <tr>
+                                <td style="text-align:left">
+                                    <div align="center">
+                                        <table cellspacing="0" cellpadding="0" height="74" border="0" width="850">
+                                            <tbody>
+                                            <tr>
+                                                <td valign="top"></td>
+                                            </tr>
+                                            <tr>
+                                                <td valign="top">
+                                                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                                        <tbody>
+                                                        <tr>
+                                                            <td width="105">
+                    <p align="left">
+                            @if(stripos(\Request::url(), 'localhost') !== FALSE)
+                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 80px" border="0">
+                            @else
+                              <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 80px" border="0">
+                            @endif
+                      
+                    </p>
+            </td>
+            @php
+             $d = App\Http\Controllers\Report\ReportController::getProfile();
+             @endphp
+            <td align="left">
+                <b>
+                    <font style="font-size: 18pt" color="#000000">{!! $d['namaprofile'] !!}</font>
+                    <br>
+                </b>
+{{--                <b>--}}
+{{--                    <font style="font-size: 18pt" color="#000000">{!! $d['alamat'] !!}</font>--}}
+{{--                    <br>--}}
+{{--                </b>--}}
+                <font size="3" color="#000000" style="font-weight: bold">{!! $d['alamat'] !!}<font>
+                    <br>
+                <font size="3" color="#000000" style="font-weight: bold">Tlpn. (0274) 895143, Fax. (0274) 895142<font>
+
+                {{--                                          <font style="font-size: 11pt" color="#000000"> : Jl. Ir. Djuanda No. 106 Km. 2--}}
+                {{--                                            Rancabango Kota--}}
+                {{--                                            Tasikmalaya<br>--}}
+                {{--                                            TAHUN AKADEMIK {{ $thn }}</font>--}}
+            </td>
+        </tr>
+        <tr>
+            <td width="105">&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        </tbody>
+    </table>
+    </td>
+    </tr>
+    </tbody>
+    </table>
+</div>
+<div style="margin-top: -10px">
+    <hr style="border:1px solid #000;margin-bottom:0px;border-style: solid">
+    <hr style="border:0.5px solid #000;margin-top:2px">
+</div>
+    <section class="content">
+        <div class="container-fluid">
 
 
     <div align="center">
         {{-- penting gais ini buat urlnya kalo localhost dan server itu beda --}}
-        
-        <!-- <table border="0" width="{{$pageWidth}}" bgcolor="#FFFFFF">
-            <thead>
-                <tr>
-                    <td width="2%">
-                        <p align="left" style="margin: 0%">
-                            @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 90px; padding-left: 40px; ">
-                            @else
-                            <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 90px; padding-left: 40px; ">
-                            @endif
-                            {{-- <font style="font-size: 10pt;" color="#000000" face="Arial"><b>RSJ GRHASIA</b></font><br> --}}
-                        </p>
-                        <p align="left" style="margin: 0%">
-                            <font style="font-size: 10pt;  padding-left: 40px;" color="#000000" face="Arial"><b>RSJ
-                                    GRHASIA</b></font><br>
-                        </p>
-                    </td>
-                    <td width="48%" border="0">
-                        <p align="left" style="margin: 0">
-                            <font style="font-size: 11pt;" color="#000000" face="Arial"><b>RUMAH SAKIT JIWA GRHASIA</b>
-                            </font><br>
-                        </p>
-                        <p align="left" style="margin: 0">
-                            @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/Aksara Jawa_Surat.png') }}" style="width: 170px; ">
-                            @else
-                            <img src="{{ asset('service/img/Aksara Jawa_Surat.png') }}" style="width: 170px; ">
-                            @endif
-                        </p>
-                        <p align="left" style="margin: 0px;">
-                            <font style="font-size: 8pt;line-height: 1px" color="#000000" face="Arial">
-                                Jalan Kaliurang Km 17 Sleman, Telepon: (0274) 895143, 895297 <br>
-                                Laman: grhasia.jogjaprov.go.id, Surel: <u>grhasiamentalhospital@gjogjaprov.go.id</u>
-                            </font><br>
-                        </p>
-
-                    </td>
-                </tr>
-            </thead>
-        </table> -->
         <table border="0" width="{{$pageWidth}}" bgcolor="#FFFFFF">
             <thead>
                 <tr>
@@ -81,4 +144,8 @@
                 @endforeach
         </table>
     </div>
-@endsection
+    </div>
+    </section>
+</div>
+</body>
+</html>
