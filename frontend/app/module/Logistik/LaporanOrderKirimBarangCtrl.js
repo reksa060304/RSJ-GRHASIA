@@ -9,16 +9,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isRouteLoading = false;
             $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD HH:mm');
             $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            LoadCombo()
+
+            function LoadCombo(){
+                medifirstService.get("logistik/get-combo-logistik?", true).then(function (dat) {                                                   
+                    $scope.listNoOrder = dat.data.noorder;
+                });
+            }
 
             function init() {
                 $scope.isRouteLoading = true;
+
+                var noorder = ''
+                if($scope.item.noorder != undefined && $scope.item.noorder != ''){
+                    noorder = $scope.item.noorder.noorder
+                }
                 
                 var tglawal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm');
                 var tglakhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm');
                 console.log($scope.item.tglAkhir)
                 medifirstService.get("logistik/get-rekap-order-kirim-barang?" +
                     "tglAwal=" + tglawal +
-                    "&tglAkhir=" + tglakhir
+                    "&tglAkhir=" + tglakhir +
+                    "&noorder=" + noorder
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var datas = dat.data.data
@@ -50,11 +63,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.cetakBlade = function () {
+                var noorder = ''
+                if($scope.item.noorder != undefined && $scope.item.noorder != ''){
+                    noorder = $scope.item.noorder.noorder
+                }
+                
                 var tglawal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm');
                 var tglakhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm');
                 window.open(baseTransaksi + "report/get-rekap-order-kirim-barang-cetak?" +
                 "tglAwal=" + tglawal +
-                "&tglAkhir=" + tglakhir, '_blank');
+                "&tglAkhir=" + tglakhir +
+                "&noorder=" + noorder, '_blank');
             }
             
             $scope.formatTanggal = function (tanggal) {

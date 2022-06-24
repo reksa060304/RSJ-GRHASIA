@@ -7201,6 +7201,9 @@ class LaporanPengunjungController extends ApiController
         if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
             $data = $data->where('rg.id', '=', $request['ruanganId']);
         }
+        if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
+            $data = $data->where('pro.namaproduk', 'ilike', '%'.$request['namaproduk'].'%');
+        }
         if (isset($request['nocm']) && $request['nocm'] != "" && $request['nocm'] != "undefined") {
             $data = $data->where('ps.nocm', 'ilike', '%'.$request['nocm'].'%');
 //				->orWhere('ps.namapasien', 'ilike', '%'.$filter['noRmNama'].'%')	;

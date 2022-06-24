@@ -2706,6 +2706,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('tatarekening/get-data-kelas-antrianpasien','TataRekening\TagihanController@getDataKelasAntrian');
           Route::get('tatarekening/get-laporan-rekap-kunjungan','TataRekening\TagihanController@getRekapKunjungan');
           Route::get('tatarekening/get-laporan-rekap-tindakan','TataRekening\TagihanController@getRekapTindakan');
+          Route::get('tatarekening/get-laporan-rekap-tindakan-detail','TataRekening\TagihanController@getRekapTindakanDetail');
             //*****END*****
 
             // Route::group(['prefix' => 'tindakan'], function () {

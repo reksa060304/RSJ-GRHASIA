@@ -73,12 +73,21 @@
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.dokter" k-data-text-field=" 'namalengkap' "
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listDokter " />
     </div>
-    <div class="grid_2" style="margin-top:5px">
+    <div class="grid_2" style="margin-top:5px" ng-hide="true">
         <div class="grid_12">
             <label c-label item="item" c-label-text="Kabupaten"></label>
         </div>
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.kabupaten" k-data-text-field=" 'namakotakabupaten' "
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listKotaKabupaten" />
+    </div>
+    <div class="grid_3" style="margin-top:5px">
+        <div class="grid_12">
+            <label c-label item="item" c-label-text="Nama Produk"></label>
+        </div>
+        <div class="grid_12">
+            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaProdukScr" 
+            ng-keypress="($event.which == 13)? cariFilter():item.namaProdukScr"/>
+        </div>
     </div>
     <div class="grid_4" style="margin-top:5px">
         <div class="grid_12">

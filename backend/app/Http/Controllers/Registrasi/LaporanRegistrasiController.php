@@ -58,6 +58,7 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         foreach ($deptPelayanan as $itemPelayanan){
             $kdDepartemenRawatPelayanan []=  (int)$itemPelayanan;
         }
+        array_push($kdDepartemenRawatPelayanan, 63);
         $kdDepartemenRawatInap = [];
         foreach ($deptPelayananRanap as $iteng){
             $kdDepartemenRawatInap []=  (int)$iteng;

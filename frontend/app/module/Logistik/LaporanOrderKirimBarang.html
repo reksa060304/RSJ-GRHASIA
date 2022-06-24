@@ -39,6 +39,12 @@
                         <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datetimepicker placeholer="yyyy-mm-dd"
                             k-format="'yyyy-MM-dd HH:mm'" />
                     </div>
+                    <div class="grid_2">
+                        <label c-label item="item" c-label-text="No Order"></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.noorder"
+                            k-data-text-field="'noorder'" k-data-value-field="'norec'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listNoOrder" />
+                    </div>
                     <div class="grid_2" style="margin-top: 18px;">
                         <button class="c-button" ng-click="cariFilter()">Cari</button>
                     </div>
