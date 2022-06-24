@@ -2042,6 +2042,41 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         return view('report.EMR.suratketerangandokter',compact('data','pageWidth'));
     }
+
+
+    public function CetakLapOrderKirim(Request $request)
+    {   
+        // $norec = $request['emr'];
+        //$kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $data = \DB::select(DB::raw("select tglkirim, nokirim, namaproduk, jumlahorder, sum(jumlahkirim) jumlahkirim
+        from(
+        select skm.tglkirim, skm.nokirim, pr.namaproduk,
+        case when so.norec is null then 0 else op.qtyproduk end as jumlahorder,
+        krp.qtyproduk jumlahkirim
+        from strukkirim_t skm
+        inner join kirimproduk_t krp on krp.nokirimfk = skm.norec
+        inner join produk_m pr on pr.id = krp.objectprodukfk
+        left join strukorder_t so on so.norec = skm.noorderfk
+        left join orderpelayanan_t op on so.norec = op.strukorderfk and op.objectprodukfk = krp.objectprodukfk
+        where skm.statusenabled = true and skm.kdprofile = 30
+        and krp.statusenabled = true and krp.kdprofile = 30
+        and skm.tglkirim::date between '$tglAwal' and '$tglAkhir' 
+        and so.statusenabled = true and so.kdprofile = 30
+        and so.tglorder::date between '$tglAwal' and '$tglAkhir' and so.noorder ilike 'OTRF%'
+        and op.statusenabled = true and op.kdprofile = 30
+        group by skm.tglkirim, skm.nokirim, pr.namaproduk, so.norec, op.qtyproduk, krp.qtyproduk
+        order by skm.nokirim
+        ) as x group by tglkirim, nokirim, namaproduk, jumlahorder;
+        "));
+        
+        $pageWidth = 950;
+        return view('report.apotik.laporderkirimbarang',compact('data','pageWidth', 'tglAwal', 'tglAkhir'));
+    }
+
+
     function tanggal_indonesia($tanggal){
         $bulan = array (
         1 =>   'Januari',

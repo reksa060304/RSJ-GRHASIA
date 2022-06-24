@@ -1,5 +1,6 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('LaporanOrderKirimBarangCtrl', ['$scope', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($scope, $state, cacheHelper, dateHelper, medifirstService) {
             $scope.item = {};
@@ -46,6 +47,14 @@ define(['initialize'], function (initialize) {
 
             $scope.cariFilter = function () {
                 init();
+            }
+
+            $scope.cetakBlade = function () {
+                var tglawal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm');
+                var tglakhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm');
+                window.open(baseTransaksi + "report/get-rekap-order-kirim-barang-cetak?" +
+                "tglAwal=" + tglawal +
+                "&tglAkhir=" + tglakhir, '_blank');
             }
             
             $scope.formatTanggal = function (tanggal) {
