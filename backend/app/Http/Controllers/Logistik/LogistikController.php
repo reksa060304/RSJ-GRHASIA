@@ -14103,5 +14103,4 @@ class LogistikController extends ApiController{
 
         return $this->respond($result);
     }
-    
 }
