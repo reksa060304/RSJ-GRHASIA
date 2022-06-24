@@ -70,7 +70,7 @@
             @php
              $d = App\Http\Controllers\Report\ReportController::getProfile();
              @endphp
-            <td align="left">
+            <td align="center">
                 <b>
                     <font style="font-size: 18pt" color="#000000">{!! $d['namaprofile'] !!}</font>
                     <br>
@@ -80,8 +80,6 @@
 {{--                    <br>--}}
 {{--                </b>--}}
                 <font size="3" color="#000000" style="font-weight: bold">{!! $d['alamat'] !!}<font>
-                    <br>
-                <font size="3" color="#000000" style="font-weight: bold">Tlpn. (0274) 895143, Fax. (0274) 895142<font>
 
                 {{--                                          <font style="font-size: 11pt" color="#000000"> : Jl. Ir. Djuanda No. 106 Km. 2--}}
                 {{--                                            Rancabango Kota--}}
@@ -104,12 +102,23 @@
     <hr style="border:1px solid #000;margin-bottom:0px;border-style: solid">
     <hr style="border:0.5px solid #000;margin-top:2px">
 </div>
-    <section class="content">
-        <div class="container-fluid">
-            @yield('content')
-            @include('template.footer')
-        </div>
-    </section>
+</td>
+</tr>
+
+
+@include('template.content')
+@include('template.footer')
+
+</tbody>
+</table>
+</p>
+</div>
+</td>
+
+</tr>
+
+</tbody>
+</table>
 </div>
 </body>
 </html>
