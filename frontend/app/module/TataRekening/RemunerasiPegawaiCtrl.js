@@ -35,13 +35,20 @@ define(['initialize'], function (initialize) {
 				
 				medifirstService.get('tatarekening/get-daftar-remun-pegawai-fix?tglawal='+ tglawal + "&tglakhir="+ tglakhir).then(function (e) {
 					$scope.isRouteLoading = false
-					if(e.data.data[0].tglverif != null){
-                        $scope.disposting = true;
-                        $scope.posting = false;
-                    } else if(e.data.data[0].tglverif == null){
+					if(e.data.data.length > 0){
+                        if(e.data.data[0].tglverif != null){
+                            $scope.disposting = true;
+                            $scope.tanggalv = e.data.data[0].tglverif
+                        } else if(e.data.data[0].tglverif == null){
+                            $scope.disposting = false;
+                        }
+                    } else{
                         $scope.disposting = false;
-                        $scope.posting = true;
                     }
+
+					for(var i =0 ; i< e.data.data.length; i++){
+						e.data.data[i].tglinput = ''
+					}
 					
 					$scope.noposting = e.data.data[0].noposting
 					console.log($scope.noposting)
@@ -179,7 +186,7 @@ define(['initialize'], function (initialize) {
 				},
 				{
 					"field": "idpegawai",
-					"title": "Kd Pegawai",
+					"title": "kd",
                     "width": '200px',			
 				},
 				{
@@ -226,7 +233,7 @@ define(['initialize'], function (initialize) {
 				},
 				{
 					"field": "uangffs",
-					"title": "Uang FFS",
+					"title": "uangffs",
                     "width": '150px',
                     "template": "<span class='style-right'>{{formatRupiah('#: uangffs #', 'Rp.')}}</span>",
 				},
@@ -262,6 +269,11 @@ define(['initialize'], function (initialize) {
 				{
 					"field": "tglverif",
 					"title": "Tgl Verif",
+                    "width": '150px',
+				},
+				{
+					"field": "tglinput",
+					"title": "tglinput",
                     "width": '150px',
 				},
 			];
@@ -305,6 +317,57 @@ define(['initialize'], function (initialize) {
                     // sheet.frozenRows = 2;
                     //sheet.mergedCells = ["A1:H1"];
                     sheet.name = "Master Produk";
+					sheet.rows[0].cells[0].background = '#ffffff'; 
+                    sheet.rows[0].cells[0].color = '#000000';
+                    sheet.rows[0].cells[0].textAlign = 'center';
+                    sheet.rows[0].cells[1].background = '#ffffff'; 
+                    sheet.rows[0].cells[1].color = '#000000';
+                    sheet.rows[0].cells[1].textAlign = 'center'; 
+                    sheet.rows[0].cells[2].background = '#ffffff'; 
+                    sheet.rows[0].cells[2].color = '#000000';
+                    sheet.rows[0].cells[2].textAlign = 'center'; 
+                    sheet.rows[0].cells[3].background = '#ffffff'; 
+                    sheet.rows[0].cells[3].color = '#000000';
+                    sheet.rows[0].cells[3].textAlign = 'center'; 
+                    sheet.rows[0].cells[4].background = '#ffffff'; 
+                    sheet.rows[0].cells[4].color = '#000000';
+                    sheet.rows[0].cells[4].textAlign = 'center';
+					sheet.rows[0].cells[5].background = '#ffffff'; 
+                    sheet.rows[0].cells[5].color = '#000000';
+                    sheet.rows[0].cells[5].textAlign = 'center'; 
+                    sheet.rows[0].cells[6].background = '#ffffff'; 
+                    sheet.rows[0].cells[6].color = '#000000';
+                    sheet.rows[0].cells[6].textAlign = 'center'; 
+                    sheet.rows[0].cells[7].background = '#ffffff'; 
+                    sheet.rows[0].cells[7].color = '#000000';
+                    sheet.rows[0].cells[7].textAlign = 'center'; 
+                    sheet.rows[0].cells[8].background = '#ffffff'; 
+                    sheet.rows[0].cells[8].color = '#000000';
+                    sheet.rows[0].cells[8].textAlign = 'center';
+					sheet.rows[0].cells[9].background = '#ffffff'; 
+                    sheet.rows[0].cells[9].color = '#000000';
+                    sheet.rows[0].cells[9].textAlign = 'center'; 
+                    sheet.rows[0].cells[10].background = '#ffffff'; 
+                    sheet.rows[0].cells[10].color = '#000000';
+                    sheet.rows[0].cells[10].textAlign = 'center'; 
+                    sheet.rows[0].cells[11].background = '#ffffff'; 
+                    sheet.rows[0].cells[11].color = '#000000';
+                    sheet.rows[0].cells[11].textAlign = 'center'; 
+                    sheet.rows[0].cells[12].background = '#ffffff'; 
+                    sheet.rows[0].cells[12].color = '#000000';
+                    sheet.rows[0].cells[12].textAlign = 'center';
+					sheet.rows[0].cells[13].background = '#ffffff'; 
+                    sheet.rows[0].cells[13].color = '#000000';
+                    sheet.rows[0].cells[13].textAlign = 'center'; 
+                    sheet.rows[0].cells[14].background = '#ffffff'; 
+                    sheet.rows[0].cells[14].color = '#000000';
+                    sheet.rows[0].cells[14].textAlign = 'center'; 
+                    sheet.rows[0].cells[15].background = '#ffffff'; 
+                    sheet.rows[0].cells[15].color = '#000000';
+                    sheet.rows[0].cells[15].textAlign = 'center'; 
+					sheet.rows[0].cells[16].background = '#ffffff'; 
+                    sheet.rows[0].cells[16].color = '#000000';
+                    sheet.rows[0].cells[16].textAlign = 'center'; 
 
                     // var myHeaders = [{
                     //     value: "Master Produk",
