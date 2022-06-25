@@ -19,7 +19,7 @@
 								</div>
 								<div class="grid_4">
 									<div class="grid_12">
-										<label><b>NIP</b></label>
+										<label><b>NIP / NIK</b></label>
 									</div>
 									<div class="grid_12">
 										<input c-text-box type="input" filter="'varchar'" class="k-textbox"
@@ -1042,7 +1042,7 @@
 								<div class="grid_12">
 									<div class="grid_4">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="JenisJabatan"></label>
+											<label c-label item="item" >Jenis Jabatan</label>
 										</div>
 										<div class="grid_12">
 											<input kendo-combo-box k-ng-model="itemJabatan.jenisJabatan"
@@ -1053,7 +1053,7 @@
 									</div>
 									<div class="grid_4">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="Jabatan"></label>
+											<label c-label >Jabatan</label>
 										</div>
 										<div class="grid_12">
 											<input kendo-combo-box k-ng-model="itemJabatan.jabatan"
@@ -1063,7 +1063,7 @@
 									</div>
 									<div class="grid_4">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="No SK"></label>
+											<label c-label>No SK</label>
 										</div>
 										<div class="grid_12">
 											<input c-text-box type="input" filter="'varchar'" class="k-textbox"
@@ -1074,7 +1074,7 @@
 								<div class="grid_12">
 									<div class="grid_4">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="Tanggal SK"></label>
+											<label c-label>Tanggal SK</label>
 										</div>
 										<div class="clear"></div>
 										<div class="grid_12">
@@ -1084,23 +1084,23 @@
 									</div>
 									<div class="grid_4">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="tandaTangan SK"></label>
+											<label c-label> Tanda Tangan SK</label>
 										</div>
 										<div class="grid_12">
-											<input style="width: 100%;" kendo-combo-box k-ng-model="itemJabatan.ttdSK"
-												k-data-text-field="'namalengkap'" k-data-value-field="'id'"
-												k-filter="'contains'" k-auto-bind="false" k-data-source="listPgw" />
+											<div class="grid_12">
+												<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="itemJabatan.ttdSK" />
+											</div>
 										</div>
 									</div>
 									<div class="grid_4">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="Jabatan tandaTangan SK"></label>
+											<label c-label> Jabatan Tanda Tangan SK</label>
 										</div>
 										<div class="grid_12">
-											<input kendo-combo-box k-ng-model="itemJabatan.jabatanTtd"
-												k-data-text-field="'namajabatan'" k-data-value-field="'id'"
-												k-filter="'contains'" k-auto-bind="false"
-												k-data-source="ListJabatanFungsional" />
+											<div class="grid_12">
+												<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="itemJabatan.jabatanTtd" />
+											</div>
+											
 										</div>
 									</div>
 								</div>
