@@ -53,6 +53,11 @@ define(['initialize'], function (initialize) {
                     rajalranap = $scope.item.rajalranap.id;
                 }
 
+                var asalrujukan = ""
+				if ($scope.item.asalrujukan != undefined) {
+                    asalrujukan = $scope.item.asalrujukan.id;
+                }
+
                 var departemen = ""
 				if ($scope.item.departemen != undefined) {
                     departemen = $scope.item.departemen.id;
@@ -69,6 +74,7 @@ define(['initialize'], function (initialize) {
                     "tglAwal=" + tglAwal +
                     "&rajalranap=" + rajalranap +
                     "&departemen=" + departemen +
+                    "&asalrujukan=" + asalrujukan +
                     "&ruangan=" + ruangan
                     ).then(function (dat) {
                         
