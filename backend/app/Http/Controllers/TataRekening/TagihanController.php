@@ -12556,6 +12556,69 @@ $result = array(
         return $this->respond($data);
     }
 
+
+    public function getRekapTindakanDetail(Request $request)
+    {
+        //ini_set('max_execution_time', 3000); //6 minutes
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $kdProfile = $this->getDataKdProfile($request);
+        $departemen = '';
+        $ruangan = '';
+        $produk = '';
+
+        if (isset($request['departemen']) && $request['departemen'] != "" && $request['departemen'] != "undefined") {
+            $departemen = ' and ru.objectdepartemenfk = '.$request['departemen'];
+        }
+
+        if (isset($request['ruangan']) && $request['ruangan'] != "" && $request['ruangan'] != "undefined") {
+            $ruangan = ' and ru.id = '.$request['ruangan'];
+        }
+
+        if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
+            $produk = " AND pr.namaproduk ilike '%"  . $request['namaproduk']."%'";
+        }
+
+
+        $dataz = DB::select(DB::raw("select
+        ps.nocm, pp.tglpelayanan as tglperiksa, pr.namaproduk, ps.namapasien, jk.jeniskelamin, alm.alamatlengkap,
+        case when dsk.namadesakelurahan is not null then dsk.namadesakelurahan else '-' end as namadesakelurahan,
+        case when alm.kecamatan is not null then alm.kecamatan else '-' end as kecamatan, 
+        case when kkb.namakotakabupaten is not null then kkb.namakotakabupaten else '-' end as namakotakabupaten, 
+        ru.namaruangan, 
+        case when pg.namalengkap is not null then pg.namalengkap else '-' end as dokter      
+        FROM
+                        pasiendaftar_t pd
+                        INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                        INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                        inner join produk_m pr on pr.id=pp.produkfk
+                                        left join jeniskelamin_m as jk on jk.id = ps.objectjeniskelaminfk
+                                        left join agama_m as ag on ag.id = ps.objectagamafk
+                                        left join alamat_m as alm on alm.nocmfk = ps.id
+                                        left join desakelurahan_m as dsk on dsk.id = alm.objectdesakelurahanfk
+                                        left join kotakabupaten_m as kkb on kkb.id = alm.objectkotakabupatenfk
+                                        left join pegawai_m as pg on pg.id = pd.objectdokterpemeriksafk
+                        WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
+                        and apd.kdprofile = 30
+                        and pd.kdprofile = 30
+                        and apd.statusenabled = true
+                        and pd.statusenabled=true
+                        and pp.isobat is null
+                        $departemen
+                        $ruangan
+                        $produk
+        group by ps.nocm, pp.tglpelayanan, pr.namaproduk, ps.namapasien, jk.jeniskelamin, alm.alamatlengkap,
+        case when dsk.namadesakelurahan is not null then dsk.namadesakelurahan else '-' end,
+        case when alm.kecamatan is not null then alm.kecamatan else '-' end, 
+        case when kkb.namakotakabupaten is not null then kkb.namakotakabupaten else '-' end, 
+        ru.namaruangan, case when pg.namalengkap is not null then pg.namalengkap else '-' end"));
+
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
+
     public function getRekapTindakan(Request $request)
     {
         

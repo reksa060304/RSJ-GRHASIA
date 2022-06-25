@@ -97,10 +97,18 @@ define(['initialize'], function (initialize) {
                     kotaKab = "&kotaKab=" + $scope.item.kabupaten.id
                 }
 
+                var NamaProduk = "";
+                if ($scope.item.namaProdukScr === undefined || $scope.item.namaProdukScr == null) {
+					NamaProduk = "";
+				} else {
+					NamaProduk = $scope.item.namaProdukScr
+				}
+
 
                 medifirstService.get("registrasi/laporan/get-data-lap-pengunjung-tindakan?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
+                    "&namaproduk=" + NamaProduk +
                     rm +
                     pasien +
                     namaruangan +

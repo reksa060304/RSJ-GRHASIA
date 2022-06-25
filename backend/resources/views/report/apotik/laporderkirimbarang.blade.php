@@ -123,6 +123,12 @@
                             <font style="font-size: 13pt; vertical-align: top;" color="#000000" face="Arial">
                                 <b>Periode : </b>{{$tglAwal}} </b>s/d {{$tglAkhir}}
                             </font>
+                            <br>
+                            @if($noorder != '')
+                            <font style="font-size: 13pt; vertical-align: top;" color="#000000" face="Arial">
+                                <b>No Order : </b>{{$noorder}}
+                            </font>
+                            @endif
                         </p>
                     </td>
                 </tr>
@@ -142,6 +148,67 @@
                     <td width="50" style="padding-left: 20px ">{{$tb->jumlahkirim}}</td>
                 </tr>
                 @endforeach
+        </table>
+        <table border="0" width="{{$pageWidth}}" bgcolor="#FFFFFF">
+            <thead>
+                <tr>
+                    <td>
+                        <p align="center" style="margin-right: 30px; margin-top: 50px; margin-bottom:50px">
+                            <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                    Yang Memberi
+                            </font>
+                            <br>
+                            <font style="font-size: 12pt; vertical-align: top;" color="#000000" face="Arial">
+                                Apoteker
+                            </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="center" style="margin-right: 30px; margin-top: 50px; margin-bottom:50px">
+                            <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                    Yang Meminta
+                            </font>
+                            <br>
+                            <font style="font-size: 12pt; vertical-align: top;" color="#000000" face="Arial">
+                                    Asisten Apoteker
+                            </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr></tr>
+                <tr></tr>
+                <tr></tr>
+                <tr></tr>
+                <tr>
+                    <td>
+                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
+                            <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                <u>
+                                    Mau'idzatul Hasanah NurilHidayah,S.Farm,Apt
+                                </u>
+                            </font>
+                        </p>
+                        <p align="left" style="margin-right: 30px; margin-left: 99px; margin-top: -10px; margin-bottom:50px">
+                            <font style="font-size: 12pt;" color="#000000" face="Arial">
+                                    NIP
+                            </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
+                            <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                <u>
+                                    Teguh Budhianto, A.Md. Farm
+                                </u>  
+                            </font>
+                        </p>
+                        <p align="left" style="margin-right: 30px; margin-left: 65px; margin-top: -10px; margin-bottom:50px">
+                            <font style="font-size: 12pt;" color="#000000" face="Arial">
+                                    NIP
+                            </font>
+                        </p>
+                    </td>
+                </tr>
         </table>
     </div>
     </div>

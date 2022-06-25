@@ -2050,6 +2050,12 @@ class ReportController extends ApiController{
         //$kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
+        $noorder = $request['noorder'];
+        $searchnoorder = '';
+
+        if(isset($request['noorder']) && $request['noorder'] != '' && $request['noorder'] != null){
+            $searchnoorder = "and so.noorder = '".$noorder."'";
+        }
 
         $data = \DB::select(DB::raw("select tglkirim, nokirim, namaproduk, jumlahorder, sum(jumlahkirim) jumlahkirim
         from(
@@ -2067,13 +2073,14 @@ class ReportController extends ApiController{
         and so.statusenabled = true and so.kdprofile = 30
         and so.tglorder::date between '$tglAwal' and '$tglAkhir' and so.noorder ilike 'OTRF%'
         and op.statusenabled = true and op.kdprofile = 30
+        $searchnoorder
         group by skm.tglkirim, skm.nokirim, pr.namaproduk, so.norec, op.qtyproduk, krp.qtyproduk
         order by skm.nokirim
         ) as x group by tglkirim, nokirim, namaproduk, jumlahorder;
         "));
         
         $pageWidth = 950;
-        return view('report.apotik.laporderkirimbarang',compact('data','pageWidth', 'tglAwal', 'tglAkhir'));
+        return view('report.apotik.laporderkirimbarang',compact('data','pageWidth', 'tglAwal', 'tglAkhir', 'noorder'));
     }
 
 

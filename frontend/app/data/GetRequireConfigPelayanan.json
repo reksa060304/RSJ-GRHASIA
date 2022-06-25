@@ -3140,6 +3140,10 @@
             "urlDep": "module/TataRekening/LaporanTataRekening/LaporanRekapTindakanCtrl"
         },
         {
+            "nameDep": "LaporanRekapTindakanDetailCtrl",
+            "urlDep": "module/TataRekening/LaporanTataRekening/LaporanRekapTindakanDetailCtrl"
+        },
+        {
             "nameDep": "AsesmenMedisSpesialisAnakCtrl",
             "urlDep": "module/EMR/AsesmenMedisSpesialisAnakCtrl"
         },
