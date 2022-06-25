@@ -66,7 +66,6 @@ define(['initialize'], function (initialize) {
                     toolbar: ["excel"],
                     excel: {
                         fileName: "Laporan Pelayanan Rehabilitasi Medik.xlsx",
-                        filterable: true,
                         allPages: true
                     },
                     excelExport: function (e) {
