@@ -155,7 +155,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 toolbar: [
                     {
                         name: "add", text: "Tambah",
-                        template: '<button ng-click="inputBaru()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button>'
+                        template: '<button ng-click="inputBaru()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button>',
+                     
                     },
 
                 ],
@@ -165,8 +166,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             "command": [
                                 { text: "Download", click: DownloadBerkas, imageClass: "k-icon k-i-download" },
                                 { text: "Lihat", click: LihatBerkas, imageClass: "k-icon fa fa-eye" },
-                                { text: "Hapus", click: hapus, imageClass: "k-icon k-i-close" },
-                                { text: "Edit", click: editBerkas, imageClass: "k-icon k-i-pencil" },
+                                { text: "Hapus", click: hapus, imageClass: "k-icon k-i-close" ,hidden:  $scope.cachePARAM != undefined},
+                                { text: "Edit", click: editBerkas, imageClass: "k-icon k-i-pencil" ,  hidden:  $scope.cachePARAM != undefined},
                                 { text: "Verify", click: verifyData, imageClass: "k-icon fa fa-check" },
                             ],
                             title: "",
@@ -230,7 +231,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                     ]
             }
+            if($scope.cachePARAM !=undefined){
+                $(".k-grid-toolbar#Grid").hide();
+            }
             $scope.inputBaru = function () {
+                if($scope.cacheRM == undefined){
+                    toastr.error('Tidak bisa menambah data')
+                    return
+                }
                 clear()
                 $scope.dataSelected = undefined
                 $scope.norecDOK = undefined
@@ -259,6 +267,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.dataSelected = dataSelected
             }
             function editBerkas(e) {
+                if($scope.cacheRM == undefined){
+                    toastr.error('Tidak bisa memproses data')
+                    return
+                }
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 $scope.item.norecDOK = dataItem.id
@@ -288,6 +300,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function hapus(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if($scope.cacheRM == undefined){
+                    toastr.error('Tidak bisa memproses data')
+                    return
+                }
                 medifirstService.post("bsre-esign/delete-ttd?id=" + dataItem.id).then(function (dat) {
                     init()
                 });
