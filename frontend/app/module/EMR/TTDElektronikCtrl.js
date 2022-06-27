@@ -267,12 +267,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.dataSelected = dataSelected
             }
             function editBerkas(e) {
+               
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 if($scope.cacheRM == undefined){
                     toastr.error('Tidak bisa memproses data')
                     return
                 }
-                e.preventDefault();
-                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 $scope.item.norecDOK = dataItem.id
                 $scope.item.pegawai = { id: dataItem.pegawaifk, namalengkap: dataItem.namalengkap }
                 $scope.item.nik = dataItem.nik_pegawai
