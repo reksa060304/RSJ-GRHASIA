@@ -138,12 +138,14 @@
         <table border="1" width="{{$pageWidth}}" bgcolor="#FFFFFF">
                 <tr>
                     <td width="150" style="padding-left: 60px; font-weight: bold ">Nama Obat</td>
+                    <td width="50" style="padding-left: 20px; font-weight: bold ">Satuan</td>
                     <td width="50" style="padding-left: 20px; font-weight: bold  ">Qty Order</td>
                     <td width="50" style="padding-left: 20px; font-weight: bold  ">Qty Kirim</td>
                 </tr>
                 @foreach ($data as $tb)
                 <tr>
                     <td width="150" style="padding-left: 60px ">{{$tb->namaproduk}}</td>
+                    <td width="50" style="padding-left: 20px ">{{$tb->satuanstandar}}</td>
                     <td width="50" style="padding-left: 20px ">{{$tb->jumlahorder}}</td>
                     <td width="50" style="padding-left: 20px ">{{$tb->jumlahkirim}}</td>
                 </tr>
@@ -157,20 +159,12 @@
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     Yang Memberi
                             </font>
-                            <br>
-                            <font style="font-size: 12pt; vertical-align: top;" color="#000000" face="Arial">
-                                Apoteker
-                            </font>
                         </p>
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; margin-top: 50px; margin-bottom:50px">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     Yang Meminta
-                            </font>
-                            <br>
-                            <font style="font-size: 12pt; vertical-align: top;" color="#000000" face="Arial">
-                                    Asisten Apoteker
                             </font>
                         </p>
                     </td>
@@ -184,7 +178,7 @@
                         <p align="center" style="margin-right: 30px; margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                 <u>
-                                    Mau'idzatul Hasanah NurilHidayah,S.Farm,Apt
+                                    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
                                 </u>
                             </font>
                         </p>
@@ -198,7 +192,7 @@
                         <p align="center" style="margin-right: 30px; margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                 <u>
-                                    Teguh Budhianto, A.Md. Farm
+                                    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
                                 </u>  
                             </font>
                         </p>
