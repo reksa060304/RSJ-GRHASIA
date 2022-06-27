@@ -420,7 +420,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             $scope.popUpFile.close()
                           
                         }else{
-                            toastr.error(error.message);
+                            toastr.error(result.message);
                         }
 
                       
@@ -430,6 +430,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                         btnSimpan.empty();
                         btnSimpan.append(textElementSimpan);
+                        $scope.disabledSimpan = false;
+                        $scope.disabledBatal = false;
                         // $scope.disabledSimpan = false;
                         // $scope.disabledBatal = false;
                         // $scope.popUpFile.close()
