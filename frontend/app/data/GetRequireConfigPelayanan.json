@@ -3259,6 +3259,10 @@
         {
             "nameDep": "TerapiHarianPasienRawatInapCtrl",
             "urlDep": "module/EMR/TerapiHarianPasienRawatInapCtrl"
+        },
+        {
+            "nameDep": "TTDElektronikCtrl",
+            "urlDep": "module/EMR/TTDElektronikCtrl"
         }
     ]
 }

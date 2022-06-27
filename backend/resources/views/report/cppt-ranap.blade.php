@@ -4,13 +4,14 @@
 <head>
     <meta charset="utf-8">
     <title>Resume Medis</title>
+       @if(stripos(\Request::url(), 'localhost') !== FALSE)
     <link rel="stylesheet" href="{{ asset('css/report/paper.css') }}">
     <link rel="stylesheet" href="{{ asset('css/report/table.css') }}">
     <link rel="stylesheet" href="{{ asset('css/report/tabel.css') }}">
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/jquery.qr-code.js') }}"></script>
 
-    @if(stripos(\Request::url(), 'localhost') !== FALSE)
+ 
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <!-- angular -->
         <script src="{{ asset('js/angular/angular.min.js') }}" type="text/javascript"></script>
@@ -19,14 +20,19 @@
         <script type="text/javascript" src="{{ asset('js/angular/angular-aria.min.js') }}"></script>
         <script src="{{ asset('js/angular/angular-material.js') }}" type="text/javascript"></script>
     @else
+      <link rel="stylesheet" href="{{ asset('service/css/report/paper.css') }}">
+    <link rel="stylesheet" href="{{ asset('service/css/report/table.css') }}">
+    <link rel="stylesheet" href="{{ asset('service/css/report/tabel.css') }}">
+    <script src="{{ asset('service/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('service/js/jquery.qr-code.js') }}"></script>
 
-        <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+        <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
         <!-- angular -->
-        <script src="{{ asset('js/angular/angular.min.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('js/angular/angular-route.min.js') }}" type="text/javascript"></script>
-        <script type="text/javascript" src="{{ asset('js/angular/angular-animate.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('js/angular/angular-aria.min.js') }}"></script>
-        <script src="{{ asset('js/angular/angular-material.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('service/js/angular/angular.min.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('service/js/angular/angular-route.min.js') }}" type="text/javascript"></script>
+        <script type="text/javascript" src="{{ asset('service/js/angular/angular-animate.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('service/js/angular/angular-aria.min.js') }}"></script>
+        <script src="{{ asset('service/js/angular/angular-material.js') }}" type="text/javascript"></script>
     @endif
     <style>
         @page {
@@ -75,14 +81,14 @@
             vertical-align: text-top;
         }
         table {
-            width: 100%;
-            height: 100%;
+            /* width: 100%;
+            height: 100%; */
         }
     </style>
 </head>
 
 <body class="A4" style="font-family:Tahoma;height: auto" ng-controller="cetakCPPTRanapCtrl">
-<section class="sheet padding-10mm" style="font-family:Tahoma;height: auto">
+<section class="sheet padding-10mm" style="font-family:Tahoma">
 {{--    <thead>--}}
 {{--    <tr>--}}
 {{--        <th>--}}
@@ -92,7 +98,12 @@
                     <tbody>
                     <tr>
                         <td width="10%" style="padding: 5px">
-                            <img src="{{ asset('img/logo_only.png') }}" alt="" style="width: 90px;">
+                            @if(stripos(\Request::url(), 'localhost') !== FALSE)
+                               <img src="{{ asset('img/logo_only.png') }}" alt="" style="width: 90px;">
+                            @else
+                              <img src="{{ asset('service/img/logo_only.png') }}" alt="" style="width: 90px;">
+                            @endif
+                          
                         </td>
                         <td style="text-align: left">
                             <b>
@@ -431,46 +442,55 @@
                         </td>
                     </tr>
                 </table>
-                <table>
-                    <tbody>
-                    <tr>
-                        <td width="33%" style="text-align: center">
+                <div class="footer">
+                  
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td width="33%" style="text-align: center">
+                                
+                            </td>
+
+                            <td width="33%"></td>
+                            <td width="33%"><b>Yogyakarta</b>, {!! date('d-m-Y') !!} <br>
+                                <b>Dokter Penanggung Jawab</b></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <!-- <div style="text-align: center" id="qrPasien"></div> -->
+                            </td>
+                            <td></td>
+                            <td height="90px">
+                                {{-- <div style="text-align: center" id="qrDokter"></div> --}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="text-align: center">
                             
-                        </td>
+                            </td>
+                            <td style="text-align: center">&nbsp;</td>
+                            <td style="text-align: center"><span style="font-weight: bold;color: #ccc">Ditandatangani secara elektronik</span>
+                                <br>{!! $res['d'][0]->namadokter !!}
+                            </td>
+                        </tr>
 
-                        <td width="33%"></td>
-                        <td width="33%"><b>Bandung</b>, {!! date('d-m-Y') !!} <br>
-                            <b>Dokter Penanggung Jawab</b></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <!-- <div style="text-align: center" id="qrPasien"></div> -->
-                        </td>
-                        <td></td>
-                        <td>
-                            <div style="text-align: center" id="qrDokter"></div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td style="text-align: center">
-                         
-                        </td>
-                        <td style="text-align: center">&nbsp;</td>
-                        <td style="text-align: center"><span style="font-weight: bold;color: #ccc">Ditandatangani secara elektronik</span>
-                            <br>{!! $res['d'][0]->namadokter !!}
-                        </td>
-                    </tr>
-
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
 {{--            </div>--}}
 {{--        </td>--}}
 {{--    </tr>--}}
 {{--    </tbody>--}}
 </section>
 </body>
-
+<style>
+    .footer {
+        position: absolute;
+        bottom: 5%;
+        right: 5%;
+     }
+    </style>
 <script type="text/javascript">
     var baseUrl =
             {!! json_encode(url('/')) !!}

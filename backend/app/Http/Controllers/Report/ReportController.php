@@ -1748,7 +1748,6 @@ class ReportController extends ApiController{
         $pageWidth = 500;
         $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
         $res['d'] = $data;
-//        dd( $res['d'] );
 
         return view('report.cppt-ranap',compact('res','pageWidth'));
     }
@@ -2344,7 +2343,7 @@ class ReportController extends ApiController{
                         INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
                         INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
                     WHERE ep.kdprofile = 30 AND ep.statusenabled = TRUE 
-                        AND ep.noemr ILIKE 'MR2206/00000044' 
+                        AND ep.noemr ILIKE '$noemr' 
                         AND ed.statusenabled = TRUE 
                         AND ep.emrfk = 3000429 
                         AND ed.emrfk = 3000429
@@ -2375,15 +2374,18 @@ class ReportController extends ApiController{
     }
     public function CetakHPPMinatBakat(Request $request)
     {
-        $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = 3000428 and statusenabled = true and kdprofile = 30 order by id
+        $noemr = $request['noemr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $emrfk = $request['emfk'];
+        $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = 3000428 and statusenabled = true and kdprofile = $kdProfile order by id
         "));
         $data = \DB::select(DB::raw("SELECT ed.id,epd.value, ed.type
                 FROM emrpasien_t ep
                         INNER JOIN emrpasiend_t epd ON ep.noemr = epd.emrpasienfk
                         INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
                         INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
-                    WHERE ep.kdprofile = 30 AND ep.statusenabled = TRUE 
-                        AND ep.noemr ILIKE 'MR2206/00000046' 
+                    WHERE ep.kdprofile = $kdProfile AND ep.statusenabled = TRUE 
+                        AND ep.noemr ILIKE '$noemr' 
                         AND ed.statusenabled = TRUE 
                         AND ep.emrfk = 3000428 
                         AND ed.emrfk = 3000428
@@ -2421,5 +2423,57 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         // var_dump($detail);
         return view('report.EMR.hppminatbakat', compact('detail','pageWidth'));
+    }
+    public function CetakGeneralConsent(Request $request)
+    {
+        $noemr = $request['noemr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $emrfk = $request['emfk'];
+        $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = $emrfk and statusenabled = true and kdprofile = $kdProfile order by id
+        "));
+        $data = \DB::select(DB::raw("SELECT ed.id,epd.value, ed.type
+                FROM emrpasien_t ep
+                        INNER JOIN emrpasiend_t epd ON ep.noemr = epd.emrpasienfk
+                        INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
+                        INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
+                    WHERE ep.kdprofile = $kdProfile AND ep.statusenabled = TRUE 
+                        AND ep.noemr ILIKE '$noemr' 
+                        AND ed.statusenabled = TRUE 
+                        AND ep.emrfk = $emrfk 
+                        AND ed.emrfk = $emrfk
+                ORDER BY ed.ID ASC"));
+        $detail = [];
+        $id=0;
+        $value="";
+        foreach ($main as $m) {
+        $id=0;
+        $value="";
+            foreach ($data as $d) {
+                if ($m->id == $d->id) {
+                    $id = $m->id;
+                    if ($d->type == 'datetime') {
+                        $value=$this->tanggal_indonesia(date('Y-m-d',strtotime($d->value)));
+                    }else{
+                        $value =$d->value;
+                    }
+                    break;
+                }else {
+                    $id = $m->id;
+                    $value = "";
+                }
+                
+            }
+
+            $detail[]= array(
+                "id"=> $id,
+                "value"=>$value,
+                "type"=> $m->type
+            );
+        }
+
+    // dd($detail);
+        $pageWidth = 950;
+        // var_dump($detail);
+        return view('report.EMR.formulirgeneralconsent', compact('detail','pageWidth'));
     }
 }

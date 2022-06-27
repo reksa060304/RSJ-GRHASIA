@@ -12,9 +12,7 @@
 
 </head>
 <style type="text/css" media="print">
-    @media print
-    {
-        @page
+    @page
         {
             size: auto;
             margin: 0;
@@ -29,7 +27,6 @@
         body {
             -webkit-print-color-adjust: exact !important;
         }
-    }
 </style>
 <style>
     tr td {
@@ -149,10 +146,13 @@
                                     </tbody>
                                 </table>
                                 {{-- @foreach ($data as $d) --}}
-                                    <table cellspacing="0" style="line-height: 25px;" cellpadding="0" bgcolor="#FFFFFF" height="0" border="0"
+                                <table cellspacing="0" style="line-height: 25px;" cellpadding="0" bgcolor="#FFFFFF" height="0" border="0"
                                     width="100%">
                                     <tr>
-                                        <td><br>
+                                        <td>
+                                            <table>
+                                                <tr>
+                                        <td width="100"><br>
                                             Nomor RM
                                         </td>
                                         <td>:</td>
@@ -186,6 +186,10 @@
                                         <td>:</td>
                                         <td>{{$detail[4]['value']}}</td>
                                     </tr>
+                                    
+                                            </table>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td colspan="3">
                                             <br>
@@ -193,13 +197,13 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" style="text-align: center"><b><u>HASIL PEMERIKSAAN PSIKOLOGIS</u></b></td>
+                                        <td colspan="3" style="text-align: center; font-size: 14pt"><b><u>HASIL PEMERIKSAAN PSIKOLOGIS</u></b></td>
                                     </tr>
                                     <tr>
                                         <td colspan="3" style="text-align: center">Nomor : 499 / {{$detail[6]['value']}} <br><br></td>
                                     </tr>
                                     <tr>
-                                        <th>I. PSIKOGRAM</th>
+                                        <td><b>I. PSIKOGRAM</b></td>
                                     </tr>
                                     <tr>
                                         <td colspan="3">

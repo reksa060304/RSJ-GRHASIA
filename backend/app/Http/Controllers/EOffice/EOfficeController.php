@@ -35,6 +35,7 @@ class EOfficeController extends ApiController
     }
     public function getComboSurat(Request $request){
         // return $this->respond((int) $this->getDataKdProfile($request)) ;
+        $kdProfile = (int) $this->getDataKdProfile($request);
         $req = $request->all();
         $dataLogin = $request->all();
         $dataPegawai = \DB::table('loginuser_s as lu')
@@ -74,6 +75,7 @@ class EOfficeController extends ApiController
             ->get();
         $Instalasi  = \DB::table('departemen_m as st')
             ->select('st.id','st.namadepartemen','st.kodeexternal')
+            ->where('st.kdprofile',$kdProfile)
             ->where('st.statusenabled',true)
             ->orderBy('st.namadepartemen')
             ->get();

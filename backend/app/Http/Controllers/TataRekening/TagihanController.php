@@ -13651,6 +13651,20 @@ $result = array(
 
                 'periode'=>$request['periode'],
                 ]);
+                $newId = LoggingUser::max('id');
+                $newId = $newId +1;
+                $logUser = new LoggingUser();
+                $logUser->id = $newId;
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= $kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->jenislog = "Dana Pagu";
+                $logUser->keterangan = "Dana Pagu diinput pada " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawai']. " Dana : ". $request['dana']." Diklat : ". $request['diklat'];
+                $logUser->noreff = $danapagu;
+                $logUser->referensi='Dana Pagu';
+                $logUser->objectloginuserfk =  $request['userloginfk'];
+                $logUser->tanggal = date('Y-m-d H:i:s');
+                $logUser->save();
             } else {
                 $pointjaspel = \DB::table('danapagu_t')->where('id', $cek[0]->id)->update([
                     'statusenabled'=>false,
@@ -13688,6 +13702,20 @@ $result = array(
     
                     'periode'=>$request['periode'],
                     ]);
+                    $newId = LoggingUser::max('id');
+                    $newId = $newId +1;
+                    $logUser = new LoggingUser();
+                    $logUser->id = $newId;
+                    $logUser->norec = $logUser->generateNewId();
+                    $logUser->kdprofile= $kdProfile;
+                    $logUser->statusenabled=true;
+                    $logUser->jenislog = "Dana Pagu";
+                    $logUser->keterangan = "Dana Pagu diinput Kembali pada " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawai']. " Dana : ". $request['dana']." Diklat : ". $request['diklat'];
+                    $logUser->noreff = $danapagu;
+                    $logUser->referensi='Dana Pagu';
+                    $logUser->objectloginuserfk =  $request['userloginfk'];
+                    $logUser->tanggal = date('Y-m-d H:i:s');
+                    $logUser->save();
             }
             
             $transStatus = 'true';
@@ -13773,8 +13801,22 @@ $result = array(
                                 'tglposting' => "$tahun-$bulan-01",
                                 'noposting' => $noposting,
                                 ]);
-                                $transStatus = 'true';
-                                $transMessage = 'Sukses' ;
+
+                            $newId = LoggingUser::max('id');
+                            $newId = $newId +1;
+                            $logUser = new LoggingUser();
+                            $logUser->id = $newId;
+                            $logUser->norec = $logUser->generateNewId();
+                            $logUser->kdprofile= $kdProfile;
+                            $logUser->statusenabled=true;
+                            $logUser->jenislog = "Dana Pagu";
+                            $logUser->keterangan = "Posting Uang Kembali pada " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawai'];
+                            $logUser->referensi='Dana Pagu';
+                            $logUser->objectloginuserfk =  $request['userloginfk'];
+                            $logUser->tanggal = date('Y-m-d H:i:s');
+                            $logUser->save();
+                            $transStatus = 'true';
+                            $transMessage = 'Sukses' ;
                     }
 
     
@@ -13804,6 +13846,19 @@ $result = array(
                             'tglposting' => "$tahun-$bulan-01",
                             'noposting' => $noposting,
                             ]);
+                              $newId = LoggingUser::max('id');
+                                $newId = $newId +1;
+                                $logUser = new LoggingUser();
+                                $logUser->id = $newId;
+                                $logUser->norec = $logUser->generateNewId();
+                                $logUser->kdprofile= $kdProfile;
+                                $logUser->statusenabled=true;
+                                $logUser->jenislog = "Dana Pagu";
+                                $logUser->keterangan = "Posting Uang pada " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawai'];
+                                $logUser->referensi='Dana Pagu';
+                                $logUser->objectloginuserfk =  $request['userloginfk'];
+                                $logUser->tanggal = date('Y-m-d H:i:s');
+                                $logUser->save();
                             $transStatus = 'true';
                             $transMessage = 'Sukses' ;
                 }
@@ -13896,10 +13951,24 @@ $result = array(
                         // $danapagu = \DB::table('danapagu_t')->where('id', $cekpagu[0]->id)->update([
                         //     'sisap3'=> $cekpagu[0]->sisap3 - $request['jumlah'],
                         //     ]);
-                    
+                $newId = LoggingUser::max('id');
+                $newId = $newId +1;
+                $logUser = new LoggingUser();
+                $logUser->id = $newId;
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= $kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->jenislog = "Dana Pagu";
+                $logUser->keterangan = "Bagi Dana P3 pada " . date('Y-m-d H:i:s') . " untuk : ".$request['pegawaip3']." Sisa Dana P3: "
+                . $request['sisa']." Jumlah Dana : ". $request['jumlah'] . " Nama Pegawai Input : ". $request['pegawaiuser'];
+                $logUser->referensi='Dana Pagu';
+                $logUser->objectloginuserfk =  $request['userloginfk'];
+                $logUser->tanggal = date('Y-m-d H:i:s');
+                $logUser->save();
                     $transStatus = 'true';
                     $transMessage = 'Sukses' ;
                 }
+                
         } catch (\Exception $e) {
             $transStatus = 'false';
         }
@@ -13959,6 +14028,19 @@ $result = array(
                         $transStatus = 'true';
                     // }
             }
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = "Jaspel Pegawai";
+            $logUser->keterangan = "Import Jaspel Pegawai pada " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawai'];
+            $logUser->referensi='Jaspel Pegawai';
+            $logUser->objectloginuserfk =  $request['userloginfk'];
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
         }
 
         if ($transStatus == 'true') {

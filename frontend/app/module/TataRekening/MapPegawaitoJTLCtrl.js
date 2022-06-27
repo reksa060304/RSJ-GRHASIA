@@ -14,6 +14,8 @@ define(['initialize'], function (initialize) {
             var lastDay = new Date(y, m + 1, 0);
             $scope.item.tglAwal = firstDay
             $scope.item.tglAkhir = lastDay
+            $scope.dataLogin = medifirstService.getUserLogin();
+            $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
             loadData();
             $scope.Search = function () {
                 loadData()
@@ -288,7 +290,9 @@ define(['initialize'], function (initialize) {
                     // "ruanganId": $scope.popUp.namaRuangan.id,
                     // "tglawal": moment($scope.popUp.tglAwal).format('YYYY-MM-DD'),
                     // "tglakhir": moment($scope.popUp.tglAkhir).format('YYYY-MM-DD'),
-                    "details": $scope.arrayProdukTemp
+                    "details": $scope.arrayProdukTemp,
+                    pegawai: $scope.pegawaiLogin.namaLengkap,
+                    loginuserfk: $scope.dataLogin.id,
                 }
                 // console.log(objSave);
                 // return
@@ -318,7 +322,9 @@ define(['initialize'], function (initialize) {
                     })
                 }
                 var itemDelete = {
-                    "data": data
+                    "data": data,
+                    pegawai: $scope.pegawaiLogin.namaLengkap,
+                    loginuserfk: $scope.dataLogin.id,
                 }
                 console.log(itemDelete);
                 medifirstService.post('remunerasi/delete-map-jtl', itemDelete).then(function (e) {
