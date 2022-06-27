@@ -20,7 +20,8 @@ define(['initialize'], function (initialize) {
 			 	depth: "decade"
 			 }
 			$scope.item.jumlahRows = 50;
-
+			$scope.dataLogin = medifirstService.getUserLogin();
+			$scope.pegawaiLogin = medifirstService.getPegawaiLogin();
             $scope.dataRemun = [];
 			var norec = "";
 			loadData()
@@ -38,9 +39,11 @@ define(['initialize'], function (initialize) {
 					if(e.data.data.length > 0){
                         if(e.data.data[0].tglverif != null){
                             $scope.disposting = true;
+							$scope.posting = false;
                             $scope.tanggalv = e.data.data[0].tglverif
                         } else if(e.data.data[0].tglverif == null){
                             $scope.disposting = false;
+							$scope.posting = true;
                         }
                     } else{
                         $scope.disposting = false;
@@ -72,6 +75,8 @@ define(['initialize'], function (initialize) {
 			$scope.isRouteLoading = true
 				let json = {
 					'noposting': $scope.noposting,
+					pegawai: $scope.pegawaiLogin.namaLengkap,
+					loginuserfk: $scope.dataLogin.id,
 				}
 				console.log(json)
 				medifirstService.post('get/save-unverif-remun', json).then(function (e) {
@@ -125,6 +130,8 @@ define(['initialize'], function (initialize) {
                                     var objSave =
                                     {
                                         data: XL_row_object,
+										pegawai: $scope.pegawaiLogin.namaLengkap,
+										userloginfk: $scope.dataLogin.id,
                                         // ruanganfk: $scope.item.ruangan.id
                                     }
 
@@ -151,6 +158,8 @@ define(['initialize'], function (initialize) {
 			$scope.postingTotalBersih = function () {
 				let json = {
 					'noposting' : $scope.noposting,
+					pegawai: $scope.pegawaiLogin.namaLengkap,
+					loginuserfk: $scope.dataLogin.id,
 				}
 				console.log(json)
 				medifirstService.post('get/save-posting-total-bersih', json).then(function (e) {
@@ -164,6 +173,8 @@ define(['initialize'], function (initialize) {
 			$scope.isRouteLoading = true
 				let json = {
 					'noposting' : $scope.noposting,
+					pegawai: $scope.pegawaiLogin.namaLengkap,
+					loginuserfk: $scope.dataLogin.id,
 				}
 				console.log(json)
 				medifirstService.post('get/save-verif-remun', json).then(function (e) {

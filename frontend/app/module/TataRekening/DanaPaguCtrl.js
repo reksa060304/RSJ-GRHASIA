@@ -8,7 +8,8 @@ define(['initialize'], function (initialize) {
             $scope.disposting = false;
             $scope.posting = false;
             $scope.tanggalv = '';
-			
+			$scope.dataLogin = medifirstService.getUserLogin();
+			$scope.pegawaiLogin = medifirstService.getPegawaiLogin();
 			// var tgl = dateHelper.getDaysofMonth()
 			// console.log(tgl);
 
@@ -98,9 +99,16 @@ define(['initialize'], function (initialize) {
 			}
 
 			$scope.save = function () {
+				
+
 				// if(moment($scope.item.periode).format('MM') == moment($scope.tanggalv).format('MM') && moment($scope.item.periode).format('YYYY') == moment($scope.tanggalv).format('YYYY')){
                 //     toastr.error('Dana pada bulan tersebut sudah diverif')
                 // } else{
+                    console.log($scope.pegawaiLogin);
+                var login={
+                    
+                }
+                // return
                     medifirstService.get('tatarekening/get-daftar-dana-pagu?periodebulan='+ moment($scope.item.periode).format('YYYY-MM-DD') ).then(function (e) {
                         if(e.data.data.length > 0){
                             $scope.popupDetailIndex.close();
@@ -116,7 +124,10 @@ define(['initialize'], function (initialize) {
                                     'dana': $scope.item.dana,
                                     'diklat': $scope.item.diklat,
                                     'periode': moment($scope.item.periode).format('YYYY-MM-DD'),
+                                    'userloginfk': $scope.dataLogin.id,
+                                    'pegawai': $scope.pegawaiLogin.namaLengkap
                                 }
+                                console.log(json);
                                 medifirstService.post('tatarekening/save-dana-pagu', json).then(function (e) {
                                     // medifirstService.postLogging('Remunerasi', 'id pegawai', $scope.itm.pegawai.id,
                                     // 	'Perubahan index dari  ' + e.data.idx.totalindex + ' menjadi ' + e.data.total + ' pada Pegawai ' +
@@ -168,6 +179,9 @@ define(['initialize'], function (initialize) {
                                 'sisa': $scope.item.danap3,
                                 'bulan' : moment($scope.item.bulan).format('MM'),
 				                'tahun' : moment($scope.item.tahun).format('YYYY'),
+                                'userloginfk': $scope.dataLogin.id,
+                                'pegawaiuser': $scope.pegawaiLogin.namaLengkap,
+                                'pegawaip3': $scope.item.pegawai.namalengkap
                             }
                             console.log(json)
                             if($scope.item.jumlahp3 > $scope.item.danap3){
@@ -231,6 +245,8 @@ define(['initialize'], function (initialize) {
                             let json = {
                                 'bulan': moment($scope.item.bulan).format('MM'),
                                 'tahun': moment($scope.item.tahun).format('YYYY'),
+                                'userloginfk': $scope.dataLogin.id,
+                                'pegawai': $scope.pegawaiLogin.namaLengkap
                             }
                             //$scope.SaveKirim();
                             medifirstService.post('tatarekening/save-dana-remun', json).then(function (e) {

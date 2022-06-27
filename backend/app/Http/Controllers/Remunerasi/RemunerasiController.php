@@ -31,6 +31,7 @@ use App\Transaksi\StrukDetailPagu;
 use App\Transaksi\MapJenisPaguToPegawai;
 use App\Transaksi\DetailPegawaiPagu;
 use App\Transaksi\JenisPagu_T;
+use App\Transaksi\LoggingUser;
 use App\Transaksi\StrukClosing;
 use App\Transaksi\PotonganRemun;
 use Webpatser\Uuid\Uuid;
@@ -6505,6 +6506,21 @@ class RemunerasiController extends ApiController
                 ]);
             }
             
+            $newId = LoggingUser::max('id');
+                $newId = $newId +1;
+                $logUser = new LoggingUser();
+                $logUser->id = $newId;
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= $kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->jenislog = "Poin Jaspel";
+                $logUser->keterangan = "Edit Point Index Pada tanggal " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawailogin'];
+                $logUser->noreff = $pointjaspel;
+                $logUser->referensi='Poin Jaspel';
+                $logUser->objectloginuserfk =  $request['loginuserfk'];
+                $logUser->tanggal = date('Y-m-d H:i:s');
+                $logUser->save();
+
             $transStatus = 'true';
             $transMessage = 'Sukses' ;
         } catch (\Exception $e) {
@@ -7394,7 +7410,20 @@ class RemunerasiController extends ApiController
                 $map->isjtl= true;
                 $map->save();
             }
-
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = "Map Kelompok JTL";
+            $logUser->keterangan = "Tambah Map Kelompok JTL tanggal " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawai'];
+            $logUser->noreff = "Map Kelompok JTL";
+            $logUser->referensi='Map Kelompok JTL';
+            $logUser->objectloginuserfk =  $request['loginuserfk'];
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -7539,7 +7568,20 @@ class RemunerasiController extends ApiController
                     'isjtl' => null
                 ]);
             }
-
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = "Map Kelompok JTL";
+            $logUser->keterangan = "Hapus Map Kelompok JTL tanggal " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawai'];
+            $logUser->noreff = "Map Kelompok JTL";
+            $logUser->referensi='Map Kelompok JTL';
+            $logUser->objectloginuserfk =  $request['loginuserfk'];
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -7612,15 +7654,29 @@ class RemunerasiController extends ApiController
         inner join pegawai_m pg on pg.id = jp.objectpegawaifk
         inner join pointgrade_m pgm on pgm.id = pg.grade 
         where jp.mk is not null"));
-
+        $posting = "";
+        $transMessage="";
         DB::beginTransaction();
         try {
             foreach ($patokan as $item){
-                \DB::table('pointjaspel_t')->where('objectpegawaifk',$item->id)->where('kdprofile',$kdProfile)->update([
+                $posting = \DB::table('pointjaspel_t')->where('objectpegawaifk',$item->id)->where('kdprofile',$kdProfile)->update([
                     'grade' => ((((float)$item->mk*(float)$item->pointgrade)/1000) + (float)$item->pointgrade)
                 ]);
             }
-
+            $newId = LoggingUser::max('id');
+                $newId = $newId +1;
+                $logUser = new LoggingUser();
+                $logUser->id = $newId;
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= $kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->jenislog = "Poin Jaspel";
+                $logUser->keterangan = "Posting Grade Pada tanggal " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawailogin'];
+                $logUser->noreff = $posting;
+                $logUser->referensi='Poin Jaspel';
+                $logUser->objectloginuserfk =  $request['loginuserfk'];
+                $logUser->tanggal = date('Y-m-d H:i:s');
+                $logUser->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -7652,12 +7708,12 @@ class RemunerasiController extends ApiController
         $kdProfile = (int) $this->getDataKdProfile($request);
         $patokan = DB::select(DB::raw("select norec, mk, bulanlastupdatemk from pointjaspel_t"));
         $bulan = $request['bulan'];
-        
+        $posting = "";
             if((int)$bulan <= (int)$patokan[0]->bulanlastupdatemk){
                 $transStatus = 'false';
             } else{
                 foreach($patokan as $row){
-                    \DB::table('pointjaspel_t')->where('statusenabled',true)->where('norec',$row->norec)->update([
+                    $posting= \DB::table('pointjaspel_t')->where('statusenabled',true)->where('norec',$row->norec)->update([
                         'mk' => $row->mk + 1,
                         'bulanlastupdatemk' => $bulan
                     ]);
@@ -7673,7 +7729,20 @@ class RemunerasiController extends ApiController
             $transMessage = "MK Bulan tersebut sudah diposting";
             $status = 400;
         }
-
+        $newId = LoggingUser::max('id');
+                $newId = $newId +1;
+                $logUser = new LoggingUser();
+                $logUser->id = $newId;
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= $kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->jenislog = "Poin Jaspel";
+                $logUser->keterangan = "Posting MK Pada tanggal " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawailogin'];
+                $logUser->noreff = $posting;
+                $logUser->referensi='Poin Jaspel';
+                $logUser->objectloginuserfk =  $request['loginuserfk'];
+                $logUser->tanggal = date('Y-m-d H:i:s');
+                $logUser->save();
         
         $result = array(
             'status' => $status,
@@ -7710,7 +7779,20 @@ class RemunerasiController extends ApiController
                     'totalbersih' => $kotor - $pajak,
                 ]);
             }
-
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = "Jaspel Pegawai";
+            $logUser->keterangan = "Hitung Pajak Remun Pegawai tanggal " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawai'] . " No Posting : " . $noposting;
+            $logUser->noreff = "Jaspel Pegawai";
+            $logUser->referensi='Jaspel Pegawai';
+            $logUser->objectloginuserfk =  $request['loginuserfk'];
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -7758,7 +7840,20 @@ class RemunerasiController extends ApiController
                     'tglverif' => date('Y-m-d H:i:s'),
                 ]);
             }
-
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = "Jaspel Pegawai";
+            $logUser->keterangan = "Verif Remun Pegawai tanggal " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawai'] . " No Posting : " . $noposting;
+            $logUser->noreff = "Jaspel Pegawai";
+            $logUser->referensi='Jaspel Pegawai';
+            $logUser->objectloginuserfk =  $request['loginuserfk'];
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -7805,7 +7900,20 @@ class RemunerasiController extends ApiController
                     'tglverif' => null,
                 ]);
             }
-
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = "Jaspel Pegawai";
+            $logUser->keterangan = "Batal Verif Remun Pegawai tanggal " . date('Y-m-d H:i:s') . " Nama Pegawai : ". $request['pegawai'] . " No Posting : " . $noposting;
+            $logUser->noreff = "Jaspel Pegawai";
+            $logUser->referensi='Jaspel Pegawai';
+            $logUser->objectloginuserfk =  $request['loginuserfk'];
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';

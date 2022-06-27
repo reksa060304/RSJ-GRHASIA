@@ -7,6 +7,8 @@ define(['initialize'], function (initialize) {
 			$scope.now = new Date();
 			$scope.item.tglmasuk = moment($scope.now).format('YYYY-MM-DD');
 			$scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD');
+			$scope.dataLogin = medifirstService.getUserLogin();
+			$scope.pegawaiLogin = medifirstService.getPegawaiLogin();
 			// var tgl = dateHelper.getDaysofMonth()
 			// console.log(tgl);
 			 $scope.monthUngkul = {
@@ -94,6 +96,7 @@ define(['initialize'], function (initialize) {
 			}
 
 			$scope.save = function () {
+
 				let json = {
 					'norec': norec,
 					'idpegawai': $scope.item.pegawai.idpegawai,
@@ -104,6 +107,8 @@ define(['initialize'], function (initialize) {
 					'grade': $scope.item.grade != undefined ? $scope.item.grade : null,
 					'mk': $scope.item.mk != undefined ? $scope.item.mk : null,
 					'point_tt': $scope.item.point_tt != undefined ? $scope.item.point_tt : null,
+					'pegawailogin': $scope.pegawaiLogin.namaLengkap,
+					'loginuserfk': $scope.dataLogin.id
 				}
 				console.log(json);
 				medifirstService.post('remunerasi/save-index-pegawaiv2', json).then(function (e) {
@@ -117,7 +122,9 @@ define(['initialize'], function (initialize) {
 
 			}
 			$scope.postingGrade = function () {
-				medifirstService.get('get/save-posting-grade').then(function (e) {
+				$scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+				$scope.dataLogin = medifirstService.getUserLogin();
+				medifirstService.get('get/save-posting-grade?pegawailogin=' + $scope.pegawaiLogin.namaLengkap + "&loginuserfk=" + $scope.dataLogin.id).then(function (e) {
 					loadData()
 					$scope.batal()
 
@@ -125,8 +132,13 @@ define(['initialize'], function (initialize) {
 
 			}
 			$scope.postingMK = function () {
+				
+				$scope.dataLogin = medifirstService.getUserLogin();
+				$scope.pegawaiLogin = medifirstService.getPegawaiLogin();
 				let json = {
 					'bulan' : moment($scope.item.bulan).format('M'),
+					'pegawailogin': $scope.pegawaiLogin.namaLengkap,
+					'loginuserfk': $scope.dataLogin.id
 				}
 				console.log(json);
 				medifirstService.post('get/save-posting-mk', json).then(function (e) {
@@ -195,7 +207,6 @@ define(['initialize'], function (initialize) {
 					alert("Data Belum Dipilih!")
 					return;
 				};
-
 				var objSave = {
 					"id": dataItem.id,
 					"status": 0//'f'
