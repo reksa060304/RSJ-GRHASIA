@@ -3447,7 +3447,12 @@ class LaporanRekamMedisController extends   ApiController
         foreach($main as $row){
             $jumlah = 0;
             foreach($data10 as $data){
-                if($row == 'Konsultasi' && ($data->id == 5007078 || $data->id == 5006385 || $data->id == 5006384 || $data->id == 5006386 || $data->id == 5006107 )){
+
+                if($row == 'Psikotes' && ($data->id == 5006417 || $data->id == 5006429 || $data->id == 5006418 || $data->id == 5006430 || $data->id == 5006431 || $data->id == 5006419 || $data->id == 5006433 || $data->id == 5006445 || $data->id == 5007121 || $data->id == 5006420 || $data->id == 5006446 || $data->id == 5006421 || $data->id == 5006434 || $data->id == 5006422 || $data->id == 5006424 || $data->id == 5006435 || $data->id == 5006449 || $data->id == 5006426 || $data->id == 5006423 || $data->id == 5006436 || $data->id == 5006447 || $data->id == 5006450 || $data->id == 5006448 || $data->id == 5006428 || $data->id == 5006427 || $data->id == 5006437 || $data->id == 5006438 || $data->id == 5006439 || $data->id == 5006440 || $data->id == 5007122 || $data->id == 5006425 || $data->id == 5006441 || $data->id == 5006442 || $data->id == 5006443 || $data->id == 5006444 || $data->id == 5006417 || $data->id == 5006429 )){
+                    $jumlah += $data->jumlah;
+                }
+
+                else if($row == 'Konsultasi' && ($data->id == 5007078 || $data->id == 5006385 || $data->id == 5006384 || $data->id == 5006386 || $data->id == 5006107 || $data->id == 5007127 || $data->id == 5007128 || $data->id == 5006407 || $data->id == 5006408 || $data->id == 5006462 || $data->id == 5006405 || $data->id == 5006406 || $data->id == 5006412 || $data->id == 5006413 || $data->id == 5006414 || $data->id == 5006415 || $data->id == 5006416 )){
                     $jumlah += $data->jumlah;
                 }
 
@@ -3455,7 +3460,7 @@ class LaporanRekamMedisController extends   ApiController
                     $jumlah += $data->jumlah;
                 }
 
-                else if($row == 'Psikoterapi' && ($data->id == 5006382 || $data->id == 5006383 || $data->id == 5006389 || $data->id == 5006388 || $data->id == 5006390 || $data->id == 5006391 || $data->id == 5006392 || $data->id == 5006107 || $data->id == 5006110 || $data->id == 5006109 || $data->id == 5006875 || $data->id == 5006883 || $data->id == 5006882 || $data->id == 5006876 || $data->id == 5006881 || $data->id == 5006879 || $data->id == 5006880 || $data->id == 5006878 || $data->id == 5006877 )){ 
+                else if($row == 'Psikoterapi' && ($data->id == 5006382 || $data->id == 5006383 || $data->id == 5006389 || $data->id == 5006388 || $data->id == 5006390 || $data->id == 5006391 || $data->id == 5006392 || $data->id == 5006107 || $data->id == 5006110 || $data->id == 5006109 || $data->id == 5006875 || $data->id == 5006883 || $data->id == 5006882 || $data->id == 5006876 || $data->id == 5006881 || $data->id == 5006879 || $data->id == 5006880 || $data->id == 5006878 || $data->id == 5006877 || $data->id == 5007127 || $data->id == 5007128 || $data->id == 5006405 || $data->id == 5006406 || $data->id == 5006412 || $data->id == 5006413 || $data->id == 5006414 || $data->id == 5006415 || $data->id == 5006416 )){ 
                     $jumlah += $data->jumlah;
                 }
 
