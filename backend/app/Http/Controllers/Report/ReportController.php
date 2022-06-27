@@ -2343,7 +2343,7 @@ class ReportController extends ApiController{
                         INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
                         INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
                     WHERE ep.kdprofile = 30 AND ep.statusenabled = TRUE 
-                        AND ep.noemr ILIKE '$emrfk' 
+                        AND ep.noemr ILIKE '$noemr' 
                         AND ed.statusenabled = TRUE 
                         AND ep.emrfk = 3000429 
                         AND ed.emrfk = 3000429
@@ -2385,7 +2385,7 @@ class ReportController extends ApiController{
                         INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
                         INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
                     WHERE ep.kdprofile = $kdProfile AND ep.statusenabled = TRUE 
-                        AND ep.noemr ILIKE '$emrfk' 
+                        AND ep.noemr ILIKE '$noemr' 
                         AND ed.statusenabled = TRUE 
                         AND ep.emrfk = 3000428 
                         AND ed.emrfk = 3000428
