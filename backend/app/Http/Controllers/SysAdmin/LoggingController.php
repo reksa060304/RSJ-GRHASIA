@@ -413,7 +413,59 @@ class LoggingController extends ApiController
         return $this->respond($result);
     }
 
+    public function saveLoggingSimpanSettingAnggaran(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
 
+        $dataLogin = $request->all();
+        $iduser = '';
+        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+                where pg.kdprofile = $kdProfile and lu.id=:idLoginUser"),
+            array(
+                'idLoginUser' => $dataLogin['userData']['id'],
+            )
+        );
+
+        foreach($dataPegawaiUser as $dat){
+            $iduser = $dat->id;
+            $namauser = $dat->namalengkap;
+        }
+
+        
+            $dataLogin = $request->all();
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog ='Simpan Setting Anggaran';
+            $logUser->noreff = $request['tahunanggaran'];
+            $logUser->referensi='Tahun Anggaran di Setting Anggaran';
+            $logUser->keterangan='Simpan Setting Anggaran oleh user '.$namauser.' pada tanggal '.date('Y-m-d H:m:s'). ' dengan tahun anggaran '.$request['tahunanggaran']. ' dan tahap '.$request['namatahap'];
+            $logUser->objectloginuserfk = $dataLogin['userData']['id'];
+            $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
+            $logUser->save();
+            $transStatus = 'true';
+        
+ 
+         if ($transStatus == 'true') {
+             $transMessage = "Simpan";
+             $result = array(
+                 'status' => 201,
+                 'message' => $transMessage,
+                 'as' => '@epic',
+             );
+         } else {
+             $transMessage = "Simpan Gagal";
+             $result = array(
+                 'status' => 400,
+                 'as' => '@epic',
+             );
+         }
+         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 
     public function saveLoggingKonsulRuangan(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);

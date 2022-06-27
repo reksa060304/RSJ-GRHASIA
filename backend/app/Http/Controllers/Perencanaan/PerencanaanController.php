@@ -36,6 +36,7 @@ use App\Master\Pegawai;
 use App\Traits\Valet;
 use App\Transaksi\AlokasiKeteranganBelanja;
 use App\Transaksi\KegiatanAnggaran;
+use App\Transaksi\SettingAnggaran;
 use App\Transaksi\KegiatanBelanja;
 use App\Transaksi\KeteranganBelanja;
 use App\Transaksi\RealisasiDetail;
@@ -370,6 +371,7 @@ class PerencanaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataLogin = $request->all();
+        $tahunanggaran = $request['tahun'];
 
         $kegiatan = \DB::table('kegiatananggaran_m as dp')
             ->leftjoin('tahapanggaran_m as thp','dp.tahap','=','thp.id')
@@ -378,6 +380,32 @@ class PerencanaanController extends ApiController {
             ->where('dp.kdprofile', $idProfile)
             ->where('dp.statusenabled', true)
             ->orderBy('dp.kode')
+            ->get();
+
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->where('st.tahunanggaran', $tahunanggaran)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+        
+        $direktur = \DB::table('pegawai_m as pg')
+            ->select('pg.namalengkap', 'pg.id')
+            ->where('pg.kdprofile', $idProfile)
+            ->where('pg.statusenabled', true)
+            ->where('pg.grade', 1)
+            ->orderBy('pg.namalengkap')
+            ->get();
+
+        $tahap = \DB::table('tahapanggaran_m as th')
+            ->select('th.tahap', 'th.id')
+            ->where('th.kdprofile', $idProfile)
+            ->where('th.statusenabled', true)
+            ->orderBy('th.id')
             ->get();
 
         
@@ -427,6 +455,12 @@ class PerencanaanController extends ApiController {
             ->where('statusenabled', 't')
             ->where('kelompok', '=',$kelompok)
             ->get();
+
+        $jenisanggaran = \DB::table('jenisanggaran_m')
+            ->select('jenisanggaran','id')
+            ->where('kdprofile', $idProfile)
+            ->where('statusenabled', 't')
+            ->get();
         
 
 
@@ -441,7 +475,11 @@ class PerencanaanController extends ApiController {
         $result = array(
             'kegiatan' => $kegiatan,
             'mataanggaran' => $mata,
+            'jenisanggaran' => $jenisanggaran,
             'keterangan' => $keterangan,
+            'setting' => $setting,
+            'tahap' => $tahap,
+            'direktur' => $direktur,
             // 'kelompokketiga' => $ketiga,
             // 'kelompokkeempat' => $keempat,
             // 'kelompokkelima' => $kelima,
@@ -1877,6 +1915,93 @@ class PerencanaanController extends ApiController {
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function saveSettingAnggaran(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tahunanggaran = $request['tahunanggaran'];
+
+        $cek = DB::select(DB::raw("select tahunanggaran from settinganggaran_t where tahunanggaran = '$tahunanggaran'"));
+
+       try{
+            if (empty($cek)){
+                $MA = new SettingAnggaran();
+                $MA->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
+                $MA->kdprofile = $idProfile;
+                $MA->statusenabled = true;
+                $MA->kodeexternal = $MA->norec;
+                $MA->namaexternal = $MA->norec;
+                $MA->reportdisplay = $MA->norec;
+            }else{
+                $MA= SettingAnggaran::where('tahunanggaran',$request['tahunanggaran'])
+                    ->where('kdprofile', $idProfile)
+                    ->first();
+            }
+            $MA->namapemda = $request['namapemda'];
+            $MA->kepaladaerah = $request['kepaladaerah'];
+            $MA->namakepaladaerah = $request['namakepaladaerah'];
+            $MA->namasekda = $request['namasekda'];
+            $MA->nipsekda = $request['nipsekda'];
+            $MA->namappkd = $request['namappkd'];
+            $MA->nipppkd = $request['nipppkd'];
+            $MA->pengelolakeuanganblud = $request['pengelolakeuanganblud'];
+            $MA->nipkepalablud = $request['nipkepalablud'];
+            $MA->alamat = $request['alamat'];
+            $MA->kota = $request['kota'];
+            $MA->telepon = $request['telepon'];
+            $MA->faximile = $request['faximile'];
+            $MA->tahunanggaran = $request['tahunanggaran'];
+            $MA->objectkepalabludfk = $request['objectkepalabludfk'];
+            $MA->objecttahapaktivfk = $request['objecttahapaktivfk'];
+            $MA->nomornpwp = $request['nomornpwp'];
+
+            $MA->save();
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'result' => $MA,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getPenjagaanSettingAnggaran(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tahunanggaran = $request['tahunanggaran'];
+
+        $cek = DB::select(DB::raw("select tahunanggaran from settinganggaran_t where tahunanggaran = '$tahunanggaran'"));
+
+       
+            $result = array(
+                'status' => 201,
+                'data' => $cek,
+                'as' => '@epic',
+            );
+
+        return $this->setStatusCode($result['status'])->respond($result);
+    }
     
     public function saveMataAnggaran(Request $request) {
         DB::beginTransaction();
@@ -1900,6 +2025,7 @@ class PerencanaanController extends ApiController {
             $MA->reportdisplay = $request['reportdisplay'];
             $MA->kodemataanggaran = $request['kodemataanggaran'];
             $MA->namamataanggaran = $request['namamataanggaran'];
+            $MA->objectjenisanggaranfk = $request['jenisanggaran'];
             $MA->keterangan = $request['keterangan'];
             $MA->kodeexternal = $request['kodeexternal'];
             $MA->namaexternal = $request['namaexternal'];
@@ -1992,7 +2118,9 @@ class PerencanaanController extends ApiController {
                 select ma.id, ma.kodemataanggaran,ma.namamataanggaran,cast(sum(kt.subtotal) as float) as total 
                 from mataanggaran_m ma
                 left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
-                where length(ma.kodemataanggaran)= 9 and ma.kdprofile=$idProfile
+                where 
+                length(ma.kodemataanggaran)= 9 
+                and ma.kdprofile=$idProfile
                 group by  ma.id,ma.kodemataanggaran,ma.namamataanggaran
                 order by ma.kodemataanggaran;
             ")
@@ -2155,6 +2283,28 @@ class PerencanaanController extends ApiController {
         $result = array(
             'data' => $data,
             'detail' => $result,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getJenisAnggaran(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $id = $request['id'];
+
+        $data = DB::select(DB::raw("
+                select ja.id, ja.jenisanggaran
+                from mataanggaran_m ma
+                INNER JOIN jenisanggaran_m ja on ja.id=ma.objectjenisanggaranfk
+                where ma.id = $id 
+            ")
+        );
+
+
+        $result = array(
+            'data' => $data,
             'message' => '@epic',
         );
 

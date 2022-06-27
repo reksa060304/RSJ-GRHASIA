@@ -1,12 +1,13 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('KelompokAnggaranCtrl', ['$scope', 'MedifirstService',
-        function ($scope, medifirstService) {
+    initialize.controller('KelompokAnggaranCtrl', ['$scope', '$mdDialog','MedifirstService',
+        function ($scope, $mdDialog, medifirstService) {
             $scope.dataVOloaded = true;
             $scope.isRouteLoading = false;
             $scope.now = new Date();
             $scope.item = {};
             $scope.dataAnggaranSelected = {};
+            $scope.jeniskode = true;
             var DataKegiatan= [];
             var DataMataAnggaran= [];
             var DataTotalMataAnggaran = [];
@@ -27,6 +28,12 @@ define(['initialize'], function (initialize) {
             $scope.rcn.totallv1 = ""
             $scope.rcn.totallv2 = ""
             $scope.rcn.totallv3 = ""
+
+            medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                $scope.listJenisAnggaran = e.data.jenisanggaran
+                $scope.listDirektur = e.data.direktur
+                $scope.listTahap = e.data.tahap
+            });
             
             $scope.yearUngkul = {
                 start: "decade",
@@ -62,66 +69,84 @@ define(['initialize'], function (initialize) {
                 // })
                 LoadTotalKeterangan()
                 LoadSPJ()
-                medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')).then(function (e) {
                     $scope.isRouteLoading = false
                     $scope.dataSourceKegiatan = e.data.kegiatan
+                    $scope.dataSourceSetting = e.data.setting
                     // $scope.dataSourceDetailMT = e.data.mataanggaran
                     DataKegiatan = e.data.kegiatan
                     DataMataAnggaran = e.data.mataanggaran
                     $scope.dataSourceMataAnggaran = e.data.mataanggaran
-                    for (let index = 0; index < e.data.keterangan.length; index++) {
-                        let element = e.data.keterangan[index];
-                        if(element.namafield == "namaPemda"){
-                           $scope.item.namaPemda = element.nilaifield
-                        }
-                        if(element.namafield == "kepalaDaerah"){
-                           $scope.item.kepalaDaerah  = element.nilaifield
-                        }
-                        if(element.namafield == "namaKepalaDaerah"){
-                           $scope.item.namaKepalaDaerah  = element.nilaifield
-                        }
-                        if(element.namafield == "namaSekda"){
-                           $scope.item.namaSekda  = element.nilaifield
-                        }
-                        if(element.namafield == "nipSekda"){
-                           $scope.item.nipSekda  = element.nilaifield
-                        }
-                        if(element.namafield == "namaPpkd"){
-                           $scope.item.namaPpkd  = element.nilaifield
-                        }
-                        if(element.namafield == "nipPpkd"){
-                           $scope.item.nipPpkd  = element.nilaifield
-                        }
-                        if(element.namafield == "pengelolaKeuanganBlud"){
-                           $scope.item.pengelolaKeuanganBlud  = element.nilaifield
-                           $scope.item.organisasi  = element.nilaifield
-                        }
-                        if(element.namafield == "namaKepalaBlud"){
-                           $scope.item.namaKepalaBlud  = element.nilaifield
-                        }
-                        if(element.namafield == "alamat"){
-                           $scope.item.alamat  = element.nilaifield
-                        }
-                        if(element.namafield == "kota"){
-                           $scope.item.kota  = element.nilaifield
-                        }
-                        if(element.namafield == "telepon"){
-                           $scope.item.telepon  = element.nilaifield
-                        }
-                        if(element.namafield == "faximile"){
-                           $scope.item.faximile  = element.nilaifield
-                        }
-                        if(element.namafield == "tahunAnggaran"){
-                           $scope.item.tahunAnggaran  = element.nilaifield
-                        }
-                        if(element.namafield == "tahapAktiv"){
-                           $scope.item.tahapAktiv  = element.nilaifield
-                        }
-                        if(element.namafield == "nomorNpwp"){
-                           $scope.item.nomorNpwp = element.nilaifield
-                        }
+                    $scope.item.namapemda = e.data.setting[0].namapemda
+                    $scope.item.kepaladaerah = e.data.setting[0].kepaladaerah
+                    $scope.item.namakepaladaerah = e.data.setting[0].namakepaladaerah
+                    $scope.item.namasekda = e.data.setting[0].namasekda
+                    $scope.item.nipsekda = e.data.setting[0].nipsekda
+                    $scope.item.namappkd = e.data.setting[0].namappkd
+                    $scope.item.nipppkd = e.data.setting[0].nipppkd
+                    $scope.item.pengelolakeuanganblud = e.data.setting[0].pengelolakeuanganblud
+                    $scope.item.nipkepalablud = e.data.setting[0].nipkepalablud
+                    $scope.item.alamat = e.data.setting[0].alamat
+                    $scope.item.kota = e.data.setting[0].kota
+                    $scope.item.telepon = e.data.setting[0].telepon
+                    $scope.item.faximile = e.data.setting[0].faximile
+                    $scope.item.tahunanggaran = e.data.setting[0].tahunanggaran
+                    $scope.item.objectkepalabludfk = {id: e.data.setting[0].objectkepalabludfk, namalengkap: e.data.setting[0].namalengkap }
+                    $scope.item.objecttahapaktivfk = {id: e.data.setting[0].objecttahapaktivfk, tahap: e.data.setting[0].tahap }
+                    $scope.item.nomornpwp = e.data.setting[0].nomornpwp
+                    // for (let index = 0; index < e.data.keterangan.length; index++) {
+                    //     let element = e.data.keterangan[index];
+                    //     if(element.namafield == "namaPemda"){
+                    //        $scope.item.namaPemda = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "kepalaDaerah"){
+                    //        $scope.item.kepalaDaerah  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "namaKepalaDaerah"){
+                    //        $scope.item.namaKepalaDaerah  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "namaSekda"){
+                    //        $scope.item.namaSekda  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "nipSekda"){
+                    //        $scope.item.nipSekda  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "namaPpkd"){
+                    //        $scope.item.namaPpkd  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "nipPpkd"){
+                    //        $scope.item.nipPpkd  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "pengelolaKeuanganBlud"){
+                    //        $scope.item.pengelolaKeuanganBlud  = element.nilaifield
+                    //        $scope.item.organisasi  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "namaKepalaBlud"){
+                    //        $scope.item.namaKepalaBlud  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "alamat"){
+                    //        $scope.item.alamat  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "kota"){
+                    //        $scope.item.kota  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "telepon"){
+                    //        $scope.item.telepon  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "faximile"){
+                    //        $scope.item.faximile  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "tahunAnggaran"){
+                    //        $scope.item.tahunAnggaran  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "tahapAktiv"){
+                    //        $scope.item.tahapAktiv  = element.nilaifield
+                    //     }
+                    //     if(element.namafield == "nomorNpwp"){
+                    //        $scope.item.nomorNpwp = element.nilaifield
+                    //     }
 
-                    }
+                    // }
                     
                     
                    
@@ -177,6 +202,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.kodeHead = a1
                 //    b1 = kodeArr2[2]
                     $scope.item.kode = b1
+                    //$scope.jeniskode = false;
                     
                     // $scope.item.kodeHead = dataItem.kode.substring(0,4)
                     // $scope.item.kode = dataItem.kode.substring(5,7)
@@ -261,6 +287,25 @@ define(['initialize'], function (initialize) {
                 $scope.item.keterangan = dataItem.keterangan
                 $scope.item.div = dataItem.div
             }
+            function occurrences(string, subString, allowOverlapping) {
+
+                string += "";
+                subString += "";
+                if (subString.length <= 0) return (string.length + 1);
+            
+                var n = 0,
+                    pos = 0,
+                    step = allowOverlapping ? 1 : subString.length;
+            
+                while (true) {
+                    pos = string.indexOf(subString, pos);
+                    if (pos >= 0) {
+                        ++n;
+                        pos += step;
+                    } else break;
+                }
+                return n;
+            }
             function editMataT(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
@@ -268,9 +313,31 @@ define(['initialize'], function (initialize) {
 
 				})
                 
+                var yangdicount = dataItem.kodemataanggaran
+                console.log(yangdicount)
+                var count = occurrences(yangdicount, ".");
+                console.log(count)
+
+                if(count == 2){
+                    $scope.jeniskode = false;
+                } else{
+                    $scope.jeniskode = true;
+                }
+                
                 $scope.item.id = dataItem.id
                 $scope.item.kodeAddMT = dataItem.kodemataanggaran
                 $scope.item.keteranganAddMT = dataItem.namamataanggaran
+                
+
+                medifirstService.get("perencanaan/get-jenis-angagran?id="+dataItem.id).then(function (e) {
+                    console.log(e.data.data.length)
+                    if(e.data.data.length == 0){
+                        $scope.item.jenisanggaran = null
+                    } else{
+                        $scope.item.jenisanggaran = e.data.data[0]
+                    }
+				})
+
                 $scope.popupTambahMT.center().open();
             }
             function editDetailRincianBelanjaSPJ(e) {
@@ -534,6 +601,77 @@ define(['initialize'], function (initialize) {
                     "width": "80px"
                 }
             ]};
+            $scope.columnSetting = {
+                columns:[
+                {
+                    "field": "tahunanggaran",
+                    "title": "Tahun Anggaran",
+                },
+                {
+                    "field": "namapemda",
+                    "title": "Nama Pemda",
+                },
+                {
+                    "field": "kepaladaerah",
+                    "title": "Kepala Daerah",
+                },
+                {
+                    "field": "namakepaladaerah",
+                    "title": "Nama Kepala Daerah",
+                },
+                {
+                    "field": "namasekda",
+                    "title": "Nama Sekda",
+                },
+                {
+                    "field": "nipsekda",
+                    "title": "NIP Sekda",
+                },
+                {
+                    "field": "namappkd",
+                    "title": "Nama PPKD",
+                },
+                {
+                    "field": "nipppkd",
+                    "title": "NIP PPKD",
+                },
+                {
+                    "field": "pengelolakeuanganblud",
+                    "title": "Pengelola Keuangan BLUD",
+                },
+                {
+                    "field": "namalengkap",
+                    "title": "Nama Kepala BLUD",
+                },
+                {
+                    "field": "nipkepalablud",
+                    "title": "NIP Kepala BLUD",
+                },
+                {
+                    "field": "alamat",
+                    "title": "Alamat",
+                },
+                {
+                    "field": "kota",
+                    "title": "Kota",
+                },
+                {
+                    "field": "telepon",
+                    "title": "Telepon",
+                },
+                {
+                    "field": "faximile",
+                    "title": "Faximile",
+                },
+                {
+                    "field": "tahap",
+                    "title": "Tahap Aktif",
+                },
+                {
+                    "field": "nomornpwp",
+                    "title": "Nomor NPWP",
+                },
+            ]};
             $scope.columnAlokasiAnggaran = {
 				// toolbar:[
                 //     {
@@ -668,6 +806,22 @@ define(['initialize'], function (initialize) {
                     $scope.dataSourceKegiatan = new kendo.data.DataSource({
                         data: data
                     });
+                }
+            });
+
+            $scope.$watch('item.kodeAddMT', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+
+                    var yangdicount = $scope.item.kodeAddMT
+                    console.log(yangdicount)
+                    var count = occurrences(yangdicount, ".");
+                    console.log(count)
+
+                    if(count == 2){
+                        $scope.jeniskode = false;
+                    } else{
+                        $scope.jeniskode = true;
+                    }
                 }
             });
             
@@ -866,6 +1020,60 @@ define(['initialize'], function (initialize) {
 
                 })
             }
+            
+            $scope.SimpanSetting = function(){
+                var objSave =
+                    {
+                        namapemda: $scope.item.namapemda,
+                        kepaladaerah: $scope.item.kepaladaerah,
+                        namakepaladaerah: $scope.item.namakepaladaerah,
+                        namasekda: $scope.item.namasekda,
+                        nipsekda: $scope.item.nipsekda,
+                        namappkd: $scope.item.namappkd,
+                        nipppkd: $scope.item.nipppkd,
+                        pengelolakeuanganblud: $scope.item.pengelolakeuanganblud,
+                        nipkepalablud: $scope.item.nipkepalablud,
+                        alamat: $scope.item.alamat,
+                        kota: $scope.item.kota,
+                        telepon: $scope.item.telepon,
+                        faximile: $scope.item.faximile,
+                        tahunanggaran: $scope.item.tahunanggaran,
+                        objectkepalabludfk: $scope.item.objectkepalabludfk.id,
+                        objecttahapaktivfk: $scope.item.objecttahapaktivfk.id,
+                        namatahap: $scope.item.objecttahapaktivfk.tahap,
+                        nomornpwp: $scope.item.nomornpwp,
+                    }
+
+                    medifirstService.get('perencanaan/get-penjagaan-setting-anggaran?tahunanggaran='+ $scope.item.tahunanggaran ).then(function (e) {
+                        if(e.data.data.length > 0){
+                            var confirm = $mdDialog.confirm()
+                                .title('Peringatan')
+                                .textContent('Pada Tahun Tersebut Sudah Ada Setting Anggaran Ingin Lanjut Simpan?')
+                                .ariaLabel('Lucky day')
+                                .cancel('Tidak')
+                                .ok('Ya')
+                            $mdDialog.show(confirm).then(function () {
+                                medifirstService.post('perencanaan/save-setting-anggaran', objSave).then(function (e) {
+                                    medifirstService.post('sysadmin/logging/save-log-simpan-setting-anggaran', objSave).then(function (data) {
+                                        loadDataGrid();
+                                    })
+                                }, function (error) {
+                
+                                })
+                            })
+                        } else{
+                            medifirstService.post('perencanaan/save-setting-anggaran', objSave).then(function (e) {
+                                medifirstService.post('sysadmin/logging/save-log-simpan-setting-anggaran', objSave).then(function (data) {
+                                    loadDataGrid();
+                                })
+                            }, function (error) {
+            
+                            })
+                        }
+                    });
+                
+            }
+
             $scope.SimpanPopUpAlokasi = function() {
                 var objSave = [];
                 for (let index = 0; index < dataAlokasi2222.length; index++) {
@@ -1498,12 +1706,20 @@ define(['initialize'], function (initialize) {
                 }else if(jmlkode > 15){
                     divS = 4
                 }
+
+                var jenisanggaran = ""
+                if ($scope.item.jenisanggaran.id != undefined) {
+                    jenisanggaran = $scope.item.jenisanggaran.id
+                }
+
+                
                 var objSave =
                     {
                         id: IDD,
                         reportdisplay: null,
                         kodemataanggaran: $scope.item.kodeAddMT,
-                        namamataanggaran: $scope.item.keteranganAddMT,
+                        namamataanggaran: $scope.item.keteranganAdd,
+                        jenisanggaran: jenisanggaran,
                         keterangan: null,
                         kodeexternal: null,
                         namaexternal: null,
@@ -2034,6 +2250,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.norecKT = ''
                 $scope.popupTambahKeteranganBelanja.center().open()
             }
+            
             $scope.TambahSPJ = function(){
                 
                 $scope.item.tglSPJ =  new Date(moment($scope.now).format('YYYY-MM-DD HH:mm'));
