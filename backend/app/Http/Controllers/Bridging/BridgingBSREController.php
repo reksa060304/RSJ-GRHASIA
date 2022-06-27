@@ -333,7 +333,7 @@ class BridgingBSREController  extends ApiController
                     DB::rollBack();
                     $result = array(
                         "status" => 400,
-                        "message" => $transMessage,
+                        "message" => $transMessage .' : '.json_decode($response)->error,
                         "as" => 'er@epic',
                     );
 
@@ -355,7 +355,7 @@ class BridgingBSREController  extends ApiController
                 $emrDkmn->tglemr = date('Y-m-d H:i:s');
                 $emrDkmn->file = 'app/' . $filename_res;
                 $emrDkmn->namafile = $filenamAsli;
-                $emrDkmn->deskripsi = $dataReq['reason'];
+                $emrDkmn->deskripsi = $dataReq['reason'] == null || $dataReq['reason']=='null'? '':$dataReq['reason'];
                 $emrDkmn->nik_pegawai = $dataReq['nik'];
                 $emrDkmn->namadokumen = $dataReq['namadokumen'];
                 $emrDkmn->pegawaifk = $dataReq['pegawaifk'];
@@ -462,7 +462,9 @@ class BridgingBSREController  extends ApiController
         $paramNoreg = '';
         $data = \DB::table('emr_bsre_t as emrdk')
             ->join('pegawai_m as pg', 'pg.id', '=', 'emrdk.pegawaifk')
-            ->select('emrdk.*', 'pg.namalengkap')
+            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'emrdk.norec_pd')
+            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->select('emrdk.*', 'pg.namalengkap','ps.nocm','ps.namapasien')
             ->where('emrdk.statusenabled', true)
             ->where('emrdk.kdprofile', $idProfile);
 
@@ -473,7 +475,18 @@ class BridgingBSREController  extends ApiController
         if (isset($request['noregistrasi']) && $request['noregistrasi'] != '') {
             $data = $data->where('emrdk.noregistrasi', $request['noregistrasi']);
         }
-
+        if (isset($request['dari']) && $request['dari'] != '') {
+            $data = $data->where('emrdk.tglemr','>=', $request['dari']);
+        }
+        if (isset($request['sampai']) && $request['sampai'] != '') {
+            $data = $data->where('emrdk.tglemr','<=', $request['sampai']);
+        }
+        if (isset($request['namapasien']) && $request['namapasien'] != '') {
+            $data = $data->where('ps.namapasien','ilike','%'. $request['namapasien'].'%');
+        }
+        if (isset($request['dokter']) && $request['dokter'] != '') {
+            $data = $data->where('emrdk.pegawaifk', $request['dokter']);
+        }
         $data = $data->get();
 
         $result = array(
