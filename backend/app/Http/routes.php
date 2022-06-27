@@ -775,6 +775,14 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('bsre-esign/sign/verify', 'Bridging\BridgingBSREController@verifyDokumen');
           Route::get('bsre-esign/user/status/{nik}', 'Bridging\BridgingBSREController@cekStatusUser');
           Route::post('bsre-esign/user/registrasi', 'Bridging\BridgingBSREController@registrasi');
+          Route::get('bsre-esign/bsre-cppt-ranap','Bridging\BridgingBSREController@BSRECPPTRanap');
+          Route::get('bsre-esign/get-combo','Bridging\BridgingBSREController@getCombo');
+          Route::post('bsre-esign/save-ttd','Bridging\BridgingBSREController@saveTTDE');
+          Route::post('bsre-esign/delete-ttd','Bridging\BridgingBSREController@deleteTTDE');
+          Route::get('bsre-esign/get-ttd', 'Bridging\BridgingBSREController@getTTD');
+          Route::get('bsre-esign/verify-ttd', 'Bridging\BridgingBSREController@verifyTTD');
+
+ 
         // });
 
           Route::post('cp/save-cp-dinamis', 'ClinicalPathway\CPController@SaveTransaksiCP');
@@ -2739,6 +2747,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-pasien','Report\ReportController@cetakPasien');
         Route::get('report/cetak-cppt','Report\ReportController@cetakCPPT');
         Route::get('report/cetak-cppt-ranap','Report\ReportController@cetakCPPTRanap');
+   
         Route::get('report/cetak-catatan-klinik','Report\ReportController@cetakCatatanKlinik');
         Route::get('report/cetak-resume-medis2','Report\ReportController@cetakResume2');
 
@@ -2829,7 +2838,31 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
     Route::get('api/grab/delivery/{deliveryID}', 'Bridging\GrabExpressController@getInfoDelivery');
     Route::get('api/grab/delivery-cancel/{deliveryID}', 'Bridging\GrabExpressController@cancelDelivery');
 
+    Route::get('storage_path', function (Illuminate\Http\Request $request)
+    {
+        $pathFILE = storage_path($request['path']);
 
+        if (!File::exists($pathFILE)) {
+          echo 'Data tidak ada ';
+          die;
+        }
+        if(isset($request['type']) && $request['type'] == 'download'){
+          $type = isset($request['mimetype']) ? $request['mimetype'] : File::mimeType($pathFILE);
+          $headers = array( 'Content-Type: '. $type,   );
+          return Response::download($pathFILE,  isset($request['filename']) ? $request['filename']:'file', $headers);
+        }
+
+        $file = File::get($pathFILE);
+        $type = isset($request['mimetype']) ? $request['mimetype'] : File::mimeType($pathFILE);
+        // $type = File::mimeType($pathFILE);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    });
+
+    
     Route::get('storage/berkaspasien', function (Illuminate\Http\Request $request)
     {
         $path = public_path('BerkasPasien/'.$request['nocm'].'/' . $request['filename']);
@@ -2858,6 +2891,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 );
         return Response::download($path,  $request['filename'], $headers);
     });
+
+    
 });
 
 Route::get('encode-base64/{data}', function($data){

@@ -3964,30 +3964,33 @@ class RegistrasiController extends ApiController
             //endregion
             $dataAL->save();
             //endregion
-            foreach($request['detailalamat'] as $item){
-                $idAlamat2 = AlamatD::max('id') + 1;
-                $dataAL2 = new AlamatD();
-                $dataAL2->id = $idAlamat2;
-                $dataAL2->kdprofile = (int)$kdProfile;
-                $dataAL2->statusenabled = true;
-                $dataAL2->norec = $dataAL2->generateNewId();
-                $dataAL2->alamatlengkap = $item['alamatlengkap'];
-                $dataAL2->objecthubungankeluargafk = 7;
-                $dataAL2->objectdesakelurahanfk = $item['objectdesakelurahanfk'];
-                $dataAL2->objectjenisalamatfk =$item['objectjenisalamatfk'];
-                $dataAL2->jenisalamat =$item['jenisalamat'];
-                $dataAL2->objectkecamatanfk = $item['objectkecamatanfk'];
-                $dataAL2->kodepos =null;
-                $dataAL2->objectkotakabupatenfk = $item['objectkotakabupatenfk'];
-                $dataAL2->namadesakelurahan = $item['namadesakelurahan'];
-                $dataAL2->namakecamatan = $item['namakecamatan'];
-                $dataAL2->namakotakabupaten = $item['namakotakabupaten'];
-                $dataAL2->propinsi = $item['propinsi'];             
-                $dataAL2->nocmfk = $dataNoCMFk;
-                $dataAL2->objectpropinsifk = $item['objectpropinsifk'];
-                $dataAL2->save();  
+            if(isset($request['detailalamat'])) {
+                foreach($request['detailalamat'] as $item){
+                    $idAlamat2 = AlamatD::max('id') + 1;
+                    $dataAL2 = new AlamatD();
+                    $dataAL2->id = $idAlamat2;
+                    $dataAL2->kdprofile = (int)$kdProfile;
+                    $dataAL2->statusenabled = true;
+                    $dataAL2->norec = $dataAL2->generateNewId();
+                    $dataAL2->alamatlengkap = $item['alamatlengkap'];
+                    $dataAL2->objecthubungankeluargafk = 7;
+                    $dataAL2->objectdesakelurahanfk = $item['objectdesakelurahanfk'];
+                    $dataAL2->objectjenisalamatfk =$item['objectjenisalamatfk'];
+                    $dataAL2->jenisalamat =$item['jenisalamat'];
+                    $dataAL2->objectkecamatanfk = $item['objectkecamatanfk'];
+                    $dataAL2->kodepos =null;
+                    $dataAL2->objectkotakabupatenfk = $item['objectkotakabupatenfk'];
+                    $dataAL2->namadesakelurahan = $item['namadesakelurahan'];
+                    $dataAL2->namakecamatan = $item['namakecamatan'];
+                    $dataAL2->namakotakabupaten = $item['namakotakabupaten'];
+                    $dataAL2->propinsi = $item['propinsi'];             
+                    $dataAL2->nocmfk = $dataNoCMFk;
+                    $dataAL2->objectpropinsifk = $item['objectpropinsifk'];
+                    $dataAL2->save();  
+                }
+                
             }
-            
+          
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
