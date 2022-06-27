@@ -322,6 +322,9 @@ class SumberDayaManusiaController extends ApiController {
 			                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,kp.kategorypegawai as namakategorypegawai,pend.pendidikan,jk.jeniskelamin,
 			                        gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,kdd.name as kedudukan,jp.jenispegawai"))
             ->where('pg.kdprofile', $kdProfile)
+            ->where('pg.namalengkap', '<>','-')
+            ->where('pg.namalengkap', '<>','Programmer Administrator')
+            ->whereNull('pg.usereksternal')
             ->where('pg.statusenabled',true)
             // ->take(50)
             ->orderBy('pg.namalengkap');

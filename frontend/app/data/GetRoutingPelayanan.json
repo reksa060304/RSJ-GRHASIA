@@ -17479,6 +17479,26 @@
     ]
   },
   {
+    "name": "LaporanRekapTindakanDetail",
+    "url": "/TGFwb3JhblJla2FwVGluZGFrYW5EZXRhaWw=",
+    "templateurl": "module/TataRekening/LaporanTataRekening/LaporanRekapTindakanDetail.html",
+    "controller": "LaporanRekapTindakanDetailCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RekamMedis.AsesmenMedis.AsesmenMedisSpesialisAnak",
     "url": "/AsesmenMedisSpesialisAnak",
     "templateurl": "module/EMR/AsesmenMedisSpesialisAnak.html",
@@ -18042,7 +18062,55 @@
                 "define": "MedifirstService"
               }
             ]
-            },
+               
+      
+    
+   },
+  {
+    "name": "RekamMedis.AsesmenMedis.TerapiHarianPasienRawatInap",
+    "url": "/TerapiHarianPasienRawatInap",
+    "templateurl": "module/EMR/TerapiHarianPasienRawatInap.html",
+    "controller": "TerapiHarianPasienRawatInapCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+
+
+
+      }
+    ]
+  },
+            {
+              "name": "RekamMedis.AsesmenMedis.AsesmenUlangNyeri",
+              "url": "/AsesmenUlangNyeri",
+              "templateurl": "module/EMR/AsesmenUlangNyeri.html",
+              "controller": "AsesmenUlangNyeriCtrl",
+              "deps": [{
+                  "module": "Services",
+                  "define": "Service"
+                },
+                {
+                  "module": "LoginServices",
+                  "define": "LoginService"
+                },
+                {
+                  "module": "MedifirstService",
+                  "define": "MedifirstService"
+                },
+                {
+                  "define": "RekamMedisCtrl"
+                }
+              ]
+   
+      },
       {
         "name": "RekamMedis.TTDElektronik",
         "url": "/TTDElektronik",

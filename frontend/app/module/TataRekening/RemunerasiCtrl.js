@@ -225,96 +225,96 @@ define(['initialize'], function (initialize) {
 			$scope.columnProduk = [
 				{
 					"field": "namalengkap",
-					"title": "Nama Pegawai",
+					"title": "namapegawai",
                     "width": '150px'			
 				},
 				{
 					"field": "idpegawai",
-					"title": "Kd Pegawai",
+					"title": "kd",
                     "width": '150px',		
 				},
 				{
 					"field": "iki",
-					"title": "IKI",
+					"title": "iki",
                     "width": '150px'
 				},
 				{
 					"field": "iku",
-					"title": "IKU",
+					"title": "iku",
                     "width": '150px'
 				},
 				{
 					"field": "prosen",
-					"title": "Prosen",
+					"title": "prosen",
                     "width": '150px'
 				},
 				{
 					"field": "grade",
-					"title": "Grade",
+					"title": "grade",
                     "width": '150px'
 				},
 				{
 					"field": "mk",
-					"title": "MK",
+					"title": "mk",
                     "width": '150px'
 				},
 				{
 					"field": "point_tt",
-					"title": "Point TT",
+					"title": "point_tt",
                     "width": '150px'
 				},
                 {
 					"field": "tglinput",
-					"title": "Tanggal Input",
+					"title": "tglinput",
                     "width": '150px'
 				},			
 			];
 			$scope.datacolumn = [
 				{
 					"field": "namalengkap",
-					"title": "Nama Pegawai",
+					"title": "namapegawai",
                     "width": '150px'			
 				},
 				{
 					"field": "idpegawai",
-					"title": "Kd Pegawai",
+					"title": "kd",
                     "width": '150px',		
 				},
 				{
 					"field": "iki",
-					"title": "IKI",
+					"title": "iki",
                     "width": '150px'
 				},
 				{
 					"field": "iku",
-					"title": "IKU",
+					"title": "iku",
                     "width": '150px'
 				},
 				{
 					"field": "prosen",
-					"title": "Prosen",
+					"title": "prosen",
                     "width": '150px'
 				},
 				{
 					"field": "grade",
-					"title": "Grade",
+					"title": "grade",
                     "width": '150px'
 				},
 				{
 					"field": "mk",
-					"title": "MK",
+					"title": "mk",
                     "width": '150px'
 				},
 				{
 					"field": "point_tt",
-					"title": "Point TT",
+					"title": "point_tt",
                     "width": '150px'
 				},
                 {
 					"field": "tglinput",
-					"title": "Tanggal Input",
+					"title": "tglinput",
                     "width": '150px'
-				},			
+				},		
 			];
 			$scope.mainGridOptions = {
 				pageable: true,
@@ -356,6 +356,33 @@ define(['initialize'], function (initialize) {
                     // sheet.frozenRows = 2;
                     //sheet.mergedCells = ["A1:H1"];
                     sheet.name = "Master Produk";
+					sheet.rows[0].cells[0].background = '#ffffff'; 
+                    sheet.rows[0].cells[0].color = '#000000';
+                    sheet.rows[0].cells[0].textAlign = 'center';
+                    sheet.rows[0].cells[1].background = '#ffffff'; 
+                    sheet.rows[0].cells[1].color = '#000000';
+                    sheet.rows[0].cells[1].textAlign = 'center'; 
+                    sheet.rows[0].cells[2].background = '#ffffff'; 
+                    sheet.rows[0].cells[2].color = '#000000';
+                    sheet.rows[0].cells[2].textAlign = 'center'; 
+                    sheet.rows[0].cells[3].background = '#ffffff'; 
+                    sheet.rows[0].cells[3].color = '#000000';
+                    sheet.rows[0].cells[3].textAlign = 'center'; 
+                    sheet.rows[0].cells[4].background = '#ffffff'; 
+                    sheet.rows[0].cells[4].color = '#000000';
+                    sheet.rows[0].cells[4].textAlign = 'center';
+					sheet.rows[0].cells[5].background = '#ffffff'; 
+                    sheet.rows[0].cells[5].color = '#000000';
+                    sheet.rows[0].cells[5].textAlign = 'center'; 
+                    sheet.rows[0].cells[6].background = '#ffffff'; 
+                    sheet.rows[0].cells[6].color = '#000000';
+                    sheet.rows[0].cells[6].textAlign = 'center'; 
+                    sheet.rows[0].cells[7].background = '#ffffff'; 
+                    sheet.rows[0].cells[7].color = '#000000';
+                    sheet.rows[0].cells[7].textAlign = 'center'; 
+                    sheet.rows[0].cells[8].background = '#ffffff'; 
+                    sheet.rows[0].cells[8].color = '#000000';
+                    sheet.rows[0].cells[8].textAlign = 'center';
 
                     // var myHeaders = [{
                     //     value: "Master Produk",

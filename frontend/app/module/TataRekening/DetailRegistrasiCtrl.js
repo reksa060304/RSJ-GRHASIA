@@ -586,14 +586,31 @@ define(['initialize'], function (initialize) {
 					tglmasuk: tglmasuks,
 					tglkeluar: tglkeluars
 				}
-				medifirstService.post('tatarekening/ubah-tgl-detailregistrasi',dataJson).then(function (e) {
-					if (e.status = 201) {
-						$scope.saveLogging('Ubah Tgl Detail Registrasi', 'norec Antrian Pasien Diperiksa',
-							$scope.currentRowData.norec, 'Ubah Tgl di Detail Registrasi pada No Registrasi ' + $scope.item.noRegistrasi)
-						LoadData();
-						$scope.batalUbahTanggal();
+				medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noRegistrasi ).then(function (e) {
+                    
+
+					if(e.data.detail[0].tglclosing == null){
+						var cek = 123;
+					} else{
+						var cek = 234;
 					}
-				})
+		  
+					console.log(cek);
+		  
+					if(cek == 234){
+						messageContainer.error("Data yang sudah diclosing tidak bisa diubah tanggal");
+					} else if (cek == 123){
+						medifirstService.post('tatarekening/ubah-tgl-detailregistrasi',dataJson).then(function (e) {
+							if (e.status = 201) {
+								$scope.saveLogging('Ubah Tgl Detail Registrasi', 'norec Antrian Pasien Diperiksa',
+									$scope.currentRowData.norec, 'Ubah Tgl di Detail Registrasi pada No Registrasi ' + $scope.item.noRegistrasi)
+								LoadData();
+								$scope.batalUbahTanggal();
+							}
+						})
+					}
+				});
+				
 
 			}
 

@@ -4,22 +4,23 @@
             <div class=' grid_12 panel panel-default'>
                 <div class='panel-body animated'>
                     <div class='grid_12'>
-                        <div class="grid_12 animated" ng-show="header.noregistrasi!==undefined">
-                            <div class="grid_1">
+                       
+                        <div class="grid_12 animated fadeIn" ng-show="header.noregistrasi!==undefined">
+                            <div class="grid_1" style="margin-top: 15px;">
                                 <fieldset class="effect-shadow" style="border-radius: 10px;">
                                     <div ng-click="showPopUp()">
                                         <img style="object-fit: cover;
                                             object-position: center;
-                                            height: 140px;
+                                            height: 100px;
                                             display: block;
                                                     max-width: 100%;
                                             width: 120px;" src="{{header.image}}" alt="Photo" title="">
                                     </div>
                                 </fieldset>
                             </div>
-                            <div class="grid_2">
-
-
+                            <div class="grid_11">
+                             <div class="grid_12">
+                             <div class="grid_2">
                                 <div class="grid_12">
                                     <input type="checkbox" class="k-checkbox" ng-model="checkNoregis" id="Generate"
                                         ng-click="getRekamMedisCheck(checkNoregis)"  >
@@ -66,7 +67,7 @@
                                         ng-model="header.namapasien" ng-disabled="true" />
                                 </div>
                             </div>
-                            <div class="grid_2">
+                            <div class="grid_3">
                                 <div class="grid_12">
                                     <label c-label item="item" c-label-text="Umur"></label>
                                 </div>
@@ -76,6 +77,7 @@
                                         ng-disabled="true" />
                                 </div>
                             </div>
+                        </div>
                             <div class="grid_2">
                                 <div class="grid_12">
                                     <label c-label item="item">Jenis Kelamin</label>
@@ -116,7 +118,7 @@
                                         ng-model="header.alamatlengkap" ng-disabled="true" />
                                 </div>
                             </div>
-                            <div class="grid_2">
+                            <div class="grid_3">
                                 <div class="grid_12">
                                     <label c-label item="item">Ruangan</label>
                                 </div>

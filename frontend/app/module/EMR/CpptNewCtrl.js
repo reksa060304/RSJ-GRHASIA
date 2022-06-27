@@ -15,6 +15,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             var dataLoad = []
              $scope.isCetak = true
              $scope.isCetakV = true
+             $scope.isTTD_E = false
             var norecEMR = ''
             $scope.show = true
             var pegawaiLogin = medifirstService.getPegawaiLogin()
@@ -1551,6 +1552,21 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + '&emrfk='+  $scope.cc.emrfk
                     +'&kdprofile='+local.id 
                     +'&nama='+nama,  '_blank');
+            }
+            $scope.ttdElek = function(){
+              if (norecEMR == '') return
+             
+              var local =JSON.parse(localStorage.getItem('profile')) 
+              var nama = medifirstService.getPegawaiLogin().namaLengkap
+              medifirstService.get('bsre-esign/bsre-cppt-ranap?nocm='  + $scope.cc.nocm 
+                + '&norec_apd='+ $scope.cc.norec
+                + '&emr=' + norecEMR
+                + '&emrfk='+  $scope.cc.emrfk
+                + '&kdprofile='+local.id 
+                + '&nama='+nama).then(function(e){
+                  
+              })
+             
             }
 
         }

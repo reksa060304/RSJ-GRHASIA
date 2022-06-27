@@ -3370,133 +3370,48 @@ class LaporanRekamMedisController extends   ApiController
         $tglAwal = $request['tglAwal']; 
         $tglAkhir = $request['tglAkhir']; 
 
-        $data10 = DB::select(DB::raw("SELECT namaruangan, 'TOTAL' as namaproduk, sum(jumlah) as jumlah from(
-            SELECT ru.namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                    FROM
-                    pasiendaftar_t pd
-                    INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                    inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                    inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                    inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                    inner  join produk_m pr on pr.id=pp.produkfk
-                    WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                    and apd.kdprofile = 30
-                    and pd.kdprofile = 30
-                    and apd.statusenabled = true
-                    and pd.statusenabled=true
-                    and pp.isobat is null
-                    and ru.id = 776
-                    and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk
-            ) as i group by namaruangan
+        $main = array('Elektro Kardiographi (EKG)', 'Elektro Myographi (EMG)', 'Echo Cardiographi (ECG)', 'Endoskopi (semua bentuk)', 'Hemodialisa', 'Densometri Tulang', 'Pungsi',
+        'Spirometri', 'Tes Kulit/Alergi/Histamin', 'Topometri', 'Akupuntur', 'Hiperbarik', 'Herbal / jamu', 'Lain-Lain', 'Total');
 
-            union ALL
+        $data10 = DB::select(DB::raw("SELECT ru.namaruangan, pr.namaproduk, pr.id, sum(ppd.jumlah) as jumlah
+        FROM
+        pasiendaftar_t pd
+        INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+        inner  join produk_m pr on pr.id=pp.produkfk
+        WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
+        and apd.kdprofile = 30
+        and pd.kdprofile = 30
+        and apd.statusenabled = true
+        and pd.statusenabled=true
+        and pp.isobat is null
+        and pr.id in(5006939, 5006940, 5005929, 5005926, 5006071, 5006350, 5006374)
+        group by ru.namaruangan, pr.id, pr.namaproduk;"));
 
-            SELECT ' ' namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id = 776
-                                and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk
+        
+        foreach($main as $row){
+            $jumlah = 0;
+            foreach($data10 as $data){
+                if($row == 'Elektro Kardiographi (EKG)' && ($data->id == 5005926 || $data->id == 5006071 || $data->id == 5006350 || $data->id == 5006374)){
+                    $jumlah += $data->jumlah;
+                }
 
-            union all
+                else if($row == 'Elektro Myographi (EMG)' && ($data->id == 5006939 || $data->id == 5006940 || $data->id == 5005929)){
+                    $jumlah += $data->jumlah;
+                }
+            }
 
-
-            SELECT ru.namaruangan, 'TOTAL' as namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id = 768
-                                and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan
-            union ALL
-
-            SELECT ' ' namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id = 768
-                                and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk
-
-            union all
-
-
-                        SELECT  'Psikologi / Psikometri' as namaruangan, 'TOTAL' as namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id in (791, 767, 807)
-                                and pr.id not in (5008635, 5008644)
-            union ALL
-
-            SELECT ' ' namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id in (791, 767, 807)
-                                and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk"));
+            $datas[] = array(
+                'namaruangan' => $row,
+                'jumlahtotal' => $jumlah,
+            );
+        }
 
         $result = array(
-            'data' => $data10,
+            'data' => $datas,
             'message' => 'as@cepot',
         );
         return $this->respond($result);
@@ -3507,175 +3422,56 @@ class LaporanRekamMedisController extends   ApiController
         $tglAwal = $request['tglAwal']; 
         $tglAkhir = $request['tglAkhir']; 
         
-        $data10 = DB::select(DB::raw("SELECT namaruangan, 'TOTAL' as namaproduk, sum(jumlah) as jumlah from(
-            SELECT ru.namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                    FROM
-                    pasiendaftar_t pd
-                    INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                    inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                    inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                    inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                    inner  join produk_m pr on pr.id=pp.produkfk
-                    WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                    and apd.kdprofile = 30
-                    and pd.kdprofile = 30
-                    and apd.statusenabled = true
-                    and pd.statusenabled=true
-                    and pp.isobat is null
-                    and ru.id = 782
-                    and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk
-            ) as i group by namaruangan
+        $main = array('Psikotes', 'Konsultasi', 'Terapi Medikamentosa', 'Elektro Medik', 'Psikoterapi', 
+        'Play Therapy', 'Rehabilitasi Medik Psikiatrik', 'TOTAL');
 
-            union ALL
+        $data10 = DB::select(DB::raw("SELECT ru.namaruangan, pr.namaproduk, pr.id, sum(ppd.jumlah) as jumlah
+        FROM
+        pasiendaftar_t pd
+        INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+        inner  join produk_m pr on pr.id=pp.produkfk
+        WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
+        and apd.kdprofile = 30
+        and pd.kdprofile = 30
+        and apd.statusenabled = true
+        and pd.statusenabled=true
+        and pp.isobat is null
+        and ru.id in(752, 782, 785, 779, 780, 572, 791, 767, 807)
+        group by ru.namaruangan, pr.id, pr.namaproduk;"));
 
-            SELECT ' ' namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id = 782
-                                and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk
+        
+        foreach($main as $row){
+            $jumlah = 0;
+            foreach($data10 as $data){
+                if($row == 'Konsultasi' && ($data->id == 5007078 || $data->id == 5006385 || $data->id == 5006384 || $data->id == 5006386 || $data->id == 5006107 )){
+                    $jumlah += $data->jumlah;
+                }
 
-            union all
+                else if($row == 'Terapi Medikamentosa' && ($data->id == 5006303)){
+                    $jumlah += $data->jumlah;
+                }
 
+                else if($row == 'Psikoterapi' && ($data->id == 5006382 || $data->id == 5006383 || $data->id == 5006389 || $data->id == 5006388 || $data->id == 5006390 || $data->id == 5006391 || $data->id == 5006392 || $data->id == 5006107 || $data->id == 5006110 || $data->id == 5006109 || $data->id == 5006875 || $data->id == 5006883 || $data->id == 5006882 || $data->id == 5006876 || $data->id == 5006881 || $data->id == 5006879 || $data->id == 5006880 || $data->id == 5006878 || $data->id == 5006877 )){ 
+                    $jumlah += $data->jumlah;
+                }
 
-            SELECT ru.namaruangan, 'TOTAL' as namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id = 752
-                                and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan
-            union ALL
+                else if($row == 'Play Therapy' && ($data->id == 5006107 || $data->id == 5006879)){
+                    $jumlah += $data->jumlah;
+                }
+            }
 
-            SELECT ' ' namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id = 752
-                                and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk
-
-                        union all
-
-                        SELECT ru.namaruangan, 'TOTAL' as namaproduk, sum(ppd.jumlah) as jumlah
-                                            FROM
-                                            pasiendaftar_t pd
-                                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                            inner  join produk_m pr on pr.id=pp.produkfk
-                                            WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                            and apd.kdprofile = 30
-                                            and pd.kdprofile = 30
-                                            and apd.statusenabled = true
-                                            and pd.statusenabled=true
-                                            and pp.isobat is null
-                                            and ru.id = 785
-                                            and pr.id not in (5008635, 5008644)
-                            group by ru.namaruangan
-                        union ALL
-
-                        SELECT ' ' namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                                            FROM
-                                            pasiendaftar_t pd
-                                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                            inner  join produk_m pr on pr.id=pp.produkfk
-                                            WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                            and apd.kdprofile = 30
-                                            and pd.kdprofile = 30
-                                            and apd.statusenabled = true
-                                            and pd.statusenabled=true
-                                            and pp.isobat is null
-                                            and ru.id = 785
-                                            and pr.id not in (5008635, 5008644)
-                            group by ru.namaruangan, pr.namaproduk
-
-                        union all
-
-
-                        SELECT ru.namaruangan, 'TOTAL' as namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id = 765
-                                and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan
-            union ALL
-
-            SELECT ' ' namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
-                                FROM
-                                pasiendaftar_t pd
-                                INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                                INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-                                inner join ruangan_m ru on ru.id = apd.objectruanganfk
-                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                                inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
-                                inner  join produk_m pr on pr.id=pp.produkfk
-                                WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
-                                and apd.kdprofile = 30
-                                and pd.kdprofile = 30
-                                and apd.statusenabled = true
-                                and pd.statusenabled=true
-                                and pp.isobat is null
-                                and ru.id = 765
-                                and pr.id not in (5008635, 5008644)
-                group by ru.namaruangan, pr.namaproduk"));
+            $datas[] = array(
+                'namaruangan' => $row,
+                'jumlahtotal' => $jumlah,
+            );
+        }
 
         $result = array(
-            'data' => $data10,
+            'data' => $datas,
             'message' => 'as@cepot',
         );
         return $this->respond($result);

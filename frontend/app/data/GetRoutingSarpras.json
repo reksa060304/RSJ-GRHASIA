@@ -4895,5 +4895,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LaporanOrderKirimBarang",
+    "url": "/TGFwb3Jhbk9yZGVyZGFuS2lyaW1CYXJhbmc=",
+    "templateurl": "module/Logistik/LaporanOrderKirimBarang.html",
+    "controller": "LaporanOrderKirimBarangCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

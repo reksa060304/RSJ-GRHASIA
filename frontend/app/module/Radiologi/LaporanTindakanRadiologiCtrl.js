@@ -284,6 +284,11 @@ define(['initialize'], function (initialize) {
                         "width": "160px"
                     },
                     {
+                        "field": "jeniskelamin",
+                        "title": "Jenis Kelamin",
+                        "width": "160px"
+                    },
+                    {
                         "field": "ruangan",
                         "title": "Poli",
                         "width": "120px",

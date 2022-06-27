@@ -34,9 +34,11 @@ use App\Transaksi\OrderPelayanan;
 use App\Transaksi\OrderProduk;
 use App\Master\Pegawai;
 use App\Traits\Valet;
+use App\Transaksi\AlokasiKeteranganBelanja;
 use App\Transaksi\KegiatanAnggaran;
 use App\Transaksi\KegiatanBelanja;
 use App\Transaksi\KeteranganBelanja;
+use App\Transaksi\RealisasiDetail;
 use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Parent_;
 use Webpatser\Uuid\Uuid;
@@ -378,12 +380,7 @@ class PerencanaanController extends ApiController {
             ->orderBy('dp.kode')
             ->get();
 
-        // $mata = \DB::table('mataanggaran_m as dp')
-        //     ->select('dp.*')
-        //     ->where('dp.kdprofile', $idProfile)
-        //     ->where('dp.statusenabled', true)
-        //     ->orderBy('dp.kodemataanggaran')
-        //     ->get();
+        
         $mata = DB::select(DB::raw("
                 select v.id, v.kodemataanggaran,v.namamataanggaran,cast(v.total as float) as total from (
                     select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
@@ -449,12 +446,32 @@ class PerencanaanController extends ApiController {
             // 'kelompokkeempat' => $keempat,
             // 'kelompokkelima' => $kelima,
             // 'kelompokkeenam' => $keenam,
-            // 'datalogin' => $dataLogin,
+            // 'rekanan' => $rekanan,
             'datalogin' => $dataLogin,
             'message' => 'epic',
         );
 
         return $this->respond($result);
+    }
+    public function getDataComboRekananPart(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $req = $request->all();
+        $rekanan = \DB::table('rekanan_m as dp')
+            ->select('dp.id','dp.namarekanan')
+            ->where('dp.kdprofile', $idProfile)
+            ->where('dp.statusenabled', true)
+            ->where('dp.objectjenisrekananfk', 1)
+            ->orderBy('dp.namarekanan');
+        if (isset($req['filter']['filters'][0]['value']) &&
+            $req['filter']['filters'][0]['value'] != "" &&
+            $req['filter']['filters'][0]['value'] != "undefined") {
+                $rekanan = $rekanan->where('namarekanan', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%');
+        };
+        $rekanan = $rekanan->take(10);
+        $rekanan = $rekanan->get();
+
+        return $this->respond($rekanan);
     }
     public function deleteChildAnggaran(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
@@ -1980,6 +1997,28 @@ class PerencanaanController extends ApiController {
                 order by ma.kodemataanggaran;
             ")
         );
+        $dataKeteranganBelanja = DB::select(DB::raw("
+                select kb.*,ma.kodemataanggaran || ' ' || ma.namamataanggaran as mataanggaran,
+                ka.kode || ' ' || ka.keterangan as kegiatan,ap.asalproduk,
+                ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap
+                --,1 as jan,1 as feb,1 as mar, 1 as apr,
+                --1 as mei,1 as juni, 1 as juli,1 as agst,1 as sep,1 as okt, 1 as nov,1 as des
+                from keteranganbelanja_t kb
+                INNER JOIN mataanggaran_m ma on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN asalproduk_m ap on ap.id=kb.objectasalprodukfk
+                INNER JOIN tahapanggaran_m ta on ta.id=ka.tahap
+            ")
+        );
+        $arrALokasi = [];
+        foreach($dataKeteranganBelanja as $item){
+            $dataAlokasi = \DB::table('alokasiketeranganbelanja_t as ap')
+            ->select('ap.*')
+            ->where('ap.statusenabled',true)
+            ->where('ap.keteranganbelanjafk',$item->norec)
+            ->get();    
+            $arrALokasi[] = $dataAlokasi;
+        }
         $dataAsalProduk = \DB::table('asalproduk_m as ap')
             ->select('ap.id','ap.asalproduk')
             ->where('ap.statusenabled',true)
@@ -1988,7 +2027,9 @@ class PerencanaanController extends ApiController {
 
         $result = array(
             'data' => $data,
+            'keteranganbelanja' => $dataKeteranganBelanja,
             'asalproduk' => $dataAsalProduk,
+            'alokasi' => $arrALokasi,
             'message' => '@epic',
         );
 
@@ -2015,5 +2056,186 @@ class PerencanaanController extends ApiController {
         );
 
         return $this->respond($result);
+    }
+    
+    public function saveAlokasiKeteranganBelanja(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+       try{
+           foreach($request['data'] as $item){
+
+                $MAA = AlokasiKeteranganBelanja::where('keteranganbelanjafk',$item['keteranganbelanjafk'])
+                    ->where('bulanint',$item['bulanint'])
+                    ->where('kdprofile', $idProfile)
+                    ->get();
+                if(empty($MAA)){
+                    $MA = new AlokasiKeteranganBelanja();
+                    $norecKS = $MA->generateNewId();
+                    $MA->norec = $norecKS;
+                    $MA->kdprofile = $idProfile;
+                    $MA->statusenabled = true;
+                }else{
+                    $MA = AlokasiKeteranganBelanja::where('keteranganbelanjafk',$item['keteranganbelanjafk'])
+                    ->where('bulanint',$item['bulanint'])
+                    ->where('kdprofile', $idProfile)
+                    ->first();
+                }
+                $MA->keteranganbelanjafk = $item['keteranganbelanjafk'];
+                $MA->bulanint = (float)$item['bulanint'];
+                $MA->nilai = (float)$item['nilai'];
+
+                $MA->save();
+                
+           }
+            
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    
+    public function getDataSPJ(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+                select sr.*,ka.tahap,ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
+                pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
+                ka.kode || '~' || ka.keterangan as kegiatan, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran
+                from strukrealisasi_t sr
+                INNER JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
+                INNER JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+                INNER JOIN rekanan_m rkn on rkn.id=sr.rekananfk
+                INNER JOIN pegawai_m as pg1 on pg1.id=sr.bendaharafk
+                INNER JOIN pegawai_m as pg2 on pg2.id=sr.penerimafk
+                where sr.tglrealisasi between '2022-06-01 00:00:00' and '2022-07-01 00:00:00'
+                and sr.statusenabled ='t'
+            ")
+        );
+        $result = [];
+        $strukrealisasifk ='';
+        foreach($data as $item){
+            $strukrealisasifk= $item->norec;
+            $dataDetail = DB::select(DB::raw("
+                    select sr.*,ka.keteranganbelanja,0 as nourut
+                    from realisasidetail_t sr
+                    INNER JOIN keteranganbelanja_t ka on ka.norec=sr.keteranganbelanjafk
+                    where sr.strukrealisasifk = '$strukrealisasifk'
+                ")
+            );
+            $result[] = array(
+                'strukrealisasifk' => $strukrealisasifk,
+                'data' => $dataDetail,
+            );
+        };
+
+
+        $result = array(
+            'data' => $data,
+            'detail' => $result,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+    public function saveRealisasiSPJ(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataRealisasiDetail = [];
+       try{
+            if ($request['norec']==''){
+                $MA = new StrukRealisasi();
+                $norecKS = $MA->generateNewId();
+                $MA->norec = $norecKS;
+                $MA->kdprofile = $idProfile;
+                $MA->statusenabled = true;
+                $noRealiasi = $this->generateCodeBySeqTable(new StrukRealisasi, 'norealisasi', 12, 'SPJ' . $this->getDateTime()->format('ym') . '/', $idProfile);
+                $MA->norealisasi = $noRealiasi;
+
+            }else{
+                $MA= StrukRealisasi::where('norec',$request['norec'])
+                    ->where('kdprofile', $idProfile)
+                    ->first();
+            }
+            $MA->tglrealisasi = $request['tglrealisasi'];
+            $MA->status = null;//$request['status'];
+            $MA->totalbelanja = $request['totalbelanja'];
+            $MA->objectcarabayarfk = null;//$request['objectcarabayarfk'];
+            $MA->rekananfk = $request['rekananfk'];
+            $MA->deskripsi = $request['deskripsi'];
+            $MA->objectkegiatanfk = $request['objectkegiatanfk'];
+            $MA->objectmataanggaranfk = $request['objectmataanggaranfk'];
+            $MA->bendaharafk = $request['bendaharafk'];
+            $MA->penerimafk = $request['penerimafk'];
+            $MA->pph = (float)$request['pph'];
+            $MA->ppn = (float)$request['ppn'];
+            $MA->save();
+
+            $norecStrukRealisasiJangInsertTableDetailNa = $MA->norec;
+
+            $dataRealisasiDetail = $request['realisasidetail'];
+            foreach($dataRealisasiDetail as $item){
+                $DT = new RealisasiDetail();
+                $norecDT = $DT->generateNewId();
+                $DT->norec = $norecDT;
+                $DT->kdprofile = $idProfile;
+                $DT->statusenabled = true;
+                $DT->strukrealisasifk = $norecStrukRealisasiJangInsertTableDetailNa;
+                $DT->uraian = $item['uraian'];
+                $DT->jml = $item['jml'];
+                $DT->satuan = $item['satuan'];
+                $DT->harga = $item['harga'];
+                $DT->subtotal = $item['subtotal'];
+                $DT->keteranganbelanjafk = $item['keteranganbelanjafk'];
+                $DT->save();
+            }
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

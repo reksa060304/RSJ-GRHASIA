@@ -106,7 +106,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="grid_6">
+                    <div class="grid_2">
+                        <label c-label item="item" c-label-text="AsalRujukan" style="margin-top: 5px;"></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.asalrujukan"
+                            k-data-text-field="'nama'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                            k-data-source="listRajalRanap" />
+                    </div>
+                    <div class="grid_4">
                         
                         <div class="grid_2" style="margin-top: 20px;">
                             <button class="c-button" ng-click="cariFilter()">Cari</button>

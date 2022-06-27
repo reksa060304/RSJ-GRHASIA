@@ -2162,7 +2162,7 @@ class RadiologiController extends ApiController
         }
 
         $data = DB::select(DB::raw("          
-                SELECT pp.norec,pp.tglpelayanan,ps.nocm,pd.noregistrasi,ps.namapasien,
+                SELECT pp.norec,pp.tglpelayanan,ps.nocm,pd.noregistrasi,ps.namapasien,jk.jeniskelamin,
                        CASE WHEN ru1.namaruangan IS NOT NULL THEN ru1.namaruangan ELSE ru2.namaruangan END AS ruangan,
                        klp.kelompokpasien,pro.namaproduk,pp.jumlah,pp.hargajual,
                        CASE WHEN pg.namalengkap IS NULL THEN '-' ELSE pg.namalengkap END AS dokterdpjp,

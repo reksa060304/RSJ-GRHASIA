@@ -983,6 +983,10 @@
         {
             "nameDep": "LaporanPelayananObatJKNCtrl",
             "urlDep": "module/Logistik/LaporanPelayananObatJKNCtrl"
+        },
+        {
+            "nameDep": "LaporanOrderKirimBarangCtrl",
+            "urlDep": "module/Logistik/LaporanOrderKirimBarangCtrl"
         }
     ]
 }

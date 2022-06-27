@@ -5428,6 +5428,46 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         return $this->respond($data);
     }
 
+    public function getPenjagaanVerifKasir(Request $request)
+    {
+        
+        $noregistrasi = $request['noregistrasi'];
+
+        $dataz = DB::select(DB::raw("select sp.nostruk
+        FROM   pasien_m ps 
+                                inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                                inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
+                                left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
+        where pd.noregistrasi = '$noregistrasi'
+        order by sp.nostruk limit 1"));
+
+        
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
+
+    public function getPenjagaanVerifPiutang(Request $request)
+    {
+        
+        $noregistrasi = $request['noregistrasi'];
+
+        $dataz = DB::select(DB::raw("select sp.totalharusdibayar
+        FROM   pasien_m ps 
+                                inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                                inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
+                                left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
+        where pd.noregistrasi = '$noregistrasi'
+        order by sp.totalharusdibayar limit 1"));
+
+        
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
+
     public function getLaporanFaktorPelayanan(Request $request)
     {
         $tglAwal = $request['tglAwal'];

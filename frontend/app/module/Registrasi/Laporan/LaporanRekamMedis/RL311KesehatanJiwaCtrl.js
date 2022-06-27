@@ -28,13 +28,18 @@ define(['initialize'], function (initialize) {
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir).then(function (data) {
                         var data = data.data
+                        var total = 0
                         for (var i = 0; i < data.data.length; i++) {
                             data.data[i].kdprov = '24'
                             data.data[i].kabkota = 'Kab. Sleman'
                             data.data[i].koders = '3404022'
                             data.data[i].namars = 'RSJ. Grhasia'
                             data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
+                            data.data[i].no = i+1
+                            total += data.data[i].jumlahtotal
                         }
+                        data.data[data.data.length-1].no = 99
+                        data.data[data.data.length-1].jumlahtotal = total
                         $scope.isRouteLoading = false;
                         $scope.ambildataexcel = data.data;
                         $scope.panggil($scope.ambildataexcel);
@@ -61,7 +66,6 @@ define(['initialize'], function (initialize) {
                     toolbar: ["excel"],
                     excel: {
                         fileName: "Laporan Pelayanan Rehabilitasi Medik.xlsx",
-                        filterable: true,
                         allPages: true
                     },
                     excelExport: function (e) {
@@ -134,17 +138,17 @@ define(['initialize'], function (initialize) {
                             width: "80px"
                         },
                         {
-                            field: "namaruangan",
+                            field: "no",
                             title: "NO",
                             width: "80px"
                         },
                         {
-                            field: "namaproduk",
+                            field: "namaruangan",
                             title: "JENIS KEGIATAN",
                             width: "80px"
                         },
                         {
-                            field: "jumlah",
+                            field: "jumlahtotal",
                             title: "JUMLAH",
                             width: "80px"
                         },

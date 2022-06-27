@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize,configuration) {
     'use strict';
     initialize.controller('SuratKeteranganPemeriksaanKesehatanJiwaCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
@@ -8,6 +8,7 @@ define(['initialize'], function (initialize) {
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true
             $scope.isCetak = false
+            $scope.isCetakV = true
             $scope.noRecPap = cacheHelper.get('noRecPap');
             $scope.totalSkor = 0
             $scope.skorNutrisi = 0
@@ -937,6 +938,18 @@ define(['initialize'], function (initialize) {
                     }
                     cacheHelper.set('cacheNomorEMR', arrStr);
                 });
+            }
+            $scope.cetakBlade = function () {
+                                console.log(nomorEMR, $scope.cc.emrfk)
+
+
+                if (nomorEMR == '-') return
+
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangankesehatanjiwa?noemr=' + nomorEMR + '&emfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama, '_blank');
             }
 
         }

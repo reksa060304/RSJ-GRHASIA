@@ -507,10 +507,15 @@ define(['initialize'], function (initialize) {
           toastr.error('Pasien belum diverifikasi')
           return
         }
-        if ($scope.listBelumBayar != undefined && $scope.dataPasienSelected.jenisAsuransi == 'Umum/Pribadi') {
-          toastr.error('Pasien harus melunasi tagihan terlebih dahulu ')
-          return
-        }
+        medifirstService.get('tatarekening/get-penjagaan-verif-piutang?noregistrasi='+$scope.dataPasienSelected.noRegistrasi).then(function (e) {
+          
+          if ($scope.listBelumBayar != undefined && $scope.dataPasienSelected.jenisAsuransi == 'Umum/Pribadi' && e.data.data[0].totalharusdibayar != 0) {
+            toastr.error('Pasien harus melunasi tagihan terlebih dahulu ')
+            return
+          }
+
+        })
+        
 
 
         var confirm = $mdDialog.confirm()

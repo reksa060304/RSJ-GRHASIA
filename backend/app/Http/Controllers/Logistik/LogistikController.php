@@ -88,6 +88,12 @@ class LogistikController extends ApiController{
             )
         );
 
+        $dataNoOrder = DB::select(DB::raw("select norec, noorder from strukorder_t 
+        where noorder ilike 'OTRF%' 
+        and statusenabled = true 
+        and kdprofile = 30
+        order by noorder"));
+
         $dataSumberDana = \DB::table('asalproduk_m as lu')
             ->select('lu.id','lu.asalproduk as asalProduk')
             ->where('lu.statusenabled', true)
@@ -349,6 +355,7 @@ class LogistikController extends ApiController{
             'fungsiproduk' => $dataFungsiProduk,
             'bahanproduk'=> $dataBahanProduk,
             'warna'=> $dataWarna,
+            'noorder'=> $dataNoOrder,
             'passwordAdjusment' => $getPasswordAdjusment,
             'bulan' => $dataBulan,
             'by' => 'ea@epic',
@@ -4373,7 +4380,7 @@ class LogistikController extends ApiController{
                 $dataSR->statusenabled = true;
                 $dataSR->norealisasi = $norealisasi;
                 $dataSR->tglrealisasi = date('Y-m-d H:i:s', strtotime($req['struk']['tglrealisasi']));//$req['struk']['tglrealisasi'];
-                $dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
+                //$dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
                 $dataSR->totalbelanja = $req['struk']['totalharusdibayar'];
                 $dataSR->save();
                 //            if (is_null($req['struk']['norecrealisasi'])) {
@@ -4382,7 +4389,7 @@ class LogistikController extends ApiController{
             } else {
                 $dataSR = StrukRealisasi::where('norec', $req['struk']['norecrealisasi'])->first();
                 $dataSR->tglrealisasi = date('Y-m-d H:i:s', strtotime($req['struk']['tglstruk']));//$req['struk']['tglstruk'];
-                $dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
+                //$dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
                 $dataSR->totalbelanja = $req['struk']['totalharusdibayar'];
                 $dataSR->save();
                 $datanorecSR = $req['struk']['norecrealisasi'];
@@ -4431,7 +4438,9 @@ class LogistikController extends ApiController{
             DB::rollBack();
             $result = array(
                 "status" => 400,
-                "message" => $transMessage,
+                //"message" => $transMessage,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
 //                "data" =>$SP,
 //                "datas" => $datanorecSR,
 //                "dataSR" => $dataSR,
@@ -14066,5 +14075,46 @@ class LogistikController extends ApiController{
 
         return $this->respond($result);
     }
-    
+
+    public function getOrderKirimBarang(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $noorder = $request['noorder'];
+        $searchnoorder = '';
+
+        if(isset($request['noorder']) && $request['noorder'] != '' && $request['noorder'] != null){
+            $searchnoorder = "and so.noorder = '".$noorder."'";
+        }
+
+        $data = \DB::select(DB::raw("select tglkirim, nokirim, namaproduk, jumlahorder, sum(jumlahkirim) jumlahkirim
+        from(
+        select skm.tglkirim, skm.nokirim, pr.namaproduk,
+        case when so.norec is null then 0 else op.qtyproduk end as jumlahorder,
+        krp.qtyproduk jumlahkirim
+        from strukkirim_t skm
+        inner join kirimproduk_t krp on krp.nokirimfk = skm.norec
+        inner join produk_m pr on pr.id = krp.objectprodukfk
+        left join strukorder_t so on so.norec = skm.noorderfk
+        left join orderpelayanan_t op on so.norec = op.strukorderfk and op.objectprodukfk = krp.objectprodukfk
+        where skm.statusenabled = true and skm.kdprofile = 30
+        and krp.statusenabled = true and krp.kdprofile = 30
+        and skm.tglkirim::date between '$tglAwal' and '$tglAkhir' 
+        and so.statusenabled = true and so.kdprofile = 30
+        and so.tglorder::date between '$tglAwal' and '$tglAkhir' and so.noorder ilike 'OTRF%'
+        and op.statusenabled = true and op.kdprofile = 30
+        $searchnoorder
+        group by skm.tglkirim, skm.nokirim, pr.namaproduk, so.norec, op.qtyproduk, krp.qtyproduk
+        order by skm.nokirim
+        ) as x group by tglkirim, nokirim, namaproduk, jumlahorder;
+        "));
+        
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
+    }
 }

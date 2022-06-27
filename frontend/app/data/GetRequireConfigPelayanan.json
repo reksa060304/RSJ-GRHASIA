@@ -3140,6 +3140,10 @@
             "urlDep": "module/TataRekening/LaporanTataRekening/LaporanRekapTindakanCtrl"
         },
         {
+            "nameDep": "LaporanRekapTindakanDetailCtrl",
+            "urlDep": "module/TataRekening/LaporanTataRekening/LaporanRekapTindakanDetailCtrl"
+        },
+        {
             "nameDep": "AsesmenMedisSpesialisAnakCtrl",
             "urlDep": "module/EMR/AsesmenMedisSpesialisAnakCtrl"
         },
@@ -3247,6 +3251,14 @@
         {
             "nameDep": "AsuhanGiziLanjutPasienRawatInapCtrl",
             "urlDep": "module/EMR/AsuhanGiziLanjutPasienRawatInapCtrl"
+        },
+        {
+            "nameDep": "AsesmenUlangNyeriCtrl",
+            "urlDep": "module/EMR/AsesmenUlangNyeriCtrl"
+        },
+        {
+            "nameDep": "TerapiHarianPasienRawatInapCtrl",
+            "urlDep": "module/EMR/TerapiHarianPasienRawatInapCtrl"
         },
         {
             "nameDep": "TTDElektronikCtrl",
