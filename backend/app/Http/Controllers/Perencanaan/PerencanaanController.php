@@ -372,14 +372,25 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
         $dataLogin = $request->all();
         $tahunanggaran = $request['tahun'];
+        $tahap = $request['tahap'];
 
         $kegiatan = \DB::table('kegiatananggaran_m as dp')
-            ->leftjoin('tahapanggaran_m as thp','dp.tahap','=','thp.id')
             ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
-            ->select('dp.*','thp.tahap','kp.namakelompok','dp.tahap as thpid')
+            ->select('dp.*','kp.namakelompok')
             ->where('dp.kdprofile', $idProfile)
             ->where('dp.statusenabled', true)
             ->orderBy('dp.kode')
+            ->get();
+
+        $kegiatansubsub = \DB::table('kegiatananggaran_m as dp')
+            ->join('keteranganbelanja_t as ktb','ktb.objectkegiatanfk','=','dp.id')
+            ->select('dp.id', 'dp.kode', 'dp.keterangan')
+            ->where('dp.kdprofile', $idProfile)
+            ->where('dp.statusenabled', true)
+            ->where('dp.div', 4)
+            ->where('ktb.objecttahapfk', $tahap)
+            ->orderBy('dp.kode')
+            ->groupBy('dp.id', 'dp.kode', 'dp.keterangan')
             ->get();
 
 
@@ -474,6 +485,7 @@ class PerencanaanController extends ApiController {
 
         $result = array(
             'kegiatan' => $kegiatan,
+            'kegiatansubsub' => $kegiatansubsub,
             'mataanggaran' => $mata,
             'jenisanggaran' => $jenisanggaran,
             'keterangan' => $keterangan,
@@ -1868,10 +1880,18 @@ class PerencanaanController extends ApiController {
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
 
+                // $KB= KeteranganBelanja::where('objectkegiatanfk',$MA->id)
+                //     ->where('kdprofile', $idProfile)
+                //     ->get();
+
             }else{
                 $MA= KegiatanAnggaran::where('id',$request['id'])
                     ->where('kdprofile', $idProfile)
                     ->first();
+                
+                // $KB= KeteranganBelanja::where('objectkegiatanfk',$request['id'])
+                //     ->where('kdprofile', $idProfile)
+                //     ->get();
             }
             $MA->kode = $request['kode'];
             $MA->keterangan = $request['keterangan'];
@@ -1879,7 +1899,7 @@ class PerencanaanController extends ApiController {
             $MA->namaexternal = $request['namaexternal'];
             $MA->reportdisplay = $request['reportdisplay'];
             $MA->tahun = $request['tahun'];
-            $MA->tahap = $request['tahap'];
+            //$MA->tahap = $request['tahap'];
             $MA->indikatormasuk = $request['indikatormasuk'];
             $MA->indikatorkeluaran = $request['indikatorkeluaran'];
             $MA->indikatorhasil = $request['indikatorhasil'];
@@ -1889,6 +1909,17 @@ class PerencanaanController extends ApiController {
             $MA->div = $request['div'];
 
             $MA->save();
+
+            // if(!empty($KB)){
+            //     foreach($KB as $k){
+            //         $k->objecttahapfk = $request['idtahap'];
+            //         $k->save();
+            //     }
+            // }
+                
+           
+            
+
            $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';
@@ -1908,8 +1939,73 @@ class PerencanaanController extends ApiController {
             DB::rollBack();
             $result = array(
                 'status' => 400,
-                'message'  => $transMessage,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
                 'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveSettingTahap(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $details = $request['details'];
+        $awal = $request['tahapawal']['id'];
+        $akhir = $request['tahapakhir']['id'];
+
+        try{
+
+            foreach($details as $dt){
+                $KB= KeteranganBelanja::where('objectkegiatanfk',$dt['id'])
+                    ->where('objecttahapfk', $awal)
+                    ->get();
+                
+                foreach($KB as $k){
+
+                    $MA = new KeteranganBelanja();
+                    $norecKS = $MA->generateNewId();
+                    $MA->norec = $norecKS;
+                    $MA->kdprofile = $idProfile;
+                    $MA->statusenabled = true;
+                    $MA->objectkegiatanfk = $dt['id'];
+                    $MA->objectmataanggaranfk = $k->objectmataanggaranfk;
+                    $MA->keteranganbelanja = $k->keteranganbelanja;
+                    $MA->nourut = $k->nourut;
+                    $MA->jml = $k->jml;
+                    $MA->hargasatuan = $k->hargasatuan;
+                    $MA->subtotal = $k->subtotal;
+                    $MA->satuan = $k->satuan;
+                    $MA->objectasalprodukfk = $k->objectasalprodukfk;
+                    $MA->objecttahapfk = $akhir;
+
+                    $MA->save();
+                }
+            }
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $KB,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
                 'as' => '@epic',
             );
         }
@@ -2083,6 +2179,7 @@ class PerencanaanController extends ApiController {
             $MA->subtotal = $request['subtotal'];
             $MA->satuan = $request['satuan'];
             $MA->objectasalprodukfk = $request['objectasalprodukfk'];
+            $MA->objecttahapfk = $request['idtahap'];
 
             $MA->save();
            $transStatus = 'true';
@@ -2114,6 +2211,19 @@ class PerencanaanController extends ApiController {
     public function getTotalMataAnggaran(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+
+        $stahun = '';
+        if(isset($request['tahun']) || $request['tahun'] != ''){
+            $stahun = "and ka.tahun = '".$request['tahun']."'";
+        }
+
+        $stahap = '';
+        if(isset($request['tahap']) && $request['tahap'] != '' && $request['tahap'] != 'undefined'){
+            $stahap = "and kb.objecttahapfk = ".$request['tahap'];
+        }
+
+
+
         $data = DB::select(DB::raw("
                 select ma.id, ma.kodemataanggaran,ma.namamataanggaran,cast(sum(kt.subtotal) as float) as total 
                 from mataanggaran_m ma
@@ -2135,8 +2245,17 @@ class PerencanaanController extends ApiController {
                 INNER JOIN mataanggaran_m ma on ma.id=kb.objectmataanggaranfk
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
                 INNER JOIN asalproduk_m ap on ap.id=kb.objectasalprodukfk
-                INNER JOIN tahapanggaran_m ta on ta.id=ka.tahap
-            ")
+                INNER JOIN tahapanggaran_m ta on ta.id=kb.objecttahapfk
+                --inner join settinganggaran_t sa on sa.objecttahapaktivfk = ta.id
+                where kb.kdprofile = 30 and kb.statusenabled = true
+                $stahun
+                $stahap
+                group by kb.norec, kb.kdprofile, kb.statusenabled, kb.objectkegiatanfk, kb.objectmataanggaranfk, kb.keteranganbelanja,
+                ma.kodemataanggaran || ' ' || ma.namamataanggaran, kb.nourut, kb.jml, kb.hargasatuan, kb.subtotal, kb.satuan,
+                kb.objectasalprodukfk, kb.objecttahapfk,
+                ka.kode || ' ' || ka.keterangan,ap.asalproduk,
+                ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap"
+            )
         );
         $arrALokasi = [];
         foreach($dataKeteranganBelanja as $item){
@@ -2158,6 +2277,27 @@ class PerencanaanController extends ApiController {
             'keteranganbelanja' => $dataKeteranganBelanja,
             'asalproduk' => $dataAsalProduk,
             'alokasi' => $arrALokasi,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+    public function getTahapKegiatan(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $id = $request['id'];
+        $data = DB::select(DB::raw("
+        select ta.id, ta.tahap FROM
+        kegiatananggaran_m ka 
+        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = ka.id
+        inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
+        where ka.id = $id
+        limit 1
+        ")
+        );
+
+        $result = array(
+            'data' => $data,
             'message' => '@epic',
         );
 
@@ -2249,7 +2389,7 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
 
         $data = DB::select(DB::raw("
-                select sr.*,ka.tahap,ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
+                select sr.*,ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
                 pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
                 ka.kode || '~' || ka.keterangan as kegiatan, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran
                 from strukrealisasi_t sr

@@ -372,7 +372,7 @@
 
 							<br />
 							<div class="grid_12">
-								<div class="grid_6">
+								<div class="grid_3">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="Organisasi"></label>
 									</div>
@@ -380,7 +380,17 @@
 										<input c-text-box type="input" class="k-textbox" ng-model="item.organisasi" disabled="true" />
 									</div>
 								</div>
-								<div class="grid_5"></div>
+								<div class="grid_4"></div>
+								<div class="grid_3" style="margin-top: 20px;">
+									<div class="grid_4" style="text-align: center;">
+										Tahap
+									</div>
+									<div class="grid_8" style="margin-top: -10px;">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchtahap"
+											k-data-text-field="'tahap'" k-data-value-field="'id'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+									</div>
+								</div>
 								<div class="grid_1">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="Tahun"></label>
@@ -390,6 +400,9 @@
 												placeholer="YYYY" k-format="'yyyy'" />
 									</div>
 								</div>
+								<div class="grid_1" style="margin-top: 10px;">
+									<button class="btnTemplate1" ng-click="findData()">Search</button>
+								</div>
 								<div class="grid_12 borderBox">
 									<kendo-grid id="kGrids" k-data-source="dataSourceKeteranganBelanja" k-selectable="'row'"  class="max-height"
 										k-options="columnKeteranganBelanja" k-ng-model="dataKeteranganBelanjaSelected" ng-click="klikKeteranganBelanja(dataKeteranganBelanjaSelected)">
@@ -398,6 +411,11 @@
 							</div>
 
 							<div class="clear"></div>
+							<div class="grid_12">
+								<div class="grid_2">
+									<button class="btnTemplate1" ng-click="SettingTahap()">Transfer / Copy Anggaran Belanja</button>
+								</div>
+							</div>
 						</md-content>
 					</md-tab>
 					<md-tab label="SPJ">
@@ -423,6 +441,57 @@
 
 		<br />
 
+	</div>
+</div>
+<div class="grid_12" kendo-window="popupTambahTahap" k-title="'Setting Tahap'" k-visible="false">
+	
+	<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:280px;">
+		<legend id="filterData">
+			<a ng-click="showAndHide()">List Sub Sub Kegiatan</a>
+		</legend>
+		<div class="grid_12" ng-repeat="item in listSubSubKegiatan track by $index  ">
+			<input type="checkbox" ng-checked="item.isChecked" class="k-checkbox" name="{{item.id}}"
+				id="{{item.id}}" ng-model="bool" value="{{item.id}}" ng-click="ceklisOne(bool,item)">
+
+			<label class="k-checkbox-label {{item.style}}" for="{{item.id}}">{{item.id}} -
+				{{item.kode}} ~ {{item.keterangan}}</label>
+		</div>
+	</div>
+	<div class="grid_12">
+		<div class="grid_4" >
+			<div class="grid_4" style="text-align: center;">
+				Tahap Awal
+			</div>
+			<div class="grid_8" style="margin-top: -10px;">
+				<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapawal"
+					k-data-text-field="'tahap'" k-data-value-field="'id'"
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+			</div>
+		</div>
+		<div class="grid_4" ></div>
+		<div class="grid_4" >
+			<div class="grid_4" style="text-align: center;">
+				Tahap Akhir
+			</div>
+			<div class="grid_8" style="margin-top: -10px;">
+				<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapakhir"
+					k-data-text-field="'tahap'" k-data-value-field="'id'"
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+			</div>
+		</div>
+	</div>
+	<div class="grid_12" >
+		<div class="grid_4" >
+			<div class="grid_12">
+				<button class="btnTemplate1" ng-click="CariSettingTahap()">Cari</button>
+			</div>
+		</div>
+		<div class="grid_4" ></div>
+		<div class="grid_4" >
+			<div class="grid_12">
+				<button class="btnTemplate1" ng-click="SaveSettingTahap()">Simpan</button>
+			</div>
+		</div>
 	</div>
 </div>
 <div kendo-window="popupTambah" k-title="'Tambah'" k-visible="false" k-width="1000" k-height="600">
@@ -625,8 +694,10 @@
 					<div class="grid_4" style="text-align: center;">
 						TAHAP
 					</div>
-					<div class="grid_8"  style="margin-top: -15px;">
-						<input c-text-box type="input" class="k-textbox" ng-model="item.tahap" disabled="true" />
+					<div class="grid_8" style="margin-top: -10px;">
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahap"
+							k-data-text-field="'tahap'" k-data-value-field="'id'"
+							k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
 					</div>
 				</div>
 			</div>
