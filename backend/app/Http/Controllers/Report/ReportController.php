@@ -2205,18 +2205,17 @@ class ReportController extends ApiController{
     {
         $noemr = $request['noemr'];
         $kdProfile = (int) $request['kdprofile'];
-        $emrfk = $request['emfk'];
+        $emrfk = $request['emrfk'];
         $data = \DB::select(DB::raw(
             "SELECT epd.value, ed.type
                 FROM emrpasien_t ep
                         INNER JOIN emrpasiend_t epd ON ep.noemr = epd.emrpasienfk
                         INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
-                        INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
                     WHERE ep.kdprofile = $kdProfile AND ep.statusenabled = TRUE 
                         AND ep.noemr ILIKE '$noemr' 
                         AND ed.statusenabled = TRUE 
-                        AND ep.emrfk = $emrfk 
-                        AND ed.emrfk = $emrfk
+                        AND ep.emrfk = 3000427 
+                        AND ed.emrfk = 3000427
                 ORDER BY
 	        ed.ID ASC
             "
@@ -2239,7 +2238,7 @@ class ReportController extends ApiController{
     {
         $noemr = $request['noemr'];
         $kdProfile = (int) $request['kdprofile'];
-        $emrfk = $request['emfk'];
+        $emrfk = $request['emrfk'];
         $emrd = \DB::select(DB::raw("
             select * from emrd_t where emrfk = $emrfk and statusenabled = true and kdprofile = $kdProfile order by id
         "));
@@ -2376,7 +2375,7 @@ class ReportController extends ApiController{
     {
         $noemr = $request['noemr'];
         $kdProfile = (int) $request['kdprofile'];
-        $emrfk = $request['emfk'];
+        $emrfk = $request['emrfk'];
         $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = 3000428 and statusenabled = true and kdprofile = $kdProfile order by id
         "));
         $data = \DB::select(DB::raw("SELECT ed.id,epd.value, ed.type
@@ -2428,7 +2427,7 @@ class ReportController extends ApiController{
     {
         $noemr = $request['noemr'];
         $kdProfile = (int) $request['kdprofile'];
-        $emrfk = $request['emfk'];
+        $emrfk = $request['emrfk'];
         $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = $emrfk and statusenabled = true and kdprofile = $kdProfile order by id
         "));
         $data = \DB::select(DB::raw("SELECT ed.id,epd.value, ed.type
