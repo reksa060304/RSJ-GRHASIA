@@ -3575,7 +3575,7 @@ class RegistrasiController extends ApiController
             if($request['idpasien'] == '') {
                 if(isset($request['pasien']['noIdentitas']) && $request['pasien']['noIdentitas']!='-'
                     && $request['pasien']['noIdentitas']!=''){
-                    $cek = Pasien::where('noidentitas',$request['pasien']['noIdentitas'])->first();
+                    $cek = Pasien::where('noidentitas',$request['pasien']['noIdentitas'])->where('statusenabled',true)->first();
                     if(!empty($cek)){
                     $transMessage = "NIK ini sudah terdaftar sebagai ".$cek->namapasien . ' ('.$cek->nocm.')';
                         DB::rollBack();
