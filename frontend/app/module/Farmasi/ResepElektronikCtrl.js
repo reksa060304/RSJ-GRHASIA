@@ -515,225 +515,327 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.updateProduksi = function () {
-                //if ($scope.item.statusorder == 'Verifikasi') {
-                if ($scope.item.statusorder != 'Menunggu') {
-                    //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 1).then(function(e) {
-                    //
-                    //managePasien.updateStatusOrder($scope.item.noorder, 1).then(function(e) {
-                    var strukresep = ""
-                    if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
-                        strukresep = true
-                    }
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
+                    
 
-                    var objSave = {
-                        noorder: $scope.item.noorder,
-                        statusorder: 1,
-                        tglambil: null,
-                        namapengambil: null,
-                        tglselesai: null,
-                        namaselesai: null,
-                        strukresep: strukresep
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
                     }
-                    medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
-                        let params = $scope.item.noregistrasi    
-                        if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
-                            params = $scope.item.noreservasi
+          
+                    console.log(cek);
+          
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
+                    } else if (cek == 123){
+                        if ($scope.item.statusorder != 'Menunggu') {
+                            //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 1).then(function(e) {
+                            //
+                            //managePasien.updateStatusOrder($scope.item.noorder, 1).then(function(e) {
+                            var strukresep = ""
+                            if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
+                                strukresep = true
+                            }
+        
+                            var objSave = {
+                                noorder: $scope.item.noorder,
+                                statusorder: 1,
+                                tglambil: null,
+                                namapengambil: null,
+                                tglselesai: null,
+                                namaselesai: null,
+                                strukresep: strukresep
+                            }
+                            medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                                let params = $scope.item.noregistrasi    
+                                if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                                    params = $scope.item.noreservasi
+                                }
+                                saveAntrol(params,5)
+                                medifirstService.postLogging('Rubah Status Produksi Order Resep Elektronik', 'No Order Struk Order',
+                                    $scope.item.noorder, 'Rubah Status Produksi Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                                        $scope.refresh();
+                                    })
+                                    
+                            });
+                        } else {
+                            toastr.error("Status Data Belum Diverifikasi !!")
+                            return;
                         }
-                        saveAntrol(params,5)
-                        medifirstService.postLogging('Rubah Status Produksi Order Resep Elektronik', 'No Order Struk Order',
-                            $scope.item.noorder, 'Rubah Status Produksi Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
-                                $scope.refresh();
-                            })
-                            
-                    });
-                } else {
-                    toastr.error("Status Data Belum Diverifikasi !!")
-                    return;
-                }
+                    }
+                });
+                //if ($scope.item.statusorder == 'Verifikasi') {
+                
             }
 
             $scope.updatePackaging = function () {
-                //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Produksi') {
-                if ($scope.item.statusorder != 'Menunggu') {
-                    //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 2).then(function(e) {
-                    // managePasien.updateStatusOrder($scope.item.noorder, 2).then(function(e) {
-                    //     $scope.refresh();
-                    // });;
-                    var strukresep = ""
-                    if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
-                        strukresep = true
-                    }
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
+                    
 
-                    var objSave =
-                    {
-                        noorder: $scope.item.noorder,
-                        statusorder: 2,
-                        tglambil: null,
-                        namapengambil: null,
-                        tglselesai: null,
-                        namaselesai: null,
-                        strukresep: strukresep
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
                     }
-                    medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
-                        medifirstService.postLogging('Rubah Status Packaging Order Resep Elektronik', 'No Order Struk Order',
-                            $scope.item.noorder, 'Rubah Status Packaging Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
-                                $scope.refresh();
-                            })
-                    });
-                } else {
-                    if ($scope.item.statusorder == 'Menunggu') {
-                        toastr.error("Status Data Belum Diverifikasi !!")
-                        return;
-                    } else {
-                        toastr.error("Status Data Belum Produksi !!")
-                        return;
+          
+                    console.log(cek);
+          
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
+                    } else if (cek == 123){
+                        if ($scope.item.statusorder != 'Menunggu') {
+                            //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 2).then(function(e) {
+                            // managePasien.updateStatusOrder($scope.item.noorder, 2).then(function(e) {
+                            //     $scope.refresh();
+                            // });;
+                            var strukresep = ""
+                            if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
+                                strukresep = true
+                            }
+        
+                            var objSave =
+                            {
+                                noorder: $scope.item.noorder,
+                                statusorder: 2,
+                                tglambil: null,
+                                namapengambil: null,
+                                tglselesai: null,
+                                namaselesai: null,
+                                strukresep: strukresep
+                            }
+                            medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                                medifirstService.postLogging('Rubah Status Packaging Order Resep Elektronik', 'No Order Struk Order',
+                                    $scope.item.noorder, 'Rubah Status Packaging Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                                        $scope.refresh();
+                                    })
+                            });
+                        } else {
+                            if ($scope.item.statusorder == 'Menunggu') {
+                                toastr.error("Status Data Belum Diverifikasi !!")
+                                return;
+                            } else {
+                                toastr.error("Status Data Belum Produksi !!")
+                                return;
+                            }
+                        }
                     }
-                }
+                });
+                //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Produksi') {
+                
             }
             $scope.updateDone = function () {
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
+                    
+
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
+                    }
+          
+                    console.log(cek);
+          
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
+                    } else if (cek == 123){
+                        if ($scope.item.statusorder != 'Menunggu') {
+                            //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 3).then(function(e) {
+                            // managePasien.updateStatusOrder($scope.item.noorder, 3).then(function(e) {
+                            //     $scope.refresh();
+                            // });;
+                            var strukresep = ""
+                            if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
+                                strukresep = true
+                            }
+                            var objSave =
+                            {
+                                noorder: $scope.item.noorder,
+                                statusorder: 3,
+                                tglambil: null,
+                                namapengambil: null,
+                                tglselesai: null,
+                                namaselesai: 'selesai',
+                                strukresep: strukresep
+                            }
+                            medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                                var userLogin = medifirstService.getPegawaiLogin();
+                                var Norec = $scope.item.noresep;
+                                var Noreg = $scope.item.noregistrasi;
+                                //grhasia ga perlu cetak ketika tekan selesai
+                                // if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai') {
+                                //     var stt = 'false'
+                                //     if (confirm('View Antrian Farmasi? ')) {
+                                //         // Save it!
+                                //         stt = 'true';
+                                //     } else {
+                                //         // Do nothing!
+                                //         stt = 'false'
+                                //     }
+                                //     var client = new HttpClient();
+                                //     client.get('http://127.0.0.1:1237/printvb/farmasi?cetak-buktiantrianfarmasi=' + Norec + '&noregistrasi=' + Noreg + '&view=' + stt, function (response) {
+                                //         // aadc=response;
+                                //     });
+                                // }
+        
+        
+                                medifirstService.postLogging('Rubah Status Selasai Order Resep Elektronik', 'No Order Struk Order',
+                                    $scope.item.noorder, 'Rubah Status Selasai Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                                        $scope.refresh();
+                                    })
+                            });
+                            let params = $scope.item.noregistrasi    
+                            if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                                params = $scope.item.noreservasi
+                            } 
+                            saveAntrol(params,7)
+                        } else {
+                            if ($scope.item.statusorder == 'Menunggu') {
+                                toastr.error("Status Data Belum Diverifikasi !!")
+                                return;
+                            } else {
+                                toastr.error("Status Data Belum Packaging !!")
+                                return;
+                            }
+                        }
+                    }
+                });
                 //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging') {
-                if ($scope.item.statusorder != 'Menunggu') {
-                    //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 3).then(function(e) {
-                    // managePasien.updateStatusOrder($scope.item.noorder, 3).then(function(e) {
-                    //     $scope.refresh();
-                    // });;
-                    var strukresep = ""
-                    if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
-                        strukresep = true
-                    }
-                    var objSave =
-                    {
-                        noorder: $scope.item.noorder,
-                        statusorder: 3,
-                        tglambil: null,
-                        namapengambil: null,
-                        tglselesai: null,
-                        namaselesai: 'selesai',
-                        strukresep: strukresep
-                    }
-                    medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
-                        var userLogin = medifirstService.getPegawaiLogin();
-                        var Norec = $scope.item.noresep;
-                        var Noreg = $scope.item.noregistrasi;
-                        //grhasia ga perlu cetak ketika tekan selesai
-                        // if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai') {
-                        //     var stt = 'false'
-                        //     if (confirm('View Antrian Farmasi? ')) {
-                        //         // Save it!
-                        //         stt = 'true';
-                        //     } else {
-                        //         // Do nothing!
-                        //         stt = 'false'
-                        //     }
-                        //     var client = new HttpClient();
-                        //     client.get('http://127.0.0.1:1237/printvb/farmasi?cetak-buktiantrianfarmasi=' + Norec + '&noregistrasi=' + Noreg + '&view=' + stt, function (response) {
-                        //         // aadc=response;
-                        //     });
-                        // }
-
-
-                        medifirstService.postLogging('Rubah Status Selasai Order Resep Elektronik', 'No Order Struk Order',
-                            $scope.item.noorder, 'Rubah Status Selasai Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
-                                $scope.refresh();
-                            })
-                    });
-                    let params = $scope.item.noregistrasi    
-                    if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
-                        params = $scope.item.noreservasi
-                    } 
-                    saveAntrol(params,7)
-                } else {
-                    if ($scope.item.statusorder == 'Menunggu') {
-                        toastr.error("Status Data Belum Diverifikasi !!")
-                        return;
-                    } else {
-                        toastr.error("Status Data Belum Packaging !!")
-                        return;
-                    }
-                }
+                
             }
 
             $scope.verifikasi = function () {
-                // debugger;
-                if ($scope.item.statusorder == 'Menunggu') {
-                    //$state.go('ResepElektronikVerifikasi', { noOrder: $scope.item.strukOrder.noOrder, noAntrianPasien: $scope.item.strukOrder.noRegistrasi.noRec });
-                    var arrStr = {
-                        0: $scope.item.nocm,
-                        1: $scope.item.namapasien,
-                        2: $scope.item.jeniskelamin,
-                        3: $scope.item.noregistrasi,
-                        4: $scope.item.umur,
-                        5: $scope.item.klid,
-                        6: $scope.item.namakelas,
-                        7: $scope.item.tglregistrasi,
-                        8: $scope.item.norec_apd,
-                        9: $scope.item.noorder,
-                        10: $scope.item.jenisPenjamin,
-                        11: $scope.item.kelompokPasien,
-                        12: $scope.item.beratBadan,
-                        13: $scope.item.AlergiYa,
-                        14: ''
-                    }
-                    cacheHelper.set('InputResepApotikCtrl', arrStr);
-                    $state.go('InputResepApotik')
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
+                    
 
-                    let params = $scope.item.noregistrasi    
-                    if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
-                        params = $scope.item.noreservasi
-                    } 
-                    saveAntrol(params,6)
-                } else {
-                    alert('Sudah di verifikasi!!')
-                }
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
+                    }
+          
+                    console.log(cek);
+          
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
+                    } else if (cek == 123){
+                        // debugger;
+                        if ($scope.item.statusorder == 'Menunggu') {
+                            //$state.go('ResepElektronikVerifikasi', { noOrder: $scope.item.strukOrder.noOrder, noAntrianPasien: $scope.item.strukOrder.noRegistrasi.noRec });
+                            var arrStr = {
+                                0: $scope.item.nocm,
+                                1: $scope.item.namapasien,
+                                2: $scope.item.jeniskelamin,
+                                3: $scope.item.noregistrasi,
+                                4: $scope.item.umur,
+                                5: $scope.item.klid,
+                                6: $scope.item.namakelas,
+                                7: $scope.item.tglregistrasi,
+                                8: $scope.item.norec_apd,
+                                9: $scope.item.noorder,
+                                10: $scope.item.jenisPenjamin,
+                                11: $scope.item.kelompokPasien,
+                                12: $scope.item.beratBadan,
+                                13: $scope.item.AlergiYa,
+                                14: ''
+                            }
+                            cacheHelper.set('InputResepApotikCtrl', arrStr);
+                            $state.go('InputResepApotik')
+
+                            let params = $scope.item.noregistrasi    
+                            if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                                params = $scope.item.noreservasi
+                            } 
+                            saveAntrol(params,6)
+                        } else {
+                            alert('Sudah di verifikasi!!')
+                        }
+                    }
+                });
+                
             }
             $scope.ambilObat = function () {
-                if ($scope.item.statusorder == 'Selesai') {
-                    // noresep
-                    $scope.item.tglambil = new Date()
-                    $scope.item.namapengambil = $scope.item.namapasien 
-                    var client = new HttpClient();
-                    client.get('http://127.0.0.1:2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.item.noantri + '&namapasien=' + $scope.item.nocm + ', ' + $scope.item.namapasien + '&view=true', function (response) {
-                        // do something with response
-                    });
-                    // if ( $scope.item.statusorder == 'Selesai') {
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
                     
-                    $scope.popup.center().open();
-                    //$state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.strukOrder.noOrder, noAntrianPasien: $scope.item.strukOrder.noRegistrasi.noRec });
-                    // $state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.noorder, noAntrianPasien: $scope.item.norec_apd });
-                    // } else {
-                    // alert('Status harus Selesai!!')
-                    // }
-                } else {
-                    toastr.error("Status Data Harus Selesai !!")
-                    return;
-                }
+
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
+                    }
+          
+                    console.log(cek);
+          
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
+                    } else if (cek == 123){
+                        if ($scope.item.statusorder == 'Selesai') {
+                            // noresep
+                            $scope.item.tglambil = new Date()
+                            $scope.item.namapengambil = $scope.item.namapasien 
+                            var client = new HttpClient();
+                            client.get('http://127.0.0.1:2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.item.noantri + '&namapasien=' + $scope.item.nocm + ', ' + $scope.item.namapasien + '&view=true', function (response) {
+                                // do something with response
+                            });
+                            // if ( $scope.item.statusorder == 'Selesai') {
+                            
+                            $scope.popup.center().open();
+                            //$state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.strukOrder.noOrder, noAntrianPasien: $scope.item.strukOrder.noRegistrasi.noRec });
+                            // $state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.noorder, noAntrianPasien: $scope.item.norec_apd });
+                            // } else {
+                            // alert('Status harus Selesai!!')
+                            // }
+                        } else {
+                            toastr.error("Status Data Harus Selesai !!")
+                            return;
+                        }
+                    }
+                });
+                
 
             }
 
             $scope.saveambilobat = function () {
-                var nm = ''
-                if ($scope.item.namapengambil != undefined) {
-                    nm = $scope.item.namapengambil
-                }
-                var strukresep = ""
-                if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
-                    strukresep = true
-                }
-                var objSave =
-                {
-                    noorder: $scope.item.noorder,
-                    statusorder: 4,
-                    tglambil: moment($scope.item.tglambil).format('YYYY-MM-DD HH:mm'),
-                    namapengambil: nm,
-                    strukresep: strukresep
-                }
-                medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
-                    medifirstService.postLogging('Rubah Status Sudah Di Ambil Order Resep Elektronik', 'No Order Struk Order',
-                        $scope.item.noorder, 'Rubah Status Sudah Di Ambil Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
-                            $scope.refresh();
-                            $scope.popup.close()
-                        })
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
+                    
+
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
+                    }
+          
+                    console.log(cek);
+          
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
+                    } else if (cek == 123){
+                        var nm = ''
+                        if ($scope.item.namapengambil != undefined) {
+                            nm = $scope.item.namapengambil
+                        }
+                        var strukresep = ""
+                        if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
+                            strukresep = true
+                        }
+                        var objSave =
+                        {
+                            noorder: $scope.item.noorder,
+                            statusorder: 4,
+                            tglambil: moment($scope.item.tglambil).format('YYYY-MM-DD HH:mm'),
+                            namapengambil: nm,
+                            strukresep: strukresep
+                        }
+                        medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                            medifirstService.postLogging('Rubah Status Sudah Di Ambil Order Resep Elektronik', 'No Order Struk Order',
+                                $scope.item.noorder, 'Rubah Status Sudah Di Ambil Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                                    $scope.refresh();
+                                    $scope.popup.close()
+                                })
+                        });
+                    }
                 });
+                
             }
 
 
