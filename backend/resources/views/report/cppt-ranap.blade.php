@@ -486,9 +486,10 @@
 </body>
 <style>
     .footer {
+        text-align: center;
         position: absolute;
-        bottom: 5%;
-        right: 5%;
+        bottom: 8%;
+        right: 10%;
      }
     </style>
 <script type="text/javascript">
