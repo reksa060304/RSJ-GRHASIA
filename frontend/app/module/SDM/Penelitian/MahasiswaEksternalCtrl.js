@@ -11,8 +11,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.currentKeterangan = [];
             $scope.item.namainstansi = medifirstService.getPegawaiLogin().namaLengkap;
             $scope.item.namauser = medifirstService.getUserLogin().kdUser;
-
+            $scope.djp = 0;
             $scope.pemb = true;
+            $scope.tbhbtn = true;
+            $scope.updbtn = false;
             $scope.ru = true;
             var noOrder = '';
             var NorecKpe = '';
@@ -71,7 +73,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.notelp = dat.pegawaiuser[0].nomor
                     }
                     if (datas.data.norec != '') {
-                        $scope.norec = datas.data.norec[0].jumlahpeserta
+                        $scope.norec = datas.data.norec[0].jumlahpeserta;
+                        $scope.djp = datas.data.norec[0].objectdetailjenisprodukfk
                     }
                     for (var i = 0; i < datas.data.me.length; i++) {
                         datas.data.me[i].no = i + 1
@@ -103,8 +106,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 
             }
-            // var imageData = 
-                        gambar = '../../../../../backend/public/DIKLAT/FileFoto/DIKLAT-MuhamadFazriAnnafi2-1709142-fazri@gmail.com.jpg'
             if (medifirstService.getKelompokUser() == 'diklit') {
                 $scope.columnGridDiagnosapasien = {
                     toolbar: ["excel", ],
@@ -312,8 +313,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     var noregistrasi = "";
                     if (dataSelected != undefined) {
                         noregistrasi = "norec=" + dataSelected.norec_eks;
-                        
+                        $scope.tbhbtn = false
+                        $scope.updbtn = true
                     }else{
+                        $scope.tbhbtn = true
+                        $scope.updbtn = false
                         $scope.isRouteLoading = false
                         return
                     }
@@ -393,24 +397,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var gambar = document.querySelectorAll('[type=file]')[0].files[0]
                 console.log(gambar);
 
-                if (gambar == undefined) {
-                        toastr.error("Foto Wajib diisi !")
-                        return;
-                    
-                } 
-                if (gambar.type != 'image/png' && gambar.type != 'image/jpeg') {
-                    toastr.error("Foto menggunakan Format jpg atau png!")
-                    return;
-                }
-                
-                
                 var listRawRequired = [
                     "item.namapeneliti|ng-model|Nama Mahasiswa",
                     "item.nim|ng-model|NIM",
                     "item.jeniskelamin|k-ng-model|Jenis Kelamin",
                     "item.email|ng-model|Email",
                 ];
+                //1948 detailjenisproduk dari diklat penelitian= 1948
+                if ($scope.djp == 1948 || $scope.djp == 1960 || $scope.djp == 1947) {
+                    if (gambar == undefined) {
+                        toastr.error("Foto Wajib diisi !")
+                        return;
 
+                    }
+                    if (gambar.type != 'image/png' && gambar.type != 'image/jpeg') {
+                        toastr.error("Foto menggunakan Format jpg atau png!")
+                        return;
+                    }
+                }
+                
                 var isValid = ModelItem.setValidation($scope, listRawRequired);
 
                 if (isValid.status == true) {
@@ -421,12 +426,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         const formData = new FormData()
                         var image = "noimage"
                         var gambar = document.querySelectorAll('[type=file]')[0].files[0]
-                        if (gambar.type != 'image/png') {
-                            toastr.error("Informasi, Data Sudah Diverifikasi !")
-                            return;
-                        } else {
+                        // if (gambar.type == 'image/png' || gambar.type == 'image/jpeg') {
                             
-                        }
+                        // } else {
+                        //     toastr.error("Informasi, Data Sudah Diverifikasi !")
+                        //     return;
+                        // }
 
                         $scope.isRouteLoading = true;
                         //bikin if untuk ruangan dan pegawai
@@ -474,72 +479,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 $scope.item = {};
                                 $scope.isRouteLoading = false;
                                 loadDataCombo();
+                                document.getElementById("coba").reset()
+                                $scope.item = {}
                             } else {
                                 toastr.info('Simpan Gagal');
+                                // document.getElementById("files").reset()
+
                             }
                             // $scope.loadDataSip();
                             // $scope.batalSip();
                         })
 
-                    } else {
-                        console.log('norec');
-                        const url = baseTransaksi + 'sdm/pendidikan/update-pesertadidik'
-
-                        const form = document.querySelector('form')
-
-                        const formData = new FormData()
-                        var image = "noimage"
-
-                        $scope.isRouteLoading = true;
-                        //bikin if untuk ruangan dan pegawai
-                        var ruangan = null
-                        var pegawai = null
-                        if (document.querySelectorAll('[type=file]')[0].files[0] != undefined) {
-                            image = document.querySelectorAll('[type=file]')[0].files[0]
-                        }
-                        console.log(image);
-                        formData.append('norec', $scope.dataSelected.norec_eks)
-                        formData.append('noregistrasifk', $state.params.norec)
-                        formData.append('nama', $scope.item.namapeneliti)
-                        formData.append('nim', $scope.item.nim)
-                        formData.append('nomorhp', $scope.item.telp)
-                        formData.append('jeniskelaminfk', $scope.item.jeniskelamin.id)
-                        formData.append('objectruanganlastfk', ruangan)
-                        formData.append('objectpegawailastfk', pegawai)
-                        formData.append('email', $scope.item.email)
-                        formData.append('image', image)
-
-                        var arr = document.cookie.split(';')
-                        var authorization;
-                        for (var i = 0; i < arr.length; i++) {
-                            var element = arr[i].split('=');
-                            if (element[0].indexOf('authorization') > 0) {
-                                authorization = element[1];
-                            }
-                        }
-                        // console.log(formData);
-                        // return
-                        fetch(url, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-AUTH-TOKEN': authorization
-                            }
-                        }).then(response => {
-                            // console.log(response)
-                            if (response.status == 201) {
-                                toastr.info('Sukses');
-                                $scope.item = {};
-                                $scope.isRouteLoading = false;
-                                loadDataCombo();
-                            } else {
-                                toastr.info('Simpan Gagal');
-                            }
-                            // $scope.loadDataSip();
-                            // $scope.batalSip();
-                        })
-
-                    }
+                    } 
                 }
                 
                 
@@ -650,7 +601,62 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.updated = function () {
                 
 
+                console.log('norec');
+                const url = baseTransaksi + 'sdm/pendidikan/update-pesertadidik'
 
+                const form = document.querySelector('form')
+
+                const formData = new FormData()
+                var image = "noimage"
+
+                $scope.isRouteLoading = true;
+                //bikin if untuk ruangan dan pegawai
+                var ruangan = null
+                var pegawai = null
+                if (document.querySelectorAll('[type=file]')[0].files[0] != undefined) {
+                    image = document.querySelectorAll('[type=file]')[0].files[0]
+                }
+                console.log(image);
+                formData.append('norec', $scope.dataSelected.norec_eks)
+                formData.append('noregistrasifk', $state.params.norec)
+                formData.append('nama', $scope.item.namapeneliti)
+                formData.append('nim', $scope.item.nim)
+                formData.append('nomorhp', $scope.item.telp)
+                formData.append('jeniskelaminfk', $scope.item.jeniskelamin.id)
+                formData.append('objectruanganlastfk', ruangan)
+                formData.append('objectpegawailastfk', pegawai)
+                formData.append('email', $scope.item.email)
+                formData.append('image', image)
+
+                var arr = document.cookie.split(';')
+                var authorization;
+                for (var i = 0; i < arr.length; i++) {
+                    var element = arr[i].split('=');
+                    if (element[0].indexOf('authorization') > 0) {
+                        authorization = element[1];
+                    }
+                }
+                // console.log(formData);
+                // return
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-AUTH-TOKEN': authorization
+                    }
+                }).then(response => {
+                    // console.log(response)
+                    if (response.status == 201) {
+                        toastr.info('Sukses');
+                        $scope.item = {};
+                        $scope.isRouteLoading = false;
+                        loadDataCombo();
+                    } else {
+                        toastr.info('Simpan Gagal');
+                    }
+                    // $scope.loadDataSip();
+                    // $scope.batalSip();
+                })
                 // $scope.isRouteLoading = true;
                 // //bikin if untuk ruangan dan pegawai
                 // var ruangan = null
@@ -844,6 +850,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // $scope.item = {};
                 // $state.go('DaftarPenelitianEksternal')
                 $scope.isRouteLoading = false;
+                $scope.item.ruangan = undefined
+                $scope.item.pegawai = undefined
+                $scope.item.tglmasuk = undefined
+                $scope.item.tglkeluar = undefined
                 loadDataCombo();
                 loadDetailRiwayat();
             })
@@ -864,7 +874,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.post("sdm/pendidikan/hapus-peserta-didik", datasend).then(function (e) {
                     $scope.isRouteLoading = false;
                     $scope.item = {};
-
+                    $scope.tbhbtn = true
+                    $scope.updbtn = false
                     loadDataCombo();
                 });
             }
