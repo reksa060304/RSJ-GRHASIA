@@ -228,6 +228,14 @@
     {
       "nameDep": "RemunerasiPegawaiCtrl",
       "urlDep": "module/TataRekening/RemunerasiPegawaiCtrl"
+    },
+    {
+      "nameDep": "RekapInstalasiDiklatCtrl",
+      "urlDep": "module/SDM/RekapInstalasiDiklatCtrl"
+    },
+    {
+      "nameDep": "DaftarKegiatanPembimbingCtrl",
+      "urlDep": "module/SDM/Pelatihan/DaftarKegiatanPembimbingCtrl"
     }
   ]
 }
