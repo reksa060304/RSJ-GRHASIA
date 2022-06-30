@@ -435,14 +435,25 @@ define(['initialize'], function (initialize) {
 
             }
             $scope.save = function(){
+                var pegawai = ""
+                var jenisperan = ""
+                if ($scope.item.pegawai!= undefined || $scope.item.jenisperan != undefined) {
+                    pegawai = $scope.item.pegawai.id
+                    jenisperan = $scope.item.jenisperan.id
+                }
+                
                 if ($scope.norecdkd != undefined) {
                     norec_dkd = $scope.norecdkd
+                }
+                if($scope.dataPasienSelected.detailjenisprodukId == 1956){
+                    pegawai = null
+                    jenisperan = null
                 }
                 var objSave = {
                     norec: norec_dkd,
                     norec_pp: $scope.dataPasienSelected.norec_spd,
-                    objectjenisperanfk: $scope.item.jenisperan.id,
-                    objectpegawaifk: $scope.item.pegawai.id,
+                    objectjenisperanfk: jenisperan,
+                    objectpegawaifk: pegawai,
                     kodeexternal: $scope.dataPasienSelected.jenisTagihan,
                     namaexternal: $scope.dataPasienSelected.keterangan,
                     objectdetailjenisproduk: $scope.dataPasienSelected.detailjenisprodukId

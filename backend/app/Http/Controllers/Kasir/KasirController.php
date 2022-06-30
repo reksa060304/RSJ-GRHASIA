@@ -5983,6 +5983,11 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                         //mapping otomatis
                         //2912 id bu ami
                         //100270 id mas toni
+                        // 320261180 diklat
+                        // 320261181 timkordik
+                        // 320261182 kepk
+                        //2665 dr. arum
+                        //2914 dr. naila
                     $TagihanDiklat2 = \DB::table('detailkegiatandiklat_t')->insert([
                         'norec'=> substr(Uuid::generate(), 0, 32),
                         'kdprofile'=> $kdProfile,
@@ -5990,7 +5995,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                         'kodeexternal'=>$req['kodeexternal'],
                         'namaexternal'=> $req['namaexternal'],
                         'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 2912,
+                        'objectpegawaifk'=> 320261180,
                         'objectjenisperanfk'=> 20,
                         'norec_pp'=> $req['norec_pp'],
                     ]);
@@ -6019,7 +6024,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                         'kodeexternal'=>$req['kodeexternal'],
                         'namaexternal'=> $req['namaexternal'],
                         'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 2912,
+                        'objectpegawaifk'=> 320261180,
                         'objectjenisperanfk'=> 22,
                         'norec_pp'=> $req['norec_pp'],
                     ]);
@@ -6031,7 +6036,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                         'kodeexternal'=>$req['kodeexternal'],
                         'namaexternal'=> $req['namaexternal'],
                         'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 100270,
+                        'objectpegawaifk'=> 2914,
                         'objectjenisperanfk'=> 23,
                         'norec_pp'=> $req['norec_pp'],
                     ]);
@@ -6059,7 +6064,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                         'kodeexternal'=>$req['kodeexternal'],
                         'namaexternal'=> $req['namaexternal'],
                         'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 2912,
+                        'objectpegawaifk'=> 320261180,
                         'objectjenisperanfk'=> 9,
                         'norec_pp'=> $req['norec_pp'],
                     ]);
@@ -6090,12 +6095,314 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                         'kodeexternal'=>$req['kodeexternal'],
                         'namaexternal'=> $req['namaexternal'],
                         'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 2912,
+                        'objectpegawaifk'=> 320261180,
                         'objectjenisperanfk'=> 31,
                         'norec_pp'=> $req['norec_pp'],
                     ]);
 
               
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+                //penelitian
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1948){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 320261180,
+                        'objectjenisperanfk'=> 33,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+              
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+                //wawancara
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1949){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 320261180,
+                        'objectjenisperanfk'=> 35,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+              
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+
+                //uap
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1958){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 320261180,
+                        'objectjenisperanfk'=> 37,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+              
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+                //pra penelitian
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1957){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 320261180,
+                        'objectjenisperanfk'=> 39,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+              
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+                //studi banding
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1952){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 320261180,
+                        'objectjenisperanfk'=> 47,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+              
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+                //mou
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1959){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 320261180,
+                        'objectjenisperanfk'=> 53,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                    
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+                 //seminar
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1961){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 320261180,
+                        'objectjenisperanfk'=> 55,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                    
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+
+                 //RM
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 2036){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 320261180,
+                        'objectjenisperanfk'=> 57,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                    
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+                //observasi akreditasi
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1953){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> $req['objectpegawaifk'],
+                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 320261180,
+                        'objectjenisperanfk'=> 59,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                    
+                    $transMessage='Simpan Berhasil plus diklat';
+                }
+                 //kepek
+                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1956){
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 2665,
+                        'objectjenisperanfk'=> 60,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                        //mapping otomatis
+                    \DB::table('detailkegiatandiklat_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>$req['kodeexternal'],
+                        'namaexternal'=> $req['namaexternal'],
+                        'reportdisplay'=>$req['kodeexternal'],
+                        'objectpegawaifk'=> 320261180,
+                        'objectjenisperanfk'=> 61,
+                        'norec_pp'=> $req['norec_pp'],
+                    ]);
+
+                    
                     $transMessage='Simpan Berhasil plus diklat';
                 }
 
@@ -6214,9 +6521,9 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             round(	(jp.poin/dkd2.totalindeks)*  ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.9)*0.3*0.75)
             WHEN jp.objectdetailjenisprodukfk in ('1960','1951','1950','1952','1959')and jp.notpegawai = true THEN
                 round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* 0.1)*0.3*0.75)
-            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai is null THEN
+            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953','1956')and jp.notpegawai is null THEN
             round(((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen)*0.3*0.75)
-            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953')and jp.notpegawai = true THEN
+            WHEN jp.objectdetailjenisprodukfk in ('1947','1948','1949','1958','1957','1961','2036','1953','1956')and jp.notpegawai = true THEN
                 round( ((spd.hargasatuan*spd.qtyproduk*spd.qtyoranglast)* jp.persen)*0.3*0.75)
         END as equ
 
