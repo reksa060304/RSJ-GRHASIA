@@ -1061,6 +1061,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('kasir/data-laporan-rekap-pendapatan', 'Kasir\KasirController@getDataLaporanRekapPendapatanRuangan');
             Route::get('sdm/diklat/get-data-detail-diklat', 'Kasir\KasirController@getDataLaporanRekapPendapatanRuangan');
             Route::get('tatarekening/get-daftar-remun-diklat', 'Kasir\KasirController@DaftarRemunDiklat');
+            Route::get('diklat/get-laporan-pengguna-total','SDM\SumberDayaManusiaController@LaporanPenggunaTotal');
+            Route::get('diklat/get-daftar-kegiatan-pembimbing','SDM\SumberDayaManusiaController@DaftarKegiatanPembimbing');
+            Route::post('diklat/save/kegiatan-diklat','SDM\SumberDayaManusiaController@saveKegiatanPembimbing');
+            Route::get('diklat/get-hasilkegiatan', 'SDM\SumberDayaManusiaController@DetailHasilKegiatan');
+
             // GET
 
             // POST
