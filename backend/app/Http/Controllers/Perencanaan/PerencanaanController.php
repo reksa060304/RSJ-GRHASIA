@@ -26,6 +26,7 @@ use App\Transaksi\RiwayatRealisasi;
 use App\Transaksi\StrukRealisasi;
 use App\Transaksi\StrukVerifikasi;
 use App\Transaksi\StrukVerifikasiAnggaran;
+use App\Transaksi\Panjar;
 use Illuminate\Http\Request;
 use DB;
 
@@ -373,6 +374,10 @@ class PerencanaanController extends ApiController {
         $dataLogin = $request->all();
         $tahunanggaran = $request['tahun'];
         $tahap = $request['tahap'];
+        $subsubkegiatan = $request['subsubkegiatan'];
+        $idsubsub = $request['idsubsub'];
+        $idmataanggaran = $request['idmataanggaran'];
+        $tahapaktif = $request['tahapaktif'];
 
         $kegiatan = \DB::table('kegiatananggaran_m as dp')
             ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
@@ -392,7 +397,35 @@ class PerencanaanController extends ApiController {
             ->orderBy('dp.kode')
             ->groupBy('dp.id', 'dp.kode', 'dp.keterangan')
             ->get();
+        
+        $kegiatansubsubcombo = \DB::table('kegiatananggaran_m as dp')
+            ->select('dp.id', 'dp.kode', 'dp.keterangan')
+            ->where('dp.kdprofile', $idProfile)
+            ->where('dp.statusenabled', true)
+            ->where('dp.div', 4)
+            ->where('dp.kode', 'ilike', '%'.$subsubkegiatan.'%')
+            ->orderBy('dp.kode')
+            ->get();
 
+        $kegiatancombo = \DB::table('kegiatananggaran_m as dp')
+            ->select('dp.id', 'dp.kode', 'dp.keterangan')
+            ->where('dp.kdprofile', $idProfile)
+            ->where('dp.statusenabled', true)
+            ->where('dp.div', 3)
+            ->orderBy('dp.kode')
+            ->get();
+
+        $carabayarcombo = \DB::table('carabayarspj_m as cbs')
+            ->select('cbs.id', 'cbs.carabayar')
+            ->where('cbs.kdprofile', $idProfile)
+            ->where('cbs.statusenabled', true)
+            ->get();
+
+        $mataanggarancombo = \DB::table('mataanggaran_m as cbs')
+            ->select('cbs.id', 'cbs.kodemataanggaran', 'cbs.namamataanggaran')
+            ->where('cbs.kdprofile', $idProfile)
+            ->where('cbs.statusenabled', true)
+            ->get();
 
         $setting = \DB::table('settinganggaran_t as st')
             ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
@@ -418,6 +451,35 @@ class PerencanaanController extends ApiController {
             ->where('th.statusenabled', true)
             ->orderBy('th.id')
             ->get();
+
+        if(!empty($idsubsub)){
+            $mataanggarancombo = DB::select(DB::raw("select ma.id, ma.kodemataanggaran, ma.namamataanggaran
+            from keteranganbelanja_t kb
+            INNER JOIN mataanggaran_m ma on ma.id=kb.objectmataanggaranfk
+            INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+            where kb.kdprofile = 30 and kb.statusenabled = true
+            and ka.id = $idsubsub
+            group by ma.id, ma.kodemataanggaran, ma.namamataanggaran"));
+        } else{
+            $mataanggarancombo = [];
+        }
+
+        if(!empty($idmataanggaran) && !empty($tahapaktif)){
+            $keteranganperubahan = \DB::table('keteranganbelanja_t as ktb')
+            ->select('ktb.norec', 'ktb.keteranganbelanja')
+            ->where('ktb.kdprofile', $idProfile)
+            ->where('ktb.statusenabled', true)
+            ->where('ktb.objectmataanggaranfk', $idmataanggaran)
+            ->where('ktb.objecttahapfk', $tahapaktif)
+            ->groupBy('ktb.norec', 'ktb.keteranganbelanja')
+            ->get();
+        } else{
+            $keteranganperubahan = [];
+        }
+
+
+        
+        
 
         
         $mata = DB::select(DB::raw("
@@ -472,8 +534,19 @@ class PerencanaanController extends ApiController {
             ->where('kdprofile', $idProfile)
             ->where('statusenabled', 't')
             ->get();
-        
 
+        $jenisbelanja = \DB::table('jenisbelanja_m')
+            ->select('jenisbelanja','id')
+            ->where('kdprofile', $idProfile)
+            ->where('statusenabled', 't')
+            ->get();
+        
+        $panjar = DB::select(DB::raw("
+            select norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, coalesce(jumlahpengembalian, 0) jumlahpengembalian, sumberpanjar
+            from panjar_t 
+            where kdprofile = 30
+            and statusenabled = true;
+        "));
 
     //     $Pengendali = \DB::table('pengendali_m as ru')
     //         ->select('ru.id','ru.pengendali')
@@ -486,12 +559,20 @@ class PerencanaanController extends ApiController {
         $result = array(
             'kegiatan' => $kegiatan,
             'kegiatansubsub' => $kegiatansubsub,
+            'kegiatansubsubcombo' => $kegiatansubsubcombo,
+            'kegiatancombo' => $kegiatancombo,
+            'mataanggarancombo' => $mataanggarancombo,
             'mataanggaran' => $mata,
+            'keteranganperubahan' => $keteranganperubahan,
+            'mataanggarancombo' => $mataanggarancombo,
             'jenisanggaran' => $jenisanggaran,
+            'jenisbelanja' => $jenisbelanja,
             'keterangan' => $keterangan,
+            'panjar' => $panjar,
             'setting' => $setting,
             'tahap' => $tahap,
             'direktur' => $direktur,
+            'carabayarcombo' => $carabayarcombo,
             // 'kelompokketiga' => $ketiga,
             // 'kelompokkeempat' => $keempat,
             // 'kelompokkelima' => $kelima,
@@ -1907,6 +1988,7 @@ class PerencanaanController extends ApiController {
             $MA->targetkeluaran = $request['targetkeluaran'];
             $MA->targethasil = $request['targethasil'];
             $MA->div = $request['div'];
+            $MA->objectjenisbelanjafk = $request['jenisbelanja'];
 
             $MA->save();
 
@@ -1986,6 +2068,208 @@ class PerencanaanController extends ApiController {
             }
 
            $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $KB,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function savePerubahanKeterangan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $details = $request['details'];
+        $subsusb = $request['idkegiatan'];
+
+        try{
+
+            foreach($details as $dt){
+                $KB= KeteranganBelanja::where('norec',$dt['norec'])
+                    ->first();
+                $KB->objectkegiatanfk = $subsusb;
+                $KB->isperubahan = true;
+                $KB->save();
+            }
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $KB,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function savePengembalianSPJ(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+            $KB= Panjar::where('norec',$request['norec'])
+                ->first();
+            $KB->jumlahpengembalian = $request['uangpengembalian'];
+            $KB->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $KB,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveVerifSPJ(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+            $KB= StrukRealisasi::where('norec',$request['norec'])
+                ->first();
+            $KB->status = $request['statusverif'];
+            $KB->tglverif = $request['tglverif'];
+            $KB->keterangan = $request['keterangan'];
+            $KB->jumlahdibayarverif = $request['jumlahdibayarverif'];
+            $KB->save();
+            $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $KB,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function savePanjarSPJ(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+            $KB= Panjar::where('nopanjar',$request['nopanjar'])
+                ->first();
+            $SR= StrukRealisasi::where('norec',$request['norec'])
+                ->first();
+
+            $SR->objectpanjarfk = $KB->norec;
+            $SR->save();
+            $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $SR,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function batalVerifSPJ(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+            $KB= StrukRealisasi::where('norec',$request['norec'])
+                ->first();
+            $KB->status = null;
+            $KB->tglverif = null;
+            $KB->keterangan = null;
+            $KB->jumlahdibayarverif = null;
+            $KB->save();
+            $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';
        }
@@ -2282,6 +2566,175 @@ class PerencanaanController extends ApiController {
 
         return $this->respond($result);
     }
+
+
+    public function getTotalKeterangan(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $tahap = $request['tahap'];
+        $data = DB::select(DB::raw("
+                select sum(kb.subtotal) totalketerangan
+                from keteranganbelanja_t kb 
+                where kb.objecttahapfk = $tahap;
+            ")
+        );
+
+        $detail = DB::select(DB::raw("
+                select sum(rd.subtotal) totalrealisasidetail
+                from keteranganbelanja_t kb
+                inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
+                where kb.objecttahapfk = $tahap;
+            ")
+        );
+
+        $panjar = DB::select(DB::raw("select sum(jumlah-jumlahpengembalian) as panjar
+        from(
+        select pj.norec, pj.jumlah, coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian
+                        from keteranganbelanja_t kb
+                        inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
+                                        inner join strukrealisasi_t sr on sr.norec = rd.strukrealisasifk
+                                        inner join panjar_t pj on pj.norec =  sr.objectpanjarfk
+                        where kb.objecttahapfk = $tahap
+        group by pj.norec, pj.jumlah, pj.jumlahpengembalian
+        ) as x;"));
+
+        $result = array(
+            'data' => $data,
+            'detail' => $detail,
+            'panjar' => $panjar,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getPanjar(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+                select nopanjar, uraian, tglpanjar, jumlah, jenispanjar, jumlahpengembalian, sumberpanjar
+                from panjar_t 
+                where kdprofile = 30
+                and statusenabled = true;
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getPanjarAktif(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+        select pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.jumlahpengembalian, pj.sumberpanjar, sr.objectpanjarfk
+        from panjar_t pj
+        left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec
+        where pj.kdprofile = 30
+        and pj.statusenabled = true
+        and sr.objectpanjarfk is null;
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getOnePanjar(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $norec = $request['norec'];
+
+        $data = DB::select(DB::raw("
+        select pj.jumlah
+        from panjar_t pj
+        left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec
+        where sr.norec = '$norec';
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getKodemataanggaran(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $namamataanggaran = $request['namamataanggaran'];
+
+        $data = DB::select(DB::raw("
+        select kodemataanggaran
+        from mataanggaran_m 
+        where namamataanggaran = '$namamataanggaran';
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getTotalRealisasiDetail(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $tahap = $request['tahap'];
+        $data = DB::select(DB::raw("
+                select sum(rd.subtotal) totalrealisasidetail
+                from keteranganbelanja_t kb
+                inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
+                where kb.objecttahapfk = $tahap;
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getPenjagaanVerifSPJ(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $norec = $request['norec'];
+
+
+
+        $data = DB::select(DB::raw("
+                select tglverif 
+                from strukrealisasi_t
+                where norec = '$norec'
+            ")
+        );
+
+        $result = array(
+            'detail' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
     public function getTahapKegiatan(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -2293,6 +2746,25 @@ class PerencanaanController extends ApiController {
         inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
         where ka.id = $id
         limit 1
+        ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+    public function getJenisBelanja(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $keterangan = $request['kegiatan'];
+        $data = DB::select(DB::raw("
+        select jb.id, jb.jenisbelanja from
+        jenisbelanja_m jb 
+        inner join kegiatananggaran_m ka on ka.objectjenisbelanjafk = jb.id
+        where ka.keterangan = '$keterangan'
         ")
         );
 
@@ -2387,9 +2859,11 @@ class PerencanaanController extends ApiController {
     public function getDataSPJ(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
 
         $data = DB::select(DB::raw("
-                select sr.*,ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
+        select string_agg(DISTINCT rd.uraian, ',') uraian, sr.*, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
                 pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
                 ka.kode || '~' || ka.keterangan as kegiatan, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran
                 from strukrealisasi_t sr
@@ -2398,8 +2872,12 @@ class PerencanaanController extends ApiController {
                 INNER JOIN rekanan_m rkn on rkn.id=sr.rekananfk
                 INNER JOIN pegawai_m as pg1 on pg1.id=sr.bendaharafk
                 INNER JOIN pegawai_m as pg2 on pg2.id=sr.penerimafk
-                where sr.tglrealisasi between '2022-06-01 00:00:00' and '2022-07-01 00:00:00'
-                and sr.statusenabled ='t'
+				inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+                left join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
+                where sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
+                and sr.statusenabled = true
+								group by sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
+                ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun
             ")
         );
         $result = [];
@@ -2456,6 +2934,10 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
         $dataRealisasiDetail = [];
        try{
+
+        $KM= MataAnggaran::where('kodemataanggaran',$request['objectmataanggaranfk'])
+                    ->first();
+
             if ($request['norec']==''){
                 $MA = new StrukRealisasi();
                 $norecKS = $MA->generateNewId();
@@ -2473,11 +2955,11 @@ class PerencanaanController extends ApiController {
             $MA->tglrealisasi = $request['tglrealisasi'];
             $MA->status = null;//$request['status'];
             $MA->totalbelanja = $request['totalbelanja'];
-            $MA->objectcarabayarfk = null;//$request['objectcarabayarfk'];
             $MA->rekananfk = $request['rekananfk'];
             $MA->deskripsi = $request['deskripsi'];
             $MA->objectkegiatanfk = $request['objectkegiatanfk'];
-            $MA->objectmataanggaranfk = $request['objectmataanggaranfk'];
+            $MA->objectmataanggaranfk = $KM->id;
+            $MA->objectcarabayarfk = $request['objectcarabayarfk'];
             $MA->bendaharafk = $request['bendaharafk'];
             $MA->penerimafk = $request['penerimafk'];
             $MA->pph = (float)$request['pph'];
@@ -2521,7 +3003,55 @@ class PerencanaanController extends ApiController {
             DB::rollBack();
             $result = array(
                 'status' => 400,
-                'message'  => $transMessage,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function savePanjar(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        try{
+            
+            $MA = new Panjar();
+            $norecKS = $MA->generateNewId();
+            $MA->norec = $norecKS;
+            $MA->kdprofile = $idProfile;
+            $MA->statusenabled = true;
+            $noPanjar = $this->generateCodeBySeqTable(new Panjar, 'nopanjar', 12, 'P' . $this->getDateTime()->format('ym') . '/', $idProfile);
+            $MA->nopanjar = $noPanjar;
+            $MA->tglpanjar = $request['tglPanjar'];
+            $MA->uraian = $request['uraianPanjar'];
+            $MA->jumlah = $request['jumlahpanjar'];
+            $MA->jenispanjar = 'Pengeluaran';
+            $MA->sumberpanjar = $request['sumberPanjar'];
+            $MA->save();
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
                 'result' => $MA,
                 'as' => '@epic',
             );

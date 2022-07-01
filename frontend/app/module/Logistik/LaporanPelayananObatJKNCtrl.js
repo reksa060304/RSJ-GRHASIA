@@ -32,9 +32,25 @@ define(['initialize'], function (initialize) {
                             schema: {
                                 model: {
                                     fields: {
+                                        totalharga: { type: "number" },
+                                        jumlahrajal: { type: "number" },
+                                        jumlahranap: { type: "number" },
+                                        total: { type: "number" },
+                                        saldoawal: { type: "number" },
+                                        saldomasuk: { type: "number" },
+                                        harganetto1: { type: "number" },
                                     }
                                 }
                             },
+                            aggregate: [
+                                { field: 'totalharga', aggregate: 'sum' },
+                                { field: 'jumlahrajal', aggregate: 'sum' },
+                                { field: 'jumlahranap', aggregate: 'sum' },
+                                { field: 'total', aggregate: 'sum' },
+                                { field: 'saldoawal', aggregate: 'sum' },
+                                { field: 'saldomasuk', aggregate: 'sum' },
+                                { field: 'harganetto1', aggregate: 'sum' },
+                            ]
                         });
                         
                     });
@@ -123,16 +139,28 @@ define(['initialize'], function (initialize) {
                         "title": "Nama Obat",
                     }, 
                     {
+                        "field": "idproduk",
+                        "title": "Kode Produk",
+                    }, 
+                    {
                         "field": "satuanstandar",
                         "title": "Satuan",
                     },
                     {
                         "field": "saldoawal",
                         "title": "Stok Awal",
+                        aggregates: ["sum"],
+                        template: "#: saldoawal  #",
+                        groupFooterTemplate: "#: data.saldoawal.sum  #",
+                        footerTemplate: "#: data.saldoawal.sum  #"
                     },
                     {
                         "field": "saldomasuk",
                         "title": "Jumlah Penerimaan",
+                        aggregates: ["sum"],
+                        template: "#: saldomasuk  #",
+                        groupFooterTemplate: "#: data.saldomasuk.sum  #",
+                        footerTemplate: "#: data.saldomasuk.sum  #"
                     },
                     {
                         "title": "Jumlah Penggunaan",
@@ -141,24 +169,44 @@ define(['initialize'], function (initialize) {
                             {
                                 "field": "jumlahrajal",
                                 "title": "Rawat Jalan",
+                                aggregates: ["sum"],
+                                template: "#: jumlahrajal  #",
+                                groupFooterTemplate: "#: data.jumlahrajal.sum  #",
+                                footerTemplate: "#: data.jumlahrajal.sum  #"
                             },
                             {
                                 "field": "jumlahranap",
                                 "title": "Rawat Inap",
+                                aggregates: ["sum"],
+                                template: "#: jumlahranap  #",
+                                groupFooterTemplate: "#: data.jumlahranap.sum  #",
+                                footerTemplate: "#: data.jumlahranap.sum  #"
                             },
                             {
                                 "field": "total",
                                 "title": "Total",
+                                aggregates: ["sum"],
+                                template: "#: total  #",
+                                groupFooterTemplate: "#: data.total.sum  #",
+                                footerTemplate: "#: data.total.sum  #"
                             },
                         ],
                     },
                     {
                         "field": "harganetto1",
                         "title": "Harga Per Item",
+                        aggregates: ["sum"],
+                        template: "#: harganetto1  #",
+                        groupFooterTemplate: "#: data.harganetto1.sum  #",
+                        footerTemplate: "#: data.harganetto1.sum  #"
                     },
                     {
                         "field": "totalharga",
                         "title": "Total Harga",
+                        aggregates: ["sum"],
+                        template: "#: totalharga  #",
+                        groupFooterTemplate: "#: data.totalharga.sum  #",
+                        footerTemplate: "#: data.totalharga.sum  #"
                     },
                 ]
             };

@@ -1125,6 +1125,10 @@ class PelayananResepController extends ApiController
 
         $orderPelayanan=[];
         $i = 0;
+        // $noordertapistruk = null;
+        // if(!empty($dataStruk)){
+        //     $noordertapistruk = $dataStruk->id;
+        // }
         $dataStok = DB::select(DB::raw("select sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk,
                             spd.harganetto2 as hargajual,spd.harganetto2 as harganetto,spd.hargadiscount,
                     sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk
@@ -1136,7 +1140,7 @@ class PelayananResepController extends ApiController
                     spd.objectruanganfk
                     order By sk.tglstruk"),
             array(
-                'ruanganid' => $dataStruk->id
+                'ruanganid' =>$dataStruk->id
             )
         );
 
@@ -2994,12 +2998,20 @@ class PelayananResepController extends ApiController
         $rajalRanap= '';
         $rajalRanapObatBebas= '';
         $namaItem = '';
+        $namaPasienText = '';
         if(isset($request['namaItem']) && $request['namaItem']!="" && $request['namaItem']!="undefined"){
             $namaItem = ' and pro.id='.$request['namaItem'];
         }
         $namaItemText = '';
         if(isset($request['namaItemText']) && $request['namaItemText']!="" && $request['namaItemText']!="undefined"){
             $namaItemText = " and pro.namaproduk ilike '%".$request['namaItemText']."%' ";
+        }
+
+        $namaPasienText = '';
+        $namaPasienTextSP = '';
+        if(isset($request['namaPasienText']) && $request['namaPasienText']!="" && $request['namaPasienText']!="undefined"){
+            $namaPasienText = " and ps.namapasien ilike '%".$request['namaPasienText']."%' ";
+            $namaPasienTextSP = " and sp.namapasien_klien ilike '%".$request['namaPasienText']."%' ";
         }
         
 
@@ -3096,99 +3108,137 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
 
 */
         $data = DB::select(DB::raw("
-                SELECT TO_CHAR(sr.tglresep, 'DD-MM-YYYY') AS tglresep,
-                       CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed IS NULL THEN 
-                       ru1.namaruangan || '[]'
-                       WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NOT NULL AND tt.nomorbed IS NOT NULL THEN
-                       ru1.namaruangan || '[' || CASE WHEN kmr.namakamar IS NULL THEN '' ELSE kmr.namakamar END || ' ' || 
-                       CASE WHEN tt.nomorbed IS NULL THEN null ELSE tt.nomorbed END || ']'
-                       ELSE dep1.namadepartemen END AS departemen,ru1.namaruangan namaruanganpasien,ru.namaruangan AS gudang,
-                       --pg1.namalengkap as user,
-                       pro.namaproduk,
-                       pp.rke,
-                       ss.satuanstandar,
-                       pp.jumlah,
-                       pp.hargajual,
-                       ((pp.hargajual - (coalesce(pp.hargadiscount,0))) * jumlah) as subtotal,
-                       pp.hargadiscount,
-                       pd.noregistrasi,
-                       ps.nocm,
-                       ps.namapasien,
-                       pg.namalengkap as dokter,
-                       sr.noresep,
-                       sbmsdhbyr.tglsbm
-                FROM strukresep_t as sr
-                INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
-                INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
-                INNER JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
-                INNER JOIN pasien_m AS ps ON ps.id=pd.nocmfk
-                LEFT JOIN jeniskelamin_m AS jk ON jk.id=ps.objectjeniskelaminfk
-                LEFT JOIN pegawai_m AS pg ON pg.id=sr.penulisresepfk
-                LEFT JOIN ruangan_m AS ru ON ru.id=sr.ruanganfk
-                LEFT JOIN ruangan_m AS ru1 ON ru1.id = apd.objectruanganfk
-                LEFT JOIN departemen_m AS dep ON dep.id = ru1.objectdepartemenfk
-                LEFT JOIN departemen_m AS dep1 ON dep1.id = ru.objectdepartemenfk
-                LEFT JOIN kamar_m AS kmr ON kmr.id = apd.objectkamarfk
-                LEFT JOIN tempattidur_m AS tt ON tt.id = apd.nobed
-                LEFT JOIN kelompokpasien_m kp ON kp.id=pd.objectkelompokpasienlastfk
-                LEFT JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
-                LEFT JOIN strukbuktipenerimaan_t as sbm on sbm.norec = sp.nosbmlastfk
-                LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk and sbmsdhbyr.statusenabled = true
-                --LEFT JOIN logginguser_t AS lg ON lg.noreff = sr.norec AND lg.jenislog = 'Input Resep Apotik'
-                --LEFT JOIN loginuser_s AS lu ON lu.id = lg.objectloginuserfk
-                --LEFT JOIN pegawai_m AS pg1 ON pg1.id = lu.objectpegawaifk
-                LEFT JOIN produk_m AS pro ON pro.id = pp.produkfk 
-                LEFT JOIN satuanstandar_m AS ss ON ss.id = pp.satuanviewfk
-                WHERE pd.statusenabled=true AND sr.statusenabled = true AND sr.kdprofile = $kdProfile and sr.tglresep BETWEEN '$tglAwal' and '$tglAkhir'
-                $dokid
-                $kpid
-                $ruid
-                $rajalRanap
-                $namaItem
-                $namaItemText
-                
-                UNION ALL
-                
-                SELECT TO_CHAR(sp.tglstruk, 'DD-MM-YYYY') AS tglresep,dep.namadepartemen AS departemen,ru.namaruangan namaruanganpasien,
-                       ru.namaruangan AS gudang,
-                       --pg1.namalengkap as user,
-                       pro.namaproduk,
-                       pp.rke,
-                       ss.satuanstandar,
-                       spd.qtyproduk as jumlah,
-                       spd.harganetto AS hargajual,
-                       (spd.qtyproduk*spd.harganetto) AS subtotal,
-                       spd.hargadiscount,
-                       '' as noregistrasi,
-                       sp.nostruk_intern as nocm,
-                       sp.namapasien_klien as namapasien,
-                       pg.namalengkap as dokter,
-                       sp.nostruk AS noresep,
-                       sbmsdhbyr.tglsbm
-                FROM strukpelayanan_t as sp
-                INNER JOIN pelayananpasien_t AS pp ON pp.strukterimafk = sp.norec
-                INNER JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
-                LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk and sbmsdhbyr.statusenabled = true
-                LEFT JOIN pegawai_m as pg on pg.id=sp.objectpegawaipenanggungjawabfk
-                LEFT JOIN strukbuktipenerimaan_t as sbm on sbm.norec = sp.nosbmlastfk
-                LEFT JOIN pegawai_m as pg2 on pg2.id = sbm.objectpegawaipenerimafk
-                LEFT JOIN loginuser_s as lu on lu.id = sbm.objectpegawaipenerimafk
-                LEFT JOIN pegawai_m as pg3 on pg3.id = lu.objectpegawaifk
-                LEFT JOIN ruangan_m as ru on ru.id = sp.objectruanganfk
-                LEFT JOIN departemen_m AS dep ON dep.id = ru.objectdepartemenfk
-                --LEFT JOIN logginguser_t AS lg ON lg.noreff = sp.norec AND lg.jenislog = 'Input Resep Obat Bebas'
-                --LEFT JOIN loginuser_s AS lu1 ON lu1.id = lg.objectloginuserfk
-                --LEFT JOIN pegawai_m AS pg1 ON pg1.id = lu.objectpegawaifk
-                LEFT JOIN produk_m AS pro ON pro.id = spd.objectprodukfk
-                LEFT JOIN satuanstandar_m AS ss ON ss.id = spd.objectsatuanstandarfk
-                WHERE sp.statusenabled = true AND sp.kdprofile = $kdProfile and sp.tglstruk BETWEEN '$tglAwal' and '$tglAkhir'
-                AND substring(sp.nostruk,1,2)='OB'
-                
-                $dokid
-                $ruid
-                $rajalRanapObatBebas    
-                $namaItem    
-                $namaItemText        
+        select tglresep, 
+        case when inputtindakan is not null then inputtindakan
+                 when inputtindakan is not null and inputresep is not null then inputtindakan
+                 when inputresep is not null and inputtindakan is null then inputresep
+                 when inputresep is null and inputtindakan is null then ''
+        end as penginput, 
+        departemen, namaruanganpasien, gudang, namaproduk, rke, satuanstandar, jumlah,
+        hargajual, subtotal, hargadiscount, noregistrasi, nocm, namapasien, dokter, noresep, tglsbm 
+        from(
+        with lt as (
+                    select distinct  lt.noreff,lt.jenislog,lt.objectloginuserfk
+                    from logginguser_t lt
+                    where lt.jenislog = 'Input Tindakan'
+                    ), cte as (
+                    select lt.noreff,lt.jenislog,pg.id idpegawai, pg.namalengkap namapegawaiinput 
+                    from lt
+                    inner join loginuser_s lu on lu.id=lt.objectloginuserfk
+                    left join pegawai_m pg on pg.id=lu.objectpegawaifk
+                    where lt.jenislog = 'Input Tindakan'
+                    ),
+        ltr as(
+                                    select distinct  ls.noreff,ls.jenislog,ls.objectloginuserfk
+                                    from logginguser_t ls
+                                    where ls.jenislog = 'Input Resep Apotik'
+                                ), cter as(
+                                    select ltr.noreff,ltr.jenislog,pg.id idpegawai, pg.namalengkap namapegawaiinput 
+                                    from ltr
+                                    inner join loginuser_s lu on lu.id=ltr.objectloginuserfk
+                                    left join pegawai_m pg on pg.id=lu.objectpegawaifk
+                                    where ltr.jenislog = 'Input Resep Apotik'
+                                )
+        
+        SELECT TO_CHAR(sr.tglresep, 'DD-MM-YYYY') AS tglresep, cte.namapegawaiinput inputtindakan, cter.namapegawaiinput inputresep,
+                               CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed IS NULL THEN 
+                               ru1.namaruangan || '[]'
+                               WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NOT NULL AND tt.nomorbed IS NOT NULL THEN
+                               ru1.namaruangan || '[' || CASE WHEN kmr.namakamar IS NULL THEN '' ELSE kmr.namakamar END || ' ' || 
+                               CASE WHEN tt.nomorbed IS NULL THEN null ELSE tt.nomorbed END || ']'
+                               ELSE dep1.namadepartemen END AS departemen,ru1.namaruangan namaruanganpasien,ru.namaruangan AS gudang,
+                               --pg1.namalengkap as user,
+                               pro.namaproduk,
+                               pp.rke,
+                               ss.satuanstandar,
+                               pp.jumlah,
+                               pp.hargajual,
+                               ((pp.hargajual - (coalesce(pp.hargadiscount,0))) * jumlah) as subtotal,
+                               pp.hargadiscount,
+                               pd.noregistrasi,
+                               ps.nocm,
+                               ps.namapasien,
+                               pg.namalengkap as dokter,
+                               sr.noresep,
+                               sbmsdhbyr.tglsbm
+                        FROM strukresep_t as sr
+                        INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
+                        INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
+                        INNER JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
+                        INNER JOIN pasien_m AS ps ON ps.id=pd.nocmfk
+                        LEFT JOIN jeniskelamin_m AS jk ON jk.id=ps.objectjeniskelaminfk
+                        LEFT JOIN pegawai_m AS pg ON pg.id=sr.penulisresepfk
+                        LEFT JOIN ruangan_m AS ru ON ru.id=sr.ruanganfk
+                        LEFT JOIN ruangan_m AS ru1 ON ru1.id = apd.objectruanganfk
+                        LEFT JOIN departemen_m AS dep ON dep.id = ru1.objectdepartemenfk
+                        LEFT JOIN departemen_m AS dep1 ON dep1.id = ru.objectdepartemenfk
+                        LEFT JOIN kamar_m AS kmr ON kmr.id = apd.objectkamarfk
+                        LEFT JOIN tempattidur_m AS tt ON tt.id = apd.nobed
+                        LEFT JOIN kelompokpasien_m kp ON kp.id=pd.objectkelompokpasienlastfk
+                        LEFT JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
+                        LEFT JOIN strukbuktipenerimaan_t as sbm on sbm.norec = sp.nosbmlastfk
+                        LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk and sbmsdhbyr.statusenabled = true
+                        --LEFT JOIN logginguser_t AS lg ON lg.noreff = sr.norec AND lg.jenislog = 'Input Resep Apotik'
+                        --LEFT JOIN loginuser_s AS lu ON lu.id = lg.objectloginuserfk
+                        --LEFT JOIN pegawai_m AS pg1 ON pg1.id = lu.objectpegawaifk
+                        LEFT JOIN produk_m AS pro ON pro.id = pp.produkfk 
+                        LEFT JOIN satuanstandar_m AS ss ON ss.id = pp.satuanviewfk
+                                        left join  cte on cte.noreff = pp.norec
+                                        left join  cter on cter.noreff = sr.norec
+                        WHERE pd.statusenabled=true AND sr.statusenabled = true AND sr.kdprofile = 30 and sr.tglresep BETWEEN '$tglAwal' and '$tglAkhir'
+                        $dokid
+                        $ruid
+                        $rajalRanapObatBebas    
+                        $namaItem    
+                        $namaItemText
+                        $namaPasienText
+
+                        UNION ALL
+                        
+                        SELECT TO_CHAR(sp.tglstruk, 'DD-MM-YYYY') AS tglresep, cte.namapegawaiinput inputtindakan, '' inputresep,
+                        dep.namadepartemen AS departemen,ru.namaruangan namaruanganpasien,
+                               ru.namaruangan AS gudang,
+                               --pg1.namalengkap as user,
+                               pro.namaproduk,
+                               pp.rke,
+                               ss.satuanstandar,
+                               spd.qtyproduk as jumlah,
+                               spd.harganetto AS hargajual,
+                               (spd.qtyproduk*spd.harganetto) AS subtotal,
+                               spd.hargadiscount,
+                               '' as noregistrasi,
+                               sp.nostruk_intern as nocm,
+                               sp.namapasien_klien as namapasien,
+                               pg.namalengkap as dokter,
+                               sp.nostruk AS noresep,
+                               sbmsdhbyr.tglsbm
+                        FROM strukpelayanan_t as sp
+                        INNER JOIN pelayananpasien_t AS pp ON pp.strukterimafk = sp.norec
+                        INNER JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
+                        LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk and sbmsdhbyr.statusenabled = true
+                        LEFT JOIN pegawai_m as pg on pg.id=sp.objectpegawaipenanggungjawabfk
+                        LEFT JOIN strukbuktipenerimaan_t as sbm on sbm.norec = sp.nosbmlastfk
+                        LEFT JOIN pegawai_m as pg2 on pg2.id = sbm.objectpegawaipenerimafk
+                        LEFT JOIN loginuser_s as lu on lu.id = sbm.objectpegawaipenerimafk
+                        LEFT JOIN pegawai_m as pg3 on pg3.id = lu.objectpegawaifk
+                        LEFT JOIN ruangan_m as ru on ru.id = sp.objectruanganfk
+                        LEFT JOIN departemen_m AS dep ON dep.id = ru.objectdepartemenfk
+                        --LEFT JOIN logginguser_t AS lg ON lg.noreff = sp.norec AND lg.jenislog = 'Input Resep Obat Bebas'
+                        --LEFT JOIN loginuser_s AS lu1 ON lu1.id = lg.objectloginuserfk
+                        --LEFT JOIN pegawai_m AS pg1 ON pg1.id = lu.objectpegawaifk
+                        LEFT JOIN produk_m AS pro ON pro.id = spd.objectprodukfk
+                        LEFT JOIN satuanstandar_m AS ss ON ss.id = spd.objectsatuanstandarfk
+                                        left join  cte on cte.noreff = pp.norec
+                        WHERE sp.statusenabled = true AND sp.kdprofile = 30 and sp.tglstruk BETWEEN '$tglAwal' and '$tglAkhir'
+                        AND substring(sp.nostruk,1,2)='OB'
+
+                        $dokid
+                        $ruid
+                        $rajalRanapObatBebas    
+                        $namaItem    
+                        $namaItemText
+                        $namaPasienTextSP
+                ) as x     
         "));
 
 

@@ -811,7 +811,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get-daftar-pasien-farmasi', 'Farmasi\FarmasiController@getDaftarPasien');
 
           Route::get('farmasi/get-detailPD', 'Farmasi\PelayananResepController@getDataPengkajian');
-          Route::get('farmasi/get-transaksi-pelayanan', 'Farmasi\PelayananResepController@getTransaksiPelayananApotik');
+          Route::get('farmasi/get-transaksi-pelayanan', 'Farmasi\FarmasiController@getTransaksiPelayananApotik');
           Route::get('farmasi/get-detail-reg-farmasi', 'Farmasi\PelayananResepController@getDetailRegApotik');
           Route::get('farmasi/get-daftar-paket-obat-pasien', 'Farmasi\PelayananResepController@getDaftarPaketObatPasien');
           Route::post('farmasi/save-hapus-pelayananobat', 'Farmasi\PelayananResepController@DeletePelayananObat');
@@ -1374,6 +1374,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
             Route::post('perencanaan/save-child','Perencanaan\PerencanaanController@saveChild');
             Route::post('perencanaan/save-setting-tahap','Perencanaan\PerencanaanController@saveSettingTahap');
+            Route::post('perencanaan/save-perubahan-keterangan','Perencanaan\PerencanaanController@savePerubahanKeterangan');
+            Route::post('perencanaan/save-pengembalian-spj','Perencanaan\PerencanaanController@savePengembalianSPJ');
+            Route::post('perencanaan/save-verif-spj','Perencanaan\PerencanaanController@saveVerifSPJ');
+            Route::post('perencanaan/save-panjar-spj','Perencanaan\PerencanaanController@savePanjarSPJ');
+            Route::post('perencanaan/batal-verif-spj','Perencanaan\PerencanaanController@batalVerifSPJ');
             Route::post('perencanaan/delete-child','Perencanaan\PerencanaanController@deleteChildAnggaran');
             Route::post('perencanaan/save-kel-head-anggaran','Perencanaan\PerencanaanController@saveKelHead');
             Route::post('perencanaan/save-kel-pertama-anggaran','Perencanaan\PerencanaanController@saveKelPertama');
@@ -1394,8 +1399,17 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-keterangan-belanja','Perencanaan\PerencanaanController@saveKeteranganBelanja');
             Route::post('perencanaan/save-alokasi-keterangan-belanja','Perencanaan\PerencanaanController@saveAlokasiKeteranganBelanja');
             Route::post('perencanaan/save-realisasi-spj','Perencanaan\PerencanaanController@saveRealisasiSPJ');
+            Route::post('perencanaan/save-panjar','Perencanaan\PerencanaanController@savePanjar');
             Route::get('perencanaan/get-total-mata-anggaran', 'Perencanaan\PerencanaanController@getTotalMataAnggaran');
+            Route::get('perencanaan/get-daftar-panjar', 'Perencanaan\PerencanaanController@getPanjar');
+            Route::get('perencanaan/get-daftar-panjar-aktif', 'Perencanaan\PerencanaanController@getPanjarAktif');
+            Route::get('perencanaan/get-one-panjar', 'Perencanaan\PerencanaanController@getOnePanjar');
+            Route::get('perencanaan/get-kodemataanggaran', 'Perencanaan\PerencanaanController@getKodemataanggaran');
+            Route::get('perencanaan/get-total-keterangan', 'Perencanaan\PerencanaanController@getTotalKeterangan');
+            Route::get('perencanaan/get-total-realisasi-detail', 'Perencanaan\PerencanaanController@getTotalRealisasiDetail');
+            Route::get('perencanaan/get-penjagaan-verif-spj', 'Perencanaan\PerencanaanController@getPenjagaanVerifSPJ');
             Route::get('perencanaan/get-tahap-kegiatan-belanja', 'Perencanaan\PerencanaanController@getTahapKegiatan');
+            Route::get('perencanaan/get-jenis-belanja', 'Perencanaan\PerencanaanController@getJenisBelanja');
             Route::get('perencanaan/get-keterangan-belanja', 'Perencanaan\PerencanaanController@getKeteranganBelanja');
             Route::get('perencanaan/get-spj', 'Perencanaan\PerencanaanController@getDataSPJ');
 

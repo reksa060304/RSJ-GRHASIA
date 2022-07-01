@@ -65,13 +65,20 @@ define(['initialize'], function (initialize) {
                   namaItemText = "&namaItemText=" + $scope.item.namaItemText;
                 }
 
+                var namaPasienText="";
+                
+                var namaPasienText = "";
+                if ($scope.item.namaPasienText != undefined) {
+                  namaPasienText = "&namaPasienText=" + $scope.item.namaPasienText;
+                }
+
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("farmasi/get-laporan-penjualan-obat-detail?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
                     "&rajalRanap=" + rajalRanap +
-                    dok + kp + ru + namaItem + namaItemText
+                    dok + kp + ru + namaItem + namaItemText + namaPasienText
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         $scope.totaltunai = 0;
@@ -460,6 +467,11 @@ define(['initialize'], function (initialize) {
                         "width": "100px",
                     },
                     {
+                        "field": "penginput",
+                        "title": "Penginput",
+                        "width": "100px",
+                    },
+                    {
                         // hidden: true,
                         "field": "departemen",
                         "title": "Departemen",
@@ -580,6 +592,7 @@ define(['initialize'], function (initialize) {
                             }
                         ]
                     },
+                    
                 ]
             };
 

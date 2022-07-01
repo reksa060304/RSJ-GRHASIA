@@ -82,12 +82,14 @@ define(['initialize'], function (initialize) {
                                     fields: {
                                         jumlahhargasarana: { type: "number" },
                                         jumlahhargapelayanan: { type: "number" },
+                                        jumlah: { type: "number" },
                                     }
                                 }
                             },
                             aggregate: [
                                 { field: 'jumlahhargasarana', aggregate: 'sum' },
                                 { field: 'jumlahhargapelayanan', aggregate: 'sum' },
+                                { field: 'jumlah', aggregate: 'sum' },
                             ]
                         });   
                         
@@ -234,7 +236,9 @@ define(['initialize'], function (initialize) {
                         "field": "jumlah",
                         "title": "Qty",
                         "width": "100px",
-                        footerTemplate: "Total"
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "#: data.jumlah.sum  #",
+                        footerTemplate: "#: data.jumlah.sum  #"
                     },
                     {
                         

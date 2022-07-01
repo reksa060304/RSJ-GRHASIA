@@ -221,6 +221,9 @@
             <span class="title"><label c-label c-label-text='Order Grab' font-size="13"></label></span>
         </c-button>
     </div>
+    <div class="grid_2" style="margin-top: 5px">
+        <button class="c-button" ng-click="Riwayat()">Riwayat Resep</button>
+    </div>
     <!-- <div class="grid_2">
         <c-button style="width: 100%; padding:0px, margin:0px;" item="item" position="'right'" click="detailVerif">
             <span class="title"><label c-label c-label-text='detailVerikasi' font-size="13"></label></span>
@@ -351,7 +354,21 @@
 
         </div>
     </div>
-
+    <div kendo-window="popUpRiwayat" k-title="'Riwayat Obat'" k-width="1500" k-visible="false" k-on-open="win2visible = true"
+    k-on-close="win2visible = false">
+        <div id="kGrid" kendo-grid k-data-source="dataGridRiwayatObat" k-selectable="'row'" k-columns="columnGridRiwayatObat"
+            k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelectedSsS" ng-click="klikGridSsS(dataSelectedSsS)">
+            <div k-detail-template>
+                <kendo-tabstrip>
+                    <div>
+                        <div id="kGridDetail" kendo-grid k-options="data22(dataItem)" k-sortable="'true'"
+                            k-selectable="'row'" k-ng-model="dataSelected2" ng-click="klikDetail(dataSelected2)">
+                        </div>
+                    </div>
+                </kendo-tabstrip>
+            </div>
+        </div>
+    </div>
     <div kendo-window="popUpDetailVerif" k-title="'Detail Verifikasi'" k-width="1100" k-height="400" k-visible="false"
         k-on-open="win2visible = true" k-on-close="win2visible = false">
         <div class="panel panel-default container_12" style="padding: 0px 10px;">

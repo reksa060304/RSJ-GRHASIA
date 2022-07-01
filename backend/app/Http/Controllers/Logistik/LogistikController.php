@@ -13986,7 +13986,7 @@ class LogistikController extends ApiController{
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
 
-        $data = \DB::select(DB::raw("select a.namaproduk, a.satuanstandar, coalesce(b.saldoawal, 0) saldoawal, coalesce(c.saldomasuk,0) as saldomasuk, a.jumlahrajal, a.jumlahranap, a.total, a.harganetto1, a.totalharga
+        $data = \DB::select(DB::raw("select a.namaproduk, a.id idproduk, a.satuanstandar, coalesce(b.saldoawal, 0) saldoawal, coalesce(c.saldomasuk,0) as saldomasuk, a.jumlahrajal, a.jumlahranap, a.total, round(a.harganetto1) harganetto1, round(a.totalharga) totalharga
         from(
         select x.namaproduk, x.id, x.satuanstandar, sum(x.jumlahranap) jumlahranap, sum(x.jumlahrajal) jumlahrajal,
         coalesce(sum(x.jumlahranap), 0) + coalesce(sum(x.jumlahrajal), 0) total, x.harganetto1, 
@@ -13999,7 +13999,7 @@ class LogistikController extends ApiController{
                                     INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
                                     INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
                                     INNER JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
-                                    inner  join produk_m pr on pr.id=pp.produkfk
+                                    inner join produk_m pr on pr.id=pp.produkfk
                                     inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
                                     inner join departemen_m dp on dp.id = ru.objectdepartemenfk
                                     inner join satuanstandar_m ss on ss.id = pr.objectsatuanstandarfk

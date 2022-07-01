@@ -704,6 +704,123 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 
             }
 
+            $scope.Riwayat = function () {
+
+                var nocm = "";
+                if ($scope.item.norm) {
+                    nocm = $scope.item.norm;
+                }
+
+                var noregistrasi = "";
+                if ($scope.item.noregistrasi) {
+                    noregistrasi = $scope.item.noregistrasi;
+                }
+
+
+                medifirstService.get("farmasi/get-transaksi-pelayanan?noReg=" + noregistrasi + "&nocm=" + nocm, true).then(function (dat) {
+                    let group = [];
+                    if (dat.statResponse == true) {
+                        for (var i = 0; i < dat.data.length; i++) {
+                            dat.data[i].no = i + 1
+                            dat.data[i].total = parseFloat(dat.data[i].jumlah) * (parseFloat(dat.data[i].hargasatuan) - parseFloat(dat.data[i].hargadiscount))
+                            dat.data[i].total = parseFloat(dat.data[i].total) + parseFloat(dat.data[i].jasa)
+                            if (dat.data[i].reseppulang == '1') {
+                                dat.data[i].cekreseppulang = '✔'
+                            } else {
+                                dat.data[i].cekreseppulang = '-'
+                            }
+                        }
+                        var array = dat.data;
+                        let sama = false
+
+                        for (let i in array) {
+                            array[i].count = 1
+                            sama = false
+                            for (let x in group) {
+                                if (group[x].noresep == array[i].noresep) {
+                                    sama = true;
+                                    group[x].count = parseFloat(group[x].count) + parseFloat(array[i].count)
+
+                                }
+                            }
+                            if (sama == false) {
+                                var dataDetail0 = [];
+                                for (var f = 0; f < array.length; f++) {
+                                    if (array[i].noresep == array[f].noresep) {
+                                        dataDetail0.push(array[f]);
+                                    };
+                                }
+                                let result = {
+                                    noregistrasi: array[i].noregistrasi,
+                                    tglpelayanan: array[i].tglpelayanan,
+                                    tglorder: array[i].tglorder,
+                                    noresep: array[i].noresep,
+                                    count: array[i].count,
+                                    aturanpakai: array[i].aturanpakai,
+                                    namaruangandepo: array[i].namaruangandepo,
+                                    namaruangan: array[i].namaruangan,
+                                    dokter: array[i].dokter,
+                                    cekreseppulang: array[i].cekreseppulang,
+                                    details: dataDetail0,
+                                   // keterangan:  array[i].keteranganpakai,
+                                }
+                                group.push(result)
+                            }
+                        }
+                    }
+
+                    $scope.dataGridRiwayatObat = group
+                    console.log(group)
+                    $scope.isRouteLoading = false;
+                    $scope.popUpRiwayat.center().open();
+                });
+            }
+
+            $scope.columnGridRiwayatObat = [
+
+                {
+                    "field": "noresep",
+                    "title": "No.Resep",
+                    "width": "100px",
+                },
+                {
+                    "field": "tglpelayanan",
+                    "title": "Tgl Resep",
+                    "width": "120px",
+                },
+                {
+                    "field": "tglorder",
+                    "title": "Tgl Order",
+                    "width": "120px",
+                },
+                {
+                    "field": "noregistrasi",
+                    "title": "No.Registrasi",
+                    "width": "100px",
+                },
+                {
+                    "field": "dokter",
+                    "title": "Penulis Resep",
+                    "width": "170px",
+                },
+                {
+                    "field": "namaruangan",
+                    "title": "Ruangan",
+                    "width": "100px",
+                },
+                {
+                    "field": "namaruangandepo",
+                    "title": "Depo",
+                    "width": "90px",
+                },
+                {
+                    "field": "cekreseppulang",
+                    "title": "Resep Pulang",
+                    "width": "90px",
+                    "template": "<span class='style-center'>#: cekreseppulang #</span>"
+                }
+            ];
+
             $scope.verifikasi = function () {
                 medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
                     
