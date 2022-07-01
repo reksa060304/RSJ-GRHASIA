@@ -522,6 +522,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     head: $scope.cc,
                     data: arrSave
                 }
+                console.log(jsonSave);
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
                    'FormulirPemberianInformasiPersetujuanCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
@@ -535,12 +536,16 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 });
             }
             $scope.cetakBlade = function () {
-                if (nomorEMR == '-') return
-
+               var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+               console.log(cacheNomorEMR[0]);
+               // return
+               if (cacheNomorEMR[0] == '-') {
+                   return
+               }
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
 
-                window.open(configuration.baseApiBackend + 'report/get-cetak-generalconsent?noemr=' + nomorEMR + '&emfk=' + $scope.cc.emrfk +
+                window.open(configuration.baseApiBackend + 'report/get-cetak-generalconsent?noemr=' + cacheNomorEMR[0] + '&emrfk=' + $scope.cc.emrfk +
                     '&kdprofile=' + local.id +
                     '&nama=' + nama, '_blank');
             }

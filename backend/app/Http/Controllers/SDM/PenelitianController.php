@@ -141,7 +141,8 @@ class PenelitianController extends ApiController {
             );
             }
             $norec = \DB::table('sdm_penelitianeksternal_t as sdpd')
-            ->select('sdpd.norec','sdpd.jumlahpeserta')
+            ->join('detailjenisproduk_m as djp','djp.id','=','sdpd.objectdetailjenisprodukfk')
+            ->select('sdpd.norec','sdpd.jumlahpeserta', 'sdpd.objectdetailjenisprodukfk', 'djp.detailjenisproduk')
             ->where('sdpd.kdprofile', $kdProfile)
             ->where('sdpd.statusenabled', true)
             ->where('sdpd.norec', $request['noregistrasi'])
@@ -426,7 +427,7 @@ class PenelitianController extends ApiController {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglawal'];
         $tglAkhir = $request['tglakhir'];
-    $NamaPeneliti = '';
+        $NamaPeneliti = '';
         if (isset($request['NamaPeneliti']) && $request['NamaPeneliti'] != "" && $request['NamaPeneliti'] != "undefined") {
         $NamaPeneliti = " and sdmp.namapeneliti ILIKE ". "'%" . $request['NamaPeneliti'] . "%'";
         }
@@ -439,6 +440,14 @@ class PenelitianController extends ApiController {
         $user = '';
         if (isset($request['user']) && $request['user'] != "" && $request['user'] != "undefined") {
         $user = "and sdmp.namauser ilike '$ex'";
+        }
+        $statusbayar = '';
+        if ($request['statusbayar'] == 1 && $request['statusbayar'] != "" && $request['statusbayar'] != "undefined") {
+        $statusbayar = "and sp.nosbmlastfk is not null";
+        }
+        if ($request['statusbayar'] == 2 && $request['statusbayar'] != "" && $request['statusbayar'] != "undefined"){
+        $statusbayar = "and sp.nosbmlastfk is null";
+
         }
         $data = DB::select(DB::raw("SELECT
             sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,
@@ -453,7 +462,7 @@ class PenelitianController extends ApiController {
                 left join strukpelayanan_t sp on sp.norec = sdmp.noregistrasifk
                 left join sdm_pesertadidik_t sdmpd on sdmpd.noregistrasifk = sdmp.norec
                 where sdmp.kdprofile = $kdProfile and sdmp.tglregistrasi::date between '$tglAwal'and '$tglAkhir' and sdmp.statusenabled = true
-                $user $Fakultas
+                $user $Fakultas $statusbayar
                 group by sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,
             sdmp.institusipendidikan,sdmp.tanggalmulai::date,sdmp.tanggalselesai::date,sdmp.biayapenelitian,
             sdmp.notelp,sdmp.hargasatuan,sdmp.qty, sp.isverifikasi,sp.nosbmlastfk,sp.nosbklastfk,

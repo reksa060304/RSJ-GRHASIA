@@ -18,10 +18,14 @@ define(['initialize'], function(initialize) {
             $scope.pemb = true;
             $scope.ru = true;
             $scope.serti=false
+            $scope.penelitibtn = true
 			var noOrder='';
 			var NorecKpe='';
 			var norec_kpe ='';
             var norecmhs = '';
+            if (medifirstService.getKelompokUser() == 'diklit') {
+                $scope.penelitibtn = false
+            }
 			loadDataCombo();
 			LoadCache();
             console.log(ModelItem.getPegawai())

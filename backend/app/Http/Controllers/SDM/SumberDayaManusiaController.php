@@ -5570,8 +5570,8 @@ END as januari
             );
         }
         $pegawai = DB::select(DB::raw("SELECT * FROM pegawai_m 
-        where namalengkap not ilike  '-' and statusenabled = true 
-        and kdprofile = 30 and namalengkap not ilike '%programmer%' and usereksternal is null"));
+        where namalengkap <> '-' and statusenabled = true 
+        and kdprofile = 30 and namalengkap <> '%programmer%' and usereksternal is null"));
         $result = array(
             'data'=> $detail,
             'count'=> $pegawai,
@@ -5957,6 +5957,129 @@ public function daftarKenaikanGajiBerkala(Request $request){
         and ppg.statusenabled = true
         order by ppg.nourut asc;"));
         
+        return $this->respond($data);
+    }
+
+    public function LaporanPenggunaTotal(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = \DB::select(DB::raw("SELECT 
+        x.pelayanan, 
+        sum(x.mhs)filter(where x.bulan = 1)as januari,
+        sum(x.mhs)filter(where x.bulan = 2)as februari,
+        sum(x.mhs)filter(where x.bulan = 3)as maret,
+        sum(x.mhs)filter(where x.bulan = 4)as april,
+        sum(x.mhs)filter(where x.bulan = 5)as mei,
+        sum(x.mhs)filter(where x.bulan = 6)as juni,
+        sum(x.mhs)filter(where x.bulan = 7)as juli,
+        sum(x.mhs)filter(where x.bulan = 8)as agustus,
+        sum(x.mhs)filter(where x.bulan = 9)as september,
+        sum(x.mhs)filter(where x.bulan = 10)as oktober,
+        sum(x.mhs)filter(where x.bulan = 11)as november,
+        sum(x.mhs)filter(where x.bulan = 12)as desember,
+        sum(x.mhs)as total
+        FROM (
+            SELECT djp.detailjenisproduk as pelayanan,date_part('month', pe.tanggalmulai::date)as bulan, count(pe.norec)as mhs 
+            from sdm_pesertadidik_t pdd inner join sdm_penelitianeksternal_t pe on pe.norec = pdd.noregistrasifk 
+            inner join detailjenisproduk_m djp on djp.id = pe.objectdetailjenisprodukfk 
+            where date_part('year', pe.tanggalmulai) = $request[tahun] and pdd.kdprofile = $idProfile and pdd.statusenabled = true 
+            GROUP BY djp.detailjenisproduk, pe.tanggalmulai::date 
+            ORDER BY djp.detailjenisproduk
+        )as x
+        GROUP BY x.pelayanan
+        "));
+
+        return $this->respond($data);
+    }
+    public function DaftarKegiatanPembimbing(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = \DB::select(DB::raw("
+        SELECT x.id as id_pegawai, x.norec as kegiatanfk, x.detailjenisproduk as kegiatan, x.diklatkategori, x.namalengkap, string_agg(x.nama, ', ')as peserta, x.periode, x.namaruangan,x.id_ruangan, x.institusipendidikan, x.tglmasukbimbingan, x.tglkeluarbimbingan FROM (SELECT 
+        djp.detailjenisproduk, pde.norec, pg.namalengkap, pdd.nama, dk.diklatkategori, pde.tanggalmulai::date || ' s.d ' || pde.tanggalselesai::date as periode, 
+        pde.institusipendidikan,pg.id, ru.namaruangan,pdr.tglmasuk::date as tglmasukbimbingan, pdr.tglkeluar::date as tglkeluarbimbingan, ru.id as id_ruangan
+        FROM
+            sdm_pdruangan_t pdr
+            INNER JOIN sdm_pesertadidik_t pdd on pdd.norec = pdr.noregistrasifk
+            INNER JOIN sdm_penelitianeksternal_t pde on pde.norec = pdd.noregistrasifk
+            INNER JOIN detailjenisproduk_m djp on djp.id = pde.objectdetailjenisprodukfk
+            INNER JOIN pegawai_m pg on pg.id = pdr.objectpegawaifk
+            inner join ruangan_m ru on ru.id = pdr.objectruanganlastfk
+            inner join diklatkategori_m dk on dk.id = pde.objectdiklatkategorifk where pdr.tglmasuk::date between '2022-07-01' and '2022-07-31' 
+            and pdr.objectpegawaifk = $request[pegawai]
+            )as x
+            GROUP BY x.norec, x.id,x.detailjenisproduk, x.namalengkap, x.diklatkategori, x.periode,x.namaruangan, x.institusipendidikan,x.id_ruangan, x.tglmasukbimbingan, x.tglkeluarbimbingan
+        "));
+
+        return $this->respond($data);
+    }
+    public function saveKegiatanPembimbing(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        \DB::beginTransaction();
+        try {
+            $skh = \DB::table('sdm_hasilkegiatan_t')->insert([
+                "norec"=> substr(Uuid::generate(), 0, 32),
+                "kdprofile"=>$idProfile,
+                "statusenabled"=> true,
+                "objectpegawaifk"=> $request['objectpegawaifk'],
+                "objectruanganfk"=> $request['objectruanganfk'],
+                "tglmasukbimbingan"=> $request['tglmasukbimbingan'],
+                "tglkeluarbimbingan"=> $request['tglkeluarbimbingan'],
+                "kegiatanfk"=> $request['kegiatanfk'],
+                "hasilkegiatan"=> $request['hasilkegiatan'],
+                "mahasiswa"=> $request['mahasiswa'],
+                "tglhasilkegiatan"=> $request['tglhasilkegiatan'],
+            ]);
+             $transStatus = true;
+        } catch (\Throwable $th) {
+             $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $e->getMessage() ,
+                 "e" => $e->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function DetailHasilKegiatan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = \DB::select(DB::raw(
+            "SELECT
+            hk.tglhasilkegiatan,
+            ru.namaruangan,
+            hk.hasilkegiatan 
+        FROM
+            sdm_hasilkegiatan_t hk
+            INNER JOIN ruangan_m ru ON ru.ID = hk.objectruanganfk
+        WHERE
+            hk.kdprofile = $idProfile
+            AND hk.statusenabled = TRUE 
+            AND hk.objectruanganfk = $request[ruangan]
+            and hk.tglmasukbimbingan = '$request[tglmasukbimbingan]'
+            and hk.tglkeluarbimbingan = '$request[tglkeluarbimbingan]'
+            and hk.kegiatanfk ilike '$request[noregistrasifk]'
+            and hk.objectpegawaifk = $request[pegawaifk]
+            "));
+
         return $this->respond($data);
     }
 }

@@ -35,16 +35,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     noOrder: 'EditPenelitianEksternal'
                 });
             }
-
-            
-
-            // function LoadCombo() {
-            //     medifirstService.get("sdm/penelitian/get-data-combo-penelitian?", true).then(function (datas) {
-            //         var dat = datas.data
-            //         $scope.listDataInstitusiPendidikan = dat.institusi;
-            //         $scope.listDataFakultas = dat.fakultas;
-            //     });
-            // }
+            $scope.listStatusBayar = [
+                {'id': 1,
+                statusbayar: "Sudah Bayar"
+                }, {
+                    'id': 2,
+                    statusbayar: "Belum Bayar"
+                }]
 
             if (medifirstService.getKelompokUser() != 'diklit') {
                 $scope.verif = false
@@ -80,8 +77,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         {
                             "title": "Tanggal",
                             "width": "20%",
-                            "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>"
+                            "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>",
+                            "footerTemplate": "TOTAL"
                         },
+                        {
+                            "field": "biayapenelitian",
+                            "title": "Biaya",
+                            "width": "20%",
+                            "template": "<span class='style-right'>{{formatRupiah('#: biayapenelitian #', 'Rp. ')}}</span>",
+                            aggregates: ['sum'],
+                            footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.biayapenelitian.sum #', 'Rp. ')}}</span>",
+                        },
+                        
                     ]
                 }
             } else {
@@ -145,7 +152,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     ],
                 }
             }
-
+            $scope.formatRupiah = function (value, currency) {
+                return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            }
             function GetData() {
                 $scope.isRouteLoading = true;
                 var tglAwal = "&tglawal="+ moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
@@ -163,21 +172,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     InstitusiPendidikan = "&Fakultas=" + $scope.item.institusipendidikan;
                 }
                 var usr = ''
-                console.log(medifirstService.getKelompokUser());
                 if (medifirstService.getKelompokUser() != 'diklit') {
                     usr = "user=" + medifirstService.getUserLogin().kdUser;
-                    // console.log(medifirstService.getUserLogin().kdUser);
                 }
-
-
-
-                // console.log(medifirstService.getPegawai());
-
-
-
-
+                var statusbayar = '';
+                if ($scope.item.statusbayar != undefined) {
+                    console.log('masuk', $scope.item.statusbayar.id);
+                    statusbayar = "&statusbayar=" + $scope.item.statusbayar.id
+                }
+                // return
                 var modelid = "&modelid="+ModelItem.getPegawai().id;
-                medifirstService.get("sdm/penelitian/get-daftar-penelitian-eksternal?"+ usr+tglAwal+tglAkhir+InstitusiPendidikan+modelid, true).then(function (dat) {
+                medifirstService.get("sdm/penelitian/get-daftar-penelitian-eksternal?"+ usr+tglAwal+tglAkhir+InstitusiPendidikan+modelid+statusbayar, true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var datas = dat.data.datas;
                         for (var i = 0; i < datas.length; i++) {
@@ -195,9 +200,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         institusipendidikan: {
                                             type: "string"
                                         },
+                                        biayapenelitian: {
+                                            type: "number"
+                                        }
                                     }
                                 }
                             },
+                            aggregate: [{
+                                field: "biayapenelitian",
+                                aggregate: "sum"
+                            }],
                             pageSize: 20,
                             serverPaging: true,
                             serverFiltering: true,
@@ -213,13 +225,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             5: '',
                             6: ''
                         }
-                        console.log(medifirstService.getKelompokUser());
                         cacheHelper.set('DaftarPenelitianEksternalCtrl', chacePeriode);
                 
                 });
-
-               
-                
             }
 
             $scope.SearchData = function (e) {
@@ -314,6 +322,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if ($scope.isverifikasi != null) {
                     $scope.isRouteLoading = false
                     toastr.error("Informasi, Data Sudah Diverif Tidak Bisa Dihapus !")
+                    return;
+                }
+                if ($scope.statusBayar != null) {
+                    $scope.isRouteLoading = false
+                    toastr.error("Informasi, Tagihan Sudah Lunas Tidak Bisa diHapus !")
                     return;
                 }
                 var objSave = {

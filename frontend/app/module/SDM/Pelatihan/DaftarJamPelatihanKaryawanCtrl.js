@@ -214,7 +214,10 @@ define(['initialize'], function (initialize) {
                         }];
                         sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
                         sheet.rows.splice(3000, 0, {
-                            cells: [{value: ""}, {value: "",}, {value: "",}, 
+                            cells: [{
+                                        value: ""
+                                    }, {
+                                        value: "Data pegawai > 20 jam",}, {value: "",}, 
                             {value: "",
                                 // colSpan: 2,verticalAlign: "top",
                             }, {value: sumakujanuari,}, {},{value:sumakufebruari},{}, {value: sumakumaret},{},{value: sumakuapril},{},{value: sumakumei},{},{value: sumakujuni},
@@ -226,38 +229,38 @@ define(['initialize'], function (initialize) {
                             cells: [{
                                     value: ""
                                 }, {
-                                    value: "",
+                                    value: "Total Akumulasi Karyawan > 20 jam / jumlah karyawan *100%",
                                 }, {
                                     value: "",
                                 },{
                                     value: "",
                                     // colSpan: 2,verticalAlign: "top",
                                 }, {
-                                    value: (sumakujanuari/count)*1,
+                                    value: ((sumakujanuari / count) * 100).toFixed(2) + "%",
                                 }, {}, {
-                                    value: (sumakufebruari/count)*1
+                                    value: ((sumakufebruari / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: (sumakumaret / count) * 1
+                                    value: ((sumakumaret / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: (sumakuapril / count) * 1
+                                    value: ((sumakuapril / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: (sumakumei / count) * 1
+                                    value: ((sumakumei / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: (sumakujuni / count) * 1
+                                    value: ((sumakujuni / count) * 100).toFixed(2) + "%"
                                 },
                                 {}, {
-                                    value: (sumakujuli / count) * 1
+                                    value: ((sumakujuli / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: (sumakuagustus / count) * 1
+                                    value: ((sumakuagustus / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: (sumakuseptember / count) * 1
+                                    value: ((sumakuseptember / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: (sumakuoktober / count) * 1
+                                    value: ((sumakuoktober / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: (sumakunovember / count) * 1
+                                    value: ((sumakunovember / count) * 100).toFixed(2) + "%"
                                 },
                                 {}, {
-                                    value: (sumakudesember / count) * 1
+                                    value: ((sumakudesember / count) * 100).toFixed(2) + "%"
                                 }
                             ],
                             type: "data",

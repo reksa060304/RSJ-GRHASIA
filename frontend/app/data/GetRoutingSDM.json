@@ -1123,5 +1123,43 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekapInstalasiDiklatCtrl",
+    "url": "/UkVLQVAgUEVOR0dVTkEgSU5TVEFMQVNJIERJS0xBVExJVEJBTkc=",
+    "templateurl": "module/SDM/RekapInstalasiDiklat.html",
+    "controller": "RekapInstalasiDiklatCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarKegiatanPembimbing",
+    "url": "/DaftarKegiatanPembimbing",
+    "templateurl": "module/SDM/Pelatihan/DaftarKegiatanPembimbing.html",
+    "controller": "DaftarKegiatanPembimbingCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

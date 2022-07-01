@@ -26,6 +26,15 @@
 							placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd HH:mm'" />
 					</div>
 				</div>
+				<div class="grid_4">
+					<div class="grid_12" style="margin-top: 6px;">
+						<label c-label >Status Bayar</label>
+						<div class="grid_12">
+							<input style="width: 100%;" kendo-combo-box k-ng-model="item.statusbayar" k-data-text-field="'statusbayar'"
+								k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listStatusBayar" />
+						</div>
+					</div>
+				</div>
 				<div class="grid_2 k-edit-buttons  k-state-default " style="margin-top:27px">
 					<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="SearchData()"
 						style="width:100px"><span class="k-sprite k-icon k-i-search"></span>Cari </button>
