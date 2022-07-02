@@ -515,20 +515,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.updateProduksi = function () {
-                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
                     
 
-                    if(e.data.detail[0].tglclosing == null){
-                        var cek = 123;
-                    } else{
-                        var cek = 234;
-                    }
-          
-                    console.log(cek);
-          
-                    if(cek == 234){
-                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
-                    } else if (cek == 123){
+                    
                         if ($scope.item.statusorder != 'Menunggu') {
                             //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 1).then(function(e) {
                             //
@@ -563,27 +552,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             toastr.error("Status Data Belum Diverifikasi !!")
                             return;
                         }
-                    }
-                });
                 //if ($scope.item.statusorder == 'Verifikasi') {
                 
             }
 
             $scope.updatePackaging = function () {
-                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
                     
 
-                    if(e.data.detail[0].tglclosing == null){
-                        var cek = 123;
-                    } else{
-                        var cek = 234;
-                    }
-          
-                    console.log(cek);
-          
-                    if(cek == 234){
-                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
-                    } else if (cek == 123){
+                    
                         if ($scope.item.statusorder != 'Menunggu') {
                             //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 2).then(function(e) {
                             // managePasien.updateStatusOrder($scope.item.noorder, 2).then(function(e) {
@@ -619,26 +595,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 return;
                             }
                         }
-                    }
-                });
                 //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Produksi') {
                 
             }
             $scope.updateDone = function () {
-                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
                     
 
-                    if(e.data.detail[0].tglclosing == null){
-                        var cek = 123;
-                    } else{
-                        var cek = 234;
-                    }
-          
-                    console.log(cek);
-          
-                    if(cek == 234){
-                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
-                    } else if (cek == 123){
+                    
                         if ($scope.item.statusorder != 'Menunggu') {
                             //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 3).then(function(e) {
                             // managePasien.updateStatusOrder($scope.item.noorder, 3).then(function(e) {
@@ -698,8 +661,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 return;
                             }
                         }
-                    }
-                });
                 //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging') {
                 
             }
@@ -872,20 +833,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 
             }
             $scope.ambilObat = function () {
-                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
-                    
-
-                    if(e.data.detail[0].tglclosing == null){
-                        var cek = 123;
-                    } else{
-                        var cek = 234;
-                    }
-          
-                    console.log(cek);
-          
-                    if(cek == 234){
-                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
-                    } else if (cek == 123){
                         if ($scope.item.statusorder == 'Selesai') {
                             // noresep
                             $scope.item.tglambil = new Date()
@@ -906,27 +853,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             toastr.error("Status Data Harus Selesai !!")
                             return;
                         }
-                    }
-                });
                 
 
             }
 
             $scope.saveambilobat = function () {
-                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
-                    
-
-                    if(e.data.detail[0].tglclosing == null){
-                        var cek = 123;
-                    } else{
-                        var cek = 234;
-                    }
-          
-                    console.log(cek);
-          
-                    if(cek == 234){
-                        messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
-                    } else if (cek == 123){
                         var nm = ''
                         if ($scope.item.namapengambil != undefined) {
                             nm = $scope.item.namapengambil
@@ -950,8 +881,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     $scope.popup.close()
                                 })
                         });
-                    }
-                });
                 
             }
 

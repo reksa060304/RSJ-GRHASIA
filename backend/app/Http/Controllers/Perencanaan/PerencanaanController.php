@@ -2928,6 +2928,76 @@ class PerencanaanController extends ApiController {
 
         return $this->respond($result);
     }
+    
+    public function getCetakSPJ(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $norec = $request['norec'];
+
+        $kegiatan = DB::select(DB::raw("
+            select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub
+            from strukrealisasi_t sr
+            inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+            inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+            inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+            left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+            inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+            where sr.norec = '$norec'
+            group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div;
+            ")
+        );
+
+        $keterangan = DB::select(DB::raw("select kb.keteranganbelanja
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec'
+        group by kb.keteranganbelanja;"));
+
+        $mataanggaran = DB::select(DB::raw("select ma.namamataanggaran, ma.kodemataanggaran
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec'
+        group by ma.namamataanggaran, ma.kodemataanggaran;"));
+
+        $spj = DB::select(DB::raw("select 
+        sr.pph, sr.ppn
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec'
+        group by sr.pph, sr.ppn;"));
+
+        $detail = DB::select(DB::raw("select rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec'
+        group by rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal;"));
+
+
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+    
     public function saveRealisasiSPJ(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
@@ -2970,19 +3040,22 @@ class PerencanaanController extends ApiController {
 
             $dataRealisasiDetail = $request['realisasidetail'];
             foreach($dataRealisasiDetail as $item){
-                $DT = new RealisasiDetail();
-                $norecDT = $DT->generateNewId();
-                $DT->norec = $norecDT;
-                $DT->kdprofile = $idProfile;
-                $DT->statusenabled = true;
-                $DT->strukrealisasifk = $norecStrukRealisasiJangInsertTableDetailNa;
-                $DT->uraian = $item['uraian'];
-                $DT->jml = $item['jml'];
-                $DT->satuan = $item['satuan'];
-                $DT->harga = $item['harga'];
-                $DT->subtotal = $item['subtotal'];
-                $DT->keteranganbelanjafk = $item['keteranganbelanjafk'];
-                $DT->save();
+                if(empty($item['norec'])){
+                    $DT = new RealisasiDetail();
+                    $norecDT = $DT->generateNewId();
+                    $DT->norec = $norecDT;
+                    $DT->kdprofile = $idProfile;
+                    $DT->statusenabled = true;
+                    $DT->strukrealisasifk = $norecStrukRealisasiJangInsertTableDetailNa;
+                    $DT->uraian = $item['uraian'];
+                    $DT->jml = $item['jml'];
+                    $DT->satuan = $item['satuan'];
+                    $DT->harga = $item['harga'];
+                    $DT->subtotal = $item['subtotal'];
+                    $DT->keteranganbelanjafk = $item['keteranganbelanjafk'];
+                    $DT->save();
+                } 
+                
             }
            $transStatus = 'true';
        } catch (\Exception $e) {

@@ -1,5 +1,6 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('KelompokAnggaranCtrl', ['$scope', '$mdDialog','MedifirstService',
         function ($scope, $mdDialog, medifirstService) {
             $scope.dataVOloaded = true;
@@ -23,6 +24,7 @@ define(['initialize'], function (initialize) {
             var ListMataAnggaran = []
             var buttonhide = true
             $scope.dispanjar = false
+            $scope.norecspj = ''
 
             $scope.rcn = {};
             $scope.rcn.mataAnggaranlv1 = ""
@@ -2788,6 +2790,16 @@ define(['initialize'], function (initialize) {
                 $scope.popupPanjar.center().open()
             }
 
+            $scope.CetakSPJ = function(){
+                console.log($scope.norecspj)
+                window.open(baseTransaksi + "report/get-cetak-spj?norec="+$scope.norecspj, '_blank');
+                // medifirstService.get("perencanaan/get-cetak-spj?norec="+$scope.norecspj
+                //     , true).then(function (dat) {
+                //         loadDataGrid();
+                        
+                //     });
+            }
+
             $scope.CariPanjar = function(){
                 medifirstService.get("perencanaan/get-daftar-panjar-aktif"
                     , true).then(function (dat) {
@@ -3129,6 +3141,8 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
 				})
+
+                $scope.norecspj = dataItem.norec
                 console.log(dataItem)
 
                 medifirstService.get("perencanaan/get-total-keterangan?tahap=" +$scope.item.objecttahapaktivfk.id).then(function (e) {
