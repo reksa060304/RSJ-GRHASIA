@@ -5996,6 +5996,10 @@ public function daftarKenaikanGajiBerkala(Request $request){
     {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $pegawai = "";
+        if (isset($request['pegawai']) && $request['pegawai'] != "") {
+            $pegawai = "and pdr.objectpegawaifk =". $request['pegawai'];
+        }
         $data = \DB::select(DB::raw("
         SELECT x.id as id_pegawai, x.norec as kegiatanfk, x.detailjenisproduk as kegiatan, x.diklatkategori, x.namalengkap, string_agg(x.nama, ', ')as peserta, x.periode, x.namaruangan,x.id_ruangan, x.institusipendidikan, x.tglmasukbimbingan, x.tglkeluarbimbingan FROM (SELECT 
         djp.detailjenisproduk, pde.norec, pg.namalengkap, pdd.nama, dk.diklatkategori, pde.tanggalmulai::date || ' s.d ' || pde.tanggalselesai::date as periode, 
@@ -6008,7 +6012,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
             INNER JOIN pegawai_m pg on pg.id = pdr.objectpegawaifk
             inner join ruangan_m ru on ru.id = pdr.objectruanganlastfk
             inner join diklatkategori_m dk on dk.id = pde.objectdiklatkategorifk where pdr.tglmasuk::date between '2022-07-01' and '2022-07-31' 
-            and pdr.objectpegawaifk = $request[pegawai]
+            $pegawai
             )as x
             GROUP BY x.norec, x.id,x.detailjenisproduk, x.namalengkap, x.diklatkategori, x.periode,x.namaruangan, x.institusipendidikan,x.id_ruangan, x.tglmasukbimbingan, x.tglkeluarbimbingan
         "));
@@ -6081,5 +6085,33 @@ public function daftarKenaikanGajiBerkala(Request $request){
             "));
 
         return $this->respond($data);
+    }
+    public function getDaftarMahasiswaAktif(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = \DB::select(DB::raw(
+            "SELECT
+                spe.institusipendidikan,
+                spd.nama,
+                spd.nim,
+                jk.jeniskelamin,
+                pg.namalengkap,
+                ru.namaruangan,
+                spe.tanggalmulai::date,
+                spe.tanggalselesai::date
+            FROM
+                sdm_pesertadidik_t spd
+                inner join sdm_penelitianeksternal_t spe on spe.norec = spd.noregistrasifk
+                inner join jeniskelamin_m jk on jk.id =spd.jeniskelaminfk
+                left join pegawai_m pg on pg.id = spd.objectpegawailastfk
+                left join ruangan_m ru on ru.id = spd.objectruanganlastfk
+            WHERE
+            spd.kdprofile = 30 and spd.statusenabled = true and
+            spe.tanggalmulai >= '$request[tanggalmulai]' and 
+                spe.tanggalselesai > CURRENT_DATE
+            "
+        ));
+        return $this->respond($data,'Fizi');
     }
 }

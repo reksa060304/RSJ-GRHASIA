@@ -790,4 +790,40 @@ class PenelitianController extends ApiController {
         );
         return $this->respond($result);
     }
+    public function getTanggalOtomatis(Request $request)
+    {
+        $nyariminggu = "";
+        $nyarihari = "";
+            if(isset($request['satuan'])){
+                $nyariminggu =\DB::select(DB::raw("SELECT y.hari-1 as hari FROM (SELECT  generate_series('$request[tgl]'::date, x.w, '1 month')::date 
+                as hari  from (select '$request[tgl]'::date + $request[qty] as w )as x )as y
+                "));  
+            
+                $count = count($nyariminggu);
+                $nyarihari = $nyariminggu;
+            }else{
+                $nyariminggu =\DB::select(DB::raw("SELECT y.hari as minggu FROM (SELECT  generate_series('$request[tgl]'::date, x.w, '1 day')::date 
+                as hari  from (select '$request[tgl]'::date + $request[qty] as w )as x )as y
+                where extract(DOW FROM y.hari) = 0"));  
+            
+                $count = count($nyariminggu);
+                $nyarihari =\DB::select(DB::raw("SELECT 
+                case when extract(DOW FROM y.hari) = 0 then
+                y.hari+1 
+                else y.hari end as hari
+                FROM (SELECT  generate_series('$request[tgl]'::date, x.w, '1 day')::date 
+                as hari  from (select '$request[tgl]'::date + ($request[qty] + $count) as w )as x )as y
+                "));
+            }
+            
+            
+
+        $result = array(
+            "nyariminggu"=>$count,
+            "nyarihari"=>$nyarihari,
+            "as"=>"FIzi"
+        );
+        return $this->respond($result);
+    }
+
 }

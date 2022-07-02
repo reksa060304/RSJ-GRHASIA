@@ -194,9 +194,15 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.jmlRows != undefined) {
                     jmlRows = $scope.item.jmlRows
                 }
+                var pegawai= "";
+                // return
+                if(medifirstService.getKelompokUser() == 'diklit'){
+                    pegawai= "";
+                } else{
+                    pegawai = medifirstService.getPegawaiLogin().id
+                }
                 
-                
-                medifirstService.get("diklat/get-daftar-kegiatan-pembimbing?pegawai="+ medifirstService.getPegawaiLogin().id ).then(function (data) {
+                medifirstService.get("diklat/get-daftar-kegiatan-pembimbing?pegawai="+ pegawai).then(function (data) {
                 $scope.isRouteLoading = false;
                 // $scope.dataDaftarPasienPulang = data[0].data;
                 var datas = data.data;
