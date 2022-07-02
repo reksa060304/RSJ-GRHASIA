@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize, configuration) {
     'use strict';
     initialize.controller('SuratBuktiPengembalianPenerimaanKembaliCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
@@ -15,7 +15,8 @@ define(['initialize'], function (initialize) {
             var peagawaiLogin = medifirstService.getPegawaiLogin()
             $scope.cc.emrfk = 3000435
             var dataLoad = []
-            $scope.isCetak = true
+            // $scope.isCetak = true
+            $scope.isCetakV = true
             var norecEMR = ''
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
@@ -532,6 +533,23 @@ define(['initialize'], function (initialize) {
                     }
                     cacheHelper.set('cacheNomorEMR', arrStr);
                 });
+            }
+
+            $scope.cetakBlade = function () {
+                // console.log(cacheNomorEMR);
+                var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+                console.log(cacheNomorEMR[0]);
+                // return
+                if (cacheNomorEMR[0] == '-') {
+                    return
+                }
+
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(configuration.baseApiBackend + 'report/get-cetak-suratbuktipengembalian?noemr=' + cacheNomorEMR[0] + '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama, '_blank');
             }
 
         }

@@ -18,14 +18,12 @@ define(['initialize'], function(initialize) {
             $scope.pemb = true;
             $scope.ru = true;
             $scope.serti=false
-            $scope.penelitibtn = true
+            // $scope.penelitibtn = true
 			var noOrder='';
 			var NorecKpe='';
 			var norec_kpe ='';
             var norecmhs = '';
-            if (medifirstService.getKelompokUser() == 'diklit') {
-                $scope.penelitibtn = false
-            }
+            
 			loadDataCombo();
 			LoadCache();
             console.log(ModelItem.getPegawai())
@@ -131,9 +129,9 @@ define(['initialize'], function(initialize) {
                 console.log(noOrder);
             console.log($scope.item.layanan.id);
             $scope.item.levelpendidikan = undefined
-
+                console.log($scope.item.layanan);
+                $scope.item.satuan = $scope.item.layanan.namaexternal
                 if (noOrder == 'EditPenelitianEksternal') {
-                    console.log($scope.item.layanan);
                     if ($scope.usereksternal != true) {
                         // $scope.item.layanan.id == 1947 || layanan praktek klinik
                         if ($scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
@@ -145,7 +143,6 @@ define(['initialize'], function(initialize) {
                         $scope.lvlpendidikan = false
                         $scope.idlvlpendidikan = true
                     }
-
                 }
                 
 
@@ -154,7 +151,7 @@ define(['initialize'], function(initialize) {
                     jenisLayanan).then(function (datas) {
                     var dat = datas.data
                     $scope.ListLevelPendidikan = dat.layanan;
-                    $scope.item.satuan = dat.detailjp[0].namaexternal;
+                    // $scope.item.satuan = dat.detailjp[0].namaexternal;
                     console.log($scope.ListLevelPendidikan);
                 });
             }
@@ -172,7 +169,10 @@ define(['initialize'], function(initialize) {
                 });
 
             }
+                console.log($scope.now);
+
             $scope.GetBiaya = function(){
+
                 if ($scope.item.jumlahpeserta > 10 && $scope.item.levelpendidikan.id == 40400030) {
                     console.log(true);
                     $scope.item.biaya = (($scope.item.jumlahpeserta - 10) * 280000) + ($scope.item.qty * $scope.harganetto);
@@ -192,7 +192,34 @@ define(['initialize'], function(initialize) {
                 if (($scope.item.levelpendidikan.id !== 40400030) && ($scope.item.layanan.id !== 1950)) {
                     $scope.item.biaya = $scope.item.jumlahpeserta*$scope.harganetto * $scope.item.qty;
                 }
+                
+                // tglOtomatis()
+            }
+            
+            function tglOtomatis(){
+                var satuan = "";
+                var qty =";"
+                if ($scope.item.satuan == "Orang - Bulan(OB)"){
+                    satuan = "&satuan=month";
+                    qty = "&qty=" + ($scope.item.qty * 31)
+                }
+                else if ($scope.item.satuan == "Orang - Minggu(OM)") {
+                    qty = "&qty=" + (($scope.item.qty*7)-1)
 
+                } else 
+                if ($scope.item.satuan == "Orang - Hari(OH)") {
+                    qty = "&qty=" + ($scope.item.qty-1)
+                } 
+                console.log(satuan);
+                medifirstService.get('diklat/get-tanggal-otomatis?tgl=' + moment($scope.now).format('YYYY-MM-DD') +satuan + qty).then(function (data) {
+                    // console.log(data);
+                    var datas = data.data.nyarihari
+                    var tglpertama = $scope.now
+                    var tglterakhir = datas.length - 1
+                    $scope.item.tanggalMulai = tglpertama
+                    $scope.item.tanggalSelesai = datas[tglterakhir].hari
+                    console.log(datas);
+                })
             }
 			function init(){
 			   	if (noOrder == 'EditPenelitianEksternal') {
@@ -230,12 +257,16 @@ define(['initialize'], function(initialize) {
                         $scope.item.judulpenelitian = datas.judulpeneltian;
                         $scope.item.pengesah = {id: datas.idpengesah,namalengkap:datas.namalengkap};
                         $scope.item.nosertifikat = datas.nosertifikat;
+                        // $scope.penelitibtn = true
                         if ($scope.usereksternal != true) {
                             if ($scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
                                 // console.log('masuk tol');
                                 $scope.Pembimbing = true;
                             }
                             $scope.serti = true
+                        }
+                        if (medifirstService.getKelompokUser() == 'diklit') {
+                            $scope.penelitibtn = false
                         }
                     })
                     
