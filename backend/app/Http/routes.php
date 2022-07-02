@@ -1134,6 +1134,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-surathppctki', 'Report\ReportController@CetakHPPCTKI');
           Route::get('report/get-cetak-surathppminatbakat', 'Report\ReportController@CetakHPPMinatBakat');
           Route::get('report/get-cetak-generalconsent', 'Report\ReportController@CetakGeneralConsent');
+          Route::get('report/get-cetak-suratbuktipengembalian', 'Report\ReportController@suratBuktiPengembalian');
+          Route::get('report/get-cetak-perjanjianmelarikandiri', 'Report\ReportController@perjanjianMelarikanDiri');
+          Route::get('report/diklat-cetakhasilkegiatan','Report\ReportController@cetakHasilKegiatan');
           Route::get('laboratorium/get-lap-kunjungan', 'Laboratorium\LaboratoriumController@getLaporanKunjungan');
           Route::get('laboratorium/get-combo-dokter-lab','Laboratorium\LaboratoriumController@getDokter');
 
@@ -2218,6 +2221,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('sdm/pendidikan/save-pdruangan', 'SDM\SumberDayaManusiaController@savePesertaDidikRuangan');
               Route::post('sdm/penelitian/verif-kegiatan-penelitian-eksternal','SDM\PenelitianController@verifKegiatanPenelitianExternal');
               Route::post('sdm/penelitian/verif-tagihan-kegiatan-penelitian-eksternal','SDM\PenelitianController@verifTagihanKegiatanPenelitianExternal');
+              
 
             // });
             // Route::group(['prefix' => 'penelitian'], function (){
