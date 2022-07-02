@@ -193,8 +193,9 @@ define(['initialize'], function(initialize) {
                     $scope.item.biaya = $scope.item.jumlahpeserta*$scope.harganetto * $scope.item.qty;
                 }
                 
-                tglOtomatis()
+                // tglOtomatis()
             }
+            
             function tglOtomatis(){
                 var satuan = "";
                 var qty =";"
