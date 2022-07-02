@@ -2792,7 +2792,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.CetakSPJ = function(){
                 console.log($scope.norecspj)
-                window.open(baseTransaksi + "report/get-cetak-spj?norec="+$scope.norecspj, '_blank');
+                medifirstService.get("sysadmin/general/get-terbilang/" + $scope.item.jumlahSPJ).then(
+					function (dat) {
+                        console.log(dat.data.terbilang)
+                        window.open(baseTransaksi + "report/get-cetak-spj?norec="+$scope.norecspj+"&terbilang="+dat.data.terbilang, '_blank');
+                        
+					}
+                );
                 // medifirstService.get("perencanaan/get-cetak-spj?norec="+$scope.norecspj
                 //     , true).then(function (dat) {
                 //         loadDataGrid();

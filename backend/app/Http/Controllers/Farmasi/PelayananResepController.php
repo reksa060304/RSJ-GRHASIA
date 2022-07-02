@@ -3188,7 +3188,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                         WHERE pd.statusenabled=true AND sr.statusenabled = true AND sr.kdprofile = 30 and sr.tglresep BETWEEN '$tglAwal' and '$tglAkhir'
                         $dokid
                         $ruid
-                        $rajalRanapObatBebas    
+                        $rajalRanap
                         $namaItem    
                         $namaItemText
                         $namaPasienText
