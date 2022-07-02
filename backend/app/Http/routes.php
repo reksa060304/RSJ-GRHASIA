@@ -1065,7 +1065,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('diklat/get-daftar-kegiatan-pembimbing','SDM\SumberDayaManusiaController@DaftarKegiatanPembimbing');
             Route::post('diklat/save/kegiatan-diklat','SDM\SumberDayaManusiaController@saveKegiatanPembimbing');
             Route::get('diklat/get-hasilkegiatan', 'SDM\SumberDayaManusiaController@DetailHasilKegiatan');
-
+            Route::get('sdm/penelitian/get-daftar-mahasiswa-aktif','SDM\SumberDayaManusiaController@getDaftarMahasiswaAktif');
+            Route::get('diklat/get-tanggal-otomatis','SDM\PenelitianController@getTanggalOtomatis');
             // GET
 
             // POST
