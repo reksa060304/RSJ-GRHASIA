@@ -21,6 +21,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.tanggalselesai = new moment($scope.now).format('YYYY-MM-DD 23:59');
             var norec = "";
 			var dataProduk = [];
+            getCombo()
             GetData()
             getDataMahasiswa()
             console.log(medifirstService.getPegawai());
@@ -56,7 +57,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             if (medifirstService.getKelompokUser() != 'diklit') {
                 $scope.verif = false
                 $scope.tagih = false
-
+                $scope.daftarmahasiswa = true
                 $scope.columnPenelitian = {
                     toolbar: ["excel"],
                     excel: {
@@ -103,6 +104,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     ]
                 }
             } else {
+                $scope.daftarmahasiswa = false
                 $scope.verif = true
                 $scope.tagih = true
                 
@@ -293,9 +295,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 getDataMahasiswa()
             }
             function getDataMahasiswa() {
+                $scope.isRouteLoading = true
                 var tanggalmulai = "tanggalmulai=" + moment($scope.item.tanggalmulai).format('YYYY-MM-DD HH:mm');
                 var tanggalselesai = "&tanggalselesai=" + moment($scope.item.tanggalselesai).format('YYYY-MM-DD HH:mm');
-                medifirstService.get("sdm/penelitian/get-daftar-mahasiswa-aktif?"+tanggalmulai+tanggalselesai).then(function (data) {
+                var jeniskegiatan = "";
+                if($scope.item.jeniskegiatan != undefined){
+                    var jeniskegiatan ="&jeniskegiatan="+$scope.item.jeniskegiatan.id
+                }
+                medifirstService.get("sdm/penelitian/get-daftar-mahasiswa-aktif?"+tanggalmulai+tanggalselesai+jeniskegiatan).then(function (data) {
                     $scope.isRouteLoading = false;
                     var datas = data.data;
                     for (var i = 0; i < datas.length; i++) {
@@ -580,6 +587,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 // return
                 window.open(baseTransaksi + "report/diklat-cetakhasilkegiatan?norec=" + dataItem.norec,'__blank');
+            }
+            function getCombo(){
+                medifirstService.get('diklat/get-combo-diklat').then(function(data){
+                    $scope.listJenisKegiatan = data.data.jeniskegiatan
+                })
             }
         }
     ]);
