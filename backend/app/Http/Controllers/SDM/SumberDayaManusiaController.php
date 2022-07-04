@@ -6011,7 +6011,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
             INNER JOIN detailjenisproduk_m djp on djp.id = pde.objectdetailjenisprodukfk
             INNER JOIN pegawai_m pg on pg.id = pdr.objectpegawaifk
             inner join ruangan_m ru on ru.id = pdr.objectruanganlastfk
-            inner join diklatkategori_m dk on dk.id = pde.objectdiklatkategorifk where pdr.tglmasuk::date between '2022-07-01' and '2022-07-31' 
+            inner join diklatkategori_m dk on dk.id = pde.objectdiklatkategorifk where pdr.tglmasuk::date between '$request[tglawal]' and '$request[tglakhir]' 
             $pegawai
             )as x
             GROUP BY x.norec, x.id,x.detailjenisproduk, x.namalengkap, x.diklatkategori, x.periode,x.namaruangan, x.institusipendidikan,x.id_ruangan, x.tglmasukbimbingan, x.tglkeluarbimbingan

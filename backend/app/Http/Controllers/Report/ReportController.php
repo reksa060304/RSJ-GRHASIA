@@ -2670,6 +2670,38 @@ public function suratBuktiPengembalian(Request $request)
     }
     public function cetakHasilKegiatan(Request $request)
     {
+        $norec = $request['norec'];
+        $kdProfile = (int) $request['kdprofile'];
         
+        $judul = \DB::table('sdm_hasilkegiatan_t as shk')
+        ->join('sdm_penelitianeksternal_t as spe', 'spe.norec','=','shk.kegiatanfk')
+        ->join('ruangan_m AS ru','ru.id','=','shk.objectruanganfk')
+        ->leftJoin('pegawai_m AS pg','pg.id','=','shk.objectpegawaifk')
+        ->where('shk.kegiatanfk',$norec)
+        ->select('spe.tanggalmulai','spe.institusipendidikan','spe.tanggalselesai')->distinct()
+        ->get(); 
+        $data = \DB::table('sdm_hasilkegiatan_t as shk')
+        ->join('sdm_penelitianeksternal_t as spe', 'spe.norec','=','shk.kegiatanfk')
+        ->join('ruangan_m AS ru','ru.id','=','shk.objectruanganfk')
+        ->leftJoin('pegawai_m AS pg','pg.id','=','shk.objectpegawaifk')
+        ->where('shk.kegiatanfk',$norec)
+        ->select('spe.tanggalmulai','spe.institusipendidikan', 'shk.mahasiswa', 'shk.tglhasilkegiatan', 'spe.tglregistrasi', 'spe.tanggalselesai','shk.hasilkegiatan', 'ru.namaruangan', 'pg.namalengkap')
+        ->get();
+
+        foreach ($data as $i) {
+            if(isset($i->tanggalmulai)){
+                $i->tanggalmulai = date('Y-m-d',strtotime($i->tanggalmulai));
+            }
+            if (isset($i->tanggalmulai)) {
+                $i->tanggalselesai = date('Y-m-d',strtotime($i->tanggalselesai));
+            }
+            if(isset($i->mahasiswa)){
+                $i->mahasiswa = explode(", ", $i->mahasiswa);
+            }
+        }
+        // var_dump($data);
+        $pageWidth = 950;
+        // var_dump($detail);
+        return view('report.hasilkegiatandiklat', compact('data','judul','pageWidth'));
     }
 }
