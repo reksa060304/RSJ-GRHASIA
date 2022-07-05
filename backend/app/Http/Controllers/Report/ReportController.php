@@ -2753,7 +2753,7 @@ public function suratBuktiPengembalian(Request $request)
         // dd($detail);
         $pageWidth = 950;
         // var_dump($detail);
-        return view('report.EMR.suratbuktipengembalian', compact('detail','pageWidth'));
+        return view('report.EMR.perjanjianpasienmelarikandiri', compact('detail','pageWidth'));
     }
     public function cetakHasilKegiatan(Request $request)
     {
@@ -2790,5 +2790,58 @@ public function suratBuktiPengembalian(Request $request)
         $pageWidth = 950;
         // var_dump($detail);
         return view('report.hasilkegiatandiklat', compact('data','judul','pageWidth'));
+    }
+
+    public function ketentuanRawatInap(Request $request)
+    {
+        $noemr = $request['noemr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $emrfk = $request['emrfk'];
+        $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = $emrfk and statusenabled = true and kdprofile = $kdProfile order by id
+        "));
+        $data = \DB::select(DB::raw("SELECT ed.id,epd.value, ed.type
+                FROM emrpasien_t ep
+                        INNER JOIN emrpasiend_t epd ON ep.noemr = epd.emrpasienfk
+                        INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
+                        INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
+                    WHERE ep.kdprofile = $kdProfile AND ep.statusenabled = TRUE 
+                        AND ep.noemr ILIKE '$noemr' 
+                        AND ed.statusenabled = TRUE 
+                        AND ep.emrfk = $emrfk 
+                        AND ed.emrfk = $emrfk
+                ORDER BY ed.ID ASC"));
+        $detail = [];
+        $id=0;
+        $value="";
+        foreach ($main as $m) {
+        $id=0;
+        $value="";
+            foreach ($data as $d) {
+                if ($m->id == $d->id) {
+                    $id = $m->id;
+                    if ($d->type == 'datetime') {
+                        $value=$this->tanggal_indonesia(date('Y-m-d',strtotime($d->value)));
+                    }else{
+                        $value =$d->value;
+                    }
+                    break;
+                }else {
+                    $id = $m->id;
+                    $value = "";
+                }
+                
+            }
+
+            $detail[]= array(
+                "id"=> $id,
+                "value"=>$value,
+                "type"=> $m->type
+            );
+        }
+
+        // dd($detail);
+        $pageWidth = 950;
+        // var_dump($detail);
+        return view('report.EMR.ketentuanrawatinap', compact('detail','pageWidth'));
     }
 }

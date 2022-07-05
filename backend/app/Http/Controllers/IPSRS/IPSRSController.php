@@ -133,6 +133,7 @@ class IPSRSController extends ApiController
         $result = array(
             'data' => $result,
             'datalogin' => $dataLogin,
+            'KdKelTransIPSRS'=> $KdKelTransIPSRS,
             'message' => 'as@epic',
         );
 
@@ -760,6 +761,242 @@ class IPSRSController extends ApiController
         );
 
         return $this->respond($result);
+    }
+    public function SavePermohonanPindahKe(Request $request)
+    {
+        DB::beginTransaction();
+        $dataLogin = $request->all();
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        try {
+            $newCOA =  StrukPlanning::where('norec',$request['norec'])->where('kdprofile', $kdProfile)->first();
+            $newCOA->objectkelompoktransaksifk = $request['pindah'];
+            if (isset($request['ruangtujuan']) && $request['ruangtujuan']!= "") {
+            $newCOA->objectruangantujuanfk = $request['ruangtujuan'];
+            }
+            $newCOA->save();
+
+            if ($newCOA->objectkelompoktransaksifk == 151) {
+                //pdti
+                $norecHead2 = $newCOA->norec;
+                $ruanganHead2 = $newCOA->objectruanganfk;
+                $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
+                $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
+
+                $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
+                $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
+                $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
+                // $jenislayann =  DB::table('jenispekerjaan_m')->where('id',$request['jenisKerusakan'])->first();
+                $secret_token = "5528647994:AAHqBykIdioFfxa-0oVdGQDpYs9jWDOKZWQ";
+                $telegram_id = '-1001762536697';//'-498979335';
+                $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
+                $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan PDTI </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
+                        "</b>  \n Pelapor: <b>".$pelapor->pelapor."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
+                        "</b>");
+                // return $url;
+                $ch = curl_init();
+                $optArray = array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true
+                );
+                curl_setopt_array($ch, $optArray);
+                $result = curl_exec($ch);
+                curl_close($ch);
+            } else if($newCOA->objectkelompoktransaksifk == 122){
+                //ipsrs
+                $norecHead2 = $newCOA->norec;
+                $ruanganHead2 = $newCOA->objectruanganfk;
+                $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
+                $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
+
+                //bot Father
+                $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
+                $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
+                $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
+                // $jenislayann =  DB::table('jenispekerjaan_m')->where('id',$request['jenisKerusakan'])->first();
+                $secret_token = "5446769474:AAFjx5jWWWTTvDKLskXL8xZ4Ry7NrhNhnvQ";
+                $telegram_id = '-730865432';//'-498979335';
+                $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
+                $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan IPSRS </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
+                        "</b>  \n Pelapor: <b>".$pelapor->pelapor."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
+                        "</b> \n Ruangan Tujuan: <b>".$ruanganTujuan->namaruangan."</b>");
+                // return $url;
+                $ch = curl_init();
+                $optArray = array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true
+                );
+                curl_setopt_array($ch, $optArray);
+                $result = curl_exec($ch);
+                curl_close($ch);
+            } else if($newCOA->objectkelompoktransaksifk== 305){
+                $norecHead2 = $newCOA->norec;
+                $ruanganHead2 = $newCOA->objectruanganfk;
+                $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
+                $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
+
+                $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
+                $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
+                $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
+                // $jenislayann =  DB::table('jenispekerjaan_m')->where('id',$request['jenisKerusakan'])->first();
+                $secret_token = "5564727540:AAFx0KWtUooqNFh_J_fwToEMP8MRIF_FW2g";
+                $telegram_id = '-1001687511947';//'-498979335';
+                $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
+                $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan Rumah Tangga </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
+                        "</b>  \n Pelapor: <b>".$pelapor->pelapor."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
+                        "</b>");
+                // return $url;
+                $ch = curl_init();
+                $optArray = array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true
+                );
+                curl_setopt_array($ch, $optArray);
+                $result = curl_exec($ch);
+                curl_close($ch);
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "";
+
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil" ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'dy@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "as" => 'dy@epic',
+                'e' => $e->getLine(),
+                'message'=> $e->getMessage(),
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getDaftarRT(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $KdKelTransIPSRS = (int) $this->settingDataFixed('KdKelTransIPSRS', $kdProfile);
+        $dataLogin = $request->all();
+        $tgl="";
+        $jenisalat="";
+        $idRuangan="";
+        $ruangantj="";
+        $pelapor="";
+        $jeniskerusakan="";
+
+        if ((isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") && (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined"))
+        {
+            $tgl = "AND stp.tglplanning BETWEEN '".$request['tglAwal']."' AND '".$request['tglAkhir']."' ";
+        }
+
+        if (isset($request['jenisalat']) && $request['jenisalat'] != "" && $request['jenisalat'] != "undefined")
+        {
+            $jenisalat = "AND stp.objectjenisalatfk = '".$request['jenisalat']."' ";
+        }
+
+        if (isset($request['jeniskerusakan']) && $request['jeniskerusakan'] != "" && $request['jeniskerusakan'] != "undefined")
+        {
+            $jeniskerusakan = "AND stp.objectjenispekerjaanfk = '".$request['jeniskerusakan']."' ";
+        }
+
+        if (isset($request['ruangan']) && $request['ruangan'] != "" && $request['ruangan'] != "undefined")
+        {
+                $idRuangan = "AND stp.objectruanganfk = '".$request['ruangan']."'";
+        }
+
+        if (isset($request['ruangantujuan']) && $request['ruangantujuan'] != "" && $request['ruangantujuan'] != "undefined")
+        {
+                $ruangantj = "AND stp.objectruangantujuanfk = '".$request['ruangantujuan']."'";
+        }
+
+        if (isset($request['pelapor']) && $request['pelapor'] != "" && $request['pelapor'] != "undefined")
+        {
+                $ruangantj = "AND stp.pelapor = '".$request['pelapor']."'";
+        }
+
+        $data = DB::select(DB::raw("
+            SELECT  stp.norec, rg.namaruangan, stp.tglplanning,stp.objectpegawaipjawabfk,pg.namalengkap, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, 
+                    stp.deskripsiplanning, stp.keteranganverifikasi, sttp.namaexternal,stp.signdate, stp.worklist, stp.keteranganverifikasi, 
+                    pg2.nama as namainspektor, pg3.nama as namapelapor,stp.objectstatuspekerjaanfk,sttp.reportdisplay as statuspekerjaan,stp.objectjenispekerjaanfk AS idjeniskerusakan,
+                    jpk.reportdisplay as jeniskerusakan,stp.objectjenisalatfk,jpk2.reportdisplay as jenisalat,r.namaruangan as namaruangantujuan, ukp.name
+            FROM strukplanning_t as stp
+            INNER JOIN ruangan_m as rg on rg.id = stp.objectruanganfk
+            inner join pegawai_m as pg1 on pg1.id = stp.narasumberfk 
+            LEFT JOIN pegawai_m as pg on pg.id = stp.objectpegawaipjawabfk
+            LEFT JOIN pegawai_m as pg2 on pg2.id = stp.objectpegawaipjawabevaluasifk
+            LEFT JOIN pegawai_m as pg3 on pg3.id = stp.narasumberfk
+            LEFT JOIN unitkerjapegawai_m as ukp on pg1.objectunitkerjafk = ukp.id 
+            LEFT JOIN statuspekerjaan_m as sttp on sttp.id = stp.objectstatuspekerjaanfk
+			LEFT JOIN jenispekerjaan_m as jpk on jpk.id = stp.objectjenispekerjaanfk
+            LEFT JOIN jenispekerjaan_m as jpk2 on jpk2.id = stp.objectjenisalatfk
+            LEFT JOIN ruangan_m as r on r.id = stp.objectruangantujuanfk
+			WHERE stp.kdprofile = $kdProfile 
+			AND stp.objectkelompoktransaksifk = 305
+			AND stp.statusenabled = true 
+			$tgl
+			$jenisalat
+            $idRuangan
+            $ruangantj
+            $pelapor
+            $jeniskerusakan
+            ORDER BY stp.tglplanning DESC"));
+
+        foreach ($data as $item) {
+            $details = \DB::select(DB::raw("select spd.pegawaifk as id,pr.namalengkap
+                    from strukplanningdetail_t as spd 
+                    left JOIN pegawai_m as pr on pr.id = spd.pegawaifk                    
+                    where spd.kdprofile = $kdProfile and noplanningfk = :norec"),
+                array(
+                    'norec' => $item->norec,
+                )
+            );
+            $result[] = array(
+                'norec' => $item->norec,
+                'namaruangan' => $item->namaruangan,
+                'tglplanning' => $item->tglplanning,
+                'objectpegawaipjawabfk' => $item->objectpegawaipjawabfk,
+                'namalengkap' => $item->namalengkap,
+                'startdate' => $item->startdate,
+                'duedate' => $item->duedate,
+                'rincianexecuteplanning_askep' => $item->rincianexecuteplanning_askep,
+                'pelapor' => $item->pelapor,
+                'deskripsiplanning' => $item->deskripsiplanning,
+                'keteranganverifikasi' => $item->keteranganverifikasi,
+                'signdate' => $item->signdate,
+                'worklist' => $item->worklist,
+                'namainspektor' => $item->namainspektor,
+                'namapelapor' => $item->namapelapor,
+                'objectstatuspekerjaanfk' => $item->objectstatuspekerjaanfk,
+                'statuspekerjaan' => $item->statuspekerjaan,
+                'idjeniskerusakan' => $item->idjeniskerusakan,
+                'jeniskerusakan' => $item->jeniskerusakan,
+                'jenisalat' => $item->jenisalat,
+                'objectjenisalatfk' => $item->objectjenisalatfk,
+                'details' => $details,
+                'namaruangantujuan' => $item->namaruangantujuan,
+                'name' => $item->name
+            );
+        }
+        if (count($data) == 0) {
+            $result = [];
+        }
+        $result = array(
+            'data' => $result,
+            'datalogin' => $dataLogin,
+            // 'KdKelTransIPSRS'=> $KdKelTransIPSRS,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
+//        return $this->respond($data);
     }
 
 }

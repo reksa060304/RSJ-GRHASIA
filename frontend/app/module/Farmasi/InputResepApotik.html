@@ -773,12 +773,27 @@
                                                     ng-disabled="true" />
                                             </div>
                                             
-                                            <div class="grid_12">
-                                                
-                                                <input type="checkbox" ng-checked="item.isChecked" class="k-checkbox" name="item.paketPelayanan"
+                                            
+                                            <div class="grid_6"  ng-show="showChkPaket">
+                                                <input type="checkbox" ng-checked="item.paketPelayanan" class="k-checkbox" name="item.paketPelayanan"
                                                 id="item.paketPelayanan" ng-model="bool" value="item.paketPelayanan" ng-click="ceklisPaketPelayanan(bool,item)">
-                                            <label class="k-checkbox-label" for="item.paketPelayanan">Paket Pelayanan</label>
+                                                 <label class="k-checkbox-label" for="item.paketPelayanan">Paket Pelayanan</label>
+                                            </div>
+                                            <div class="grid_6"  ng-show="showChkHibah">
+                                                <input type="checkbox" ng-checked="item.brgHibah" class="k-checkbox" name="item.brgHibah"
+                                                id="item.brgHibah" ng-model="bool" value="item.brgHibah" ng-click="ceklisBrgHibah(bool,item)">
+                                                 <label class="k-checkbox-label" for="item.brgHibah">Barang Hibah</label>
+                                            </div>
+                                            <div class="grid_12" ng-show="showTotalSetelah">
+                                                <div class="grid_3" style="margin-top: 10px">
+                                                    <label c-label item="item" c-label-text="Total :"></label>
                                                 </div>
+                                                <div class="grid_8">
+                                                    <input c-text-box type="input" style="text-align: right" filter=""
+                                                        class="k-textbox" ng-model="item.totalSetelah"
+                                                        ng-disabled="true" />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 

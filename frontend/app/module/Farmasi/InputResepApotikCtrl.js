@@ -20,6 +20,9 @@ define(['initialize'], function (initialize) {
             $scope.HargaMaster = -1;
             $scope.disTanggal = false;
             $scope.item.paketPelayanan = false
+            $scope.showTotalSetelah = false
+            $scope.showChkPaket = true
+            $scope.showChkHibah = true
             var statusTambah = true
             var pegawaiUser = {}
             var norec_apd = '';
@@ -1812,6 +1815,15 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
                             }
                         }
+                        if($scope.item.brgHibah == true){
+                            for (var i = data2.length - 1; i >= 0; i--) {
+                                if(data2[i].asalprodukfk == 3){
+                                    data2[i].hargasatuan = 0
+                                    data2[i].hargajual = 0
+                                    data2[i].total = 0
+                                }
+                            }
+                        }
                         for (var i = data2.length - 1; i >= 0; i--) {
                             //if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0 ) {
                             //if (data2[i].hargasatuan == 0 && $scope.HargaMaster != 0) {
@@ -2724,11 +2736,38 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 }
             }
             $scope.ceklisPaketPelayanan = function (bool, data) {
-                // if (bool) {
-                    $scope.item.paketPelayanan = bool
-                // } else {
-                //     e.isChecked = true
-                // }
+                $scope.item.paketPelayanan = bool
+                if(bool == true){
+                    $scope.showChkPaket = true
+                    $scope.showChkHibah = false
+                    $scope.showTotalSetelah = true
+                    $scope.item.totalSetelah =  0
+                 }else{
+                    $scope.showTotalSetelah = false
+                    $scope.showChkPaket = true
+                    $scope.showChkHibah = true
+                 }
+            }
+            $scope.ceklisBrgHibah = function (bool, data) {
+                 $scope.item.brgHibah = bool
+                 if(bool == true){        
+                    $scope.showChkPaket = false
+                    $scope.showChkHibah = true
+
+                    $scope.showTotalSetelah = true
+                    let totalSetelah = 0;
+                    for (let index = 0; index < data2.length; index++) {
+                       const element = data2[index];
+                       if(data2[index].asalprodukfk != 3){
+                           totalSetelah = totalSetelah +  data2[index].total
+                       }
+                    }
+                    $scope.item.totalSetelah =  parseFloat(totalSetelah).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                 }else{
+                    $scope.showTotalSetelah = false
+                    $scope.showChkPaket = true
+                    $scope.showChkHibah = true
+                 }
             }
             //** BATAS */
         }

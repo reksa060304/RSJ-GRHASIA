@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize,configuration) {
     'use strict';
     initialize.controller('KetentuanRawatInapCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
@@ -55,11 +55,24 @@ define(['initialize'], function (initialize) {
                 }
             }
             $scope.cetakPdf = function () {
-                if (norecEMR == '') return
-                var client = new HttpClient();
-                client.get('http://127.0.0.1:1237/printvb/e-rekammedis?cetak-emr-hpp-wisc&id=' + $scope.cc.nocm + '&emr=' + norecEMR + '&view=true', function (response) {
-                    // do something with response
-                });
+                // if (norecEMR == '') return
+                // var client = new HttpClient();
+                // client.get('http://127.0.0.1:1237/printvb/e-rekammedis?cetak-emr-hpp-wisc&id=' + $scope.cc.nocm + '&emr=' + norecEMR + '&view=true', function (response) {
+                //     // do something with response
+                // });
+                var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+                console.log(cacheNomorEMR[0]);
+                // return
+                if (cacheNomorEMR[0] == '-') {
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(configuration.baseApiBackend + 'report/get-cetak-ketentuanranap?noemr=' + cacheNomorEMR[0] + '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama, '_blank');
+
             }
 
         
