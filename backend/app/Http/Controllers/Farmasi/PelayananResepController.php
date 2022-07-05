@@ -3140,7 +3140,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                                     where ltr.jenislog = 'Input Resep Apotik'
                                 )
         
-        SELECT TO_CHAR(sr.tglresep, 'DD-MM-YYYY') AS tglresep, cte.namapegawaiinput inputtindakan, cter.namapegawaiinput inputresep,
+        SELECT TO_CHAR(pp.tglpelayanan, 'DD-MM-YYYY') AS tglresep, cte.namapegawaiinput inputtindakan, cter.namapegawaiinput inputresep,
                                CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed IS NULL THEN 
                                ru1.namaruangan || '[]'
                                WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NOT NULL AND tt.nomorbed IS NOT NULL THEN
@@ -3161,31 +3161,29 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                                pg.namalengkap as dokter,
                                sr.noresep,
                                sbmsdhbyr.tglsbm
-                        FROM strukresep_t as sr
-                        INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
-                        INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
-                        INNER JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
-                        INNER JOIN pasien_m AS ps ON ps.id=pd.nocmfk
-                        LEFT JOIN jeniskelamin_m AS jk ON jk.id=ps.objectjeniskelaminfk
-                        LEFT JOIN pegawai_m AS pg ON pg.id=sr.penulisresepfk
-                        LEFT JOIN ruangan_m AS ru ON ru.id=sr.ruanganfk
-                        LEFT JOIN ruangan_m AS ru1 ON ru1.id = apd.objectruanganfk
-                        LEFT JOIN departemen_m AS dep ON dep.id = ru1.objectdepartemenfk
-                        LEFT JOIN departemen_m AS dep1 ON dep1.id = ru.objectdepartemenfk
-                        LEFT JOIN kamar_m AS kmr ON kmr.id = apd.objectkamarfk
-                        LEFT JOIN tempattidur_m AS tt ON tt.id = apd.nobed
-                        LEFT JOIN kelompokpasien_m kp ON kp.id=pd.objectkelompokpasienlastfk
-                        LEFT JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
-                        LEFT JOIN strukbuktipenerimaan_t as sbm on sbm.norec = sp.nosbmlastfk
-                        LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk and sbmsdhbyr.statusenabled = true
-                        --LEFT JOIN logginguser_t AS lg ON lg.noreff = sr.norec AND lg.jenislog = 'Input Resep Apotik'
-                        --LEFT JOIN loginuser_s AS lu ON lu.id = lg.objectloginuserfk
-                        --LEFT JOIN pegawai_m AS pg1 ON pg1.id = lu.objectpegawaifk
-                        LEFT JOIN produk_m AS pro ON pro.id = pp.produkfk 
-                        LEFT JOIN satuanstandar_m AS ss ON ss.id = pp.satuanviewfk
-                                        left join  cte on cte.noreff = pp.norec
-                                        left join  cter on cter.noreff = sr.norec
-                        WHERE pd.statusenabled=true AND sr.statusenabled = true AND sr.kdprofile = 30 and sr.tglresep BETWEEN '$tglAwal' and '$tglAkhir'
+                               FROM pelayananpasien_t AS pp  
+                        
+                               left JOIN strukresep_t as sr ON pp.strukresepfk = sr.norec and sr.statusenabled = true AND sr.kdprofile = 30 
+                               left JOIN antrianpasiendiperiksa_t AS apd ON apd.norec=sr.pasienfk
+                                left JOIN pasiendaftar_t AS pd ON pd.norec=apd.noregistrasifk
+                                left JOIN pasien_m AS ps ON ps.id=pd.nocmfk
+                                LEFT JOIN jeniskelamin_m AS jk ON jk.id=ps.objectjeniskelaminfk
+                                LEFT JOIN pegawai_m AS pg ON pg.id=sr.penulisresepfk
+                                LEFT JOIN ruangan_m AS ru ON ru.id=sr.ruanganfk
+                                LEFT JOIN ruangan_m AS ru1 ON ru1.id = apd.objectruanganfk
+                                LEFT JOIN departemen_m AS dep ON dep.id = ru1.objectdepartemenfk
+                                LEFT JOIN departemen_m AS dep1 ON dep1.id = ru.objectdepartemenfk
+                                LEFT JOIN kamar_m AS kmr ON kmr.id = apd.objectkamarfk
+                                LEFT JOIN tempattidur_m AS tt ON tt.id = apd.nobed
+                                LEFT JOIN kelompokpasien_m kp ON kp.id=pd.objectkelompokpasienlastfk
+                                LEFT JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
+                                LEFT JOIN strukbuktipenerimaan_t as sbm on sbm.norec = sp.nosbmlastfk
+                                LEFT JOIN strukbuktipenerimaan_t as sbmsdhbyr on sbmsdhbyr.norec = sp.nosbmlastfk and sbmsdhbyr.statusenabled = true
+                                LEFT JOIN produk_m AS pro ON pro.id = pp.produkfk 
+                                LEFT JOIN satuanstandar_m AS ss ON ss.id = pp.satuanviewfk
+                       left join  cte on cte.noreff = pp.norec
+                       left join  cter on cter.noreff = sr.norec
+                        WHERE pp.tglpelayanan BETWEEN '$tglAwal' and '$tglAkhir'
                         $dokid
                         $ruid
                         $rajalRanap

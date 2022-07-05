@@ -55,6 +55,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.listKegiatanComboakhir = e.data.kegiatancombo
                 $scope.dataSourcePanjarPengembalian = e.data.panjar
                 $scope.dataSourceSPP = e.data.spp
+                $scope.dataSourceCariSPM = e.data.carispm
                 $scope.dataSourceSPD = e.data.spd
             });
 
@@ -753,6 +754,60 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 },
             ]}
 
+            $scope.columnCariSPM = {
+                columns:[
+                {
+                    "field": "nospm",
+                    "title": "No SPM",
+                    "width": "80px"
+                },
+                {
+                    "field": "jenisbukti",
+                    "title": "Jenis Bukti",
+                    "width": "80px"
+                },
+                {
+                    "field": "untukpengeluaran",
+                    "title": "Untuk",
+                    "width": "80px"
+                },
+                {
+                    "field": "status",
+                    "title": "Status",
+                    "width": "100px"
+                },
+                {
+                    "field": "nospp",
+                    "title": "No SPP",
+                    "width": "80px"
+                },
+                {
+                    "field": "tglspm",
+                    "title": "Tgl SPM",
+                    "width": "80px"
+                },
+                {
+                    "field": "tglsah",
+                    "title": "Tgl Sah",
+                    "width": "80px"
+                },
+                {
+                    "field": "nilaispm",
+                    "title": "Nilai SPM",
+                    "width": "80px"
+                },
+                {
+                    "field": "noreg",
+                    "title": "No Reg",
+                    "width": "80px"
+                },
+                {
+                    "field": "nospp",
+                    "title": "No SPP",
+                    "width": "80px"
+                },
+            ]}
+
             $scope.columnSPD = {
                 columns:[
                 {
@@ -769,6 +824,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "field": "nilaispd",
                     "title": "Nilai SPD",
                     "width": "80px"
+                },
+                {
+                    "field": "nospp",
+                    "title": "No SPP",
+                    "width": "80px",
+                    //template: $("#status-template").html()
+                },
+                {
+                    "command": [
+                          {
+                             text: "Pilih",
+                             click: PilihSPD,
+                             imageClass: "clinic fa",
+                             visible: function(dataItem) { return dataItem.nospp }
+                          },
+                      ],
+                         title: "",
+                         
+                         width: "60px",
+                         
                 },
             ]}
 
@@ -1054,6 +1129,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "title": "Jml Pengembalian",
                 },
                 {
+                    "field": "norealisasi",
+                    "title": "No SPJ",
+                },
+                {
+                    "field": "jumlahspj",
+                    "title": "Jml SPJ",
+                },
+                {
                     "field": "sumberpanjar",
                     "title": "Sumber Panjar",
                 },
@@ -1265,7 +1348,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.CariKeteranganPerubahan = function () {
-                medifirstService.get("perencanaan/get-data-combo?idmataanggaran="+$scope.item.combomataanggaran.id+"&tahapaktif="+$scope.item.objecttahapaktivfk.id).then(function (e) {
+                medifirstService.get("perencanaan/get-data-combo?idmataanggaran="+$scope.item.combomataanggaran.id+"&tahapaktif="+$scope.item.objecttahappemindahan.id).then(function (e) {
                     
                     $scope.listKeteranganPerubahan = e.data.keteranganperubahan
                     $scope.arrayProdukTemp = []
@@ -1607,8 +1690,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
 
                     medifirstService.post('perencanaan/save-spd', objSave).then(function (e) {
-                        $scope.popupSPP.center().close()
-                        loadDataGrid();
+                        medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                            $scope.dataSourceSPD = e.data.spd
+                        });
+                        
                     }, function (error) {
                 
                     })
@@ -1637,7 +1722,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         jumlahpanjar: $scope.item.jumlahpanjar,
                     }
                     medifirstService.post('perencanaan/save-panjar', objSave).then(function (e) {
-                            loadDataGrid();
+                        loadDataGrid()
                     }, function (error) {
             
                     })
@@ -3542,8 +3627,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     norec: $scope.norecverif,
                     nopanjar: dataItem.nopanjar,
                 }
+                $scope.jumlahpanjar = dataItem.jumlah
                 medifirstService.post('perencanaan/save-panjar-spj', objSave).then(function (e) {
-                    loadDataGrid();
+                    $scope.item.panjar = $scope.jumlahpanjar
                 }, function (error) {
             
                 })

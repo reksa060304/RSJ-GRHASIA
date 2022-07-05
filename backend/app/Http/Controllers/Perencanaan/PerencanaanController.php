@@ -545,28 +545,25 @@ class PerencanaanController extends ApiController {
             ->get();
         
         $panjar = DB::select(DB::raw("
-            select norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, coalesce(jumlahpengembalian, 0) jumlahpengembalian, sumberpanjar
-            from panjar_t 
-            where kdprofile = 30
-            and statusenabled = true;
+            select pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, sr.norealisasi,
+            case when sr.norec is not null then pj.jumlah - coalesce(pj.jumlahpengembalian, 0) else 0 end as jumlahspj,
+            coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian,  pj.sumberpanjar
+            from panjar_t pj
+            left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec
+            where pj.kdprofile = 30
+            and pj.statusenabled = true;
         "));
 
         $spp = DB::select(DB::raw("select spp.*, spd.nospd from spp_t spp inner join spd_t spd on spd.norec = spp.objectspdfk"));
-        $spd = DB::select(DB::raw("select * from spd_t"));
+        $spd = DB::select(DB::raw("select spd.*, spp.nospp from spd_t spd left join spp_t spp on spp.objectspdfk = spd.norec"));
         $carispd = DB::select(DB::raw("select spd.nospd, spd.tglspd, spd.nilaispd, spp.norec
         from spd_t spd
         left join spp_t spp on spd.norec = spp.objectspdfk 
         where spp.norec is null"));
 
-
-        
-
-    //     $Pengendali = \DB::table('pengendali_m as ru')
-    //         ->select('ru.id','ru.pengendali')
-    //         ->where('ru.kdprofile', $idProfile)
-    //         ->where('ru.statusenabled', true)
-    //         ->orderBy('ru.pengendali')
-    //         ->get();
+        $carispm = DB::select(DB::raw("select spm.*, spp.nospp
+        from spm_t spm
+        left join spp_t spp on spp.norec = spm.objectsppfk"));
 
 
         $result = array(
@@ -589,6 +586,7 @@ class PerencanaanController extends ApiController {
             'spp' => $spp,
             'spd' => $spd,
             'carispd' => $carispd,
+            'carispm' => $carispm,
             // 'kelompokketiga' => $ketiga,
             // 'kelompokkeempat' => $keempat,
             // 'kelompokkelima' => $kelima,
@@ -2804,7 +2802,7 @@ class PerencanaanController extends ApiController {
         left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec
         where pj.kdprofile = 30
         and pj.statusenabled = true
-        and sr.objectpanjarfk is null;
+        and sr.objectpanjarfk is null
             ")
         );
 

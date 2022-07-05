@@ -484,6 +484,19 @@
 							</div>
 						</md-content>
 					</md-tab>
+					<md-tab label="Surat Perintah Membayar (SPM)">
+						<!-- Setting keterangan blud -->
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_12 borderBox">
+									<kendo-grid id="kGrids" k-data-source="dataSourceCariSPM" k-selectable="'row'"  class="max-height"
+										k-options="columnCariSPM" k-ng-model="dataSPMSelected" ng-click="klikPanjar(dataSPMSelected)">
+									</kendo-grid>
+								</div>
+							</div>
+							<div class="grid_11"></div>
+						</md-content>
+					</md-tab>
 				</md-tabs>
 			</md-content>
 		</div>
@@ -545,7 +558,7 @@
 </div>
 <div class="grid_12" kendo-window="popupPerubahan" style="overflow-y: scroll;" k-title="'Pemindahan Rincian Belanja'" k-visible="false" k-width="800">
 	
-	<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height: 450px;">
+	<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height: 650px;">
 		<legend id="filterData">
 			<a ng-click="showAndHide()">Dipindahkan</a>
 		</legend>
@@ -573,6 +586,16 @@
 			<input style="width: 100%;" kendo-combo-box k-ng-model="item.combomataanggaran"
 				k-data-text-field="'namamataanggaran'" k-data-value-field="'id'"
 				k-filter="'contains'" k-auto-bind="false" k-data-source="listMataAnggaranCombo" />
+		</div><br>
+		<div class="grid_12">
+			<div class="grid_12">
+				<label c-label item="item" c-label-text="Tahap"></label>
+			</div>
+			<div class="grid_12">
+				<input style="width: 100%;" kendo-combo-box k-ng-model="item.objecttahappemindahan"
+					k-data-text-field="'tahap'" k-data-value-field="'id'"
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+			</div>
 		</div>
 		<br>
 		<legend id="filterData">
@@ -1685,7 +1708,7 @@
 		</div><br>
 	</div>
 </div>
-<div kendo-window="popupSPP" k-title="'Surat Permintaan Pembayaran (SPP)'" k-visible="false" k-width="700" k-height="400">
+<div kendo-window="popupSPP" k-title="'Surat Permintaan Pembayaran (SPP)'" k-visible="false" k-width="800" k-height="600">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
 			<div class="grid_12">
@@ -1740,7 +1763,7 @@
 					<button class="btnTemplate1" ng-click="TambahSPD()" ng-hide="dispanjar">Add</button>
 				</div>
 				<div class="grid_1" style="margin-left: 10px;">
-					<button class="btnTemplate1" ng-click="CariSPD()" ng-hide="dispanjar">Cari</button>
+					<button class="btnTemplate1" ng-click="CariSPD()" ng-hide="true">Cari</button>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -1798,6 +1821,7 @@
 			</div>
 			<div class="grid_5"></div>
 		</div><br>
+
 	</div>
 </div>
 <div kendo-window="popupSPM" k-title="'Surat Perintah Membayar (SPM)'" k-visible="false" k-width="700" k-height="400">
@@ -2127,3 +2151,10 @@
 	</div>
 </div>
 <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+<script id="status-template" type="text/kendo-templ">
+    # if (nospp == null) { #
+        <button class="btnTemplate1" ng-click="PilihSPD()" style="width: 50px;">Pilih</button>
+    # } else{ #
+        <span></span>
+    # } #
+</script>
