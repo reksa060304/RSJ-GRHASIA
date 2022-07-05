@@ -3107,7 +3107,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
 
 
 */
-        $data = DB::select(DB::raw("
+        $data = DB::select(DB::raw("select * from(
         select tglresep, 
         case when inputtindakan is not null then inputtindakan
                  when inputtindakan is not null and inputresep is not null then inputtindakan
@@ -3238,7 +3238,10 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                         $namaItem    
                         $namaItemText
                         $namaPasienTextSP
-                ) as x     
+                ) as x  ) as c group by tglresep, 
+                penginput, 
+                departemen, namaruanganpasien, gudang, namaproduk, rke, satuanstandar, jumlah,
+                hargajual, subtotal, hargadiscount, noregistrasi, nocm, namapasien, dokter, noresep, tglsbm    
         "));
 
 

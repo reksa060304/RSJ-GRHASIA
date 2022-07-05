@@ -468,6 +468,22 @@
 							</div>
 						</md-content>
 					</md-tab>
+					<md-tab label="Surat Permintaan Pembayaran (SPP)">
+						<!-- Setting keterangan blud -->
+						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_12 borderBox">
+									<kendo-grid id="kGrids" k-data-source="dataSourceSPP" k-selectable="'row'"  class="max-height"
+										k-options="columnSPP" k-ng-model="dataSPPSelected" ng-click="klikPanjar(dataSPPSelected)">
+									</kendo-grid>
+								</div>
+							</div>
+							<div class="grid_11"></div>
+							<div class="grid_1">
+								<button class="btnTemplate1" ng-click="TambahSPP()">Tambah</button>
+							</div>
+						</md-content>
+					</md-tab>
 				</md-tabs>
 			</md-content>
 		</div>
@@ -1531,6 +1547,12 @@
 			</div>
 		</div>
 		<div class="grid_12">
+            <div class="grid_12"  style="margin-top:20px; margin-left:20px;"  >
+                <input type="checkbox" class="k-checkbox" id="isCetakLampiran" ng-model="item.isCetakLampiran" >
+                <label class="k-checkbox-label" for="isCetakLampiran">Tampilkan Lampiran</label>
+            </div>
+        </div>
+		<div class="grid_12">
 			<div class="grid_2" style="margin-top: 20px;">
 				<button class="btnTemplate1" ng-click="CetakSPJ()">Cetak</button>
 			</div>
@@ -1661,6 +1683,282 @@
 			</div>
 			<div class="grid_5"></div>
 		</div><br>
+	</div>
+</div>
+<div kendo-window="popupSPP" k-title="'Surat Permintaan Pembayaran (SPP)'" k-visible="false" k-width="700" k-height="400">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Nomor SPP
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nospp"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Jenis Bukti
+				</div>
+				<div class="grid_9" >
+					<input kendo-combo-box k-ng-model="item.itemJenisBukti"
+						k-data-text-field="'jenisbukti'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false"
+						k-data-source="listJenisBukti"  />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Dasar Pengeluaran
+				</div>
+				<div class="grid_9" >
+					<textarea class="k-textbox" style="height: 76px;
+                        width: 100%;
+                        margin-top: 5px;
+                        resize: none;" ng-model="item.dasarPengeluaran" ></textarea>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Status
+				</div>
+				<div class="grid_9" >
+					<md-radio-group ng-model="item.radioStatusSPP">
+						<div class="grid_6"><md-radio-button value="Diterima" class="md-primary">Diterima</md-radio-button></div>
+						<div class="grid_6"><md-radio-button value="Ditolak" class="md-primary">Ditolak</md-radio-button></div>
+					</md-radio-group>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Nomor SPD
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nospd"/>
+				</div>
+				<div class="grid_1">
+					<button class="btnTemplate1" ng-click="TambahSPD()" ng-hide="dispanjar">Add</button>
+				</div>
+				<div class="grid_1" style="margin-left: 10px;">
+					<button class="btnTemplate1" ng-click="CariSPD()" ng-hide="dispanjar">Cari</button>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Tanggal SPP
+				</div>
+				<div class="grid_9" style="margin-top: -10px;">
+					<input style="width: 100%" k-ng-model="item.tglSPP" kendo-datetimepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Bulan
+				</div>
+				<div class="grid_9" >
+					<input kendo-combo-box k-ng-model="item.itemBulan"
+						k-data-text-field="'bulan'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false"
+						k-data-source="listBulan"  />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Untuk Pengeluaran
+				</div>
+				<div class="grid_9" >
+					<textarea class="k-textbox" style="height: 76px;
+                        width: 100%;
+                        margin-top: 5px;
+                        resize: none;" ng-model="item.untukPengeluaran" ></textarea>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Tanggal Sah
+				</div>
+				<div class="grid_9" style="margin-top: -10px;">
+					<input style="width: 100%" k-ng-model="item.tglSah" kendo-datetimepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Nilai SPP
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nilaispp"/>
+				</div>
+			</div>
+		</div>
+		<div class="grid_12" style="margin-top: 20px;">
+			<div class="grid_2">
+				<button class="btnTemplate1" ng-click="SimpanSPP()">Simpan SPP</button>
+			</div>
+			<div class="grid_5"></div>
+		</div><br>
+	</div>
+</div>
+<div kendo-window="popupSPM" k-title="'Surat Perintah Membayar (SPM)'" k-visible="false" k-width="700" k-height="400">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Nomor SPM
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nospm"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Jenis Bukti
+				</div>
+				<div class="grid_9" >
+					<input kendo-combo-box k-ng-model="item.itemJenisBuktiSPM"
+						k-data-text-field="'jenisbukti'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false"
+						k-data-source="listJenisBukti"  />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Untuk
+				</div>
+				<div class="grid_9" >
+					<textarea class="k-textbox" style="height: 76px;
+                        width: 100%;
+                        margin-top: 5px;
+                        resize: none;" ng-model="item.untuk" ></textarea>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Status
+				</div>
+				<div class="grid_9" >
+					<md-radio-group ng-model="item.radioStatusSPM">
+						<div class="grid_6"><md-radio-button value="Diterima" class="md-primary">Diterima</md-radio-button></div>
+						<div class="grid_6"><md-radio-button value="Ditolak" class="md-primary">Ditolak</md-radio-button></div>
+					</md-radio-group>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Nomor Reg
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.noreg"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Tanggal SPM
+				</div>
+				<div class="grid_9" style="margin-top: -10px;">
+					<input style="width: 100%" k-ng-model="item.tglSPM" kendo-datetimepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Nomor SPP
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nosppspm" disabled="true"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Tanggal SPP
+				</div>
+				<div class="grid_9" style="margin-top: -10px;">
+					<input style="width: 100%" k-ng-model="item.tglsppspm" kendo-datetimepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'" disabled="true"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Tanggal Sah
+				</div>
+				<div class="grid_9" style="margin-top: -10px;">
+					<input style="width: 100%" k-ng-model="item.tglSahSPM" kendo-datetimepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Nilai SPM
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nilaispm"/>
+				</div>
+			</div>
+		</div>
+		<div class="grid_12" style="margin-top: 20px;">
+			<div class="grid_2">
+				<button class="btnTemplate1" ng-click="SimpanSPM()">Simpan SPM</button>
+			</div>
+			<div class="grid_5"></div>
+		</div><br><br>
+		<div class="grid_12">
+			<kendo-grid id="kGrids" k-data-source="dataSourceSPM" k-selectable="'row'"  class="max-height"
+				k-options="columnSPM" k-ng-model="dataSPMSelected" ng-click="klikPanjar(dataSPPSelected)">
+			</kendo-grid>
+		</div>
+	</div>
+</div>
+<div kendo-window="popupSPD" k-title="'Input SPD'" k-visible="false" k-width="700" k-height="400">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Nomor SPD
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nospd"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Nilai SPD
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nilaispd"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Tanggal SPD
+				</div>
+				<div class="grid_9" style="margin-top: -10px;">
+					<input style="width: 100%" k-ng-model="item.tglSPD" kendo-datetimepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+				</div>
+			</div>
+		</div>
+		<div class="grid_12" style="margin-top: 20px;">
+			<div class="grid_2">
+				<button class="btnTemplate1" ng-click="SimpanSPD()">Simpan SPD</button>
+			</div>
+			<div class="grid_5"></div>
+		</div><br>
+		<div class="grid_12 borderBox">
+			<kendo-grid id="kGrids" k-data-source="dataSourceSPD" k-selectable="'row'"  class="max-height"
+				k-options="columnSPD" k-ng-model="dataSPPSelected" ng-click="klikPanjar(dataSPPSelected)">
+			</kendo-grid>
+		</div>
+	</div>
+</div>
+<div kendo-window="popupCariSPD" k-title="'Input SPD'" k-visible="false" k-width="700" k-height="400">
+	<div class="panel panel-default container_12">
+		<br>
+		<div class="grid_12 borderBox">
+			<kendo-grid id="kGrids" k-data-source="dataSourceCariSPD" k-selectable="'row'"  class="max-height"
+				k-options="columnCariSPD" k-ng-model="dataSPPSelected" ng-click="klikPanjar(dataSPPSelected)">
+			</kendo-grid>
+		</div>
 	</div>
 </div>
 <div kendo-window="popupPanjarAktif" k-title="'Tambah Data Panjar'" k-visible="false" k-width="700" k-height="600">

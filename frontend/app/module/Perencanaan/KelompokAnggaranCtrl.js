@@ -8,6 +8,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.now = new Date();
             $scope.item = {};
             $scope.dataAnggaranSelected = {};
+            $scope.dataSourceSPP = [];
             $scope.jeniskode = true;
             var DataKegiatan= [];
             var DataMataAnggaran= [];
@@ -53,7 +54,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.listKegiatanCombo = e.data.kegiatancombo
                 $scope.listKegiatanComboakhir = e.data.kegiatancombo
                 $scope.dataSourcePanjarPengembalian = e.data.panjar
+                $scope.dataSourceSPP = e.data.spp
+                $scope.dataSourceSPD = e.data.spd
             });
+
+            
             
             $scope.yearUngkul = {
                 start: "decade",
@@ -184,6 +189,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.listPihakKetiga = data
                 })
             }    
+
+            function loadDataSPM() {
+                medifirstService.get("perencanaan/get-data-spm?nospp="+$scope.item.nosppspm).then(function (e) {
+                    $scope.dataSourceSPM = e.data.data
+                })
+            };
             
             // $scope.popupEntry.center().open();
             $scope.addKegiatan = function(){
@@ -201,6 +212,38 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.Tambah = function(){
                 $scope.item.id = ''
                 $scope.popupTambah.center().open()
+            }
+            $scope.TambahSPP = function(){
+                $scope.listJenisBukti = [
+                    { id: 1, jenisbukti: "UP" },
+                ];
+                $scope.listBulan = [
+                    { id: 1, bulan: "Januari" },
+                    { id: 2, bulan: "Februari" },
+                    { id: 3, bulan: "Maret" },
+                    { id: 4, bulan: "April" },
+                    { id: 5, bulan: "Mei" },
+                    { id: 6, bulan: "Juni" },
+                    { id: 7, bulan: "Juli" },
+                    { id: 8, bulan: "Agustus" },
+                    { id: 9, bulan: "September" },
+                    { id: 10, bulan: "Oktober" },
+                    { id: 11, bulan: "November" },
+                    { id: 12, bulan: "Desember" },
+                ];
+                $scope.popupSPP.center().open()
+                
+            }
+            $scope.TambahSPD = function(){
+                $scope.popupSPD.center().open()
+                
+            }
+            $scope.CariSPD = function(){
+                medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                    $scope.dataSourceCariSPD = e.data.carispd
+                });
+                $scope.popupCariSPD.center().open()
+                
             }
             $scope.TambahMT = function(){
                 $scope.item.id = ''
@@ -595,6 +638,169 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
            $scope.klikKegiatan = function(dataKegiatanSelected){
                 
             }
+
+            $scope.columnSPP = {
+                columns:[
+                    {
+                        "command": [
+                              {
+                                 text: "Input SPM",
+                                 click: inputSPM,
+                                 imageClass: "clinic fa"
+                              },
+                          ],
+                             title: "",
+                             width: "60px",
+                    },
+                {
+                    "field": "nospp",
+                    "title": "No SPP",
+                    "width": "80px"
+                },
+                {
+                    "field": "jenisbukti",
+                    "title": "Jenis Bukti",
+                    "width": "80px"
+                },
+                {
+                    "field": "dasarpengeluaran",
+                    "title": "Dasar Pengeluaran",
+                    "width": "80px"
+                },
+                {
+                    "field": "status",
+                    "title": "Status",
+                    "width": "100px"
+                },
+                {
+                    "field": "nospd",
+                    "title": "SPD",
+                    "width": "80px"
+                },
+                {
+                    "field": "tglspp",
+                    "title": "Tgl SPP",
+                    "width": "80px"
+                },
+                {
+                    "field": "bulan",
+                    "title": "Bulan",
+                    "width": "80px"
+                },
+                {
+                    "field": "pengeluaran",
+                    "title": "Untuk Pengeluaran",
+                    "width": "80px"
+                },
+                {
+                    "field": "tglsah",
+                    "title": "Tgl Sah",
+                    "width": "80px"
+                },
+                {
+                    "field": "nilaispp",
+                    "title": "Nilai SPP",
+                    "width": "80px"
+                },
+            ]}
+
+            $scope.columnSPM = {
+                columns:[
+                {
+                    "field": "nospm",
+                    "title": "No SPM",
+                    "width": "80px"
+                },
+                {
+                    "field": "jenisbukti",
+                    "title": "Jenis Bukti",
+                    "width": "80px"
+                },
+                {
+                    "field": "untukpengeluaran",
+                    "title": "Untuk",
+                    "width": "80px"
+                },
+                {
+                    "field": "status",
+                    "title": "Status",
+                    "width": "100px"
+                },
+                {
+                    "field": "nospp",
+                    "title": "No SPP",
+                    "width": "80px"
+                },
+                {
+                    "field": "tglspm",
+                    "title": "Tgl SPM",
+                    "width": "80px"
+                },
+                {
+                    "field": "tglsah",
+                    "title": "Tgl Sah",
+                    "width": "80px"
+                },
+                {
+                    "field": "nilaispm",
+                    "title": "Nilai SPM",
+                    "width": "80px"
+                },
+                {
+                    "field": "noreg",
+                    "title": "No Reg",
+                    "width": "80px"
+                },
+            ]}
+
+            $scope.columnSPD = {
+                columns:[
+                {
+                    "field": "nospd",
+                    "title": "No SPD",
+                    "width": "80px"
+                },
+                {
+                    "field": "tglspd",
+                    "title": "Tgl SPD",
+                    "width": "80px"
+                },
+                {
+                    "field": "nilaispd",
+                    "title": "Nilai SPD",
+                    "width": "80px"
+                },
+            ]}
+
+            $scope.columnCariSPD = {
+                columns:[
+                {
+                    "field": "nospd",
+                    "title": "No SPD",
+                    "width": "80px"
+                },
+                {
+                    "field": "tglspd",
+                    "title": "Tgl SPD",
+                    "width": "80px"
+                },
+                {
+                    "field": "nilaispd",
+                    "title": "Nilai SPD",
+                    "width": "80px"
+                },
+                {
+                    "command": [
+                          {
+                             text: "Pilih",
+                             click: PilihSPD,
+                             imageClass: "clinic fa"
+                          },
+                      ],
+                         title: "",
+                         width: "60px",
+                },
+            ]}
             
             $scope.columnKegiatan = {
 				toolbar:[
@@ -1342,6 +1548,70 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             })
                         }
                     });
+                
+            }
+
+            $scope.SimpanSPP = function(){
+                var objSave =
+                    {
+                        nospp: $scope.item.nospp,
+                        jenisbukti: $scope.item.itemJenisBukti.jenisbukti,
+                        dasarpengeluaran: $scope.item.dasarPengeluaran,
+                        statusspp: $scope.item.radioStatusSPP,
+                        nospd: $scope.item.nospd,
+                        tglspp: $scope.item.tglSPP,
+                        bulan: $scope.item.itemBulan.bulan,
+                        pengeluaran: $scope.item.untukPengeluaran,
+                        tglsah: $scope.item.tglSah,
+                        nilaispp: $scope.item.nilaispp,
+                    }
+
+                    medifirstService.post('perencanaan/save-spp', objSave).then(function (e) {
+                        $scope.popupSPP.center().close()
+                        loadDataGrid();
+                    }, function (error) {
+                
+                    })
+                
+            }
+
+            $scope.SimpanSPM = function(){
+                var objSave =
+                    {
+                        nospm: $scope.item.nospm,
+                        jenisbukti: $scope.item.itemJenisBuktiSPM.jenisbukti,
+                        untukpengeluaran: $scope.item.untuk,
+                        status: $scope.item.radioStatusSPM,
+                        nospp: $scope.item.nosppspm,
+                        tglspm: $scope.item.tglSPM,
+                        tglsah: $scope.item.tglSahSPM,
+                        nilaispm: $scope.item.nilaispm,
+                        noreg: $scope.item.noreg,
+                    }
+
+                    medifirstService.post('perencanaan/save-spm', objSave).then(function (e) {
+                        $scope.popupSPM.center().close()
+                        loadDataSPM();
+                    }, function (error) {
+                
+                    })
+                
+            }
+
+            $scope.SimpanSPD = function(){
+                var objSave =
+                    {
+                        nospd: $scope.item.nospd,
+                        tglspd: $scope.item.tglSPD,
+                        nilaispd: $scope.item.nilaispd,
+                    }
+
+                    medifirstService.post('perencanaan/save-spd', objSave).then(function (e) {
+                        $scope.popupSPP.center().close()
+                        loadDataGrid();
+                    }, function (error) {
+                
+                    })
                 
             }
 
@@ -2790,20 +3060,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.popupPanjar.center().open()
             }
 
+            
+
             $scope.CetakSPJ = function(){
+                console.log($scope.item.isCetakLampiran)
                 console.log($scope.norecspj)
-                medifirstService.get("sysadmin/general/get-terbilang/" + $scope.item.jumlahSPJ).then(
-					function (dat) {
-                        console.log(dat.data.terbilang)
-                        window.open(baseTransaksi + "report/get-cetak-spj?norec="+$scope.norecspj+"&terbilang="+dat.data.terbilang, '_blank');
-                        
-					}
-                );
-                // medifirstService.get("perencanaan/get-cetak-spj?norec="+$scope.norecspj
-                //     , true).then(function (dat) {
-                //         loadDataGrid();
-                        
-                //     });
+                if($scope.item.isCetakLampiran == true){
+                    medifirstService.get("sysadmin/general/get-terbilang/" + $scope.item.jumlahSPJ).then(
+                        function (dat) {
+                            console.log(dat.data.terbilang)
+                            window.open(baseTransaksi + "report/get-cetak-spj?norec="+$scope.norecspj+"&terbilang="+dat.data.terbilang, '_blank');
+                            
+                        }
+                    );
+                } else if ($scope.item.isCetakLampiran == undefined){
+                    medifirstService.get("sysadmin/general/get-terbilang/" + $scope.item.jumlahSPJ).then(
+                        function (dat) {
+                            console.log(dat.data.terbilang)
+                            window.open(baseTransaksi + "report/get-cetak-spj-satu-lampiran?norec="+$scope.norecspj+"&terbilang="+dat.data.terbilang, '_blank');
+                            
+                        }
+                    );
+                }
             }
 
             $scope.CariPanjar = function(){
@@ -3270,6 +3548,36 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             
                 })
                 $scope.popupPanjarAktif.center().close()
+            }
+
+            function PilihSPD(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                console.log(dataItem)
+                $scope.item.nospd = dataItem.nospd
+                
+                $scope.popupCariSPD.center().close()
+            }
+
+            function inputSPM(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+
+                $scope.listJenisBukti = [
+                    { id: 1, jenisbukti: "UP" },
+                ];
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                $scope.item.nosppspm = dataItem.nospp
+                $scope.item.tglsppspm = dataItem.tglspp
+                loadDataSPM()
+                $scope.popupSPM.center().open()
             }
 
             function PengembalianPanjar(e) {
