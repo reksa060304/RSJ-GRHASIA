@@ -1834,28 +1834,28 @@ class GeneralController extends ApiController
 //                    $ruanganId =$item->ruid_pd;
 //                    $deptId =$item->dept_pd;
 //                }
-//                foreach ($dataCoa as $coa){
-//                    if ($coa->ruid == $ruanganId){
-//                        if (strpos($coa->namaaccount , 'Administrasi')!= false){
-//                            $coaAdministrasi=$coa->coaid;
-//                        }
-//                        if (strpos($coa->namaaccount , 'Konsul')!= false){
-//                            $coaKonsultasi=$coa->coaid;
-//                        }
-//                        if (strpos($coa->namaaccount , 'Visite')!= false){
-//                            $coaVisite=$coa->coaid;
-//                        }
-//                        if (strpos($coa->namaaccount , 'Akomodasi')!= false){
-//                            $coaAkomodasi=$coa->coaid;
-//                        }
-//                        if (strpos($coa->namaaccount , 'Tindakan')!= false){
-//                            $coaTindakan=$coa->coaid;
-//                        }
-//                        if (strpos($coa->namaaccount , 'Alat Canggih')!= false){
-//                            $coaAlatCanggih=$coa->coaid;
-//                        }
-//                    }
-//                }
+               foreach ($dataCoa as $coa){
+                   if ($coa->ruid == $ruanganId){
+                       if (strpos($coa->namaaccount , 'Administrasi')!= false){
+                           $coaAdministrasi=$coa->coaid;
+                       }
+                       if (strpos($coa->namaaccount , 'Konsul')!= false){
+                           $coaKonsultasi=$coa->coaid;
+                       }
+                       if (strpos($coa->namaaccount , 'Visite')!= false){
+                           $coaVisite=$coa->coaid;
+                       }
+                       if (strpos($coa->namaaccount , 'Akomodasi')!= false){
+                           $coaAkomodasi=$coa->coaid;
+                       }
+                       if (strpos($coa->namaaccount , 'Tindakan')!= false){
+                           $coaTindakan=$coa->coaid;
+                       }
+                       if (strpos($coa->namaaccount , 'Alat Canggih')!= false){
+                           $coaAlatCanggih=$coa->coaid;
+                       }
+                   }
+               }
 
                 $totalRp = $item->harga;//($item->hargajual) * ($item->jumlah);
                 $totalNettoRp = ($item->harganetto) * ($item->jumlah);
@@ -1888,30 +1888,30 @@ class GeneralController extends ApiController
 //                }
                 $debetId = 1778;
                 $kreditId = 12211;
-//                if ($item->objectkelompokpasienlastfk == 1){//1	Umum/Pribadi
-////                    $debetId = 10896;
-//                    $kreditId = 11164;
-//                }
-//                if ($item->objectkelompokpasienlastfk == 2){//2 BPJS
-////                    $debetId = 10897;
-//                    $kreditId = 11165;
-//                }
-//                if ($item->objectkelompokpasienlastfk == 3){//3	Asuransi lain
-////                    $debetId = 10901;
-//                    $kreditId = 11169;
-//                }
-//                if ($item->objectkelompokpasienlastfk == 5){//5	Perusahaan
-////                    $debetId = 10901;
-//                    $kreditId = 11169;
-//                }
-//                if ($item->objectkelompokpasienlastfk == 6){//6	Perjanjian
-////                    $debetId = 10896;
-//                    $kreditId = 11164;
-//                }
-//                if ($item->objectkelompokpasienlastfk == 7){//7	Dinas Sosial
-////                    $debetId = 10900;
-//                    $kreditId = 11168;
-//                }
+               if ($item->objectruanganfk == 1){//1	Umum/Pribadi
+//                    $debetId = 10896;
+                   $kreditId = 11164;
+               }
+               if ($item->objectkelompokpasienlastfk == 2){//2 BPJS
+//                    $debetId = 10897;
+                   $kreditId = 11165;
+               }
+               if ($item->objectkelompokpasienlastfk == 3){//3	Asuransi lain
+//                    $debetId = 10901;
+                   $kreditId = 11169;
+               }
+               if ($item->objectkelompokpasienlastfk == 5){//5	Perusahaan
+//                    $debetId = 10901;
+                   $kreditId = 11169;
+               }
+               if ($item->objectkelompokpasienlastfk == 6){//6	Perjanjian
+//                    $debetId = 10896;
+                   $kreditId = 11164;
+               }
+               if ($item->objectkelompokpasienlastfk == 7){//7	Dinas Sosial
+//                    $debetId = 10900;
+                   $kreditId = 11168;
+               }
 //                $debetId = 0;
 //                10896	Piutang Pasien Umum
 //                10897	Piutang BPJS

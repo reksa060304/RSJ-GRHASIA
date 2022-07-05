@@ -41,6 +41,9 @@ use App\Transaksi\SettingAnggaran;
 use App\Transaksi\KegiatanBelanja;
 use App\Transaksi\KeteranganBelanja;
 use App\Transaksi\RealisasiDetail;
+use App\Transaksi\SPP;
+use App\Transaksi\SPD;
+use App\Transaksi\SPM;
 use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Parent_;
 use Webpatser\Uuid\Uuid;
@@ -548,6 +551,16 @@ class PerencanaanController extends ApiController {
             and statusenabled = true;
         "));
 
+        $spp = DB::select(DB::raw("select spp.*, spd.nospd from spp_t spp inner join spd_t spd on spd.norec = spp.objectspdfk"));
+        $spd = DB::select(DB::raw("select * from spd_t"));
+        $carispd = DB::select(DB::raw("select spd.nospd, spd.tglspd, spd.nilaispd, spp.norec
+        from spd_t spd
+        left join spp_t spp on spd.norec = spp.objectspdfk 
+        where spp.norec is null"));
+
+
+        
+
     //     $Pengendali = \DB::table('pengendali_m as ru')
     //         ->select('ru.id','ru.pengendali')
     //         ->where('ru.kdprofile', $idProfile)
@@ -573,6 +586,9 @@ class PerencanaanController extends ApiController {
             'tahap' => $tahap,
             'direktur' => $direktur,
             'carabayarcombo' => $carabayarcombo,
+            'spp' => $spp,
+            'spd' => $spd,
+            'carispd' => $carispd,
             // 'kelompokketiga' => $ketiga,
             // 'kelompokkeempat' => $keempat,
             // 'kelompokkelima' => $kelima,
@@ -2094,6 +2110,155 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function saveSPP(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                    $SP = SPD::where('nospd', '=', $request['nospd'])->first();        
+            
+                    $MA = new SPP();
+                    $norecKS = $MA->generateNewId();
+                    $MA->norec = $norecKS;
+                    $MA->kdprofile = $idProfile;
+                    $MA->statusenabled = true;
+                    $MA->nospp = $request['nospp'];
+                    $MA->jenisbukti = $request['jenisbukti'];
+                    $MA->dasarpengeluaran = $request['dasarpengeluaran'];
+                    $MA->status = $request['statusspp'];
+                    $MA->tglspp = $request['tglspp'];
+                    $MA->bulan = $request['bulan'];
+                    $MA->pengeluaran = $request['pengeluaran'];
+                    $MA->tglsah = $request['tglsah'];
+                    $MA->nilaispp = $request['nilaispp'];
+                    $MA->objectspdfk = $SP->norec;
+
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveSPM(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                    $SP = SPP::where('nospp', '=', $request['nospp'])->first();        
+            
+                    $MA = new SPM();
+                    $norecKS = $MA->generateNewId();
+                    $MA->norec = $norecKS;
+                    $MA->kdprofile = $idProfile;
+                    $MA->statusenabled = true;
+                    $MA->nospm = $request['nospm'];
+                    $MA->jenisbukti = $request['jenisbukti'];
+                    $MA->untukpengeluaran = $request['untukpengeluaran'];
+                    $MA->status = $request['status'];
+                    $MA->objectsppfk = $SP->norec;
+                    $MA->tglspm = $request['tglspm'];
+                    $MA->tglsah = $request['tglsah'];
+                    $MA->nilaispm = $request['nilaispm'];
+                    $MA->noreg = $request['noreg'];
+
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveSPD(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                    $MA = new SPD();
+                    $norecKS = $MA->generateNewId();
+                    $MA->norec = $norecKS;
+                    $MA->kdprofile = $idProfile;
+                    $MA->statusenabled = true;
+                    $MA->nospd = $request['nospd'];
+                    $MA->tglspd = $request['tglspd'];
+                    $MA->nilaispd = $request['nilaispd'];
+
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function savePerubahanKeterangan(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
@@ -2901,6 +3066,27 @@ class PerencanaanController extends ApiController {
         $result = array(
             'data' => $data,
             'detail' => $result,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getDataSPM(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $nospp = $request['nospp'];
+
+        $data = DB::select(DB::raw("
+        select spm.*, spp.nospp FROM
+            spp_t spp
+            inner join spm_t spm on spm.objectsppfk = spp.norec
+            where spp.nospp = '$nospp'
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
             'message' => '@epic',
         );
 

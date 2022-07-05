@@ -772,6 +772,13 @@
                                                     class="k-textbox" ng-model="item.totalSubTotal"
                                                     ng-disabled="true" />
                                             </div>
+                                            
+                                            <div class="grid_12">
+                                                
+                                                <input type="checkbox" ng-checked="item.isChecked" class="k-checkbox" name="item.paketPelayanan"
+                                                id="item.paketPelayanan" ng-model="bool" value="item.paketPelayanan" ng-click="ceklisPaketPelayanan(bool,item)">
+                                            <label class="k-checkbox-label" for="item.paketPelayanan">Paket Pelayanan</label>
+                                                </div>
                                         </div>
                                     </div>
 
@@ -796,6 +803,7 @@
                                         <div class="grid_3"></div>
                                         <div class="grid_6">
                                             <div class="grid_4">
+                                               
                                             </div>
                                             <div class="grid_2" style="margin-top: 22px">
                                                 <button class="c-button" ng-click="Riwayat()">Riwayat</button>

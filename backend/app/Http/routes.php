@@ -1371,6 +1371,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-penjagaan-setting-anggaran', 'Perencanaan\PerencanaanController@getPenjagaanSettingAnggaran');
             Route::get('perencanaan/get-jenis-angagran', 'Perencanaan\PerencanaanController@getJenisAnggaran');
             Route::get('report/get-cetak-spj', 'Report\ReportController@getCetakSPJ');
+            Route::get('report/get-cetak-spj-satu-lampiran', 'Report\ReportController@getCetakSPJSatuLampiran');
             Route::get('perencanaan/get-datacombo-part-rekanan', 'Perencanaan\PerencanaanController@getDataComboRekananPart');
             Route::get('perencanaan/get-kel-keempat-part','Perencanaan\PerencanaanController@getKelAnggaranKeempat');
             Route::get('perencanaan/get-kel-ketiga-part','Perencanaan\PerencanaanController@getKelAnggaranKeTiga');
@@ -1386,6 +1387,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
             Route::post('perencanaan/save-child','Perencanaan\PerencanaanController@saveChild');
             Route::post('perencanaan/save-setting-tahap','Perencanaan\PerencanaanController@saveSettingTahap');
+            Route::post('perencanaan/save-spp','Perencanaan\PerencanaanController@saveSPP');
+            Route::post('perencanaan/save-spm','Perencanaan\PerencanaanController@saveSPM');
+            Route::post('perencanaan/save-spd','Perencanaan\PerencanaanController@saveSPD');
             Route::post('perencanaan/save-perubahan-keterangan','Perencanaan\PerencanaanController@savePerubahanKeterangan');
             Route::post('perencanaan/save-pengembalian-spj','Perencanaan\PerencanaanController@savePengembalianSPJ');
             Route::post('perencanaan/save-verif-spj','Perencanaan\PerencanaanController@saveVerifSPJ');
@@ -1424,6 +1428,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-jenis-belanja', 'Perencanaan\PerencanaanController@getJenisBelanja');
             Route::get('perencanaan/get-keterangan-belanja', 'Perencanaan\PerencanaanController@getKeteranganBelanja');
             Route::get('perencanaan/get-spj', 'Perencanaan\PerencanaanController@getDataSPJ');
+            Route::get('perencanaan/get-data-spm', 'Perencanaan\PerencanaanController@getDataSPM');
 
         // });
         // Route::group(['prefix' => 'piutang'], function () {
