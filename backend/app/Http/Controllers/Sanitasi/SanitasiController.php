@@ -729,42 +729,37 @@ class SanitasiController extends ApiController
             }
             $newCOA->tglplanning = $request['tglplanning'];
             $newCOA->objectruanganfk = $request['ruangandesc'];
-            $newCOA->objectkelompoktransaksifk = 121;
+            $newCOA->objectkelompoktransaksifk = 305;
             $newCOA->rincianexecuteplanning_askep = $request['rincian'];
             $newCOA->narasumberfk = $request['pelapor'];
             $newCOA->objectjenispekerjaanfk = $request['jenisKerusakan'];
+            $newCOA->pelapor = $request['namalengkap'];
             $newCOA->save();
 
             $norecHead2 = $newCOA->norec;
+            $ruanganHead2 = $newCOA->objectruanganfk;
+            $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
+            $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
 
-//            $sid    = "ACc6ac08ce1cc9096e0fd57a0c38801118";
-//            $token  = "cada716b5a36721fd86832662bbd06fe";
-//            $twilio = new Client($sid, $token);
-//            $array =[
-//                "whatsapp:+6282110191673",
-//                "whatsapp:+6282211333013",
-//                "whatsapp:+6285702501576",
-//                "whatsapp:+6283838339887",
-//                "whatsapp:+6281649111417",
-//                "whatsapp:+628563637731",
-//                "whatsapp:+6285746169422",
-//                "whatsapp:+628563637731",
-//                "whatsapp:+6281346568936",
-//                "whatsapp:+6287758626737",
-//                "whatsapp:+6285641367387",
-//                "whatsapp:+6285727301273"
-//            ];
-//            $i = 0;
-//            foreach ($array as $arr){
-//                $message = $twilio->messages
-//                    ->create($array[$i], // to
-//                        array(
-//                            "from" => "whatsapp:+14155238886",
-//                            "body" => "Laporan Baru Sanitasi - ".$request['rincian']
-//                        )
-//                    );
-//                $i = $i+1;
-//            }
+            $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
+            $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
+            $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
+            // $jenislayann =  DB::table('jenispekerjaan_m')->where('id',$request['jenisKerusakan'])->first();
+            $secret_token = "5564727540:AAFx0KWtUooqNFh_J_fwToEMP8MRIF_FW2g";
+            $telegram_id = '-1001687511947';//'-498979335';
+            $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
+            $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan Rumah Tangga </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
+                    "</b>  \n Pelapor: <b>".$pelapor->pelapor."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
+                    "</b>");
+            // return $url;
+            $ch = curl_init();
+            $optArray = array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true
+            );
+            curl_setopt_array($ch, $optArray);
+            $result = curl_exec($ch);
+            curl_close($ch);
 
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -786,7 +781,8 @@ class SanitasiController extends ApiController
             DB::rollBack();
             $result = array(
                 "status" => 400,
-//                "data" => $newPJT,
+                "e" => $e->getLine(),
+                "message" => $e->getMessage(),
                 "as" => 'as@epic',
             );
         }
@@ -827,7 +823,7 @@ class SanitasiController extends ApiController
             LEFT JOIN pegawai_m as pg3 on pg3.id = stp.narasumberfk 
             LEFT JOIN statuspekerjaan_m as sttp on sttp.id = stp.objectstatuspekerjaanfk
                         LEFT JOIN jenispekerjaan_m as jpk on jpk.id = stp.objectjenispekerjaanfk
-            WHERE stp.objectkelompoktransaksifk=121
+            WHERE stp.objectkelompoktransaksifk=305
             AND stp.statusenabled=true
             and stp.kdprofile='$kdProfile'
             $tgl

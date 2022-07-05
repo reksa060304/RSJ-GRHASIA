@@ -44,20 +44,26 @@ define(['initialize'], function (initialize) {
                     init();
                 }
             }
-           
+            $scope.listPindah = [{
+                id:151,
+                pindah: "PDTI"
+            },{
+                id:305,
+                pindah: "Rumah Tangga"
+            }]
             function loadCombo() {
                 $scope.dataLogin = medifirstService.getPegawaiLogin();
                 medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
                     $scope.listPelapor = data;
                 }); 
-                medifirstService.getPart("sysadmin/general/get-ruangan-part", true, true, 20).then(function (data) {
+                medifirstService.getPart("sysadmin/general/get-ruangan-part2", true, true, 20).then(function (data) {
                     $scope.listRuangan = data;
                 });  
                 medifirstService.get('ipsrs/get-ruangan',true).then(function (dat) {
                     $scope.listRuanganTujuan = dat.data[0].ruanganipsrs;
                 })
                 
-               
+            //    ->whereIn('rm.id', [850, 851, 852, 602])
             }
 
             $scope.newOrder = function () {
@@ -524,6 +530,17 @@ define(['initialize'], function (initialize) {
                     anHttpRequest.open("GET", aUrl, true);
                     anHttpRequest.send(null);
                 }
+            }
+            $scope.savePindah = function(){
+                $scope.isRouteLoading = true;
+                var objSave = {
+                    norec: $scope.dataSelected.norec,
+                    pindah: $scope.item.pindah.id
+                }
+                console.log(objSave);
+                medifirstService.post('ipsrs/save-permohonan-pindahke', objSave).then(function (e) {
+                    $scope.isRouteLoading = false;
+                })
             }
             //***********************************
         }

@@ -5406,5 +5406,32 @@ class GeneralController extends ApiController
 
         return $this->respond($dataPenulis2);
     }
+    public function getRuanganPart2(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $req=$request->all();
+        $data  = \DB::table('ruangan_m as st')
+            ->select('st.id','st.namaruangan')
+            ->where('st.kdprofile', $kdProfile)
+            ->where('st.statusenabled',true)
+            ->whereNotIn('st.id', [850, 851, 852, 602])
+            ->orderBy('st.namaruangan');
+        if(isset($req['filter']['filters'][0]['value']) &&
+            $req['filter']['filters'][0]['value']!="" &&
+            $req['filter']['filters'][0]['value']!="undefined"){
+            $data = $data->where('st.namaruangan','ilike','%'. $req['filter']['filters'][0]['value'].'%' );
+        };
+        if(isset($req['namaruangan']) && $req['namaruangan']!="" && $req['namaruangan']!="undefined"){
+            $data = $data
+                ->where('st.namaruangan','ilike','%'.$req['namaruangan'].'%' );
+        }
+        if(isset($req['idRuangan']) && $req['idRuangan']!="" && $req['idRuangan']!="undefined"){
+            $data = $data
+                ->where('st.id','=',$req['idRuangan'] );
+        }
+        $data = $data->take(10);
+        $data = $data->get();
+
+        return $this->respond($data);
+    }
 
 }

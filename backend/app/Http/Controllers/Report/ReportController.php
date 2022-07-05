@@ -2753,7 +2753,7 @@ public function suratBuktiPengembalian(Request $request)
         // dd($detail);
         $pageWidth = 950;
         // var_dump($detail);
-        return view('report.EMR.suratbuktipengembalian', compact('detail','pageWidth'));
+        return view('report.EMR.perjanjianpasienmelarikandiri', compact('detail','pageWidth'));
     }
     public function cetakHasilKegiatan(Request $request)
     {

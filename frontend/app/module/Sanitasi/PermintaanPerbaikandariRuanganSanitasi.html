@@ -20,7 +20,7 @@
 <div class="grid_12">
 
     <div class="grid_12 headerBox">
-        <h1 style="color: white;"><b>Permohonan Perbaikan Sanitasi</b></h1>
+        <h1 style="color: white;"><b>Permohonan Perbaikan Rumah Tangga</b></h1>
     </div>
     <div class="grid_12">
         <div class="panel panel-default container_12">
@@ -72,7 +72,7 @@
                                                     k-auto-bind="false" />
                                             </div>
                                         </div>
-                                        <div class="grid_3">
+                                        <!-- <div class="grid_3">
                                             <div class="grid_12">
                                                 <label c-label item="item" c-label-text="Jenis Layanan"></label>
                                             </div>
@@ -82,14 +82,14 @@
                                                     k-filter="'contains'" k-data-value-field="'id'"
                                                     k-auto-bind="false" />
                                             </div>
-                                            <!-- <div class="grid_12">
-                <label c-label item="item" c-label-text="Status"></label>
-            </div>
+                                            <div class="grid_12">
+                                                <label c-label item="item" c-label-text="Status"></label>
+                                            </div>
 
-            <div class="grid_12">
-                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.status" disabled />
-            </div> -->
-                                        </div>
+                                            <div class="grid_12">
+                                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.status" disabled />
+                                            </div>
+                                        </div> -->
                                         <div class="grid_12" style="margin-left: 10px">
                                             <div class="grid_12">
                                                 <label c-label item="item"
@@ -176,6 +176,24 @@
                                                 </div>
                                             </div>
                                             <div class="grid_7">
+                                                <div class="grid_2">
+                                                    <label c-label item="item" c-label-text="Pindahkan Ke"></label>
+                                                    <input kendo-combo-box k-data-source="listPindah"
+                                                        k-ng-model="item.pindah" k-data-text-field="'pindah'"
+                                                        k-filter="'contains'" k-data-value-field="'id'"
+                                                        k-auto-bind="false" k-on-change="pindahbuatipsrs()" />
+                                                </div>
+                                                <div class="grid_2" ng-show="ipsrs">
+                                                    <label c-label item="item" c-label-text="Ruang Tujuan"></label>
+                                                    <input kendo-combo-box k-data-source="listRuanganTujuan"
+                                                        k-ng-model="item.ruangan" k-data-text-field="'namaruangan'"
+                                                        k-filter="'contains'" k-data-value-field="'id'"
+                                                        k-auto-bind="false" />
+                                                </div>
+                                                <div class="grid_2" style="margin-top: 20px">
+                                                    <button class="c-button success"
+                                                        ng-click="savePindah()">Pindah</button>
+                                                </div>
                                             </div>
                                             <div class="grid_2" style="margin-top: 22px">
                                                 <button class="c-button" ng-click="DetailBtn()">Detail</button>

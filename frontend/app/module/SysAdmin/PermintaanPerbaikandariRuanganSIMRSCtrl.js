@@ -28,7 +28,13 @@ define(['initialize'], function (initialize) {
             //$scope.item.tittle = "Daftar Tempat Tidur"
             LoadCache();
             loadCombo();
-
+            $scope.listPindah = [{
+                id: 122,
+                pindah: "IPSRS"
+            }, {
+                id: 305,
+                pindah: "Rumah Tangga"
+            }]
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('PermintaanPerbaikandariRuanganCtrl');
                 if (chacePeriode != undefined) {
@@ -42,7 +48,6 @@ define(['initialize'], function (initialize) {
                     init();
                 }
             }
-           
             function loadCombo() {
                 $scope.dataLogin = medifirstService.getPegawaiLogin();
                 medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
@@ -51,6 +56,9 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("sysadmin/general/get-ruangan-part", true, true, 20).then(function (data) {
                     $scope.listRuangan = data;
                 });  
+                medifirstService.get('ipsrs/get-ruangan', true).then(function (dat) {
+                    $scope.listRuanganTujuan = dat.data[0].ruanganipsrs;
+                })
                 // medifirstService.getPart("ipsrs/get-jenis-pekerjaan").then(function (data) {
                 //     $scope.listJenisKerusakan = data;
                 // }); 
@@ -233,7 +241,7 @@ define(['initialize'], function (initialize) {
                     "width": "80px",
                 },
                 {
-                    "field": "rincian",
+                    "field": "rincianexecuteplanning_askep",
                     "title": "Keterangan Maintenance",
                     "width": "150px",
                 },
@@ -502,6 +510,32 @@ define(['initialize'], function (initialize) {
                     anHttpRequest.send(null);
                 }
             }
+            $scope.savePindah = function () {
+                $scope.isRouteLoading = true;
+                var ruangtujuan = ""
+                if ($scope.item.ruangan != undefined) {
+                    ruangtujuan = $scope.item.ruangan.id
+                }
+                var objSave = {
+                    norec: $scope.dataSelected.norec,
+                    pindah: $scope.item.pindah.id,
+                    ruangtujuan: ruangtujuan
+                }
+                console.log(objSave);
+                medifirstService.post('ipsrs/save-permohonan-pindahke', objSave).then(function (e) {
+                    $scope.isRouteLoading = false;
+                })
+            }   
+            $scope.pindahbuatipsrs = function () {
+                console.log($scope.item.pindah.id);
+                if ($scope.item.pindah.id == 122) {
+                    $scope.ipsrs = true
+                }else{
+                    $scope.ipsrs = false
+                    $scope.item.ruangan = undefined
+                }
+            }
+
             //***********************************
         }
     ]);
