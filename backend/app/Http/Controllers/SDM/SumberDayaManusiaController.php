@@ -6090,6 +6090,11 @@ public function daftarKenaikanGajiBerkala(Request $request){
     {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $jenisKegiatanTemp = "";
+        if(isset($request['jeniskegiatan'])){
+            $jenisKegiatanTemp = "and spe.objectdiklatkategorifk =". $request['jeniskegiatan'];
+        }
+
         $data = \DB::select(DB::raw(
             "SELECT
                 spe.institusipendidikan,
@@ -6107,9 +6112,10 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 left join pegawai_m pg on pg.id = spd.objectpegawailastfk
                 left join ruangan_m ru on ru.id = spd.objectruanganlastfk
             WHERE
-            spd.kdprofile = 30 and spd.statusenabled = true and
-            spe.tanggalmulai >= '$request[tanggalmulai]' and 
-                spe.tanggalselesai > CURRENT_DATE
+            spd.kdprofile = 30 and spd.statusenabled = true
+            $jenisKegiatanTemp
+            and spe.tanggalmulai >= '$request[tanggalmulai]' and
+            spe.tanggalselesai > CURRENT_DATE
             "
         ));
         return $this->respond($data,'Fizi');

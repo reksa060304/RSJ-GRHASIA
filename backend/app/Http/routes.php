@@ -1064,9 +1064,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('diklat/get-laporan-pengguna-total','SDM\SumberDayaManusiaController@LaporanPenggunaTotal');
             Route::get('diklat/get-daftar-kegiatan-pembimbing','SDM\SumberDayaManusiaController@DaftarKegiatanPembimbing');
             Route::post('diklat/save/kegiatan-diklat','SDM\SumberDayaManusiaController@saveKegiatanPembimbing');
+            Route::post('diklat/save-master-data-kampus', 'SDM\PelatihanController@saveMasterDataKampus');
             Route::get('diklat/get-hasilkegiatan', 'SDM\SumberDayaManusiaController@DetailHasilKegiatan');
             Route::get('sdm/penelitian/get-daftar-mahasiswa-aktif','SDM\SumberDayaManusiaController@getDaftarMahasiswaAktif');
             Route::get('diklat/get-tanggal-otomatis','SDM\PenelitianController@getTanggalOtomatis');
+            Route::get('diklat/get-combo-diklat', 'SDM\PelatihanController@getComboDiklat');
             // GET
 
             // POST
@@ -1137,6 +1139,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-suratbuktipengembalian', 'Report\ReportController@suratBuktiPengembalian');
           Route::get('report/get-cetak-perjanjianmelarikandiri', 'Report\ReportController@perjanjianMelarikanDiri');
           Route::get('report/diklat-cetakhasilkegiatan','Report\ReportController@cetakHasilKegiatan');
+          Route::get('report/get-cetak-ketentuanranap','Report\ReportController@ketentuanRawatInap');
           Route::get('laboratorium/get-lap-kunjungan', 'Laboratorium\LaboratoriumController@getLaporanKunjungan');
           Route::get('laboratorium/get-combo-dokter-lab','Laboratorium\LaboratoriumController@getDokter');
 
@@ -2085,6 +2088,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('ipsrs/save-pengerjaan-permohonan','IPSRS\IPSRSController@SavePengerjaanPermohonan');
             Route::post('ipsrs/hapus-pengerjaan-permohonan','IPSRS\IPSRSController@SaveHapusPengerjaanPermohonan');
             Route::get('ipsrs/get-ruangan','IPSRS\IPSRSController@getComboRuanganIPSRS');
+            Route::post('ipsrs/save-permohonan-pindahke','IPSRS\IPSRSController@SavePermohonanPindahKe');
+            Route::get('ipsrs/get-daftar-permohonan-rt','IPSRS\IPSRSController@getDaftarRT');
 
         // });
         // Route::group(['prefix' => 'sdm'], function () {
@@ -2286,6 +2291,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('sysadmin/get-mapping-ruanganpelayananmutu', 'SysAdmin\SysAdminController@getMappingRuanganToPelayananMutu');
           Route::post('sysadmin/save-map-ruangan-to-pelayananmutu', 'SysAdmin\SysAdminController@saveMapRuanganToPelayananMutu');
           Route::post('sysadmin/delete-map-ruangan-to-pelayananmutu', 'SysAdmin\SysAdminController@DeleteMapRuanganToPelayananMutu');
+          Route::get('sysadmin/general/get-ruangan-part2', 'SysAdmin\GeneralController@getRuanganPart2');
 
           Route::get('sysadmin/get-combo-mapemr', 'SysAdmin\SysAdminController@getComboMappingEMR');
           Route::get('sysadmin/get-mapping-emr', 'SysAdmin\SysAdminController@getMappingEMR');
@@ -2476,6 +2482,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sysadmin/general/save-map-laporankeuanganlingkuppelayanan','SysAdmin\GeneralController@saveMappingLaporanKeuanganToLingkupPelayanan');
                 Route::get('sysadmin/logging/save-log-meninggal-pasien-rj', 'SysAdmin\LoggingController@saveLogMeninggalPasienRJ');
                 Route::get('sysadmin/logging/save-log-pulang-pasien-rj', 'SysAdmin\LoggingController@saveLogPulangPasienRJ');
+                
                 // POST //
 
                 // Route::group(['prefix' => 'rensar'], function () {

@@ -28,7 +28,13 @@ define(['initialize'], function (initialize) {
             //$scope.item.tittle = "Daftar Tempat Tidur"
             LoadCache();
             loadCombo();
-
+            $scope.listPindah = [{
+                id: 122,
+                pindah: "IPSRS"
+            }, {
+                id: 151,
+                pindah: "PDTI"
+            }]
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('PermintaanPerbaikandariRuanganCtrl');
                 if (chacePeriode != undefined) {
@@ -48,12 +54,15 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
                     $scope.listPelapor = data;
                 });
-                medifirstService.getPart("sysadmin/general/get-ruangan-part", true, true, 20).then(function (data) {
+                medifirstService.getPart("sysadmin/general/get-ruangan-part2", true, true, 20).then(function (data) {
                     $scope.listRuangan = data;
                 });
                 medifirstService.getPart("sanitasi/get-jenis-layanan-sanitasi").then(function (data) {
                     $scope.listJenisLayanan = data;
                 });
+                medifirstService.get('ipsrs/get-ruangan', true).then(function (dat) {
+                    $scope.listRuanganTujuan = dat.data[0].ruanganipsrs;
+                })
 
             }
 
@@ -104,13 +113,14 @@ define(['initialize'], function (initialize) {
                 }
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
-                medifirstService.get("ipsrs/get-daftar-permohonan?" +
+                medifirstService.get("ipsrs/get-daftar-permohonan-rt?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir + desc + '&arrru=' + jenisForm +
                     "&manage=" + manage
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
-                        var data2 = dat.data;
+                        var data2 = dat.data.data;
+                        console.log(data2);
                         for (var i = 0; i < data2.length; i++) {
                             data2[i].no = i + 1
                         }
@@ -233,7 +243,7 @@ define(['initialize'], function (initialize) {
                     "width": "80px",
                 },
                 {
-                    "field": "rincian",
+                    "field": "rincianexecuteplanning_askep",
                     "title": "Keterangan Maintenance",
                     "width": "150px",
                 },
@@ -333,7 +343,9 @@ define(['initialize'], function (initialize) {
                     ruangandesc: $scope.item.ruangan.id,
                     rincian: $scope.item.desckerusakan,
                     pelapor: $scope.item.pelapor.id,
-                    jenisKerusakan: $scope.item.jenisKerusakan.id
+                    namalengkap: $scope.item.pelapor.namalengkap,
+
+                    // jenisKerusakan: $scope.item.jenisKerusakan.id
                 }
                 medifirstService.post('sanitasi/save-permohonan-sanitasi', objSave).then(function (e) {
                     // $scope.popupSignDate.close();
@@ -499,6 +511,31 @@ define(['initialize'], function (initialize) {
 
                     anHttpRequest.open("GET", aUrl, true);
                     anHttpRequest.send(null);
+                }
+            }
+            $scope.savePindah = function () {
+                $scope.isRouteLoading = true;
+                var ruangtujuan = ""
+                if ($scope.item.ruangan != undefined) {
+                    ruangtujuan = $scope.item.ruangan.id
+                }
+                var objSave = {
+                    norec: $scope.dataSelected.norec,
+                    pindah: $scope.item.pindah.id,
+                    ruangtujuan: ruangtujuan
+                }
+                console.log(objSave);
+                medifirstService.post('ipsrs/save-permohonan-pindahke', objSave).then(function (e) {
+                    $scope.isRouteLoading = false;
+                })
+            }
+            $scope.pindahbuatipsrs = function () {
+                console.log($scope.item.pindah.id);
+                if ($scope.item.pindah.id == 122) {
+                    $scope.ipsrs = true
+                } else {
+                    $scope.ipsrs = false
+                    $scope.item.ruangan = undefined
                 }
             }
             //***********************************

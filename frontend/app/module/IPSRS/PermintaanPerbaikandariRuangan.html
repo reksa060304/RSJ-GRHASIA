@@ -217,6 +217,17 @@
                                                 </div>
                                             </div>
                                             <div class="grid_7">
+                                                
+                                                <div class="grid_2">
+                                                    <label c-label item="item" c-label-text="Pindahkan Ke"></label>
+                                                    <input kendo-combo-box k-data-source="listPindah"
+                                                        k-ng-model="item.pindah" k-data-text-field="'pindah'"
+                                                        k-filter="'contains'" k-data-value-field="'id'"
+                                                        k-auto-bind="false" />
+                                                </div>
+                                                <div class="grid_2" style="margin-top: 20px">
+                                                    <button class="c-button success" ng-click="savePindah()">Pindah</button>
+                                                </div>
                                             </div>
                                             <!-- <div class="grid_2" style="margin-top: 22px">
                                                 <button class="c-button" ng-click="DetailBtn()">Detail</button>

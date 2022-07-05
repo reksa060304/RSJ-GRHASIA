@@ -2785,4 +2785,14 @@ class PelatihanController extends ApiController {
         );
         return $this->respond($result);
     }
+    public function getComboDiklat(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $jeniskegiatan = \DB::table('diklatkategori_m')->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)->get();
+        $result = array(
+            'jeniskegiatan'=> $jeniskegiatan,
+        );
+        return $this->respond($result);
+    }
 }
