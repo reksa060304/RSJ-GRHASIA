@@ -186,8 +186,8 @@ define(['initialize'], function (initialize) {
 
             function loadData() {
                 $scope.isRouteLoading = true;
-                var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm:ss');
-                var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm:ss');
+                var tglAwal = "&tglawal="+moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm:ss');
+                var tglAkhir = "&tglakhir=" + moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm:ss');
 
                 
                 var jmlRows = "";
@@ -202,7 +202,7 @@ define(['initialize'], function (initialize) {
                     pegawai = medifirstService.getPegawaiLogin().id
                 }
                 
-                medifirstService.get("diklat/get-daftar-kegiatan-pembimbing?pegawai="+ pegawai).then(function (data) {
+                medifirstService.get("diklat/get-daftar-kegiatan-pembimbing?pegawai="+ pegawai+tglAwal+tglAkhir).then(function (data) {
                 $scope.isRouteLoading = false;
                 // $scope.dataDaftarPasienPulang = data[0].data;
                 var datas = data.data;
@@ -362,7 +362,7 @@ define(['initialize'], function (initialize) {
                     objectruanganfk: $scope.itemP.ruangan.id,
                     hasilkegiatan: $scope.itemP.kegiatan,
                     kegiatanfk : $scope.dataPasienSelected.kegiatanfk,
-                    mahasiswa: $scope.itemP.daftarmahasiswa,
+                    mahasiswa: $scope.dataPasienSelected.peserta,
                     tglmasukbimbingan: $scope.itemP.tglmasukbimbingan,
                     tglkeluarbimbingan: $scope.itemP.tglkeluarbimbingan,
                     objectpegawaifk: medifirstService.getPegawaiLogin().id

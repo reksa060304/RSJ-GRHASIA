@@ -19,6 +19,7 @@ define(['initialize'], function (initialize) {
             $scope.tglkadaluarsa = undefined;
             $scope.HargaMaster = -1;
             $scope.disTanggal = false;
+            $scope.item.paketPelayanan = false
             var statusTambah = true
             var pegawaiUser = {}
             var norec_apd = '';
@@ -1803,6 +1804,14 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             $scope.tombolSimpanVis = true;
                             return
                         }
+                        if($scope.item.paketPelayanan == true){
+                            for (var i = data2.length - 1; i >= 0; i--) {
+                                data2[i].hargasatuan = 0
+                                data2[i].hargajual = 0
+                                data2[i].total = 0
+
+                            }
+                        }
                         for (var i = data2.length - 1; i >= 0; i--) {
                             //if (data2[i].hargasatuan == 0 && parseFloat(data2[i].jmlstok)<=0 ) {
                             //if (data2[i].hargasatuan == 0 && $scope.HargaMaster != 0) {
@@ -1836,7 +1845,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             noresep: $scope.item.resep,
                             retur: '-',
                             isobatalkes: isPemakaianObatAlkes,
-                            isreseppulang: checkRP != undefined ? checkRP : null
+                            isreseppulang: checkRP != undefined ? checkRP : null,
+                            ispaketpelayanan : $scope.item.paketPelayanan
                         }
                         var objSave =
                         {
@@ -2712,6 +2722,13 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     $scope.item.diskonTotalPersen = diskon;
                     $scope.item.total = parseFloat($scope.item.hargaSatuan) - parseFloat($scope.item.diskonTotal);
                 }
+            }
+            $scope.ceklisPaketPelayanan = function (bool, data) {
+                // if (bool) {
+                    $scope.item.paketPelayanan = bool
+                // } else {
+                //     e.isChecked = true
+                // }
             }
             //** BATAS */
         }
