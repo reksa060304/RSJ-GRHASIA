@@ -89,8 +89,20 @@ define(['initialize'], function (initialize) {
                             serverPaging: false,
                             schema: {
                                 model: {
+                                    fields: {
+                                        qtyproduk: { type: "number" },
+                                        harganetto: { type: "number" },
+                                        subtotal: { type: "number" },
+                                        totalharusdibayar: { type: "number" },
+                                    }
                                 }
-                            }
+                            },
+                            aggregate: [
+                                { field: 'qtyproduk', aggregate: 'sum' },
+                                { field: 'harganetto', aggregate: 'sum' },
+                                { field: 'subtotal', aggregate: 'sum' },
+                                { field: 'totalharusdibayar', aggregate: 'sum' },
+                            ]
                         });
                         pegawaiUser = dat.data.datalogin
                     });
@@ -253,6 +265,10 @@ define(['initialize'], function (initialize) {
                         "title": "Qty Terima",
                         "width": "55px",
                         "template": "<span class='style-right'>#= kendo.toString(qtyproduk) #</span>",
+                        aggregates: ["sum"],
+                        template: "#: qtyproduk  #",
+                        groupFooterTemplate: "#: data.qtyproduk.sum  #",
+                        footerTemplate: "#: data.qtyproduk.sum  #"
                     },
                     {
                         "field": "satuanstandar",
@@ -263,7 +279,6 @@ define(['initialize'], function (initialize) {
                         "field": "hargasatuan",
                         "title": "HARGA SATUAN",
                         "width": "90px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: hargasatuan #', '')}}</span>"
                     },
                     {
                         "field": "persenppn",
@@ -281,19 +296,30 @@ define(['initialize'], function (initialize) {
                         "field": "harganetto",
                         "title": "HARGA SATUAN SETELAH PPN&DISC",
                         "width": "55px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: harganetto #', '')}}</span>",
+                        aggregates: ["sum"],
+                        template: "#: harganetto  #",
+                        groupFooterTemplate: "#: data.harganetto.sum  #",
+                        footerTemplate: "#: data.harganetto.sum  #"
                     },
                     {
                         "field": "subtotal",
                         "title": "SUB TOTAL",
                         "width": "90px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: subtotal #', '')}}</span>"
+                        "template": "<span class='style-right'>{{formatRupiah('#: subtotal #', '')}}</span>",
+                        aggregates: ["sum"],
+                        template: "#: subtotal  #",
+                        groupFooterTemplate: "#: data.subtotal.sum  #",
+                        footerTemplate: "#: data.subtotal.sum  #"
                     },
                     {
                         "field": "totalharusdibayar",
                         "title": "TOTAL HARGA",
                         "width": "90px",
-                        "template": "# if(row_number == 1) {#<span class='style-right'>{{formatRupiah('#: totalharusdibayar #', '')}}</span>#} else {#<span class='style-right'></span>#}#"
+                        "template": "# if(row_number == 1) {#<span class='style-right'>{{formatRupiah('#: totalharusdibayar #', '')}}</span>#} else {#<span class='style-right'></span>#}#",
+                        aggregates: ["sum"],
+                        template: "#: totalharusdibayar  #",
+                        groupFooterTemplate: "#: data.totalharusdibayar.sum  #",
+                        footerTemplate: "#: data.totalharusdibayar.sum  #"
                     },
                     {
                         "field": "nosppb",
