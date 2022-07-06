@@ -3263,6 +3263,10 @@
         {
             "nameDep": "TTDElektronikCtrl",
             "urlDep": "module/EMR/TTDElektronikCtrl"
+        },
+        {
+            "nameDep": "LaporanPasienRujukanPerbulanCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/LaporanPasienRujukanPerbulanCtrl"
         }
     ]
 }

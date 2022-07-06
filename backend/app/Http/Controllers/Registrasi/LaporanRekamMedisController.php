@@ -2088,6 +2088,76 @@ class LaporanRekamMedisController extends   ApiController
         return $this->respond($result);
     }
 
+    public function getRujukanPerbulan(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tahun = $request['tahun'];
+
+        $data10 = DB::select(DB::raw("select namaruangan, sum(jumlahrujukanjanuari) jumlahrujukanjanuari, sum(jumlahnonrujukanjanuari) jumlahnonrujukanjanuari,
+        sum(jumlahrujukanfebruari) jumlahrujukanfebruari, sum(jumlahnonrujukanfebruari) jumlahnonrujukanfebruari,
+        sum(jumlahrujukanmaret) jumlahrujukanmaret, sum(jumlahnonrujukanmaret) jumlahnonrujukanmaret,
+        sum(jumlahrujukanapril) jumlahrujukanapril, sum(jumlahnonrujukanapril) jumlahnonrujukanapril,
+        sum(jumlahrujukanmei) jumlahrujukanmei, sum(jumlahnonrujukanmei) jumlahnonrujukanmei,
+        sum(jumlahrujukanjuni) jumlahrujukanjuni, sum(jumlahnonrujukanjuni) jumlahnonrujukanjuni,
+        sum(jumlahrujukanjuli) jumlahrujukanjuli, sum(jumlahnonrujukanjuli) jumlahnonrujukanjuli,
+        sum(jumlahrujukanagustus) jumlahrujukanagustus, sum(jumlahnonrujukanagustus) jumlahnonrujukanagustus,
+        sum(jumlahrujukanseptember) jumlahrujukanseptember, sum(jumlahnonrujukanseptember) jumlahnonrujukanseptember,
+        sum(jumlahrujukanoktober) jumlahrujukanoktober, sum(jumlahnonrujukanoktober) jumlahnonrujukanoktober,
+        sum(jumlahrujukannovember) jumlahrujukannovember, sum(jumlahnonrujukannovember) jumlahnonrujukannovember,
+        sum(jumlahrujukandesember) jumlahrujukandesember, sum(jumlahnonrujukandesember) jumlahnonrujukandesember
+        from(
+            select namaruangan,
+            case when bulan = 'January' then sum(jumlahrujukan) else 0 end as jumlahrujukanjanuari,
+            case when bulan = 'January' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukanjanuari,
+            case when bulan = 'February' then sum(jumlahrujukan) else 0 end as jumlahrujukanfebruari,
+            case when bulan = 'February' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukanfebruari,
+            case when bulan = 'March' then sum(jumlahrujukan) else 0 end as jumlahrujukanmaret,
+            case when bulan = 'March' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukanmaret,
+            case when bulan = 'April' then sum(jumlahrujukan) else 0 end as jumlahrujukanapril,
+            case when bulan = 'April' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukanapril,
+            case when bulan = 'May' then sum(jumlahrujukan) else 0 end as jumlahrujukanmei,
+            case when bulan = 'May' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukanmei,
+            case when bulan = 'June' then sum(jumlahrujukan) else 0 end as jumlahrujukanjuni,
+            case when bulan = 'June' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukanjuni,
+            case when bulan = 'July' then sum(jumlahrujukan) else 0 end as jumlahrujukanjuli,
+            case when bulan = 'July' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukanjuli,
+            case when bulan = 'August' then sum(jumlahrujukan) else 0 end as jumlahrujukanagustus,
+            case when bulan = 'August' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukanagustus,
+            case when bulan = 'September' then sum(jumlahrujukan) else 0 end as jumlahrujukanseptember,
+            case when bulan = 'September' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukanseptember,
+            case when bulan = 'October' then sum(jumlahrujukan) else 0 end as jumlahrujukanoktober,
+            case when bulan = 'October' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukanoktober,
+            case when bulan = 'November' then sum(jumlahrujukan) else 0 end as jumlahrujukannovember,
+            case when bulan = 'November' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukannovember,
+            case when bulan = 'December' then sum(jumlahrujukan) else 0 end as jumlahrujukandesember,
+            case when bulan = 'December' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukandesember
+            from(
+            select rtrim(to_char(pd.tglregistrasi, 'Month'), ' ') as bulan, ru.namaruangan,
+            case when apd.objectasalrujukanfk in(1,2,3,4,8,9,11,12,13,14,15,16,17) then count(pd.noregistrasi) else 0 end as jumlahrujukan,
+          case when apd.objectasalrujukanfk in(5,6,7,10) then count(pd.noregistrasi) else 0 end as jumlahnonrujukan
+                            FROM
+                            pasiendaftar_t pd
+                            INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            where pd.kdprofile = 30 and pd.statusenabled = TRUE
+                            and pd.tglregistrasi between '$tahun-01-01 00:00' and '$tahun-12-31 23:59'
+                            and apd.tglmasuk between '$tahun-01-01 00:00' and '$tahun-12-31 23:59'
+                            and ru.id in (765, 29)
+                            group by rtrim(to_char(pd.tglregistrasi, 'Month'), ' '), ru.namaruangan, apd.objectasalrujukanfk
+            ) as x group by namaruangan, bulan
+        ) as y group by namaruangan
+        "));
+
+        $result = array(
+            'data' => $data10,
+            'message' => 'er@epic',
+
+        );
+
+        return $this->respond($result);
+    }
+
     public function getKegiatanKesehatanGigidanMulut(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

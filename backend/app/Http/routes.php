@@ -1841,6 +1841,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('registrasi/laporan/delete-mapping-rl', 'Registrasi\LaporanRekamMedisController@deleteMapProdukToLaporanRL');
               Route::get('registrasi/laporan/get-combo-mapping-rl', 'Registrasi\LaporanRekamMedisController@getComboMappingRL');
 
+              Route::get('registrasi/laporan/get-laporan-pasien-rujukan-perbulan','Registrasi\LaporanRekamMedisController@getRujukanPerbulan');
               Route::get('registrasi/laporan/get-laporan-rl12', 'Registrasi\LaporanRekamMedisController@getDataRL31RawatInap');
               Route::get('registrasi/laporan/get-laporan-rl2', 'Registrasi\LaporanRekamMedisController@getDataRL2');
               Route::get('registrasi/laporan/get-grafik-barber-johnson', 'Registrasi\LaporanRekamMedisController@getGrafikBarberJohnson');
