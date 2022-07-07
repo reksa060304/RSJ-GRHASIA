@@ -26,6 +26,18 @@ define(['initialize'], function (initialize) {
             //     jenisForm = 18
             // }
             //$scope.item.tittle = "Daftar Tempat Tidur"
+            $scope.pdti = false
+            $scope.dispdti = true
+            $scope.item.pelapor = {
+                id: medifirstService.getPegawaiLogin().id,
+                namalengkap: medifirstService.getPegawaiLogin().namaLengkap
+            }
+            if (medifirstService.getKelompokUser() == 'ITI') {
+                $scope.pdti = true
+                $scope.dispdti = false
+                $scope.item.pelapor = {}
+            }
+            console.log(medifirstService.getKelompokUser());
             LoadCache();
             loadCombo();
             $scope.listPindah = [{

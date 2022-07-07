@@ -60,7 +60,7 @@
                                                     k-auto-bind="false" />
                                             </div>
                                         </div>
-                                        <div class="grid_3">
+                                        <div class="grid_3" >
                                             <div class="grid_12">
                                                 <label c-label item="item" c-label-text="Pelapor"></label>
                                             </div>
@@ -69,7 +69,7 @@
                                                 <input kendo-combo-box k-data-source="listPelapor"
                                                     k-ng-model="item.pelapor" k-data-text-field="'namalengkap'"
                                                     k-filter="'contains'" k-data-value-field="'id'"
-                                                    k-auto-bind="false" />
+                                                    k-auto-bind="false" ng-disabled="disip3rs" />
                                                 <!-- <input c-text-box type="input" filter="" class="k-textbox"
                                                     ng-model="item.pelapor" /> -->
                                             </div>
@@ -216,7 +216,7 @@
                                                         ng-model="item.cariDesc" />
                                                 </div>
                                             </div>
-                                            <div class="grid_7">
+                                            <div class="grid_7" ng-show="ip3rs" >
                                                 
                                                 <div class="grid_2">
                                                     <label c-label item="item" c-label-text="Pindahkan Ke"></label>

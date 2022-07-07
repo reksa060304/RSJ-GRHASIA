@@ -3,36 +3,44 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Report HPP Minat Bakat</title>
-    <link rel="stylesheet" href="{{ asset('css/report/paper.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/report/table.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/report/tabel.css') }}">
-    <script src="{{ asset('js/jquery.min.js') }}"></script>
-    <script src="{{ asset('js/jquery.qr-code.js') }}"></script>
+    <title>Report Perjanjian Pasien Melarikan Diri</title>
+    
 
     @if(stripos(\Request::url(), 'localhost') !== FALSE)
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/report/paper.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/report/table.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/report/tabel.css') }}">
     <!-- angular -->
     <script src="{{ asset('js/angular/angular.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('js/angular/angular-route.min.js') }}" type="text/javascript"></script>
     <script type="text/javascript" src="{{ asset('js/angular/angular-animate.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/angular/angular-aria.min.js') }}"></script>
     <script src="{{ asset('js/angular/angular-material.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.qr-code.js') }}"></script>
     @else
 
     <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('service/css/report/paper.css') }}">
+    <link rel="stylesheet" href="{{ asset('service/css/report/table.css') }}">
+    <link rel="stylesheet" href="{{ asset('service/css/report/tabel.css') }}">
     <!-- angular -->
     <script src="{{ asset('service/js/angular/angular.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('service/js/angular/angular-route.min.js') }}" type="text/javascript"></script>
     <script type="text/javascript" src="{{ asset('service/js/angular/angular-animate.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('service/js/angular/angular-aria.min.js') }}"></script>
     <script src="{{ asset('service/js/angular/angular-material.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('service/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('service/js/jquery.qr-code.js') }}"></script>
     @endif
     <style>
         @page {
             size: A4;
         }
-
+        section {
+            page-break-after: always;
+        }
         /*@media print {*/
         /*    body {margin:0}*/
         /*}*/
@@ -125,98 +133,77 @@
         {{-- <hr style="border:0.5px solid #000;margin-top:2px"> --}}
         <table cellspacing="0" cellpadding="0" border="0" width="100%">
             <tr>
-                <td colspan="3" style="text-align: center;font-family: Arial; font-size: 12pt "><b>SURAT BUKTI PENGEMBALIAN / PENERIMAAN KEMBALI <br>
-                    PASIEN DARI RSJ GRHASIA</b></td>
+                <td height="100" colspan="2" style="text-align: center;font-family: Arial; font-size: 12pt "><b>PERJANJIAN PASIEN MELARIKAN DIRI</b></td>
             </tr>
             <tr>
                 <td>
                     <table border="0" align="center" width="100%"
-                        style="line-height: 25px;">
+                        style="line-height: 25px;text-align: justify;font-family: Arial;">
                         <tr>
-                            <td colspan="3" style="font-family: Arial">Yang bertanda tangan dibawah ini, Saya : </td>
+                            <td colspan="2" style="">Yang bertanda tangan dibawah ini, Saya : </td>
                         </tr>
                         <tr>
-                            <td width="80">Nama</td>
-                            <td colspan="2" style="text-align: justify;font-family: Arial"> : {{$detail[0]['value']}}</td>
-                        </tr>
-                        <tr>
-                            <td>Umur</td>
-                            <td colspan="2" style="text-align: justify;font-family: Arial"> : {{$detail[1]['value']}}</td>
-                        </tr>
-                        <tr>
-                            <td>Jenis Kelamin</td>
-                            <td colspan="2" style="text-align: justify;font-family: Arial"> : @if ($detail[2]['value'] == 1)Laki-Laki @else <s>Laki-Laki</s>@endif / @if ($detail[3]['value'] == 1) Perempuan @else <s>Perempuan</s>@endif</td>
+                            <td width="100">Nama</td>
+                            <td style="text-align: justify;font-family: Arial"> : {{$detail[0]['value']}}</td>
                         </tr>
                         <tr>
                             <td>Alamat</td>
-                            <td colspan="2" style="text-align: justify;font-family: Arial"> : {{$detail[4]['value']}}</td>
+                            <td style="text-align: justify;font-family: Arial"> : {{$detail[1]['value']}}</td>
                         </tr>
                         <tr>
-                            <td> . </td>
-                            <td width="150">Sesuai KTP(kartu identitas)</td>
-                            <td style="text-align: justify;font-family: Arial"> : {{$detail[5]['value']}}</td>
+                            <td>Nomor Identitas</td>
+                            <td style="text-align: justify;font-family: Arial"> : {{$detail[2]['value']}}</td>
                         </tr>
                         <tr>
-                            <td> . </td>
-                            <td>Tempat tinggal sekarang</td>
-                            <td style="text-align: justify;font-family: Arial"> : {{$detail[6]['value']}}</td>
+                            <td>Nomor Telepon</td>
+                            <td style="text-align: justify;font-family: Arial"> : {{$detail[3]['value']}}</td>
                         </tr>
                         <tr>
-                            <td colspan="3">Hubungan keluarga dengan pasien tersebut di bawah : {{$detail[7]['value']}}</td>
+                            <td colspan="2">Sebagai penanggungjawab pasien tersebut di atas, dengan ini menyatakan dengan sesungguhnya bahwa :</td>
                         </tr>
                         <tr>
-                            <td style="padding-top: 50px" colspan="3">Menyatakan bahwa pada hari ini tanggal {{ $detail[8]['value']}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">Telah menerima kembali seorang pasien</td>
-                        </tr>
-                        <tr>
-                            <td>Nama</td>
-                            <td colspan="2"> : {{$detail[9]['value']}}</td>
-                        </tr>
-                        <tr>
-                            <td>Umur</td>
-                            <td colspan="2"> : {{$detail[10]['value']}}</td>
-                        </tr>
-                        <tr>
-                            <td>Nomor RM</td>
-                            <td colspan="2"> : {{$detail[11]['value']}}</td>
-                        </tr>
-                        <tr>
-                            <td>Jenis Kelamin</td>
-                            <td colspan="2"> : {{$detail[12]['value']}}</td>
-                        </tr>
-                        <tr>
-                            <td>Alamat</td>
-                            <td colspan="2"> : {{$detail[13]['value']}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">Yang dirawat di RSJ Grhasia sejak tanggal {{$detail[14]['value']}} s/d {{$detail[15]['value']}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">Demikian surat ini saya buat dengan sebenarnya dan saya tanda tangani dihadapan petugas Rumah Sakit Jiwa Grhasia.</td>
-                        </tr>
-                        <tr >
-                            <td colspan="2" width="450" ></td>
-                            <td style="padding-top: 100px"> Yogyakarta, {{$detail[16]['value']}}</td>
+                            <td colspan="2">
+                                <table>
+                                    <tr>
+                                        <td valign="top">1. </td>
+                                        <td>Saya menyadari adanya kemungkinan pasien melakukan tindakan-tindakan yang di luar kendali atau kesadarannya. Tindakan-tindakan tersebut, 
+                                            diantaranya dapat berupa resiko melarikan diri, kecelakaan maupun keselamatan jiwanya, baik di dalam maupun di luar wilayah kerja Rumah Sakit Jiwa Grhasia DIY, 
+                                            bukanlah menjadi tanggung jawab Rumah Sakit Jiwa Grhasia DIY sepanjang tidak ditemukan unsur kelalaian dari pihak Rumah Sakit Jiwa Grhasia DIY.</td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top">2. </td>
+                                        <td>Dalam hal pasien melarikan diri, maka pihak RSJ Grhasia DIY akan melakukan upaya pencarian pasien melarikan diri tersebut, 
+                                            melaporkan kejadian perkara tersebut kepada aparat Kepolisian setempat dan kepada pihak keluarga / penanggungjawab pasien pada kesempatan pertama.</td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top">3. </td>
+                                        <td>Apabila tidak didapatkan unsur kelalaian dari petugas RSJ Grhasia DIY dan dalam waktu 3 x 24 jam terhitung sejak pasien melarikan diri, 
+                                            pasien tersebut tidak ditemukan, maka tanggungjawab selanjutnya diserahkan pada pihak keluarga / penanggungjawab.</td>
+                                    </tr>
+                                </table>
+                            </td>
                         </tr>
                     </table>
-                    
                 </td>
             </tr>
             <tr>
                 <td>
                     <table align="center" border="0" align="center" width="100%"
                         style="line-height: 15px;">
-                        <tr style="text-align: center">
-                            <td style="width: 150px">Yang menyerahkan<br>Petugas RSJ Grhasia</td>
-                            <td style="width: 100px"></td>
-                            <td style="width: 150px">Yang Menerima</td>
-                        </tr>
-                        <tr style="text-align: center">
-                            <td style="padding-top: 100px">{{substr($detail[17]['value'],strpos($detail[17]['value'], "~")+1)}}</td>
+                        <tr>
                             <td></td>
-                            <td style="padding-top: 100px">{{$detail[18]['value']}}</td>
+                            <td colspan="2" align="center" height="100">Yogyakarta, {{$detail[4]['value']}}</td>
+                        </tr>
+                        <tr style="text-align: center; margin-top: 50px">
+                            <td style="width: 150px">Penanggung Jawab Pasien</td>
+                            <td style="width: 100px">Petugas Pemberi Informasi</td>
+                            <td style="width: 150px">Saksi</td>
+                        </tr>
+                        <tr style="text-align: center; ">
+                            <td style="padding-top: 100px">{{$detail[5]['value']}}</td>
+                            {{-- <td style="padding-top: 100px">{{substr($detail[5]['value'],strpos($detail[5]['value'], "~")+1)}}</td> --}}
+                            <td style="padding-top: 100px">{{substr($detail[6]['value'],strpos($detail[6]['value'], "~")+1)}}</td>
+                            <td style="padding-top: 100px">{{$detail[7]['value']}}</td>
                         </tr>
                     </table>
                 </td>

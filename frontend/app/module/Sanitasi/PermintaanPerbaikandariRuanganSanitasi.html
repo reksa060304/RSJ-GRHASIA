@@ -69,7 +69,7 @@
                                                 <input kendo-combo-box k-data-source="listPelapor"
                                                     k-ng-model="item.pelapor" k-data-text-field="'namalengkap'"
                                                     k-filter="'contains'" k-data-value-field="'id'"
-                                                    k-auto-bind="false" />
+                                                    k-auto-bind="false" ng-disabled="disrumahTangga" />
                                             </div>
                                         </div>
                                         <!-- <div class="grid_3">
@@ -175,7 +175,7 @@
                                                         ng-model="item.cariDesc" />
                                                 </div>
                                             </div>
-                                            <div class="grid_7">
+                                            <div class="grid_7" ng-show="rumahTangga">
                                                 <div class="grid_2">
                                                     <label c-label item="item" c-label-text="Pindahkan Ke"></label>
                                                     <input kendo-combo-box k-data-source="listPindah"

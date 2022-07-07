@@ -65,7 +65,7 @@
             <div class="grid_12">
                 <input kendo-combo-box k-data-source="listPelapor" k-ng-model="item.pelapor"
                         k-data-text-field="'namalengkap'" k-filter="'contains'" k-data-value-field="'id'"
-                        k-auto-bind="false"  />
+                        k-auto-bind="false" ng-disabled="dispdti"  />
             </div>
         </div>
         <!-- <div class="grid_2">
@@ -164,7 +164,7 @@
                 <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.cariDesc" />
             </div>
         </div>
-        <div class="grid_7">
+        <div class="grid_7" ng-show="pdti">
             <div class="grid_2">
                 <label c-label item="item" c-label-text="Pindahkan Ke"></label>
                 <input kendo-combo-box k-data-source="listPindah" k-ng-model="item.pindah" k-data-text-field="'pindah'"

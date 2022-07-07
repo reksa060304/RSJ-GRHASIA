@@ -6,6 +6,12 @@ define(['initialize'], function (initialize) {
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.isRouteLoading = false;
+            $scope.ip3rs = false
+            $scope.disip3rs= true
+            $scope.item.pelapor = {
+                id: medifirstService.getPegawaiLogin().id,
+                namalengkap: medifirstService.getPegawaiLogin().namaLengkap
+            }
             var jenisForm = 0
             var tabNumber = 1
             var pegawaiUser = {}
@@ -28,7 +34,6 @@ define(['initialize'], function (initialize) {
             //$scope.item.tittle = "Daftar Tempat Tidur"
             LoadCache();
             loadCombo();
-
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('PermintaanPerbaikandariRuanganCtrl');
                 if (chacePeriode != undefined) {
@@ -43,6 +48,11 @@ define(['initialize'], function (initialize) {
                     $scope.item.tglAwal1 = new moment($scope.now).format('YYYY-MM-DD 00:00');
                     init();
                 }
+            }
+            if (medifirstService.getKelompokUser() == 'ip3rs') {
+                $scope.ip3rs = true
+                $scope.disip3rs = false
+                $scope.item.pelapor = {}
             }
             $scope.listPindah = [{
                 id:151,

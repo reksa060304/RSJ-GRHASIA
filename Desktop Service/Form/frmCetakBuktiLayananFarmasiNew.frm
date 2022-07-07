@@ -187,8 +187,8 @@ bolStrukResep = True
                           " ((spd.hargasatuan-spd.hargadiscount)*spd.qtyproduk)+spd.hargatambahan as totalbiaya, " & _
                           " pr.id as kdproduk,'rke-' || spd.resepke || ' ' || pr.namaproduk as namaprodukstandar, spd.qtyproduk as qtyhrg,spd.qtyproduk as jumlah, " & _
                           " CASE when spd.hargadiscount isnull then 0 ELSE  spd.hargadiscount * spd.qtyproduk end as totaldiscound, " & _
-                          " spd.resepke as rke,jkm.jeniskemasan,spd.qtyproduk as qtydetailresep,spd.qtydetailresep,'' AS alamatpasien,'' AS noantri, " & _
-                          " (CASE WHEN spd.hargadiscount IS NULL THEN 0 ELSE spd.hargadiscount END/spd.hargasatuan)*100 AS disc,spd.hargasatuan " & _
+                          " spd.resepke as rke,jkm.jeniskemasan,spd.qtyproduk as qtydetailresep,spd.qtydetailresep,'' AS alamatpasien,'' AS noantri, case when pp.hargasatuan =0 then 0 else" & _
+                          " (CASE WHEN spd.hargadiscount IS NULL THEN 0 ELSE spd.hargadiscount END/spd.hargasatuan)*100 end AS disc,spd.hargasatuan " & _
                           " from strukpelayanan_t sp " & _
                           " INNER JOIN strukpelayanandetail_t spd on spd.nostrukfk=sp.norec " & _
                           " left JOIN pegawai_m pg on pg.id=sp.objectpegawaipenanggungjawabfk " & _
@@ -205,7 +205,7 @@ bolStrukResep = True
                          " CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END AS jasa,pp.hargasatuan, " & _
                          " pp.jumlah AS qtyhrg,(pp.jumlah * (pp.hargasatuan-(case when pp.hargadiscount is null then 0 else pp.hargadiscount end )) )+case when pp.jasa is null then 0 else pp.jasa end as totalharga,jnskem.jeniskemasan,pgw.namalengkap, " & _
                          " CASE WHEN pp.hargadiscount IS NULL THEN 0 ELSE pp.hargadiscount * pp.jumlah END AS totaldiscound, " & _
-                         " ((pp.jumlah * pp.hargasatuan ) - (CASE when pp.hargadiscount isnull then 0 ELSE  pp.hargadiscount * pp.jumlah end))+case when pp.jasa is null then 0 else pp.jasa end as totalbiaya,pp.qtydetailresep,ap.jenis ||'-'||ap.noantri AS noantri, (CASE WHEN pp.hargadiscount IS NULL THEN 0 ELSE pp.hargadiscount END/pp.hargasatuan)*100 AS disc " & _
+                         " ((pp.jumlah * pp.hargasatuan ) - (CASE when pp.hargadiscount isnull then 0 ELSE  pp.hargadiscount * pp.jumlah end))+case when pp.jasa is null then 0 else pp.jasa end as totalbiaya,pp.qtydetailresep,ap.jenis ||'-'||ap.noantri AS noantri, case when pp.hargasatuan =0 then 0 else(CASE WHEN pp.hargadiscount IS NULL THEN 0 ELSE pp.hargadiscount END/pp.hargasatuan)*100 end AS disc " & _
                          " FROM pelayananpasien_t AS pp INNER JOIN antrianpasiendiperiksa_t AS apdp ON pp.noregistrasifk = apdp.norec " & _
                          " INNER JOIN pasiendaftar_t AS pd ON apdp.noregistrasifk = pd.norec " & _
                          " INNER JOIN pasien_m AS ps ON pd.nocmfk = ps.id " & _
@@ -239,7 +239,7 @@ bolStrukResep = True
                 .usNorec.SetUnboundFieldSource ("{ado.norec}")
                 .usProduk.SetUnboundFieldSource ("{ado.namaprodukstandar}")
                 .ucHargaSatuan.SetUnboundFieldSource ("{ado.hargasatuan}")
-                .unJml.SetUnboundFieldSource ("{ado.jumlah}")
+                .unjml.SetUnboundFieldSource ("{ado.jumlah}")
                 .usJml.SetUnboundFieldSource ("{ado.jumlah}")
                 .ucTotalHarga.SetUnboundFieldSource ("{ado.totalharga}")
                 .usDiskon.SetUnboundFieldSource ("{ado.disc}")
