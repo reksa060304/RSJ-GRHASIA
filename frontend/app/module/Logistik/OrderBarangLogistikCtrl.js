@@ -190,9 +190,59 @@ define(['initialize'], function (initialize) {
                         })
                     })
                 /* end info stok all ruangan */
+                medifirstService.get('farmasi/get-info-transfer?produk=' + $scope.item.produk.id + '&ruangan=' + $scope.item.ruanganTujuan.id).then(function (data) {
+                    var datas = data.data.data;
+                    for (let i = 0; i < datas.length; i++) {
+                        datas[i].no = i + 1;
+                    }
+                    $scope.dataGridTransfer = new kendo.data.DataSource({
+                        data: datas,
+                        pageable: true,
+                        pageSize: 5,
+                        total: datas.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {}
+                            }
+                        }
+                    })
+                })
                 GETKONVERSI(0)
+                
             }
+            $scope.columnGridTransfer = [{
+                    "field": "no",
+                    "title": "No",
+                    "width": "30px",
+                },
+                {
+                    "field": "tglpelayanan",
+                    "title": "Tgl Pelayanan",
+                    "width": "100px",
+                },
+                {
+                    "field": "namaproduk",
+                    "title": "Nama Produk",
+                    "width": "100px",
+                },
+                {
+                    "field": "namaruangan",
+                    "title": "Ruangan Pemesan",
+                    "width": "70px",
+                },
+                {
+                    "field": "qtyorder",
+                    "title": "Qty order",
+                    "width": "70px",
+                },
+                {
+                    "field": "qtyproduk",
+                    "title": "Qty kirim",
+                    "width": "70px",
+                },
 
+            ];
             function GETKONVERSI(jml) {
                 if ($scope.item.produk == undefined) {
                     return
