@@ -5686,5 +5686,26 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         $data['detail']  =$dataz;
         return $this->respond($data);
     }
-        
+    
+    public function getInformasiTransfer(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $data = \DB::select(DB::Raw("SELECT
+            kb.tglpelayanan,
+            ru.namaruangan,
+            pr.namaproduk,
+            kb.qtyorder,
+            kb.qtyproduk
+        FROM
+            kirimproduk_t kb
+            INNER JOIN ruangan_m ru ON ru.ID = kb.objectruanganfk 
+            inner join produk_m pr on pr.id = kb.objectprodukfk
+            where kb.objectruanganpengirimfk = $request[ruangan] and kb.objectprodukfk = $request[produk] and kb.kdprofile = $kdProfile and kb.statusenabled = true
+        "));
+        $result = array(
+            'data'=> $data,
+            'as'=> 'fizi'
+        );
+        return $this->respond($result);
+    }
 }
