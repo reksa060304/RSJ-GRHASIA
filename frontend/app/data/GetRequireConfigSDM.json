@@ -236,6 +236,10 @@
     {
       "nameDep": "DaftarKegiatanPembimbingCtrl",
       "urlDep": "module/SDM/Pelatihan/DaftarKegiatanPembimbingCtrl"
+    },
+    {
+      "nameDep": "MasterDataKampusCtrl",
+      "urlDep": "module/SDM/Penelitian/MasterDataKampusCtrl"
     }
   ]
 }

@@ -1069,6 +1069,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/penelitian/get-daftar-mahasiswa-aktif','SDM\SumberDayaManusiaController@getDaftarMahasiswaAktif');
             Route::get('diklat/get-tanggal-otomatis','SDM\PenelitianController@getTanggalOtomatis');
             Route::get('diklat/get-combo-diklat', 'SDM\PelatihanController@getComboDiklat');
+            Route::post('diklat/hapus-master-data-kampus','SDM\PelatihanController@hapusMasterDataKampus');
+
             // GET
 
             // POST
@@ -1140,6 +1142,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-perjanjianmelarikandiri', 'Report\ReportController@perjanjianMelarikanDiri');
           Route::get('report/diklat-cetakhasilkegiatan','Report\ReportController@cetakHasilKegiatan');
           Route::get('report/get-cetak-ketentuanranap','Report\ReportController@ketentuanRawatInap');
+          Route::get('report/get-cetak-persetujuanpembiayaan', 'Report\ReportController@persetujuanPembiayaan');
           Route::get('laboratorium/get-lap-kunjungan', 'Laboratorium\LaboratoriumController@getLaporanKunjungan');
           Route::get('laboratorium/get-combo-dokter-lab','Laboratorium\LaboratoriumController@getDokter');
 

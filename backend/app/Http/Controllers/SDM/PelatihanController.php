@@ -49,6 +49,8 @@ use DB;
 use App\Traits\Valet;
 use App\Traits\SettingDataFixedTrait;
 use App\User;
+use Webpatser\Uuid\Uuid;
+use App\Master\Pegawai;
 
 
 class PelatihanController extends ApiController {
@@ -2790,9 +2792,127 @@ class PelatihanController extends ApiController {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $jeniskegiatan = \DB::table('diklatkategori_m')->where('kdprofile', $kdProfile)
         ->where('statusenabled', true)->get();
+
+        $masterdatakampus = \DB::table('pegawai_m')->where('kdprofile', $kdProfile)
+        ->select('namalengkap','email', 'nohandphone','alamat', 'nama as namapj','usereksternal','id')
+        ->where('usereksternal', true)
+        ->where('statusenabled', true)->get();
         $result = array(
             'jeniskegiatan'=> $jeniskegiatan,
+            'masterdatakampus'=> $masterdatakampus,
         );
         return $this->respond($result);
+    }
+
+    public function saveMasterDataKampus(Request $request)
+    {
+        $dataLogin = $request->all();
+        \DB::beginTransaction();
+        $idpegawai = Pegawai::max('id') +1 ;
+        try {
+            if ($request['id']=='') {
+                $dataKampus= new Pegawai();
+                $dataKampus->id=$idpegawai;
+                $dataKampus->norec = 0;
+                $dataKampus->kdprofile= 30;
+                $keterangan = "Simpan";
+            } else {
+                $dataKampus= Pegawai::where('id', $request['id'])->where('kdprofile', 30)->where('statusenabled', true)->where('usereksternal', true)->first();
+                $keterangan = "Ubah";
+            }
+            $dataKampus->statusenabled =true;
+            $dataKampus->namalengkap= $request['namalengkap'];
+            $dataKampus->nama= $request['nama'];
+            $dataKampus->nohandphone= $request['nohandphone'];
+            $dataKampus->email= $request['email'];
+            $dataKampus->alamat= $request['alamat'];
+            $dataKampus->usereksternal=true;
+            $dataKampus->qpegawai=0;
+            $dataKampus->save();
+
+            // Log User
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= 30;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = "Master Data Kampus";
+            $logUser->keterangan = $keterangan . " Master Data Kampus";
+            $logUser->noreff = $request['norec'];
+            $logUser->referensi="Master Data Kampus";
+            $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
+            $transStatus = true;
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        
+        if ($transStatus) {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                // 'result' => $TP,
+                'as' => 'fizi',
+            );
+
+        } else {
+            $transMessage = 'Gagal';
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'message'=> $th->getMessage(),
+                'as' => 'fizi',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function hapusMasterDataKampus(Request $request)
+    {
+        // $transMessage = "";
+        try {
+            $cekuser = \DB::select(DB::raw("
+            SELECT lu.namauser FROM pegawai_m pg inner join loginuser_s lu on lu.objectpegawaifk = pg.id where pg.id=$request[id]
+            "));
+            if (count($cekuser)>0) {
+                $no = "tidak dapat dihapus";
+                $transMessage = "Data Tidak Bisa Dihapus";
+            } else{
+                $no = Pegawai::where('id', $request['id'])->where('kdprofile', 30)->where('statusenabled', true)->where('usereksternal', true)->delete();
+                $transMessage = "Data Berhasil Dihapus";
+            }
+            $transStatus = true;
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus) {
+            $transMessage = $transMessage;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                // 'result' => $TP,
+                'as' => 'fizi',
+            );
+
+        } else {
+            $transMessage = 'Gagal';
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'message'=> $th->getMessage(),
+                'as' => 'fizi',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
     }
 }

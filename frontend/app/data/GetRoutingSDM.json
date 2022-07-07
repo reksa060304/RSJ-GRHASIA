@@ -1161,5 +1161,24 @@
         "define": "MedifirstService"
       }
     ]
+  }, 
+  {
+    "name": "MasterDataKampus",
+    "url": "/MasterDataKampus",
+    "templateurl": "module/SDM/Penelitian/MasterDataKampus.html",
+    "controller": "MasterDataKampusCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
