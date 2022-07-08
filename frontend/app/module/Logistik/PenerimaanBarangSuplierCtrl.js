@@ -62,6 +62,7 @@ define(['initialize'], function (initialize) {
             var urlKirimBarangElogistic=''
             var profile =JSON.parse(localStorage.getItem('profile'))
             var kdProfileELogistic=profile.kodeexternal
+            var subtotal = 0;
             $scope.disableSppb = false;
             $scope.isPenerimaanElogistic =false
             $scope.disabledRuangan = true;
@@ -77,6 +78,7 @@ define(['initialize'], function (initialize) {
             }
 
             function LoadCache() {
+                Kosongkan();
                 // $scope.item.noTerima = 'RS/' + moment(new Date()).format('YYMM')+'____'
                 // $scope.item.noBuktiKK = '____' + '/KK/' + moment(new Date()).format('MM/YY')
                 var chacePeriode = cacheHelper.get('PenerimaanBarangSuplierCtrl');
@@ -167,13 +169,13 @@ define(['initialize'], function (initialize) {
 
             function ComboLoad() {
 
-                medifirstService.get('logistik/get-combo-logistik').then(function (dat) {
-                    $scope.listDataJabatan = dat.data.jabatan;
-                });
+                // medifirstService.get('logistik/get-combo-logistik').then(function (dat) {
+                //     $scope.listDataJabatan = dat.data.jabatan;
+                // });
 
-                medifirstService.getPart("logistik/get-combo-pegawai-logistik", true, true, 20).then(function (data) {
-                    $scope.ListDataPegawai = data;
-                });
+                // medifirstService.getPart("logistik/get-combo-pegawai-logistik", true, true, 20).then(function (data) {
+                //     $scope.ListDataPegawai = data;
+                // });
             }
 
             $scope.getProduk = function () {
@@ -323,12 +325,12 @@ define(['initialize'], function (initialize) {
                                     totSblPpn = totSblPpn + (ttlTotal-ttlDiskon);
                                     ttlPpn =  ttlPpn + parseFloat(data2[i].ppn)
                                 }
-                                $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                                 grandTotal = (ttlTotal - ttlDiskon) + ttlPpn 
-                                $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")                               
+                                $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")                               
                             });
                             $scope.columnGrid = [
                                 {
@@ -349,6 +351,11 @@ define(['initialize'], function (initialize) {
                                 {
                                     "field": "jumlah",
                                     "title": "Qty",
+                                    "width": "50px",
+                                },
+                                {
+                                    "field": "jumlahdipakai",
+                                    "title": "Qty Terpakai",
                                     "width": "50px",
                                 },
                                 {
@@ -424,6 +431,11 @@ define(['initialize'], function (initialize) {
                                 {
                                     "field": "jumlah",
                                     "title": "Qty",
+                                    "width": "50px",
+                                },
+                                {
+                                    "field": "jumlahdipakai",
+                                    "title": "Qty Terpakai",
                                     "width": "50px",
                                 },
                                 {
@@ -542,12 +554,12 @@ define(['initialize'], function (initialize) {
                                     ttlPpn = ttlPpn + (parseFloat(data2[i].ppn) * parseFloat(data2[i].jumlah))
 
                                 }
-                                $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                                 grandTotal = ttlTotal + ttlPpn - ttlDiskon
-                                $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
                             });
                         }
                         if (noOrder == 'SPK') {
@@ -585,6 +597,11 @@ define(['initialize'], function (initialize) {
                                 {
                                     "field": "jumlah",
                                     "title": "Qty",
+                                    "width": "50px",
+                                },
+                                {
+                                    "field": "jumlahdipakai",
+                                    "title": "Qty Terpakai",
                                     "width": "50px",
                                 },
                                 {
@@ -702,12 +719,12 @@ define(['initialize'], function (initialize) {
                                     ttlPpn = ttlPpn + (parseFloat(data2[i].ppn) * parseFloat(data2[i].jumlah))
 
                                 }
-                                $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                                 grandTotal = ttlTotal + ttlPpn - ttlDiskon
-                                $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
                             });
                         }
                         if (noOrder == 'SPPBDetail') {
@@ -739,6 +756,11 @@ define(['initialize'], function (initialize) {
                                 {
                                     "field": "jumlah",
                                     "title": "Qty",
+                                    "width": "50px",
+                                },
+                                {
+                                    "field": "jumlahdipakai",
+                                    "title": "Qty Terpakai",
                                     "width": "50px",
                                 },
                                 {
@@ -843,12 +865,12 @@ define(['initialize'], function (initialize) {
                                     ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].qtyprodukkonfirmasi))
                                     ttlPpn = ttlPpn + (parseFloat(data2[i].ppn) * parseFloat(data2[i].qtyprodukkonfirmasi))
                                 }
-                                $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                                 grandTotal = ttlTotal + ttlPpn - ttlDiskon
-                                $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
                             });
                         }
                     } else {
@@ -871,6 +893,11 @@ define(['initialize'], function (initialize) {
                             {
                                 "field": "jumlah",
                                 "title": "Qty",
+                                "width": "50px",
+                            },
+                            {
+                                "field": "jumlahdipakai",
+                                "title": "Qty Terpakai",
                                 "width": "50px",
                             },
                             {
@@ -958,13 +985,14 @@ define(['initialize'], function (initialize) {
                 $scope.item.keterangan = $scope.item.produk.spesifikasi;
                 $scope.item.nobatch = '-';
                 $scope.item.tglkadaluarsa = new Date();
+                
                 // if ($scope.item.ruangan == undefined) {
                 //     //alert("Pilih Ruangan terlebih dahulu!!")
                 //     return;
                 // }
                 medifirstService.get("logistik/get-data-harga?" +
                     "produkfk=" + $scope.item.produk.id +
-                    "&ruanganfk=50", true).then(function (dat) {
+                    "&ruanganfk=" + $scope.item.ruanganPenerima.id, true).then(function (dat) {
                         dataProdukDetail = dat.data.detail;
                         $scope.item.hargaSatuan = 0
                         $scope.item.hargadiskon = 0
@@ -972,6 +1000,7 @@ define(['initialize'], function (initialize) {
                         $scope.item.total = 0
                         $scope.item.jumlah = 0
                         $scope.item.hargaSatuan = dat.data.detail[0].harga
+                        $scope.item.stokReal = dat.data.detail[0].stokreal
                     });
             }
 
@@ -979,7 +1008,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.nilaiKonversi = $scope.item.satuan.nilaikonversi
                 medifirstService.get("logistik/get-data-harga?" +
                     "produkfk=" + $scope.item.produk.id +
-                    "&ruanganfk=50", true).then(function (dat) {
+                    "&ruanganfk=" + $scope.item.ruanganPenerima.id, true).then(function (dat) {
                         dataProdukDetail = dat.data.detail;
                         $scope.item.hargaSatuan = 0
                         $scope.item.hargadiskon = 0
@@ -987,6 +1016,7 @@ define(['initialize'], function (initialize) {
                         $scope.item.total = 0
                         $scope.item.jumlah = 0
                         $scope.item.hargaSatuan = dat.data.detail[0].hargapenerimaan
+                        $scope.item.stokReal = dat.data.detail[0].stokreal
                     });
             }
 
@@ -1053,8 +1083,10 @@ define(['initialize'], function (initialize) {
 
                     qty = parseFloat($scope.item.jumlah)
                     hrgsatuan = parseFloat($scope.item.hargaSatuan)
-                    ppn = parseFloat($scope.item.ppn)
                     hargadiskon = parseFloat($scope.item.hargaDiskon)
+                    $scope.item.ppn = parseFloat($scope.item.hargaSatuan - hargadiskon) * (parseFloat($scope.item.ppnpersen)/100) * qty
+                    ppn = parseFloat($scope.item.ppn)
+                    subtotal = parseFloat($scope.item.subTotaltxt)
                     subTtlSetelahDiskon = (qty * hrgsatuan) - (qty*hargadiskon)
                     $scope.item.subTotaltxt = subTtlSetelahDiskon + ppn
                 }
@@ -1069,8 +1101,9 @@ define(['initialize'], function (initialize) {
                     // $scope.item.subTotaltxt = qty*(hrgsatuan+ppn-hargadiskon)
                     qty = parseFloat($scope.item.jumlah)
                     hrgsatuan = parseFloat($scope.item.hargaSatuan)
-                    ppn = parseFloat($scope.item.ppn)
                     hargadiskon = parseFloat($scope.item.hargaDiskon)
+                    $scope.item.ppn = parseFloat($scope.item.hargaSatuan - hargadiskon) * (parseFloat($scope.item.ppnpersen)/100) * qty
+                    ppn = parseFloat($scope.item.ppn)
                     subTtlSetelahDiskon = (qty * hrgsatuan) - (qty*hargadiskon)
                     $scope.item.subTotaltxt = subTtlSetelahDiskon + ppn
                 }
@@ -1080,10 +1113,13 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     qty = parseFloat($scope.item.jumlah)
                     hrgsatuan = parseFloat($scope.item.hargaSatuan)
-                    ppn = parseFloat($scope.item.ppn)
                     hargadiskon = parseFloat($scope.item.hargaDiskon)
+                    ppn = parseFloat($scope.item.ppn)
+                    $scope.item.ppn = parseFloat($scope.item.hargaSatuan - hargadiskon) * (parseFloat($scope.item.ppnpersen)/100) * qty
+                    subtotal = parseFloat($scope.item.subTotaltxt)
                     subTtlSetelahDiskon = (qty * hrgsatuan) - (qty*hargadiskon)
                     $scope.item.subTotaltxt = subTtlSetelahDiskon + ppn
+                    
                 }
             });
 
@@ -1091,8 +1127,10 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     qty = parseFloat($scope.item.jumlah)
                     hrgsatuan = parseFloat($scope.item.hargaSatuan)
-                    ppn = parseFloat($scope.item.ppn)
                     hargadiskon = parseFloat($scope.item.hargaDiskon)
+                    ppn = parseFloat($scope.item.ppn)
+                    $scope.item.ppn = parseFloat($scope.item.hargaSatuan - hargadiskon) * (parseFloat($scope.item.ppnpersen)/100) * qty
+                    subtotal = parseFloat($scope.item.subTotaltxt)
                     subTtlSetelahDiskon = (qty * hrgsatuan) - (qty*hargadiskon)
                     $scope.item.subTotaltxt = subTtlSetelahDiskon + ppn
                 }
@@ -1103,8 +1141,8 @@ define(['initialize'], function (initialize) {
                     // $scope.item.ppn = (parseFloat($scope.item.ppnpersen)*parseFloat($scope.item.hargaSatuan))/100
                     var qtys = parseFloat($scope.item.jumlah)
                     var hrgsatuans = parseFloat($scope.item.hargaSatuan)
-
                     var hargadiskons = parseFloat($scope.item.hargaDiskon)
+                    subtotal = parseFloat($scope.item.subTotaltxt)
                     var subTtlSetelahDiskons = (qtys * hrgsatuans) - (qtys * hargadiskons)
                     $scope.item.ppn = (subTtlSetelahDiskons * parseFloat($scope.item.ppnpersen)) / 100
                 }
@@ -1130,10 +1168,10 @@ define(['initialize'], function (initialize) {
                     alert("Jumlah harus di isi!")
                     return;
                 }
-                if ($scope.item.produk == undefined) {
-                    alert("Pilih Produk terlebih dahulu!!")
-                    return;
-                }
+                // if ($scope.item.produk == undefined) {
+                //     alert("Pilih Produk terlebih dahulu!!")
+                //     return;
+                // }
                 if ($scope.item.satuan == undefined) {
                     alert("Pilih Satuan terlebih dahulu!!")
                     return;
@@ -1176,6 +1214,8 @@ define(['initialize'], function (initialize) {
                                 data.jumlahspk = data2[i].jumlahspk
                                 data.jumlahterima = data2[i].jumlahterima
                                 data.jumlah = $scope.item.jumlah
+                                data.jumlahdipakai = $scope.item.jumlahdipakai
+                                data.sisa = $scope.item.jumlah- $scope.item.jumlahdipakai
                                 data.subtotal = parseFloat($scope.item.jumlah)*parseFloat($scope.item.hargaSatuan)
                                 data.hargadiscount = String($scope.item.hargaDiskon)
                                 data.persendiscount = String($scope.item.hargaDiskonPersen)
@@ -1210,12 +1250,12 @@ define(['initialize'], function (initialize) {
                                     totSblPpn = totSblPpn + (ttlTotal-ttlDiskon);
                                     ttlPpn =  ttlPpn + parseFloat(data2[i].ppn)
                                 }
-                                $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                                 grandTotal = (ttlTotal - ttlDiskon) + ttlPpn 
-                                $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                             }
                             // break;
@@ -1238,6 +1278,8 @@ define(['initialize'], function (initialize) {
                             jumlahspk: 0,
                             jumlahterima: 0,
                             jumlah: $scope.item.jumlah,
+                            jumlahdipakai :$scope.item.jumlahdipakai,
+                            sisa : $scope.item.jumlah - $scope.item.jumlahdipakai,
                             subtotal : parseFloat($scope.item.jumlah)*parseFloat($scope.item.hargaSatuan),
                             hargadiscount: String($scope.item.hargaDiskon),
                             persendiscount: String($scope.item.hargaDiskonPersen),
@@ -1268,16 +1310,16 @@ define(['initialize'], function (initialize) {
                         totSblPpn = 0;
                         for (var i = data2.length - 1; i >= 0; i--) {
                             ttlTotal = ttlTotal + (parseFloat(data2[i].hargasatuan) * parseFloat(data2[i].jumlah))
-                            ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))                            
+                            ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))
                             totSblPpn = totSblPpn + (ttlTotal-ttlDiskon);
                             ttlPpn =  ttlPpn + parseFloat(data2[i].ppn)
                         }
-                        $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                        $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                        $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                         grandTotal = (ttlTotal - ttlDiskon) + ttlPpn 
-                        $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
                     }
                 } else if (loadSPPB == 'ya') {
                     if ($scope.item.no != undefined) {
@@ -1302,6 +1344,8 @@ define(['initialize'], function (initialize) {
                                 data.jumlahsppb = data2[i].jumlahsppb
                                 data.jumlahterima = data2[i].jumlahterima
                                 data.jumlah = $scope.item.jumlah
+                                data.jumlahdipakai = $scope.item.jumlahdipakai
+                                data.sisa = $scope.item.jumlah- $scope.item.jumlahdipakai
                                 data.subtotal = parseFloat($scope.item.jumlah)*parseFloat($scope.item.hargaSatuan)
                                 data.hargadiscount = String($scope.item.hargaDiskon)
                                 data.persendiscount = String($scope.item.hargaDiskonPersen)
@@ -1332,16 +1376,16 @@ define(['initialize'], function (initialize) {
                                 totSblPpn = 0;
                                 for (var i = data2.length - 1; i >= 0; i--) {
                                     ttlTotal = ttlTotal + (parseFloat(data2[i].hargasatuan) * parseFloat(data2[i].jumlah))
-                                    ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))                                    
+                                    ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))
                                     totSblPpn = totSblPpn + (ttlTotal-ttlDiskon);
                                     ttlPpn =  ttlPpn + parseFloat(data2[i].ppn)
                                 }
-                                $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                                 grandTotal = (ttlTotal - ttlDiskon) + ttlPpn 
-                                $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                             }
                             // break;
@@ -1363,6 +1407,8 @@ define(['initialize'], function (initialize) {
                             jumlahsppb: 0,
                             jumlahterima: 0,
                             jumlah: $scope.item.jumlah,
+                            jumlahdipakai :$scope.item.jumlahdipakai,
+                            sisa : $scope.item.jumlah - $scope.item.jumlahdipakai,
                             subtotal : parseFloat($scope.item.jumlah)*parseFloat($scope.item.hargaSatuan),
                             hargadiscount: String($scope.item.hargaDiskon),
                             persendiscount: String($scope.item.hargaDiskonPersen),
@@ -1393,16 +1439,16 @@ define(['initialize'], function (initialize) {
                         totSblPpn = 0;
                         for (var i = data2.length - 1; i >= 0; i--) {
                             ttlTotal = ttlTotal + (parseFloat(data2[i].hargasatuan) * parseFloat(data2[i].jumlah))
-                            ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))                            
+                            ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))
                             totSblPpn = totSblPpn + (ttlTotal-ttlDiskon);
                             ttlPpn =  ttlPpn + parseFloat(data2[i].ppn)
                         }
-                        $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                        $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                        $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                         grandTotal = (ttlTotal - ttlDiskon) + ttlPpn 
-                        $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
                     }
                 } else if (loadSPPBDetail == 'ya') {
                     if ($scope.item.no != undefined) {
@@ -1427,6 +1473,8 @@ define(['initialize'], function (initialize) {
                                 data.jumlahsppb = data2[i].jumlahsppb
                                 data.jumlahterima = data2[i].jumlahterima
                                 data.jumlah = $scope.item.jumlah
+                                data.jumlahdipakai = $scope.item.jumlahdipakai
+                                data.sisa = $scope.item.jumlah- $scope.item.jumlahdipakai
                                 data.subtotal = parseFloat($scope.item.jumlah)*parseFloat($scope.item.hargaSatuan)
                                 data.hargadiscount = String($scope.item.hargaDiskon)
                                 data.persendiscount = String($scope.item.hargaDiskonPersen)
@@ -1457,16 +1505,16 @@ define(['initialize'], function (initialize) {
                                 totSblPpn = 0;
                                 for (var i = data2.length - 1; i >= 0; i--) {
                                     ttlTotal = ttlTotal + (parseFloat(data2[i].hargasatuan) * parseFloat(data2[i].jumlah))
-                                    ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))                                    
+                                    ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))
                                     totSblPpn = totSblPpn + (ttlTotal-ttlDiskon);
                                     ttlPpn =  ttlPpn + parseFloat(data2[i].ppn)
                                 }
-                                $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                                 grandTotal = (ttlTotal - ttlDiskon) + ttlPpn 
-                                $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                             }
                             // break;
@@ -1488,6 +1536,8 @@ define(['initialize'], function (initialize) {
                             jumlahsppb: 0,
                             jumlahterima: 0,
                             jumlah: $scope.item.jumlah,
+                            jumlahdipakai :$scope.item.jumlahdipakai,
+                            sisa : $scope.item.jumlah - $scope.item.jumlahdipakai,
                             subtotal : parseFloat($scope.item.jumlah)*parseFloat($scope.item.hargaSatuan),
                             hargadiscount: String($scope.item.hargaDiskon),
                             persendiscount: String($scope.item.hargaDiskonPersen),
@@ -1518,16 +1568,16 @@ define(['initialize'], function (initialize) {
                         totSblPpn = 0;
                         for (var i = data2.length - 1; i >= 0; i--) {
                             ttlTotal = ttlTotal + (parseFloat(data2[i].hargasatuan) * parseFloat(data2[i].jumlah))
-                            ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))                            
+                            ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))
                             totSblPpn = totSblPpn + (ttlTotal-ttlDiskon);
                             ttlPpn =  ttlPpn + parseFloat(data2[i].ppn)
                         }
-                        $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                        $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                        $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                         grandTotal = (ttlTotal - ttlDiskon) + ttlPpn 
-                        $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
                     }
                 } else {
                     if ($scope.item.no != undefined) {
@@ -1546,6 +1596,8 @@ define(['initialize'], function (initialize) {
                                 data.satuanviewfk = $scope.item.satuan.ssid
                                 data.satuanview = $scope.item.satuan.satuanstandar
                                 data.jumlah = $scope.item.jumlah
+                                data.jumlahdipakai = $scope.item.jumlahdipakai
+                                data.sisa = $scope.item.jumlah- $scope.item.jumlahdipakai
                                 data.subtotal = parseFloat($scope.item.jumlah)*parseFloat($scope.item.hargaSatuan)
                                 data.hargadiscount = String($scope.item.hargaDiskon)
                                 data.persendiscount = String($scope.item.hargaDiskonPersen)
@@ -1576,16 +1628,16 @@ define(['initialize'], function (initialize) {
                                 totSblPpn = 0;
                                 for (var i = data2.length - 1; i >= 0; i--) {
                                     ttlTotal = ttlTotal + (parseFloat(data2[i].hargasatuan) * parseFloat(data2[i].jumlah))
-                                    ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))                                    
+                                    ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))
                                     totSblPpn = totSblPpn + (ttlTotal-ttlDiskon);
                                     ttlPpn =  ttlPpn + parseFloat(data2[i].ppn)
                                 }
-                                $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                                $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                                 grandTotal = (ttlTotal - ttlDiskon) + ttlPpn 
-                                $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                                $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                             }
                             // break;
@@ -1606,6 +1658,8 @@ define(['initialize'], function (initialize) {
                             satuanviewfk: $scope.item.satuan.ssid,
                             satuanview: $scope.item.satuan.satuanstandar,
                             jumlah: $scope.item.jumlah,
+                            jumlahdipakai :$scope.item.jumlahdipakai,
+                            sisa : $scope.item.jumlah - $scope.item.jumlahdipakai,
                             subtotal : parseFloat($scope.item.jumlah)*parseFloat($scope.item.hargaSatuan),
                             hargadiscount: String($scope.item.hargaDiskon),
                             persendiscount: String($scope.item.hargaDiskonPersen),
@@ -1636,16 +1690,16 @@ define(['initialize'], function (initialize) {
                         totSblPpn = 0;
                         for (var i = data2.length - 1; i >= 0; i--) {
                             ttlTotal = ttlTotal + (parseFloat(data2[i].hargasatuan) * parseFloat(data2[i].jumlah))
-                            ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))                           
+                            ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))
                             totSblPpn = totSblPpn + (ttlTotal-ttlDiskon);
                             ttlPpn = ttlPpn + parseFloat(data2[i].ppn)
                         }
-                        $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                        $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                        $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                         grandTotal = (ttlTotal - ttlDiskon) + ttlPpn 
-                        $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                        $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
                     }
                 }
                 Kosongkan()
@@ -1676,43 +1730,36 @@ define(['initialize'], function (initialize) {
 
 
                 $scope.item.jumlah = dataSelected.jumlah
+                $scope.item.jumlahdipakai = dataSelected.jumlahdipakai
                 $scope.item.hargaSatuan = dataSelected.hargasatuan
+                $scope.item.subTotaltxt = dataSelected.subtotal
                 var qtys = parseFloat(dataSelected.jumlah)
                 var hrgsatuans = parseFloat(dataSelected.hargasatuan)
                 var hargadiskons = parseFloat(dataSelected.hargadiscount)
+                var subtotals = parseFloat(dataSelected.subtotal)
                 var subTtlSetelahDiskons = (qtys * hrgsatuans) - (qtys * hargadiskons)
 
-                // if (dataSelected.persenppn == 0 && dataSelected.ppn == "10") {
-                //     $scope.item.ppnpersen = dataSelected.ppn
+                if (dataSelected.persenppn == 0 && dataSelected.ppn == "10") {
+                    $scope.item.ppnpersen = dataSelected.ppn
 
-                //     $scope.item.ppn = (parseFloat($scope.item.ppnpersen) * subTtlSetelahDiskons) / 100
-                // } else if (dataSelected.persenppn == "10") {
+                    $scope.item.ppn = (parseFloat($scope.item.ppnpersen) * subTtlSetelahDiskons) / 100
+                } else if (dataSelected.persenppn == "10") {
 
-                //     $scope.item.ppnpersen = dataSelected.persenppn
-                //     $scope.item.ppn = (parseFloat($scope.item.ppnpersen) * subTtlSetelahDiskons) / 100
-                // } else if (dataSelected.ppn != "10" && dataSelected.ppn != 0) {
-                //     var ppnu = 0;
-                //     var ppnu = (parseFloat(dataSelected.ppn) / subTtlSetelahDiskons) * 100
-                //     $scope.item.ppn = dataSelected.ppn
-                //     $scope.item.ppnpersen = ppnu;
-                //     //                 $scope.item.ppn = (parseFloat($scope.item.ppnpersen)*parseFloat(dataSelected.hargasatuan))/100
-                // } else {
-                //     // var ppnu = parseFloat(dataSelected.hargasatuan)/parseFloat(dataSelected.ppn)
-                //     $scope.item.ppnpersen = 0
-                //     $scope.item.ppn = 0
-                // }                
-                // $scope.item.ppn = dataSelected.ppn
-                var persenpajak = 0;
-                if (dataSelected.persenppn == 0 && dataSelected.ppn != 10) {
-                    persenpajak = (parseFloat(dataSelected.ppn)/dataSelected.hargasatuan)*100
-                }else if (dataSelected.persenppn == 0 && dataSelected.ppn == 10) {
-                    persenpajak = parseFloat(dataSelected.ppn)
-                }else{
-                    persenpajak = parseFloat(dataSelected.persenppn)
+                    $scope.item.ppnpersen = dataSelected.persenppn
+                    $scope.item.ppn = (parseFloat($scope.item.ppnpersen) * subTtlSetelahDiskons) / 100
+                } else if (dataSelected.ppn != "10" && dataSelected.ppn != 0) {
+                    var ppnu = 0;
+                    var ppnu = (parseFloat(dataSelected.ppn) / subTtlSetelahDiskons) * 100
+                    $scope.item.ppn = dataSelected.ppn
+                    $scope.item.ppnpersen = ppnu;
+                    //                 $scope.item.ppn = (parseFloat($scope.item.ppnpersen)*parseFloat(dataSelected.hargasatuan))/100
+                } else {
+                    // var ppnu = parseFloat(dataSelected.hargasatuan)/parseFloat(dataSelected.ppn)
+                    $scope.item.ppnpersen = 0
+                    $scope.item.ppn = 0
                 }
 
-                $scope.item.ppnpersen = persenpajak
-                $scope.item.ppn = dataSelected.ppn
+                // $scope.item.ppn = dataSelected.ppn
                 $scope.item.hargaDiskon = dataSelected.hargadiscount
                 $scope.item.hargaDiskonPersen = dataSelected.persendiscount
                 $scope.item.keterangan = dataSelected.keterangan
@@ -1742,9 +1789,9 @@ define(['initialize'], function (initialize) {
                 $scope.item.hargadiskon = 0
                 $scope.item.no = undefined
                 $scope.item.ppn = 0
-                $scope.item.ppnpersen = 0
                 $scope.item.hargaDiskon = 0
                 $scope.item.subTotaltxt = 0
+                $scope.item.jumlahdipakai = $scope.item.jumlah
             }
             $scope.batal = function () {
                 Kosongkan()
@@ -1928,10 +1975,10 @@ define(['initialize'], function (initialize) {
                     alert("No Terima Kosong!!")
                     return
                 }
-                if (data2.length == 0) {
-                    alert("Pilih Produk terlebih dahulu!!")
-                    return
-                }
+                // if (data2.length == 0) {
+                //     alert("Pilih Produk terlebih dahulu!!")
+                //     return
+                // }
                 if ($scope.item.TglJatuhTempo == undefined || $scope.item.TglJatuhTempo == "") {
                     alert("Tgl Jatuh Tempo Tidak Boleh Kosong!!")
                     return
@@ -1945,9 +1992,7 @@ define(['initialize'], function (initialize) {
                     .ok('Ya')
                 $mdDialog.show(confirm).then(function () {
                     $scope.SavePenerimaan();
-                    $state.go('DaftarPenerimaanBarangSuplier')
-                })  
-                   
+                })
 
             }
             var HttpClient = function () {
@@ -1968,10 +2013,15 @@ define(['initialize'], function (initialize) {
                     alert("Jumlah harus di isi!")
                     return;
                 }
+
+                if ($scope.item.jumlahdipakai != 0) {
+                    alert("Stok sudah ada yang terpakai tidak bisa dihapus")
+                    return;
+                }
                 // if ($scope.item.total == 0) {
                 //     alert("Stok tidak ada harus di isi!")
                 //     return;
-                // }
+                // }    
                 // if ($scope.item.jenisKemasan == undefined) {
                 //     alert("Pilih Jenis Kemasan terlebih dahulu!!")
                 //     return;
@@ -1980,10 +2030,10 @@ define(['initialize'], function (initialize) {
                 //     alert("Pilih Asal Produk terlebih dahulu!!")
                 //     return;
                 // }
-                if ($scope.item.produk == undefined) {
-                    alert("Pilih Produk terlebih dahulu!!")
-                    return;
-                }
+                // if ($scope.item.produk == undefined) {
+                //     alert("Pilih Produk terlebih dahulu!!")
+                //     return;
+                // }
                 if ($scope.item.satuan == undefined) {
                     alert("Pilih Satuan terlebih dahulu!!")
                     return;
@@ -1999,9 +2049,44 @@ define(['initialize'], function (initialize) {
                     for (var i = data2.length - 1; i >= 0; i--) {
                         if (data2[i].no == $scope.item.no) {
 
+                            
+
+                            data.no = $scope.item.no
+                                data.hargasatuan = String($scope.item.hargaSatuan)
+                                data.ruanganfk = $scope.item.ruanganPenerima.id
+                                data.asalprodukfk = $scope.item.asalproduk.id
+                                data.asalproduk = $scope.item.asalproduk.asalProduk
+                                data.produkfk = $scope.item.produk.id
+                                data.namaproduk = $scope.item.produk.namaproduk
+                                data.nilaikonversi = $scope.item.nilaiKonversi
+                                data.satuanstandarfk = $scope.item.satuan.ssid
+                                data.satuanstandar = $scope.item.satuan.satuanstandar
+                                data.satuanviewfk = $scope.item.satuan.ssid
+                                data.satuanview = $scope.item.satuan.satuanstandar
+                                data.jumlahspk = data2[i].jumlahspk
+                                data.jumlahterima = data2[i].jumlahterima
+                                data.jumlahdipakai = $scope.item.jumlah
+                                data.sisa = $scope.item.jumlah- $scope.item.jumlahdipakai
+                                data.jumlah = 0
+                                data.subtotal = parseFloat($scope.item.jumlah)*parseFloat($scope.item.hargaSatuan)
+                                data.hargadiscount = String($scope.item.hargaDiskon)
+                                data.persendiscount = String($scope.item.hargaDiskonPersen)
+                                data.ppn = String($scope.item.ppn)
+                                data.persenppn = String($scope.item.ppnpersen)
+                                data.total = $scope.item.subTotaltxt
+                                data.keterangan = $scope.item.keterangan
+                                data.nobatch = $scope.item.nobatch
+                                data.tglkadaluarsa = $scope.item.tglkadaluarsa
+
+                                data2[i] = data;
+                                data2.splice(i-1, 1);
+                                $scope.dataGrid = new kendo.data.DataSource({
+                                    data: data2
+                                });
+                                
                             //data2[i] = data;
                             // delete data2[i]
-                            data2.splice(i, 1);
+                            
 
                             // var subTotal = 0 ;
                             // for (var i = data2.length - 1; i >= 0; i--) {
@@ -2009,9 +2094,7 @@ define(['initialize'], function (initialize) {
                             //     data2[i].no = i+1
                             // }
                             // data2.length = data2.length -1
-                            $scope.dataGrid = new kendo.data.DataSource({
-                                data: data2
-                            });
+                            
                             // for (var i = data2.length - 1; i >= 0; i--) {
                             //     subTotal=subTotal+ parseFloat(data2[i].total)
                             // }
@@ -2025,13 +2108,13 @@ define(['initialize'], function (initialize) {
                                 ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))
                                 ttlPpn = ttlPpn + (parseFloat(data2[i].ppn) * parseFloat(data2[i].jumlah))
                             }
-                            $scope.item.total = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                            $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                            $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                            $scope.item.total = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                            $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                            $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                             var grandTotal = 0;
                             grandTotal = ttlTotal + ttlPpn - ttlDiskon
-                            $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                            $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                         }
                         // break;
@@ -2042,7 +2125,6 @@ define(['initialize'], function (initialize) {
             }
             $scope.loadELogistik = function(){
                   if($scope.item.noFaktur == undefined)return
-                      $scope.isRouteLoading =true
                     $scope.isPenerimaanElogistic =false
                         data2=[]
                     // http://localhost:8200/service/e-logistik/get-detail-penerimaan?kdprofile=35&nofaktur=FT-20020000010
@@ -2052,7 +2134,6 @@ define(['initialize'], function (initialize) {
                                 toastr.error('Penerimaan Tidak ada')
                                 return
                             }
-                             $scope.isRouteLoading =false
                             $scope.item.noTerima = data_ih.data.detailterima.nostruk
                             $scope.item.noUsulan = data_ih.data.detailterima.nousulan
                             $scope.item.noOrder = data_ih.data.detailterima.nosppb
@@ -2078,11 +2159,6 @@ define(['initialize'], function (initialize) {
                             $scope.item.TglJatuhTempo = moment(data_ih.data.detailterima.tgljatuhtempo).format('DD-MM-YYYY HH:mm');
                             kelTrans = 35
                             data2 = data_ih.data.pelayananPasien
-                               for (var i = data2.length - 1; i >= 0; i--) {
-                                   data2[i].subtotal = parseFloat(data2[i].jumlah )*parseFloat(data2[i].hargasatuan)
-                               }
-
-                             
                             $scope.dataGrid = new kendo.data.DataSource({
                                 data: data2,
                                 group: $scope.group,
@@ -2104,12 +2180,12 @@ define(['initialize'], function (initialize) {
                                 ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].jumlah))
                                 ttlPpn = ttlPpn + (parseFloat(data2[i].ppn) * parseFloat(data2[i].jumlah))
                             }
-                            $scope.item.total = parseFloat(ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                            $scope.item.totalDiskon = parseFloat(ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-                            $scope.item.totalPpn = parseFloat(ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                            $scope.item.total = parseFloat(~~ttlTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                            $scope.item.totalDiskon = parseFloat(~~ttlDiskon).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                            $scope.item.totalPpn = parseFloat(~~ttlPpn).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                             grandTotal = ttlTotal + ttlPpn - ttlDiskon
-                            $scope.item.grandTotal = parseFloat(grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                            $scope.item.grandTotal = parseFloat(~~grandTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
                             $scope.isPenerimaanElogistic =true
                     })
             }

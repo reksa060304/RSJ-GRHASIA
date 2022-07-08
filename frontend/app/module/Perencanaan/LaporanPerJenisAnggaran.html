@@ -1,0 +1,92 @@
+<!-- <div ng-controller="LaporanKematianRsCtrl"> -->
+
+    <style>
+        .k-grid .k-grid-header .k-header .k-link {
+            height: auto;
+        }
+    
+        .k-grid .k-grid-header .k-header {
+            white-space: normal;
+        }
+    
+        .k-grid .k-grid-header .k-header {
+            text-align: center;
+        }
+    </style>
+    <div ng-show="dataVOloaded">
+        <!-- <c-panel item="item" header="'Daftar Tagihan Rekanan'" disabled> -->
+        <div class="grid_12 headerBox">
+            <h1 style="color: white;">
+                <p><b>LAPORAN ANGGARAN</b></p>
+            </h1>
+        </div>
+        <div class="grid_12">
+            <div ng-cloak>
+                <md-content>
+                    <md-tabs md-dynamic-height md-border-bottom>
+                        <md-tab label="REKAP ANGGARAN TIAP SUB KEGIATAN(JENIS ANGGARAN)">
+                            <md-content class="md-padding" ng-hide="false">
+                                <div class="grid_12" style="margin-top: 25px;">
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tahun"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun"  kendo-date-picker  placeholer="YYYY" k-format="'yyyy'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tahap"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input kendo-combo-box k-ng-model="item.tahap"
+                                                k-data-text-field="'tahap'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false"
+                                                k-data-source="listTahap"  />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Terhadap"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input kendo-combo-box k-ng-model="item.terhadap"
+                                                k-data-text-field="'tahap'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false"
+                                                k-data-source="listTahap"  />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_1">
+                                        <div class="grid_12">
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <button class="primary c-button" style="margin-top: 6px" ng-click="CetakData()">Cetak</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab>
+                    </md-tabs>
+                </md-content>
+            </div>
+        </div> 
+        <div class="grid_12">
+            <div class="grid_12" style="float:right">
+                <div class="grid_10"></div>
+            </div>
+        </div>
+        <br />
+    </div>
+    <br />
+    </div>
+    <div class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
