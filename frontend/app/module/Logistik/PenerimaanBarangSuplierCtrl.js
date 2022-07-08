@@ -1878,6 +1878,13 @@ define(['initialize'], function (initialize) {
                     noOrder = $scope.item.noOrder
                 }
 
+                var jml = 0;
+                for (var i = 0; i < data2.length; i++) {
+                    if(data2[i].jumlah != 0){
+                        jml++
+                    }
+                }
+
                 var struk = {
                     nostruk: norecTerima,
                     noorder: noOrder,
@@ -1894,7 +1901,7 @@ define(['initialize'], function (initialize) {
                     objectpegawaipenanggungjawabfk: pegawaiPembuat,
                     pegawaimenerimafk: $scope.item.pegawaiPenerima.id,
                     namapegawaipenerima: $scope.item.pegawaiPenerima.namalengkap,
-                    qtyproduk: data2.length,
+                    qtyproduk: jml,
                     totalharusdibayar: grandTotal,
                     totalppn: ttlPpn,
                     totaldiscount: ttlDiskon,
@@ -2065,9 +2072,9 @@ define(['initialize'], function (initialize) {
                                 data.satuanview = $scope.item.satuan.satuanstandar
                                 data.jumlahspk = data2[i].jumlahspk
                                 data.jumlahterima = data2[i].jumlahterima
-                                data.jumlahdipakai = $scope.item.jumlah
-                                data.sisa = $scope.item.jumlah- $scope.item.jumlahdipakai
                                 data.jumlah = 0
+                                data.jumlahdipakai = 0
+                                data.sisa = 0
                                 data.subtotal = parseFloat($scope.item.jumlah)*parseFloat($scope.item.hargaSatuan)
                                 data.hargadiscount = String($scope.item.hargaDiskon)
                                 data.persendiscount = String($scope.item.hargaDiskonPersen)
@@ -2079,7 +2086,7 @@ define(['initialize'], function (initialize) {
                                 data.tglkadaluarsa = $scope.item.tglkadaluarsa
 
                                 data2[i] = data;
-                                data2.splice(i-1, 1);
+                                //data2.splice(i-1, 1);
                                 $scope.dataGrid = new kendo.data.DataSource({
                                     data: data2
                                 });

@@ -3649,7 +3649,8 @@ class LogistikController extends ApiController{
                 'spd.qtyproduk as jumlah', 'spd.hargadiscount', 'spd.hargappn', 'spd.hargasatuan', 'spd.objectasalprodukfk',
                 'ap.asalproduk', 'spd.persendiscount', 'spd.persenppn', 'spd.keteranganlainnya', 'spd.nobatch', 'spd.tglkadaluarsa',
                 'kp.id as kpid', 'kp.kelompokproduk')
-            ->where('sp.kdprofile',$idProfile);
+            ->where('sp.kdprofile',$idProfile)
+            ->where('spd.qtyproduk','!=', 0);
 
         if (isset($request['norec']) && $request['norec'] != "" && $request['norec'] != "undefined") {
             $data = $data->where('sp.norec', '=', $request['norec']);
@@ -4762,137 +4763,141 @@ class LogistikController extends ApiController{
 
             $qtyJumlah =0;
             $qtyJumlahSisa = 0;
-            foreach ($req['details'] as $item) {
-                $qtyJumlah=0;
-                $qtyJumlah = (float)$item['jumlah'] * (float)$item['nilaikonversi'];
-                $qtyJumlahSisa = (float)$item['sisa'] * (float)$item['nilaikonversi'];
-                $SPD = new StrukPelayananDetail();
-                $norecKS = $SPD->generateNewId();
-                $SPD->norec = $norecKS;
-                $SPD->kdprofile = $idProfile;
-                $SPD->statusenabled = true;
-                $SPD->nostrukfk = $SP->norec;
-                $SPD->objectasalprodukfk = $request['struk']['asalproduk']; //$item['asalprodukfk'];
-                $SPD->objectprodukfk = $item['produkfk'];
-                $SPD->objectruanganfk = $req['struk']['ruanganfk'];
-                $SPD->objectruanganstokfk = $req['struk']['ruanganfk'];
-                $SPD->objectsatuanstandarfk = $item['satuanstandarfk'];
-                $SPD->hargadiscount = $item['hargadiscount'];
-                $SPD->hargadiscountgive = 0;
-                $SPD->hargadiscountsave = 0;
-                $SPD->harganetto = $item['hargasatuan'];
-                $SPD->hargapph = 0;
-                $SPD->hargappn = $item['ppn'];
-                $SPD->hargasatuan = $item['hargasatuan'];
-                $SPD->hasilkonversi = $item['nilaikonversi'];
-                $SPD->namaproduk = $item['namaproduk'];
-                $SPD->keteranganlainnya = $item['keterangan'];
-                $SPD->hargasatuandijamin = 0;
-                $SPD->hargasatuanppenjamin = 0;
-                $SPD->hargatambahan = 0;
-                $SPD->hargasatuanpprofile = 0;
-                $SPD->isonsiteservice = 0;
-                $SPD->kdpenjaminpasien = 0;
-                $SPD->persendiscount = $item['persendiscount'];
-                $SPD->persenppn = $item['persenppn'];
-                $SPD->qtyproduk = $item['jumlah'];
-                $SPD->qtyprodukoutext = 0;
-                $SPD->qtyprodukoutint = 0;
-                $SPD->qtyprodukretur = 0;
-                $SPD->satuan = '-'; //$item['satuanstandar'];;
-                $SPD->satuanstandar = $item['satuanviewfk'];
-                $SPD->tglpelayanan = date('Y-m-d H:i:s', strtotime($req['struk']['tglstruk'])); //$req['struk']['tglstruk'];
-                $SPD->is_terbayar = 0;
-                $SPD->linetotal = 0;
-                $SPD->tglkadaluarsa = $item['tglkadaluarsa'];
-                $SPD->nobatch = $item['nobatch'];
-                $SPD->save();
-
-                $saldoAwalIns = 0;
-                $dataSaldoAwal = collect(DB::select("
-                    select sum(qtyproduk) as qty from stokprodukdetail_t
-                    where kdprofile = $idProfile
-                    and objectruanganfk = $item[ruanganfk]
-                    and objectprodukfk = $item[produkfk]
-                "))->first();
-
-                $dataSort = DB::table('stokprodukdetail_t')
-                    ->select(DB::raw("
-                                norec,qtyproduk,sort
-                            "))
-                    ->where('kdprofile', $idProfile)
-                    ->where('objectruanganfk', $item['ruanganfk'])
-                    ->where('objectprodukfk', $item['produkfk'])
-                    ->get();
-
-                $sort = null;
-                $norec = null;
-                foreach ($dataSort as $itm) {
-                    if ($itm->qtyproduk <= 0) {
-                        $norec = $itm->norec;
+            
+                foreach ($req['details'] as $item) {
+                    if(($request['struk']['nostruk'] != '' && $item['jumlah'] != 0 && $item['sisa'] != 0) || ($request['struk']['nostruk'] == '' && $item['jumlah'] != 0 && $item['sisa'] != 0) || ($request['struk']['nostruk'] != '' && $item['jumlah'] == 0 && $item['sisa'] == 0)){
+                    $qtyJumlah=0;
+                    $qtyJumlah = (float)$item['jumlah'] * (float)$item['nilaikonversi'];
+                    $qtyJumlahSisa = (float)$item['sisa'] * (float)$item['nilaikonversi'];
+                    $SPD = new StrukPelayananDetail();
+                    $norecKS = $SPD->generateNewId();
+                    $SPD->norec = $norecKS;
+                    $SPD->kdprofile = $idProfile;
+                    $SPD->statusenabled = true;
+                    $SPD->nostrukfk = $SP->norec;
+                    $SPD->objectasalprodukfk = $request['struk']['asalproduk']; //$item['asalprodukfk'];
+                    $SPD->objectprodukfk = $item['produkfk'];
+                    $SPD->objectruanganfk = $req['struk']['ruanganfk'];
+                    $SPD->objectruanganstokfk = $req['struk']['ruanganfk'];
+                    $SPD->objectsatuanstandarfk = $item['satuanstandarfk'];
+                    $SPD->hargadiscount = $item['hargadiscount'];
+                    $SPD->hargadiscountgive = 0;
+                    $SPD->hargadiscountsave = 0;
+                    $SPD->harganetto = $item['hargasatuan'];
+                    $SPD->hargapph = 0;
+                    $SPD->hargappn = $item['ppn'];
+                    $SPD->hargasatuan = $item['hargasatuan'];
+                    $SPD->hasilkonversi = $item['nilaikonversi'];
+                    $SPD->namaproduk = $item['namaproduk'];
+                    $SPD->keteranganlainnya = $item['keterangan'];
+                    $SPD->hargasatuandijamin = 0;
+                    $SPD->hargasatuanppenjamin = 0;
+                    $SPD->hargatambahan = 0;
+                    $SPD->hargasatuanpprofile = 0;
+                    $SPD->isonsiteservice = 0;
+                    $SPD->kdpenjaminpasien = 0;
+                    $SPD->persendiscount = $item['persendiscount'];
+                    $SPD->persenppn = $item['persenppn'];
+                    $SPD->qtyproduk = $item['jumlah'];
+                    $SPD->qtyprodukoutext = 0;
+                    $SPD->qtyprodukoutint = 0;
+                    $SPD->qtyprodukretur = 0;
+                    $SPD->satuan = '-'; //$item['satuanstandar'];;
+                    $SPD->satuanstandar = $item['satuanviewfk'];
+                    $SPD->tglpelayanan = date('Y-m-d H:i:s', strtotime($req['struk']['tglstruk'])); //$req['struk']['tglstruk'];
+                    $SPD->is_terbayar = 0;
+                    $SPD->linetotal = 0;
+                    $SPD->tglkadaluarsa = $item['tglkadaluarsa'];
+                    $SPD->nobatch = $item['nobatch'];
+                    $SPD->save();
+    
+                    $saldoAwalIns = 0;
+                    $dataSaldoAwal = collect(DB::select("
+                        select sum(qtyproduk) as qty from stokprodukdetail_t
+                        where kdprofile = $idProfile
+                        and objectruanganfk = $item[ruanganfk]
+                        and objectprodukfk = $item[produkfk]
+                    "))->first();
+    
+                    $dataSort = DB::table('stokprodukdetail_t')
+                        ->select(DB::raw("
+                                    norec,qtyproduk,sort
+                                "))
+                        ->where('kdprofile', $idProfile)
+                        ->where('objectruanganfk', $item['ruanganfk'])
+                        ->where('objectprodukfk', $item['produkfk'])
+                        ->get();
+    
+                    $sort = null;
+                    $norec = null;
+                    foreach ($dataSort as $itm) {
+                        if ($itm->qtyproduk <= 0) {
+                            $norec = $itm->norec;
+                        }
+                    }
+    
+                    $saldoAwalIns = $dataSaldoAwal->qty + $qtyJumlahSisa;//$qtyJumlah;
+                    $sort = DB::table('stokprodukdetail_t')
+                        ->where('kdprofile', $idProfile)
+                        ->where('objectruanganfk', $req['struk']['ruanganfk'])
+                        ->where('objectprodukfk', $item['produkfk'])
+                        ->where('nostrukterimafk', $SPD->norec)
+                        ->update([
+                            "sort" => null
+                        ]);
+    
+                    //## StokProdukDetail
+                    $StokPD = new StokProdukDetail();
+                    $norecStokPD = $StokPD->generateNewId();
+                    $StokPD->norec = $norecKS;
+                    $StokPD->kdprofile = $idProfile;
+                    $StokPD->statusenabled = true;
+    
+                    $StokPD->objectasalprodukfk = $request['struk']['asalproduk']; //$item['asalprodukfk'];
+                    $StokPD->hargadiscount = 0;
+                    $diskon = (((float)$item['persendiscount']) * (float)$item['hargasatuan']) / 100;
+                    $hargaStlhDiskon = (float)$item['hargasatuan'] - $diskon;
+                    $ppn = ((float) $item['persenppn'] * $hargaStlhDiskon) / 100;
+                    $StokPD->harganetto1 = ($hargaStlhDiskon + $ppn) / (float)$item['nilaikonversi'];
+                    // $StokPD->harganetto1 = ((float)$item['hargasatuan'] + (float)$item['ppn']) / (float)$item['nilaikonversi'];
+                    $StokPD->harganetto2 = ((float)$item['hargasatuan']) / (float)$item['nilaikonversi'];
+                    $StokPD->persendiscount = 0;
+                    $StokPD->objectprodukfk = $item['produkfk'];
+                    $StokPD->qtyproduk = $qtyJumlahSisa;//$qtyJumlah;
+                    $StokPD->qtyprodukonhand = 0;
+                    $StokPD->qtyprodukoutext = 0;
+                    $StokPD->qtyprodukoutint = 0;
+                    $StokPD->objectruanganfk = $req['struk']['ruanganfk'];
+                    $StokPD->nostrukterimafk = $SP->norec;
+                    $StokPD->nobatch = $item['nobatch'];
+                    $StokPD->objectstrukpelayanandetail = $SPD->norec;
+                    $StokPD->tglkadaluarsa = $item['tglkadaluarsa'];
+                    $StokPD->tglpelayanan = date('Y-m-d H:i:s', strtotime($req['struk']['tglstruk'])); //$req['struk']['tglstruk'];
+                    $StokPD->sort = 1;
+                    $StokPD->save();
+    
+                    //## KartuStok
+                    $newKS = new KartuStok();
+                    $norecKS = $newKS->generateNewId();
+                    $newKS->norec = $norecKS;
+                    $newKS->kdprofile = $idProfile;
+                    $newKS->statusenabled = true;
+                    $newKS->jumlah = $qtyJumlahSisa;//$qtyJumlah;
+                    $newKS->keterangan = 'Penerimaan Barang Suplier. No Terima. ' . $noStruk . ' Faktur No.' . $req['struk']['nofaktur'] . ' ' . $req['struk']['namarekanan'];
+                    $newKS->produkfk = $item['produkfk'];
+                    $newKS->ruanganfk = $req['struk']['ruanganfk'];
+                    $newKS->saldoawal = (float)$saldoAwalIns;
+                    $newKS->status = 1;
+                    $newKS->tglinput = date('Y-m-d H:i:s'); //$r_SR['tglresep'];//$r_SR['tglresep']->format('Y-m-d H:i:s');
+                    $newKS->tglkejadian = date('Y-m-d H:i:s'); //$r_SR['tglresep'];// $r_SR['tglresep']->format('Y-m-d H:i:s');
+                    $newKS->nostrukterimafk = $SP->norec;
+                    $newKS->norectransaksi = $SP->norec;
+                    $newKS->tabletransaksi = 'strukpelayanan_t';
+                    $newKS->flagfk = 1;
+                    $newKS->save();
                     }
                 }
-
-                $saldoAwalIns = $dataSaldoAwal->qty + $qtyJumlahSisa;//$qtyJumlah;
-                $sort = DB::table('stokprodukdetail_t')
-                    ->where('kdprofile', $idProfile)
-                    ->where('objectruanganfk', $req['struk']['ruanganfk'])
-                    ->where('objectprodukfk', $item['produkfk'])
-                    ->where('nostrukterimafk', $SPD->norec)
-                    ->update([
-                        "sort" => null
-                    ]);
-
-                //## StokProdukDetail
-                $StokPD = new StokProdukDetail();
-                $norecStokPD = $StokPD->generateNewId();
-                $StokPD->norec = $norecKS;
-                $StokPD->kdprofile = $idProfile;
-                $StokPD->statusenabled = true;
-
-                $StokPD->objectasalprodukfk = $request['struk']['asalproduk']; //$item['asalprodukfk'];
-                $StokPD->hargadiscount = 0;
-                $diskon = (((float)$item['persendiscount']) * (float)$item['hargasatuan']) / 100;
-                $hargaStlhDiskon = (float)$item['hargasatuan'] - $diskon;
-                $ppn = ((float) $item['persenppn'] * $hargaStlhDiskon) / 100;
-                $StokPD->harganetto1 = ($hargaStlhDiskon + $ppn) / (float)$item['nilaikonversi'];
-                // $StokPD->harganetto1 = ((float)$item['hargasatuan'] + (float)$item['ppn']) / (float)$item['nilaikonversi'];
-                $StokPD->harganetto2 = ((float)$item['hargasatuan']) / (float)$item['nilaikonversi'];
-                $StokPD->persendiscount = 0;
-                $StokPD->objectprodukfk = $item['produkfk'];
-                $StokPD->qtyproduk = $qtyJumlahSisa;//$qtyJumlah;
-                $StokPD->qtyprodukonhand = 0;
-                $StokPD->qtyprodukoutext = 0;
-                $StokPD->qtyprodukoutint = 0;
-                $StokPD->objectruanganfk = $req['struk']['ruanganfk'];
-                $StokPD->nostrukterimafk = $SP->norec;
-                $StokPD->nobatch = $item['nobatch'];
-                $StokPD->objectstrukpelayanandetail = $SPD->norec;
-                $StokPD->tglkadaluarsa = $item['tglkadaluarsa'];
-                $StokPD->tglpelayanan = date('Y-m-d H:i:s', strtotime($req['struk']['tglstruk'])); //$req['struk']['tglstruk'];
-                $StokPD->sort = 1;
-                $StokPD->save();
-
-                //## KartuStok
-                $newKS = new KartuStok();
-                $norecKS = $newKS->generateNewId();
-                $newKS->norec = $norecKS;
-                $newKS->kdprofile = $idProfile;
-                $newKS->statusenabled = true;
-                $newKS->jumlah = $qtyJumlahSisa;//$qtyJumlah;
-                $newKS->keterangan = 'Penerimaan Barang Suplier. No Terima. ' . $noStruk . ' Faktur No.' . $req['struk']['nofaktur'] . ' ' . $req['struk']['namarekanan'];
-                $newKS->produkfk = $item['produkfk'];
-                $newKS->ruanganfk = $req['struk']['ruanganfk'];
-                $newKS->saldoawal = (float)$saldoAwalIns;
-                $newKS->status = 1;
-                $newKS->tglinput = date('Y-m-d H:i:s'); //$r_SR['tglresep'];//$r_SR['tglresep']->format('Y-m-d H:i:s');
-                $newKS->tglkejadian = date('Y-m-d H:i:s'); //$r_SR['tglresep'];// $r_SR['tglresep']->format('Y-m-d H:i:s');
-                $newKS->nostrukterimafk = $SP->norec;
-                $newKS->norectransaksi = $SP->norec;
-                $newKS->tabletransaksi = 'strukpelayanan_t';
-                $newKS->flagfk = 1;
-                $newKS->save();
-            }
+            
             //***** Struk Realisasi *****
             $datanorecSR = '';
             if ($req['struk']['norecrealisasi'] == '') {
@@ -5534,7 +5539,8 @@ class LogistikController extends ApiController{
                     from strukpelayanandetail_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
-                    where spd.kdprofile = $idProfile and nostrukfk=:norec"),
+                    where spd.kdprofile = $idProfile and nostrukfk=:norec
+                    and spd.qtyproduk != 0"),
                 array(
                     'norec' => $item->norec,
                 )
