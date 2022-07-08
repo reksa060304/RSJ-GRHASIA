@@ -9,23 +9,17 @@ define(['initialize'], function (initialize) {
             var jenisForm = 0
             var tabNumber = 1
             var pegawaiUser = {}
-            // if ($state.params.jenis == "1") {
-            //     $scope.item.title = 'Manajemen Kebersihan Tempat Tidur'
-            //     jenisForm = 16
-            // }
-            // if ($state.params.jenis == "2") {
-            //     $scope.item.title = 'Manajemen Kebersihan Area RS'
-            //     jenisForm = 35
-            // }
-            // if ($state.params.jenis == "3") {
-            //     $scope.item.title = 'Manajemen Pest Control'
-            //     jenisForm = 14
-            // }
-            // if ($state.params.jenis == "4") {
-            //     $scope.item.title = 'Manajemen Saluran Air Limbah'
-            //     jenisForm = 18
-            // }
-            //$scope.item.tittle = "Daftar Tempat Tidur"
+            $scope.rumahTangga = false
+            $scope.disrumahTangga = true
+            $scope.item.pelapor = {
+                id: medifirstService.getPegawaiLogin().id,
+                namalengkap: medifirstService.getPegawaiLogin().namaLengkap
+            }
+            if (medifirstService.getKelompokUser() == 'rumahTangga') {
+                $scope.rumahTangga = true
+                $scope.disrumahTangga = false
+                $scope.item.pelapor = {}
+            }
             LoadCache();
             loadCombo();
             $scope.listPindah = [{

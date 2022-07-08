@@ -424,6 +424,308 @@ define(['initialize'], function (initialize) {
                 })
             }
 
+            $scope.hasil = function (criteria) {
+                if ($scope.dataSelected == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+                // $scope.isRouteLoading = true
+                $scope.sourceHasilRad = new kendo.data.DataSource({
+                    data: [],
+                    pageSize: 10
+                });
+                if (criteria == 1) {
+                    $scope.showRadiologi = false
+                    $scope.ruanganMana = 'lab'
+                } else {
+                    $scope.ruanganMana = 'rad'
+                    $scope.showRadiologi = true
+                }
+
+
+                var tanggal = $scope.now;
+                var tanggalLahir = new Date($scope.dataSelected.tgllahir);
+                var umur = dateHelper.CountAge(tanggalLahir, tanggal);
+                $scope.dataSelected.umur = umur.year + ' thn ' + umur.month + ' bln ' + umur.day + ' hari';
+                $scope.popupRad = $scope.dataSelected
+                // managePhp.getData('laporan/get-order-' + $scope.ruanganMana + '?noregistrasi='
+                medifirstService.get('registrasi/daftar-registrasi/get-daftar-order-hasil-' + $scope.ruanganMana + '?noregistrasi=' +
+                    $scope.dataSelected.noregistrasi).then(function (e) {
+                    for (var i = e.data.daftar.length - 1; i >= 0; i--) {
+                        e.data.daftar[i].no = i + 1
+                    }
+                    if (criteria == 2) {
+                        for (var i = 0; i < e.data.daftar.length; i++) {
+                            let details = e.data.daftar[i].details;
+                            let risorder = e.data.daftar[i].risorder;
+                            for (let yy = 0; yy < details.length; yy++) {
+                                for (let zz = 0; zz < risorder.length; zz++) {
+                                    if (details[yy].norecopfk === risorder[zz].norec_op_fk) {
+                                        e.data.daftar[i].details[yy].radiologiId = risorder[zz].patient_id + '-' + risorder[zz].order_cnt
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    $scope.isRouteLoading = false
+                    $scope.sourceHasilRad = new kendo.data.DataSource({
+                        data: e.data.daftar,
+                        pageSize: 10
+                    });
+                });
+                $scope.popUpHasilRad.center().open()
+            }
+            $scope.columnHasilRad = [{
+                    "field": "no",
+                    "title": "No",
+                    "width": "20px",
+                },
+                {
+                    "field": "tglorder",
+                    "title": "Tgl Order",
+                    "width": "50px",
+                },
+                {
+                    "field": "noorder",
+                    "title": "No Order",
+                    "width": "60px",
+                },
+                {
+                    "field": "dokter",
+                    "title": "Dokter",
+                    "width": "100px"
+                },
+                {
+                    "field": "namaruangantujuan",
+                    "title": "Ruangan",
+                    "width": "100px",
+                },
+                {
+                    "field": "statusorder",
+                    "title": "Keterangan",
+                    "width": "80px",
+                }
+            ];
+            $scope.detailHasilRad = function (dataItem) {
+                return {
+                    dataSource: new kendo.data.DataSource({
+                        data: dataItem.details
+                    }),
+                    columns: [{
+                            field: "namaproduk",
+                            title: "Deskripsi",
+                            width: "300px"
+                        },
+                        {
+                            field: "qtyproduk",
+                            title: "Qty",
+                            width: "100px"
+                        }, {
+                            "command": [{
+                                text: "Lihat Hasil",
+                                click: hasilRadDetil,
+                                imageClass: "k-icon k-i-download"
+                            }],
+                            hidden: !$scope.showRadiologi,
+                        }
+                    ]
+                };
+            };
+            var hasilRadDetil = function (e) {
+                e.preventDefault();
+                var tr = $(e.target).closest("tr");
+                var dataItem = this.dataItem(tr);
+                if (dataItem.radiologiId === undefined || dataItem.radiologiId === null || dataItem.radiologiId === '') {
+                    toastr.warning('Hasil belum ada', 'Peringatan')
+                } else {
+                    // syamsu
+                    var datauserlogin = JSON.parse(localStorage.getItem('datauserlogin'));
+
+                    var patienIdMr = dataItem.radiologiId.replace('null', '1')
+                    var client = new HttpClient();
+
+                    let viewer = null
+
+                    var errorFunc = function () {
+                        toastr.error('Ada kesalahan pada jaringan ke server', 'Kesalahan')
+                    }
+
+                    let awal = true
+
+                    var noMrFunc = function (response) {
+                        if (response === undefined || response === null || response == '') {
+                            if (awal) {
+                                awal = false
+                                client.get(config.urlPACSEngine + '/dcm4chee-arc/aets/TRANSMEDIC/rs/' +
+                                    'studies?limit=1&includefield=all&offset=0&PatientID=' + patienIdMr.split('-')[0],
+                                    noMrFunc, errorFunc)
+                            } else {
+                                toastr.warning('Hasil foto belum dikirim ke PACS', 'Peringatan')
+                            }
+                        } else {
+                            let data = JSON.parse(response)
+                            viewer = data[0]["0020000D"].Value[0]
+                            window.open(config.urlPACSViewer + "/viewer/" + datauserlogin.id + "/" + dataItem.norecopfk + "/" + dataItem.noorder + "/" + viewer, "pacs");
+                        }
+                    }
+
+                    client.get(config.urlPACSEngine + '/dcm4chee-arc/aets/TRANSMEDIC/rs/' +
+                        'studies?limit=1&includefield=all&offset=0&PatientID=' + patienIdMr,
+                        noMrFunc, errorFunc)
+                    // syamsu
+                }
+            }
+            $scope.tutup = function () {
+                $scope.popUpHasilRad.close()
+            }
+            $scope.lihatHasilLab = function () {
+                if ($scope.dataHasilRad == undefined) {
+                    toastr.error('Pilih data dulu');
+                    return
+                }
+                // var arrStr = {
+                //     0: $scope.dataSelected.nocm,
+                //     1: $scope.dataSelected.namapasien,
+                //     2: $scope.resDataAPD.jeniskelamin,
+                //     3: $scope.dataSelected.noregistrasi,
+                //     4: $scope.dataSelected.umur,
+                //     5: $scope.dataSelected.kelompokpasien,
+                //     6: $scope.dataSelected.tglregistrasi,
+                //     7: $scope.resDataAPD.norec_apd,
+                //     8: $scope.dataSelected.norec_pd,
+                //     9: $scope.resDataAPD.idkelas,
+                //     10: $scope.resDataAPD.namakelas,
+                //     11: $scope.resDataAPD.objectruanganfk,
+                //     12: $scope.resDataAPD.namaruangan + '`',
+                //     13: '',
+                //     14: null,
+                //     15: [],
+                // }
+
+                // cacheHelper.set('chaceHasilLab2', arrStr);
+                $state.go('HasilLaboratorium', {
+                    // norecPd: $scope.dataHasilRad.norecpd,
+                    noOrder: $scope.dataHasilRad.noorder,
+                    // norecApd: $scope.resDataAPD.norec_apd,
+                })
+
+            }
+            $scope.HasilExpertise = function () {
+                if ($scope.dataSelected == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+
+                $scope.sourceExpRad = new kendo.data.DataSource({
+                    data: [],
+                    pageSize: 10
+                });
+
+                var tanggal = $scope.now;
+                var tanggalLahir = new Date($scope.dataSelected.tgllahir);
+                var umur = dateHelper.CountAge(tanggalLahir, tanggal);
+                $scope.dataSelected.umur = umur.year + ' thn ' + umur.month + ' bln ' + umur.day + ' hari';
+                $scope.popupExp = $scope.dataSelected
+                medifirstService.get('registrasi/daftar-registrasi/get-daftar-expertise-rad?noregistrasi=' +
+                    $scope.dataSelected.noregistrasi).then(function (e) {
+                    for (var i = e.data.daftar.length - 1; i >= 0; i--) {
+                        e.data.daftar[i].no = i + 1
+                    }
+                    $scope.isRouteLoading = false
+                    $scope.sourceExpRad = new kendo.data.DataSource({
+                        data: e.data.daftar,
+                        pageSize: 10
+                    });
+                });
+                $scope.popUpExpRad.center().open();
+            }
+            $scope.tutupExp = function () {
+                HapusExp();
+            }
+            function HapusExp() {
+                $scope.popupExp = {}
+                $scope.sourceExpRad = new kendo.data.DataSource({
+                    data: [],
+                    pageSize: 10
+                });
+                $scope.popUpExpRad.close();
+            }
+            $scope.columnExpRad = [{
+                    "field": "no",
+                    "title": "No",
+                    "width": "20px",
+                },
+                {
+                    "field": "tanggal",
+                    "title": "Tgl Order",
+                    "width": "50px",
+                },
+                {
+                    "field": "noorder",
+                    "title": "No Order",
+                    "width": "60px",
+                },
+                {
+                    "field": "namaproduk",
+                    "title": "Layanan",
+                    "width": "120px",
+                },
+                {
+                    "field": "namalengkap",
+                    "title": "Dokter",
+                    "width": "100px"
+                },
+                {
+                    "field": "namaruangan",
+                    "title": "Ruangan",
+                    "width": "100px",
+                }
+            ];
+            $scope.lihatHasilExpertasi = function () {
+                if ($scope.dataExpRad == undefined) {
+                    window.messageContainer.error("Pilih Data Dulu!");
+                    return;
+                }
+                $scope.norecHasilRadiologi = ''
+                $scope.item.namaPelayanan = $scope.dataExpRad.namaproduk
+                $scope.item.dokters = $scope.dataExpRad.namalengkap
+                medifirstService.get('radiologi/get-hasil-radiologi?norec_pp=' + $scope.dataExpRad.norec_pp + '&idproduk=' + $scope.dataExpRad.produkfk).then(function (e) {
+                    if (e.data.length > 0) {
+                        $scope.norecHasilRadiologi = e.data[0].norec
+                        $scope.item.nofoto = e.data[0].nofoto
+                        $scope.item.tglInput = new Date(e.data[0].tanggal)
+                        $scope.item.dokter = {
+                            id: e.data[0].pegawaifk,
+                            namalengkap: e.data[0].namalengkap
+                        }
+                        $scope.item.keterangan = e.data[0].keterangan.replace(/~/g, "\n")
+                    }
+                    $scope.popUpEkpertise.center().open();
+                })
+
+                medifirstService.get('radiologi/get-ekspertise?norec_pp=' + $scope.dataExpRad.norec_pp).then(function (e) {
+                    if (e.data.status) {
+                        if (e.data.data.list.length > 0) {
+                            $scope.cekhasilrad = false;
+                            $scope.listNamaGambar = e.data.data.list;
+                            $scope.itemimg.gambar = {
+                                norec: e.data.data.list[0].norec,
+                                filename: e.data.data.list[0].filename
+                            }
+                            $scope.itemimg.keterangan = e.data.data.list[0].keterangan
+                            var temp = e.data.data.list[0].filename.slice(0, e.data.data.list[0].filename.indexOf('.'))
+                            $scope.itemimg.img = config.urlPACSJpeg + "/service/medifirst2000/radiologi/images/pacs/" + temp + "/jpg"
+                        }
+                    } else {
+                        $scope.cekhasilrad = true;
+                        $scope.itemimg.img = "./images/noimage.png"
+                        window.messageContainer.error("Belum ada Ekspertise");
+                    }
+                }).error(function (err) {
+                    $scope.item.img = "./images/noimage.png"
+                });
+            }
             //***********************************
 
         }

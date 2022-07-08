@@ -2447,11 +2447,10 @@ public function deleteDataCuti(Request $request){
     }
     public function savePesertaDidik(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        
+        $dataLogin = $request->all();
         $data = '';
         try{
             
-        // var_dump($request->file('image'));
             $TP = new PesertaDidik();
             $TP->kdprofile = $kdProfile;
             $TP->norec = $TP->generateNewId();
@@ -2461,23 +2460,34 @@ public function deleteDataCuti(Request $request){
             $TP->nama = $request['nama'];
             $TP->nim = $request['nim'];
             $TP->nomorhp = $request['nomorhp'];
-            // $TP->objectruanganlastfk = $request['objectruanganlastfk'];
-            // $TP->objectpegawailastfk = $request['objectpegawailastfk'];
             $TP->email = $request['email'];
 
             $uploadimage = $request->file('image');
             if($request['image']!='noimage'){
                 $extensionimage = $uploadimage->getClientOriginalExtension();
                 $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
-//                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameImage,file_get_contents($request->file('filesip')));
                 $TP->image = $filenameImage;
             }
             
-            // $TP->image = $request['image'];
             $TP->save();
-            // $norec = ;
+
+            //## Logging User
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = "Mahasiswa Eksternal";
+            $logUser->keterangan = "Simpan Mahasiswa Eksternal". " Nama: ". $request['nama']. " NIM: ". $request['nim']. " Email: " . $request['email'];
+            $logUser->noreff = $TP->norec;
+            $logUser->referensi="Mahasiswa Eksternal";
+            $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
+
             if(!empty($uploadimage)) {
-                // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
                 $request->file('image')->move('img/DIKLAT/FileFoto/'.$request['email'],$filenameImage);
             }
             $transStatus = 'true';
@@ -2591,6 +2601,7 @@ public function deleteDataCuti(Request $request){
 
     public function updatePesertaDidik(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
+        $dataLogin = $request->all();
         DB::beginTransaction();
         
         $data = '';
@@ -2609,23 +2620,34 @@ public function deleteDataCuti(Request $request){
                 $extensionimage = $uploadimage->getClientOriginalExtension();
                 $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
                 
-//                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameImage,file_get_contents($request->file('filesip')));
                 $TP->image = $filenameImage;
             }else{
                 $TP->image = null;
                 $filename = $request['image'];
-                // $path = public_path('DIKLAT/FileFoto/'.$request['email'].'/');
                 $path = public_path('img/DIKLAT/FileFoto/'.$request['email'].'/');
 
                 if (!\File::exists($path)) {
-//                abort(404);
                 }else{
                     $file = \File::deleteDirectory($path);
                 }
             }
             
-            // $TP->image = $request['image'];
             $TP->save();
+            //## Logging User
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = "Mahasiswa Eksternal";
+            $logUser->keterangan = "Ubah Data Mahasiswa Eksternal". " Nama: ". $request['nama']. " NIM: ". $request['nim']. " Email: " . $request['email'];
+            $logUser->noreff = $request['norec'];
+            $logUser->referensi="Mahasiswa Eksternal";
+            $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
             // $norec = ;
             if(!empty($uploadimage)) {
                 // $request->file('image')->move('DIKLAT/FileFoto/',$filenameImage);
@@ -2672,6 +2694,7 @@ public function deleteDataCuti(Request $request){
 
     public function hapusPesertaDidik(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
+        $dataLogin = $request->all();
         DB::beginTransaction();
             $a= "0";
         try{
@@ -2686,9 +2709,24 @@ public function deleteDataCuti(Request $request){
                     $file = \File::deleteDirectory($path);
                 }
                 // Storage::disk('local')->delete('DIKLAT/FileFoto/'.$request['email'].'/'.$filename);
-                $a="tidak nol";
+                // $a="tidak nol";
             }
             $TP = PesertaDidik::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
+            //## Logging User
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = "Mahasiswa Eksternal";
+            $logUser->keterangan = "Hapus Mahasiswa Eksternal". " Email: " . $request['email'];
+            $logUser->noreff = $request['norec'];
+            $logUser->referensi="Mahasiswa Eksternal";
+            $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -2710,6 +2748,8 @@ public function deleteDataCuti(Request $request){
             $result = array(
                 'status' => 400,
                 'message'  => $transMessage,
+                'e'=>$e->getLine(),
+                'message'=>$e->getMessage(),
                 'as' => 'asepic',
             );
         }

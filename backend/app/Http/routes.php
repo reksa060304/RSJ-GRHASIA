@@ -821,6 +821,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get_detail-resep', 'Farmasi\PelayananResepController@getDetailResep');
           Route::get('farmasi/get-detail-order', 'Farmasi\PelayananResepController@getDetailOrder');
           Route::get('farmasi/get-info-stok', 'Farmasi\PelayananResepController@getInformasiStok');
+          Route::get('farmasi/get-info-transfer', 'Farmasi\PelayananResepController@getInformasiTransfer');
           Route::get('farmasi/get-produkdetail', 'Farmasi\PelayananResepController@getProdukDetail');
           Route::post('farmasi/save-stock-merger', 'Farmasi\PelayananResepController@StokMerger');
           Route::get('farmasi/get-jenis-obat', 'Farmasi\PelayananResepController@getJenisObat');
@@ -1069,6 +1070,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/penelitian/get-daftar-mahasiswa-aktif','SDM\SumberDayaManusiaController@getDaftarMahasiswaAktif');
             Route::get('diklat/get-tanggal-otomatis','SDM\PenelitianController@getTanggalOtomatis');
             Route::get('diklat/get-combo-diklat', 'SDM\PelatihanController@getComboDiklat');
+            Route::post('diklat/hapus-master-data-kampus','SDM\PelatihanController@hapusMasterDataKampus');
+
             // GET
 
             // POST
@@ -1142,6 +1145,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-perjanjianmelarikandiri', 'Report\ReportController@perjanjianMelarikanDiri');
           Route::get('report/diklat-cetakhasilkegiatan','Report\ReportController@cetakHasilKegiatan');
           Route::get('report/get-cetak-ketentuanranap','Report\ReportController@ketentuanRawatInap');
+          Route::get('report/get-cetak-persetujuanpembiayaan', 'Report\ReportController@persetujuanPembiayaan');
           Route::get('laboratorium/get-lap-kunjungan', 'Laboratorium\LaboratoriumController@getLaporanKunjungan');
           Route::get('laboratorium/get-combo-dokter-lab','Laboratorium\LaboratoriumController@getDokter');
 
@@ -2082,6 +2086,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('ipsrs/save-identifikasi-kerusakan','IPSRS\IPSRSController@SaveDataIdentifikasi');
             Route::post('ipsrs/save-jenis-kerusakan','IPSRS\IPSRSController@SaveDataJenisKerusakan');
             Route::get('ipsrs/get-jenis-pekerjaan','IPSRS\IPSRSController@getJenisPekerjaan');
+            Route::get('ipsrs/get-jenis-pekerjaan-simrs','IPSRS\IPSRSController@getJenisPekerjaanSIMRS');
             Route::get('ipsrs/get-status-pekerjaan','IPSRS\IPSRSController@getStatusPekerjaan');
             Route::post('ipsrs/save-status-pekerjaan','IPSRS\IPSRSController@SaveDataStatus');
             Route::get('ipsrs/send-notif-whatsapp','IPSRS\IPSRSController@sendNotifWhatsapp');

@@ -3,30 +3,34 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Report HPP Minat Bakat</title>
+    <title>General Consent</title>
+    @if(stripos(\Request::url(), 'localhost') !== FALSE)
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/report/paper.css') }}">
     <link rel="stylesheet" href="{{ asset('css/report/table.css') }}">
     <link rel="stylesheet" href="{{ asset('css/report/tabel.css') }}">
-    <script src="{{ asset('js/jquery.min.js') }}"></script>
-    <script src="{{ asset('js/jquery.qr-code.js') }}"></script>
-
-    @if(stripos(\Request::url(), 'localhost') !== FALSE)
-    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <!-- angular -->
     <script src="{{ asset('js/angular/angular.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('js/angular/angular-route.min.js') }}" type="text/javascript"></script>
     <script type="text/javascript" src="{{ asset('js/angular/angular-animate.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/angular/angular-aria.min.js') }}"></script>
     <script src="{{ asset('js/angular/angular-material.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.qr-code.js') }}"></script>
     @else
 
     <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('service/css/report/paper.css') }}">
+    <link rel="stylesheet" href="{{ asset('service/css/report/table.css') }}">
+    <link rel="stylesheet" href="{{ asset('service/css/report/tabel.css') }}">
     <!-- angular -->
     <script src="{{ asset('service/js/angular/angular.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('service/js/angular/angular-route.min.js') }}" type="text/javascript"></script>
     <script type="text/javascript" src="{{ asset('service/js/angular/angular-animate.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('service/js/angular/angular-aria.min.js') }}"></script>
     <script src="{{ asset('service/js/angular/angular-material.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('service/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('service/js/jquery.qr-code.js') }}"></script>
     @endif
     <style>
         @page {

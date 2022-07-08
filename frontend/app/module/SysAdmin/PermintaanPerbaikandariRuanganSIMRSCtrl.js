@@ -26,6 +26,18 @@ define(['initialize'], function (initialize) {
             //     jenisForm = 18
             // }
             //$scope.item.tittle = "Daftar Tempat Tidur"
+            $scope.pdti = false
+            $scope.dispdti = true
+            $scope.item.pelapor = {
+                id: medifirstService.getPegawaiLogin().id,
+                namalengkap: medifirstService.getPegawaiLogin().namaLengkap
+            }
+            if (medifirstService.getKelompokUser() == 'ITI') {
+                $scope.pdti = true
+                $scope.dispdti = false
+                $scope.item.pelapor = {}
+            }
+            console.log(medifirstService.getKelompokUser());
             LoadCache();
             loadCombo();
             $scope.listPindah = [{
@@ -38,11 +50,13 @@ define(['initialize'], function (initialize) {
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('PermintaanPerbaikandariRuanganCtrl');
                 if (chacePeriode != undefined) {
+                    $scope.item.tglInputAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
                     $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
                     $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59:59');
                     init();
                 }
                 else {
+                    $scope.item.tglInputAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
                     $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
                     $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59:59');
                     init();
@@ -62,6 +76,9 @@ define(['initialize'], function (initialize) {
                 // medifirstService.getPart("ipsrs/get-jenis-pekerjaan").then(function (data) {
                 //     $scope.listJenisKerusakan = data;
                 // }); 
+                medifirstService.getPart("ipsrs/get-jenis-pekerjaan-simrs").then(function (data) {
+                    $scope.listJenisKerusakan = data;
+                });
                
             }
 
@@ -337,12 +354,13 @@ define(['initialize'], function (initialize) {
                 var objSave = 
                     {
                         norec : '',
-                        tglplanning : $scope.item.tglAwal,
+                        tglplanning: $scope.item.tglInputAwal,
                         ruangandesc : $scope.item.ruangan.id,
                         rincian : $scope.item.desckerusakan,
                         pelapor : $scope.item.pelapor.id,
                         namalengkap : $scope.item.pelapor.namalengkap,
-                        namaruangan : $scope.item.ruangan.namaruangan
+                        namaruangan : $scope.item.ruangan.namaruangan,
+                        jeniskerusakan: $scope.item.jenisKerusakan.id
                     }
                 medifirstService.post('sysadmin/general/save-permohonan-simrs',objSave).then(function(e) {
                     // $scope.popupSignDate.close();

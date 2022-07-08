@@ -245,11 +245,12 @@ class PenelitianController extends ApiController {
             $logUser->norec = $logUser->generateNewId();
             $logUser->kdprofile= $kdProfile;
             $logUser->statusenabled=true;
-            $logUser->jenislog = $JenisLog;
-            $logUser->noreff =$idPP;
-            $logUser->referensi='norec Penelitian Kegiatan Eksternal';
+            $logUser->jenislog = "Kegiatan Diklat Eksternal";
+            $logUser->keterangan = $JenisLog;
+            $logUser->noreff = $dataKPE->norec;
+            $logUser->referensi="Kegiatan Diklat Eksternal";
             $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
-            $logUser->tanggal = $tglAyeuna;
+            $logUser->tanggal = date('Y-m-d H:i:s');
             $logUser->save();
 
             $transStatus = 'true';
@@ -388,7 +389,22 @@ class PenelitianController extends ApiController {
             // $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
             // $logUser->tanggal = $tglAyeuna;
             // $logUser->save();
-
+            //## Logging User
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = "Mahasiswa Eksternal";
+            $logUser->keterangan = "Ubah Data Mahasiswa Eksternal". " Nama: ". $request['nama']. " NIM: ". $request['nim']. " Email: " . $request['email'];
+            $logUser->noreff = $request['norec'];
+            $logUser->referensi="Mahasiswa Eksternal";
+            $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
+            
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';

@@ -30,14 +30,15 @@ define(['initialize'], function (initialize) {
             userRuangan();
             LoadCache();
             loadCombo();
-
+            console.log(medifirstService.getKelompokUser());
             function userRuangan(){
                 
                 var listUserRuangan = medifirstService.getMapLoginUserToRuangan();
+                console.log(listUserRuangan);
                 if (listUserRuangan.length > 0){
                     $scope.userLoginRuangan = listUserRuangan[0].id
                 }
-                if ($scope.userLoginRuangan == 1 ){
+                if (medifirstService.getKelompokUser() == 'ITI') {
                     $scope.showBtn = true
                 }        
               
@@ -119,7 +120,8 @@ define(['initialize'], function (initialize) {
                     jenisKerusakan = "&jenisKerusakan=" + $scope.item.jenisKerusakanCari.id
                 }
 
-                var idRuangan= "&idRuangan=" + $scope.userLoginRuangan
+                // var idRuangan= "&idRuangan=" + $scope.userLoginRuangan
+                var idRuangan=''
                 if ($scope.userLoginRuangan == 1){
                     idRuangan = ''
                 }
