@@ -4650,13 +4650,14 @@ class GeneralController extends ApiController
             $newCOA->rincianexecuteplanning_askep = $request['rincian'];
             $newCOA->narasumberfk = $request['pelapor'];
             $newCOA->pelapor = $request['namalengkap'];
+            $newCOA->objectjenispekerjaanfk = $request['jeniskerusakan'];
             $newCOA->save();
 
             $norecHead2 = $newCOA->norec;
             $ruanganHead2 = $newCOA->objectruanganfk;
             $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
             $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
-
+            $jenispekerjaan = $newCOA->objectjenispekerjaanfk;
 //            $sid    = "ACc6ac08ce1cc9096e0fd57a0c38801118";
 //            $token  = "cada716b5a36721fd86832662bbd06fe";
 //            $twilio = new Client($sid, $token);
@@ -4688,12 +4689,12 @@ class GeneralController extends ApiController
             $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
             $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
             $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
-            // $jenislayann =  DB::table('jenispekerjaan_m')->where('id',$request['jenisKerusakan'])->first();
+            $jenispekerjaan =  \DB::table('jenispekerjaan_m')->where('id',$jenispekerjaan)->select('reportdisplay')->first();
             $secret_token = "5528647994:AAHqBykIdioFfxa-0oVdGQDpYs9jWDOKZWQ";
             $telegram_id = '-1001762536697';//'-498979335';
             $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
             $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan PDTI </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
-                    "</b>  \n Pelapor: <b>".$pelapor->pelapor."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
+                    "</b>  \n Pelapor: <b>".$pelapor->pelapor. "</b>  \n Jenis Kerusakan: <b>".$jenispekerjaan->reportdisplay."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
                     "</b>");
             // return $url;
             $ch = curl_init();
@@ -4767,7 +4768,7 @@ class GeneralController extends ApiController
             LEFT JOIN pegawai_m as pg3 on pg3.id = stp.narasumberfk 
             LEFT JOIN statuspekerjaan_m as sttp on sttp.id = stp.objectstatuspekerjaanfk
 			LEFT JOIN jenispekerjaan_m as jpk on jpk.id = stp.objectjenispekerjaanfk
-			WHERE stp.kdprofile = $kdProfile and stp.objectkelompoktransaksifk=151 
+			WHERE stp.kdprofile = $kdProfile and stp.objectkelompoktransaksifk= 151 
 			AND stp.statusenabled=true 
 			$tgl
 			$jenisKerusakan

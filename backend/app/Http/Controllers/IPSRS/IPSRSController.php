@@ -469,7 +469,13 @@ class IPSRSController extends ApiController
         SELECT * FROM jenispekerjaan_m WHERE kdprofile = $kdProfile and statusenabled = true and jenispekerjaan='IPSRS' AND namaexternal='Status Jenis'"));
         return $this->respond($data);
     }
-
+    public function getJenisPekerjaanSIMRS(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $dataLogin = $request->all();
+        $data = DB::select(DB::raw("
+        SELECT * FROM jenispekerjaan_m WHERE kdprofile = $kdProfile and statusenabled = true and jenispekerjaan='SIMRS' AND namaexternal='Kegiatan SIMRS'"));
+        return $this->respond($data);
+    }
     public function getStatusPekerjaan(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $dataLogin = $request->all();

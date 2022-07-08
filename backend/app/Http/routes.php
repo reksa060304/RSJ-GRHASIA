@@ -2084,6 +2084,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('ipsrs/save-identifikasi-kerusakan','IPSRS\IPSRSController@SaveDataIdentifikasi');
             Route::post('ipsrs/save-jenis-kerusakan','IPSRS\IPSRSController@SaveDataJenisKerusakan');
             Route::get('ipsrs/get-jenis-pekerjaan','IPSRS\IPSRSController@getJenisPekerjaan');
+            Route::get('ipsrs/get-jenis-pekerjaan-simrs','IPSRS\IPSRSController@getJenisPekerjaanSIMRS');
             Route::get('ipsrs/get-status-pekerjaan','IPSRS\IPSRSController@getStatusPekerjaan');
             Route::post('ipsrs/save-status-pekerjaan','IPSRS\IPSRSController@SaveDataStatus');
             Route::get('ipsrs/send-notif-whatsapp','IPSRS\IPSRSController@sendNotifWhatsapp');
