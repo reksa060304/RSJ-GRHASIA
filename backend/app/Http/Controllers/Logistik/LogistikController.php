@@ -4909,7 +4909,7 @@ class LogistikController extends ApiController{
                 $dataSR->statusenabled = true;
                 $dataSR->norealisasi = $norealisasi;
                 $dataSR->tglrealisasi = date('Y-m-d H:i:s', strtotime($req['struk']['tglrealisasi'])); //$req['struk']['tglrealisasi'];
-                $dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
+                //$dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
                 $dataSR->totalbelanja = $req['struk']['totalharusdibayar'];
                 $dataSR->save();
                 //            if (is_null($req['struk']['norecrealisasi'])) {
@@ -4917,7 +4917,7 @@ class LogistikController extends ApiController{
             } else {
                 $dataSR = StrukRealisasi::where('norec', $req['struk']['norecrealisasi'])->first();
                 $dataSR->tglrealisasi = date('Y-m-d H:i:s', strtotime($req['struk']['tglstruk'])); //$req['struk']['tglstruk'];
-                $dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
+                //$dataSR->objectmataanggaranfk = $req['struk']['objectmataanggaranfk'];
                 $dataSR->totalbelanja = $req['struk']['totalharusdibayar'];
                 $dataSR->save();
                 $datanorecSR = $req['struk']['norecrealisasi'];
