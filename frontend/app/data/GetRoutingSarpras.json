@@ -4915,5 +4915,44 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "DaftarMataAnggaran",
+    "url": "/RGFmdGFyTWF0YUFuZ2dhcmFu",
+    "templateurl": "module/Perencanaan/DaftarMataAnggaran.html",
+    "controller": "DaftarMataAnggaranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]  },
+  {
+    "name": "LaporanPerJenisAnggaran",
+    "url": "/TGFwb3JhbkFuZ2dhcmFuUGVyU3ViS2VnaWF0YW4oSmVuaXNBbmdnYXJhbik=",
+    "templateurl": "module/Perencanaan/LaporanPerJenisAnggaran.html",
+    "controller": "LaporanPerJenisAnggaranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

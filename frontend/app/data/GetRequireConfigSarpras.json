@@ -987,6 +987,10 @@
         {
             "nameDep": "LaporanOrderKirimBarangCtrl",
             "urlDep": "module/Logistik/LaporanOrderKirimBarangCtrl"
+        },
+        {
+            "nameDep": "LaporanPerJenisAnggaranCtrl",
+            "urlDep": "module/Perencanaan/LaporanPerJenisAnggaranCtrl"
         }
     ]
 }

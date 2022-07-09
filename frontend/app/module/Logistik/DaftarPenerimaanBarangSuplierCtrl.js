@@ -257,15 +257,16 @@ define(['initialize'], function (initialize) {
                 // **  VALIDASI CLOSING STOK 
 
                 $scope.isRouteLoading = true
-                medifirstService.get('logistik/cek-transaksi-use?norec=' + $scope.dataSelected.norec).then(function (e) {
-                    $scope.isRouteLoading = false
-                    if (e.data.isedit == true) {
-                        $scope.lanjutEdit()
-                    } else {
-                        toastr.error('Stok Telah Digunakan, Tidak Bisa Ubah Penerimaan')
-                        return
-                    }
-                })
+                $scope.lanjutEdit()
+                // medifirstService.get('logistik/cek-transaksi-use?norec=' + $scope.dataSelected.norec).then(function (e) {
+                //     $scope.isRouteLoading = false
+                //     if (e.data.isedit == true) {
+                //         $scope.lanjutEdit()
+                //     } else {
+                //         toastr.error('Stok Telah Digunakan, Tidak Bisa Ubah Penerimaan')
+                //         return
+                //     }
+                // })
             }
 
             $scope.lanjutEdit = function () {

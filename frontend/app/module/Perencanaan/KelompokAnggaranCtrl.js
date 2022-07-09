@@ -10,6 +10,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.dataAnggaranSelected = {};
             $scope.dataSourceSPP = [];
             $scope.jeniskode = true;
+            $scope.inputtahap = true
             var DataKegiatan= [];
             var DataMataAnggaran= [];
             var DataMataAnggaranCombo= [];
@@ -1278,6 +1279,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.dataSourceKegiatan = new kendo.data.DataSource({
                         data: data
                     });
+                }
+            });
+
+            $scope.$watch('item.tahap', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    if($scope.item.tahap != undefined || $scope.item.tahap != null){
+                        $scope.inputtahap = false
+                    }
                 }
             });
             
