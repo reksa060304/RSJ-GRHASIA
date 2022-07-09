@@ -292,6 +292,10 @@ define(['initialize'], function(initialize) {
 			}
 
 			$scope.Save = function(){
+                if ($scope.item.biaya == undefined) {
+                    toastr.error("Tunggu Hingga Total Biaya Muncul")
+                    return
+                }
                 var listRawRequired = [
                     "item.notelp|ng-model|No Telp",
                     "item.jenis|k-ng-model|Jenis Layanan",
