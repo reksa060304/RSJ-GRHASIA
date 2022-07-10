@@ -2,8 +2,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     var baseTransaksi = configuration.baseApiBackend;
 
-    initialize.controller('DaftarPenelitianEksternalCtrl', ['$scope', '$state', 'DateHelper', 'CacheHelper', 'MedifirstService', 'ModelItem',
-        function ($scope, $state, dateHelper, cacheHelper, medifirstService, ModelItem) {
+    initialize.controller('DaftarPenelitianEksternalCtrl', ['$scope', '$state', 'DateHelper', 'CacheHelper', 'MedifirstService', 'ModelItem','$mdDialog',
+        function ($scope, $state, dateHelper, cacheHelper, medifirstService, ModelItem, $mdDialog) {
             $scope.item = {};
             $scope.isRouteLoading = false;
             $scope.now = new Date();
@@ -411,33 +411,41 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             
 
             $scope.Hapus = function () {
-                $scope.isRouteLoading = true
-                // console.log($scope.count);
-                // console.log($scope.isverifikasi);
-                if ($scope.count > 0) {
-                $scope.isRouteLoading = false
-                    toastr.error("Informasi, Sudah ada data mahasiswa record tidak bisa dihapus....!")
-                    return;
-                }
+                var confirm = $mdDialog.confirm()
+                    .title('Informasi')
+                    .htmlContent("Apakah anda ingin menghapus kegiatan ini?")
+                    .ariaLabel('Lucky day')
+                    .cancel('Batal')
+                    .ok('Ok');
+                    $mdDialog.show(confirm).then(function () {
+                        $scope.isRouteLoading = true
+                        // console.log($scope.count);
+                        // console.log($scope.isverifikasi);
+                        if ($scope.count > 0) {
+                        $scope.isRouteLoading = false
+                            toastr.error("Informasi, Sudah ada data mahasiswa record tidak bisa dihapus....!")
+                            return;
+                        }
 
-                if ($scope.isverifikasi != null) {
-                    $scope.isRouteLoading = false
-                    toastr.error("Informasi, Data Sudah Diverif Tidak Bisa Dihapus !")
-                    return;
-                }
-                if ($scope.statusBayar != null) {
-                    $scope.isRouteLoading = false
-                    toastr.error("Informasi, Tagihan Sudah Lunas Tidak Bisa diHapus !")
-                    return;
-                }
-                var objSave = {
-                    norec: $scope.current
-                }
-                // console.log(objSave);
+                        if ($scope.isverifikasi != null) {
+                            $scope.isRouteLoading = false
+                            toastr.error("Informasi, Data Sudah Diverif Tidak Bisa Dihapus !")
+                            return;
+                        }
+                        if ($scope.statusBayar != null) {
+                            $scope.isRouteLoading = false
+                            toastr.error("Informasi, Tagihan Sudah Lunas Tidak Bisa diHapus !")
+                            return;
+                        }
+                        var objSave = {
+                            norec: $scope.current
+                        }
+                        // console.log(objSave);
 
-                medifirstService.post('sdm/penelitian/batal-kegiatan-penelitian-eksternal', objSave).then(function (e) {
-                    GetData()
-                })
+                        medifirstService.post('sdm/penelitian/batal-kegiatan-penelitian-eksternal', objSave).then(function (e) {
+                            GetData()
+                        })
+                    })
             }
             // console.log(ModelItem.getPegawai());
             

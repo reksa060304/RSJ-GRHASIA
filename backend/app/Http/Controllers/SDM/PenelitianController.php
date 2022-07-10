@@ -477,7 +477,7 @@ class PenelitianController extends ApiController {
                 left join produk_m pr on pr.id= sdmp.objectprodukfk
                 left join strukpelayanan_t sp on sp.norec = sdmp.noregistrasifk
                 left join sdm_pesertadidik_t sdmpd on sdmpd.noregistrasifk = sdmp.norec
-                where sdmp.kdprofile = $kdProfile and sdmp.tglregistrasi::date between '$tglAwal'and '$tglAkhir' and sdmp.statusenabled = true
+                where sdmp.kdprofile = $kdProfile and sdmp.tanggalmulai::date between '$tglAwal'and '$tglAkhir' and sdmp.statusenabled = true
                 $user $Fakultas $statusbayar
                 group by sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,
             sdmp.institusipendidikan,sdmp.tanggalmulai::date,sdmp.tanggalselesai::date,sdmp.biayapenelitian,
