@@ -308,7 +308,7 @@ class FarmasiController extends ApiController
             ->select('sr.norec','sr.statusenabled','sr.noresep','sr.tglresep','ps.id as psid','pd.noregistrasi','ps.nocm','ps.namapasien','ru.id as ruid',
                 'ru.namaruangan','pg.id as pgid','pg.namalengkap as dokter','ru2.id as ruapotikid',
                 'ru2.namaruangan as namaruanganapotik','jk.jeniskelamin','ps.tgllahir','kl.id as klid','kl.namakelas',
-                'pd.tglregistrasi','apd.norec as norec_apd','kp.kelompokpasien','pd.norec as norec_pd',
+                'pd.tglregistrasi','apd.norec as norec_apd','kp.kelompokpasien','pd.norec as norec_pd','apd.objectruanganfk',
                 DB::raw("
                 case when pd.isclosing is null 
                     then 'Belum Closing' else 'Sudah Closing' 

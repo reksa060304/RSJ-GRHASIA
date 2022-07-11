@@ -5434,5 +5434,10 @@ class GeneralController extends ApiController
 
         return $this->respond($data);
     }
+    public function getRuanganPart3(Request $request)
+    {
+        $data = \DB::select(DB::raw("SELECT id, reportdisplay from ruangan_m where statusenabled = true and kdprofile = 30 and isperbaikan = true"));
+        return $this->respond($data);
+    }
 
 }

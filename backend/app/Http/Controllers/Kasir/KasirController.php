@@ -5904,9 +5904,9 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                         'sp.keteranganlainnya', 'sp.nosbklastfk', 'sp.nosbmlastfk', 'kt.id as jenisTagihanId','djp.detailjenisproduk', 'djp.id as iddjp','spd.norec as norec_spd',
                     \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar "))
                 ->where('sp.kdprofile', $kdProfile)
-                ->whereNotNull('sp.totalharusdibayar')
+                // ->whereNotNull('sp.totalharusdibayar')
                 // ->whereIn('sp.objectkelompoktransaksifk', $KdList)
-                ->whereNotNull('sp.nosbmlastfk')
+                // ->whereNotNull('sp.nosbmlastfk')
                 // ->whereNotNull('sp.nosbklastfk')
                 ->where('kt.id','=',13);
         
