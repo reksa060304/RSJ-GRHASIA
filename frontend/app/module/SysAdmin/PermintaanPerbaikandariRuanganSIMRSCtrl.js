@@ -67,9 +67,12 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
                     $scope.listPelapor = data;
                 }); 
-                medifirstService.getPart("sysadmin/general/get-ruangan-part", true, true, 20).then(function (data) {
+                // medifirstService.getPart("sysadmin/general/get-ruangan-part", true, true, 20).then(function (data) {
+                //     $scope.listRuangan = data;
+                // });  
+                medifirstService.getPart("sysadmin/general/get-ruangan-part3").then(function (data) {
                     $scope.listRuangan = data;
-                });  
+                });
                 medifirstService.get('ipsrs/get-ruangan', true).then(function (dat) {
                     $scope.listRuanganTujuan = dat.data[0].ruanganipsrs;
                 })
