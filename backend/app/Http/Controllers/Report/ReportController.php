@@ -1959,14 +1959,13 @@ class ReportController extends ApiController{
         ->where('sdmp.kdprofile',$kdProfile)
         ->join('sdm_penelitianeksternal_t as sdm','sdm.norec','=','sdmp.noregistrasifk')
         ->join('detailjenisproduk_m as djp','djp.id','=','sdm.objectdetailjenisprodukfk')
-        // ->join('jeniskelamin_m as jk','jk.id','=','sdm.jeniskelaminfk')
-        // ->join('sdm')
         ->select('sdmp.email','sdmp.norec','sdmp.nama','sdmp.image','djp.detailjenisproduk','sdm.institusipendidikan',DB::raw('sdm.tanggalmulai::date,sdm.tanggalselesai::date'))
-        ->get();
-        // $pdf = PDF::loadview('report.diklat-nametag', compact('data','pageWidth'));
-        //        return $pdf->stream();
+        // ->orderBy('sdmp.nama', 'asc')
+        ->paginate(10);
+        
+        // $users->withPath('custom/url');
 
-        return view('report.diklat-nametag',compact('data','pageWidth'));
+        return view('report.diklat-nametag',compact('data','pageWidth','norec'));
         // return $this->respond($data);
     }
     public function cetakSertifikat(Request $request)
