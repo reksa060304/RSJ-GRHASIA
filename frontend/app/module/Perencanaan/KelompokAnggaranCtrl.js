@@ -11,6 +11,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.dataSourceSPP = [];
             $scope.jeniskode = true;
             $scope.inputtahap = true
+            $scope.norecpanjar = ''
             var DataKegiatan= [];
             var DataMataAnggaran= [];
             var DataMataAnggaranCombo= [];
@@ -51,7 +52,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.listJenisAnggaran = e.data.jenisanggaran
                 $scope.listDirektur = e.data.direktur
                 $scope.listTahap = e.data.tahap
-                $scope.listSubSubKegiatan = e.data.kegiatansubsub
+                //$scope.listSubSubKegiatan = e.data.kegiatansubsub
                 $scope.listKegiatanCombo = e.data.kegiatancombo
                 $scope.listKegiatanComboakhir = e.data.kegiatancombo
                 $scope.dataSourcePanjarPengembalian = e.data.panjar
@@ -582,7 +583,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                 }
                 $scope.item.thnAnggaran = dataItem.tahun
-                $scope.item.tahap = dataItem.tahap
+                // $scope.item.tahap = dataItem.tahap
                 $scope.item.subKegiatan = subKegiatanStr
                 $scope.item.subSubKegiatan = kodeArr[1] + dataItem.kegiatan
                 $scope.item.mataanggaran = dataItem.mataanggaran
@@ -3480,7 +3481,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         pph:  $scope.item.pph,
                         ppn:  $scope.item.ppn,
                         realisasidetail: DataDetailSPJ,
-                        objectcarabayarfk: parseInt($scope.item.radioPencairan)
+                        objectcarabayarfk: parseInt($scope.item.radioPencairan),
+                        norecpanjar:  $scope.norecpanjar
                     }
 
                     console.log(datasave)
@@ -3631,17 +3633,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 console.log(dataItem)
                 console.log($scope.norecverif)
-                var objSave =
-                {
-                    norec: $scope.norecverif,
-                    nopanjar: dataItem.nopanjar,
-                }
+                
                 $scope.jumlahpanjar = dataItem.jumlah
-                medifirstService.post('perencanaan/save-panjar-spj', objSave).then(function (e) {
-                    $scope.item.panjar = $scope.jumlahpanjar
+                medifirstService.get('perencanaan/save-panjar-spj?nopanjar='+dataItem.nopanjar).then(function (e) {
+                    $scope.norecpanjar = e.data.data[0].norec
                 }, function (error) {
             
                 })
+                console.log($scope.norecpanjar)
+                $scope.item.panjar = dataItem.jumlah
                 $scope.popupPanjarAktif.center().close()
             }
 

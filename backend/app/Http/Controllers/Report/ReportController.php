@@ -2093,7 +2093,7 @@ class ReportController extends ApiController{
             inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
             inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
             inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-            left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+            left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
             inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
             where sr.norec = '$norec'
             group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div;
@@ -2105,7 +2105,7 @@ class ReportController extends ApiController{
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec'
         group by kb.keteranganbelanja;"));
@@ -2115,7 +2115,7 @@ class ReportController extends ApiController{
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec'
         group by ma.namamataanggaran, ma.kodemataanggaran;"));
@@ -2128,7 +2128,7 @@ class ReportController extends ApiController{
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
         left join pegawai_m pgb on pgb.id = sr.bendaharafk 
         left join pegawai_m pgp on pgp.id = sr.penerimafk 
-        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec'
         group by sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nip_pns"));
@@ -2138,7 +2138,7 @@ class ReportController extends ApiController{
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec'
         group by rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal, rd.norec;"));
@@ -2152,7 +2152,7 @@ class ReportController extends ApiController{
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
         left join pegawai_m pgb on pgb.id = sr.bendaharafk 
         left join pegawai_m pgp on pgp.id = sr.penerimafk 
-        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec'
         group by rd.subtotal, rd.norec
@@ -2191,11 +2191,11 @@ class ReportController extends ApiController{
                 from( 
                     select kmss.keterangan kegiatan, kmss.kode, kmss.div, kms.keterangan subkegiatan, ja.jenisanggaran, sum(kb.subtotal) subtotal
                     from kegiatananggaran_m km
-                    inner join kegiatananggaran_m kms on km.kode ilike '%' || kms.kode || '%' and kms.div = 3
-                    left join kegiatananggaran_m kmss on km.kode ilike '%' || kmss.kode || '%' and kmss.div = 2
+                    inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                     inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                     inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike '%' || mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
+                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                     inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                     where km.kdprofile = 30 and km.statusenabled = true
                     and km.tahun = '$tahun'
@@ -2218,11 +2218,11 @@ class ReportController extends ApiController{
                 from( 
                     select kmss.keterangan kegiatan, kms.keterangan subkegiatan, kms.kode, kms.div, ja.jenisanggaran, sum(kb.subtotal) subtotal
                     from kegiatananggaran_m km
-                    inner join kegiatananggaran_m kms on km.kode ilike '%' || kms.kode || '%' and kms.div = 3
-                    left join kegiatananggaran_m kmss on km.kode ilike '%' || kmss.kode || '%' and kmss.div = 2
+                    inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                     inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                     inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike '%' || mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
+                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                     inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                     where km.kdprofile = 30 and km.statusenabled = true
                     and km.tahun = '$tahun'
@@ -2245,11 +2245,11 @@ class ReportController extends ApiController{
                 from( 
                     select kmss.keterangan kegiatan, kmss.kode, kmss.div, kms.keterangan subkegiatan, ja.jenisanggaran, sum(kb.subtotal) subtotal
                     from kegiatananggaran_m km
-                    inner join kegiatananggaran_m kms on km.kode ilike '%' || kms.kode || '%' and kms.div = 3
-                    left join kegiatananggaran_m kmss on km.kode ilike '%' || kmss.kode || '%' and kmss.div = 2
+                    inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                     inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                     inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike '%' || mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
+                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                     inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                     where km.kdprofile = 30 and km.statusenabled = true
                     and km.tahun = '$tahun'
@@ -2292,11 +2292,11 @@ class ReportController extends ApiController{
                 from( 
                     select kmss.keterangan kegiatan, kms.keterangan subkegiatan, kmss.kode, kmss.div, km.keterangan subsubkegiatan, ta.tahap, ta.id, ja.jenisanggaran, sum(kb.subtotal) subtotal
                     from kegiatananggaran_m km
-                    inner join kegiatananggaran_m kms on km.kode ilike '%' || kms.kode || '%' and kms.div = 3
-                    left join kegiatananggaran_m kmss on km.kode ilike '%' || kmss.kode || '%' and kmss.div = 2
+                    inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                     inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                     inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike '%' || mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
+                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                     inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                     left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                     where km.kdprofile = 30 and km.statusenabled = true
@@ -2305,11 +2305,11 @@ class ReportController extends ApiController{
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
-                        inner join kegiatananggaran_m kms on km.kode ilike '%' || kms.kode || '%' and kms.div = 3
-                        left join kegiatananggaran_m kmss on km.kode ilike '%' || kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                        left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                         inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike '%' || mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
+                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                         inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                         left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                         where km.kdprofile = 30 and km.statusenabled = true
@@ -2333,11 +2333,11 @@ class ReportController extends ApiController{
                 from( 
                     select kmss.keterangan kegiatan, kms.keterangan subkegiatan, kms.kode, kms.div, km.keterangan subsubkegiatan, ta.tahap, ta.id, ja.jenisanggaran, sum(kb.subtotal) subtotal
                     from kegiatananggaran_m km
-                    inner join kegiatananggaran_m kms on km.kode ilike '%' || kms.kode || '%' and kms.div = 3
-                    left join kegiatananggaran_m kmss on km.kode ilike '%' || kmss.kode || '%' and kmss.div = 2
+                    inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                     inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                     inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike '%' || mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
+                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                     inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                     left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                     where km.kdprofile = 30 and km.statusenabled = true
@@ -2346,11 +2346,11 @@ class ReportController extends ApiController{
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
-                        inner join kegiatananggaran_m kms on km.kode ilike '%' || kms.kode || '%' and kms.div = 3
-                        left join kegiatananggaran_m kmss on km.kode ilike '%' || kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                        left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                         inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike '%' || mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
+                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                         inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                         left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                         where km.kdprofile = 30 and km.statusenabled = true
@@ -2373,11 +2373,11 @@ class ReportController extends ApiController{
                 from( 
                     select kmss.keterangan kegiatan, kms.keterangan subkegiatan, kmss.kode, kmss.div, km.keterangan subsubkegiatan, ta.tahap, ta.id, ja.jenisanggaran, sum(kb.subtotal) subtotal
                     from kegiatananggaran_m km
-                    inner join kegiatananggaran_m kms on km.kode ilike '%' || kms.kode || '%' and kms.div = 3
-                    left join kegiatananggaran_m kmss on km.kode ilike '%' || kmss.kode || '%' and kmss.div = 2
+                    inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                     inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                     inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike '%' || mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
+                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                     inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                     left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                     where km.kdprofile = 30 and km.statusenabled = true
@@ -2386,11 +2386,11 @@ class ReportController extends ApiController{
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
-                        inner join kegiatananggaran_m kms on km.kode ilike '%' || kms.kode || '%' and kms.div = 3
-                        left join kegiatananggaran_m kmss on km.kode ilike '%' || kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                        left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                         inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike '%' || mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
+                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                         inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                         left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                         where km.kdprofile = 30 and km.statusenabled = true
@@ -2414,11 +2414,11 @@ class ReportController extends ApiController{
                 from(
                     select kmss.keterangan kegiatan, kms.keterangan subkegiatan, kms.kode, kms.div, km.keterangan subsubkegiatan, ta.tahap, ta.id, ja.jenisanggaran, sum(kb.subtotal) subtotal
                     from kegiatananggaran_m km
-                    inner join kegiatananggaran_m kms on km.kode ilike '%' || kms.kode || '%' and kms.div = 3
-                    left join kegiatananggaran_m kmss on km.kode ilike '%' || kmss.kode || '%' and kmss.div = 2
+                    inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                     inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                     inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike '%' || mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
+                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                     inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                     left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                     where km.kdprofile = 30 and km.statusenabled = true
@@ -2427,11 +2427,11 @@ class ReportController extends ApiController{
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
-                        inner join kegiatananggaran_m kms on km.kode ilike '%' || kms.kode || '%' and kms.div = 3
-                        left join kegiatananggaran_m kmss on km.kode ilike '%' || kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                        left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                         inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike '%' || mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
+                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                         inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                         left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                         where km.kdprofile = 30 and km.statusenabled = true
@@ -2450,94 +2450,567 @@ class ReportController extends ApiController{
         return view('report.spj.cetakjenisanggaransebelumsesudah',compact('sebelum', 'pageWidth', 'sesudah'));
     }
 
+    
 
-    public function getCetakSPJSatuLampiran(Request $request){
-        $norec = $request['norec'];
-        $terbilang = $request['terbilang'];
+    public function CetakRekapMataAnggaran(Request $request){
+        $tahun = $request['tahun'];
+        
 
-        $kegiatan = DB::select(DB::raw("
-            select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub
-            from strukrealisasi_t sr
-            inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
-            inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
-            inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-            left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
-            inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-            where sr.norec = '$norec'
-            group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div;
-            ")
-        );
+        $qtahap  = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $qtahap =  ' and kb.objecttahapfk =  ' . $request['tahap'];
+        }
 
-        $keterangan = DB::select(DB::raw("select kb.keteranganbelanja
-        from strukrealisasi_t sr
-        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
-        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
-        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
-        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
-        group by kb.keteranganbelanja;"));
+        $qterhadap  = '';
+        if (isset($request['terhadap']) && $request['terhadap'] != "" && $request['terhadap'] != "undefined") {
+            $qterhadap =  ' and kb.objecttahapfk =  ' . $request['terhadap'];
+        }
 
-        $mataanggaran = DB::select(DB::raw("select ma.namamataanggaran, ma.kodemataanggaran
-        from strukrealisasi_t sr
-        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
-        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
-        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
-        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
-        group by ma.namamataanggaran, ma.kodemataanggaran;"));
+        $sebelum = DB::select(DB::raw("
+        SELECT o.*, p.subtotalsetelah, p.tahapsetelah, p.subtotalsebelum
+from
+(
+	select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
+	case 
+    when kodemataanggaran ilike 'I%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
+    when kodemataanggaran ilike 'II%' then (char_length(kodemataanggaran) = 4 or char_length(kodemataanggaran) = 2)
+    when kodemataanggaran ilike 'III%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
+	end
+) as o
+left join
+(
+select j.kodemataanggaran, j.subtotal as subtotalsetelah, j.tahap tahapsetelah
+, k.subtotal subtotalsebelum from
+(
+			select id, tahap,
+			case 
+				when kodemataanggaran = 'A' then 'I.A'
+				when kodemataanggaran = 'B' then 'I.B'
+				when kodemataanggaran = 'II' then 'II'
+				when kodemataanggaran = 'III' then 'III'
+			end as kodemataanggaran,
+			case 
+				when kodemataanggaran = 'A' then 'BIAYA PELAYANAN '
+				when kodemataanggaran = 'B' then 'BIAYA UMUM DAN ADMINISTRASI'
+				when kodemataanggaran = 'II' then 'BIAYA NON OPERASIONAL'
+				when kodemataanggaran = 'III' then 'BIAYA PENGELUARAN INVESTASI'
+			end as keterangan,
+			case 
+				when kodemataanggaran = 'A' then sum(subtotal)
+				when kodemataanggaran = 'B' then sum(subtotal)
+				when kodemataanggaran = 'II' then sum(subtotal)
+				when kodemataanggaran = 'III' then sum(subtotal)
+			end as subtotal
+			from(
+				select id, tahap,
+				case 
+					when kodemataanggaran ilike 'I.A.%' then 'A'
+					when kodemataanggaran ilike 'I.B.%' then 'B'
+					when kodemataanggaran ilike 'II.%' then 'II'
+					when kodemataanggaran ilike 'III.%' then 'III'
+				end as kodemataanggaran,
+				case 
+					when kodemataanggaran ilike 'I.A.%' then sum(subtotal)
+					when kodemataanggaran ilike 'I.B.%' then sum(subtotal)
+					when kodemataanggaran ilike 'II.%' then sum(subtotal)
+					when kodemataanggaran ilike 'III.%' then sum(subtotal)
+				end as subtotal
+				from(
+							select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
+							from kegiatananggaran_m km
+							inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+							left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+							inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+							inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+							inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+							and 
+							case 
+								when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+								when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+								when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+							end
+							inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+							where km.kdprofile = 30 and km.statusenabled = true
+							$qterhadap
+							and km.tahun = '$tahun'
+							group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
+				) as x group by id, tahap, kodemataanggaran
+			) as y group by id, tahap, kodemataanggaran
 
-        $spj = DB::select(DB::raw("select 
-        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nip_pns as nipbendahara, pgp.namalengkap as namapenerima
-        from strukrealisasi_t sr
-        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
-        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
-        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-        left join pegawai_m pgb on pgb.id = sr.bendaharafk 
-        left join pegawai_m pgp on pgp.id = sr.penerimafk 
-        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
-        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
-        group by sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nip_pns"));
+			union all
 
-        $detail = DB::select(DB::raw("select row_number() over(order by rd.norec) as nomor, rd.norec, rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
-        from strukrealisasi_t sr
-        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
-        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
-        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
-        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
-        group by rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal, rd.norec;"));
+			select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran keterangan, sum(kb.subtotal) subtotal
+			from kegiatananggaran_m km
+			inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+			left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+			inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+			inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+			inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+			and 
+			case 
+				when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+				when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+				when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+			end
+			inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+			where km.kdprofile = 30 and km.statusenabled = true
+			$qterhadap
+			and km.tahun = '$tahun'
+			group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran
+			
+) as j 
+inner join(
+			select id,
+			case 
+				when kodemataanggaran = 'A' then 'I.A'
+				when kodemataanggaran = 'B' then 'I.B'
+				when kodemataanggaran = 'II' then 'II'
+				when kodemataanggaran = 'III' then 'III'
+			end as kodemataanggaran,
+			case 
+				when kodemataanggaran = 'A' then 'BIAYA PELAYANAN '
+				when kodemataanggaran = 'B' then 'BIAYA UMUM DAN ADMINISTRASI'
+				when kodemataanggaran = 'II' then 'BIAYA NON OPERASIONAL'
+				when kodemataanggaran = 'III' then 'BIAYA PENGELUARAN INVESTASI'
+			end as keterangan,
+			case 
+				when kodemataanggaran = 'A' then sum(subtotal)
+				when kodemataanggaran = 'B' then sum(subtotal)
+				when kodemataanggaran = 'II' then sum(subtotal)
+				when kodemataanggaran = 'III' then sum(subtotal)
+			end as subtotal
+			from(
+				select id,
+				case 
+					when kodemataanggaran ilike 'I.A.%' then 'A'
+					when kodemataanggaran ilike 'I.B.%' then 'B'
+					when kodemataanggaran ilike 'II.%' then 'II'
+					when kodemataanggaran ilike 'III.%' then 'III'
+				end as kodemataanggaran,
+				case 
+					when kodemataanggaran ilike 'I.A.%' then sum(subtotal)
+					when kodemataanggaran ilike 'I.B.%' then sum(subtotal)
+					when kodemataanggaran ilike 'II.%' then sum(subtotal)
+					when kodemataanggaran ilike 'III.%' then sum(subtotal)
+				end as subtotal
+				from(
+							select ta.id, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
+							from kegiatananggaran_m km
+							inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+							left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+							inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+							inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+							inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+							and 
+							case 
+								when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+								when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+								when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+							end
+							inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+							where km.kdprofile = 30 and km.statusenabled = true
+							$qtahap
+							and km.tahun = '$tahun'
+							group by ta.id, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
+				) as x group by id, kodemataanggaran
+			) as y group by id, kodemataanggaran
 
-        $jumlah = DB::select(DB::raw("select sum(subtotal) totalfix, round(sum(subtotal)) totalpembulatan
+			union ALL
+
+			select ta.id, mat.kodemataanggaran, mat.namamataanggaran keterangan, sum(kb.subtotal) subtotal
+			from kegiatananggaran_m km
+			inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+			left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+			inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+			inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+			inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+			and 
+			case 
+				when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+				when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+				when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+			end
+			inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+			where km.kdprofile = 30 and km.statusenabled = true
+			$qtahap
+			and km.tahun = '$tahun'
+			group by ta.id, mat.kodemataanggaran, mat.namamataanggaran
+			order by kodemataanggaran
+) as k on j.kodemataanggaran = k.kodemataanggaran order by k.kodemataanggaran
+) as p on o.kodemataanggaran = p.kodemataanggaran order by o.kodemataanggaran"));
+
+        $jumlah = DB::select(DB::raw("select sum(subtotal) totalawalsebelum, sum(subtotalsetelah) totalawalsesudah from(
+        SELECT k.*, j.subtotal as subtotalsetelah, j.tahap tahapsetelah
         from(
-        select rd.subtotal, rd.norec
-                from strukrealisasi_t sr
-        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
-        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
-        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-        left join pegawai_m pgb on pgb.id = sr.bendaharafk 
-        left join pegawai_m pgp on pgp.id = sr.penerimafk 
-        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
-        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
-        group by rd.subtotal, rd.norec
-        ) as x;"));
+                    select id, tahap,
+                    case 
+                        when kodemataanggaran = 'A' then 'I.A'
+                        when kodemataanggaran = 'B' then 'I.B'
+                        when kodemataanggaran = 'II' then 'II'
+                        when kodemataanggaran = 'III' then 'III'
+                    end as kodemataanggaran,
+                    case 
+                        when kodemataanggaran = 'A' then 'BIAYA PELAYANAN '
+                        when kodemataanggaran = 'B' then 'BIAYA UMUM DAN ADMINISTRASI'
+                        when kodemataanggaran = 'II' then 'BIAYA NON OPERASIONAL'
+                        when kodemataanggaran = 'III' then 'BIAYA PENGELUARAN INVESTASI'
+                    end as keterangan,
+                    case 
+                        when kodemataanggaran = 'A' then sum(subtotal)
+                        when kodemataanggaran = 'B' then sum(subtotal)
+                        when kodemataanggaran = 'II' then sum(subtotal)
+                        when kodemataanggaran = 'III' then sum(subtotal)
+                    end as subtotal
+                    from(
+                        select id, tahap,
+                        case 
+                            when kodemataanggaran ilike 'I.A.%' then 'A'
+                            when kodemataanggaran ilike 'I.B.%' then 'B'
+                            when kodemataanggaran ilike 'II.%' then 'II'
+                            when kodemataanggaran ilike 'III.%' then 'III'
+                        end as kodemataanggaran,
+                        case 
+                            when kodemataanggaran ilike 'I.A.%' then sum(subtotal)
+                            when kodemataanggaran ilike 'I.B.%' then sum(subtotal)
+                            when kodemataanggaran ilike 'II.%' then sum(subtotal)
+                            when kodemataanggaran ilike 'III.%' then sum(subtotal)
+                        end as subtotal
+                        from(
+                                    select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
+                                    from kegiatananggaran_m km
+                                    inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+                                    inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                    inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+                                    and 
+                                    case 
+                                        when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+                                        when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+                                        when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+                                    end
+                                    inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+                                    where km.kdprofile = 30 and km.statusenabled = true
+                                    $qterhadap
+                                    and km.tahun = '$tahun'
+                                    group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
+                        ) as x group by id, tahap, kodemataanggaran
+                    ) as y group by id, tahap, kodemataanggaran
+        
+                    union all
+        
+                    select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran keterangan, sum(kb.subtotal) subtotal
+                    from kegiatananggaran_m km
+                    inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+                    inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                    inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+                    and 
+                    case 
+                        when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+                        when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+                        when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+                    end
+                    inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+                    where km.kdprofile = 30 and km.statusenabled = true
+                    $qterhadap
+                    and km.tahun = '$tahun'
+                    group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran
+                    
+        ) as j
+        inner join(
+                    select id,
+                    case 
+                        when kodemataanggaran = 'A' then 'I.A'
+                        when kodemataanggaran = 'B' then 'I.B'
+                        when kodemataanggaran = 'II' then 'II'
+                        when kodemataanggaran = 'III' then 'III'
+                    end as kodemataanggaran,
+                    case 
+                        when kodemataanggaran = 'A' then 'BIAYA PELAYANAN '
+                        when kodemataanggaran = 'B' then 'BIAYA UMUM DAN ADMINISTRASI'
+                        when kodemataanggaran = 'II' then 'BIAYA NON OPERASIONAL'
+                        when kodemataanggaran = 'III' then 'BIAYA PENGELUARAN INVESTASI'
+                    end as keterangan,
+                    case 
+                        when kodemataanggaran = 'A' then sum(subtotal)
+                        when kodemataanggaran = 'B' then sum(subtotal)
+                        when kodemataanggaran = 'II' then sum(subtotal)
+                        when kodemataanggaran = 'III' then sum(subtotal)
+                    end as subtotal
+                    from(
+                        select id,
+                        case 
+                            when kodemataanggaran ilike 'I.A.%' then 'A'
+                            when kodemataanggaran ilike 'I.B.%' then 'B'
+                            when kodemataanggaran ilike 'II.%' then 'II'
+                            when kodemataanggaran ilike 'III.%' then 'III'
+                        end as kodemataanggaran,
+                        case 
+                            when kodemataanggaran ilike 'I.A.%' then sum(subtotal)
+                            when kodemataanggaran ilike 'I.B.%' then sum(subtotal)
+                            when kodemataanggaran ilike 'II.%' then sum(subtotal)
+                            when kodemataanggaran ilike 'III.%' then sum(subtotal)
+                        end as subtotal
+                        from(
+                                    select ta.id, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
+                                    from kegiatananggaran_m km
+                                    inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+                                    inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                    inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+                                    and 
+                                    case 
+                                        when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+                                        when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+                                        when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+                                    end
+                                    inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+                                    where km.kdprofile = 30 and km.statusenabled = true
+                                    $qtahap
+                                    and km.tahun = '$tahun'
+                                    group by ta.id, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
+                        ) as x group by id, kodemataanggaran
+                    ) as y group by id, kodemataanggaran
+        
+                    union ALL
+        
+                    select ta.id, mat.kodemataanggaran, mat.namamataanggaran keterangan, sum(kb.subtotal) subtotal
+                    from kegiatananggaran_m km
+                    inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+                    inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                    inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                    inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+                    and 
+                    case 
+                        when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+                        when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+                        when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+                    end
+                    inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+                    where km.kdprofile = 30 and km.statusenabled = true
+                    $qtahap
+                    and km.tahun = '$tahun'
+                    group by ta.id, mat.kodemataanggaran, mat.namamataanggaran
+                    order by kodemataanggaran
+        ) as k on j.kodemataanggaran = k.kodemataanggaran order by k.kodemataanggaran
+        ) as i where kodemataanggaran ilike 'I.%' and char_length(kodemataanggaran) = 3;"));
 
 
 
         $result = array(
-            'data' => $detail,
+            'data' => $sebelum,
             'message' => '@epic',
         );
 
-        $pageWidth = 950;
-        return view('report.spj.cetakspjsatulampiran',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang'));
+        $pageWidth = 1200;
+        return view('report.spj.cetakrekapmataanggaran',compact('sebelum','pageWidth', 'jumlah'));
     }
 
+    public function CetakRekapMataAnggaranSebelum(Request $request){
+        $tahun = $request['tahun'];
+        
 
+        $qtahap  = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $qtahap =  ' and kb.objecttahapfk =  ' . $request['tahap'];
+        }
+
+        
+
+        $sebelum = DB::select(DB::raw("
+        SELECT o.*, p.subtotal, p.tahap
+from
+(
+	select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
+	case 
+		when kodemataanggaran ilike 'I%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
+		when kodemataanggaran ilike 'II%' then (char_length(kodemataanggaran) = 4 or char_length(kodemataanggaran) = 2)
+		when kodemataanggaran ilike 'III%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
+	end
+) as o
+left join
+(
+			select id, tahap,
+			case 
+				when kodemataanggaran = 'A' then 'I.A'
+				when kodemataanggaran = 'B' then 'I.B'
+				when kodemataanggaran = 'II' then 'II'
+				when kodemataanggaran = 'III' then 'III'
+			end as kodemataanggaran,
+			case 
+				when kodemataanggaran = 'A' then 'BIAYA PELAYANAN '
+				when kodemataanggaran = 'B' then 'BIAYA UMUM DAN ADMINISTRASI'
+				when kodemataanggaran = 'II' then 'BIAYA NON OPERASIONAL'
+				when kodemataanggaran = 'III' then 'BIAYA PENGELUARAN INVESTASI'
+			end as keterangan,
+			case 
+				when kodemataanggaran = 'A' then sum(subtotal)
+				when kodemataanggaran = 'B' then sum(subtotal)
+				when kodemataanggaran = 'II' then sum(subtotal)
+				when kodemataanggaran = 'III' then sum(subtotal)
+			end as subtotal
+			from(
+				select id, tahap,
+				case 
+					when kodemataanggaran ilike 'I.A.%' then 'A'
+					when kodemataanggaran ilike 'I.B.%' then 'B'
+					when kodemataanggaran ilike 'II.%' then 'II'
+					when kodemataanggaran ilike 'III.%' then 'III'
+				end as kodemataanggaran,
+				case 
+					when kodemataanggaran ilike 'I.A.%' then sum(subtotal)
+					when kodemataanggaran ilike 'I.B.%' then sum(subtotal)
+					when kodemataanggaran ilike 'II.%' then sum(subtotal)
+					when kodemataanggaran ilike 'III.%' then sum(subtotal)
+				end as subtotal
+				from(
+							select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
+							from kegiatananggaran_m km
+							inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+							left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+							inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+							inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+							inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+							and 
+							case 
+								when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+								when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+								when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+							end
+							inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+							where km.kdprofile = 30 and km.statusenabled = true
+							$qtahap
+							and km.tahun = '$tahun'
+							group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
+				) as x group by id, tahap, kodemataanggaran
+			) as y group by id, tahap, kodemataanggaran
+
+			union all
+
+			select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran keterangan, sum(kb.subtotal) subtotal
+			from kegiatananggaran_m km
+			inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+			left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+			inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+			inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+			inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+			and 
+			case 
+				when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+				when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+				when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+			end
+			inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+			where km.kdprofile = 30 and km.statusenabled = true
+			$qtahap
+			and km.tahun = '$tahun'
+			group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran
+) as p on o.kodemataanggaran = p.kodemataanggaran order by o.kodemataanggaran"));
+
+        $jumlah = DB::select(DB::raw("select sum(subtotal) totalawalsebelum from(
+            SELECT o.*, p.subtotal, p.tahap
+            from
+            (
+                select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
+                case 
+                    when kodemataanggaran ilike 'I%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
+                    when kodemataanggaran ilike 'II%' then (char_length(kodemataanggaran) = 4 or char_length(kodemataanggaran) = 2)
+                    when kodemataanggaran ilike 'III%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
+                end
+            ) as o
+            left join
+            (
+                        select id, tahap,
+                        case 
+                            when kodemataanggaran = 'A' then 'I.A'
+                            when kodemataanggaran = 'B' then 'I.B'
+                            when kodemataanggaran = 'II' then 'II'
+                            when kodemataanggaran = 'III' then 'III'
+                        end as kodemataanggaran,
+                        case 
+                            when kodemataanggaran = 'A' then 'BIAYA PELAYANAN '
+                            when kodemataanggaran = 'B' then 'BIAYA UMUM DAN ADMINISTRASI'
+                            when kodemataanggaran = 'II' then 'BIAYA NON OPERASIONAL'
+                            when kodemataanggaran = 'III' then 'BIAYA PENGELUARAN INVESTASI'
+                        end as keterangan,
+                        case 
+                            when kodemataanggaran = 'A' then sum(subtotal)
+                            when kodemataanggaran = 'B' then sum(subtotal)
+                            when kodemataanggaran = 'II' then sum(subtotal)
+                            when kodemataanggaran = 'III' then sum(subtotal)
+                        end as subtotal
+                        from(
+                            select id, tahap,
+                            case 
+                                when kodemataanggaran ilike 'I.A.%' then 'A'
+                                when kodemataanggaran ilike 'I.B.%' then 'B'
+                                when kodemataanggaran ilike 'II.%' then 'II'
+                                when kodemataanggaran ilike 'III.%' then 'III'
+                            end as kodemataanggaran,
+                            case 
+                                when kodemataanggaran ilike 'I.A.%' then sum(subtotal)
+                                when kodemataanggaran ilike 'I.B.%' then sum(subtotal)
+                                when kodemataanggaran ilike 'II.%' then sum(subtotal)
+                                when kodemataanggaran ilike 'III.%' then sum(subtotal)
+                            end as subtotal
+                            from(
+                                        select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
+                                        from kegiatananggaran_m km
+                                        inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                                        left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+                                        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+                                        and 
+                                        case 
+                                            when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+                                            when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+                                            when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+                                        end
+                                        inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+                                        where km.kdprofile = 30 and km.statusenabled = true
+                                        $qtahap
+                                        and km.tahun = '$tahun'
+                                        group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
+                            ) as x group by id, tahap, kodemataanggaran
+                        ) as y group by id, tahap, kodemataanggaran
+            
+                        union all
+            
+                        select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran keterangan, sum(kb.subtotal) subtotal
+                        from kegiatananggaran_m km
+                        inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                        left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+                        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+                        and 
+                        case 
+                            when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
+                            when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
+                            when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
+                        end
+                        inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
+                        where km.kdprofile = 30 and km.statusenabled = true
+                        $qtahap
+                        and km.tahun = '$tahun'
+                        group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran
+            ) as p on o.kodemataanggaran = p.kodemataanggaran order by o.kodemataanggaran) as i"));
+
+
+
+        $result = array(
+            'data' => $sebelum,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 1200;
+        return view('report.spj.cetakrekapmataanggaransebelum',compact('sebelum','pageWidth', 'jumlah'));
+    }
     
 
     public function CetakSKNapza(Request $request)

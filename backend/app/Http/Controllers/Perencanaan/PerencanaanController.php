@@ -2383,40 +2383,21 @@ class PerencanaanController extends ApiController {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $nopanjar = $request['nopanjar'];
 
-        try{
-            $KB= Panjar::where('nopanjar',$request['nopanjar'])
-                ->first();
-            $SR= StrukRealisasi::where('norec',$request['norec'])
-                ->first();
+        $data = DB::select(DB::raw("
+                select *
+                from panjar_t 
+                where nopanjar = '$nopanjar'
+            ")
+        );
 
-            $SR->objectpanjarfk = $KB->norec;
-            $SR->save();
-            $transStatus = 'true';
-       } catch (\Exception $e) {
-            $transStatus = 'false';
-       }
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
 
-        if ($transStatus == 'true') {
-            $transMessage = "Simpan";
-            DB::commit();
-            $result = array(
-                'status' => 201,
-                'message' => $transMessage,
-                'result' => $SR,
-                'as' => '@epic',
-            );
-        } else {
-            $transMessage = "Simpan Gagal";
-            DB::rollBack();
-            $result = array(
-                'status' => 400,
-                'line'=> $e->getLine(),
-                'message'=> $e->getMessage(),
-                'as' => '@epic',
-            );
-        }
-        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+        return $this->respond($result);
     }
 
     public function batalVerifSPJ(Request $request) {
@@ -3214,6 +3195,7 @@ class PerencanaanController extends ApiController {
             $MA->objectkegiatanfk = $request['objectkegiatanfk'];
             $MA->objectmataanggaranfk = $KM->id;
             $MA->objectcarabayarfk = $request['objectcarabayarfk'];
+            $MA->objectpanjarfk = $request['norecpanjar'];
             $MA->bendaharafk = $request['bendaharafk'];
             $MA->penerimafk = $request['penerimafk'];
             $MA->pph = (float)$request['pph'];

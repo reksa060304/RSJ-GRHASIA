@@ -1134,6 +1134,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-suratketerangandokter','Report\ReportController@CetakSKDokter');
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
+          Route::get('report/get-cetak-rekap-mata-anggaran','Report\ReportController@CetakRekapMataAnggaran');
+          Route::get('report/get-cetak-rekap-mata-anggaran-sebelum','Report\ReportController@CetakRekapMataAnggaranSebelum');
           Route::get('report/get-rekap-order-kirim-barang-cetak','Report\ReportController@CetakLapOrderKirim');
           Route::get('report/get-cetak-suratketerangannapza','Report\ReportController@CetakSKNapza');
           Route::get('report/get-cetak-suratketerangankesehatanjiwa','Report\ReportController@CetakSKJiwa');
@@ -1400,7 +1402,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-perubahan-keterangan','Perencanaan\PerencanaanController@savePerubahanKeterangan');
             Route::post('perencanaan/save-pengembalian-spj','Perencanaan\PerencanaanController@savePengembalianSPJ');
             Route::post('perencanaan/save-verif-spj','Perencanaan\PerencanaanController@saveVerifSPJ');
-            Route::post('perencanaan/save-panjar-spj','Perencanaan\PerencanaanController@savePanjarSPJ');
+            Route::get('perencanaan/save-panjar-spj','Perencanaan\PerencanaanController@savePanjarSPJ');
             Route::post('perencanaan/batal-verif-spj','Perencanaan\PerencanaanController@batalVerifSPJ');
             Route::post('perencanaan/delete-child','Perencanaan\PerencanaanController@deleteChildAnggaran');
             Route::post('perencanaan/save-kel-head-anggaran','Perencanaan\PerencanaanController@saveKelHead');
