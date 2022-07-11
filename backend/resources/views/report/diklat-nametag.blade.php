@@ -63,7 +63,11 @@
             <tbody border="2" style="display: inline-block; table-layout: fixed; margin: 5px;  border: 2px solid #000000;">
                 <tr>
                     <td style="text-align: center;">
-                        <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 70px; padding: 3px">
+                        @if (stripos(\Request::url(), 'localhost') !== FALSE)
+                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 70px; padding: 3px">
+                        @else
+                            <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 70px; padding: 3px">
+                        @endif
                     </td>
                     <td>
                         <div
