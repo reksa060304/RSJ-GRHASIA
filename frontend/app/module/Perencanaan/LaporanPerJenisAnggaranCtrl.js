@@ -53,16 +53,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     tahap = $scope.item.tahapmata.id
                 }
                 
-                var terhadap = 2
+                var terhadap = ""
                 if ($scope.item.terhadapmata != undefined){
                     terhadap = $scope.item.terhadapmata.id
                 }
 
                 
 
-                if($scope.item.terhadap == undefined || tahap == terhadap){
+                if($scope.item.terhadapmata == undefined || tahap == terhadap){
                     window.open(baseTransaksi + "report/get-cetak-rekap-mata-anggaran-sebelum?tahap="+tahap+"&tahun="+moment($scope.item.tahun).format('YYYY'), '_blank');
-                } else if($scope.item.terhadap != undefined){
+                } else if($scope.item.terhadapmata != undefined || tahap != terhadap){
                     window.open(baseTransaksi + "report/get-cetak-rekap-mata-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahun).format('YYYY') +"&terhadap="+terhadap, '_blank');
                 }
             }

@@ -89,10 +89,54 @@
         </tbody>
         <tbody>
         <tr>
-            <td colspan="2" style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 40px;">
+            <td colspan="2" style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 10px;">
                 <font style="font-size: 12pt" color="#000000">Terbilang: {{$jumlah[0]->totalfix}}</font>
             </td>
         </tr>
+        @if($kegiatan[0]->namalengkap != null)
+        <tr>
+            <td colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 100px;">
+                <font style="font-size: 12pt" color="#000000"></font>
+            </td>
+            <td style="width: 100px;"></td>
+            <td colspan="2" style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
+                <font style="font-size: 12pt" color="#000000">Pejabat Pelaksana</font>
+            </td>
+        </tr>
+        <tr>
+            <td  colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 100px;">
+                <font style="font-size: 12pt" color="#000000"></font>
+            </td>
+            <td style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 100px;">
+                <font style="font-size: 12pt" color="#000000"></font>
+            </td>
+            <td  colspan="2" style="padding: 10px; padding-bottom: 80px; padding-top: 5px; width: 100px;" align="center">
+                <font style="font-size: 12pt" color="#000000">Teknis Kegiatan (PPTK)</font>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 120px;">
+                <font style="font-size: 12pt" color="#000000"></font>
+            </td>
+            <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 80px;">
+                <font style="font-size: 12pt" color="#000000"></font>
+            </td>
+            <td colspan="2" style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
+                <font style="font-size: 12pt" color="#000000"><u>{{ $kegiatan[0]->namalengkap}}</u></font>
+            </td>
+        </tr>
+        <tr>
+            <td  colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 5px; width: 120px;">
+                <font style="font-size: 12pt" color="#000000"></font>
+            </td>
+            <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; width: 80px;">
+                <font style="font-size: 12pt" color="#000000"></font>
+            </td>
+            <td  colspan="2" style="padding: 10px; padding-bottom: 5px; width: 100px;" align="left">
+                <font style="font-size: 12pt" color="#000000">&emsp;&nbsp;NIP. {{ $kegiatan[0]->nip_pns}}</font>
+            </td>
+        </tr>
+        @endif
         <tr>
             <td colspan="5" style="text-align:right; padding-right: 50px; padding-bottom: 5px; padding-top: 30px;">
                 <font style="font-size: 12pt" color="#000000">Yogyakarta, &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; {{$kegiatan[0]->tahun}}</font>
@@ -108,13 +152,13 @@
             </td>
         </tr>
         <tr>
-            <td  colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 120px; padding-top: 5px; width: 100px;">
+            <td  colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 100px;">
                 <font style="font-size: 12pt" color="#000000">Direktur Selaku KPA</font>
             </td>
             <td style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 100px;">
                 <font style="font-size: 12pt" color="#000000">Bendahara Pengeluaran</font>
             </td>
-            <td  colspan="2" style="padding: 10px; padding-bottom: 100px; padding-top: 5px; width: 100px;" align="center">
+            <td  colspan="2" style="padding: 10px; padding-bottom: 80px; padding-top: 5px; width: 100px;" align="center">
                 <font style="font-size: 12pt" color="#000000">Tanda Tangan</font>
             </td>
         </tr>
@@ -253,11 +297,11 @@
             </td>
         </tr>
         <tr>
-            <td colspan="1" style="text-align:center; padding-left: 0px; padding-top: 200px; width: 100px;">
+            <td colspan="1" style="text-align:center; padding-left: 0px; padding-top: 100px; width: 100px;">
                 <font style="font-size: 12pt" color="#000000"></font>
             </td>
-            <td style="width: 100px; padding-top: 200px;"></td>
-            <td colspan="2" style="padding-top: 200px; width: 100px;" align="center">
+            <td style="width: 100px; padding-top: 100px;"></td>
+            <td colspan="2" style="padding-top: 100px; width: 100px;" align="center">
             </td>
         </tr>
         </tbody>

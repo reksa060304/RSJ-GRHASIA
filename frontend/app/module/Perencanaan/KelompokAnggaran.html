@@ -844,27 +844,39 @@
 					<input c-text-box type="input" class="k-textbox" ng-model="item.thnAnggaran"  />
 				</div>
 				
-				<div class="grid_6" >
-					<div class="grid_4" style="text-align: center;">
+				
+					<div class="grid_1" style="text-align: center;">
 						TAHAP
 					</div>
-					<div class="grid_8" style="margin-top: -10px;">
+					<div class="grid_5" style="margin-top: -10px;">
 						<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahap"
 							k-data-text-field="'tahap'" k-data-value-field="'id'"
 							k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
 					</div>
-				</div>
 			</div>
-			<div class="grid_12" ng-hide="buttonhide">
+			<div class="grid_12">
 				<div class="grid_4" style="text-align: center;">
 					JENIS BELANJA
 				</div>
-				<div class="grid_8" style="margin-top: -10px;">
+				<div class="grid_2" style="margin-top: -10px;">
 					<input style="width: 100%;" kendo-combo-box k-ng-model="item.jenisbelanja"
-						k-data-text-field="'jenisbelanja'" k-data-value-field="'id'"
-						k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisBelanja" />
+							k-data-text-field="'jenisbelanja'" k-data-value-field="'id'"
+							k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisBelanja" />
 				</div>
+
+
+					<input c-text-box type="input" class="k-textbox" ng-model="item.savepptk" ng-hide="true">
+					<div class="grid_1" style="text-align: center;">
+						PPTK
+					</div>
+					<div class="grid_3" style="margin-top: -10px;">
+						<input c-text-box type="input" class="k-textbox" ng-model="item.pptktext" ng-hide="dispptk"                  " />
+					</div>
+					<div class="grid_1" style="margin-top: -10px;">
+						<button class="btnTemplate1" ng-click="TambahPPTK()" ng-hide="dispptk">Add</button>           
+					</div>
 			</div>
+			
 			<div class="grid_12">
 				<div class="grid_4" style="text-align: center;">
 					SUB KEGIATAN
@@ -1511,7 +1523,7 @@
 					JUMLAH TOTAL SPJ
 				</div>
 				<div class="grid_4" style="margin-top: -10px;">
-					<input c-text-box type="input" class="k-textbox" ng-model="item.jumlahSPJ"  />
+					<input c-text-box type="input" class="k-textbox" ng-model="item.jumlahSPJ"  disabled="true"/>
 				</div>
 				<div class="grid_4" style="margin-top: -10px;">{{item.jumlahtotalspjRP}}</div>
 			</div>
@@ -1645,6 +1657,50 @@
 		</div><br>
 		<div class="grid_12 borderBox">
 			<div id="kGrid" kendo-grid k-data-source="dataSourcePanjar" k-selectable="'row'" options="columnPanjar"
+                        k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected">
+                    </div>
+		</div>
+	</div>
+</div>
+<div kendo-window="popupPPTK" k-title="'Tambah Data PPTK'" k-visible="false" k-width="700" k-height="300">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_12">
+				<div class="grid_6" style="text-align: left;margin-top: 15px;">
+					Kode Sub Sub Kegiatan
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.kodesubsubpptk" disabled="true"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_6" style="text-align: left;margin-top: 15px;">
+					Nama Sub Sub Kegiatan
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.namasubsubpptk" disabled="true"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_6">
+					PPTK 
+				</div>
+				<div class="grid_6">
+					<input kendo-combo-box k-ng-model="item.pptk"
+						k-data-text-field="'text'" k-data-value-field="'value'"
+						k-filter="'contains'" k-auto-bind="false"
+						k-data-source="listPenerima"  />
+				</div>
+			</div>
+		</div>
+		<div class="grid_12" style="margin-top: 20px;">
+			<div class="grid_2">
+				<button class="btnTemplate1" ng-click="SimpanPPTK()">Simpan</button>
+			</div>
+			<div class="grid_5"></div>
+		</div><br>
+		<div class="grid_12 borderBox">
+			<div id="kGrid" kendo-grid k-data-source="dataSourcePPTK" k-selectable="'row'" options="columnPPTK"
                         k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected">
                     </div>
 		</div>

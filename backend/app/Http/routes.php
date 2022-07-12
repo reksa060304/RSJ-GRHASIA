@@ -1427,10 +1427,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-panjar','Perencanaan\PerencanaanController@savePanjar');
             Route::get('perencanaan/get-total-mata-anggaran', 'Perencanaan\PerencanaanController@getTotalMataAnggaran');
             Route::get('perencanaan/get-daftar-panjar', 'Perencanaan\PerencanaanController@getPanjar');
+            Route::get('perencanaan/get-daftar-pptk', 'Perencanaan\PerencanaanController@getPPTK');
             Route::get('perencanaan/get-daftar-panjar-aktif', 'Perencanaan\PerencanaanController@getPanjarAktif');
             Route::get('perencanaan/get-one-panjar', 'Perencanaan\PerencanaanController@getOnePanjar');
             Route::get('perencanaan/get-kodemataanggaran', 'Perencanaan\PerencanaanController@getKodemataanggaran');
             Route::get('perencanaan/get-total-keterangan', 'Perencanaan\PerencanaanController@getTotalKeterangan');
+            Route::get('perencanaan/get-total-belanja', 'Perencanaan\PerencanaanController@getTotalBelanja');
             Route::get('perencanaan/get-total-realisasi-detail', 'Perencanaan\PerencanaanController@getTotalRealisasiDetail');
             Route::get('perencanaan/get-penjagaan-verif-spj', 'Perencanaan\PerencanaanController@getPenjagaanVerifSPJ');
             Route::get('perencanaan/get-tahap-kegiatan-belanja', 'Perencanaan\PerencanaanController@getTahapKegiatan');

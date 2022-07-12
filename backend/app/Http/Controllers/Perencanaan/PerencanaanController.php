@@ -384,7 +384,8 @@ class PerencanaanController extends ApiController {
 
         $kegiatan = \DB::table('kegiatananggaran_m as dp')
             ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
-            ->select('dp.*','kp.namakelompok')
+            ->leftJoin('pegawai_m as pg','pg.id','=','dp.objectpptkfk')
+            ->select('dp.*','kp.namakelompok', 'pg.namalengkap')
             ->where('dp.kdprofile', $idProfile)
             ->where('dp.statusenabled', true)
             ->orderBy('dp.kode')
@@ -2003,7 +2004,7 @@ class PerencanaanController extends ApiController {
             $MA->targethasil = $request['targethasil'];
             $MA->div = $request['div'];
             $MA->objectjenisbelanjafk = $request['jenisbelanja'];
-
+            $MA->objectpptkfk = $request['pptk'];
             $MA->save();
 
             // if(!empty($KB)){
@@ -2717,18 +2718,23 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
 
         $tahap = $request['tahap'];
+        $subsubkegiatan = $request['subsubkegiatan'];
         $data = DB::select(DB::raw("
-                select sum(kb.subtotal) totalketerangan
-                from keteranganbelanja_t kb 
-                where kb.objecttahapfk = $tahap;
+        select sum(kb.subtotal) totalketerangan
+        from kegiatananggaran_m ka 
+        inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
+        where kb.objecttahapfk = $tahap
+        and ka.id = $subsubkegiatan;
             ")
         );
 
         $detail = DB::select(DB::raw("
-                select sum(rd.subtotal) totalrealisasidetail
-                from keteranganbelanja_t kb
-                inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
-                where kb.objecttahapfk = $tahap;
+        select sum(rd.subtotal) totalrealisasidetail
+        from kegiatananggaran_m ka 
+        inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
+        inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
+        where kb.objecttahapfk = $tahap
+        and ka.id = $subsubkegiatan;
             ")
         );
 
@@ -2762,6 +2768,48 @@ class PerencanaanController extends ApiController {
                 from panjar_t 
                 where kdprofile = 30
                 and statusenabled = true;
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getTotalBelanja(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $norec = $request['norec'];
+
+        $data = DB::select(DB::raw("
+        select sum(rd.subtotal) total
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+        where sr.norec = '$norec';
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getPPTK(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+                select ka.*, pg.namalengkap
+                from kegiatananggaran_m ka
+                inner join pegawai_m pg on pg.id = ka.objectpptkfk  
+                where ka.kdprofile = 30
+                and ka.statusenabled = true;
             ")
         );
 
@@ -3012,12 +3060,12 @@ class PerencanaanController extends ApiController {
                 ka.kode || '~' || ka.keterangan as kegiatan, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran
                 from strukrealisasi_t sr
                 INNER JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
-                INNER JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
-                INNER JOIN rekanan_m rkn on rkn.id=sr.rekananfk
-                INNER JOIN pegawai_m as pg1 on pg1.id=sr.bendaharafk
-                INNER JOIN pegawai_m as pg2 on pg2.id=sr.penerimafk
-				inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+                inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+                left JOIN rekanan_m rkn on rkn.id=sr.rekananfk
+                left JOIN pegawai_m as pg1 on pg1.id=sr.bendaharafk
+                left JOIN pegawai_m as pg2 on pg2.id=sr.penerimafk
                 left join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
+                left JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
                 where sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
                 and sr.statusenabled = true
 								group by sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
@@ -3105,8 +3153,8 @@ class PerencanaanController extends ApiController {
             inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
             inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
             inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-            left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
             inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+            left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
             where sr.norec = '$norec'
             group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div;
             ")

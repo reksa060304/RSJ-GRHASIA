@@ -142,8 +142,8 @@
                 <tr>
                     <td  colspan="3"  style="padding: 10px; text-align: left; font-weight: bold; border-top: 3px solid black; text-align:center;">JUMLAH TOTAL</td>
                     <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black;border-left: 3px solid black;text-align: right;">{{$totalsebelum}}</td>
-                    <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black; border-left: 3px solid black;text-align: right;">{{$totalsesudah}}</td>
-                    <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black; border-left: 3px solid black;text-align: right;">{{$totalberkurang}}</td>
+                    <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black; border-left: 3px solid black;text-align: right;border-right: 3px solid black;">{{$totalsesudah}}</td>
+                    <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black; text-align: right;">{{$totalberkurang}}</td>
                 </tr>
                 
         </table>
@@ -151,14 +151,14 @@
             <thead>
                 <tr>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
+                        <p align="center" style="margin-right: 30px; margin-top: 150px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     Mengetahui,
                             </font>
                         </p>
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
+                        <p align="center" style="margin-right: 30px; margin-top: 150px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     Yogyakarta, {{ date('d M Y') }}
                             </font>

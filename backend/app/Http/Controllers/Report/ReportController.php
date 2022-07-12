@@ -2082,20 +2082,108 @@ class ReportController extends ApiController{
         return view('report.apotik.laporderkirimbarang',compact('data','pageWidth', 'tglAwal', 'tglAkhir', 'noorder'));
     }
 
+    public function getCetakSPJSatuLampiran(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+
+        $kegiatan = DB::select(DB::raw("
+            select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, pg.namalengkap, pg.nip_pns, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub
+            from strukrealisasi_t sr
+            inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+            inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+            inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+            inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+            left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+            left join pegawai_m pg on pg.id = km.objectpptkfk
+            where sr.norec = '$norec'
+            group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div, pg.namalengkap, pg.nip_pns;
+            ")
+        );
+
+        $keterangan = DB::select(DB::raw("select kb.keteranganbelanja
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec'
+        group by kb.keteranganbelanja;"));
+
+        $mataanggaran = DB::select(DB::raw("select ma.namamataanggaran, ma.kodemataanggaran
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec'
+        group by ma.namamataanggaran, ma.kodemataanggaran;"));
+
+        $spj = DB::select(DB::raw("select 
+        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nip_pns as nipbendahara, pgp.namalengkap as namapenerima
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+        left join pegawai_m pgb on pgb.id = sr.bendaharafk 
+        left join pegawai_m pgp on pgp.id = sr.penerimafk 
+        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec'
+        group by sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nip_pns"));
+
+        $detail = DB::select(DB::raw("select row_number() over(order by rd.norec) as nomor, rd.norec, rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec'
+        group by rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal, rd.norec;"));
+
+        $jumlah = DB::select(DB::raw("select sum(subtotal) totalfix, round(sum(subtotal)) totalpembulatan
+        from(
+        select rd.subtotal, rd.norec
+                from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+        left join pegawai_m pgb on pgb.id = sr.bendaharafk 
+        left join pegawai_m pgp on pgp.id = sr.penerimafk 
+        left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec'
+        group by rd.subtotal, rd.norec
+        ) as x;"));
+
+
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetakspjsatulampiran',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang'));
+    }
+
     public function getCetakSPJ(Request $request){
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
 
         $kegiatan = DB::select(DB::raw("
-            select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub
+            select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub, pg.namalengkap, pg.nip_pns
             from strukrealisasi_t sr
             inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
             inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
             inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
-            left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
             inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+            left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
+            left join pegawai_m pg on pg.id = km.objectpptkfk
             where sr.norec = '$norec'
-            group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div;
+            group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div, pg.namalengkap, pg.nip_pns;
             ")
         );
 
@@ -2478,7 +2566,7 @@ from
 ) as o
 left join
 (
-select j.kodemataanggaran, j.subtotal as subtotalsetelah, j.tahap tahapsetelah
+select j.kodemataanggaran, j.subtotal as subtotalsetelah, k.tahap tahapsetelah
 , k.subtotal subtotalsebelum from
 (
 			select id, tahap,
@@ -2559,7 +2647,7 @@ select j.kodemataanggaran, j.subtotal as subtotalsetelah, j.tahap tahapsetelah
 			
 ) as j 
 inner join(
-			select id,
+			select id, tahap,
 			case 
 				when kodemataanggaran = 'A' then 'I.A'
 				when kodemataanggaran = 'B' then 'I.B'
@@ -2579,7 +2667,7 @@ inner join(
 				when kodemataanggaran = 'III' then sum(subtotal)
 			end as subtotal
 			from(
-				select id,
+				select id, tahap,
 				case 
 					when kodemataanggaran ilike 'I.A.%' then 'A'
 					when kodemataanggaran ilike 'I.B.%' then 'B'
@@ -2593,7 +2681,7 @@ inner join(
 					when kodemataanggaran ilike 'III.%' then sum(subtotal)
 				end as subtotal
 				from(
-							select ta.id, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
+							select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
 							from kegiatananggaran_m km
 							inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
 							left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -2610,13 +2698,13 @@ inner join(
 							where km.kdprofile = 30 and km.statusenabled = true
 							$qtahap
 							and km.tahun = '$tahun'
-							group by ta.id, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
-				) as x group by id, kodemataanggaran
-			) as y group by id, kodemataanggaran
+							group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
+				) as x group by id, tahap, kodemataanggaran
+			) as y group by id, tahap, kodemataanggaran
 
 			union ALL
 
-			select ta.id, mat.kodemataanggaran, mat.namamataanggaran keterangan, sum(kb.subtotal) subtotal
+			select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran keterangan, sum(kb.subtotal) subtotal
 			from kegiatananggaran_m km
 			inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
 			left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -2633,7 +2721,7 @@ inner join(
 			where km.kdprofile = 30 and km.statusenabled = true
 			$qtahap
 			and km.tahun = '$tahun'
-			group by ta.id, mat.kodemataanggaran, mat.namamataanggaran
+			group by ta.id, ta.tahap,  mat.kodemataanggaran, mat.namamataanggaran
 			order by kodemataanggaran
 ) as k on j.kodemataanggaran = k.kodemataanggaran order by k.kodemataanggaran
 ) as p on o.kodemataanggaran = p.kodemataanggaran order by o.kodemataanggaran"));
