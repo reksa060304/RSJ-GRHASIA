@@ -821,9 +821,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						"width": "20%"
 					},
 					{
-						"field": "pegawaipenanggungjawab",
+						// "field": "pegawaipenanggungjawab",
 						"title": "Penanda Tangan SK",
-						"width": "20%"
+						"width": "20%",
+						"template": "#: ttdsk # / #: ttdjabatansk #"
 					},
 					{
 						"command": [
@@ -1587,8 +1588,9 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.itemJabatan.jabatan = { id: dataItem.objectjabatanfk, namajabatan: dataItem.namajabatan };
 				$scope.itemJabatan.noSK = dataItem.nosk;
 				$scope.itemJabatan.tglSK = moment(dataItem.tglsk).format('YYYY-MM-DD HH:mm');
-				$scope.itemJabatan.ttdSK = { id: dataItem.objectpegawaittdfk, namalengkap: dataItem.pegawaittd };
-				$scope.itemJabatan.jabatanTtd = { id: dataItem.objectjabatanttdfk, namajabatan: dataItem.namajabatanttd };
+				$scope.itemJabatan.ttdSK = dataItem.ttdsk;
+				$scope.itemJabatan.jabatanTtd = dataItem.ttdjabatansk;
+				$scope.itemJabatan.tunjangan = dataItem.tunjangan;
 				$scope.popUpRiwayatJabatan.center().open();
 			}
 
@@ -2513,6 +2515,7 @@ $scope.formatRupiah = function (value, currency) {
 					"itemJabatan.tglSK|k-ng-model|Tgl SK",
 					"itemJabatan.ttdSK|k-ng-model|Penandatangan SK",
 					"itemJabatan.jabatanTtd|k-ng-model|Penandatangan Jabatan",
+					"itemJabatan.tunjangan|ng-model|Tunjangan",
 				];
 
 				var isValid = ModelItem.setValidation($scope, listRawRequired);
@@ -2525,8 +2528,8 @@ $scope.formatRupiah = function (value, currency) {
 					}
 					var data = {};
 					if ($scope.item.nomorId != undefined) {
-						for (var i = gridRiwayatJabatan.length - 1; i >= 0; i--) {
-							if (gridRiwayatJabatan[i].no == $scope.item.nomorId) {
+						for (var i = dataRiwayatJabatan.length - 1; i >= 0; i--) {
+							if (dataRiwayatJabatan[i].no == $scope.item.nomorId) {
 
 								data.no = $scope.item.nomorId
 								data.objectjenisjabatanfk = $scope.itemJabatan.jenisJabatan.id
@@ -2535,12 +2538,15 @@ $scope.formatRupiah = function (value, currency) {
 								data.namajabatan = $scope.itemJabatan.jabatan.namajabatan
 								data.nosk = $scope.itemJabatan.noSK
 								data.tglsk = moment($scope.itemJabatan.tglSK).format('YYYY-MM-DD HH:mm')
-								data.objectpegawaittdfk = $scope.itemJabatan.ttdSK.id
-								data.pegawaittd = $scope.itemJabatan.ttdSK.namalengkap
-								data.objectjabatanttdfk = $scope.itemJabatan.jabatanTtd.id
+								// data.objectpegawaittdfk = $scope.itemJabatan.ttdSK.id
+								// data.pegawaittd = $scope.itemJabatan.ttdSK.namalengkap
+								// data.objectjabatanttdfk = $scope.itemJabatan.jabatanTtd.id
 								data.namajabatanttd = $scope.itemJabatan.jabatanTtd.namajabatan
-								data.pegawaipenanggungjawab = $scope.itemJabatan.ttdSK.namalengkap + " / " + $scope.itemJabatan.jabatanTtd.namajabatan
+								data.pegawaipenanggungjawab = $scope.itemJabatan.ttdSK + " / " + $scope.itemJabatan.jabatanTtd
 								data.norec = $scope.item.norecJab
+								data.tunjangan = $scope.itemJabatan.tunjangan
+								data.ttdsk = $scope.itemJabatan.ttdSK
+								data.ttdjabatansk = $scope.itemJabatan.jabatanTtd
 
 								dataRiwayatJabatan[i] = data;
 								$scope.gridRiwayatJabatan = new kendo.data.DataSource({
@@ -2559,12 +2565,15 @@ $scope.formatRupiah = function (value, currency) {
 							namajabatan: $scope.itemJabatan.jabatan.namajabatan,
 							nosk: $scope.itemJabatan.noSK,
 							tglsk: moment($scope.itemJabatan.tglSK).format('YYYY-MM-DD HH:mm'),
-							objectpegawaittdfk: $scope.itemJabatan.ttdSK.id,
-							pegawaittd: $scope.itemJabatan.ttdSK.namalengkap,
-							objectjabatanttdfk: $scope.itemJabatan.jabatanTtd.id,
+							// objectpegawaittdfk: $scope.itemJabatan.ttdSK.id,
+							// pegawaittd: $scope.itemJabatan.ttdSK.namalengkap,
+							// objectjabatanttdfk: $scope.itemJabatan.jabatanTtd.id,
 							namajabatanttd: $scope.itemJabatan.jabatanTtd.namajabatan,
-							pegawaipenanggungjawab: $scope.itemJabatan.ttdSK.namalengkap + " / " + $scope.itemJabatan.jabatanTtd.namajabatan,
-							norec: $scope.item.norecJab
+							pegawaipenanggungjawab: $scope.itemJabatan.ttdSK + " / " + $scope.itemJabatan.jabatanTtd,
+							norec: $scope.item.norecJab,
+							ttdsk: $scope.itemJabatan.ttdSK,
+							tunjangan: $scope.itemJabatan.tunjangan,
+							ttdjabatansk: $scope.itemJabatan.jabatanTtd,
 						}
 
 						dataRiwayatJabatan.push(data)
