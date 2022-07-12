@@ -46,6 +46,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.totalketerangan = 0;
             $scope.totalrealisasidetail = 0;
             $scope.totalpanjar = 0;
+            $scope.subtotalbelanjasebelum = 0;
 
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listJenisBelanja = e.data.jenisbelanja
@@ -1316,9 +1317,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     medifirstService.get("perencanaan/get-total-keterangan?tahap=" +e.data.setting[0].objecttahapaktivfk + "&subsubkegiatan=" + $scope.item.subSubKegiatanSPJ.id).then(function (e) {
                         $scope.totalketerangan = e.data.data[0].totalketerangan
                         $scope.totalrealisasidetail = e.data.detail[0].totalrealisasidetail
-                        $scope.totalpanjar = e.data.panjar[0].panjar
-                        $scope.item.sisaAnggaranSPJ = parseInt($scope.totalketerangan) - parseInt($scope.totalrealisasidetail) 
-                        //- parseInt($scope.totalpanjar)
+                        if(e.data.panjar.length > 0){
+                            $scope.panjar = e.data.panjar[0].jumlah
+                            $scope.pengembalian = e.data.panjar[0].jumlahpengembalian
+                            $scope.item.sisaAnggaranSPJ = parseInt($scope.totalketerangan) - parseInt($scope.totalrealisasidetail) + parseInt($scope.panjar) - parseInt($scope.pengembalian)
+                        }else if(e.data.panjar.length == 0){
+                            $scope.item.sisaAnggaranSPJ = parseInt($scope.totalketerangan) - parseInt($scope.totalrealisasidetail)
+                        }
+                        
                         console.log($scope.item.sisaAnggaranspj)
                     })
                 })
@@ -3413,53 +3419,73 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.item.itemRincian != undefined){
                     if($scope.item.SPJstatusTambah == 'new'){
                         // let nourut = DataDetailSPJ.length + 1
-                        let dataAddSPJ = {
-                            nourut : $scope.item.noUrutSPJ,
-                            uraian : $scope.item.keteranganSPJ,
-                            jml : $scope.item.jmlSPJ,
-                            satuan : $scope.item.satuanSPJ,
-                            harga : $scope.item.hargaSatuanSPJ,
-                            subtotal : $scope.item.subTotalSPJ,
-                            keteranganbelanjafk : $scope.item.itemRincian.norec,
-                            keteranganbelanja :$scope.item.itemRincian.keteranganbelanja
+                        if($scope.item.subTotalSPJ > $scope.item.sisaAnggaranSPJ){
+                            toastr.error('Subtotal yang diinput melebihi sisa anggaran', 'Informasi');
+                            return
                         }
-                        DataDetailSPJ.push(dataAddSPJ)
-                        $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
-                            data: DataDetailSPJ
-                        });
-                        console.log(DataDetailSPJ)
-                        let NewTotal = 0;
-                        for (let index = 0; index < DataDetailSPJ.length; index++) {
-                            const element = DataDetailSPJ[index];
-                            NewTotal +=parseFloat(DataDetailSPJ[index].subtotal)
+                        else{
+                            let dataAddSPJ = {
+                                nourut : $scope.item.noUrutSPJ,
+                                uraian : $scope.item.keteranganSPJ,
+                                jml : $scope.item.jmlSPJ,
+                                satuan : $scope.item.satuanSPJ,
+                                harga : $scope.item.hargaSatuanSPJ,
+                                subtotal : $scope.item.subTotalSPJ,
+                                keteranganbelanjafk : $scope.item.itemRincian.norec,
+                                keteranganbelanja :$scope.item.itemRincian.keteranganbelanja
+                            }
+                            DataDetailSPJ.push(dataAddSPJ)
+                            $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
+                                data: DataDetailSPJ
+                            });
+                            console.log(DataDetailSPJ)
+                            let NewTotal = 0;
+                            for (let index = 0; index < DataDetailSPJ.length; index++) {
+                                const element = DataDetailSPJ[index];
+                                NewTotal +=parseFloat(DataDetailSPJ[index].subtotal)
+                            }
+                            $scope.item.jumlahSPJ = NewTotal
+                            $scope.item.jumlahtotalspjRP =formatRupiah(NewTotal, "Rp. ") 
+                            
+                            $scope.item.sisaAnggaranSPJ -= $scope.item.subTotalSPJ
                         }
-                        $scope.item.jumlahSPJ = NewTotal
-                        $scope.item.jumlahtotalspjRP =formatRupiah(NewTotal, "Rp. ") 
                         $scope.popupTambahDetailSPJ.center().close()
                     }else{
-                        for (let index = 0; index < DataDetailSPJ.length; index++) {
-                            const element = DataDetailSPJ[index];
-                            if(element.nourut == $scope.item.noUrutSPJ ){
-                                element.uraian = $scope.item.keteranganSPJ
-                                element.jml = $scope.item.jmlSPJ
-                                element.satuan = $scope.item.satuanSPJ
-                                element.harga = $scope.item.hargaSatuanSPJ
-                                element.subtotal = $scope.item.subTotalSPJ
-                                element.keteranganbelanjafk = $scope.item.itemRincian.norec
-                                element.keteranganbelanja = $scope.item.itemRincian.keteranganbelanja
+                        if($scope.subtotalbelanjasebelum < $scope.item.subTotalSPJ && (($scope.item.subTotalSPJ - $scope.subtotalbelanjasebelum) > $scope.item.sisaAnggaranSPJ)){
+                            toastr.error('Subtotal yang diinput melebihi sisa anggaran', 'Informasi');
+                            return
+                        } else{
+                            for (let index = 0; index < DataDetailSPJ.length; index++) {
+                                const element = DataDetailSPJ[index];
+                                if(element.nourut == $scope.item.noUrutSPJ ){
+                                    element.uraian = $scope.item.keteranganSPJ
+                                    element.jml = $scope.item.jmlSPJ
+                                    element.satuan = $scope.item.satuanSPJ
+                                    element.harga = $scope.item.hargaSatuanSPJ
+                                    element.subtotal = $scope.item.subTotalSPJ
+                                    element.keteranganbelanjafk = $scope.item.itemRincian.norec
+                                    element.keteranganbelanja = $scope.item.itemRincian.keteranganbelanja
+                                }
+                            }
+                            $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
+                                data: DataDetailSPJ
+                            });
+                            console.log(DataDetailSPJ)
+                            let NewTotal = 0;
+                            for (let index = 0; index < DataDetailSPJ.length; index++) {
+                                const element = DataDetailSPJ[index];
+                                NewTotal += parseFloat(DataDetailSPJ[index].subtotal)
+                            }
+                            $scope.item.jumlahSPJ = NewTotal
+                            $scope.item.jumlahtotalspjRP =formatRupiah(NewTotal, "Rp. ") 
+                            if($scope.subtotalbelanjasebelum > $scope.item.subTotalSPJ){
+                                $scope.item.sisaAnggaranSPJ += ($scope.subtotalbelanjasebelum - $scope.item.subTotalSPJ)
+                            } else if($scope.subtotalbelanjasebelum < $scope.item.subTotalSPJ){
+                                $scope.item.sisaAnggaranSPJ -= ($scope.item.subTotalSPJ - $scope.subtotalbelanjasebelum)
                             }
                         }
-                        $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
-                            data: DataDetailSPJ
-                        });
-                        console.log(DataDetailSPJ)
-                        let NewTotal = 0;
-                        for (let index = 0; index < DataDetailSPJ.length; index++) {
-                            const element = DataDetailSPJ[index];
-                            NewTotal += parseFloat(DataDetailSPJ[index].subtotal)
-                        }
-                        $scope.item.jumlahSPJ = NewTotal
-                        $scope.item.jumlahtotalspjRP =formatRupiah(NewTotal, "Rp. ") 
+                        
+                        
                         $scope.popupTambahDetailSPJ.center().close()
                     }
                     
@@ -3471,6 +3497,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
 				})
+
+                console.log(dataItem)
                 
                 if( $scope.item.mataAnggaranSPJ ==  undefined){
                     return
@@ -3482,6 +3510,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.hargaSatuanSPJ =dataItem.harga
                 $scope.item.subTotalSPJ =dataItem.subtotal
                 $scope.item.SPJstatusTambah = 'luama'
+                $scope.subtotalbelanjasebelum = dataItem.subtotal
                 
                 // DataKeteranganBelanja
                 let itemRincianList = [];
@@ -3505,28 +3534,38 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if( $scope.item.mataAnggaranSPJ ==  undefined){
                     return
                 }
-                // DataDetailSPJ.push(dataAddSPJ)
-                let newARr = []
-                let a  = 0
-                for (let index = 0; index < DataDetailSPJ.length; index++) {
-                    if(DataDetailSPJ[index].nourut != dataItem.nourut){
-                        a++
-                        DataDetailSPJ[index].nourut = a
-                        newARr.push(DataDetailSPJ[index])
+                console.log(dataItem)
+                var datasave =
+                    {
+                        norec :  dataItem.norec,
                     }
-                }
-                $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
-                    data: newARr
-                });
-                DataDetailSPJ = newARr
-                console.log(DataDetailSPJ)
-                let NewTotal = 0;
-                for (let index = 0; index < DataDetailSPJ.length; index++) {
-                    const element = DataDetailSPJ[index];
-                    NewTotal += parseFloat(DataDetailSPJ[index].subtotal)
-                }
-                $scope.item.jumlahSPJ = NewTotal
-                $scope.item.jumlahtotalspjRP =formatRupiah(NewTotal, "Rp. ") 
+                medifirstService.post('perencanaan/delete-rincian-belanja',datasave).then(function (e) {
+                    $scope.item.sisaAnggaranSPJ += dataItem.subtotal
+                }, function (error) {
+
+                })
+                // DataDetailSPJ.push(dataAddSPJ)
+                // let newARr = []
+                // let a  = 0
+                // for (let index = 0; index < DataDetailSPJ.length; index++) {
+                //     if(DataDetailSPJ[index].nourut != dataItem.nourut){
+                //         a++
+                //         DataDetailSPJ[index].nourut = a
+                //         newARr.push(DataDetailSPJ[index])
+                //     }
+                // }
+                // $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
+                //     data: newARr
+                // });
+                // DataDetailSPJ = newARr
+                // console.log(DataDetailSPJ)
+                // let NewTotal = 0;
+                // for (let index = 0; index < DataDetailSPJ.length; index++) {
+                //     const element = DataDetailSPJ[index];
+                //     NewTotal += parseFloat(DataDetailSPJ[index].subtotal)
+                // }
+                // $scope.item.jumlahSPJ = NewTotal
+                // $scope.item.jumlahtotalspjRP =formatRupiah(NewTotal, "Rp. ") 
             }
             
             $scope.SimpanPopUpDetailSPJ = function() {
@@ -3539,6 +3578,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.item.mataAnggaranSPJ == undefined){
                     return
                 }
+                if($scope.item.bendaharaSPJ == undefined){
+                    return
+                }
+                if($scope.item.penerimaSPJ == undefined){
+                    return
+                }
+                
                 // let idAnggaran = 0;
                 // for (let index = 0; index < DataMataAnggaranCombo.length; index++) {
                 //     const element = DataMataAnggaranCombo[index];
@@ -3605,8 +3651,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.norecspj = dataItem.norec
                 console.log(dataItem)
 
-               
-
                 medifirstService.get("perencanaan/get-one-panjar?norec=" +dataItem.norec).then(function (e) {
                     $scope.item.panjar = e.data.data[0].jumlah
                     console.log($scope.item.panjar)
@@ -3672,11 +3716,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 let newArr = []
                 for (let index = 0; index < DataDetailSPJALL.length; index++) {
                     const element = DataDetailSPJALL[index];
+                    console.log(element)
                     if(element.strukrealisasifk == dataItem.norec){
-                        // element.nourut = index+1
+                        for (let i = 0; i < element.data.length; i++) {
+                            element.data[i].nourut = i+1
+                        }
                         newArr.push(element.data)
                     }
                 }
+                
                 DataDetailSPJ = []
                 DataDetailSPJ = newArr[0]
                 $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
