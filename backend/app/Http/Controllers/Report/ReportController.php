@@ -2446,7 +2446,7 @@ class ReportController extends ApiController{
 
         $pageWidth = 1200;
         //return $this->respond($result);
-        return view('report.spj.cetakjenisanggaransebelumsesudah',compact('sebelum', 'pageWidth', 'sesudah'));
+        return view('report.spj.cetakjenisanggaransebelumsesudah',compact('sebelum', 'pageWidth'));
     }
 
     
