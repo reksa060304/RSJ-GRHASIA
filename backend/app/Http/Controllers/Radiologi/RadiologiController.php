@@ -748,6 +748,7 @@ class RadiologiController extends ApiController
                 as cito,'' AS expertise
                 "))
             ->where('apd.kdprofile', $idProfile)
+            ->where('pd.statusenabled', true)
             ->where('ru.objectdepartemenfk',$dataruangan[0]->objectdepartemenfk)
 //            ->where('apd.objectruanganfk',$dataruangan[0]->id)
             ->orderBy('apd.tglregistrasi','desc');

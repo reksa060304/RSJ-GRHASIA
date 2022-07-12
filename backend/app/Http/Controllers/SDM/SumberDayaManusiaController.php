@@ -997,8 +997,11 @@ class SumberDayaManusiaController extends ApiController {
                     $dataSaveJabatan->namajabatan =$hideung['namajabatan'];
                     $dataSaveJabatan->nosk = $hideung['nosk'];
                     $dataSaveJabatan->tglsk = $hideung['tglsk'];
-                    $dataSaveJabatan->objectpegawaittdfk = $hideung['objectpegawaittdfk'];
-                    $dataSaveJabatan->objectjabatanttdfk = $hideung['objectjabatanttdfk'];
+                    $dataSaveJabatan->ttdsk = $hideung['ttdsk'];
+                    $dataSaveJabatan->tunjangan = $hideung['tunjangan'];
+                    // $dataSaveJabatan->tunjangan = $hideung['tunjangan'];
+                    $dataSaveJabatan->ttdjabatansk = $hideung['ttdjabatansk'];
+                    // $dataSaveJabatan->objectjabatanttdfk = $hideung['objectjabatanttdfk'];
                     $dataSaveJabatan->save();
                 }
             }
@@ -6159,5 +6162,17 @@ public function daftarKenaikanGajiBerkala(Request $request){
             "
         ));
         return $this->respond($data,'Fizi');
+    }
+
+    public function getGajiTunjangan(Request $request)
+    {
+        $data = \DB::select(DB::raw("SELECT x.namalengkap,x.nippns, x.namajabatan, x.tglsk,x.tunjangan 
+        FROM (SELECT 
+            row_number()over(partition by pg.id ORDER BY rj.tglsk desc)as baris ,pg.namalengkap, pg.nippns, rj.tglsk, rj.tunjangan, rj.namajabatan 
+            FROM riwayatjabatan_t rj 
+            inner join pegawai_m pg on pg.id = rj.objectpegawaifk )as x 
+            where x.baris = 1"));
+        
+        return $this->respond($data);
     }
 }

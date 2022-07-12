@@ -3414,4 +3414,127 @@ class PerencanaanController extends ApiController {
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    
+public function loadComboRincian(Request $request)
+    {
+        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
+        $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
+        $rincianpendapatan = \DB::table('rincianpendapatan_t as rp')
+        ->join('asalproduk_m as ap','ap.id','=','rp.objectasalprodukfk')
+        ->join('uraianpendapatan_m as up','up.id','=','rp.objecturaianpendapatanfk')
+        ->select('rp.norec','rp.isperubahan', 'rp.jumlahpendapatan','rp.tahun', 'rp.tglinput', 'rp.keterangan', 'rp.objectasalprodukfk', 'rp.objecturaianpendapatanfk','up.uraianpendapatan','ap.namaexternal', 'rp.uraianpendapatan as uraian')
+        ->where('rp.kdprofile', 30)->where('rp.statusenabled', true)->get();
+
+        $result = array(
+            'sumberpendapatan'=> $sumberpendapatan,
+            'uraianpendapatan'=> $uraianpendapatan,
+            'rincianpendapatan'=> $rincianpendapatan,
+            'as'=> 'FiziLucky'
+        );
+        return $this->respond($result);
+    }
+    
+    public function saveRincianPendapatan(Request $request)
+    {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = "";
+        try {
+            if ($request['norec']== "") {
+                $data = \DB::table('rincianpendapatan_t')->insert([
+                'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                'kdprofile'=> $idProfile,
+                'statusenabled'=> true,
+                'tglinput'=> $request['tglinput'],
+                'uraianpendapatan'=> $request['uraianpendapatan'],
+                'jumlahpendapatan'=> $request['jumlahpendapatan'],
+                'objectasalprodukfk'=> $request['objectasalprodukfk'],
+                'objecturaianpendapatanfk'=> $request['objecturaianpendapatanfk'],
+                'keterangan'=> $request['keterangan'],
+                'isperubahan'=> $request['isperubahan'],
+                'tahun'=> $request['tahun']
+                ]);
+            } else {
+                $data = \DB::table('rincianpendapatan_t')->where('norec',$request['norec'])->update([
+                    'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $idProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> $request['tglinput'],
+                    'uraianpendapatan'=> $request['uraianpendapatan'],
+                    'jumlahpendapatan'=> $request['jumlahpendapatan'],
+                    'objectasalprodukfk'=> $request['objectasalprodukfk'],
+                    'objecturaianpendapatanfk'=> $request['objecturaianpendapatanfk'],
+                    'keterangan'=> $request['keterangan'],
+                    'isperubahan'=> $request['isperubahan'],
+                    'tahun'=> $request['tahun']
+                ]);
+            }
+            
+
+            $transStatus = 'true';
+        } catch (\Throwable $th) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $data,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $th->getLine(),
+                'message'=> $th->getMessage(),
+                // 'result' => $MA,
+                'as' => 'Fizi@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function loadDataRincian(Request $request)
+    {
+        $data = \DB::select(DB::raw("SELECT * FROM rincianpendapatan_t rp 
+        where rp.statusenabled = true and rp.kdprofile = 30 and rp.objectasalprodukfk = 2 and isperubahan = true and rp.norec ilike '74d3fce0-0189-11ed-b9a4-bff4c5c2'"));
+    }
+    public function hapusRincianPendapatan(Request $request)
+    {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = "";
+        try {
+            $data = \DB::table('rincianpendapatan_t')->where('norec', $request['norec'])->delete();
+            $transStatus = 'true';
+        } catch (\Throwable $th) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $data,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $th->getLine(),
+                'message'=> $th->getMessage(),
+                // 'result' => $MA,
+                'as' => 'Fizi@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

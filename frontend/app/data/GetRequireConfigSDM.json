@@ -240,6 +240,10 @@
     {
       "nameDep": "MasterDataKampusCtrl",
       "urlDep": "module/SDM/Penelitian/MasterDataKampusCtrl"
+    }, 
+    {
+      "nameDep": "DaftarGajiTunjanganCtrl",
+      "urlDep": "module/SDM/DaftarGajiTunjanganCtrl"
     }
   ]
 }

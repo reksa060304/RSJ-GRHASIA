@@ -1997,5 +1997,24 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "DaftarRincianPendapatan",
+    "url": "/DaftarRincianPendapatan",
+    "templateurl": "module/Perencanaan/RincianPendapatan.html",
+    "controller": "RincianPendapatanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

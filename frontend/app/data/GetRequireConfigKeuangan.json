@@ -403,6 +403,10 @@
         {
             "nameDep": "STSPertanggalCtrl",
             "urlDep": "module/BendaharaPenerimaan/STSPertanggalCtrl"
+        }, 
+        {
+            "nameDep": "RincianPendapatanCtrl",
+            "urlDep": "module/Perencanaan/RincianPendapatanCtrl"
         }
     ]
 }
