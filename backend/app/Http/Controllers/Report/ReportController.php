@@ -2388,7 +2388,7 @@ class ReportController extends ApiController{
                     left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                     where km.kdprofile = 30 and km.statusenabled = true
                     $qterhadap
-                    and km.tahun = '2022'
+                    and km.tahun = '$request[tahun]'
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
@@ -2401,7 +2401,7 @@ class ReportController extends ApiController{
                         left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                         where km.kdprofile = 30 and km.statusenabled = true
                         $qtahap
-                        and km.tahun = '2022'
+                        and km.tahun = '$request[tahun]'
                         group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div, km.keterangan, ta.tahap, ta.id
                     )
                     group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div, km.keterangan, ta.tahap, ta.id
@@ -2429,7 +2429,7 @@ class ReportController extends ApiController{
                     left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                     where km.kdprofile = 30 and km.statusenabled = true
                     $qterhadap
-                    and km.tahun = '2022'
+                    and km.tahun = '$request[tahun]'
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
@@ -2442,7 +2442,7 @@ class ReportController extends ApiController{
                         left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                         where km.kdprofile = 30 and km.statusenabled = true
                         $qtahap
-                        and km.tahun = '2022'
+                        and km.tahun = '$request[tahun]'
                         group by kms.keterangan, kmss.keterangan, kms.kode, ja.jenisanggaran, kms.div, km.keterangan, ta.tahap, ta.id
                     )
                     group by kms.keterangan, kmss.keterangan, kms.kode, ja.jenisanggaran, kms.div, km.keterangan, ta.tahap, ta.id
@@ -2469,7 +2469,7 @@ class ReportController extends ApiController{
                     left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                     where km.kdprofile = 30 and km.statusenabled = true
                     $qtahap
-                    and km.tahun = '2022'
+                    and km.tahun = '$request[tahun]'
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
@@ -2482,7 +2482,7 @@ class ReportController extends ApiController{
                         left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                         where km.kdprofile = 30 and km.statusenabled = true
                         $qterhadap
-                        and km.tahun = '2022'
+                        and km.tahun = '$request[tahun]'
                         group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div, km.keterangan, ta.tahap, ta.id
                     )
                     group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div, km.keterangan, ta.tahap, ta.id
@@ -2510,7 +2510,7 @@ class ReportController extends ApiController{
                     left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                     where km.kdprofile = 30 and km.statusenabled = true
                     $qtahap
-                    and km.tahun = '2022'
+                    and km.tahun = '$request[tahun]'
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
@@ -2523,7 +2523,7 @@ class ReportController extends ApiController{
                         left join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                         where km.kdprofile = 30 and km.statusenabled = true
                         $qterhadap
-                        and km.tahun = '2022'
+                        and km.tahun = '$request[tahun]'
                         group by kms.keterangan, kmss.keterangan, kms.kode, ja.jenisanggaran, kms.div, km.keterangan, ta.tahap, ta.id
                     )
                     group by kms.keterangan, kmss.keterangan, kms.kode, ja.jenisanggaran, kms.div, km.keterangan, ta.tahap, ta.id
