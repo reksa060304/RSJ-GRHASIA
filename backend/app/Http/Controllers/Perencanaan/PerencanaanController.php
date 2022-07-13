@@ -1241,6 +1241,60 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode(201)->respond([], $transMessage);
     }
 
+    public function deleteRincianBelanja(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+        $norec = '';
+        DB::beginTransaction();
+        try{
+            if ($request['norec'] != ''){
+                $data1 = RealisasiDetail::where('norec', $request['norec'])->where('kdprofile', $idProfile)->first();
+                $norec = $data1->strukrealisasifk;
+                $data1->statusenabled = false;
+                $data1->save();
+                
+                $update = DB::select(DB::raw("select sum(rd.subtotal) total from strukrealisasi_t sr
+                inner join realisasidetail_t rd on sr.norec = rd.strukrealisasifk
+                where sr.norec = '$norec'
+                and rd.statusenabled = true and rd.kdprofile = 30
+                and sr.statusenabled = true and sr.kdprofile = 30"));
+
+                $spj = StrukRealisasi::where('norec', $norec)->where('kdprofile', $idProfile)->first();
+                $spj->totalbelanja = $update[0]->total;
+                $spj->save();
+
+                $transStatus = 'true';
+            }
+        }
+        catch(\Exception $e){
+            $transStatus= 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $data1,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'result' => $data1,
+                'as' => '@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function getDaftarMonitoringAnggaran(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -2734,20 +2788,21 @@ class PerencanaanController extends ApiController {
         inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
         inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
         where kb.objecttahapfk = $tahap
-        and ka.id = $subsubkegiatan;
+        and ka.id = $subsubkegiatan
+        and rd.statusenabled = true
+        and rd.kdprofile = 30;
             ")
         );
 
-        $panjar = DB::select(DB::raw("select sum(jumlah-jumlahpengembalian) as panjar
-        from(
-        select pj.norec, pj.jumlah, coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian
-                        from keteranganbelanja_t kb
-                        inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
-                                        inner join strukrealisasi_t sr on sr.norec = rd.strukrealisasifk
-                                        inner join panjar_t pj on pj.norec =  sr.objectpanjarfk
-                        where kb.objecttahapfk = $tahap
-        group by pj.norec, pj.jumlah, pj.jumlahpengembalian
-        ) as x;"));
+        $panjar = DB::select(DB::raw("select pj.norec, pj.jumlah, coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian
+        from kegiatananggaran_m ka 
+        inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
+        inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
+        inner join strukrealisasi_t sr on sr.norec = rd.strukrealisasifk
+        inner join panjar_t pj on pj.norec =  sr.objectpanjarfk
+        where kb.objecttahapfk = $tahap
+        and ka.id = $subsubkegiatan
+        group by pj.norec, pj.jumlah, pj.jumlahpengembalian"));
 
         $result = array(
             'data' => $data,
@@ -2788,7 +2843,9 @@ class PerencanaanController extends ApiController {
         select sum(rd.subtotal) total
         from strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
-        where sr.norec = '$norec';
+        where sr.norec = '$norec'
+        and rd.statusenabled = true
+        and rd.kdprofile = 30;
             ")
         );
 
@@ -3081,6 +3138,8 @@ class PerencanaanController extends ApiController {
                     from realisasidetail_t sr
                     INNER JOIN keteranganbelanja_t ka on ka.norec=sr.keteranganbelanjafk
                     where sr.strukrealisasifk = '$strukrealisasifk'
+                    and sr.statusenabled = true
+                    and sr.kdprofile = 30
                 ")
             );
             $result[] = array(
@@ -3267,6 +3326,16 @@ class PerencanaanController extends ApiController {
                     $DT->harga = $item['harga'];
                     $DT->subtotal = $item['subtotal'];
                     $DT->keteranganbelanjafk = $item['keteranganbelanjafk'];
+                    $DT->save();
+                } else if(!empty($item['norec'])){
+                    $DT = RealisasiDetail::where('norec',$item['norec'])
+                    ->where('kdprofile', $idProfile)
+                    ->first();;
+                    $DT->uraian = $item['uraian'];
+                    $DT->jml = $item['jml'];
+                    $DT->satuan = $item['satuan'];
+                    $DT->harga = $item['harga'];
+                    $DT->subtotal = $item['subtotal'];
                     $DT->save();
                 } 
                 
