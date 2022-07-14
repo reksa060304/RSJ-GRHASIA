@@ -43,7 +43,7 @@ define(['initialize'], function (initialize) {
                 })
             }
             $scope.getLayanan = function () {
-                medifirstService.getPart("tatarekening/get-tindakan", true, 10, 10)
+                medifirstService.get("tatarekening/get-tindakan?idRuangan=" + $scope.item.ruangan.id)
                 .then(function (x) {
                   $scope.listLayanan = x;
                 })                             

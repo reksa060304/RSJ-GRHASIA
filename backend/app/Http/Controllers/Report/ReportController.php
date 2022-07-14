@@ -3737,4 +3737,524 @@ public function suratBuktiPengembalian(Request $request)
         // var_dump($detail);
         return view('report.EMR.persetujuanpembiayaan', compact('detail','pageWidth'));
     }
+    public function CetakRekapSumberDanaAnggaranSebelum(Request $request)
+    {
+        $tahun = $request['tahun'];
+        $tahap =  $request['tahap'];
+
+        $qtahap  = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $qtahap =  ' and kb.objecttahapfk =  ' . $request['tahap'];
+        }
+
+        $tahap = DB::select(DB::raw("select * from tahapanggaran_m where id = $tahap"));
+        $data = \DB::select(DB::raw("SELECT a.kode, a.div, CASE 
+            WHEN a.div = 2 THEN
+                SUBSTR(a.kode,9,4 )
+            ELSE
+                SUBSTR(a.kode,14,2 )
+        END as kode1,a.kegiatan,a.jasalayanan,a.apbd,a.total from(
+                    select y.kegiatan, y.kode, y.div, sum(y.apbd) apbd, sum(y.jasalayanan) jasalayanan, 
+                    sum(y.apbd) + sum(y.jasalayanan) as total
+                    from(
+                        select x.kegiatan, x.subkegiatan, x.kode, x.div,
+                                        case when x.id_asalproduk = 15 then x.subtotal else 0 end as apbd,
+                        case when x.id_asalproduk = 18 then subtotal else 0 end as jasalayanan
+                        from( 
+                            select kmss.keterangan kegiatan, ap.id as id_asalproduk,kmss.kode, kmss.div, kms.keterangan subkegiatan, sum(kb.subtotal) subtotal
+                            from kegiatananggaran_m km
+                            inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
+                            left join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
+                            inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                            where km.kdprofile = 30 and km.statusenabled = true
+                            and km.tahun = '$tahun'
+                            $qtahap
+                            group by kms.keterangan, kmss.keterangan, kmss.kode,  kmss.div, ap.id
+                        ) as x group by x.kegiatan, x.subkegiatan, x.subtotal, x.kode, x.div, x.id_asalproduk
+                    ) as y group by kegiatan, kode, div
+                                
+                    union all
+                                
+                    select y.subkegiatan as kegiatan, y.kode, y.div, sum(y.apbd) apbd, sum(y.jasalayanan) jasalayanan, 
+                    sum(y.apbd) + sum(y.jasalayanan) as total
+                    from(
+                        select x.kegiatan, x.subkegiatan, x.kode, x.div,
+                        case when x.id_asalproduk = 15 then x.subtotal else 0 end as apbd,
+                        case when x.id_asalproduk = 18 then subtotal else 0 end as jasalayanan
+                        from( 
+                            select kmss.keterangan kegiatan, kms.keterangan subkegiatan, kms.kode, kms.div, ap.id as id_asalproduk,sum(kb.subtotal) subtotal
+                            from kegiatananggaran_m km
+                            inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
+                            left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+                            inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                            where km.kdprofile = 30 and km.statusenabled = true
+                            and km.tahun = '$tahun'
+                            $qtahap
+                            group by kms.keterangan, kmss.keterangan, kms.kode, kms.div, ap.id
+                        ) as x group by x.kegiatan, x.subkegiatan, x.subtotal, x.kode, x.div, x.id_asalproduk
+                    ) as y group by subkegiatan, kode, div
+                ) as a order by kode"));
+        $pageWidth = 950;
+        return view('report.spj.cetakrekapanggaransumberdana', compact('data', 'pageWidth','tahap'));
+    }
+    public function CetakRekapSumberDanaAnggaran(Request $request)
+    {   
+        $tahun = $request['tahun'];
+        
+
+        $qtahap  = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $qtahap =  ' and kb.objecttahapfk =  ' . $request['tahap'];
+        }
+
+        $qterhadap  = '';
+        if (isset($request['terhadap']) && $request['terhadap'] != "" && $request['terhadap'] != "undefined") {
+            $qterhadap =  ' and kb.objecttahapfk =  ' . $request['terhadap'];
+        }
+        $sebelum = \DB::select(DB::raw("
+        SELECT
+            j.*,
+            K.apbd AS kapbd,
+            K.jasalayanan as kjasalayanan,
+            K.total as ktotal,
+            k.tahap tahapsesudah
+        FROM
+            (
+            SELECT
+                * 
+            FROM
+                (
+                SELECT
+                    y.kegiatan,
+                    y.tahap,
+                    y.kode,
+                    y.div,
+                    SUM ( y.apbd ) AS apbd,
+                    SUM ( y.jasalayanan ) AS jasalayanan,
+                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                FROM
+                    (
+                    SELECT
+                        x.kegiatan,
+                        x.subkegiatan,
+                        x.tahap,
+                        x.kode,
+                        x.div,
+                    CASE
+                            
+                            WHEN x.id_asalproduk = 15 THEN
+                            x.subtotal ELSE 0 
+                        END AS apbd,
+                    CASE
+                            
+                            WHEN x.id_asalproduk = 18 THEN
+                            subtotal ELSE 0 
+                        END AS jasalayanan 
+                    FROM
+                        (
+                        SELECT
+                            kmss.keterangan kegiatan,
+                            ap.ID AS id_asalproduk,
+                            kms.keterangan subkegiatan,
+                            kmss.kode,
+                            kmss.div,
+                            km.keterangan subsubkegiatan,
+                            ta.tahap,
+                            ta.ID,
+                            ap.asalproduk,
+                            SUM ( kb.subtotal ) subtotal 
+                        FROM
+                            kegiatananggaran_m km
+                            INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
+                            AND kms.div = 3
+                            LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                            AND kmss.div = 2
+                            INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
+                            ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                            LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
+                        WHERE
+                            km.kdprofile = 30 
+                            AND km.statusenabled = TRUE 
+                            $qterhadap
+                            and km.tahun = '$request[tahun]'
+                            AND km.keterangan IN (
+                            SELECT
+                                km.keterangan 
+                            FROM
+                                kegiatananggaran_m km
+                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
+                                AND kms.div = 3
+                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                                AND kmss.div = 2
+                                INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
+                                ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                                LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
+                            WHERE
+                                km.kdprofile = 30 
+                                AND km.statusenabled = TRUE 
+                                $qtahap
+                                and km.tahun = '$request[tahun]'
+                            GROUP BY
+                                kms.keterangan,
+                                kmss.keterangan,
+                                kmss.kode,
+                                ap.asalproduk,
+                                kmss.div,
+                                km.keterangan,
+                                ta.tahap,
+                                ta.ID 
+                            ) 
+                        GROUP BY
+                            kms.keterangan,
+                            kmss.keterangan,
+                            kmss.kode,
+                            ap.asalproduk,
+                            kmss.div,
+                            km.keterangan,
+                            ta.tahap,
+                            ta.ID,
+                            ap.ID 
+                        ) AS x 
+                    GROUP BY
+                        x.kegiatan,
+                        x.subkegiatan,
+                        x.tahap,
+                        x.asalproduk,
+                        x.subtotal,
+                        x.kode,
+                        x.div,
+                        x.id_asalproduk 
+                    ) AS y 
+                GROUP BY
+                    y.kegiatan,
+                    y.tahap,
+                    y.kode,
+                    y.div UNION ALL
+                SELECT
+                    y.subkegiatan,
+                    y.tahap,
+                    y.kode,
+                    y.div,
+                    SUM ( y.apbd ) AS apbd,
+                    SUM ( y.jasalayanan ) AS jasalayanan,
+                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                FROM
+                    (
+                    SELECT
+                        x.kegiatan,
+                        x.subkegiatan,
+                        x.tahap,
+                        x.kode,
+                        x.div,
+                    CASE
+                            
+                            WHEN x.id_asalproduk = 15 THEN
+                            x.subtotal ELSE 0 
+                        END AS apbd,
+                    CASE
+                            
+                            WHEN x.id_asalproduk = 18 THEN
+                            subtotal ELSE 0 
+                        END AS jasalayanan 
+                    FROM
+                        (
+                        SELECT
+                            ap.ID AS id_asalproduk,
+                            kmss.keterangan kegiatan,
+                            kms.keterangan subkegiatan,
+                            kms.kode,
+                            kms.div,
+                            km.keterangan subsubkegiatan,
+                            ta.tahap,
+                            ta.ID,
+                            SUM ( kb.subtotal ) subtotal 
+                        FROM
+                            kegiatananggaran_m km
+                            INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
+                            AND kms.div = 3
+                            LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                            AND kmss.div = 2
+                            INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
+                            ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                            LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
+                        WHERE
+                            km.kdprofile = 30 
+                            AND km.statusenabled = TRUE 
+                            $qterhadap
+                                and km.tahun = '$request[tahun]'
+                            AND km.keterangan IN (
+                            SELECT
+                                km.keterangan 
+                            FROM
+                                kegiatananggaran_m km
+                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
+                                AND kms.div = 3
+                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                                AND kmss.div = 2
+                                INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
+                                ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                                LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
+                            WHERE
+                                km.kdprofile = 30 
+                                AND km.statusenabled = TRUE 
+                                $qtahap
+                                and km.tahun = '$request[tahun]' 
+                            GROUP BY
+                                kms.keterangan,
+                                kmss.keterangan,
+                                kms.kode,
+                                ap.asalproduk,
+                                kms.div,
+                                km.keterangan,
+                                ta.tahap,
+                                ta.ID,
+                                ap.ID 
+                            ) 
+                        GROUP BY
+                            kms.keterangan,
+                            kmss.keterangan,
+                            kms.kode,
+                            ap.asalproduk,
+                            kms.div,
+                            km.keterangan,
+                            ta.tahap,
+                            ta.ID,
+                            ap.ID 
+                        ) AS x 
+                    GROUP BY
+                        x.kegiatan,
+                        x.subkegiatan,
+                        x.tahap,
+                        x.id_asalproduk,
+                        x.subtotal,
+                        x.kode,
+                        x.div 
+                    ) AS y 
+                GROUP BY
+                    y.subkegiatan,
+                    y.tahap,
+                    y.kode,
+                    y.div 
+                ) AS A 
+            ORDER BY
+                A.kode 
+            ) AS j
+            INNER JOIN (
+            SELECT
+                * 
+            FROM
+                (
+                SELECT
+                    y.kegiatan AS kegiatan,
+                    y.tahap,
+                    y.kode,
+                    y.div,
+                    SUM ( y.apbd ) AS apbd,
+                    SUM ( y.jasalayanan ) AS jasalayanan,
+                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                FROM
+                    (
+                    SELECT
+                        x.kegiatan,
+                        x.tahap,
+                        x.kode,
+                        x.div,
+                    CASE
+                            
+                            WHEN x.id_asalproduk = 15 THEN
+                            x.subtotal ELSE 0 
+                        END AS apbd,
+                    CASE
+                            
+                            WHEN x.id_asalproduk = 18 THEN
+                            subtotal ELSE 0 
+                        END AS jasalayanan 
+                    FROM
+                        (
+                        SELECT
+                            kmss.keterangan kegiatan,
+                            kmss.kode,
+                            kmss.div,
+                            km.keterangan subsubkegiatan,
+                            ta.tahap,
+                            ta.ID,
+                            ap.ID AS id_asalproduk,
+                            ap.asalproduk,
+                            SUM ( kb.subtotal ) subtotal 
+                        FROM
+                            kegiatananggaran_m km
+                            INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
+                            AND kms.div = 3
+                            LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                            AND kmss.div = 2
+                            INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
+                            ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                            LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
+                        WHERE
+                            km.kdprofile = 30 
+                            AND km.statusenabled = TRUE 
+                            $qtahap
+                                and km.tahun = '$request[tahun]' 
+                            AND km.keterangan IN (
+                            SELECT
+                                km.keterangan 
+                            FROM
+                                kegiatananggaran_m km
+                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
+                                AND kms.div = 3
+                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                                AND kmss.div = 2
+                                INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
+                                ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                                LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
+                            WHERE
+                                km.kdprofile = 30 
+                                AND km.statusenabled = TRUE 
+                                $qterhadap
+                                and km.tahun = '$request[tahun]'
+                            GROUP BY
+                                kmss.keterangan,
+                                kmss.kode,
+                                ap.asalproduk,
+                                kmss.div,
+                                km.keterangan,
+                                ta.tahap,
+                                ta.ID 
+                            ) 
+                        GROUP BY
+                            kmss.keterangan,
+                            kmss.kode,
+                            ap.asalproduk,
+                            ap.ID,
+                            kmss.div,
+                            km.keterangan,
+                            ta.tahap,
+                            ta.ID 
+                        ) AS x 
+                    GROUP BY
+                        x.kegiatan,
+                        x.tahap,
+                        x.asalproduk,
+                        x.subtotal,
+                        x.kode,
+                        x.div,
+                        x.id_asalproduk 
+                    ) AS y 
+                GROUP BY
+                    y.kegiatan,
+                    y.tahap,
+                    y.kode,
+                    y.div UNION ALL
+                SELECT
+                    y.subkegiatan AS kegiatan,
+                    y.tahap,
+                    y.kode,
+                    y.div,
+                    SUM ( y.apbd ) AS apbd,
+                    SUM ( y.jasalayanan ) AS jasalayanan,
+                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                FROM
+                    (
+                    SELECT
+                        x.subkegiatan,
+                        x.tahap,
+                        x.kode,
+                        x.div,
+                    CASE
+                            
+                            WHEN x.id_asalproduk = 15 THEN
+                            x.subtotal ELSE 0 
+                        END AS apbd,
+                    CASE
+                            
+                            WHEN x.id_asalproduk = 18 THEN
+                            subtotal ELSE 0 
+                        END AS jasalayanan 
+                    FROM
+                        (
+                        SELECT
+                            kms.keterangan subkegiatan,
+                            kms.kode,
+                            kms.div,
+                            km.keterangan subsubkegiatan,
+                            ta.tahap,
+                            ta.ID,
+                            ap.ID AS id_asalproduk,
+                            ap.asalproduk,
+                            SUM ( kb.subtotal ) subtotal 
+                        FROM
+                            kegiatananggaran_m km
+                            INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
+                            AND kms.div = 3
+                            LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                            AND kmss.div = 2
+                            INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
+                            ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                            LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
+                        WHERE
+                            km.kdprofile = 30 
+                            AND km.statusenabled = TRUE 
+                            $qtahap
+                                and km.tahun = '$request[tahun]'
+                            AND km.keterangan IN (
+                            SELECT
+                                km.keterangan 
+                            FROM
+                                kegiatananggaran_m km
+                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
+                                AND kms.div = 3
+                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                                AND kmss.div = 2
+                                INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
+                                ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                                LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
+                            WHERE
+                                km.kdprofile = 30 
+                                AND km.statusenabled = TRUE 
+                                $qterhadap
+                                and km.tahun = '$request[tahun]'
+                            GROUP BY
+                                kms.keterangan,
+                                kmss.kode,
+                                ap.asalproduk,
+                                kmss.div,
+                                km.keterangan,
+                                ta.tahap,
+                                ta.ID 
+                            ) 
+                        GROUP BY
+                            kms.keterangan,
+                            kms.kode,
+                            ap.asalproduk,
+                            ap.ID,
+                            kms.div,
+                            km.keterangan,
+                            ta.tahap,
+                            ta.ID 
+                        ) AS x 
+                    GROUP BY
+                        x.subkegiatan,
+                        x.tahap,
+                        x.asalproduk,
+                        x.subtotal,
+                        x.kode,
+                        x.div,
+                        x.id_asalproduk 
+                    ) AS y 
+                GROUP BY
+                    y.subkegiatan,
+                    y.tahap,
+                    y.kode,
+                    y.div 
+                ) AS A 
+            ORDER BY
+            A.kode 
+            ) AS K ON j.kegiatan = K.kegiatan
+        "));
+        $pageWidth = 1200;
+        //return $this->respond($result);
+        return view('report.spj.cetakrekapanggaransumberdanasebelumsesudah',compact('sebelum', 'pageWidth'));
+    }   
 }

@@ -66,7 +66,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     window.open(baseTransaksi + "report/get-cetak-rekap-mata-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahun).format('YYYY') +"&terhadap="+terhadap, '_blank');
                 }
             }
+            $scope.CetakSumberDana = function(){
+                var tahap = ""
+                if ($scope.item.tahapSumberDana != undefined) {
+                    tahap = $scope.item.tahapSumberDana.id
+                }
 
+                var terhadap = ""
+                if ($scope.item.terhadapSumberDana != undefined) {
+                    terhadap = $scope.item.terhadapSumberDana.id
+                }
+
+
+                if ($scope.item.terhadapSumberDana == undefined || tahap == terhadap) {
+                    window.open(baseTransaksi + "report/get-cetak-rekap-SumberDana-anggaran-sebelum?tahap=" + tahap + "&tahun=" + moment($scope.item.tahunSumberDana).format('YYYY'), '_blank');
+                } else if ($scope.item.terhadapSumberDana != undefined || tahap != terhadap) {
+                    window.open(baseTransaksi + "report/get-cetak-rekap-SumberDana-anggaran?tahap=" + tahap + "&tahun=" + moment($scope.item.tahunSumberDana).format('YYYY') + "&terhadap=" + terhadap, '_blank');
+                }
+            }
             $scope.Perbaharui = function () {
                 $scope.ClearSearch();
             }
