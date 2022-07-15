@@ -55,6 +55,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get('emr/get-combo-diagnosis').then(function (data) {
                     $scope.listJenisDiagnosa = data.data.jenisdiagnosa;
                 });
+                $scope.item.jenisDiagnosis = {id: 1, jenisDiagnosa: "Primary / utama"}
 
                 //   ModelItem.getDataDummyGeneric("JenisDiagnosa", true, true, 10).then(function (data) {
                 //     $scope.listJenisDiagnosa = data;

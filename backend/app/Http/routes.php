@@ -820,6 +820,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get-datacombo', 'Farmasi\PelayananResepController@getDataCombo');
           Route::get('farmasi/get_detail-resep', 'Farmasi\PelayananResepController@getDetailResep');
           Route::get('farmasi/get-detail-order', 'Farmasi\PelayananResepController@getDetailOrder');
+          Route::get('farmasi/get-detail-order-resep', 'Farmasi\PelayananResepController@getDetailOrderResep');
           Route::get('farmasi/get-info-stok', 'Farmasi\PelayananResepController@getInformasiStok');
           Route::get('farmasi/get-info-transfer', 'Farmasi\PelayananResepController@getInformasiTransfer');
           Route::get('farmasi/get-produkdetail', 'Farmasi\PelayananResepController@getProdukDetail');

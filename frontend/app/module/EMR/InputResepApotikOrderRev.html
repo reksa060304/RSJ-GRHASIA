@@ -120,6 +120,11 @@
                         </div>
                     </div>
                 </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="margin-top: 10px">
+                        <button class="btnTemplate1" ng-click="reOrderResep()"><i class="fa fa-edit"></i>Order Ulang</button>
+                    </div>
+                </div>
             </div>
             <div class="grid_12">
                 <br>
@@ -183,6 +188,24 @@
                                 <input kendo-combo-box k-ng-model="item.jenisRacikan" k-data-text-field="'jenisracikan'"
                                     k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
                                     k-data-source="listJenisRacikan" />
+                            </div>
+                        </div>
+                        <div class="grid_1" ng-show='showNonRacikan'>
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Hari"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox"
+                                    ng-model="item.hari" />
+                            </div>
+                        </div>
+                        <div class="grid_1" ng-show='showNonRacikan'>
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Dosis"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.dosisperhari" />
+
                             </div>
                         </div>
                         <div class="grid_2">
@@ -598,7 +621,8 @@
                     </div>
                 </div>
             </div>
-
+            
+            
 
             <!-- </div> -->
             <div class="grid_12">
@@ -612,14 +636,17 @@
                 </div>
             </div>
         </div>
+        
         <div class="grid_2">
         </div>
 
     </div>
 </div>
+
 <div class="grid_12" style="margin-top:60px">
     <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 </div>
+
 </div>
 <div kendo-window="popUpPaketObat" k-title="'Paket Obat'" k-width="800" k-visible="false" k-on-open="win2visible = true"
     k-on-close="win2visible = false">

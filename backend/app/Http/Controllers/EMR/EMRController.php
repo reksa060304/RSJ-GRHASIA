@@ -5854,6 +5854,7 @@ class EMRController  extends ApiController
                 "status" => 400,
                 "message" => $transMessage,
                 // "noresep" => $newSO,//$noResep,
+                "e" => $e->getMessage().' '.$e->getLine(),
                 "as" => 'as@epic',
             );
         }
