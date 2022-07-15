@@ -4,13 +4,25 @@ define(['initialize'], function (initialize) {
 		function ($scope, medifirstService) {
 			$scope.item = {};
 			$scope.popUp = {}
+			$scope.popUp.HariAwal = [];
+			$scope.selectOptionsHari = {
+                placeholder: "Pilih Hari...",
+                dataTextField: "namahari",
+                dataValueField: "id",
+                // dataSource:{
+                //     data: $scope.listRuangan
+                // },
+                autoBind: false,                       
+            }; 
 			$scope.isRouteLoading = false;
 			FormLoad()
 			loadData();
-			
-			function FormLoad(){
-				medifirstService.get("reservasionline/get-list-data").then(function (dat) {
+
+			function FormLoad() {
+				medifirstService.get("reservasionline/get-combo-reservasi").then(function (dat) {
 					$scope.listRuangan = dat.data.ruanganrajal
+					$scope.listHari = dat.data.hari
+					$scope.listDokter = dat.data.dokter
 				})
 			}
 
@@ -19,11 +31,15 @@ define(['initialize'], function (initialize) {
 			}
 
 			$scope.Clear = function () {
-				$scope.item = {}
-				$scope.popUp = {}			
-				loadData()				
-			}			
+				// $scope.item = {
 			
+				// }
+				$scope.popUp = {
+					HariAwal : []
+				}
+				loadData()
+			}
+
 			function loadData() {
 				$scope.isRouteLoading = true;
 				var id = ""
@@ -38,11 +54,16 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.quota != undefined) {
 					quota = "&quota=" + $scope.item.quota
 				}
+				var dokter = ""
+				if ($scope.item.Qdokter != undefined) {
+					dokter = "&dokter=" + $scope.item.Qdokter
+				}
 
 				medifirstService.get("reservasionline/get-daftar-slotting?"
 					+ ruang
 					+ quota
 					+ id
+					+ dokter
 				).then(function (data) {
 					$scope.isRouteLoading = false;
 					for (var i = 0; i < data.data.data.length; i++) {
@@ -52,6 +73,9 @@ define(['initialize'], function (initialize) {
 					$scope.dataSource = new kendo.data.DataSource({
 						data: data.data.data,
 						pageSize: 10,
+						group: [
+							{ field: "namaruangan" }
+						],
 						// total: data.data.data.length,
 						serverPaging: true,
 
@@ -70,47 +94,57 @@ define(['initialize'], function (initialize) {
 					},
 
 				],
-				columns: [{
-					"field": "no",
-					"title": "No",
-					"width": "5%",
-					"attributes": { align: "center" }
+				columns: [
+					// 	{
+					// 	"field": "no",
+					// 	"title": "No",
+					// 	"width": "5%",
+					// 	"attributes": { align: "center" }
 
-				},
-				{
-					"field": "namaruangan",
-					"title": "Nama Ruangan",
-					"width": "60%"
-				}, {
-					"field": "jambuka",
-					"title": "Jam Buka",
-					"width": "20%"
-				}, {
+					// },
+					{
+						"field": "namaruangan",
+						"title": "Nama Ruangan",
+						"width": "220px",
+						"hidden": true
+					}, {
+						"field": "namalengkap",
+						"title": "Dokter",
+						"width": "220px"
+					}, {
+						"field": "hari",
+						"title": "Hari",
+						"width": "220px"
+					}, {
+						"field": "jambuka",
+						"title": "Jam Buka",
+						"width": "100px"
+					}, {
 
-					"field": "jamtutup",
-					"title": "Jam Tutup",
-					"width": "20%"
-				},
-				{
-
-					"field": "quota",
-					"title": "Quota",
-					"width": "10%"
-				},
-				{
-					"command": [{
-						text: "Edit",
-						click: editData,
-						imageClass: "k-icon k-i-pencil"
+						"field": "jamtutup",
+						"title": "Jam Tutup",
+						"width": "100px"
 					},
 					{
-						text: "Hapus",
-						click: hapusData,
-						imageClass: "k-icon k-delete"
-					}],
-					title: "",
-					width: "15%",
-				}
+
+						"field": "quota",
+						"title": "Kuota",
+						"width": "100px"
+					},
+					{
+						"command": [{
+							text: "Edit",
+							click: editData,
+							imageClass: "k-icon k-i-pencil"
+						},
+						{
+							text: "Hapus",
+							click: hapusData,
+							imageClass: "k-icon k-delete"
+						}],
+						title: "",
+						width: "120px",
+					}
 
 				]
 			};
@@ -128,31 +162,53 @@ define(['initialize'], function (initialize) {
 					toastr.error('Ruangan harus di isi')
 					return
 				}
-					if ($scope.popUp.quota == undefined) {
+				if ($scope.popUp.dokterInput == undefined) {
+					toastr.error('Dokter harus di isi')
+					return
+				}
+				if ($scope.popUp.quota == undefined) {
 					toastr.error('Quota harus di isi')
 					return
 				}
-					if ($scope.popUp.jamBuka == undefined) {
+				if ($scope.popUp.jamBuka == undefined) {
 					toastr.error('Jam Buka harus di isi')
 					return
 				}
-					if ($scope.popUp.jamTutup == undefined) {
+				if ($scope.popUp.jamTutup == undefined) {
 					toastr.error('Jam Tutup harus di isi')
 					return
+				}
+				var listHari = '';
+				if($scope.popUp.HariAwal.length != 0){
+					var a = ""
+                    var b = ""
+                    for (var i = 0; i < $scope.popUp.HariAwal.length; i++){
+                    	if (i == $scope.popUp.HariAwal.length - 1){
+                    		listHari += $scope.popUp.HariAwal[i].namahari
+                    	} else {
+                    		listHari += $scope.popUp.HariAwal[i].namahari + ", "
+                    	}
+                    }
 				}
 
 
 				var objSave = {
 					"id": id,
 					"objectruanganfk": $scope.popUp.ruangan.id,
-					"jambuka": moment($scope.popUp.jamBuka).format('HH:mm') ,
-					"jamtutup": moment($scope.popUp.jamTutup).format('HH:mm') ,
-					"quota": $scope.popUp.quota ,
+					"jambuka": moment($scope.popUp.jamBuka).format('HH:mm'),
+					"jamtutup": moment($scope.popUp.jamTutup).format('HH:mm'),
+					"quota": $scope.popUp.quota,
+					"hari": listHari != undefined ? listHari : null,
+					"objectpegawaifk": $scope.popUp.dokterInput.id
 
 				}
-				medifirstService.post('reservasionline/save-slotting',objSave).then(function (e) {
+				$scope.isSave = true
+				medifirstService.post('reservasionline/save-slotting', objSave).then(function (e) {
+					$scope.isSave = false
 					loadData();
 					$scope.Clear();
+				},function(error){
+					$scope.isSave = false
 				})
 
 			}
@@ -171,7 +227,7 @@ define(['initialize'], function (initialize) {
 					"id": dataItem.id
 				}
 
-				medifirstService.post( 'reservasionline/delete-slotting',itemDelete).then(function (e) {
+				medifirstService.post('reservasionline/delete-slotting', itemDelete).then(function (e) {
 					if (e.status === 201) {
 						loadData();
 						grid.removeRow(row);
@@ -185,26 +241,46 @@ define(['initialize'], function (initialize) {
 				var row = $(e.currentTarget).closest("tr");
 				var tr = $(e.target).closest("tr");
 				var dataItem = this.dataItem(tr);
-				medifirstService.post("reservasionline/get-daftar-slotting?id=" + dataItem.id).then(function (e) {
+				// medifirstService.post("reservasionline/get-daftar-slotting?id=" + dataItem.id).then(function (e) {
 
-				})
+				// })
 				$scope.popUp.id = dataItem.id
-				$scope.nows= new Date()
-
-				$scope.popUp.ruangan = {id:dataItem.idruangan,namaruangan: dataItem.namaruangan}
-				$scope.popUp.jamBuka = new Date( moment(	$scope.nows).format('YYYY-MM-DD') +' '+ dataItem.jambuka)
-				$scope.popUp.jamTutup = new Date(  moment(	$scope.nows).format('YYYY-MM-DD') +' '+dataItem.jamtutup)
-				$scope.popUp.quota =parseInt( dataItem.quota)
+				$scope.nows = new Date()
+				if (dataItem.hari) {
+					$scope.popUp.HariAwal = []
+					let split = dataItem.hari.split(',')
+					if (split.length > 0) {
+						for (var i = 0; i < split.length; i++) {
+							const elem = split[i]
+							for (var z = 0; z < $scope.listHari.length; z++) {
+								const elem2 = $scope.listHari[z]
+								if (elem.indexOf(elem2.namahari) > -1) {
+									$scope.popUp.HariAwal.push(elem2)
+									break
+								}
+							}
+						}
+					}
+				}
+				$scope.popUp.ruangan = { id: dataItem.idruangan, namaruangan: dataItem.namaruangan }
+				$scope.popUp.dokterInput = { id: dataItem.objectpegawaifk, namalengkap: dataItem.namalengkap };
+				if (dataItem.jambuka != undefined) {
+					$scope.popUp.jamBuka = new Date(moment(new Date()).format('YYYY-MM-DD '+dataItem.jambuka));
+				}
+				if (dataItem.jamtutup != undefined) {
+					$scope.popUp.jamTutup = new Date(moment(new Date()).format('YYYY-MM-DD '+ dataItem.jamtutup));
+				}
+				$scope.popUp.quota = dataItem.quota? parseInt(dataItem.quota):0
 				$scope.popUps.center().open();
 
 			}
 
 			$scope.tutup = function () {
 				$scope.popUps.close();
-		
+
 			}
 			// intervensi
-			
+
 
 			//ennd evaluaso
 

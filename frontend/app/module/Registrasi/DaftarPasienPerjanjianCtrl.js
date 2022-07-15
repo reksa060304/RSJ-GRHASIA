@@ -18,6 +18,28 @@ define(['initialize'], function (initialize) {
                 { id: 1, nama: 'Confirm' },//#
                 { id: 2, nama: 'Reservasi' },
             ]
+            $scope.Tracer = function () {
+                if ($scope.item.noreservasi != undefined) {
+                    // var fixUrlLaporan = cetakHelper.open("reporting/lapTracer?noRegistrasi=" + $scope.item.pasienDaftar.noRegistrasi);
+                    // window.open(fixUrlLaporan, '', 'width=800,height=600')
+
+                    //##save identifikasi tracer
+                    // medifirstService.get("registrasi/identifikasi-tracer?norec_pd="
+                    //     + $scope.dataPasienSelected.norec
+                    // ).then(function (data) {
+                    //     var datas = data.data;
+                    // })
+                    //##end
+
+                    //cetakan langsung service VB6 by grh    
+                    var client = new HttpClient();
+                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-tracer-online=1&norec=' + $scope.item.noreservasi + '&noCm=' + $scope.item.nocm + '&view=false', function (response) {
+                        // do something with response
+                    });
+
+
+                }
+            }
 
             $scope.kodeReservasi = '';
             $scope.Column = {
@@ -63,6 +85,10 @@ define(['initialize'], function (initialize) {
                         template: "<span class='style-left'>{{formatTanggal('#: tanggalreservasi #')}}</span>",
                         width: 120
                     }, {
+                        field: "jamreservasi",
+                        title: "Jam",
+                        width: 100
+                    },{
                         field: "namapasien",
                         title: "Nama Pasien",
                         width: 200
@@ -169,6 +195,10 @@ define(['initialize'], function (initialize) {
             $scope.reconfirm = function () {
                 // window.isPerjanjian = $scope.item.noreservasi;
                 // findPasien.CheckNoReconfirm($scope.item.noreservasi).then(function(e) {
+                if($scope.item.status == 'Confirm'){
+                    toastr.error('Sudah Confirm')
+                    return
+                }
                 if ($scope.item.nocm == undefined || $scope.item.nocm == null) {
 
                     //  var data={
