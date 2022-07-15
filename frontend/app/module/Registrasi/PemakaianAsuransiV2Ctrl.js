@@ -3219,6 +3219,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 tglRencanaKunjungan: response2.tglRencanaKunjungan,
 
                             };
+
+                            vcetak(response2.noRujukan,
+                                response2.tglRujukan, response2.peserta.noKartu,
+                                response2.peserta.nama, $scope.model.tglLahir,
+                                response2.tujuanRujukan.nama, namappkRumahSakit,
+                                response2.poliTujuan.nama, response2.peserta.kelamin,
+                                response2.diagnosa.nama, $scope.rujukan.catatan,
+                                $scope.rujukan.tipe, $scope.rujukan.pelayanan.kode, 
+                                response2.diagnosa.nama,
+                                response2.tglRencanaKunjungan
+                            )
+
                         } else {
                             var data = {
                                 tipe: $scope.rujukan.insert == undefined ? 'save' : 'update',
@@ -3250,6 +3262,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         toastr.success(x.data.metaData.message, 'Info')
                     } else
                         toastr.info(x.data.metaData.message, 'Info')
+
+                    
                 })
             }
             $scope.formatTanggal = function (tanggal) {

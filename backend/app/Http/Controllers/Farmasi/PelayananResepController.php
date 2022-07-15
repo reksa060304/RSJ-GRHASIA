@@ -1353,7 +1353,8 @@ class PelayananResepController extends ApiController
         left join satuanresep_m sre on sre.id = pp.satuanresepfk
         left join satuanstandar_m ss on pr.objectsatuanstandarfk = ss.id
         where sr.noresep = '$noresep'
-        and pp.isobat = true"));
+        and pp.isobat = true
+        and pp.jumlah != 0"));
         $results=[];
         //var_dump($data);
         foreach($data as $row){
@@ -1430,6 +1431,7 @@ class PelayananResepController extends ApiController
                         }
                     }
                     
+                    if($item->harganetto != 0){
                         $results[] = array(
                             'jeniskemasanfk' => $row->jeniskemasanfk,
                             'jenisobatfk' => $row->jenisobatfk,
@@ -1460,7 +1462,7 @@ class PelayananResepController extends ApiController
                             'issore' => $row->issore,
                             'ismalam' => $row->ismalam,
                         );
-                    
+                    }
                 }
             }
         }

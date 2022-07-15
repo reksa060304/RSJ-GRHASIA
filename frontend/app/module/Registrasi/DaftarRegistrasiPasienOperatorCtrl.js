@@ -2438,6 +2438,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 toastr.error(e.data.metaData.message, 'Info');
                             }
                         })
+
+
                     } else {
                         // update
                         let json = {
@@ -2490,6 +2492,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 								saveSPRILokal('insert')
 								
                                 toastr.success(e.data.response.noSuratKontrol, e.data.metaData.message);
+								$scope.kontrol.noSuratKontrol = e.data.response.noSuratKontrol
                             } else {
 								$scope.isSaves =false
                                 toastr.error(e.data.metaData.message, 'Info');
@@ -2517,6 +2520,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 								$scope.kontrol.resNoSurat = e.data.response.noSuratKontrol
 								saveSPRILokal('update')
                                 toastr.success(e.data.response.noSuratKontrol, e.data.metaData.message);
+								$scope.kontrol.noSuratKontrol = e.data.response.noSuratKontrol
                             } else {
 								$scope.isSaves =false
                                 toastr.error(e.data.metaData.message, 'Info');

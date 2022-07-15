@@ -727,6 +727,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
          Route::post('emr/send-chat-api','EMR\EMRController@sendChatAPI');
 
           Route::get('emr/get-pegawai-parts','EMR\EMRController@getPegawaiParts');
+          Route::get('emr/get-kode-eksternal-pegawai','EMR\EMRController@getPegawaiKodeEksternal');
           Route::post('emr/hapus-order-pelayananobatfarmasi', 'EMR\EMRController@hapusOrderResep');
 
           Route::get('emr/get-daftar-obat-sering-diresepkan','EMR\EMRController@getObatSeringDiresepkanDokter');

@@ -12,6 +12,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
       $scope.isBatal = true;
       $scope.isSearchingHarga = false;
       $scope.produkcarisebelumnya='';
+      $scope.kodeeksternal = ''
 
       if ($scope.currentNorecPD == undefined) {
         var chacePeriode = cacheHelper.get('InputTindakanPelayananDokterRevCtrl');
@@ -359,7 +360,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           cookie = cookie[0].split('=');
           // if (cookie[1] == 'dokter')
           $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]
-           
+           console.log($scope.pegawaiLogin)
           if($scope.item.pasien.kdinternal  == "JIW" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
             let params = $scope.item.pasien.noregistrasi;    
             if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
@@ -371,34 +372,40 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           }
 
           if($scope.ruanganfk  == 768 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
-            // let params = $scope.item.pasien.noregistrasi;    
-            // if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
-            //     params = $scope.item.pasien.noreservasi;
-            // }
-            // saveAntrol4(params,4);
-            // saveAntrol(params,5); 
+            let params = $scope.item.pasien.noregistrasi;    
+            if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
+                params = $scope.item.pasien.noreservasi;
+            }
+            saveAntrol4(params,4);
+            saveAntrol(params,5); 
             loadOtomatisProduk();
           }
 
           if($scope.ruanganfk  == 770 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
-            // let params = $scope.item.pasien.noregistrasi;    
-            // if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
-            //     params = $scope.item.pasien.noreservasi;
-            // }
-            // saveAntrol4(params,4);
-            // saveAntrol(params,5); 
+            let params = $scope.item.pasien.noregistrasi;    
+            if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
+                params = $scope.item.pasien.noreservasi;
+            }
+            saveAntrol4(params,4);
+            saveAntrol(params,5); 
             loadOtomatisProduk();
           }
 
-          if($scope.departemenfk  == 16 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
-            // let params = $scope.item.pasien.noregistrasi;    
-            // if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
-            //     params = $scope.item.pasien.noreservasi;
-            // }
-            // saveAntrol4(params,4);
-            // saveAntrol(params,5); 
-            loadOtomatisProduk();
-          }
+          medifirstService.get("emr/get-kode-eksternal-pegawai?id=" + $scope.pegawaiLogin.id, true ).then(function (e) {
+            if($scope.departemenfk  == 16 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && e.data.data[0].kodeexternal == "JIWA"){
+              let params = $scope.item.pasien.noregistrasi;    
+              if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
+                  params = $scope.item.pasien.noreservasi;
+              }
+              saveAntrol4(params,4);
+              saveAntrol(params,5); 
+              loadOtomatisProduk();
+            }
+          })
+
+          
+
+          
           
         });
       }
