@@ -2999,18 +2999,6 @@ left join
 ) as p on o.kodemataanggaran = p.kodemataanggaran order by o.kodemataanggaran"));
 
         $jumlah = DB::select(DB::raw("select sum(subtotal) totalawalsebelum from(
-            SELECT o.*, p.subtotal, p.tahap
-            from
-            (
-                select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
-                case 
-                    when kodemataanggaran ilike 'I%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
-                    when kodemataanggaran ilike 'II%' then (char_length(kodemataanggaran) = 4 or char_length(kodemataanggaran) = 2)
-                    when kodemataanggaran ilike 'III%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
-                end
-            ) as o
-            left join
-            (
                         select id, tahap,
                         case 
                             when kodemataanggaran = 'A' then 'I.A'
@@ -3064,29 +3052,8 @@ left join
                                         and km.tahun = '$tahun'
                                         group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
                             ) as x group by id, tahap, kodemataanggaran
-                        ) as y group by id, tahap, kodemataanggaran
-            
-                        union all
-            
-                        select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran keterangan, sum(kb.subtotal) subtotal
-                        from kegiatananggaran_m km
-                        inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
-                        left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
-                        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
-                        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-                        and 
-                        case 
-                            when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-                            when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-                            when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-                        end
-                        inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
-                        where km.kdprofile = 30 and km.statusenabled = true
-                        $qtahap
-                        and km.tahun = '$tahun'
-                        group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran
-            ) as p on o.kodemataanggaran = p.kodemataanggaran order by o.kodemataanggaran) as i"));
+                        ) as y where y.kodemataanggaran not in('II', 'III') group by id, tahap, kodemataanggaran
+            )  as i"));
 
 
 

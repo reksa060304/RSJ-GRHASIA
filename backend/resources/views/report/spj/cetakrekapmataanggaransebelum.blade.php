@@ -110,20 +110,32 @@
                     <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; border-right: 3px solid black;">{{$sb->kodemataanggaran}}</td>
                     <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; "></td>
                     @elseif(strpos($sb->kodemataanggaran,'I.') !== false && strlen($sb->kodemataanggaran) == 3)
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; border-right: 3px solid black;"></td>
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; ">{{substr($sb->kodemataanggaran, -1)}}</td>
+                    <td width="10" style="padding: 10px; border-top: 3px solid black; border-right: 3px solid black;"></td>
+                    <td width="10" style="padding: 10px; border-top: 3px solid black; ">{{substr($sb->kodemataanggaran, -1)}}</td>
                     @else
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; border-right: 3px solid black;"></td>
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; "></td>
+                    <td width="10" style="padding: 10px; border-top: 3px solid black; border-right: 3px solid black;"></td>
+                    <td width="10" style="padding: 10px; border-top: 3px solid black; "></td>
                     @endif                    
                     @if(strlen($sb->kodemataanggaran) > 3)
-                    <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;">{{substr($sb->kodemataanggaran, -1)}}. {{$sb->namamataanggaran}}</td>
+                    <td width="200" style="padding: 10px; border-left: 3px solid black; border-top: 3px solid black;">{{substr($sb->kodemataanggaran, -1)}}. {{$sb->namamataanggaran}}</td>
                     @else
-                    <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;">{{$sb->namamataanggaran}}</td>
+                        @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
+                            <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;">{{$sb->namamataanggaran}}</td>
+                        @else
+                            <td width="200" style="padding: 10px; border-left: 3px solid black; border-top: 3px solid black;">{{$sb->namamataanggaran}}</td>
+                        @endif
                     @endif
-                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;  ">{{$sb->subtotal}}</td>
+                    @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
+                        <td width="50" style="padding: 10px; text-align: right; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;  ">{{$sb->subtotal}}</td>
+                    @else
+                        <td width="50" style="padding: 10px; text-align: right; border-left: 3px solid black; border-top: 3px solid black;  ">{{$sb->subtotal}}</td>
+                    @endif
                     <td width="50" style="padding: 10px; text-align: right; font-weight: bold;border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; "></td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; font-weight: bold;border-top: 3px solid black;">{{$sb->subtotal}}</td>
+                    @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
+                        <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; font-weight: bold;border-top: 3px solid black;">{{$sb->subtotal}}</td>
+                    @else 
+                        <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; border-top: 3px solid black;">{{$sb->subtotal}}</td>
+                    @endif
                 </tr>
                 @endforeach
                 <tr>
