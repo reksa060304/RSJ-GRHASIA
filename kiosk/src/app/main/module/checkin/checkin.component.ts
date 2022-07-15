@@ -77,32 +77,29 @@ export class CheckinComponent implements OnInit {
   }
   getInfoByNoReservasi() {
     this.isloading =true
-    this.httpservice.get('medifirst2000/reservasionline/get-history?noReservasi=' + this.formGroup.get('noReservasi').value).subscribe(e => {
+    this.httpservice.get('medifirst2000/reservasionline/cek-in-kiosk?noReservasi=' + this.formGroup.get('noReservasi').value).subscribe(e => {
       this.isloading =false
-      if (e.data.length > 0) {
-
-        let result = e.data[0]
+      if (e.data !=null ) {
+        let result = e.data
         let now =new Date();// new Date(new Date(tglRes).setHours(new Date(tglRes).getHours() - 1))
         let tglResDate = new Date(result.tanggalreservasi)
         var hours = this.diff_hours(tglResDate, now)
-        if (hours >  this.batasJamCheckin ) {
-          this.alertService.error('','Check-In hanya bisa dilakukan SATU Jam sebelum jam reservasi', {
-            toastClass: 'toast ngx-toastr',
-            closeButton: true,
-            positionClass: 'toast-bottom-center'
-          });
-          // this.alertService.error('Info', 'Check-In hanya bisa dilakukan SATU Jam sebelum jam reservasi')
-          return
-        }
-        if (new Date() > new Date(result.tanggalreservasi)) {
-          this.alertService.error('','Batas Waktu Check-In anda melebihi batas yang ditentukan', {
-            toastClass: 'toast ngx-toastr',
-            closeButton: true,
-            positionClass: 'toast-bottom-center'
-          });
-          // this.alertService.error('Info', 'Batas Waktu Check-In anda melebihi batas yang ditentukan')
-          return
-        }
+        // if (hours >  this.batasJamCheckin ) {
+        //   this.alertService.error('','Check-In hanya bisa dilakukan SATU Jam sebelum jam reservasi', {
+        //     toastClass: 'toast ngx-toastr',
+        //     closeButton: true,
+        //     positionClass: 'toast-bottom-center'
+        //   });
+        //   return
+        // }
+        // if (new Date() > new Date(result.tanggalreservasi)) {
+        //   this.alertService.error('','Batas Waktu Check-In anda melebihi batas yang ditentukan', {
+        //     toastClass: 'toast ngx-toastr',
+        //     closeButton: true,
+        //     positionClass: 'toast-bottom-center'
+        //   });
+        //   return
+        // }
 
         if (result.tgllahir == null)
           result.tgllahir = '-'
@@ -127,7 +124,7 @@ export class CheckinComponent implements OnInit {
 
       } else {
         this.isInfoPasien = false
-        this.alertService.error('','Data tidak ditemukan', {
+        this.alertService.error('',e.message, {
           toastClass: 'toast ngx-toastr',
           closeButton: true,
           positionClass: 'toast-bottom-center'

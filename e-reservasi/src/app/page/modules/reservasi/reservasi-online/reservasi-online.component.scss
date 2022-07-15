@@ -168,3 +168,38 @@ body .ui-menu-close-item {
   -webkit-transform: scale(3); /* Safari 3-8 */
   transform: scale(3); 
 }
+.ui-button-icon-only .fa {
+  top: 50%;
+  left: 50%;
+  margin-top: -0.5em;
+  margin-left: -0.6em;
+}
+.ui-button-icon-only .fa, .ui-button-text-icon-left .fa, .ui-button-text-icon-right .fa {
+  position: absolute;
+  top: 50%;
+  margin-top: -0.5em;
+}
+body .ui-fluid .ui-button-icon-only {
+  /* width: auto; */
+  width: 2.357rem;
+  padding: 0.5rem 0;
+}
+
+.fa-fw {
+  width: 1.28571429em;
+  text-align: center;
+}
+.fa {
+  display: inline-block;
+  font: 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.ui-button-icon-left {
+  left: 0.5em;
+}
+.ui-widget, .ui-widget * {
+  box-sizing: border-box;
+}

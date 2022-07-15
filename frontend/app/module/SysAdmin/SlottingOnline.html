@@ -18,15 +18,16 @@
                             </div>
                             <div class="grid_12">
                                 <input c-text-box type="input" filter="" class="k-textbox"
-                                    ng-model="item.namaRuangan" />
+                                    ng-model="item.namaRuangan"  ng-keypress="($event.which == 13)? Search():item.namaRuangan"/>
                             </div>
                         </div>
-                        <div class="grid_1">
+                        <div class="grid_4">
                             <div class="grid_12">
-                                <label c-label item="item" c-label-text="Quota"></label>
+                                <label c-label item="item" c-label-text=" Dokter"></label>
                             </div>
                             <div class="grid_12">
-                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.quota" />
+                                <input c-text-box type="input" filter="" class="k-textbox"
+                                    ng-model="item.Qdokter" ng-keypress="($event.which == 13)? Search():item.Qdokter"/>
                             </div>
                         </div>
 
@@ -45,6 +46,7 @@
                 <div class="grid_12" style="margin-top: 10px">
                     <div class="grid_12">
                         <kendo-grid id="kGrids" k-data-source="dataSource" k-selectable="'row'" k-groupable="'true'"
+                        class="max-height"
                             k-options="columnGrid" k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
                         </kendo-grid>
                     </div>
@@ -57,9 +59,47 @@
     <div class="grid_12" style="margin-top:60px">
         <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
     </div>
-    <div kendo-window="popUps" k-title="'Tambah'" k-width="900" k-height="250" k-visible="false"
-        k-on-close="customClicked()">
-        <div class="panel panel-default container_12" style="padding: 0px 10px;">
+    <div kendo-window="popUps" k-title="' Jadwal Dokter'" k-width="900" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <!-- <div kendo-window="popUps" k-title="'Tambah'" k-width="900"  k-visible="false"
+        k-on-close="customClicked()"> -->
+        <div class="panel panel-default container_12">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Nama Ruangan"></label>
+                <input style="width: 100%;" kendo-combo-box k-ng-model="popUp.ruangan"
+                    k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
+                    k-auto-bind="false" k-data-source="listRuangan" />
+            </div>
+            <div class="grid_12">
+                <label c-label item="item">Dokter</label>
+                <input style="width: 100%;" kendo-combo-box k-ng-model="popUp.dokterInput"
+                    k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+                    k-auto-bind="false" k-data-source="listDokter" />
+            </div>
+            <div class="grid_12" style="margin-top:5px">
+                <label c-label c-label-text="hari" real></label>
+                <select style="border: 1px solid #41abf2;" kendo-multi-select k-options="selectOptionsHari"
+                    k-filter="'contains'" k-data-source="listHari" k-ng-model="popUp.HariAwal"></select>
+
+            </div>
+            <div class="grid_12">
+                <div class="grid_6">
+                    <label c-label item="item">Jam Awal</label>
+                    <input style="width: 100%;" k-ng-model="popUp.jamBuka" kendo-timepicker placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                </div>
+                <div class="grid_6">
+                    <label c-label item="item">Jam Akhir</label>
+                    <input style="width: 100%;" k-ng-model="popUp.jamTutup" kendo-timepicker placeholer="HH:mm" k-format="'HH:mm'"  parsedate="HH:mm" />
+                </div>
+            </div>
+           
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Kuota"></label>
+                <input c-text-box type="number" class="k-textbox" ng-model="popUp.quota" />
+            </div>
+           
+        </div>
+        <!-- <div class="panel panel-default container_12" style="padding: 0px 10px;">
             <div class="grid_12">
                 <div class="grid_6">
                     <label c-label item="item" c-label-text="ID"></label>
@@ -71,7 +111,7 @@
                     <input style="width: 100%;" kendo-combo-box k-ng-model="popUp.ruangan"
                         k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
                         k-auto-bind="false" k-data-source="listRuangan" />
-                    <!-- <input c-text-box type="input" class="k-textbox" ng-model="popUp.ruangan" /> -->
+              
 
                 </div>
             </div>
@@ -81,7 +121,6 @@
                     <label c-label item="item" c-label-text="Jam Buka"></label>
                     <input style="width: 100%" k-ng-model="popUp.jamBuka" kendo-timepicker placeholer="HH:mm"
                         k-format="'HH:mm'" />
-                    <!-- <input c-text-box type="number" class="k-textbox" ng-model="popUp.jamBuka" /> -->
 
                 </div>
                 <div class="grid_4">
@@ -89,7 +128,6 @@
                     <label c-label item="item" c-label-text="Jam Tutup"></label>
                     <input style="width: 100%" k-ng-model="popUp.jamTutup" kendo-timepicker placeholer="HH:mm"
                         k-format="'HH:mm'" />
-                    <!-- <input c-text-box type="number" class="k-textbox" ng-model="popUp.jamTutup" /> -->
 
                 </div>
                 <div class="grid_4">
@@ -99,9 +137,9 @@
 
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
-            <button class="k-button  k-button-icontext k-primary k-grid-update" ng-click="save()"><span
+            <button class="k-button  k-button-icontext k-primary k-grid-update" ng-click="save()" ng-hide="isSave"><span
                     class="k-icon k-update"></span>Simpan</button>
             <button class="k-button  btnHapus k-button-icontext" ng-click="tutup()"><span
                     class="k-icon k-cancel"></span>Tutup</button>

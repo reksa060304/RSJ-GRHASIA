@@ -8,7 +8,7 @@ export class Configuration {
       }
     } else if (window.location.hostname.indexOf('localhost') > -1) {
       return {
-        apiBackend: 'http://localhost:8600/service/',
+        apiBackend: 'http://localhost:3331/service/',
         headerToken: 'X-AUTH-TOKEN',
         authLogin: ':8400',
       }

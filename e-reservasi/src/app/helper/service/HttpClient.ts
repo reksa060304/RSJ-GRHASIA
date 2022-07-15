@@ -242,7 +242,35 @@ export class HttpClient implements OnDestroy {
         this.hideLoader();
       });
   }
+  postNonMessage(url, data, callBack: (res: any) => any = null, auth: boolean = false, tokenSuper: string = null) {
+    this.createAuthorizationHeader
+    this.method = 2;
+    this.url = url;
+    this.data = data;
+    this.isSuperUserReq = auth;
+    this.callBack = callBack;
+    this.showLoader();
 
+    const headers = new Headers();
+    this.createAuthorizationHeader(headers, tokenSuper);
+    const options = new RequestOptions({ headers: headers, withCredentials: false });
+    // console.log(JSON.stringify(data));
+    return this.http.post(Configuration.get().apiBackend + url, data, options)
+      .map((res: Response) => {
+        // this.responseSuccess(res);
+        if (callBack !== undefined && callBack !== null) {
+          callBack(res.json());
+        }
+        return res.json();
+      })
+      .catch(error => {
+        // this.handleError(error);
+        return this.reject();
+      })
+      .finally(() => {
+        this.hideLoader();
+      });
+  }
   update(url, data, callBack: (res: any) => any = null, auth: boolean = false, tokenSuper: string = null) {
     this.method = 3;
     this.url = url;
