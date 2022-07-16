@@ -2238,6 +2238,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				$scope.popUpSPRI.center().open()
 			}
 			$scope.batalSPRI = function(){
+				$scope.kontrol.noSuratKontrol = undefined
+				$scope.kontrol.kodeDokter = []
+				$scope.kontrol.poliKontrol = []
 				$scope.popUpSPRI.close()
 			}
 			$scope.columnGridSPRI = [{
@@ -2529,6 +2532,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
 
                 }
+
+				
             }
 			function saveSPRILokal(tipe) {
 				loadGridKontrol()
