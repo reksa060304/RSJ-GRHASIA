@@ -3294,7 +3294,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
     FROM
         (
             SELECT
-                *, ROW_NUMBER () OVER (PARTITION BY noresep, namaproduk) NUMBER
+                *, ROW_NUMBER () OVER (PARTITION BY noresep, namaproduk, rke) NUMBER
             FROM
                 (
                     SELECT

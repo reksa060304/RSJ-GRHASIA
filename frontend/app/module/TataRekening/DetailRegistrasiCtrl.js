@@ -354,10 +354,10 @@ define(['initialize'], function (initialize) {
 			}
 
 			$scope.DaftarRuangan = function () {
-				if ($scope.currentRowData === undefined) {
-					messageContainer.error("Pilih data terlebih dahulu");
-					return
-				} else {
+				// if ($scope.currentRowData === undefined) {
+				// 	messageContainer.error("Pilih data terlebih dahulu");
+				// 	return
+				// } else {
 
 					$scope.konsul.kelas = $scope.listKelas[3]
 
@@ -365,7 +365,7 @@ define(['initialize'], function (initialize) {
 					$scope.cboUbahDokter = false;
 					$scope.cboKonsul = true;
 					$scope.showUbahTanggal = false;
-				}
+				// }
 			}
 			$scope.getKelas = function (ruangan) {
 				if (ruangan != undefined && ruangan.namaruangan.indexOf('Bedah') > -1) {

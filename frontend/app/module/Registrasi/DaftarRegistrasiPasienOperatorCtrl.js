@@ -1330,11 +1330,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 								// $state.go('PemakaianAsuransi',{
 								norecPD: $scope.dataPasienSelected.norec,
 								norecAPD: dataAntrian.norec_apd,
+								br: $scope.dataPasienSelected.norec_br,
+								noregistrasi: $scope.dataPasienSelected.noregistrasi,
 							});
+
+							console.log($scope.dataPasienSelected.noregistrasi)
 
 							var cacheSet = $scope.dataPasienSelected.objectasuransipasienfk
 								+ "~" + $scope.dataPasienSelected.norec_pa
-								+ "~" + $scope.dataPasienSelected.noregistrasi;
+								+ "~" + $scope.dataPasienSelected.noregistrasi
+								+ "~" + $scope.dataPasienSelected.norec_br;
 
 							cacheHelper.set('CachePemakaianAsuransi', cacheSet);
 						}
@@ -1422,7 +1427,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				$state.go('InputTindakan', {
 					norecPD: $scope.dataPasienSelected.norec,
 					norecAPD: $scope.item.ruanganAntrian.norec_apd,
-
+					br: $scope.dataPasienSelected.norec_br,
+					noregistrasi: $scope.dataPasienSelected.noregistrasi,
 				});
 			}
 			$scope.pegawai = ModelItem.getPegawai();
