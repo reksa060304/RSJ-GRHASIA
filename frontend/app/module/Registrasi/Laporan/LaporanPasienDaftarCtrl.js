@@ -98,7 +98,7 @@ define(['initialize'], function (initialize) {
             };
 
             medifirstService.get("registrasi/laporan/get-data-combo-laporan").then(function (dat) {
-           
+                
                 // $scope.listPegawai = dat.data.dokter;
                 $scope.listDepartemen = dat.data.departemen;
                 // $scope.listPegawaiKasir = dat.data.kasir;
@@ -185,8 +185,52 @@ define(['initialize'], function (initialize) {
                                 day = umur.day
                             var usia = (umur.year * 12) + umur.month;
                             datas[i].umur = thn + ' thn ' + bln + ' bln ' + day + ' hr ' 
+                            var akhir = usia * 30
+                            
+                            // var 
+                            if (datas[i].jk == 'L') {
+                                if (umur.year > 0 && umur.year < 5) {
+                                    datas[i].y1l = umur.year
+                                } else if (umur.year > 4 && umur.year < 15) {
+                                    datas[i].y2l = umur.year
+                                } else if (umur.year > 14 && umur.year < 25) {
+                                    datas[i].y3l = umur.year
+                                } else if (umur.year > 24 && umur.year < 45) {
+                                    datas[i].y4l = umur.year
+                                } else if (umur.year > 44 && umur.year < 65) {
+                                    datas[i].y5l = umur.year
+                                } else if (umur.year > 64) {
+                                    datas[i].y6l = umur.year
+                                } else if(datas[i].umurhari >=0 && datas[i].umurhari < 7 ) {
+                                    datas[i].y7l = datas[i].umurhari
+                                } else if (datas[i].umurhari >= 8 && datas[i].umurhari < 29) {
+                                    datas[i].y8l = datas[i].umurhari
+                                } else if (datas[i].umurhari >= 29 && datas[i].umurhari < 365) {
+                                    datas[i].y9l = datas[i].umurhari
+                                }
+                            } else if (datas[i].jk == 'P') {
+                                if (umur.year > 0 && umur.year < 5) {
+                                    datas[i].y1p = umur.year
+                                } else if (umur.year > 4 && umur.year < 15) {
+                                    datas[i].y2p = umur.year
+                                } else if (umur.year > 14 && umur.year < 25) {
+                                    datas[i].y3p = umur.year
+                                } else if (umur.year > 24 && umur.year < 45) {
+                                    datas[i].y4p = umur.year
+                                } else if (umur.year > 44 && umur.year < 65) {
+                                    datas[i].y5p = umur.year
+                                } else if (umur.year > 64) {
+                                    datas[i].y6p = umur.year
+                                } else if (datas[i].umurhari >= 0 && datas[i].umurhari < 7) {
+                                    datas[i].y7p = datas[i].umurhari
+                                } else if (datas[i].umurhari > 6 && datas[i].umurhari < 29) {
+                                    datas[i].y8p = datas[i].umurhari
+                                } else if (datas[i].umurhari >= 28 && datas[i].umurhari < 365) {
+                                    datas[i].y9p = datas[i].umurhari
+                                }
+                            }
                         }
-                        
+                       
                         $scope.sourceLaporan = new kendo.data.DataSource({
                             data: datas,
                             pageSize: 10,
@@ -238,17 +282,10 @@ define(['initialize'], function (initialize) {
                 selectable: "row",
                 columns: [
                     {
-                        "field": "tglregistrasi1",
-                        "title": "Tgl Masuk",
-                        "width": "100px",
-                        // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
-                        
-                    },
-                    {
-                        "field": "jamregistrasi",
-                        "title": "Jam Masuk",
-                        "width": "80px",
-                        // "template": "<span class='style-left'>{{formatJam('#: tglregistrasi #')}}</span>"
+                        "field": "nocm",
+                        "title": "No Rm",
+                        "width": "80px"
+
                     },
                     {
                         "field": "noregistrasi",
@@ -257,31 +294,265 @@ define(['initialize'], function (initialize) {
                         "template": "<span class='style-center'>#: noregistrasi #</span>"
                     },
                     {
+                        "field": "statuspasien",
+                        "title": "Status Pasien",
+                        "width": "100px"
+                    },
+                    {
+                        "title": "Keterangan Dirawat",
+                        "width": "80px",
+                        "columns": [{
+                            "field": "tglregistrasi1",
+                            "title": "Masuk",
+                            "width": "80px",
+                            // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+
+                        }, {
+                            "field": "tglpulang1",
+                            "title": "Keluar",
+                            "width": "80px"
+                        }, ]
+
+                    },
+                    {
+                        "field": "jamregistrasi",
+                        "title": "Jam Masuk",
+                        "width": "80px",
+                        // "template": "<span class='style-left'>{{formatJam('#: tglregistrasi #')}}</span>"
+                    },
+                    {
+                        "field": "lamadirawat",
+                        "title": "Lama Dirawat",
+                        "width": "100px",
+                        "template": "#: lamadirawat == 0 ? ' ': lamadirawat #"
+                        // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+
+                    },
+                    {
                         "field": "namapasien",
                         "title": "Nama Pasien",
                         "width": "180px",
+                    },
+                    {
+                        "field": "alamatlengkap",
+                        "title": "Alamat",
+                        "width": "400px",
+                        // "template": "#: alamatlengkap# #: #"
+                    },
+                    {
+                        // "field": "alamatlengkap",
+                        "title": "Nama / Alamat Keluarga / Penanggung Jawab",
+                        "width": "400px",
+                        "template": "#: namapasien # / #: alamatrmh == null ? '-': alamatrmh # / #: penanggungjawab == null ? '-' : penanggungjawab #"
+                    }, 
+                    {
+                        "field": "statusperkawinan",
+                        "title": "Marital",
+                        "width": "100px",
+                        // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                    },
+                    {
+                        "title": "Data Kabupaten",
+                        "width": "100px",
+                        "columns": [{
+                            // 'field': 'datadiy',
+                            "title" : "DIY",
+                            "width": "70px",
+                            "template": "#: datadiy == 'LUARDIY' ? 'LUAR DIY' : datadiy #"
+                        },
+                        {
+                            // 'field': 'dataluardiy',
+                            "title": "Luar DIY",
+                            "width": "100px",
+                            "template": "#: dataluardiy != ' ' ? dataluardiy : ' ' #"
+                        }]
+                    },
+                    // {
+                    //     "field": "kecamatan",
+                    //     "title": "Kecamatan",
+                    //     "width": "200px"
+                    // }, 
+                    // {
+                    //     "field": "kelurahan",
+                    //     "title": "Kelurahan",
+                    //     "width": "200px"
+                    // }, 
+                    {
+                        "title": "Jumlah Pasien menurut Umur dan Jenis Kelamin ",
+                        "width": "80px",
+                        "columns": [
+                            {
+                                // "field": "tglregistrasi",
+                                "title": "0-8hari",
+                                "width": "80px",
+                                // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                                "columns": [{
+                                    "field": "y7l",
+                                    "title": "L",
+                                    "width": "50px",
+                                }, {
+                                    "field": "y7p",
+                                    "title": "P",
+                                    "width": "50px"
+                                }]
+                            },
+                            {
+                                // "field": "tglregistrasi",
+                                "title": "7-28hari",
+                                "width": "80px",
+                                // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                                "columns": [{
+                                    "field": "y8l",
+                                    "title": "L",
+                                    "width": "50px",
+                                }, {
+                                    "field": "y8p",
+                                    "title": "P",
+                                    "width": "50px"
+                                }]
+                            },
+                            {
+                                // "field": "tglregistrasi",
+                                "title": "28-<1tahun",
+                                "width": "80px",
+                                // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                                "columns": [{
+                                    "field": "y9l",
+                                    "title": "L",
+                                    "width": "50px",
+                                }, {
+                                    "field": "y9p",
+                                    "title": "P",
+                                    "width": "50px"
+                                }]
+                            },
+                            {
+                            // "field": "tglregistrasi",
+                            "title": "1-4tahun",
+                            "width": "80px",
+                            // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                            "columns":[{
+                                "field": "y1l",
+                                "title":"L",
+                                "width": "50px",
+                            },{
+                                "field": "y1p",
+                                "title": "P",
+                                "width": "50px"
+                            }]
+                            }, 
+                            {
+                                // "field": "tglregistrasi",
+                                "title": "5-14tahun",
+                                "width": "80px",
+                                // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                                "columns": [{
+                                    "field": "y2l",
+                                    "title": "L",
+                                    "width": "50px",
+                                }, {
+                                    "field": "y2p",
+                                    "title": "P",
+                                    "width": "50px"
+                                }]
+                            },
+                            {
+                                // "field": "tglregistrasi",
+                                "title": "15-24tahun",
+                                "width": "80px",
+                                // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                                "columns": [{
+                                    "field": "y3l",
+                                    "title": "L",
+                                    "width": "50px",
+                                }, {
+                                    "field": "y3p",
+                                    "title": "P",
+                                    "width": "50px"
+                                }]
+                            },
+                            {
+                                // "field": "tglregistrasi",
+                                "title": "25-44tahun",
+                                "width": "80px",
+                                // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                                "columns": [{
+                                    "field": "y4l",
+                                    "title": "L",
+                                    "width": "50px",
+                                }, {
+                                    "field": "y4p",
+                                    "title": "P",
+                                    "width": "50px"
+                                }]
+                            },
+                            {
+                                // "field": "tglregistrasi",
+                                "title": "45-64tahun",
+                                "width": "80px",
+                                // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                                "columns": [{
+                                    "field": "y5l",
+                                    "title": "L",
+                                    "width": "50px",
+                                }, {
+                                    "field": "y5p",
+                                    "title": "P",
+                                    "width": "50px"
+                                }]
+                            },
+                            {
+                                // "field": "tglregistrasi",
+                                "title": ">65tahun",
+                                "width": "80px",
+                                // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                                "columns": [{
+                                    "field": "y6l",
+                                    "title": "L",
+                                    "width": "50px",
+                                }, {
+                                    "field": "y6p",
+                                    "title": "P",
+                                    "width": "50px"
+                                }]
+                            },
+                        ]
 
                     },
-
+                    // {
+                    //     "title": "BU",
+                    //     "columns": [
+                    //         {
+                    //             "title": "kode DX1",
+                    //             "columns": [
+                    //                 {
+                    //                     "title": "L",
+                    //                     "width": "40px"
+                    //                 },
+                    //                 {
+                    //                     "title": "P",
+                    //                     "width":"40px"
+                    //                 }
+                    //             ]
+                    //         },
+                    //         {
+                    //             "title": "kode DX2"
+                    //         }
+                    //     ]
+                    // },
                     {
                         "field": "ruangandaftar",
                         "title": "Unit Layanan",
                         "width": "100px"
                     },
                     {
-                        "field": "nocm",
-                        "title": "No Rm",
-                        "width": "80px"
-
+                        "field": "namakelas",
+                        "title": "Kelas",
+                        "width": "100px"
                     },
                     {
                         "field": "kelompokpasien",
                         "title": "Tipe Pasien",
-                        "width": "100px"
-                    },
-                    {
-                        "field": "statuspasien",
-                        "title": "Status Pasien",
                         "width": "100px"
                     },
                     {
@@ -310,32 +581,12 @@ define(['initialize'], function (initialize) {
                         "width": "200px"
                     },
                     {
-                        "field": "alamatlengkap",
-                        "title": "Alamat",
-                        "width": "400px"
-                    },
-                    {
-                        "field": "kecamatan",
-                        "title": "Kecamatan",
-                        "width": "200px"
-                    },
-                    {
-                        "field": "kelurahan",
-                        "title": "Kelurahan",
-                        "width": "200px"
-                    },
-                    {
-                        "field": "kabupaten",
-                        "title": "Kabupaten",
-                        "width": "200px"
-                    },
-                    {
                         "field": "suku",
                         "title": "Suku",
                         "width": "200px"
                     },
                     {
-                        "field": "tgllahir1",
+                        "field": "tgllahir",
                         "title": "Tgl Lahir",
                         "width": "100px",
                         // "template": "<span class='style-left'>{{formatTanggal('#: tgllahir #')}}</span>"
@@ -345,38 +596,23 @@ define(['initialize'], function (initialize) {
                         "title": "Umur",
                         "width": "100px"
                     },
+                    // {
+                    //     "field": "dokterapd",
+                    //     "title": "Dokter",
+                    //     "width": "100px"
+                    // },
                     {
-                        "field": "namakelas",
-                        "title": "Kelas",
+                        "field": "kodesekunder",
+                        "title": "Kode IDX2",
                         "width": "100px"
                     },
                     {
-                        "field": "dokterapd",
-                        "title": "Dokter",
+                        "field": "kodeprimer",
+                        "title": "Kode IDX1",
                         "width": "100px"
                     },
                     {
-                        "field": "kodemasuk",
-                        "title": "Kode",
-                        "width": "100px"
-                    },
-                    {
-                        "field": "diagnosamasuk",
-                        "title": "Diagnosa Masuk",
-                        "width": "300px"
-                    },
-                    {
-                        "field": "pegawaimasuk",
-                        "title": "Pegawai input(Masuk)",
-                        "width": "200px"
-                    },
-                    {
-                        "field": "kodekeluar",
-                        "title": "Kode",
-                        "width": "100px"
-                    },
-                    {
-                        "field": "diagnosakeluar",
+                        "field": "diagnosaprimer",
                         "title": "Diagnosa Primer",
                         "width": "300px"
                     },
@@ -385,11 +621,11 @@ define(['initialize'], function (initialize) {
                         "title": "Pegawai input(Primer)",
                         "width": "200px"
                     },
-                    {
-                        "field": "kasus",
-                        "title": "Kasus",
-                        "width": "80px"
-                    },
+                    // {
+                    //     "field": "kasus",
+                    //     "title": "Kasus",
+                    //     "width": "80px"
+                    // },
 
                     //
                     // {
@@ -397,18 +633,18 @@ define(['initialize'], function (initialize) {
                     //     "title": "Asal Pasien",
                     //     "width": "100px"
                     // },
-                    {
-                        "field": "tglpulang1",
-                        "title": "Tgl Keluar",
-                        "width": "150px",
-                        // "template": "<span class='style-left'>{{formatTanggal('#: tglpulang #')}}</span>"
-                    },
-                    {
-                        "field": "jampulang",
-                        "title": "Jam Keluar",
-                        "width": "150px",
-                        // "template": "<span class='style-left'>{{formatTanggal('#: tglpulang #')}}</span>"
-                    },
+                    // {
+                    //     "field": "tglpulang1",
+                    //     "title": "Tgl Keluar",
+                    //     "width": "150px",
+                    //     // "template": "<span class='style-left'>{{formatTanggal('#: tglpulang #')}}</span>"
+                    // },
+                    // {
+                    //     "field": "jampulang",
+                    //     "title": "Jam Keluar",
+                    //     "width": "150px",
+                    //     // "template": "<span class='style-left'>{{formatTanggal('#: tglpulang #')}}</span>"
+                    // },
                     // {
                     //     "field": "kondisipasien",
                     //     "title": "Keadaan",

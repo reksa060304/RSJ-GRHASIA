@@ -7479,7 +7479,7 @@ class RegistrasiController extends ApiController
         $jenisDiagnosa = \DB::table('jenisdiagnosa_m as ma')
             ->select('ma.id','ma.jenisdiagnosa as jenisDiagnosa')
             ->where('ma.statusenabled',true)
-            ->orderBy('ma.jenisdiagnosa')
+            ->orderBy('ma.id')
             ->get();
         $result = array(
             'deptrirj' => $deptRajalInap,
