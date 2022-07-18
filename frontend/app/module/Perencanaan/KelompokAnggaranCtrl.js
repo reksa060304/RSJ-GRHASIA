@@ -3632,7 +3632,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         messageContainer.error("Data yang sudah diverif tidak bisa diubah");
                     } else if (cek == 123){
                         medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
-                            LoadSPJ()
+                            loadDataGrid();
                             $scope.popupTambahSPJ.center().close()
                         }, function (error) {
         

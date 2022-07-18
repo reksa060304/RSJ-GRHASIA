@@ -668,9 +668,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.Riwayat = function () {
 
                 var nocm = "";
-                if ($scope.item.norm) {
-                    nocm = $scope.item.norm;
+                if ($scope.item.nocm) {
+                    nocm = $scope.item.nocm;
                 }
+
+                console.log(nocm)
 
                 var noregistrasi = "";
                 if ($scope.item.noregistrasi) {
@@ -678,7 +680,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
 
 
-                medifirstService.get("farmasi/get-transaksi-pelayanan?noReg=" + noregistrasi + "&nocm=" + nocm, true).then(function (dat) {
+                medifirstService.get("farmasi/get-transaksi-pelayanan?nocm=" + nocm, true).then(function (dat) {
                     let group = [];
                     if (dat.statResponse == true) {
                         for (var i = 0; i < dat.data.length; i++) {
@@ -736,6 +738,66 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.popUpRiwayat.center().open();
                 });
             }
+
+            $scope.data22 = function (dataItem) {
+                // debugger
+                for (var i = 0; i < dataItem.details.length; i++) {
+                    dataItem.details[i].no = i + 1
+
+                }
+                return {
+                    dataSource: new kendo.data.DataSource({
+                        data: dataItem.details,
+                        sort:[{ field: "rke", dir: "asc" }],
+
+                    }),
+                    resizable: true,
+                    columns: [
+                        {
+                            "field": "no",
+                            "title": "No",
+                            "width": "15px",
+                            "hidden": "true",
+                        },
+                        {
+                            "field": "rke",
+                            "title": "R/",
+                            "width": "35px",
+                        },
+                        {
+                            "field": "namaproduk",
+                            "title": "Deskripsi",
+                            "width": "200px",
+                        },
+                        {
+                            "field": "aturanpakai",
+                            "title": "Aturan Pakai",
+                            "width": "80px",
+                        },
+                        {
+                            "field": "satuanstandar",
+                            "title": "Satuan",
+                            "width": "80px",
+                        },
+                        {
+                            "field": "jumlah",
+                            "title": "Qty",
+                            "width": "40px",
+                        },
+                        {
+                            "field": "keteranganpakai",
+                            "title": "Keterangan",
+                            "width": "400px",
+                        },
+                        {
+                            "field": "kekuatan",
+                            "title": "Kekuatan",
+                            "width": "80px",
+                        }
+
+                    ]
+                }
+            };
 
             $scope.columnGridRiwayatObat = [
 

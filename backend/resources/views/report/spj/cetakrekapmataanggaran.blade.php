@@ -97,12 +97,14 @@
                     <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; border-right: 3px solid black;">I</td>
                     <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; "></td>
                     <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;">BIAYA OPERASIONAL</td>
-                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold;border-left: 3px solid black;border-top: 3px solid black;  text-align: right;">{{$jumlah[0]->totalawalsebelum}}</td>
-                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold;border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; text-align: right;">{{$jumlah[0]->totalawalsesudah}}</td>
+                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold;border-left: 3px solid black;border-top: 3px solid black;  text-align: right;">{{$jumlah[0]->totalawalsesudah}}</td>
+                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold;border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; text-align: right;">{{$jumlah[0]->totalawalsebelum}}</td>
                     @if($jumlah[0]->totalawalsebelum > $jumlah[0]->totalawalsesudah)
                     <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$jumlah[0]->totalawalsebelum-$jumlah[0]->totalawalsesudah}}</td>
                     @elseif($jumlah[0]->totalawalsebelum < $jumlah[0]->totalawalsesudah)
                     <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$jumlah[0]->totalawalsesudah-$jumlah[0]->totalawalsebelum}}</td>
+                    @else
+                    <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;"></td>
                     @endif
                 </tr>
                 @foreach($sebelum as $sb)
@@ -117,32 +119,51 @@
                     <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; border-right: 3px solid black;">{{$sb->kodemataanggaran}}</td>
                     <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; "></td>
                     @elseif(strpos($sb->kodemataanggaran,'I.') !== false && strlen($sb->kodemataanggaran) == 3)
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; border-right: 3px solid black;"></td>
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; ">{{substr($sb->kodemataanggaran, -1)}}</td>
+                    <td width="10" style="padding: 10px; border-top: 3px solid black; border-right: 3px solid black;"></td>
+                    <td width="10" style="padding: 10px; border-top: 3px solid black; ">{{substr($sb->kodemataanggaran, -1)}}</td>
                     @else
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; border-right: 3px solid black;"></td>
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; "></td>
+                    <td width="10" style="padding: 10px; border-top: 3px solid black; border-right: 3px solid black;"></td>
+                    <td width="10" style="padding: 10px; border-top: 3px solid black; "></td>
                     @endif                    
                     @if(strlen($sb->kodemataanggaran) > 3)
-                    <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;">{{substr($sb->kodemataanggaran, -1)}}. {{$sb->namamataanggaran}}</td>
+                    <td width="200" style="padding: 10px; border-left: 3px solid black; border-top: 3px solid black;">{{substr($sb->kodemataanggaran, -1)}}. {{$sb->namamataanggaran}}</td>
                     @else
-                    <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;">{{$sb->namamataanggaran}}</td>
+                        @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
+                            <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;">{{$sb->namamataanggaran}}</td>
+                        @else 
+                            <td width="200" style="padding: 10px; border-left: 3px solid black; border-top: 3px solid black;">{{$sb->namamataanggaran}}</td>
+                        @endif
                     @endif
-                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;  ">{{$sb->subtotalsebelum}}</td>
-                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; ">{{$sb->subtotalsetelah}}</td>
-                    @if($sb->subtotalsebelum > $sb->subtotalsetelah)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; font-weight: bold;border-top: 3px solid black;">{{$sb->subtotalsebelum-$sb->subtotalsetelah}}</td>
-                    @elseif($sb->subtotalsebelum < $sb->subtotalsetelah)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; font-weight: bold;border-top: 3px solid black;">{{$sb->subtotalsetelah-$sb->subtotalsebelum}}</td>
+                    @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
+                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;  ">{{$sb->subtotalsetelah}}</td>
+                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; ">{{$sb->subtotalsebelum}}</td>
                     @else
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; font-weight: bold;border-top: 3px solid black;"></td>
+                    <td width="50" style="padding: 10px; text-align: right; border-left: 3px solid black; border-top: 3px solid black;  ">{{$sb->subtotalsetelah}}</td>
+                    <td width="50" style="padding: 10px; text-align: right; border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; ">{{$sb->subtotalsebelum}}</td>
+                    @endif
+                    @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
+                        @if($sb->subtotalsebelum > $sb->subtotalsetelah)
+                        <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; font-weight: bold;border-top: 3px solid black;">{{$sb->subtotalsebelum-$sb->subtotalsetelah}}</td>
+                        @elseif($sb->subtotalsebelum < $sb->subtotalsetelah)
+                        <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; font-weight: bold;border-top: 3px solid black;">{{$sb->subtotalsetelah-$sb->subtotalsebelum}}</td>
+                        @else
+                        <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; font-weight: bold;border-top: 3px solid black;"></td>
+                        @endif
+                    @else
+                        @if($sb->subtotalsebelum > $sb->subtotalsetelah)
+                        <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; border-top: 3px solid black;">{{$sb->subtotalsebelum-$sb->subtotalsetelah}}</td>
+                        @elseif($sb->subtotalsebelum < $sb->subtotalsetelah)
+                        <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; border-top: 3px solid black;">{{$sb->subtotalsetelah-$sb->subtotalsebelum}}</td>
+                        @else
+                        <td width="20" style="padding: 10px; border-top: 3px solid black; text-align: right; border-top: 3px solid black;"></td>
+                        @endif
                     @endif
                 </tr>
                 @endforeach
                 <tr>
                     <td  colspan="3"  style="padding: 10px; text-align: left; font-weight: bold; border-top: 3px solid black; text-align:center;">JUMLAH TOTAL</td>
-                    <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black;border-left: 3px solid black;text-align: right;">{{$totalsebelum}}</td>
-                    <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black; border-left: 3px solid black;text-align: right;border-right: 3px solid black;">{{$totalsesudah}}</td>
+                    <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black;border-left: 3px solid black;text-align: right;">{{$totalsesudah}}</td>
+                    <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black; border-left: 3px solid black;text-align: right;border-right: 3px solid black;">{{$totalsebelum}}</td>
                     <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black; text-align: right;">{{$totalberkurang}}</td>
                 </tr>
                 

@@ -106,18 +106,20 @@
                 @endphp
                 @foreach($sebelum as $sb)
                 <tr>
-                    @php
-                    $sebelumjumlahbarangjasa += $sb->jumlahbarangjasa;
-                    $sebelumjumlahmodal += $sb->jumlahmodal;
-                    $sebelumjumlahpegawai += $sb->jumlahpegawai;
-                    $sebelumtotal += $sb->total;
-                    $sesudahjumlahbarangjasa += $sb->kjumlahbarangjasa;
-                    $sesudahjumlahmodal += $sb->kjumlahmodal;
-                    $sesudahjumlahpegawai += $sb->kjumlahpegawai;
-                    $sesudahtotal += $sb->ktotal;
-                    $sb->ktotal > $sb->total ? $berkurang += ($sb->ktotal - $sb->total) : $berkurang += ($sb->total - $sb->ktotal);
-                    
-                    @endphp
+                    @if($sb->div == 2)
+                        @php
+                        $sebelumjumlahbarangjasa += $sb->jumlahbarangjasa;
+                        $sebelumjumlahmodal += $sb->jumlahmodal;
+                        $sebelumjumlahpegawai += $sb->jumlahpegawai;
+                        $sebelumtotal += $sb->total;
+                        $sesudahjumlahbarangjasa += $sb->kjumlahbarangjasa;
+                        $sesudahjumlahmodal += $sb->kjumlahmodal;
+                        $sesudahjumlahpegawai += $sb->kjumlahpegawai;
+                        $sesudahtotal += $sb->ktotal;
+                        $sb->ktotal > $sb->total ? $berkurang += ($sb->ktotal - $sb->total) : $berkurang += ($sb->total - $sb->ktotal);
+                        
+                        @endphp
+                    @endif
                     @if($sb->div == 2)
                     <td width="15" style="padding: 10px; border-top: 3px solid black; "><b>{{ substr($sb->kode, -4) }}</b></td>
                     @elseif($sb->div == 3)
@@ -140,6 +142,8 @@
                     <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->ktotal-$sb->total}}</td>
                     @elseif($sb->ktotal < $sb->total)
                     <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->total-$sb->ktotal}}</td>
+                    @else
+                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">0</td>
                     @endif
                 </tr>
                 @endforeach

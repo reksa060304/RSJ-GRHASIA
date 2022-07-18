@@ -12,12 +12,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
       $scope.isBatal = true;
       $scope.isSearchingHarga = false;
       $scope.produkcarisebelumnya='';
+      $scope.kodeeksternal = ''
 
       if ($scope.currentNorecPD == undefined) {
         var chacePeriode = cacheHelper.get('InputTindakanPelayananDokterRevCtrl');
         if (chacePeriode != undefined) {
           $scope.currentNorecPD = chacePeriode[8]
           $scope.currentNorecAPD = chacePeriode[7]
+          $scope.ruanganfk = chacePeriode[11]
+          $scope.departemenfk = chacePeriode[19]
           $scope.hideEMR = true
           $scope.isRincian= true
         }
@@ -25,6 +28,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
         cacheHelper.set('InputTindakanPelayananDokterRevCtrl',undefined)
       }
+      console.log($scope.ruanganfk)
       var norec_resep = null
       if(cacheHelper.get('norec_resep_qwertyuio') != undefined ){
           norec_resep = cacheHelper.get('norec_resep_qwertyuio')
@@ -63,6 +67,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
       $scope.isLoadOtomatisProduk=false;
       function loadOtomatisProduk(){
+        console.log($scope.item.pasien.kdinternal)
         if($scope.item.pasien.kdinternal  == "JIW" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
           $scope.isLoadOtomatisProduk = true;
           
@@ -70,7 +75,73 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             id: 5006382,
             namaproduk: "Pemeriksaan Dokter Spesialis Jiwa",
             objectruanganfk: 752
-          };
+          }
+          // ,
+          // {
+          //   id: 5006572,
+          //   namaproduk: "Visite Dokter Spesialis Jiwa",
+          //   objectruanganfk: 752
+          // }
+          ;
+
+
+          
+          $scope.getHargaTindakan();
+          //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
+        }else if($scope.ruanganfk  == 768 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+          $scope.isLoadOtomatisProduk = true;
+          
+          $scope.item.namaProduk={
+            id: 5006382,
+            namaproduk: "Pemeriksaan Dokter Spesialis Jiwa",
+            objectruanganfk: 768
+          }
+          // ,
+          // {
+          //   id: 5006572,
+          //   namaproduk: "Visite Dokter Spesialis Jiwa",
+          //   objectruanganfk: 752
+          // }
+          ;
+
+
+          
+          $scope.getHargaTindakan();
+          //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
+        }else if($scope.ruanganfk  == 770 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+          $scope.isLoadOtomatisProduk = true;
+          
+          $scope.item.namaProduk={
+            id: 5007079,
+            namaproduk: "Pemeriksaan Bebas Narkoba",
+            objectruanganfk: 770
+          }
+          // ,
+          // {
+          //   id: 5006572,
+          //   namaproduk: "Visite Dokter Spesialis Jiwa",
+          //   objectruanganfk: 752
+          // }
+          ;
+
+
+          
+          $scope.getHargaTindakan();
+          //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
+        }else if($scope.departemenfk  == 16 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+          $scope.isLoadOtomatisProduk = true;
+          
+          $scope.item.namaProduk={
+            id: 5006572,
+            namaproduk: "Visite Dokter Spesialis Jiwa",
+          }
+          // ,
+          // {
+          //   id: 5006572,
+          //   namaproduk: "Visite Dokter Spesialis Jiwa",
+          //   objectruanganfk: 752
+          // }
+          ;
 
 
           
@@ -289,7 +360,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           cookie = cookie[0].split('=');
           // if (cookie[1] == 'dokter')
           $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]
-           
+           console.log($scope.pegawaiLogin)
           if($scope.item.pasien.kdinternal  == "JIW" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
             let params = $scope.item.pasien.noregistrasi;    
             if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
@@ -299,6 +370,42 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             saveAntrol(params,5); 
             loadOtomatisProduk();
           }
+
+          if($scope.ruanganfk  == 768 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+            let params = $scope.item.pasien.noregistrasi;    
+            if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
+                params = $scope.item.pasien.noreservasi;
+            }
+            saveAntrol4(params,4);
+            saveAntrol(params,5); 
+            loadOtomatisProduk();
+          }
+
+          if($scope.ruanganfk  == 770 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+            let params = $scope.item.pasien.noregistrasi;    
+            if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
+                params = $scope.item.pasien.noreservasi;
+            }
+            saveAntrol4(params,4);
+            saveAntrol(params,5); 
+            loadOtomatisProduk();
+          }
+
+          medifirstService.get("emr/get-kode-eksternal-pegawai?id=" + $scope.pegawaiLogin.id, true ).then(function (e) {
+            if($scope.departemenfk  == 16 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && e.data.data[0].kodeexternal == "JIWA"){
+              let params = $scope.item.pasien.noregistrasi;    
+              if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
+                  params = $scope.item.pasien.noreservasi;
+              }
+              saveAntrol4(params,4);
+              saveAntrol(params,5); 
+              loadOtomatisProduk();
+            }
+          })
+
+          
+
+          
           
         });
       }

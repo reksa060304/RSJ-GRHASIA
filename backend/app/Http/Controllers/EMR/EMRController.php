@@ -5854,6 +5854,7 @@ class EMRController  extends ApiController
                 "status" => 400,
                 "message" => $transMessage,
                 // "noresep" => $newSO,//$noResep,
+                "e" => $e->getMessage().' '.$e->getLine(),
                 "as" => 'as@epic',
             );
         }
@@ -7345,6 +7346,23 @@ class EMRController  extends ApiController
         $dataProduk = $dataProduk->get();
 
         return $this->respond($dataProduk);
+    }
+
+    public function getPegawaiKodeEksternal(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $req = $request->all();
+        $id = $req['id'];
+        $data = DB::select(DB::raw("select kodeexternal from pegawai_m
+        where kdprofile = 30
+        and statusenabled = true 
+        and id = $id"));
+
+            $result= array(
+                'data'=> $data,
+                'message' => 'inhuman@epic',
+            );
+            return $this->respond($result);
     }
 
     public function getComboJensiDiagnosaPart(Request $request){

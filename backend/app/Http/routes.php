@@ -727,6 +727,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
          Route::post('emr/send-chat-api','EMR\EMRController@sendChatAPI');
 
           Route::get('emr/get-pegawai-parts','EMR\EMRController@getPegawaiParts');
+          Route::get('emr/get-kode-eksternal-pegawai','EMR\EMRController@getPegawaiKodeEksternal');
           Route::post('emr/hapus-order-pelayananobatfarmasi', 'EMR\EMRController@hapusOrderResep');
 
           Route::get('emr/get-daftar-obat-sering-diresepkan','EMR\EMRController@getObatSeringDiresepkanDokter');
@@ -820,6 +821,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get-datacombo', 'Farmasi\PelayananResepController@getDataCombo');
           Route::get('farmasi/get_detail-resep', 'Farmasi\PelayananResepController@getDetailResep');
           Route::get('farmasi/get-detail-order', 'Farmasi\PelayananResepController@getDetailOrder');
+          Route::get('farmasi/get-detail-order-resep', 'Farmasi\PelayananResepController@getDetailOrderResep');
           Route::get('farmasi/get-info-stok', 'Farmasi\PelayananResepController@getInformasiStok');
           Route::get('farmasi/get-info-transfer', 'Farmasi\PelayananResepController@getInformasiTransfer');
           Route::get('farmasi/get-produkdetail', 'Farmasi\PelayananResepController@getProdukDetail');
@@ -2053,6 +2055,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('reservasionline/delete-libur','ReservasiOnline\ReservasiOnlineController@deleteLibur');
           Route::get('reservasionline/get-status-va','ReservasiOnline\ReservasiOnlineController@getDaftarStatusVA');
           Route::get('reservasionline/get-slotting-new','ReservasiOnline\ReservasiOnlineController@getSlottingByRuanganNew2');
+          Route::get('reservasionline/get-combo-reservasi','ReservasiOnline\ReservasiOnlineController@getComboReserv');
+          Route::get('reservasionline/get-slotting-rev','ReservasiOnline\ReservasiOnlineController@getSlottingByRuanganDokter');
+          Route::get('reservasionline/get-dokter','ReservasiOnline\ReservasiOnlineController@getDokterByRuang');
+          Route::get('reservasionline/cek-in-kiosk','ReservasiOnline\ReservasiOnlineController@cekINReservasi');
+
         // });
         // Route::group(['prefix' => 'sanitasi'], function () {
           Route::get('sanitasi/get-tempat-tidur','Sanitasi\SanitasiController@getTempatTidur');

@@ -6,6 +6,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.currentNorecPD = $state.params.norecPD;
             $scope.currentNorecAPD = $state.params.norecAPD;
+            $scope.currentBR = $state.params.br;
+            $scope.currentNoRegistrasi = $state.params.noregistrasi;
+            console.log($state.params)
             var dataKabupaten = '';
             var dataKecamatan = '';
             loadCombo()
@@ -584,6 +587,31 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.popupRujukan.close()
                 }
             }
+
+            console.log($scope.currentNoRegistrasi)
+
+            $scope.DaftarRuangan = function () {
+                $scope.cachePasienDaftar = cacheHelper.get('CachePemakaianAsuransi');
+                var arrPasienDaftar = $scope.cachePasienDaftar.split('~');
+				if (arrPasienDaftar[3] == "Pasien Batal") {
+					// window.messageContainer.error('Pasien Sudah Batal');
+					alert("Pasien Sudah Batal!!!")
+					return;
+				}
+
+				if (arrPasienDaftar[2] != undefined) {
+					var obj = {
+						noRegistrasi: arrPasienDaftar[2]
+					}
+                    
+
+					cacheHelper.set('AntrianPasienDiperiksaNOREG', arrPasienDaftar[2]);
+					// cacheHelper.set('AntrianPasienDiperiksaNOREG', '');
+					$state.go('DetailRegistrasi', {
+						dataPasien: JSON.stringify(obj)
+					});
+				}
+			}
 
             function getDPJP(kdSpesialis, jenisPel, tipe) {
                 let now = new moment($scope.now).format('YYYY-MM-DD')
@@ -3219,6 +3247,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 tglRencanaKunjungan: response2.tglRencanaKunjungan,
 
                             };
+
+                            vcetak(response2.noRujukan,
+                                response2.tglRujukan, response2.peserta.noKartu,
+                                response2.peserta.nama, $scope.model.tglLahir,
+                                response2.tujuanRujukan.nama, namappkRumahSakit,
+                                response2.poliTujuan.nama, response2.peserta.kelamin,
+                                response2.diagnosa.nama, $scope.rujukan.catatan,
+                                $scope.rujukan.tipe, $scope.rujukan.pelayanan.kode, 
+                                response2.diagnosa.nama,
+                                response2.tglRencanaKunjungan
+                            )
+
                         } else {
                             var data = {
                                 tipe: $scope.rujukan.insert == undefined ? 'save' : 'update',
@@ -3250,6 +3290,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         toastr.success(x.data.metaData.message, 'Info')
                     } else
                         toastr.info(x.data.metaData.message, 'Info')
+
+                    
                 })
             }
             $scope.formatTanggal = function (tanggal) {
@@ -3483,6 +3525,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     });
 
             }
+
             function vcetak(n, t, i, r, u, e, o, h, c, l, a, v, y, p, w) {
                 var k = new jsPDF("l", "mm", [95, 210]),
                     nt, g, ct, tt, d, at;

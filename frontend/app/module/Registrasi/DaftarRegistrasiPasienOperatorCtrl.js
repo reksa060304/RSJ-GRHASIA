@@ -1330,11 +1330,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 								// $state.go('PemakaianAsuransi',{
 								norecPD: $scope.dataPasienSelected.norec,
 								norecAPD: dataAntrian.norec_apd,
+								br: $scope.dataPasienSelected.norec_br,
+								noregistrasi: $scope.dataPasienSelected.noregistrasi,
 							});
+
+							console.log($scope.dataPasienSelected.noregistrasi)
 
 							var cacheSet = $scope.dataPasienSelected.objectasuransipasienfk
 								+ "~" + $scope.dataPasienSelected.norec_pa
-								+ "~" + $scope.dataPasienSelected.noregistrasi;
+								+ "~" + $scope.dataPasienSelected.noregistrasi
+								+ "~" + $scope.dataPasienSelected.norec_br;
 
 							cacheHelper.set('CachePemakaianAsuransi', cacheSet);
 						}
@@ -1422,7 +1427,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				$state.go('InputTindakan', {
 					norecPD: $scope.dataPasienSelected.norec,
 					norecAPD: $scope.item.ruanganAntrian.norec_apd,
-
+					br: $scope.dataPasienSelected.norec_br,
+					noregistrasi: $scope.dataPasienSelected.noregistrasi,
 				});
 			}
 			$scope.pegawai = ModelItem.getPegawai();
@@ -2238,6 +2244,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				$scope.popUpSPRI.center().open()
 			}
 			$scope.batalSPRI = function(){
+				$scope.kontrol.noSuratKontrol = undefined
+				$scope.kontrol.kodeDokter = []
+				$scope.kontrol.poliKontrol = []
 				$scope.popUpSPRI.close()
 			}
 			$scope.columnGridSPRI = [{
@@ -2438,6 +2447,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 toastr.error(e.data.metaData.message, 'Info');
                             }
                         })
+
+
                     } else {
                         // update
                         let json = {
@@ -2490,6 +2501,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 								saveSPRILokal('insert')
 								
                                 toastr.success(e.data.response.noSuratKontrol, e.data.metaData.message);
+								$scope.kontrol.noSuratKontrol = e.data.response.noSuratKontrol
                             } else {
 								$scope.isSaves =false
                                 toastr.error(e.data.metaData.message, 'Info');
@@ -2517,6 +2529,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 								$scope.kontrol.resNoSurat = e.data.response.noSuratKontrol
 								saveSPRILokal('update')
                                 toastr.success(e.data.response.noSuratKontrol, e.data.metaData.message);
+								$scope.kontrol.noSuratKontrol = e.data.response.noSuratKontrol
                             } else {
 								$scope.isSaves =false
                                 toastr.error(e.data.metaData.message, 'Info');
@@ -2525,6 +2538,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
 
                 }
+
+				
             }
 			function saveSPRILokal(tipe) {
 				loadGridKontrol()

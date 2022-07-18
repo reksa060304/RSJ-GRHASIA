@@ -6264,7 +6264,7 @@ class RegistrasiController extends ApiController
                 'apr.notelepon','pm.namapasien','apr.namapasien','apr.objectkelompokpasienfk','kps.kelompokpasien',
                 'apr.tglinput','apr.nocmfk',
                 DB::raw('(case when pm.namapasien is null then apr.namapasien else pm.namapasien end) as namapasien,
-                (case when apr.isconfirm=\'true\' then \'Confirm\' else \'Reservasi\' end) as status')
+                (case when apr.isconfirm=\'true\' then \'Confirm\' else \'Reservasi\' end) as status,apr.jamreservasi')
             )
             ->where('apr.noreservasi','<>','-')
             ->where('apr.statusenabled',true)
@@ -6292,7 +6292,8 @@ class RegistrasiController extends ApiController
             $data = $data->whereNull('apr.isconfirm');
         }
         if(isset($filter['namapasienpm']) && $filter['namapasienpm'] != "" && $filter['namapasienpm'] != "undefined") {
-            $data = $data->where('pm.namapasien','ilike','%'. $filter['namapasienpm'] .'%');
+            $data = $data->whereRaw(" ( pm.namapasien ilike '%".$filter['namapasienpm'] ."%' or apr.namapasien ilike '%".$filter['namapasienpm'] ."%' )"
+            );
             // ->orWhere('apr.namapasien','ilike','%'. $filter['namapasienapr'] .'%');
         }
 

@@ -34,7 +34,15 @@ export const MY_FORMATS = {
     monthYearA11yLabel: 'MMMM YYYY',
   },
 };
-
+export interface Ruangan {
+  namaruangan: string;
+  objectdepartemenfk: any;
+  id: any
+}
+export interface Dokter {
+  namalengkap: string;
+  id: any
+}
 @Component({
   selector: 'app-reservasi-online',
   templateUrl: './reservasi-online.component.html',
@@ -47,15 +55,15 @@ export class ReservasiOnlineComponent implements OnInit {
   loading: boolean = false;
   isBaru: boolean = false
   isLama: boolean = false
-  minDate = new Date()
-  // minDate = new Date(new Date().setDate(new Date().getDate() + 1))
+  // minDate = new Date()
+  minDate = new Date(new Date().setDate(new Date().getDate() + 1))
   maxDate: any
   model: any = {};
   stepsMenuItems: MenuItem[];
   activeIndex: number = 0;
   listJK: any[] = []
-  listRuangan: any[] = []
-  listDokter: any = []
+  // listRuangan: any[] = []
+  // listDokter: any = []
   listTipePembayaran: any[] = []
   isSelected1: any;
   isSelected2: any;
@@ -86,6 +94,8 @@ export class ReservasiOnlineComponent implements OnInit {
   tglReservasi: any;
   poliTujuan: any;
   dokter: any;
+  Estimasi:any
+  jamR:any
   qrCode: any;
   isBuktiReservasi: boolean = false
 
@@ -160,7 +170,13 @@ export class ReservasiOnlineComponent implements OnInit {
       prev: false
     }
   }; // {customBtns: [{name: 'print', icon: 'fa fa-print'}, {name: 'link', icon: 'fa fa-link'}]};
-
+  poliKlinik = new FormControl();
+  listRuangan: Ruangan[] = []
+  listRuanganF: Observable<Ruangan[]>;
+  dokter2 = new FormControl();
+  listDokter: Dokter[] = []
+  // listRuanganF: Observable<string[]>;
+  listDokterF: Observable<Dokter[]>;
   handleEvent(event: CustomEvent) {
     console.log(`${event.name} has been click on img ${event.imageIndex + 1}`);
 
@@ -178,6 +194,21 @@ export class ReservasiOnlineComponent implements OnInit {
 
   }
 
+  displayFn(user: Ruangan): string {
+    return user && user.namaruangan ? user.namaruangan : '';
+  }
+  displayFn2(user: Dokter): string {
+    return user && user.namalengkap ? user.namalengkap : ''
+  }
+
+  private _filter(name: string): Ruangan[] {
+    const filterValue = name.toLowerCase();
+    return this.listRuangan.filter(option => option.namaruangan.toLowerCase().includes(filterValue));
+  }
+  private _filter2(name: string): Dokter[] {
+    const filterValue = name.toLowerCase();
+    return this.listDokter.filter(option => option.namalengkap.toLowerCase().includes(filterValue));
+  }
 
   onSortChange(event) {
     let value = event.value;
@@ -202,43 +233,66 @@ export class ReservasiOnlineComponent implements OnInit {
     // var secondHalf = "";
     // var fullSSN = "";
 
-    let namafield = 'isRentangReservasi'
-    this.httpService.get('medifirst2000/sysadmin/settingdatafixed/get/' + namafield).subscribe(resp => {
-      this.maxDate = new Date(new Date().setDate(new Date().getDate() + resp))
-    }, error => {
-      this.maxDate = new Date(new Date().setDate(new Date().getDate() + 28))
-    })
+    // let namafield = 'isRentangReservasi'
+    // this.httpService.get('medifirst2000/sysadmin/settingdatafixed/get/' + namafield).subscribe(resp => {
+    //   this.maxDate = new Date(new Date().setDate(new Date().getDate() + resp))
+    // }, error => {
+    //   this.maxDate = new Date(new Date().setDate(new Date().getDate() + 28))
+    // })
+    this.httpService.get('medifirst2000/reservasionline/get-list-data').subscribe(e => {
+      this.maxJamReservasi = e.maxJamReservasi
+      this.maxDate = new Date(new Date().setDate(new Date().getDate() + e.isRentangReservasi))
+      e.jeniskelamin.forEach(element => {
+        this.listJK.push(element)
+      });
 
-    //
-    this.httpService.get('medifirst2000/reservasionline/get-libur').subscribe(e => {
+      e.ruanganrajal.forEach(element => {
+        this.listRuangan.push(element)
+      });
+
+      // e.dokter.forEach(element => {
+      //   this.listDokter.push(element)
+      // });
+
+      e.kelompokpasien.forEach(element => {
+        this.listTipePembayaran.push(element)
+      });
+
       let arr = []
       if (e.libur.length > 0) {
         for (let i = 0; i < e.libur.length; i++) {
           const element = e.libur[i];
           arr.push(element.tgllibur)
         }
-        this.myFilter = (d): boolean => {
-          const day: number = d._d.getDay()
-
+      }  
+      this.myFilter = (d): boolean => {
+        const day: number = d._d.getDay()
+        if(arr.length>0){
           for (let i = 0; i < arr.length; i++) {
             const element = arr[i];
             if (moment(d._d).format('YYYY/MM/DD') == element) {
               return false
             }
           }
-
-          // Prevent Saturday and Sunday from being selected.
-          // return day != 0 && day != 6 ? true : false;
-          return day != 0 ? true : false;
         }
-
+      
+        // Prevent Saturday and Sunday from being selected.
+        // return day != 0 && day != 6 ? true : false;
+       return day != 0  ? true : false;
       }
-      this.getMaxJamReservasis()
+
+      // this.getMaxJamReservasis()
 
       this.loadNoRek()
-      //['2019-05-30', '2019-05-31', '2019-06-01', '2019-06-03', '2019-06-04', '2019-06-05', '2019-06-06', '2019-06-07']
-
+    }, error => {
+      this.maxDate = new Date(new Date().setDate(new Date().getDate() + 28))
     })
+    //
+    // this.httpService.get('medifirst2000/reservasionline/get-libur').subscribe(e => {
+
+    //   //['2019-05-30', '2019-05-31', '2019-06-01', '2019-06-03', '2019-06-04', '2019-06-05', '2019-06-06', '2019-06-07']
+
+    // })
 
     // $("#barcode").JsBarcode("Hi!");
     // $("#barcode").barcode("1234567890128", "ean13");  
@@ -341,8 +395,25 @@ export class ReservasiOnlineComponent implements OnInit {
     // );
     // var ssn = document.getElementById('idNamaPasien');
     // ssn.addEventListener('input', this.ssnMask(ssn), false);
+    this.listRuanganF = this.poliKlinik.valueChanges.pipe(
+      startWith(''),
+      map(value => (typeof value === 'string' ? value : value.namaruangan)),
+      map(name => (name ? this._filter(name) : this.listRuangan.slice())),
+    );
+    this.listDokterF = this.dokter2.valueChanges.pipe(
+      startWith(''),
+      map(value => (typeof value === 'string' ? value : value.namalengkap)),
+      map(name => (name ? this._filter2(name) : this.listDokter.slice())),
+    );
 
-
+  }
+  setValueRu(eve) {
+    this.formGroup.get('poliKlinik').setValue(eve.value)
+    this.getSlotRu(eve)
+  }
+  setValueDok(dok) {
+    this.formGroup.get('dokter').setValue(dok.value)
+    this.getSlotDok(dok)
   }
   ssnMask() {
     var ssn = (<HTMLInputElement>document.getElementById('ssn'));
@@ -377,40 +448,78 @@ export class ReservasiOnlineComponent implements OnInit {
     let nik = this.formGroup.get('nik').value
     if (nik != null && nik.length > 10)
       this.isDukcapil = false
-    this.httpService.get('medifirst2000/bridging/dukcapil/get-nik/' + nik).subscribe(e => {
-      if (e.content == undefined) {
-        return
-      }
-      if (e.messages) {
-        this.messageService.error('Error', e.messages)
-        return
-      }
-      if (e.content[0] != "") {
-        let result = e.content[0]
-        let namaPasien = result.NAMA_LGKP
+
+    let prov = {
+      "url": "Peserta/nik/" + nik + "/tglSEP/" + moment(new Date()).format('YYYY-MM-DD'),
+      "method": "GET",
+      "data": null
+    }
+
+    this.httpService.postNonMessage("medifirst2000/bridging/bpjs/tools", prov).subscribe(e => {
+      if (e.metaData.code == 200) {
+        this.messageService.success('Info', e.metaData.message)
+        var result = e.response.peserta
+        let namaPasien = result.nama
         let subStr = namaPasien.substring(0, 5)
         this.isDukcapil = true
         // this.formHistory.get('namaPasien').setValue(subStr + ' ********')
         this.messageService.success('Sukses', 'Nama Lengkap : ' + subStr + ' ********')
-        this.formGroup.get('namaPasien').setValue(result.NAMA_LGKP)
+        this.formGroup.get('namaPasien').setValue(result.nama)
         this.formGroup.get('namaPasienDukcapil').setValue(subStr + ' ********')
 
-
+        var jkn = result.sex == 'L' ? 1 : 2
         for (let i = 0; i < this.listJK.length; i++) {
           const element = this.listJK[i];
-          if (element.jeniskelamin.toLowerCase().indexOf(result.JENIS_KLMIN.toLowerCase()) > -1) {
+          if (element.id == jkn) {
             this.formGroup.get('jenisKelamin').setValue(element)
             break
           }
         }
-        this.formGroup.get('tglLahir').setValue(new Date(result.TGL_LHR))
-        this.formGroup.get('namaPasien').setValue(result.NAMA_LGKP)
+        this.formGroup.get('tglLahir').setValue(new Date(result.tglLahir))
+        this.formGroup.get('namaPasien').setValue(result.nama)
+        this.formGroup.get('noTelpon').setValue(result.mr.noTelepon)
+        this.formGroup.get('noKartuPeserta').setValue(result.noKartu)
+
       } else {
-        this.messageService.error('Info', e.content.RESPON)
+        this.messageService.info('Info', e.metaData.message)
       }
     }, function (err) {
       this.isDukcapil = false
-    });
+    })
+    // this.httpService.get('medifirst2000/bridging/dukcapil/get-nik/' + nik).subscribe(e => {
+    //   if (e.content == undefined) {
+    //     return
+    //   }
+    //   if (e.messages) {
+    //     this.messageService.error('Error', e.messages)
+    //     return
+    //   }
+    //   if (e.content[0] != "") {
+    //     let result = e.content[0]
+    //     let namaPasien = result.NAMA_LGKP
+    //     let subStr = namaPasien.substring(0, 5)
+    //     this.isDukcapil = true
+    //     // this.formHistory.get('namaPasien').setValue(subStr + ' ********')
+    //     this.messageService.success('Sukses', 'Nama Lengkap : ' + subStr + ' ********')
+    //     this.formGroup.get('namaPasien').setValue(result.NAMA_LGKP)
+    //     this.formGroup.get('namaPasienDukcapil').setValue(subStr + ' ********')
+
+
+    //     for (let i = 0; i < this.listJK.length; i++) {
+    //       const element = this.listJK[i];
+    //       if (element.jeniskelamin.toLowerCase().indexOf(result.JENIS_KLMIN.toLowerCase()) > -1) {
+    //         this.formGroup.get('jenisKelamin').setValue(element)
+    //         break
+    //       }
+    //     }
+    //     this.formGroup.get('tglLahir').setValue(new Date(result.TGL_LHR))
+    //     this.formGroup.get('namaPasien').setValue(result.NAMA_LGKP)
+    //   } else {
+    //     this.messageService.error('Info', e.content.RESPON)
+    //   }
+    // }, function (err) {
+    //   this.isDukcapil = false
+    // });
 
   }
   changeTipeBayar(event) {
@@ -480,11 +589,15 @@ export class ReservasiOnlineComponent implements OnInit {
 
   }
   hapusHistory(selected) {
+    if(selected.isconfirm ==true ){
+      this.messageService.warn('Info', 'Reservasi yg sudah confirm tidak bisa dibatalkan')
+      return
+    }
     let data = {
       'norec': selected.norec
     }
     this.confirmationService.confirm({
-      message: 'Yakin mau menghapus data?',
+      message: 'Yakin mau batal reservasi?',
       accept: () => {
         this.httpService.post('medifirst2000/reservasionline/delete', data).subscribe(res => {
           this.findHistory()
@@ -497,9 +610,11 @@ export class ReservasiOnlineComponent implements OnInit {
   }
   cetakHistory(selected) {
     this.kodeReservasi = selected.noreservasi
-    this.tglReservasi = selected.tanggalreservasi
+    this.tglReservasi = selected.tanggal 
+    this.jamR =  selected.jamreservasi
     this.poliTujuan = selected.namaruangan
     this.dokter = selected.dokter
+    this.Estimasi = selected.tanggalreservasi
 
     this.barCode = this.linkBarcode + selected.noreservasi + this.linkBarcode2
     QRCode.toDataURL(selected.noreservasi)
@@ -538,6 +653,7 @@ export class ReservasiOnlineComponent implements OnInit {
           let _hari = tglReserDay.getDay();
           let hariFix = this.listHari[_hari]
           element.tanggalreservasi = hariFix + ', ' + moment(new Date(element.tanggalreservasi)).format('DD/MMM/YYYY HH:mm') //HH:mm
+          element.tanggal = hariFix + ', ' + moment(new Date(element.tanggal)).format('DD/MMM/YYYY') //HH:mm
         }
         let namaPasien = res.data[0].namapasien
         let subStr = namaPasien.substring(0, 5)
@@ -711,7 +827,7 @@ export class ReservasiOnlineComponent implements OnInit {
       let tglReservasi = this.formGroup.get('tglReservasi').value
       tglReservasi = new Date(tglReservasi._i.year, tglReservasi._i.month, tglReservasi._i.date)
       let poliKlinik = this.formGroup.get('poliKlinik').value
-      // let dokter = this.formGroup.get('dokter').value
+      let dokter = this.formGroup.get('dokter').value
       let tipePembayaran = this.formGroup.get('tipePembayaran').value
       let jamReservasi = this.formGroup.get('jamReservasi').value
       let noRujukan = this.formGroup.get('noRujukan').value
@@ -728,10 +844,10 @@ export class ReservasiOnlineComponent implements OnInit {
         this.messageService.warn('Peringatan', 'Jam Reservasi belum di pilih !')
         return
       }
-      // if (!dokter) {
-      //   this.messageService.warn('Peringatan', 'Dokter belum di pilih !')
-      //   return
-      // }
+      if (!dokter) {
+        this.messageService.warn('Peringatan', 'Dokter belum di pilih !')
+        return
+      }
       if (!tipePembayaran) {
         this.messageService.warn('Peringatan', 'Tipe Pembayaran belum di pilih !')
         return
@@ -771,7 +887,7 @@ export class ReservasiOnlineComponent implements OnInit {
 
       this.formGroup.get('resumeTglReservasi').setValue(moment(tglReservasi).format('DD/MM/YYYY') + ' ' + jamReservasi.jam)
       this.formGroup.get('resumePoli').setValue(poliKlinik.namaruangan)
-      // this.formGroup.get('resumeDokter').setValue(dokter.namalengkap)
+      this.formGroup.get('resumeDokter').setValue(dokter.namalengkap)
       this.formGroup.get('resumeDokter').setValue('-')
       this.formGroup.get('resumeTipe').setValue(tipePembayaran.kelompokpasien)
       this.formGroup.get('resumNoka').setValue(this.formGroup.get('noKartuPeserta').value != null ? this.formGroup.get('noKartuPeserta').value : '')
@@ -784,6 +900,22 @@ export class ReservasiOnlineComponent implements OnInit {
       }
 
       if (this.formGroup.get('tipePembayaran').value.id == 2) {
+        if (this.formGroup.get('noKartuPeserta').value != null) {
+
+          let prov = {
+            "url": "Peserta/nokartu/" + this.formGroup.get('noKartuPeserta').value + "/tglSEP/" + moment(new Date()).format('YYYY-MM-DD'),
+            "method": "GET",
+            "data": null
+          }
+          this.httpService.postNonMessage("medifirst2000/bridging/bpjs/tools", prov).subscribe(xx => {
+            if (xx.metaData.code == '200') {
+              if (this.formGroup.get('resumeNIK').value == null) {
+                this.formGroup.get('resumeNIK').setValue(xx.response.peserta.nik)
+              }
+              this.formGroup.get('nik').setValue(xx.response.peserta.nik)
+            }
+          })
+        }
         // cek pasien dihari yang sama hanya boleh satu kali daftar
         let tglLahirs = moment(new Date(this.formGroup.get('tglLahir').value)).format('YYYY/MM/DD')
         let cektglReservasi = moment(tglReservasi).format('YYYY/MM/DD')
@@ -798,6 +930,10 @@ export class ReservasiOnlineComponent implements OnInit {
             this.messageService.warn('Perhatian', 'Pasien BPJS di Hari yang sama hanya dapat mendaftar Satu Kali')
             return
           } else {
+            if (this.formGroup.get('noRujukan').value == null) {
+              this.messageService.warn('Perhatian', 'No Rujukan harus di isi')
+              return
+            }
             this.onCariNoRujukan(this.formGroup.get('noKartuPeserta').value, valueIndex)
             // this.activeIndex = valueIndex
           }
@@ -818,39 +954,49 @@ export class ReservasiOnlineComponent implements OnInit {
     }
   }
   onCariNoRujukan(searchValue: string, valueIndex): void {
-    // if (searchValue.length <= 14) {
-    //   this.cekPesertaByNoKartu(this.formGroup.get('noRujukan').value)
-    // } else {
-    //   this.cekPesertaByNoRujukan(this.formGroup.get('noRujukan').value)
-    // }
-    this.activeIndex = valueIndex
-    // this.httpService.get('medifirst2000/bridging/bpjs/get-rujukan-pcare-nokartu?nokartu=' + searchValue).subscribe(e => {
-    //   if (e.response != null) {
-    //     this.formGroup.get('noRujukan').setValue(e.response.rujukan.noKunjungan)
-    //     this.formGroup.get('resumNoRujukan').setValue(this.formGroup.get('noRujukan').value != null ? this.formGroup.get('noRujukan').value : '-')
-    //     this.activeIndex = valueIndex
-    //   } else {
-    //     this.httpService.get('medifirst2000/bridging/bpjs/get-rujukan-rs-nokartu?nokartu=' + searchValue).subscribe(e => {
-    //       if (e.response != null) {
-    //         this.formGroup.get('noRujukan').setValue(e.response.rujukan.noKunjungan)
-    //         this.formGroup.get('resumNoRujukan').setValue(this.formGroup.get('noRujukan').value != null ? this.formGroup.get('noRujukan').value : '-')
-    //         this.activeIndex = valueIndex
-    //       } else {
-    //         // this.statusRujukanBerlaku = false
-    //         this.messageService.error('Peringatan', 'Rujukan Tidak Ada atau Masa Berlaku habis, Silahkan Hubungi Call Center RSUD Mataram')
 
-    //       }
-    //     }, error => {
-    //       // this.statusRujukanBerlaku = false
-    //       this.messageService.error('Peringatan', 'Rujukan Tidak Ada atau Masa Berlaku habis, Silahkan Hubungi Call Center RSUD Mataram')
+    // this.activeIndex = valueIndex
+    let prov = {
+      "url": "Rujukan/Peserta/" + searchValue,
+      "method": "GET",
+      "data": null
+    }
 
-    //     })
-    //   }
-    // }, error => {
-    //   // this.statusRujukanBerlaku = false
-    //   this.messageService.error('Peringatan', 'Rujukan Tidak Ada atau Masa Berlaku habis, Silahkan Hubungi Call Center RSUD Mataram')
+    this.httpService.postNonMessage("medifirst2000/bridging/bpjs/tools", prov).subscribe(e => {
+      // this.httpService.get('medifirst2000/bridging/bpjs/get-rujukan-pcare-nokartu?nokartu=' + searchValue).subscribe(e => {
+      if (e.metaData.code == '200') {
+        this.formGroup.get('noRujukan').setValue(e.response.rujukan.noKunjungan)
+        this.formGroup.get('resumNoRujukan').setValue(this.formGroup.get('noRujukan').value != null ? this.formGroup.get('noRujukan').value : '-')
 
-    // })
+        this.messageService.info('No Rujukan Aktif',e.response.rujukan.noKunjungan)
+        this.activeIndex = valueIndex
+      } else {
+        // this.messageService.error('Rujukan PCARE', e.metaData.message)
+        let prov = {
+          "url": "Rujukan/RS/Peserta/" + searchValue,
+          "method": "GET",
+          "data": null
+        }
+        this.httpService.postNonMessage("medifirst2000/bridging/bpjs/tools", prov).subscribe(e => {
+          if (e.metaData.code == '200') {
+            this.formGroup.get('noRujukan').setValue(e.response.rujukan.noKunjungan)
+            this.formGroup.get('resumNoRujukan').setValue(this.formGroup.get('noRujukan').value != null ? this.formGroup.get('noRujukan').value : '-')
+            this.messageService.info('No Rujukan Aktif',e.response.rujukan.noKunjungan)
+            this.activeIndex = valueIndex
+          } else {
+             this.messageService.error('Rujukan', e.metaData.message)
+             this.activeIndex = valueIndex
+          }
+        }, error => {
+          this.messageService.error('Peringatan', 'Rujukan Tidak Ada atau Masa Berlaku habis')
+
+        })
+      }
+    }, error => {
+      // this.statusRujukanBerlaku = false
+      this.messageService.error('Peringatan', 'Rujukan Tidak Ada atau Masa Berlaku habis')
+
+    })
 
   }
   cekPasienMendaftarDihariSama(tglReser, tipePasien) {
@@ -868,27 +1014,7 @@ export class ReservasiOnlineComponent implements OnInit {
   }
 
   setSourceCombo() {
-    this.httpService.get('medifirst2000/reservasionline/get-list-data').subscribe(e => {
 
-      e.jeniskelamin.forEach(element => {
-        this.listJK.push(element)
-      });
-
-      e.ruanganrajal.forEach(element => {
-        this.listRuangan.push(element)
-      });
-
-      e.dokter.forEach(element => {
-        this.listDokter.push(element)
-      });
-
-      e.kelompokpasien.forEach(element => {
-        this.listTipePembayaran.push(element)
-      });
-
-    }, error => {
-
-    })
 
     // this.filteredOptions = this.formGroup.get('dokter').valueChanges
     // .pipe(
@@ -910,8 +1036,8 @@ export class ReservasiOnlineComponent implements OnInit {
     // console.log(tanggal)
     this.formGroup.get('tglReservasiFix').setValue(tanggal)
 
-    // this.formGroup.get('dokter').setValue({ id: this.formGroup.get('dokter').value.id, namalengkap: this.formGroup.get('dokter').value.namalengkap })
-    this.formGroup.get('dokter').setValue(null)
+    this.formGroup.get('dokter').setValue({ id: this.formGroup.get('dokter').value.id, namalengkap: this.formGroup.get('dokter').value.namalengkap })
+    // this.formGroup.get('dokter').setValue(null)
     this.confirmationService.confirm({
       message: 'Yakin mau menyimpan data?',
       accept: () => {
@@ -944,7 +1070,7 @@ export class ReservasiOnlineComponent implements OnInit {
                 let _haris = tglReserDays.getDay();
                 let hariFix = this.listHari[_haris]
                 resultNoReservasi.tanggalreservasi = hariFix + ', ' + moment(new Date(resultNoReservasi.tanggalreservasi)).format('DD/MMM/YYYY HH:mm') //HH:mm
-
+                resultNoReservasi.tanggal = hariFix + ', ' + moment(new Date(resultNoReservasi.tanggal)).format('DD/MMM/YYYY') //HH:mm
                 let namaPasien = res.data[0].namapasien
                 let subStr = namaPasien.substring(0, 5)
 
@@ -1000,20 +1126,63 @@ export class ReservasiOnlineComponent implements OnInit {
   popUpQR() {
     this.displayPopUpQr = true
   }
-  getSlotting(event) {
-    let idRuangan = event.value.id
-    if (idRuangan == undefined) {
-      idRuangan = this.formGroup.get('poliKlinik').value != null ? this.formGroup.get('poliKlinik').value.id : undefined
-    }
-    if (idRuangan == undefined) {
-      return
-    }
+  getSlotTgl(event) {
     this.formGroup.get('jamReservasi').reset()
-    // let tglReservasi = moment(this.formGroup.get('tglReservasi').value).format('YYYY/MM/DD')
-    let tglReservasi = this.formGroup.get('tglReservasi').value
-    tglReservasi = moment(new Date(tglReservasi._i.year, tglReservasi._i.month, tglReservasi._i.date)).format('YYYY-MM-DD')
-    this.httpService.get('medifirst2000/reservasionline/get-slotting-by-ruangan-new/'
-      + idRuangan + '/' + tglReservasi).subscribe(res => {
+    this.formGroup.get('poliKlinik').reset()
+    this.formGroup.get('dokter').reset()
+  }
+  getSlotRu(event) {
+    this.listDokter = []
+    this.formGroup.get('jamReservasi').reset()
+    this.formGroup.get('dokter').setValue('')
+    this.formGroup.get('dokter').reset()
+   
+    this.getListDokter()
+  }
+  getSlotDok(event) {
+    this.formGroup.get('jamReservasi').reset()
+    this.getSlotting()
+  }
+  getListDokter() {
+    this.listDokter = []
+    if (this.formGroup.get('poliKlinik').value == null || this.formGroup.get('poliKlinik').value == '') return
+    if (this.formGroup.get('tglReservasi').value == null || this.formGroup.get('tglReservasi').value == '') return
+    this.httpService.get('medifirst2000/reservasionline/get-dokter?id_ruangan=' + this.formGroup.get('poliKlinik').value.id
+      + '&tgl=' + moment(this.formGroup.get('tglReservasi').value).format('YYYY-MM-DD')).subscribe(e => {
+        if(e.list.length == 0){
+          this.messageService.warn('Maaf', e.message)
+          return
+        }else{
+          this.messageService.info('Info', e.list.length+ ' Dokter tersedia di Poli ini')
+          this.listDokter = e.list
+        }
+      
+      })
+  }
+  setJam(e){
+    this.messageService.info('Info', 'Sisa Kuota ' + e.value.sisaquota )
+  }
+  getSlotting() {
+    this.formGroup.get('jamReservasi').reset()
+    this.listJam = []
+    let idRuangan = null
+    let tglReservasi = null
+    let dokter = null
+    if (this.formGroup.get('poliKlinik').value == null || this.formGroup.get('poliKlinik').value == '') return
+    idRuangan = this.formGroup.get('poliKlinik').value.id
+    if (this.formGroup.get('dokter').value == null || this.formGroup.get('dokter').value == '') return
+    dokter = this.formGroup.get('dokter').value.id
+    if (this.formGroup.get('tglReservasi').value == null || this.formGroup.get('tglReservasi').value == '') return
+    tglReservasi = moment(this.formGroup.get('tglReservasi').value).format('YYYY-MM-DD')
+
+
+    this.httpService.get('medifirst2000/reservasionline/get-slotting-rev?id_ruangan='
+      + idRuangan + '&id_dokter=' + dokter
+      + '&tgl=' + tglReservasi).subscribe(res => {
+        if(res.status != 200){
+          this.messageService.warn('Maaf', res.message)
+          return
+        }
         let now = moment(new Date()).format('YYYY/MM/DD')
         let tglNow = new Date(now + ' ' + '13:00')
         if (this.maxJamReservasi != undefined) {
@@ -1023,7 +1192,6 @@ export class ReservasiOnlineComponent implements OnInit {
         let tglNowNol = new Date(now + ' ' + '00:00')
         let tglPesen = this.formGroup.get('tglReservasi').value
         tglPesen = new Date(tglPesen._i.year, tglPesen._i.month, tglPesen._i.date)
-
 
         let tglPesenNol = new Date(moment(tglPesen).format('YYYY/MM/DD 00:00'))
         let tglRes = tglPesen
@@ -1042,62 +1210,16 @@ export class ReservasiOnlineComponent implements OnInit {
           this.messageService.error('Maaf', 'Tidak Bisa Pesan Untuk Tanggal Sekarang')
           return
         }
-        let jamBuka = res.tanggal + ' ' + res.slot.jambuka
-        let jamTutup = res.tanggal + ' ' + res.slot.jamtutup
-        let interval = res.slot.interval
-        let quota = res.slot.quota
-        this.listJam = [];
-        let result = [];
-        result = this.intervals(jamBuka, jamTutup, interval)
-
-        if (result.length > 0) {
-          for (let i = 0; i < quota; i++) {
-            let hour: any = new Date(result[i]).getHours() < 10 ? '0' + new Date(result[i]).getHours() : new Date(result[i]).getHours()
-            let minutes: any = new Date(result[i]).getMinutes() < 10 ? '0' + new Date(result[i]).getMinutes() : new Date(result[i]).getMinutes()
-            this.listJam.push({
-              'jam': hour + ':' + minutes  // moment(new Date(result[i])).format('HH:mm')
-            })
-          }
-        }
-        let listReservasi = []
-        if (res.reservasi.length > 0) {
-          listReservasi = res.reservasi
-        }
-
-        if (listReservasi.length > 0) {
-          // for (let j = 0; j < listReservasi.length; j++) {
-          // for (let i = 0; i < this.listJam.length; i++) {
-          for (var j = listReservasi.length - 1; j >= 0; j--) {
-            for (var i = this.listJam.length - 1; i >= 0; i--) {
-              if (this.listJam[i].jam == listReservasi[j].jamreservasi) {
-                // this.listJam.splice[i]
-                this.listJam.splice([i], 1)
-                // this.listJam[i].disable = false
-              }
-            }
-          }
-        }
-        //reservasi hari ini
-        let tglReservasiJam = this.formGroup.get('tglReservasi').value
-        let nowss = moment(new Date()).format('YYYY/MM/DD');
-        if (moment(new Date(tglReservasiJam._i.year, tglReservasiJam._i.month, tglReservasiJam._i.date)).format('YYYY/MM/DD') == nowss) {
-          let hourReser = moment(new Date()).format('HH:mm')
-          for (var i = this.listJam.length - 1; i >= 0; i--) {
-            let stringJam = moment(new Date()).format('YYYY/MM/DD ' + this.listJam[i].jam)
-            let stringRes = moment(new Date()).format('YYYY/MM/DD ' + hourReser)
-            let dt = new Date(stringRes)
-            dt.setHours(dt.getHours() + 1);
-            if (new Date(stringJam) < dt) {
-              // this.listJam.splice[i]
-              this.listJam.splice([i], 1)
-              // this.listJam[i].disable = false
-            }
-          }
-        }
+        // let jamBuka = res.tanggal + ' ' + res.slot.jambuka
+        // let jamTutup = res.tanggal + ' ' + res.slot.jamtutup
+        // let interval = res.slot.interval
+        // let quota = res.slot.quota
+        this.listJam = res.listjam;
+  
         if (this.listJam.length == 0)
           this.messageService.error('Maaf', 'Jadwal Reservasi Sudah Penuh, Coba dihari lain')
         else
-          this.messageService.success('Info', 'Slot Reservasi Tersedia : ' + this.listJam.length + ' Slot')
+          this.messageService.info('Info', 'Slot Reservasi Tersedia : ' + this.listJam.length + ' jadwal')
 
       }, error => {
         this.listJam = []
@@ -1336,16 +1458,16 @@ export class ReservasiOnlineComponent implements OnInit {
       }
     }
   }
-  getMaxJamReservasis() {
-    let maxJam = 'maxJamReservasi'
-    this.httpService.get('medifirst2000/reservasionline/get-setting?namaField=' + maxJam)
-      .subscribe(response => {
-        this.maxJamReservasi = response
-        console.log(response)
-      }, error => {
+  // getMaxJamReservasis() {
+  //   let maxJam = 'maxJamReservasi'
+  //   this.httpService.get('medifirst2000/reservasionline/get-setting?namaField=' + maxJam)
+  //     .subscribe(response => {
+  //       this.maxJamReservasi = response
+  //       console.log(response)
+  //     }, error => {
 
-      })
-  }
+  //     })
+  // }
   pilihNoregis(event) {
     this.selectedItemGridRiwayat = event
     this.formPelayanan.get('noRegistrasi').setValue(event.noregistrasi)

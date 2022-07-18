@@ -21,6 +21,7 @@ define(['initialize'], function (initialize) {
             $scope.item.total = 0
             $scope.showTombol = false
             $scope.norecOrder = ''
+            $scope.showNonRacikan = false
             $scope.tglkadaluarsa = undefined;
             var statusTambah = true
             var norec_apd = '';
@@ -43,6 +44,7 @@ define(['initialize'], function (initialize) {
             $scope.item.aturanPakai = "";
             var dataPaket = [];
             $scope.item.noRuang = 0;
+            $scope.copynoresep = ""
             $scope.listJumlah =  [
                 { "jml": 7 },
                 { "jml": 14 },
@@ -188,6 +190,8 @@ define(['initialize'], function (initialize) {
                         $scope.item.ruangan = dat.data.ruanganfarmasi[4];
                     }
                     $scope.item.jenisKemasan = dat.data.jeniskemasan[1];
+
+                    $scope.item.ruangan = dat.data.ruanganfarmasi[1];
 
                     if($scope.item.penulisResep.jenispegawai.id != 1){
                         $scope.hideSimpan =true;
@@ -346,6 +350,21 @@ define(['initialize'], function (initialize) {
                     // }
                 }
             });
+            $scope.$watch('item.hari', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                        $scope.item.jumlah = parseInt($scope.item.hari) * parseFloat($scope.item.dosisperhari)*parseInt($scope.item.aturanpakaitxt.slice(0, -2))
+                }
+            });
+            $scope.$watch('item.dosisperhari', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                        $scope.item.jumlah = parseInt($scope.item.hari) * parseFloat($scope.item.dosisperhari)*parseInt($scope.item.aturanpakaitxt.slice(0, -2))
+                }
+            });
+            $scope.$watch('item.aturanpakaitxt', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                        $scope.item.jumlah = parseInt($scope.item.hari) * parseFloat($scope.item.dosisperhari)*parseInt($scope.item.aturanpakaitxt.slice(0, -2))
+                }
+            });
             $scope.$watch('item.tglresep', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     var date1 = new Date($scope.item.tglresep);
@@ -400,6 +419,15 @@ define(['initialize'], function (initialize) {
                         $scope.showRacikanDose = true
                     } else {
                         $scope.showRacikanDose = false
+                    }
+                }
+            });
+            $scope.$watch('item.jenisKemasan.jeniskemasan', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    if (newValue == 'Non Racikan') {
+                        $scope.showNonRacikan = true
+                    } else {
+                        $scope.showNonRacikan = false
                     }
                 }
             });
@@ -1105,11 +1133,20 @@ define(['initialize'], function (initialize) {
                 medifirstService.post('emr/simpan-order-pelayananobatfarmasi',{data: objSaves}).then(function (e) {
                     $scope.item.resep == undefined
                     $scope.norecOrder = ''
-                    medifirstService.postLogging('Order Resep', 'Norec strukresep_t', e.data.noresep.norec,
+                    console.log($scope.copynoresep)
+                    if($scope.copynoresep == ''){
+                        medifirstService.postLogging('Order Resep', 'Norec strukresep_t', e.data.noresep.norec,
                         'Order Resep No Order - ' + e.data.noresep.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
                         })
+                    } else if($scope.copynoresep != ''){
+                        medifirstService.postLogging('Order Resep', 'Norec strukresep_t', e.data.noresep.norec,
+                        'Order Resep No Order - ' + e.data.noresep.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi+ ' dari copy no resep ' + $scope.copynoresep).then(function (res) {
+                        })
+                    }
+                    
                     // $scope.item.resep = e.data.noresep.noorder
                     //  $scope.hideSimpan =false
+                    $scope.copynoresep = ''
                     init();
                     $scope.batal();
                     $scope.disabledRuangan = false
@@ -1540,6 +1577,55 @@ define(['initialize'], function (initialize) {
                     $scope.riwayatFormResep = false
                     $scope.riwayatForm = false
                     $scope.inputObatOrder = true;
+                });
+            }
+            $scope.reOrderResep = function (){
+                if ($scope.dataSelectedResep == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+
+                $scope.copynoresep = $scope.dataSelectedResep.noresep
+
+                medifirstService.get("farmasi/get-detail-order-resep?noresep=" + $scope.dataSelectedResep.noresep + "&kpid=" + $scope.item.kpid, true).then(function (dat) {
+                    $scope.isRouteLoading = false;
+                    var nama = 'Laras'
+                    var jumlah = 0;
+                    var no = 0;
+
+
+                    
+
+                    for(var i=0; i<dat.data.data.length; i++){
+
+                            if(i  == 0){
+                                jumlah = 0;
+                                jumlah = parseInt(dat.data.data[i]['stock']);
+                            }
+                            else if(dat.data.data[i]['namaproduk'] != dat.data.data[i-1]['namaproduk']){
+                                jumlah = 0;
+                                jumlah = parseInt(dat.data.data[i]['stock']);
+                            }
+                            else if(dat.data.data[i]['namaproduk'] == dat.data.data[i-1]['namaproduk']){
+                                jumlah += parseInt(dat.data.data[i]['stock']);
+                                dat.data.data[i]['stock'] = jumlah;
+                                dat.data.data[i]['jmlstok'] = jumlah;
+                                dat.data.data.splice(i-1, 1);
+                            } 
+                            //nama = dat.data.data[i]['namaproduk'];
+                            console.log(jumlah)
+                        }
+
+                    for(var x=0; x<dat.data.data.length; x++){
+                        dat.data.data[x].no = x+1
+                    }
+
+                     console.log(dat.data.data)   
+                    data2 = dat.data.data
+
+                    $scope.dataGrid = new kendo.data.DataSource({
+                        data: data2
+                    });
                 });
             }
             $scope.listDataSigna = [
