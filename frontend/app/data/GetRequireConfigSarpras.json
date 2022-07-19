@@ -105,6 +105,10 @@
             "urlDep": "module/Logistik/StokRuanganCtrl"
         },
         {
+            "nameDep": "StokRuanganGabunganCtrl",
+            "urlDep": "module/Logistik/StokRuanganGabunganCtrl"
+        },
+        {
             "nameDep": "KartuStokCtrl",
             "urlDep": "module/Logistik/KartuStokCtrl"
         },

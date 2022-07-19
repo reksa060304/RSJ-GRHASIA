@@ -957,6 +957,29 @@ define(['initialize'], function (initialize) {
 
             }
             $scope.getSatuan = function () {
+
+                medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
+                .then(function (e) {
+                    //dikasih nilai namaProduks & namaRuangans hanya ketika data yg dipilih ada data info stoknya/valid
+                    $scope.item.namaProduks = $scope.item.produk.namaproduk;
+                    $scope.item.namaRuangans = $scope.item.ruanganPenerima.namaruangan;
+                    for (var i = 0; i < e.data.infostok.length; i++) {
+                        e.data.infostok[i].no = i + 1
+                    }
+                    $scope.dataGridStok = new kendo.data.DataSource({
+                        data: e.data.infostok,
+                        pageable: true,
+                        pageSize: 5,
+                        total: e.data.infostok.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        }
+                    })
+                })
                 GETKONVERSI(0)
             }
 
@@ -1157,6 +1180,8 @@ define(['initialize'], function (initialize) {
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY');
             }
+
+            
 
             $scope.tambah = function () {
 
@@ -1941,9 +1966,11 @@ define(['initialize'], function (initialize) {
                         objSave.struk.kdprofile = kdProfileELogistic//JSON.parse(localStorage.getItem('profile'))
                         medifirstService.postCustomHeader(urlKirimBarangElogistic+'verifikasi-penerimaan', objSave).then(function (e) {
                            $scope.isPenerimaanElogistic =false
-                          
                         })
-                    }                
+                    }   
+                    $state.go('DaftarPenerimaanBarangSuplier', {
+                           
+                    });             
                 },function error(e){
                     $scope.isPenerimaanElogistic =false
                 })
@@ -2196,6 +2223,26 @@ define(['initialize'], function (initialize) {
                             $scope.isPenerimaanElogistic =true
                     })
             }
+
+            $scope.columnGridStok = [
+                {
+                    "field": "no",
+                    "title": "No",
+                    "width": "20px",
+                },
+                {
+                    "field": "namaruangan",
+                    "title": "Ruangan",
+                    "width": "100px",
+                },
+                {
+                    "field": "qtyproduk",
+                    "title": "Stok",
+                    "width": "50px",
+                }
+
+            ];
+
             $scope.loadComboProduk = function () {
                 medifirstService.get("logistik/get-data-produk-detail?idkelompokproduk=" + $scope.item.kelompokproduk.id, true).then(function (dat) {
                     $scope.listProduk = dat.data.produk;

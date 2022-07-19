@@ -28,6 +28,9 @@ define(['initialize'], function (initialize) {
                     var dataCombo = data.data;
                     $scope.passwordAd = dataCombo.passwordAdjusment
                 })
+                medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
+                    $scope.listNamaBarang = data;
+                });
                 // medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
                 //     $scope.listNamaBarang = data;
                 // });
@@ -217,10 +220,15 @@ define(['initialize'], function (initialize) {
                     KdSirs2 = "&KdSirs2=" + $scope.item.KdSirs2
                 }
 
-                var idProduk = ""
+                // var idProduk = ""
                 // if ($scope.item.namaBarang != undefined) {
                 //     idProduk = "&produkfk=" + $scope.item.namaBarang.id
                 // }
+
+                var kdproduk = "";
+                if ($scope.item.namaBarang !== undefined) {
+                    kdproduk = "&produkfk=" + $scope.item.namaBarang.id;
+                }
 
                 medifirstService.get('logistik/get-stok-ruangan-detail?' +
                     'kelompokprodukid=' + kelBarang +
@@ -228,7 +236,7 @@ define(['initialize'], function (initialize) {
                     '&namaproduk=' + $scope.item.namaProduk +
                     '&ruanganfk=' + ruanganId +
                     '&asalprodukfk=' + asalProdukId +
-                    KdSirs1 + KdSirs2 + idProduk +
+                    KdSirs1 + KdSirs2 + kdproduk +
                     '&jmlRows=' + jmlRows).then(function (data) {
                         $scope.isRouteLoading = false;
                         var datas = data.data.detail;

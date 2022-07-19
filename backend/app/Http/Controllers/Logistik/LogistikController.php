@@ -14643,4 +14643,64 @@ class LogistikController extends ApiController{
 
         return $this->respond($result);
     }
+
+    public function getDataStokRuanganGabungan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $namaproduk='';
+        $produkid= '';
+        $jumlah = $request['jmlRows'];
+
+        if(isset($request['produkfk']) && $request['produkfk']!="" && $request['produkfk']!="undefined"){
+            $produkid = ' and pr.id='.$request['produkfk'];
+        }
+        if(isset( $request['namaproduk'])&&  $request['namaproduk']!='undefined'){
+            $namaproduk = "and pr.namaproduk  ILIKE '%". $request['namaproduk']."%'";
+        }
+
+        $data = DB::select(DB::raw("select kdproduk, namaproduk, satuanstandar, hargabeli, hargajual, sum(qtyfarmasi) qtyfarmasi,
+        sum(qtygudang) qtygudang from(
+            select kdproduk, namaproduk, satuanstandar, hargabeli, hargajual,
+            case when idruangan = 94 then qtyproduk else 0 end as qtyfarmasi,
+            case when idruangan = 59 then qtyproduk else 0 end as qtygudang
+            from(
+                select ru.id idruangan, ru.namaruangan, pr.id as kdproduk,pr.namaproduk,sum(CAST(spd.qtyproduk AS FLOAT)) as qtyproduk,
+                ss.satuanstandar,CAST(ppr.harganetto AS FLOAT) hargabeli, CAST(ppr.hargajual AS FLOAT) hargajual
+                from stokprodukdetail_t as spd
+                inner join strukpelayanan_t as sp on sp.norec = spd.nostrukterimafk
+                inner join produk_m as pr on pr.id = spd.objectprodukfk
+                inner join detailjenisproduk_m as djp on djp.id = pr.objectdetailjenisprodukfk
+                inner join jenisproduk_m as jp on jp.id = djp.objectjenisprodukfk
+                inner join asalproduk_m as ap on ap.id = spd.objectasalprodukfk
+                inner join satuanstandar_m as ss on ss.id = pr.objectsatuanstandarfk
+                inner join ruangan_m ru on ru.id = spd.objectruanganfk
+                inner join pelayananpasien_t ppr on ppr.produkfk = pr.id
+                inner join (
+                    select pr.id, max(pp.tglpelayanan) maxtgl from pelayananpasien_t pp
+                    inner join produk_m pr on pr.id = pp.produkfk
+                    where pp.statusenabled = true and pp.kdprofile = 30
+                    group by pr.id
+                ) as x on x.id = ppr.produkfk and x.maxtgl = ppr.tglpelayanan
+                where pr.statusenabled = true
+                and spd.statusenabled = true
+                and pr.kdprofile = 30 
+                and spd.kdprofile = 30  
+                and ru.id in(59, 94)
+                $namaproduk
+                $produkid
+                group by ru.id, ru.namaruangan, pr.id,pr.namaproduk,
+                ss.satuanstandar,CAST(ppr.harganetto AS FLOAT), CAST(ppr.hargajual AS FLOAT)
+            ) as x group by kdproduk, namaproduk, satuanstandar, hargabeli, hargajual, idruangan, qtyproduk
+        ) as y group by kdproduk, namaproduk, satuanstandar, hargabeli, hargajual
+        order by qtyfarmasi desc, qtygudang desc
+        limit $jumlah    
+        "));
+
+
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
+    }
 }

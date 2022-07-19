@@ -28,6 +28,7 @@ define(['initialize'], function(initialize) {
             var racikan = 0
             var strStatus = 0
             var tarifJasa = 0
+            $scope.item.hargaNetto = 0
             // $scope.item.tglAwal = $scope.now;
             // $scope.item.tglAkhir = $scope.now;
             LoadCache();
@@ -292,6 +293,7 @@ define(['initialize'], function(initialize) {
                     $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
                     $scope.item.satuan = {ssid:$scope.dataSelected.satuanviewfk,satuanstandar:$scope.dataSelected.satuanview}
                     $scope.item.hargaSatuan = $scope.dataSelected.hargasatuan
+                    $scope.item.hargaNetto = $scope.dataSelected.harganetto
                     $scope.item.hargadiskon = $scope.dataSelected.hargadiscount
                     $scope.item.total = $scope.dataSelected.total 
             });
@@ -529,7 +531,7 @@ define(['initialize'], function(initialize) {
                         data.jenisobatfk = jRacikan
                         data.kelasfk = $scope.item.kelas.id
                         data.stock = String($scope.item.stok)
-                        data.harganetto = String($scope.item.hargaSatuan)
+                        data.harganetto = String($scope.item.hargaNetto)
                         data.nostrukterimafk = noTerima
                         data.ruanganfk = $scope.item.ruangan.id
 
@@ -590,7 +592,7 @@ define(['initialize'], function(initialize) {
                         jenisobatfk: jRacikan,
                         kelasfk:$scope.item.kelas.id,
                         stock:String($scope.item.stok),
-                        harganetto:String($scope.item.hargaSatuan),
+                        harganetto:String($scope.item.hargaNetto),
                         nostrukterimafk:noTerima,
                         ruanganfk:$scope.item.ruangan.id,//£££
                         rke:$scope.item.rke,
