@@ -1218,6 +1218,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // GET //
             Route::get('logistik/get-combo-logistik','Logistik\LogistikController@getComboLogistik');
             Route::get('logistik/get-stok-ruangan-detail', 'Logistik\LogistikController@getDataStokRuanganDetail');
+            Route::get('logistik/get-stok-ruangan-gabungan', 'Logistik\LogistikController@getDataStokRuanganGabungan');
             Route::get('logistik/get-combo-barang-logistik', 'Logistik\LogistikController@getDataProdukLogistik');
             Route::get('logistik/get-data-produk-detail', 'Logistik\LogistikController@getDataProdukDetail');
             Route::get('logistik/get-combo-pegawai-logistik', 'Logistik\LogistikController@getDataPegawaiPart');

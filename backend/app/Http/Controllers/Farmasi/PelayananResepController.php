@@ -935,13 +935,13 @@ class PelayananResepController extends ApiController
             ->JOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->JOIN('satuanstandar_m as ss2','ss2.id','=','pp.satuanviewfk')
             ->LeftJOIN('satuanresep_m as sn','sn.id','=','pp.satuanresepfk')
-            ->select('sr.noresep','pp.hargasatuan','pp.stock','pp.stock as jmlstok','apd.objectruanganfk','ru.namaruangan',
+            ->select('sr.noresep','pp.hargasatuan', 'pp.stock','pp.stock as jmlstok','apd.objectruanganfk','ru.namaruangan',
                 'pp.rke','pp.jeniskemasanfk','jk.id as jkid','jk.jeniskemasan','pp.aturanpakai','pp.routefk','rt.name as namaroute',
                 'pp.produkfk','pr.namaproduk','pp.nilaikonversi',
                 'pr.objectsatuanstandarfk','ss.satuanstandar','pp.satuanviewfk','ss2.satuanstandar as ssview',
                 'pp.jumlah','pp.hargadiscount','pp.dosis','pp.jenisobatfk','pp.jasa','pp.hargajual','pp.hargasatuan','pp.strukterimafk',
                 'pp.qtydetailresep','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pr.kekuatan','pp.keteranganpakai','pp.iskronis',
-                'pp.satuanresepfk','sn.satuanresep','pp.tglkadaluarsa')
+                'pp.satuanresepfk','sn.satuanresep','pp.tglkadaluarsa', 'pp.harganetto')
             ->where('sr.kdprofile', $idProfile);
 
         if(isset($request['norecResep']) && $request['norecResep']!="" && $request['norecResep']!="undefined"){
@@ -999,12 +999,12 @@ class PelayananResepController extends ApiController
                     if ($item2->norec == $item->strukterimafk){
 
                         $hargajual = $item->hargajual;
-                        $harganetto = $item->hargasatuan;
+                        $harganetto = $item->harganetto;
 
                         $nostrukterimafk = $item2->norec;
                         $asalprodukfk = $item2->objectasalprodukfk;
                         $jmlstok = $item2->qtyproduk;
-                        $hargasatuan = $harganetto;
+                        $hargasatuan = $item->hargasatuan;
                         $hargadiscount = $item->hargadiscount;
                         $total =(((float)$item->jumlah * ((float)$hargasatuan-(float)$hargadiscount))) ;
                         break;

@@ -85,10 +85,20 @@
                         k-data-text-field="'asalProduk'" k-data-value-field="'id'" k-filter="'contains'"
                         k-auto-bind="false" k-data-source="listSumberDana" />
                 </div>
-                <div class="grid_7">
+                <div class="grid_3">
                     <label c-label item="item" c-label-text="Nama Produk"></label>
                     <input c-text-box type="input" class="k-textbox" ng-model="item.namaProduk"
                         ng-keypress="($event.which == 13)? cari():item.namaProduk" />
+                </div>
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label class="label-aja" item="item" c-label-text="NamaBarang"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.namaBarang"
+                            k-data-text-field="'namaproduk'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listNamaBarang" />
+                    </div>
                 </div>
                 <!-- <div class="grid_7">
                     <div class="grid_12">

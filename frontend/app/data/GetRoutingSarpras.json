@@ -520,6 +520,26 @@
     ]
   },
   {
+    "name": "StokRuanganGabungan",
+    "url": "/TGFwb3JhblN0b2tPYmF0R2FidW5nYW4=",
+    "templateurl": "module/Logistik/StokRuanganGabungan.html",
+    "controller": "StokRuanganGabunganCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "KartuStok",
     "url": "/S2FydHVTdG9rUGVyc2VkaWFhbg==",
     "templateurl": "module/Logistik/KartuStok.html",
