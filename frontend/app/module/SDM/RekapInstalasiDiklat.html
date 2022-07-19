@@ -18,19 +18,17 @@
             <h2>Pencarian</h2>
         </legend>
         <div class="grid_10">
-            <div class="grid_4">
+            <!-- <div class="grid_4">
                 <div class="grid_12">
                     <label c-label item="item" c-label-text="Periode Tanggal"></label>
                 </div>
                 <div class="grid_12">
-                    <!-- AwalPeriode -->
                     <div class="grid_6 padDatePicker">
                         <div class="grid_12">
                             <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datetimepicker k-max="now"
                                 placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
                         </div>
                     </div>
-                    <!-- AkhirPeriode -->
                     <div class="grid_6 padDatePicker">
                         <div class="grid_12">
                             <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datetimepicker
@@ -43,7 +41,7 @@
                 <label c-label item="item" c-label-text="Status"></label>
                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.status" k-data-text-field="'nama'"
                     k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="Liststatus" />
-            </div>
+            </div> -->
             <div class="grid_1">
                 <label c-label item="item" c-label-text="Tahun"></label>
                 <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker

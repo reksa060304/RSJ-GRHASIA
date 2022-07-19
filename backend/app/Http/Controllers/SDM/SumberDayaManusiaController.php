@@ -6023,11 +6023,10 @@ public function daftarKenaikanGajiBerkala(Request $request){
         sum(x.mhs)filter(where x.bulan = 12)as desember,
         sum(x.mhs)as total
         FROM (
-            SELECT djp.detailjenisproduk as pelayanan,date_part('month', pe.tanggalmulai::date)as bulan, count(pe.norec)as mhs 
-            from sdm_pesertadidik_t pdd inner join sdm_penelitianeksternal_t pe on pe.norec = pdd.noregistrasifk 
-            inner join detailjenisproduk_m djp on djp.id = pe.objectdetailjenisprodukfk 
-            where date_part('year', pe.tanggalmulai) = $request[tahun] and pdd.kdprofile = $idProfile and pdd.statusenabled = true 
-            GROUP BY djp.detailjenisproduk, pe.tanggalmulai::date 
+            SELECT djp.detailjenisproduk as pelayanan,date_part('month', pe.tanggalmulai::date)as bulan, pe.jumlahpeserta as mhs
+            from sdm_penelitianeksternal_t pe 
+            left join detailjenisproduk_m djp on djp.id = pe.objectdetailjenisprodukfk
+            where date_part('year', pe.tanggalmulai) = $request[tahun] and pe.kdprofile = $idProfile and pe.statusenabled = true 
             ORDER BY djp.detailjenisproduk
         )as x
         GROUP BY x.pelayanan
