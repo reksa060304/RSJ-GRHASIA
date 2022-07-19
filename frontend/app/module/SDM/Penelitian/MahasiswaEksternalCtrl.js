@@ -419,7 +419,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var isValid = ModelItem.setValidation($scope, listRawRequired);
 
                 if (isValid.status == true) {
-                    if (norecMs == '') {
+                    // if (norecMs == '') {
                         console.log('no norec');
                         const url = baseTransaksi + 'sdm/pendidikan/save-pesertadidik'
                         const form = document.querySelector('form')
@@ -490,7 +490,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             // $scope.batalSip();
                         })
 
-                    } 
+                    // } 
                 }
                 
                 
@@ -600,7 +600,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.updated = function () {
                 
+                if ($scope.djp == 1948 || $scope.djp == 1960 || $scope.djp == 1947) {
+                    if (gambar == undefined) {
+                        toastr.error("Foto Wajib diisi !")
+                        return;
 
+                    }
+                    if (gambar.type != 'image/png' && gambar.type != 'image/jpeg') {
+                        toastr.error("Foto menggunakan Format jpg atau png!")
+                        return;
+                    }
+                }
                 console.log('norec');
                 const url = baseTransaksi + 'sdm/pendidikan/update-pesertadidik'
 

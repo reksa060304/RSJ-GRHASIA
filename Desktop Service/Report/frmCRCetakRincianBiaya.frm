@@ -191,7 +191,10 @@ Set Report = New crRincianBiayaPelayanan
             "sp.nostruk='" & strNoStruk & "' and pr.id not in (402611,10011572,10011571)  or " & _
             "sbm.nosbm='" & strNoKwitansi & "' and pr.id not in (402611,10011572,10011571)  order by pp.tglpelayanan, pp.rke"
             
-    strSQL = "select tp.*,(select alamatlengkap from pasiendaftar_t as pd inner join pasien_m as ps on ps.id = pd.nocmfk inner join alamat_m as alm on alm.nocmfk = ps.id where pd.noregistrasi='" & strNoregistrasi & "' limit 1) as alamat from temp_billing_t as tp where noregistrasi='" & strNoregistrasi & "' " & _
+    strSQL = "select tp.*,(select " & _
+            "case when alamatlengkap ilike '%kec.%' or alamatlengkap ilike '%kab.%' or alamatlengkap ilike '%kel.%'  then 'Alamat : ' || alamatlengkap " & _
+            "else 'Alamat : ' || alamatlengkap ||' - Kel. '|| namadesakelurahan || ' - Kec. '|| namakecamatan || ' - '|| namakotakabupaten end " & _
+            "from pasiendaftar_t as pd inner join pasien_m as ps on ps.id = pd.nocmfk inner join alamat_m as alm on alm.nocmfk = ps.id where pd.noregistrasi='" & strNoregistrasi & "' limit 1) as alamat from temp_billing_t as tp where noregistrasi='" & strNoregistrasi & "' " & _
             "and tglpelayanan is not null and namaproduk not in ('Biaya Administrasi','Biaya Materai') order by tglpelayanan, namaproduk"
 'strSQL = "select nobilling,nocm,noregistrasi,nocm,namapasienjk,unit,objectdepartemenfk,namakelas,dokterpj,tglregistrasi, " & _
 '         "tglpulang,namarekanan,tglpelayanan,ruangantindakan,namaproduk,penulisresep,jenisproduk,dokter,jumlah, " & _
@@ -280,7 +283,7 @@ Set Report = New crRincianBiayaPelayanan
             .txtAlamatRs.SetText strAlamatRS & ", " & strKodePos & ", " & strNoTlpn & ", " & strNoFax
             .txtWebEmail.SetText strEmail & ", " & strWebSite
             .txtNamaKota.SetText strNamaKota & ", "
-            .usNoRegistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
+            .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasienjk}")
             .usRuangan.SetUnboundFieldSource ("{ado.unit}")
@@ -296,7 +299,7 @@ Set Report = New crRincianBiayaPelayanan
             .usAlamat.SetUnboundFieldSource ("{ado.alamat}")
                      
             .usJenisProduk.SetUnboundFieldSource ("{ado.jenisproduk}")
-            .udTanggal.SetUnboundFieldSource ("{ado.tglpelayanan}")
+            .udtanggal.SetUnboundFieldSource ("{ado.tglpelayanan}")
             .usTglPelayanan.SetUnboundFieldSource ("{ado.tglpelayanan}")
             .usLayanan.SetUnboundFieldSource ("{ado.namaproduk}")
             .usKelas.SetUnboundFieldSource ("{ado.namakelas}")
@@ -360,7 +363,7 @@ Set Report = New crRincianBiayaPelayanan
 '            Else
 '                .txtUser.SetText UCase(IIf(isnull(RS2("namalengkap")), "-", RS2("namalengkap")))
 '            End If
-            .txtUser.SetText UCase(strIdPegawai)
+            .txtuser.SetText UCase(strIdPegawai)
             
             If view = "false" Then
                 Dim strPrinter As String
