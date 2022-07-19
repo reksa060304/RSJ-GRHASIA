@@ -254,7 +254,7 @@ class RawatInapController extends ApiController
                 --and dept.id in (16,  17,  35) 
                 and pd.tglpulang is null --and pd.noregistrasi='1808010084'
                 $ruangId $noreg $norm $nama
-                
+                and apd.tglkeluar is null
                  --order by ru.namaruangan asc
                  ) as x where x.rownum=1")
         );
