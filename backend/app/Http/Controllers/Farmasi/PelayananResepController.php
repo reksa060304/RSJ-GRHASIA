@@ -2753,10 +2753,10 @@ class PelayananResepController extends ApiController
         DB::beginTransaction();
         $r_SR=$request['strukresep'];
         try {
-            $dataPPOK = PelayananPasienObatKronis::where('strukresepfk', $request['norecresep'])->first();
+//             $dataPPOK = PelayananPasienObatKronis::where('strukresepfk', $request['norecresep'])->first();
 //            return $this->respond($dataPPOK);
             foreach ($request['pelayananpasienobatkronis'] as $item) {
-                if ($dataPPOK == null){
+//                 if ($dataPPOK == null){
                     $newPP = new PelayananPasienObatKronis();
                     $norecPPOK= $newPP->generateNewId();
                     $newPP->norec = $norecPPOK;
@@ -2792,44 +2792,44 @@ class PelayananResepController extends ApiController
                     $newPP->jasa = $item['jasa'];
                     $newPP->isobat = 1;
                     $newPP->save();
-                }else{
-                    $delPP = PelayananPasienObatKronis::where('strukresepfk', $request['norecresep'])->delete();
-                    $newPP = new PelayananPasienObatKronis();
-                    $norecPPOK= $newPP->generateNewId();
-                    $newPP->norec = $norecPPOK;
-                    $newPP->kdprofile = 0;
-                    $newPP->statusenabled = true;
-                    $qtyJumlah = $item['jumlahcetak'];
-                    $newPP->noregistrasifk = $item['noregistrasifk'];
-                    $newPP->aturanpakai = $item['aturanpakai'];
-                    if (isset($item['generik'])){
-                        $newPP->generik = $item['generik'];
-                    }
-                    $newPP->hargadiscount = $item['hargadiscount'];
-                    $newPP->hargajual = $item['hargajual'];
-                    $newPP->hargasatuan = $item['hargasatuan'];
-                    $newPP->jenisobatfk = $item['jenisobatfk'];
-                    $newPP->jumlah = $qtyJumlah;
-                    $newPP->kelasfk = $item['kelasfk'];
-                    $newPP->kdkelompoktransaksi = 1;
-                    $newPP->produkfk = $item['produkfk'];
-                    if (isset($item['routefk'])){
-                        $newPP->routefk = $item['routefk'];
-                    }
-                    $newPP->stock = $item['stock'];
-                    $newPP->tglpelayanan = $r_SR['tglresep'];
-                    $newPP->harganetto = $item['harganetto'];
-                    $newPP->jeniskemasanfk = $item['jeniskemasanfk'];
-                    $newPP->rke = $item['rke'];
-                    $newPP->strukresepfk = $request['norecresep'];
-                    $newPP->satuanviewfk = $item['satuanviewfk'];
-                    $newPP->nilaikonversi = $item['nilaikonversi'];
-                    $newPP->strukterimafk = $item['nostrukterimafk'];
-                    $newPP->dosis = $item['dosis'];
-                    $newPP->jasa = $item['jasa'];
-                    $newPP->isobat = 1;
-                    $newPP->save();
-                }
+//                 }else{
+//                     $delPP = PelayananPasienObatKronis::where('strukresepfk', $request['norecresep'])->delete();
+//                     $newPP = new PelayananPasienObatKronis();
+//                     $norecPPOK= $newPP->generateNewId();
+//                     $newPP->norec = $norecPPOK;
+//                     $newPP->kdprofile = 0;
+//                     $newPP->statusenabled = true;
+//                     $qtyJumlah = $item['jumlahcetak'];
+//                     $newPP->noregistrasifk = $item['noregistrasifk'];
+//                     $newPP->aturanpakai = $item['aturanpakai'];
+//                     if (isset($item['generik'])){
+//                         $newPP->generik = $item['generik'];
+//                     }
+//                     $newPP->hargadiscount = $item['hargadiscount'];
+//                     $newPP->hargajual = $item['hargajual'];
+//                     $newPP->hargasatuan = $item['hargasatuan'];
+//                     $newPP->jenisobatfk = $item['jenisobatfk'];
+//                     $newPP->jumlah = $qtyJumlah;
+//                     $newPP->kelasfk = $item['kelasfk'];
+//                     $newPP->kdkelompoktransaksi = 1;
+//                     $newPP->produkfk = $item['produkfk'];
+//                     if (isset($item['routefk'])){
+//                         $newPP->routefk = $item['routefk'];
+//                     }
+//                     $newPP->stock = $item['stock'];
+//                     $newPP->tglpelayanan = $r_SR['tglresep'];
+//                     $newPP->harganetto = $item['harganetto'];
+//                     $newPP->jeniskemasanfk = $item['jeniskemasanfk'];
+//                     $newPP->rke = $item['rke'];
+//                     $newPP->strukresepfk = $request['norecresep'];
+//                     $newPP->satuanviewfk = $item['satuanviewfk'];
+//                     $newPP->nilaikonversi = $item['nilaikonversi'];
+//                     $newPP->strukterimafk = $item['nostrukterimafk'];
+//                     $newPP->dosis = $item['dosis'];
+//                     $newPP->jasa = $item['jasa'];
+//                     $newPP->isobat = 1;
+//                     $newPP->save();
+//                 }
 
                 $ruanganfk= $request['strukresep']['ruanganfk'];
 
