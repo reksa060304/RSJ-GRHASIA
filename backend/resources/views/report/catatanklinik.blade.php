@@ -99,7 +99,11 @@
                     <tbody>
                     <tr>
                         <td width="10%" style="padding: 5px">
-                            <img src="{{ asset('img/logo_only.png') }}" alt="" style="width: 90px;">
+                            @if(stripos(\Request::url(), 'localhost') !== FALSE)
+                               <img src="{{ asset('img/logo_only.png') }}" alt="" style="width: 90px;">
+                            @else
+                              <img src="{{ asset('service/img/logo_only.png') }}" alt="" style="width: 90px;">
+                            @endif
                         </td>
                         <td style="text-align: left">
                             <b>
@@ -228,7 +232,7 @@
                         </td>
 
                         <td width="33%"></td>
-                        <td width="33%"><b>Bandung</b>, {!! date('d-m-Y') !!} <br>
+                        <td width="33%"><b>Yogyakarta</b>, {!! date('d-m-Y') !!} <br>
                             <b>Dokter Penanggung Jawab</b></td>
                     </tr>
                     <tr>
