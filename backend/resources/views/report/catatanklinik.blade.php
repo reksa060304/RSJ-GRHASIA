@@ -19,13 +19,13 @@
         <script src="{{ asset('js/angular/angular-material.js') }}" type="text/javascript"></script>
     @else
 
-        <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+        <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
         <!-- angular -->
-        <script src="{{ asset('js/angular/angular.min.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('js/angular/angular-route.min.js') }}" type="text/javascript"></script>
-        <script type="text/javascript" src="{{ asset('js/angular/angular-animate.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('js/angular/angular-aria.min.js') }}"></script>
-        <script src="{{ asset('js/angular/angular-material.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('service/js/angular/angular.min.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('service/js/angular/angular-route.min.js') }}" type="text/javascript"></script>
+        <script type="text/javascript" src="{{ asset('service/js/angular/angular-animate.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('service/js/angular/angular-aria.min.js') }}"></script>
+        <script src="{{ asset('service/js/angular/angular-material.js') }}" type="text/javascript"></script>
     @endif
     <style>
         @page {
