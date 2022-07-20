@@ -362,7 +362,9 @@ define(['initialize'], function (initialize) {
             });
             $scope.$watch('item.aturanpakaitxt', function (newValue, oldValue) {
                 if (newValue != oldValue) {
+                    if($scope.item.jenisKemasan.jeniskemasan == 'Non Racikan'){
                         $scope.item.jumlah = parseInt($scope.item.hari) * parseFloat($scope.item.dosisperhari)*parseInt($scope.item.aturanpakaitxt.slice(0, -2))
+                    } 
                 }
             });
             $scope.$watch('item.tglresep', function (newValue, oldValue) {
