@@ -112,7 +112,7 @@ class PelayananResepController extends ApiController
             ->leftJoin('satuanresep_m as sn','sn.id','=','pp.satuanresepfk')
             ->select('ps.nocm','ps.namapasien','jk.jeniskelamin','pp.tglpelayanan','pp.produkfk','pr.namaproduk',
                 'ss.satuanstandar','pp.jumlah','pp.hargasatuan','pp.hargadiscount','sp.nostruk','pd.noregistrasi',
-                'ks.nilaikonversi','ss2.satuanstandar as satuanstandar2','sr.noresep','sr.norec as norec_resep','pp.rke',
+                'ks.nilaikonversi','ss2.satuanstandar as satuanstandar2','sr.noresep','sr.norec as norec_resep', 'sr.cito', 'pp.rke',
                 'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as namaruanganasalid','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
                 'pp.aturanpakai','ru.namaruangan','dok.id as dokterid','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
                 DB::raw("CASE WHEN pr.kekuatan IS NOT NULL AND rs.name IS NOT NULL THEN pr.kekuatan || ' ' || rs.name ELSE '' END AS kekuatan,
@@ -233,6 +233,7 @@ class PelayananResepController extends ApiController
                 'detailjenisproduk' => $item->detailjenisproduk,
                 'jenisproduk' => $item->jenisproduk,
                 'reseppulang' =>$item->reseppulang,
+                'cito' =>$item->cito,
                 'norec_pd' => $item->norec_pd,
                 'klid' => $item->klid,
                 'keteranganpakai' => $item->keteranganpakai,
@@ -2045,7 +2046,7 @@ class PelayananResepController extends ApiController
             $newSR->ruanganfk = $r_SR['ruanganfk'];
             $newSR->status = 0;//$r_SR['status'];;
             $newSR->tglresep =  $r_SR['tglresep'];//->format('Y-m-d H:i:s');
-
+            $newSR->cito =  $r_SR['cito'];
             $newSR->save();
             $norec_SR = $newSR->norec;
             $dokterPenulis =  $newSR->penulisresepfk;

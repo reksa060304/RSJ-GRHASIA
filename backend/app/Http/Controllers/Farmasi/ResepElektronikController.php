@@ -125,7 +125,7 @@ class ResepElektronikController extends ApiController
                         so.tglorder,pg.namalengkap,ru2.namaruangan,so.statusorder,so.namapengambilorder,so.noregistrasifk,pd.noregistrasi,
                         kp.kelompokpasien,apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,so.tglambilorder,
                         sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,sr.norec AS norecresep,sr.noresep,so.nourutruangan AS noruangan,
-                        so.isreseppulang as checkreseppulang,so.isambilobat,so.no_hp as nohp,so.alamat_kirim AS alamatlengkap,so.isordergrab,
+                        so.isreseppulang as checkreseppulang,so.isambilobat,so.cito,so.no_hp as nohp,so.alamat_kirim AS alamatlengkap,so.isordergrab,
                         so.iskurir , pd.statusschedule as noreservasi,case when sp.norec is not null then true else false end as isbayar
                  FROM strukorder_t AS so
                  INNER JOIN pasien_m AS ps ON ps.id = so.nocmfk
@@ -168,7 +168,7 @@ class ResepElektronikController extends ApiController
                          sr.namalengkapambilresep AS namapengambilorder,pd.norec AS noregistrasifk,pd.noregistrasi,kp.kelompokpasien,
                          apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,sr.tglambilresep AS tglambilorder,
                          sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,sr.norec AS norecresep,sr.noresep,NULL AS noruangan,
-                         sr.isreseppulang as checkreseppulang,null as isambilobat,ps.nohp,alm.alamatlengkap, null as isordergrab,
+                         sr.isreseppulang as checkreseppulang,null as isambilobat,null as cito,ps.nohp,alm.alamatlengkap, null as isordergrab,
                          null as iskurir, '' as noreservasi,case when sp.norec is not null then true else false end as isbayar
                 FROM strukresep_t AS sr
                 INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = sr.pasienfk
@@ -243,6 +243,7 @@ class ResepElektronikController extends ApiController
                 'noruangan' => $item->noruangan,
                 'checkreseppulang' => $item->checkreseppulang,
                 'isambilobat' => $item->isambilobat,
+                'cito' => $item->cito,
                 'nohp' => $item->nohp,
                 'alamatlengkap' => $item->alamatlengkap,
                 'isordergrab' => $item->isordergrab,

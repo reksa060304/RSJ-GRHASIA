@@ -30,14 +30,28 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     var isambilobat = kendoGrid.dataItem(row).isambilobat;
                     if (isambilobat != null && isambilobat == '✔') {
                         $(row.cells[2]).addClass("green");
-                         $(row.cells[15]).addClass("green");
+                         $(row.cells[16]).addClass("green");
                     }else{
+                        // $(row.cells[1]).addClass("red");
+                    }
+                    var cito = kendoGrid.dataItem(row).cito;
+                    if (cito != null && cito == '✔') {
+                         $(row.cells[15]).addClass("red");
+                    }else{
+                        // $(row.cells[1]).addClass("red");
+                    }
+                    var statusorder = kendoGrid.dataItem(row).statusorder;
+                    if (statusorder != null && statusorder == 'Menunggu') {
+                         $(row.cells[11]).addClass("koneng");
+                    }else if (statusorder != null && statusorder == 'Verifikasi') {
+                        $(row.cells[11]).addClass("green");
+                   }else{
                         // $(row.cells[1]).addClass("red");
                     }
                     var iskurir = kendoGrid.dataItem(row).iskurir;
                     if (iskurir != null && iskurir == '✔') {
                         $(row.cells[2]).addClass("koneng");
-                         $(row.cells[16]).addClass("koneng");
+                         $(row.cells[17]).addClass("koneng");
                     }else{
                         // $(row.cells[1]).addClass("red");
                     }
@@ -62,7 +76,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 // },
                 selectable: 'row',
                 scrollable: true,
-
                 pageable: true,
                 groupable: true,  
                 columns: [
@@ -144,6 +157,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "title": "Resep Pulang",
                     "width": "80px",
 
+                },
+                {
+                    "field": "cito",
+                    "title": "Cito",
+                    "width": "80px",
                 },
                 {
                     "field": "isbayar",
@@ -375,10 +393,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         } else {
                             e.data[i].cekreseppulang = '-'
                         }
+                        
                         if (e.data[i].isambilobat == true) {
                             e.data[i].isambilobat = "✔"                            
                         }else{
                             e.data[i].isambilobat = "✘"
+                        }   
+                        if (e.data[i].cito == true) {
+                            e.data[i].cito = "✔"                            
+                        }else{
+                            e.data[i].cito = "✘"
                         }                        
                         if (e.data[i].isordergrab == true) {
                             e.data[i].statusgrab = "Sudah Order"                            
@@ -877,7 +901,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 11: $scope.item.kelompokPasien,
                                 12: $scope.item.beratBadan,
                                 13: $scope.item.AlergiYa,
-                                14: ''
+                                14: '',
+                                17: $scope.item.cito,
                             }
                             cacheHelper.set('InputResepApotikCtrl', arrStr);
                             $state.go('InputResepApotik')

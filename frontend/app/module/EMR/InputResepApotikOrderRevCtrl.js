@@ -1004,6 +1004,11 @@ define(['initialize'], function (initialize) {
                     "title": "Resep Pulang",
                     "width": "50px",
                 },
+                {
+                    "field": "cito",
+                    "title": "Cito",
+                    "width": "50px",
+                },
                  {
                     "field": "isambilobat",
                     "title": "Resep Di Ambil Di RS",
@@ -1119,6 +1124,7 @@ define(['initialize'], function (initialize) {
                         qtyproduk: $scope.dataGrid._data.length,
                         noruangan: $scope.item.noRuang != undefined ? $scope.item.noRuang : null,
                         isreseppulang: checkRP,
+                        iscito: $scope.item.iscito != undefined && $scope.item.iscito == true ? $scope.item.iscito : false,
                     }
                     var objSave = {
                         strukorder: strukorder,
@@ -1168,6 +1174,7 @@ define(['initialize'], function (initialize) {
             }
             function loadOrder(params){
                 medifirstService.get("emr/get-daftar-detail-order?" + params, true).then(function (e) {
+                    console.log(e.data)
                     for (var i = e.data.length - 1; i >= 0; i--) {
                         e.data[i].no = i + 1                        
                         if (e.data[i].reseppulang == 1) {
@@ -1179,6 +1186,12 @@ define(['initialize'], function (initialize) {
                             e.data[i].isambilobat = "✔"                            
                         }else{
                             e.data[i].isambilobat = "✘"
+                        }
+
+                        if (e.data[i].cito == true) {
+                            e.data[i].cito = "✔"                            
+                        }else{
+                            e.data[i].cito = "✘"
                         }
                     }
                     $scope.dataGridRiwayat = new kendo.data.DataSource({
@@ -1202,6 +1215,12 @@ define(['initialize'], function (initialize) {
                                 dat.data[i].cekreseppulang = '✔'
                             }else{
                                 dat.data[i].cekreseppulang = '-'
+                            }
+
+                            if ( dat.data[i].cito == true) {
+                                dat.data[i].cito = '✔'
+                            }else{
+                                dat.data[i].cito = '-'
                             }
                         }
                         var array = dat.data;
@@ -1234,7 +1253,8 @@ define(['initialize'], function (initialize) {
                                     namaruangandepo: array[i].namaruangandepo,
                                     namaruangan: array[i].namaruangan,
                                     dokter: array[i].dokter,
-                                    cekreseppulang: array[i].cekreseppulang,                                 
+                                    cekreseppulang: array[i].cekreseppulang,     
+                                    cito: array[i].cito,                                 
                                     details: dataDetail0
                                 }
                                 group.push(result)
@@ -1276,6 +1296,12 @@ define(['initialize'], function (initialize) {
                                 }else{
                                     dat.data[i].cekreseppulang = "-"
                                 }
+
+                                if ( dat.data[i].cito == true) {
+                                    dat.data[i].cito = '✔'
+                                }else{
+                                    dat.data[i].cito = '-'
+                                }
                             }
                             var array = dat.data;
                             let sama = false
@@ -1307,6 +1333,7 @@ define(['initialize'], function (initialize) {
                                         dokter: array[i].dokter,
                                         count: array[i].count,
                                         cekreseppulang : array[i].cekreseppulang,
+                                        cito: array[i].cito, 
                                         details: dataDetail0
                                     }
                                     group.push(result)
@@ -1364,8 +1391,15 @@ define(['initialize'], function (initialize) {
                     "title": "Resep Pulang",
                     "width": "90px",
                      "template": "<span class='style-center'>#: cekreseppulang #</span>"
+                },
+                {
+                    "field": "cito",
+                    "title": "Cito",
+                    "width": "90px",
+                     "template": "<span class='style-center'>#: cito #</span>"
                 }
             ];
+
             $scope.data2 = function (dataItem) {
                 // debugger
                 for (var i = 0; i < dataItem.details.length; i++) {
@@ -1503,6 +1537,12 @@ define(['initialize'], function (initialize) {
                     }else{
                         $scope.checkResepPulang = false;
                     }
+
+                    if ($scope.dataSelectedRiwayat.cito == "✔") {
+                        $scope.item.iscito = true;
+                    }else{
+                        $scope.item.iscito = false;
+                    }
                     
                     data2 = dat.data.orderpelayanan
                     for (var i = data2.length - 1; i >= 0; i--) {
@@ -1551,6 +1591,12 @@ define(['initialize'], function (initialize) {
                     }else{
                         $scope.checkResepPulang = false;
                     }
+
+                    if ($scope.dataSelectedRiwayat.cito == "✔") {
+                        $scope.item.iscito = true;
+                    }else{
+                        $scope.item.iscito = false;
+                    }
                     
                     data2 = dat.data.orderpelayanan
                     for (var i = data2.length - 1; i >= 0; i--) {
@@ -1583,6 +1629,12 @@ define(['initialize'], function (initialize) {
                 if ($scope.dataSelectedResep == undefined) {
                     toastr.error('Pilih data dulu')
                     return
+                }
+
+                if ($scope.dataSelectedResep.cito == "✔") {
+                    $scope.item.iscito = true;
+                }else{
+                    $scope.item.iscito = false;
                 }
 
                 $scope.copynoresep = $scope.dataSelectedResep.noresep

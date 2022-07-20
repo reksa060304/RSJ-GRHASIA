@@ -5381,7 +5381,7 @@ class EMRController  extends ApiController
                 'so.statusorder', 'so.namapengambilorder', 'so.noregistrasifk',
                 'pd.noregistrasi', 'kp.kelompokpasien',
                 'apd.norec as norec_apd',
-                'pd.tglregistrasi', 'ps.tgllahir', 'kl.namakelas', 'kl.id as klid', 'so.tglambilorder', 'so.norec as norec_order','so.isreseppulang','so.isambilobat','so.iskurir')
+                'pd.tglregistrasi', 'ps.tgllahir', 'kl.namakelas', 'kl.id as klid', 'so.tglambilorder', 'so.norec as norec_order','so.isreseppulang','so.isambilobat','so.iskurir', 'so.cito')
             ->where('so.kdprofile', $idProfile);
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
@@ -5471,6 +5471,7 @@ class EMRController  extends ApiController
                 'namakelas' => $item->namakelas,
                 'reseppulang' => $item->isreseppulang,
                 'isambilobat' => $item->isambilobat,
+                'cito' => $item->cito,
                 'details' => $details
             );
         }
@@ -5643,6 +5644,7 @@ class EMRController  extends ApiController
                     $newSO->totalharusdibayar = 0;
                     $newSO->totalpph = 0;
                     $newSO->totalppn = 0;
+                    $newSO->cito = $r_SR['iscito'];
                     if($r_SR['isreseppulang'] == 1){
                         $newSO->isreseppulang = true;
                     }
