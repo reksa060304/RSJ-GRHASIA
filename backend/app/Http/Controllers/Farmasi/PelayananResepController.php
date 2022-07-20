@@ -440,10 +440,11 @@ class PelayananResepController extends ApiController
                         ->orderBy('tglpelayanan', 'desc')
                         ->first();
 
+
                     $jmlPengurang =(float)$qtyJumlah;
                     DB::table('stokprodukdetail_t')
                         ->where('kdprofile', $idProfile)
-                        ->where('norec',$GetNorec->norec)
+                        ->where('norec',$GetNorec['norec'])
                         ->sharedLock()
                         ->increment('qtyproduk', (float)$jmlPengurang);
 
@@ -2046,7 +2047,10 @@ class PelayananResepController extends ApiController
             $newSR->ruanganfk = $r_SR['ruanganfk'];
             $newSR->status = 0;//$r_SR['status'];;
             $newSR->tglresep =  $r_SR['tglresep'];//->format('Y-m-d H:i:s');
-            $newSR->cito =  $r_SR['cito'];
+            if(isset($r_SR['cito'])){
+                $newSR->cito =  $r_SR['cito'];
+            }
+            
             $newSR->save();
             $norec_SR = $newSR->norec;
             $dokterPenulis =  $newSR->penulisresepfk;

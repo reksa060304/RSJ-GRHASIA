@@ -353,18 +353,28 @@ define(['initialize'], function (initialize) {
             $scope.$watch('item.hari', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                         $scope.item.jumlah = parseInt($scope.item.hari) * parseFloat($scope.item.dosisperhari)*parseInt($scope.item.aturanpakaitxt.slice(0, -2))
+                    
                 }
             });
             $scope.$watch('item.dosisperhari', function (newValue, oldValue) {
                 if (newValue != oldValue) {
+                    if($scope.item.hari != undefined){
                         $scope.item.jumlah = parseInt($scope.item.hari) * parseFloat($scope.item.dosisperhari)*parseInt($scope.item.aturanpakaitxt.slice(0, -2))
+                    }
                 }
             });
             $scope.$watch('item.aturanpakaitxt', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    if($scope.item.jenisKemasan.jeniskemasan == 'Non Racikan'){
-                        $scope.item.jumlah = parseInt($scope.item.hari) * parseFloat($scope.item.dosisperhari)*parseInt($scope.item.aturanpakaitxt.slice(0, -2))
-                    } 
+                    $scope.$watch('item.hari', function (newValues, oldValues) {
+                        if (newValues != oldValues) {
+                            console.log($scope.item.hari)
+                            if($scope.item.jenisKemasan.jeniskemasan == 'Non Racikan'){
+                                if($scope.item.hari != undefined){
+                                    $scope.item.jumlah = parseInt($scope.item.hari) * parseFloat($scope.item.dosisperhari)*parseInt($scope.item.aturanpakaitxt.slice(0, -2))
+                                } 
+                            } 
+                        }
+                    })
                 }
             });
             $scope.$watch('item.tglresep', function (newValue, oldValue) {
