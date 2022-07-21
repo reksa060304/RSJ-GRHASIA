@@ -416,7 +416,7 @@ class PelayananResepController extends ApiController
 
             //## PelayananPasien
 
-            $newPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->get();
+            $newPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->where('isobat', true)->get();
             $newPP2 =$newPP;
             foreach ($newPP as $r_PPL){
                 $norec_PP = $r_PPL->norec;
@@ -481,7 +481,7 @@ class PelayananResepController extends ApiController
                 $antrianApotik = AntrianApotik::where('noresep',$newSR->noresep)->where('kdprofile', $idProfile)->delete();
             }
 
-            $newPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->delete();
+            $newPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->where('isobat', true)->delete();
 //            $ppKronis = PelayananPasienObatKronis::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->delete();
 
             $transStatus = 'true';
@@ -2284,12 +2284,13 @@ class PelayananResepController extends ApiController
                 //$HapusPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->get();
                 $HapusPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)
                 ->whereNull('status')
+                ->where('isobat', true)
                 ->get();
                 foreach ($HapusPP as $pp){
                     $HapusPPD = PelayananPasienDetail::where('pelayananpasien', $pp['norec'])->where('kdprofile', $idProfile)->delete();
                     $HapusPPP = PelayananPasienPetugas::where('pelayananpasien', $pp['norec'])->where('kdprofile', $idProfile)->delete();
                 }
-                $HpsPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->whereNull('status')->delete();
+                $HpsPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->whereNull('status')->where('isobat', true)->delete();
             }
 
             //## PelayananPasien
