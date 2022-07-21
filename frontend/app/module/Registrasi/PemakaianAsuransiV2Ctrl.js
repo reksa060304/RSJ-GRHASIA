@@ -666,9 +666,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					+ $scope.item.kelasKonsul.id
 					+ "&objectruangantujuanfk="
 					+ $scope.item.ruanganKonsul.id).then(function (data) {
-                        $scope.item.kelasKonsul = {}
-                        $scope.item.namaDokterKonsul = {}
-                        $scope.popupKonsul.center().close();
+                        $scope.item.namaDokterKonsul = undefined
+                        $scope.item.ruanganKonsul = undefined
+                        // $scope.popupKonsul.center().close();
 					})
 			}
 
