@@ -316,7 +316,6 @@ class BendaharaPenerimaanController extends ApiController {
             $SC->keteranganlainnya = "Setoran Kasir";
             $SC->tglawal = $tglAwal;
             $SC->tglakhir = $tglAkhir;
-            $SC->tglclosing = $this->getDateTime()->format('Y-m-d H:i:s');
             $SC->save();
             $NorecSc = $SC->norec;
 
