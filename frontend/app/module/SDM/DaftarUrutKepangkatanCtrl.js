@@ -131,44 +131,49 @@ define(['initialize'], function (initialize) {
                 pageable: true,
                 columns: [
                     {
-                        "field": "namalengkap",
-                        "title": "Nama Pegawai",
-                        "width": "150px",                        
-                    },                    
-                    {
-                        "field": "jenispegawai",
-                        "title": "Jenis Pegawai",
-                        "width": "120px"
-                    },
-                    {
                         "field": "nippns",
                         "title": "NIP",
                         "width": "100px"
-                    },                    
-                    {
-                        "field": "namapangkat",
-                        "title": "Pangkat",
-                        "width": "110px"
                     },
                     {
-                        "field": "golongan",
-                        "title": "Golongan",
-                        "width": "80px"
-                    },
-                    {
-                        "field": "namajabatan",
-                        "title": "Jabatan",
-                        "width": "120px"
+                        "field": "namalengkap",
+                        "title": "Nama Pegawai",
+                        "width": "150px",                        
                     },
                     {
                         "field": "tgllahir",
                         "title": "Tgl Lahir",
-                        "width":"87px",
+                        "width": "87px",
                         "template": "<span class='style-left'>{{formatTanggal('#: tgllahir #')}}</span>"
                     },
                     {
-                        "field": "umur",
-                        "title": "Umur",
+                        "field": "namapangkat",
+                        "title": "Pangkat",
+                        "width": "110px"
+                    }, 
+                    {
+                        "field": "golongan",
+                        "title": "Golongan TMT",
+                        "width": "80px"
+                    },
+                    {
+                        // "field": "golongan",
+                        "title": "Golongan Eselon",
+                        "width": "80px"
+                    },
+                    {
+                        // "field": "namajabatan",
+                        "title": "Jabatan",
+                        "width": "120px"
+                    },
+                    {
+                        // "field": "jenispegawai",
+                        "title": "Pendidikan",
+                        "width": "120px"
+                    },
+                    {
+                        // "field": "umur",
+                        "title": "Masa Kerja",
                         "width": "100px"
                     }
                 ]

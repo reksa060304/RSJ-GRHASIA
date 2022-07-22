@@ -2168,6 +2168,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('sdm/delete-data-gaji-berkala', 'SDM\SumberDayaManusiaController@deleteDataGajiBerkala');
             Route::post('sdm/delete-data-sipstr', 'SDM\SumberDayaManusiaController@deleteDataSipStr');
             Route::post('sdm/save-rekam-data-pegawai', 'SDM\SumberDayaManusiaController@saveDataRekamDataPegawai');
+            Route::post('sdm/save-riwayat-pendidikan','SDM\SumberDayaManusiaController@saveRiwayatPendidikan');
+            Route::post('sdm/save-riwayat-pelatihan','SDM\SumberDayaManusiaController@saveRiwayatPelatihan');
+            Route::post('sdm/save-riwayat-jabatan','SDM\SumberDayaManusiaController@saveRiwayatJabatan');
+            Route::post('sdm/save-riwayat-pangkat-golongan','SDM\SumberDayaManusiaController@saveRiwayatPangkatGolongan');
+            Route::post('sdm/save-riwayat-gaji-berkala','SDM\SumberDayaManusiaController@saveRiwayatGajiBerkala');
+            Route::post('sdm/save-riwayat-hukuman-disiplin','SDM\SumberDayaManusiaController@saveRiwayatHukumanDisiplin');
+            Route::post('sdm/save-riwayat-cuti','SDM\SumberDayaManusiaController@saveRiwayatCuti');
             Route::post('sdm/upload-data-sipstr', 'SDM\SumberDayaManusiaController@simpanSipStr');
             Route::get('report/cetak-sertifikat','Report\ReportController@cetakSertifikat');
             Route::post('sdm/update-data-pegawai-form-pensiun', 'SDM\SumberDayaManusiaController@updateDataPegawaiFormPensiun');

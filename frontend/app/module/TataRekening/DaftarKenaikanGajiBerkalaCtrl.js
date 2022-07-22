@@ -11,7 +11,8 @@ define(['initialize'], function (initialize) {
             $scope.item.listKasirMulti = [];
             $scope.item.listKasirMultis = [];
             $scope.isRouteLoading = false;
-
+            $scope.item.periodeAwal = moment($scope.now).format('YYYY-MM-DD 00:00')
+            $scope.item.periodeAkhir = moment($scope.now).format('YYYY-MM-DD 23:59')
             $scope.tglMeninggal = '';
             $scope.Page = {
                 refresh: true,

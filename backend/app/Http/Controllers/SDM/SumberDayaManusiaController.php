@@ -679,11 +679,11 @@ class SumberDayaManusiaController extends ApiController {
         $kdProfile = (int) $this->getDataKdProfile($request);
         try {
             \DB::table('riwayatgolongan_t')->where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
-            $transMessage = "Hapus Data Pelatihan Golongan Sukses ";
+            $transMessage = "Hapus Data Pangkat Golongan Sukses ";
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
-            $transMessage = "Hapus Data Pelatihan Golongan Gagal";
+            $transMessage = "Hapus Data Pangkat Golongan Gagal";
         }
 
         if ($transStatus != 'false') {
@@ -6173,5 +6173,515 @@ public function daftarKenaikanGajiBerkala(Request $request){
             where x.baris = 1"));
         
         return $this->respond($data);
+    }
+    public function saveRiwayatPendidikan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $jns ="";
+        try {
+            $dataSavePegawai = Pegawai::where('id', $request['objectpegawaifk'])->where('kdprofile', $kdProfile)->first();
+            if(isset($request['datahapus'])){
+                $datahapus = RiwayatPendidikan::where('norec', $request['norec'])
+                    ->where('kdprofile', $kdProfile)
+                    ->where('objectpegawaifk',$request['objectpegawaifk'])
+                    ->delete();
+            $jns ="Hapus ";
+
+            }
+            else if ($request['norec'] == ""){
+
+                $dataSavePegawai->objectpendidikanpegawaifk =$request['objectpendidikanpegawaifk'];
+                $dataSavePegawai->save();
+
+                $dataSavePendidikan = new RiwayatPendidikan();
+                $dataSavePendidikan->kdprofile = $kdProfile;
+                $dataSavePendidikan->statusenabled=true;
+                $dataSavePendidikan->norec = $dataSavePendidikan->generateNewId();
+                $dataSavePendidikan->objectpegawaifk = $request['objectpegawaifk'];
+                $jns ="Simpan ";
+                $dataSavePendidikan->namatempatpendidikan = $request['namatempatpendidikan'];
+                $dataSavePendidikan->alamattempatpendidikan = $request['alamattempatpendidikan'];
+                $dataSavePendidikan->objectpendidikanpegawaifk =$request['objectpendidikanpegawaifk'];
+                $dataSavePendidikan->jurusan = $request['jurusan'];
+                $dataSavePendidikan->tglmasuk = $request['tglmasuk'];
+                $dataSavePendidikan->tgllulus = $request['tgllulus'];
+                $dataSavePendidikan->nilaiipk = $request['nilaiipk'];
+                $dataSavePendidikan->noijazah = $request['noijazah'];
+                if (isset($request['tglijazah'])){
+                    $dataSavePendidikan->tglijazah = $request['tglijazah'];
+                }
+                $dataSavePendidikan->save();
+            }else{
+                $jns ="Ubah ";
+                $dataSavePendidikan = RiwayatPendidikan::where('norec', $request['norec'])
+                    ->where('kdprofile', $kdProfile)
+                    ->where('objectpegawaifk',$request['objectpegawaifk'])
+                    ->first();
+                $dataSavePegawai->objectpendidikanpegawaifk =$request['objectpendidikanpegawaifk'];
+                $dataSavePegawai->save();
+
+                $dataSavePendidikan->namatempatpendidikan = $request['namatempatpendidikan'];
+                $dataSavePendidikan->alamattempatpendidikan = $request['alamattempatpendidikan'];
+                $dataSavePendidikan->objectpendidikanpegawaifk =$request['objectpendidikanpegawaifk'];
+                $dataSavePendidikan->jurusan = $request['jurusan'];
+                $dataSavePendidikan->tglmasuk = $request['tglmasuk'];
+                $dataSavePendidikan->tgllulus = $request['tgllulus'];
+                $dataSavePendidikan->nilaiipk = $request['nilaiipk'];
+                $dataSavePendidikan->noijazah = $request['noijazah'];
+                if (isset($request['tglijazah'])){
+                    $dataSavePendidikan->tglijazah = $request['tglijazah'];
+                }
+                $dataSavePendidikan->save();
+                }
+            
+            
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = $jns . "Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = $jns . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveRiwayatPelatihan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $jns ="";
+        try {
+            if ($request['norec'] == ""){
+                $jns ="Simpan ";
+                $dataSavePelatihan = new RiwayatPelatihan();
+                $dataSavePelatihan->kdprofile = $kdProfile;
+                $dataSavePelatihan->statusenabled=true;
+                $dataSavePelatihan->norec = $dataSavePelatihan->generateNewId();
+                $dataSavePelatihan->objectpegawaifk = $request['objectpegawaifk'];
+                $dataSavePelatihan->instansipenyelenggara = $request['instansipenyelenggara'];
+                $dataSavePelatihan->namapelatihan = $request['namapelatihan'];
+                $dataSavePelatihan->lokasipelatihan =$request['lokasipelatihan'];
+                $dataSavePelatihan->tglmulai = $request['tglmulai'];
+                $dataSavePelatihan->tglakhir = $request['tglakhir'];
+                $dataSavePelatihan->durasi = $request['durasi'];
+                $dataSavePelatihan->unitpenginputfk = $request['unitpenginputfk'];
+                $dataSavePelatihan->jenispelatihanfk = $request['jenispelatihanfk'];
+                $dataSavePelatihan->penyelenggara = $request['penyelenggara'];
+                $dataSavePelatihan->biayadiklat = $request['biayadiklat'];
+                $dataSavePelatihan->biayasppd = $request['biayasppd'];
+                $dataSavePelatihan->sumberdanafk = $request['sumberdanafk'];
+
+                if (isset($request['nosertifikat'])){
+                    $dataSavePelatihan->nosertifikat = $request['nosertifikat'];
+                }
+                if (isset($request['keterangan'])){
+                    $dataSavePelatihan->keterangan = $request['keterangan'];
+                }
+                $dataSavePelatihan->save();
+            }else{
+                $jns ="Ubah ";
+
+                $dataSavePelatihan = RiwayatPelatihan::where('norec', $request['norec'])
+                    ->where('kdprofile', $kdProfile)
+                    ->where('objectpegawaifk',$request['objectpegawaifk'])
+                    ->first();
+                $dataSavePelatihan->instansipenyelenggara = $request['instansipenyelenggara'];
+                $dataSavePelatihan->namapelatihan = $request['namapelatihan'];
+                $dataSavePelatihan->lokasipelatihan =$request['lokasipelatihan'];
+                $dataSavePelatihan->tglmulai = $request['tglmulai'];
+                $dataSavePelatihan->tglakhir = $request['tglakhir'];
+                $dataSavePelatihan->durasi = $request['durasi'];
+                $dataSavePelatihan->unitpenginputfk = $request['unitpenginputfk'];
+                $dataSavePelatihan->jenispelatihanfk = $request['jenispelatihanfk'];
+                $dataSavePelatihan->penyelenggara = $request['penyelenggara'];
+                $dataSavePelatihan->biayadiklat = $request['biayadiklat'];
+                $dataSavePelatihan->biayasppd = $request['biayasppd'];
+                $dataSavePelatihan->sumberdanafk = $request['sumberdanafk'];
+
+                if (isset($request['nosertifikat'])){
+                    $dataSavePelatihan->nosertifikat = $request['nosertifikat'];
+                }
+                if (isset($request['keterangan'])){
+                    $dataSavePelatihan->keterangan = $request['keterangan'];
+                }
+                $dataSavePelatihan->save();
+            }
+            
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = $jns . "Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = $jns . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveRiwayatJabatan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $jns ="";
+        try {
+            if(isset($request['datahapus'])){
+                $datahapus = RiwayatJabatan::where('norec', $request['norec'])
+                    ->where('kdprofile', $kdProfile)
+                    ->where('objectpegawaifk',$request['objectpegawaifk'])
+                    ->delete();
+                $jns ="Hapus ";
+
+            }else if ($request['norec'] == ""){
+                $jns ="Simpan ";
+                $dataSaveJabatan = new RiwayatJabatan();
+                $dataSaveJabatan->kdprofile = $kdProfile;
+                $dataSaveJabatan->statusenabled=true;
+                $dataSaveJabatan->norec = $dataSaveJabatan->generateNewId();
+                $dataSaveJabatan->objectpegawaifk = $request['objectpegawaifk'];
+                $dataSaveJabatan->objectjenisjabatanfk = $request['objectjenisjabatanfk'];
+                $dataSaveJabatan->objectjabatanfk = $request['objectjabatanfk'];
+                $dataSaveJabatan->namajabatan =$request['namajabatan'];
+                $dataSaveJabatan->nosk = $request['nosk'];
+                $dataSaveJabatan->tglsk = $request['tglsk'];
+                $dataSaveJabatan->ttdsk = $request['ttdsk'];
+                $dataSaveJabatan->tunjangan = $request['tunjangan'];
+                // $dataSaveJabatan->tunjangan = $request['tunjangan'];
+                $dataSaveJabatan->ttdjabatansk = $request['ttdjabatansk'];
+                // $dataSaveJabatan->objectjabatanttdfk = $request['objectjabatanttdfk'];
+                $dataSaveJabatan->save();
+            }else{
+                $jns ="Ubah ";
+                $dataSaveJabatan = RiwayatJabatan::where('norec', $request['norec'])
+                    ->where('kdprofile', $kdProfile)
+                    ->where('objectpegawaifk',$request['objectpegawaifk'])
+                    ->first();
+                $dataSaveJabatan->objectjenisjabatanfk = $request['objectjenisjabatanfk'];
+                $dataSaveJabatan->objectjabatanfk = $request['objectjabatanfk'];
+                $dataSaveJabatan->namajabatan =$request['namajabatan'];
+                $dataSaveJabatan->nosk = $request['nosk'];
+                $dataSaveJabatan->tglsk = $request['tglsk'];
+                $dataSaveJabatan->ttdsk = $request['ttdsk'];
+                $dataSaveJabatan->tunjangan = $request['tunjangan'];
+                // $dataSaveJabatan->tunjangan = $request['tunjangan'];
+                $dataSaveJabatan->ttdjabatansk = $request['ttdjabatansk'];
+                // $dataSaveJabatan->objectjabatanttdfk = $request['objectjabatanttdfk'];
+                $dataSaveJabatan->save();
+                }
+                    
+                
+            
+            
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = $jns . "Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = $jns . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    
+    public function saveRiwayatPangkatGolongan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $jns ="";
+        try {
+            if ($request['norec'] == ""){
+                $jns ="Simpan ";
+                
+                \DB::table("riwayatgolongan_t")->insert([
+                'norec' => substr(Uuid::generate(), 0, 32),
+                'kdprofile'=> $kdProfile,
+                'statusenabled'=> true,
+                'objectpegawaifk'=> $request['objectpegawaifk'],
+                'objectgolonganfk'=> $request['objectgolonganfk'],
+                'tglsk'=>$request['tglsk'],
+                'tgltmt'=>$request['tgltmt'],
+                'pejabatmenetapkan'=> $request['pejabatmenetapkan'] ,
+                'nosk'=> $request['nosk'],
+                'nominal'=> $request['nominal'],
+                ]);
+                
+            }else{
+                $jns ="Ubah ";
+                \DB::table("riwayatgolongan_t")
+                ->where('norec', $request['norec'])
+                ->where('kdprofile', $kdProfile)
+                ->where('objectpegawaifk', $request['objectpegawaifk'])
+                ->update([
+                    // 'statusenabled'=> true,
+                    'objectgolonganfk'=> $request['objectgolonganfk'],
+                    'tglsk'=>$request['tglsk'],
+                    'tgltmt'=>$request['tgltmt'],
+                    'pejabatmenetapkan'=> $request['pejabatmenetapkan'] ,
+                    'nosk'=> $request['nosk'],
+                    'nominal'=> $request['nominal'],
+                ]);
+                
+            }
+            
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = $jns . "Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = $jns . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveRiwayatGajiBerkala(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $jns ="";
+        try {
+            if ($request['norec'] == "") {
+                $jns = "Simpan ";
+                \DB::table("riwayatgajiberkala_t")->insert([
+                'norec' => substr(Uuid::generate(), 0, 32),
+                'kdprofile'=> $kdProfile,
+                'statusenabled'=> true,
+                'objectpegawaifk'=> $request['objectpegawaifk'],
+                'gajiawal'=> $request['gajiawal'],
+                'gajiakhir'=> $request['gajiakhir'],
+                'tglsk'=>$request['tglsk'],
+                'tgltmt'=>$request['tgltmt'],
+                'pejabatmenetapkan'=> $request['pejabatmenetapkan'] ,
+                'nosk'=> $request['nosk'],
+                'objectgolonganfk'=>$request['objectgolonganfk'],
+                ]);
+            }else{
+                $jns = "Ubah ";
+                \DB::table("riwayatgajiberkala_t")
+                ->where('norec', $request['norec'])
+                ->where('kdprofile', $kdProfile)
+                ->where('objectpegawaifk', $request['objectpegawaifk'])
+                ->update([
+                    // 'statusenabled'=> true,
+                    'gajiawal'=> $request['gajiawal'],
+                    'gajiakhir'=> $request['gajiakhir'],
+                    'tglsk'=>$request['tglsk'],
+                    'tgltmt'=>$request['tgltmt'],
+                    'pejabatmenetapkan'=> $request['pejabatmenetapkan'] ,
+                    'nosk'=> $request['nosk'],
+                    'objectgolonganfk'=>$request['objectgolonganfk'],
+                ]);
+            }
+            
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = $jns . "Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = $jns . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveRiwayatHukumanDisiplin(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $jns ="";
+        try {
+            if ($request['norec'] == "") {
+                $jns = "Simpan ";
+                $dahudis = \DB::table('sdm_hukumandisiplin_t')
+                ->insert([
+                    'norec' => substr(Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'objectjenishukumanfk'=> $request['objectjenishukumanfk'],
+                    'tgldari'=>$request['tgldari'],
+                    'tglsampai'=>$request['tglsampai'],
+                    'pejabatmenetapkan'=> $request['pejabatmenetapkan'],
+                    'objectpegawaifk'=> $request['objectpegawaifk'],
+                    'tglsk'=> $request['tglsk'],
+                    'nosk'=> $request['nosk'],
+                ]);
+            } else {
+                $jns = "Ubah ";
+                $dahudis = \DB::table('sdm_hukumandisiplin_t')
+                ->where('norec', $request['norec'])
+                ->where('kdprofile', $kdProfile)
+                ->where('objectpegawaifk', $request['objectpegawaifk'])
+                ->update([
+                    'statusenabled'=> true,
+                    'objectjenishukumanfk'=> $request['objectjenishukumanfk'],
+                    'tgldari'=>$request['tgldari'],
+                    'tglsampai'=>$request['tglsampai'],
+                    'pejabatmenetapkan'=> $request['pejabatmenetapkan'],
+                    'tglsk'=> $request['tglsk'],
+                    'nosk'=> $request['nosk'],
+                ]);
+            }
+            
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = $jns . "Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = $jns . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveRiwayatCuti(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $jns ="";
+        try {
+            if ($request['norec'] == "") {
+                $jns = "Simpan ";
+                \DB::table("riwayatcuti_t")
+                ->insert([
+                    'norec' => substr(Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'objectpegawaifk'=> $request['objectpegawaifk'],
+                    'tgldari'=>$request['tgldari'],
+                    'tglsampai'=>$request['tglsampai'],
+                    'tglsk'=> $request['tglsk'],
+                    'nosk'=> $request['nosk'],
+                    'pejabatmenetapkan'=> $request['pejabatmenetapkan'],
+                ]);
+                
+            } else {
+                $jns = "Ubah ";
+                \DB::table("riwayatcuti_t")
+                ->where('norec', $request['norec'])
+                ->where('kdprofile', $kdProfile)
+                ->where('objectpegawaifk', $request['objectpegawaifk'])
+                ->update([
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'objectpegawaifk'=> $request['objectpegawaifk'],
+                    'tgldari'=>$request['tgldari'],
+                    'tglsampai'=>$request['tglsampai'],
+                    'tglsk'=> $request['tglsk'],
+                    'nosk'=> $request['nosk'],
+                    'pejabatmenetapkan'=> $request['pejabatmenetapkan'],
+                ]);
+            }
+            
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = $jns . "Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = $jns . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

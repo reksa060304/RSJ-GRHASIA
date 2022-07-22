@@ -491,6 +491,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         })
 
                     // } 
+                } else {
+                    ModelItem.showMessages(isValid.messages);
                 }
                 
                 

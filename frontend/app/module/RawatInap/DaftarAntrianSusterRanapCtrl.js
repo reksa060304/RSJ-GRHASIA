@@ -448,6 +448,7 @@ define(['initialize'], function (initialize) {
 
             }
             $scope.rekamMedisElektronik = function () {
+                
                 if ($scope.item.nocm == null && $scope.item.norec_apd == null) {
                     window.messageContainer.error("Pilih Dahulu Pasien!")
                     return
