@@ -59,11 +59,13 @@ define(['initialize'], function (initialize) {
                                 model: {
                                     fields: {
                                         totalfaktorpelayanan: { type: "number" },
+                                        jumlah: { type: "number" },
                                     }
                                 }
                             },
                             aggregate: [
                                 { field: 'totalfaktorpelayanan', aggregate: 'sum' },
+                                { field: 'jumlah', aggregate: 'sum' },
                             ]
                         });   
                         
@@ -184,6 +186,11 @@ define(['initialize'], function (initialize) {
                         "field": "jumlah",
                         "title": "Jumlah",
                         "width": "100px",
+
+                        aggregates: ["sum"],
+                        template: "#: jumlah #",
+                        groupFooterTemplate: "#: data.jumlah.sum  #",
+                        footerTemplate: "#: data.jumlah.sum  #"
                     },
                     {
                         

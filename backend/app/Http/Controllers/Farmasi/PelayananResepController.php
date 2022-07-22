@@ -3176,6 +3176,7 @@ class PelayananResepController extends ApiController
     }
 
     public function getLaporanPenjualanObatDetail(Request $request){
+        ini_set('max_execution_time', 6000);
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal= $request['tglAwal'];
         $tglAkhir= $request['tglAkhir'];
@@ -3184,6 +3185,7 @@ class PelayananResepController extends ApiController
         $ruid='';
         $sudahbayar= '';
         $rajalRanap= '';
+        $isobat= '';
         $rajalRanapObatBebas= '';
         $namaItem = '';
         $namaPasienText = '';
@@ -3219,6 +3221,11 @@ class PelayananResepController extends ApiController
         if(isset( $request['rajalRanap'])&&  $request['rajalRanap']=='2'){//ranap
             $rajalRanap = "and ru1.objectdepartemenfk = 16 ";
             $rajalRanapObatBebas = "and ru.objectdepartemenfk = 16";//ini ga mungkin terjadi
+        }
+        if(isset($request['isobat']) && $request['isobat']!="" && $request['isobat']!="undefined" && $request['isobat']==true){
+            $isobat = ' and pp.isobat='.$request['isobat'];
+        } else if(isset($request['isobat']) && $request['isobat']!="" && $request['isobat']!="undefined" && $request['isobat']==false){
+            $isobat = ' and pp.isobat is null';
         }
         
 
@@ -3297,14 +3304,14 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
 */
         $data = DB::select(DB::raw("SELECT
         *
-    FROM
+        FROM
         (
             SELECT
-                *, ROW_NUMBER () OVER (PARTITION BY noresep, namaproduk, rke) NUMBER
+                *, ROW_NUMBER () OVER (PARTITION BY noresep, namaproduk, rke, jumlah, norec) NUMBER
             FROM
                 (
                     SELECT
-                        tglresep,
+                        tglresep, norec,
                         CASE
                     WHEN inputtindakan IS NOT NULL THEN
                         inputtindakan
@@ -3387,7 +3394,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 TO_CHAR(
                     pp.tglpelayanan,
                     'DD-MM-YYYY'
-                ) AS tglresep,
+                ) AS tglresep, pp.norec,
                 cte.namapegawaiinput inputtindakan,
                 cter.namapegawaiinput inputresep,
                 CASE
@@ -3471,10 +3478,11 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                         $namaItem    
                         $namaItemText
                         $namaPasienText
+                        $isobat
 
                         UNION ALL
                         
-                        SELECT TO_CHAR(sp.tglstruk, 'DD-MM-YYYY') AS tglresep, cte.namapegawaiinput inputtindakan, '' inputresep,
+                        SELECT TO_CHAR(sp.tglstruk, 'DD-MM-YYYY') AS tglresep, pp.norec, cte.namapegawaiinput inputtindakan, '' inputresep,
                         dep.namadepartemen AS departemen,ru.namaruangan namaruanganpasien,
                                ru.namaruangan AS gudang,
                                --pg1.namalengkap as user,
@@ -3517,6 +3525,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                         $namaItem    
                         $namaItemText
                         $namaPasienTextSP
+                        $isobat
                  ) AS x
 			) AS C
 	    ) AS e
