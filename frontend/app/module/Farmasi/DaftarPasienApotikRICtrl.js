@@ -83,6 +83,103 @@ define(['initialize'], function(initialize) {
             $scope.getRuangan = function(){
                 $scope.listRuangan = $scope.item.instalasi.ruangan;
             }
+            $scope.showPop =  function () {
+                if($scope.dataSelected== undefined){
+                   toastr.error('Pilih data dulu')
+                   return
+               }
+                medifirstService.get("sysadmin/general/get-status-close/" + $scope.dataSelected.noregistrasi, false).then(function (rese) {
+                    if (rese.data.status == true) {
+                        toastr.error('Pemeriksaan sudah ditutup tanggal ' + moment(new Date(rese.data.tglclosing)).format('DD-MMM-YYYY HH:mm'), 'Peringatan!')
+                        $scope.isSelesaiPeriksa = true
+                        return
+                    } else {
+                        medifirstService.get("radiologi/get-apd?noregistrasi="
+                            + $scope.dataSelected.noregistrasi
+                        ).then(function (data) {
+                            $scope.daftarApd = data.data.ruangan;
+                            if ($scope.daftarApd.length > 0) {
+                                var status = false
+                                var norec_apd = ''
+                                for (var i = 0; i < $scope.daftarApd.length; i++) {
+                                    status = false
+                                    if ($scope.daftarApd[i].id == 94) {
+                                        status = true
+                                        norec_apd = $scope.daftarApd[i].norec_apd
+                                        break
+                                    }
+                                }
+                                if (status == true) {
+                                    $scope.showTindakan(norec_apd)
+                                } else {
+                                    $scope.listRuanganApd = []
+
+                                    $scope.listRuanganApd = [{id: 94, namaruangan: "FARMASI"}]
+                                    $scope.item.ruanganAntrian = $scope.listRuanganApd[0]
+                                    $scope.popupAntrians.center().open()
+                                }
+                            }
+                        })
+                    }
+                });
+           }
+
+           $scope.inputTindakan = function () {
+            if($scope.item.ruanganAntrian == undefined)return
+            medifirstService.get("radiologi/get-apd?noregistrasi="
+                + $scope.dataSelected.noregistrasi
+            ).then(function (data) {
+                $scope.daftarApd = data.data.ruangan;
+                if ($scope.daftarApd.length > 0) {
+                    var status = false
+                    var norec_apd = ''
+                    for (var i = 0; i < $scope.daftarApd.length; i++) {
+                        status = false
+                        if ($scope.daftarApd[i].id == $scope.item.ruanganAntrian.id) {
+                            status = true
+                            norec_apd = $scope.daftarApd[i].norec_apd
+                            break
+                        }
+                    }
+                    if (status == true) {
+                        $scope.showTindakan(norec_apd)
+                    } else {
+                        $scope.saveAPD()
+                    }
+                }
+            })
+        }
+
+        $scope.showTindakan = function (norec_apd) {
+            $state.go('InputTindakan', {
+                norecPD: $scope.dataSelected.norec_pd,
+                norecAPD: norec_apd,
+
+            });
+           
+        }
+
+        $scope.saveAPD = function (argument) {
+            $scope.tombolSimpanVis = true;
+            var dataKonsul = {
+                "asalrujukanfk": 5, //datang sendiri
+                "norec_pd": $scope.dataSelected.norec_pd,
+                "dokterfk": $scope.dataSelected.pgid,
+                "objectruangantujuanfk": $scope.item.ruanganAntrian.id,
+                "objectruanganasalfk": $scope.dataSelected.ruid,
+                "objectkelasfk": $scope.dataSelected.klid,
+                "tglregistrasidate":moment($scope.dataSelected.tglregistrasi).format('YYYY-MM-DD')
+            }
+            medifirstService.post('radiologi/save-apd', dataKonsul).then(function (e) {
+                $scope.tombolSimpanVis = false;
+                var norec_apd = e.data.data.norec
+               
+                $scope.showTindakan(norec_apd)
+
+            }, function (error) {
+                $scope.tombolSimpanVis = true;
+            })
+        }
             $scope.cariFilter = function(){
 
                 init();
