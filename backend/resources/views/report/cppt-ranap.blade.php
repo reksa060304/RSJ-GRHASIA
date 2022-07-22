@@ -118,30 +118,30 @@
                                     <tr>
                                         <td class="f-s-15 bold  text-top" style="width: 100px">No. RM</td>
                                         <td class="f-s-15 bold  text-top">:</td>
-                                        <td class="f-s-15 bold text-top"><b>{!! $res['d'][0]->nocm  !!}</b></td>
+                                        <td class="f-s-15 bold text-top"><b>{{  $data[0]->nocm  }}</b></td>
                                     </tr>
                                     <tr>
                                         <td class="f-s-15 bold  text-top">Nama</td>
                                         <td class="f-s-15 bold  text-top">:</td>
-                                        <td class="f-s-15 bold  text-top"><b>{!!  $res['d'][0]->namapasien  !!}</b>
+                                        <td class="f-s-15 bold  text-top"><b>{{  $data[0]->namapasien  }}</b>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="f-s-15 bold  text-top">Jenis Kelamin</td>
                                         <td class="f-s-15 bold  text-top">:</td>
                                         <td class="f-s-15 bold  text-top">
-                                            <b>{!! $res['d'][0]->jeniskelamin   !!}</b></td>
+                                            <b>{{  $data[0]->jeniskelamin   }}</b></td>
                                     </tr>
                                     <tr>
                                         <td class="f-s-15 bold  text-top">Tgl Lahir</td>
                                         <td class="f-s-15 bold  text-top">:</td>
                                         <td class="f-s-15 bold  text-top">
-                                            <b>{!! date('d-m-Y',strtotime( $res['d'][0]->tgllahir  )) !!}</b></td>
+                                            <b>{{ date('d-m-Y',strtotime( $data[0]->tgllahir  )) }}</b></td>
                                     </tr>
                                     <tr>
                                         <td class="f-s-15 bold  text-top">Ruangan</td>
                                         <td class="f-s-15 bold  text-top">:</td>
-                                        <td class="f-s-15 bold  text-top"><b>{!! $res['d'][0]->namaruangan   !!}</b>
+                                        <td class="f-s-15 bold  text-top"><b>{{  $data[0]->namaruangan   }}</b>
                                         </td>
                                     </tr>
                                 </table>

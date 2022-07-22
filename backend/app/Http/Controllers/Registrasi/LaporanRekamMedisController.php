@@ -4030,7 +4030,7 @@ class LaporanRekamMedisController extends   ApiController
         and ru.objectdepartemenfk = 16
         --and (jd.id = 1 or jd.id = 7)
         and ddtd.id between 1 and 507
-        and pd.tglregistrasi between '$tglAwal-01-01' and '$tglAwal-12-31'
+        and pd.tglpulang between '$tglAwal-01-01' and '$tglAwal-12-31'
         order by ddtd.id"));
 
         $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
@@ -4256,7 +4256,7 @@ class LaporanRekamMedisController extends   ApiController
 
         $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
         inner join profile_m pr on pr.id = ddtd.kdprofile
-        where ddtd.id between 1 and 507 and pr.id = $kdProfile order by ddtd.id"));
+        where ddtd.id between 508 and 537 and pr.id = $kdProfile order by ddtd.id"));
 
         
         $jumlahumur0hs6hl = 0;
@@ -4699,7 +4699,7 @@ class LaporanRekamMedisController extends   ApiController
 
         $id = DB::select(DB::raw("select ddtd.id, ddtd.nodtd, ddtd.nodaftarterperinci, ddtd.golongansebabpenyakit, pr.id idprofile, pr.namakota, pr.namapemerintahan, pr.namalengkap from diagnosadtd_m ddtd
         inner join profile_m pr on pr.id = ddtd.kdprofile
-        where ddtd.id between 1 and 507 and pr.id = $kdProfile order by ddtd.id"));
+        where ddtd.id between 508 and 537 and pr.id = $kdProfile order by ddtd.id"));
 
         
         $jumlahumur0hs6hl = 0;

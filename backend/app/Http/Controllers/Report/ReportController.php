@@ -1749,7 +1749,7 @@ class ReportController extends ApiController{
         $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
         $res['d'] = $data;
 
-        return view('report.cppt-ranap',compact('res','pageWidth'));
+        return view('report.cppt-ranap',compact('res','pageWidth', 'data'));
     }
 
     public function cetakCatatanKlinik(Request $request){

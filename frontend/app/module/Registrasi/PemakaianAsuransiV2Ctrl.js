@@ -269,6 +269,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             });
 
+            medifirstService.get("registrasi/laporan/get-combo-box-laporan-pengunjung")
+            .then(function (data) {
+                $scope.listDokter = data.data.dokter
+            })
+
+            medifirstService.get('registrasi/daftar-antrian-pasien/get-combo').then(function (e) {
+                $scope.listRuanganDokter = e.data.data
+            })
+
+            medifirstService.get("registrasi/get-data-combo-new", true)
+                .then(function (dat) {
+                    $scope.listKelas = dat.data.kelas;
+            });
+
             function getPemakaianAsuransiByNoReg(noreg) {
                 medifirstService.get("registrasi/get-history-pemakaianasuransi-new?noregistrasi="
                     // +$scope.item.pasien.noregistrasi
@@ -591,26 +605,71 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             console.log($scope.currentNoRegistrasi)
 
             $scope.DaftarRuangan = function () {
-                $scope.cachePasienDaftar = cacheHelper.get('CachePemakaianAsuransi');
-                var arrPasienDaftar = $scope.cachePasienDaftar.split('~');
-				if (arrPasienDaftar[3] == "Pasien Batal") {
-					// window.messageContainer.error('Pasien Sudah Batal');
-					alert("Pasien Sudah Batal!!!")
-					return;
-				}
+                // $scope.cachePasienDaftar = cacheHelper.get('CachePemakaianAsuransi');
+                // var arrPasienDaftar = $scope.cachePasienDaftar.split('~');
+				// if (arrPasienDaftar[3] == "Pasien Batal") {
+				// 	// window.messageContainer.error('Pasien Sudah Batal');
+				// 	alert("Pasien Sudah Batal!!!")
+				// 	return;
+				// }
 
-				if (arrPasienDaftar[2] != undefined) {
-					var obj = {
-						noRegistrasi: arrPasienDaftar[2]
-					}
+				// if (arrPasienDaftar[2] != undefined) {
+				// 	var obj = {
+				// 		noRegistrasi: arrPasienDaftar[2]
+				// 	}
                     
 
-					cacheHelper.set('AntrianPasienDiperiksaNOREG', arrPasienDaftar[2]);
-					// cacheHelper.set('AntrianPasienDiperiksaNOREG', '');
-					$state.go('DetailRegistrasi', {
-						dataPasien: JSON.stringify(obj)
+				// 	cacheHelper.set('AntrianPasienDiperiksaNOREG', arrPasienDaftar[2]);
+				// 	// cacheHelper.set('AntrianPasienDiperiksaNOREG', '');
+				// 	$state.go('DetailRegistrasi', {
+				// 		dataPasien: JSON.stringify(obj)
+				// 	});
+				// }
+                
+                console.log($scope.item.pasien)
+                $scope.item.kelasKonsul = {id: $scope.item.pasien.objectkelasfk, namakelas: $scope.item.pasien.namakelas}
+                $scope.popupKonsul.center().open();
+                
+			}
+
+            $scope.simpanKonsul = function () {
+                medifirstService.get("tatarekening/get-detail-pasien?noregistrasi=" + $scope.item.pasien.noregistrasi).then(function (e) {
+					$scope.dataRincianTagihan = new kendo.data.DataSource({
+						data: e.data
 					});
-				}
+                    console.log($scope.dataRincianTagihan)
+                    var length = $scope.dataRincianTagihan._data.length + 1;
+                    var dataKonsul = {
+                        "asalrujukanfk": $scope.item.pasien.objectasalrujukanfk,
+                        "kelasfk": $scope.item.kelasKonsul.id,//6,//nonKelas current.kelasid,
+                        "noantrian": length,
+                        "norec_pd": $scope.item.pasien.norec_pd,
+                        "dokterfk": $scope.item.namaDokterKonsul.id,
+                        "objectruangantujuanfk": $scope.item.ruanganKonsul.id,
+                        "objectruanganasalfk": $scope.item.pasien.objectruanganlastfk
+                    }
+                    medifirstService.post('tatarekening/save-konsul-keruangan',dataKonsul).then(function (e) {
+                        
+                        $scope.saveLogKonsul();
+                        //$scope.batalKonsul();
+                        
+                    })
+				})
+			}
+
+            $scope.saveLogKonsul = function () {
+				medifirstService.get("sysadmin/logging/save-log-konsul?norec_pd="
+					+ $scope.item.pasien.norec_pd
+					+ "&dokterfk="
+					+ $scope.item.namaDokterKonsul.id
+					+ "&kelasfk="
+					+ $scope.item.kelasKonsul.id
+					+ "&objectruangantujuanfk="
+					+ $scope.item.ruanganKonsul.id).then(function (data) {
+                        $scope.item.namaDokterKonsul = undefined
+                        $scope.item.ruanganKonsul = undefined
+                        // $scope.popupKonsul.center().close();
+					})
 			}
 
             function getDPJP(kdSpesialis, jenisPel, tipe) {

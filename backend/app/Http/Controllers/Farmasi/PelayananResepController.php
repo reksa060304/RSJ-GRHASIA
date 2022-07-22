@@ -112,7 +112,7 @@ class PelayananResepController extends ApiController
             ->leftJoin('satuanresep_m as sn','sn.id','=','pp.satuanresepfk')
             ->select('ps.nocm','ps.namapasien','jk.jeniskelamin','pp.tglpelayanan','pp.produkfk','pr.namaproduk',
                 'ss.satuanstandar','pp.jumlah','pp.hargasatuan','pp.hargadiscount','sp.nostruk','pd.noregistrasi',
-                'ks.nilaikonversi','ss2.satuanstandar as satuanstandar2','sr.noresep','sr.norec as norec_resep','pp.rke',
+                'ks.nilaikonversi','ss2.satuanstandar as satuanstandar2','sr.noresep','sr.norec as norec_resep', 'sr.cito', 'pp.rke',
                 'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as namaruanganasalid','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
                 'pp.aturanpakai','ru.namaruangan','dok.id as dokterid','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
                 DB::raw("CASE WHEN pr.kekuatan IS NOT NULL AND rs.name IS NOT NULL THEN pr.kekuatan || ' ' || rs.name ELSE '' END AS kekuatan,
@@ -233,6 +233,7 @@ class PelayananResepController extends ApiController
                 'detailjenisproduk' => $item->detailjenisproduk,
                 'jenisproduk' => $item->jenisproduk,
                 'reseppulang' =>$item->reseppulang,
+                'cito' =>$item->cito,
                 'norec_pd' => $item->norec_pd,
                 'klid' => $item->klid,
                 'keteranganpakai' => $item->keteranganpakai,
@@ -415,7 +416,7 @@ class PelayananResepController extends ApiController
 
             //## PelayananPasien
 
-            $newPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->get();
+            $newPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->where('isobat', true)->get();
             $newPP2 =$newPP;
             foreach ($newPP as $r_PPL){
                 $norec_PP = $r_PPL->norec;
@@ -439,10 +440,11 @@ class PelayananResepController extends ApiController
                         ->orderBy('tglpelayanan', 'desc')
                         ->first();
 
+
                     $jmlPengurang =(float)$qtyJumlah;
                     DB::table('stokprodukdetail_t')
                         ->where('kdprofile', $idProfile)
-                        ->where('norec',$GetNorec->norec)
+                        ->where('norec',$GetNorec['norec'])
                         ->sharedLock()
                         ->increment('qtyproduk', (float)$jmlPengurang);
 
@@ -479,7 +481,7 @@ class PelayananResepController extends ApiController
                 $antrianApotik = AntrianApotik::where('noresep',$newSR->noresep)->where('kdprofile', $idProfile)->delete();
             }
 
-            $newPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->delete();
+            $newPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->where('isobat', true)->delete();
 //            $ppKronis = PelayananPasienObatKronis::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->delete();
 
             $transStatus = 'true';
@@ -2045,7 +2047,10 @@ class PelayananResepController extends ApiController
             $newSR->ruanganfk = $r_SR['ruanganfk'];
             $newSR->status = 0;//$r_SR['status'];;
             $newSR->tglresep =  $r_SR['tglresep'];//->format('Y-m-d H:i:s');
-
+            if(isset($r_SR['cito'])){
+                $newSR->cito =  $r_SR['cito'];
+            }
+            
             $newSR->save();
             $norec_SR = $newSR->norec;
             $dokterPenulis =  $newSR->penulisresepfk;
@@ -2279,12 +2284,13 @@ class PelayananResepController extends ApiController
                 //$HapusPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->get();
                 $HapusPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)
                 ->whereNull('status')
+                ->where('isobat', true)
                 ->get();
                 foreach ($HapusPP as $pp){
                     $HapusPPD = PelayananPasienDetail::where('pelayananpasien', $pp['norec'])->where('kdprofile', $idProfile)->delete();
                     $HapusPPP = PelayananPasienPetugas::where('pelayananpasien', $pp['norec'])->where('kdprofile', $idProfile)->delete();
                 }
-                $HpsPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->whereNull('status')->delete();
+                $HpsPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->whereNull('status')->where('isobat', true)->delete();
             }
 
             //## PelayananPasien
@@ -2752,10 +2758,10 @@ class PelayananResepController extends ApiController
         DB::beginTransaction();
         $r_SR=$request['strukresep'];
         try {
-            $dataPPOK = PelayananPasienObatKronis::where('strukresepfk', $request['norecresep'])->first();
+//             $dataPPOK = PelayananPasienObatKronis::where('strukresepfk', $request['norecresep'])->first();
 //            return $this->respond($dataPPOK);
             foreach ($request['pelayananpasienobatkronis'] as $item) {
-                if ($dataPPOK == null){
+//                 if ($dataPPOK == null){
                     $newPP = new PelayananPasienObatKronis();
                     $norecPPOK= $newPP->generateNewId();
                     $newPP->norec = $norecPPOK;
@@ -2791,44 +2797,44 @@ class PelayananResepController extends ApiController
                     $newPP->jasa = $item['jasa'];
                     $newPP->isobat = 1;
                     $newPP->save();
-                }else{
-                    $delPP = PelayananPasienObatKronis::where('strukresepfk', $request['norecresep'])->delete();
-                    $newPP = new PelayananPasienObatKronis();
-                    $norecPPOK= $newPP->generateNewId();
-                    $newPP->norec = $norecPPOK;
-                    $newPP->kdprofile = 0;
-                    $newPP->statusenabled = true;
-                    $qtyJumlah = $item['jumlahcetak'];
-                    $newPP->noregistrasifk = $item['noregistrasifk'];
-                    $newPP->aturanpakai = $item['aturanpakai'];
-                    if (isset($item['generik'])){
-                        $newPP->generik = $item['generik'];
-                    }
-                    $newPP->hargadiscount = $item['hargadiscount'];
-                    $newPP->hargajual = $item['hargajual'];
-                    $newPP->hargasatuan = $item['hargasatuan'];
-                    $newPP->jenisobatfk = $item['jenisobatfk'];
-                    $newPP->jumlah = $qtyJumlah;
-                    $newPP->kelasfk = $item['kelasfk'];
-                    $newPP->kdkelompoktransaksi = 1;
-                    $newPP->produkfk = $item['produkfk'];
-                    if (isset($item['routefk'])){
-                        $newPP->routefk = $item['routefk'];
-                    }
-                    $newPP->stock = $item['stock'];
-                    $newPP->tglpelayanan = $r_SR['tglresep'];
-                    $newPP->harganetto = $item['harganetto'];
-                    $newPP->jeniskemasanfk = $item['jeniskemasanfk'];
-                    $newPP->rke = $item['rke'];
-                    $newPP->strukresepfk = $request['norecresep'];
-                    $newPP->satuanviewfk = $item['satuanviewfk'];
-                    $newPP->nilaikonversi = $item['nilaikonversi'];
-                    $newPP->strukterimafk = $item['nostrukterimafk'];
-                    $newPP->dosis = $item['dosis'];
-                    $newPP->jasa = $item['jasa'];
-                    $newPP->isobat = 1;
-                    $newPP->save();
-                }
+//                 }else{
+//                     $delPP = PelayananPasienObatKronis::where('strukresepfk', $request['norecresep'])->delete();
+//                     $newPP = new PelayananPasienObatKronis();
+//                     $norecPPOK= $newPP->generateNewId();
+//                     $newPP->norec = $norecPPOK;
+//                     $newPP->kdprofile = 0;
+//                     $newPP->statusenabled = true;
+//                     $qtyJumlah = $item['jumlahcetak'];
+//                     $newPP->noregistrasifk = $item['noregistrasifk'];
+//                     $newPP->aturanpakai = $item['aturanpakai'];
+//                     if (isset($item['generik'])){
+//                         $newPP->generik = $item['generik'];
+//                     }
+//                     $newPP->hargadiscount = $item['hargadiscount'];
+//                     $newPP->hargajual = $item['hargajual'];
+//                     $newPP->hargasatuan = $item['hargasatuan'];
+//                     $newPP->jenisobatfk = $item['jenisobatfk'];
+//                     $newPP->jumlah = $qtyJumlah;
+//                     $newPP->kelasfk = $item['kelasfk'];
+//                     $newPP->kdkelompoktransaksi = 1;
+//                     $newPP->produkfk = $item['produkfk'];
+//                     if (isset($item['routefk'])){
+//                         $newPP->routefk = $item['routefk'];
+//                     }
+//                     $newPP->stock = $item['stock'];
+//                     $newPP->tglpelayanan = $r_SR['tglresep'];
+//                     $newPP->harganetto = $item['harganetto'];
+//                     $newPP->jeniskemasanfk = $item['jeniskemasanfk'];
+//                     $newPP->rke = $item['rke'];
+//                     $newPP->strukresepfk = $request['norecresep'];
+//                     $newPP->satuanviewfk = $item['satuanviewfk'];
+//                     $newPP->nilaikonversi = $item['nilaikonversi'];
+//                     $newPP->strukterimafk = $item['nostrukterimafk'];
+//                     $newPP->dosis = $item['dosis'];
+//                     $newPP->jasa = $item['jasa'];
+//                     $newPP->isobat = 1;
+//                     $newPP->save();
+//                 }
 
                 $ruanganfk= $request['strukresep']['ruanganfk'];
 
@@ -3170,6 +3176,7 @@ class PelayananResepController extends ApiController
     }
 
     public function getLaporanPenjualanObatDetail(Request $request){
+        ini_set('max_execution_time', 6000);
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal= $request['tglAwal'];
         $tglAkhir= $request['tglAkhir'];
@@ -3178,6 +3185,7 @@ class PelayananResepController extends ApiController
         $ruid='';
         $sudahbayar= '';
         $rajalRanap= '';
+        $isobat= '';
         $rajalRanapObatBebas= '';
         $namaItem = '';
         $namaPasienText = '';
@@ -3213,6 +3221,11 @@ class PelayananResepController extends ApiController
         if(isset( $request['rajalRanap'])&&  $request['rajalRanap']=='2'){//ranap
             $rajalRanap = "and ru1.objectdepartemenfk = 16 ";
             $rajalRanapObatBebas = "and ru.objectdepartemenfk = 16";//ini ga mungkin terjadi
+        }
+        if(isset($request['isobat']) && $request['isobat']!="" && $request['isobat']!="undefined" && $request['isobat']==true){
+            $isobat = ' and pp.isobat='.$request['isobat'];
+        } else if(isset($request['isobat']) && $request['isobat']!="" && $request['isobat']!="undefined" && $request['isobat']==false){
+            $isobat = ' and pp.isobat is null';
         }
         
 
@@ -3291,14 +3304,14 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
 */
         $data = DB::select(DB::raw("SELECT
         *
-    FROM
+        FROM
         (
             SELECT
-                *, ROW_NUMBER () OVER (PARTITION BY noresep, namaproduk, rke) NUMBER
+                *, ROW_NUMBER () OVER (PARTITION BY noresep, namaproduk, rke, jumlah, norec) NUMBER
             FROM
                 (
                     SELECT
-                        tglresep,
+                        tglresep, norec,
                         CASE
                     WHEN inputtindakan IS NOT NULL THEN
                         inputtindakan
@@ -3381,7 +3394,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 TO_CHAR(
                     pp.tglpelayanan,
                     'DD-MM-YYYY'
-                ) AS tglresep,
+                ) AS tglresep, pp.norec,
                 cte.namapegawaiinput inputtindakan,
                 cter.namapegawaiinput inputresep,
                 CASE
@@ -3465,10 +3478,11 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                         $namaItem    
                         $namaItemText
                         $namaPasienText
+                        $isobat
 
                         UNION ALL
                         
-                        SELECT TO_CHAR(sp.tglstruk, 'DD-MM-YYYY') AS tglresep, cte.namapegawaiinput inputtindakan, '' inputresep,
+                        SELECT TO_CHAR(sp.tglstruk, 'DD-MM-YYYY') AS tglresep, pp.norec, cte.namapegawaiinput inputtindakan, '' inputresep,
                         dep.namadepartemen AS departemen,ru.namaruangan namaruanganpasien,
                                ru.namaruangan AS gudang,
                                --pg1.namalengkap as user,
@@ -3511,6 +3525,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                         $namaItem    
                         $namaItemText
                         $namaPasienTextSP
+                        $isobat
                  ) AS x
 			) AS C
 	    ) AS e

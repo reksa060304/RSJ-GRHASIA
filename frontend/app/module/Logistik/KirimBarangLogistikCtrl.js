@@ -169,7 +169,7 @@ define(['initialize'], function (initialize) {
                 /* info stok all ruangan */
                 medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
                     .then(function (e) {
-                        $scope.item.namaProduks = $scope.item.produk.namaproduk;
+                        $scope.item.namaProduks = $scope.item.produk.namaexternal;
                         for (var i = 0; i < e.data.infostok.length; i++) {
                             e.data.infostok[i].no = i + 1
                         }
@@ -432,7 +432,7 @@ define(['initialize'], function (initialize) {
                             data.asalproduk = $scope.item.asal.asalproduk
                             data.produkfk = $scope.item.produk.id
                             data.kdproduk = $scope.item.produk.kdproduk
-                            data.namaproduk = $scope.item.produk.namaproduk
+                            data.namaproduk = $scope.item.produk.namaexternal
                             data.nilaikonversi = $scope.item.nilaiKonversi
                             data.satuanstandarfk = $scope.item.satuan.ssid
                             data.satuanstandar = $scope.item.satuan.satuanstandar
@@ -479,7 +479,7 @@ define(['initialize'], function (initialize) {
                         asalproduk: $scope.item.asal.asalproduk,
                         produkfk: $scope.item.produk.id,
                         kdproduk: $scope.item.produk.kdproduk,
-                        namaproduk: $scope.item.produk.namaproduk,
+                        namaproduk: $scope.item.produk.namaexternal,
                         nilaikonversi: $scope.item.nilaiKonversi,
                         satuanstandarfk: $scope.item.satuan.ssid,
                         satuanstandar: $scope.item.satuan.satuanstandar,

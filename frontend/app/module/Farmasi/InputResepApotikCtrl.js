@@ -23,6 +23,7 @@ define(['initialize'], function (initialize) {
             $scope.showTotalSetelah = false
             $scope.showChkPaket = true
             $scope.showChkHibah = true
+            $scope.discito = false
             var statusTambah = true
             var pegawaiUser = {}
             var norec_apd = '';
@@ -44,6 +45,17 @@ define(['initialize'], function (initialize) {
             var dataPaket = [];
             var dataPaketGrid = [];
             $scope.showGridKronis = false
+            var chacePeriode = cacheHelper.get('InputResepApotikCtrl');
+            if(chacePeriode[17] === "✔" || chacePeriode[17] === "✘"){
+                $scope.discito = true
+            } else if(chacePeriode[17] == null){
+                $scope.discito = false
+            } else if(chacePeriode[17] != "✔"){
+                $scope.discito = false
+            } else{
+                $scope.discito = false
+            }
+            console.log(chacePeriode)
             // $scope.item.tglAwal = $scope.now;
             // $scope.item.tglAkhir = $scope.now;
             //* SKRINING */
@@ -298,6 +310,11 @@ define(['initialize'], function (initialize) {
                     $scope.item.AlergiYa = chacePeriode[13]
                     norecResep = chacePeriode[14]
                     $scope.item.penulisResep = chacePeriode[15]
+                    if(chacePeriode[17] == '✔'){
+                        $scope.item.cito = true
+                    } else{
+                        $scope.item.cito = false
+                    }
                     $scope.item.tglAwal = new Date($scope.now);
                     $scope.item.resep = '-';
                     loadAlamat();
@@ -1858,7 +1875,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             retur: '-',
                             isobatalkes: isPemakaianObatAlkes,
                             isreseppulang: checkRP != undefined ? checkRP : null,
-                            ispaketpelayanan : $scope.item.paketPelayanan
+                            ispaketpelayanan : $scope.item.paketPelayanan,
+                            cito : $scope.item.cito
                         }
                         var objSave =
                         {

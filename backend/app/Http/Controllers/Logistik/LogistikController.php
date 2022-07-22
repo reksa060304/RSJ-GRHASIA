@@ -190,12 +190,12 @@ class LogistikController extends ApiController{
             ->JOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
-            ->select('pr.id','pr.kdproduk as kdsirs','pr.namaproduk','ss.id as ssid','ss.satuanstandar')
+            ->select('pr.id','pr.kdproduk as kdsirs','pr.namaproduk','ss.id as ssid','ss.satuanstandar', 'pr.namaexternal')
             ->where('pr.statusenabled',true)
             ->where('pr.kdprofile', $idProfile)
 //            ->where('jp.id',97)
             ->where('spd.qtyproduk','>',0)
-            ->groupBy('pr.id','pr.kdproduk','pr.namaproduk','ss.id','ss.satuanstandar')
+            ->groupBy('pr.id','pr.kdproduk','pr.namaproduk','ss.id','ss.satuanstandar', 'pr.namaexternal')
             ->orderBy('pr.namaproduk')
             ->get();
 
@@ -223,6 +223,7 @@ class LogistikController extends ApiController{
             $dataProdukResult[]=array(
                 'id' =>   $item->id,
                 'namaproduk' =>   $item->namaproduk,
+                'namaexternal' =>   $item->namaexternal,
                 'kdsirs' => $item->kdsirs,
                 'kdproduk' => $item->kdsirs,
                 'ssid' =>   $item->ssid,

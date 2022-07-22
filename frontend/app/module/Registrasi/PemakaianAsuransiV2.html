@@ -646,6 +646,56 @@
             </div>
 
         </div>
+        <div kendo-window="popupKonsul" k-title="'Konsul'" k-width="1200" k-height="400" k-visible="false"
+            k-on-open="win2visible = true" k-on-close="win2visible = false">
+            <div class="panel panel-default container_12" style="padding: 0px 10px;">
+                <div class="grid_12 pull-right">
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="Ruangan Konsul"></label>
+                        </div>
+                        <div class="clear"></div>
+        
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruanganKonsul"
+                                k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listRuanganDokter" k-on-change='getKelas(konsul.ruangan)' />
+                        </div>
+                    </div>
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="Nama Dokter"></label>
+                        </div>
+                        <div class="clear"></div>
+        
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.namaDokterKonsul"
+                                k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listDokter" />
+                        </div>
+                    </div>
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="Kelas"></label>
+                        </div>
+                        <div class="clear"></div>
+        
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.kelasKonsul"
+                                k-data-text-field="'namakelas'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listKelas" />
+                        </div>
+                    </div>
+                    <div class="grid_1" style="margin-top: 11px">
+                        <button class="btnTemplate1" style="margin-left: 0;" ng-click="simpanKonsul()">Simpan</button>
+                    </div>
+                    <div class="grid_1" style="margin-top: 11px; margin-left: 10px;">
+                        <button class="btnTemplate1" style="margin-left: 0;" ng-click="batalKonsul()">Batal</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
         <div kendo-window="popUpRSPRI" k-title="'Rencana Kontrol/SPRI'" k-width="1300" k-visible="false"
             k-on-open="win2visible = true" k-on-close="win2visible = false">
             <div class="panel panel-default container_12" style="padding: 0px 10px;">

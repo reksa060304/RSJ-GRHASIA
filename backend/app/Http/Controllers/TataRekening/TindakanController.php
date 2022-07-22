@@ -486,7 +486,8 @@ class TindakanController extends ApiController
             DB::rollBack();
             $result = array(
                 'status' => 400,
-                'message'  => $transMessage,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
                 'dataPP' => $PelPasien,
 //                'dataPPP' => $PelPasienPetugas,
 //                'dataPPD' => $PelPasienDetail,

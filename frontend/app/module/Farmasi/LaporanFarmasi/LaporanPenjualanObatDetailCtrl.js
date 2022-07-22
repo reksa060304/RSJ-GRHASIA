@@ -27,6 +27,10 @@ define(['initialize'], function (initialize) {
                         { id: 1, names: "Rawat Jalan" },
                         { id: 2, names: "Rawat Inap"}
                     ];
+                    $scope.listIsObat = [
+                        { id: 1, isobat: true },
+                        { id: 2, isobat: false}
+                    ];
                     $scope.namaLengkap = medifirstService.getPegawaiLogin();
                     // init();
                 });
@@ -72,12 +76,18 @@ define(['initialize'], function (initialize) {
                   namaPasienText = "&namaPasienText=" + $scope.item.namaPasienText;
                 }
 
+                var isobat = "";
+                if ($scope.item.isObat != undefined) {
+                    isobat = $scope.item.isObat.isobat
+                }
+
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("farmasi/get-laporan-penjualan-obat-detail?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
                     "&rajalRanap=" + rajalRanap +
+                    "&isobat=" + isobat +
                     dok + kp + ru + namaItem + namaItemText + namaPasienText
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
