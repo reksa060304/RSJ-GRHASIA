@@ -2843,7 +2843,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-pasien','Report\ReportController@cetakPasien');
         Route::get('report/cetak-cppt','Report\ReportController@cetakCPPT');
         Route::get('report/cetak-cppt-ranap','Report\ReportController@cetakCPPTRanap');
-   
+        Route::get('report/get-cetak-suratkgb', 'Report\ReportController@cetakKGB');
         Route::get('report/cetak-catatan-klinik','Report\ReportController@cetakCatatanKlinik');
         Route::get('report/cetak-resume-medis2','Report\ReportController@cetakResume2');
 

@@ -116,10 +116,22 @@
 									</legend>
 									<div class="grid_12">
 										<div class="grid_4">
-											<div class="grid_6">
-												<label c-label item="item" c-label-text="Tanggal Masuk"></label>
+											<!-- <div class="grid_6">
+												<label c-label item="item" c-label-text="Tanggal Mulai"></label>
 												<input style="width: 100%" k-ng-model="item.tanggalmulai" kendo-datetimepicker
 													placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd HH:mm'" />
+											</div> -->
+											<div class="grid_6">
+												<div class="grid_12">
+													<label c-label item="item">Institusi Pendidikan</label>
+													<input c-text-box type="input" filter="" class="k-textbox" ng-model="itemMa.institusipendidikan" />
+												</div>
+											</div>
+											<div class="grid_6">
+												<div class="grid_12">
+													<label c-label item="item">Mahasiswa</label>
+													<input c-text-box type="input" filter="" class="k-textbox" ng-model="itemMa.mahasiswa" />
+												</div>
 											</div>
 											<div class="grid_6">
 												<label c-label item="item" c-label-text="Jenis Kegiatan"></label>
@@ -143,8 +155,9 @@
 									</div>
 								</fieldset>
 								<div class="grid_12" style="margin-top: 10px;">
-									<kendo-grid k-data-source="DataMahasiswaAktif" k-selectable="'row'" k-options="columnMahasiswaAktif"
-										k-ng-model="current" ng-click="kl(current)">
+									<kendo-grid id="kGrid" k-data-source="DataMahasiswaAktif"
+										k-options="columnMahasiswaAktif"
+										k-ng-model="current">
 									</kendo-grid>
 								</div>
 								<div class="grid_12" style="margin-top:60px">

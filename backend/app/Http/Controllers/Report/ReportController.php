@@ -4248,65 +4248,34 @@ public function suratBuktiPengembalian(Request $request)
             $qterhadap =  ' and kb.objecttahapfk =  ' . $request['terhadap'];
         }
         $sebelum = \DB::select(DB::raw("
-        SELECT
-            j.*,
-            K.apbd AS kapbd,
-            K.jasalayanan as kjasalayanan,
-            K.total as ktotal,
-            k.tahap tahapsesudah
+        SELECT j.*, K.apbd AS kapbd, K.jasalayanan as kjasalayanan, K.total as ktotal, k.tahap tahapsesudah
         FROM
             (
             SELECT
                 * 
             FROM
                 (
-                SELECT
-                    y.kegiatan,
-                    y.tahap,
-                    y.kode,
-                    y.div,
-                    SUM ( y.apbd ) AS apbd,
-                    SUM ( y.jasalayanan ) AS jasalayanan,
-                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                SELECT y.kegiatan, y.tahap, y.kode, y.div, SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan, SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
                 FROM
                     (
-                    SELECT
-                        x.kegiatan,
-                        x.subkegiatan,
-                        x.tahap,
-                        x.kode,
-                        x.div,
+                    SELECT x.kegiatan, x.subkegiatan, x.tahap, x.kode, x.div,
                     CASE
-                            
-                            WHEN x.id_asalproduk = 15 THEN
-                            x.subtotal ELSE 0 
+                        WHEN x.id_asalproduk = 15 THEN x.subtotal 
+                        ELSE 0 
                         END AS apbd,
                     CASE
-                            
                             WHEN x.id_asalproduk = 18 THEN
                             subtotal ELSE 0 
                         END AS jasalayanan 
                     FROM
                         (
-                        SELECT
-                            kmss.keterangan kegiatan,
-                            ap.ID AS id_asalproduk,
-                            kms.keterangan subkegiatan,
-                            kmss.kode,
-                            kmss.div,
-                            km.keterangan subsubkegiatan,
-                            ta.tahap,
-                            ta.ID,
-                            ap.asalproduk,
-                            SUM ( kb.subtotal ) subtotal 
+                        SELECT kmss.keterangan kegiatan, ap.ID AS id_asalproduk, kms.keterangan subkegiatan, kmss.kode, kmss.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, ap.asalproduk, SUM ( kb.subtotal ) subtotal 
                         FROM
                             kegiatananggaran_m km
-                            INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
-                            AND kms.div = 3
-                            LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
-                            AND kmss.div = 2
-                            INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
-                            ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                            INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' AND kms.div = 3
+                            LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' AND kmss.div = 2
+                            INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.ID 
+                            INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
                             LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
                         WHERE
                             km.kdprofile = 30 
@@ -4318,92 +4287,35 @@ public function suratBuktiPengembalian(Request $request)
                                 km.keterangan 
                             FROM
                                 kegiatananggaran_m km
-                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
-                                AND kms.div = 3
-                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
-                                AND kmss.div = 2
-                                INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
-                                ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' AND kms.div = 3
+                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' AND kmss.div = 2
+                                INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
                                 LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
                             WHERE
                                 km.kdprofile = 30 
                                 AND km.statusenabled = TRUE 
                                 $qtahap
                                 and km.tahun = '$request[tahun]'
-                            GROUP BY
-                                kms.keterangan,
-                                kmss.keterangan,
-                                kmss.kode,
-                                ap.asalproduk,
-                                kmss.div,
-                                km.keterangan,
-                                ta.tahap,
-                                ta.ID 
+                            GROUP BY kms.keterangan, kmss.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 
                             ) 
-                        GROUP BY
-                            kms.keterangan,
-                            kmss.keterangan,
-                            kmss.kode,
-                            ap.asalproduk,
-                            kmss.div,
-                            km.keterangan,
-                            ta.tahap,
-                            ta.ID,
-                            ap.ID 
-                        ) AS x 
-                    GROUP BY
-                        x.kegiatan,
-                        x.subkegiatan,
-                        x.tahap,
-                        x.asalproduk,
-                        x.subtotal,
-                        x.kode,
-                        x.div,
-                        x.id_asalproduk 
-                    ) AS y 
-                GROUP BY
-                    y.kegiatan,
-                    y.tahap,
-                    y.kode,
-                    y.div UNION ALL
-                SELECT
-                    y.subkegiatan,
-                    y.tahap,
-                    y.kode,
-                    y.div,
-                    SUM ( y.apbd ) AS apbd,
-                    SUM ( y.jasalayanan ) AS jasalayanan,
-                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                        GROUP BY kms.keterangan, kmss.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID, ap.ID 
+                        ) AS x GROUP BY x.kegiatan, x.subkegiatan, x.tahap, x.asalproduk, x.subtotal, x.kode, x.div, x.id_asalproduk 
+                    ) AS y GROUP BY y.kegiatan, y.tahap, y.kode, y.div UNION ALL
+                SELECT y.subkegiatan, y.tahap, y.kode, y.div, SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan, SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
                 FROM
                     (
-                    SELECT
-                        x.kegiatan,
-                        x.subkegiatan,
-                        x.tahap,
-                        x.kode,
-                        x.div,
+                    SELECT x.kegiatan, x.subkegiatan, x.tahap, x.kode, x.div,
                     CASE
-                            
                             WHEN x.id_asalproduk = 15 THEN
                             x.subtotal ELSE 0 
                         END AS apbd,
                     CASE
-                            
                             WHEN x.id_asalproduk = 18 THEN
                             subtotal ELSE 0 
                         END AS jasalayanan 
                     FROM
                         (
-                        SELECT
-                            ap.ID AS id_asalproduk,
-                            kmss.keterangan kegiatan,
-                            kms.keterangan subkegiatan,
-                            kms.kode,
-                            kms.div,
-                            km.keterangan subsubkegiatan,
-                            ta.tahap,
-                            ta.ID,
-                            SUM ( kb.subtotal ) subtotal 
+                        SELECT ap.ID AS id_asalproduk, kmss.keterangan kegiatan, kms.keterangan subkegiatan, kms.kode, kms.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, SUM ( kb.subtotal ) subtotal 
                         FROM
                             kegiatananggaran_m km
                             INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
@@ -4435,42 +4347,13 @@ public function suratBuktiPengembalian(Request $request)
                                 AND km.statusenabled = TRUE 
                                 $qtahap
                                 and km.tahun = '$request[tahun]' 
-                            GROUP BY
-                                kms.keterangan,
-                                kmss.keterangan,
-                                kms.kode,
-                                ap.asalproduk,
-                                kms.div,
-                                km.keterangan,
-                                ta.tahap,
-                                ta.ID,
-                                ap.ID 
+                            GROUP BY kms.keterangan, kmss.keterangan, kms.kode, ap.asalproduk, kms.div, km.keterangan, ta.tahap, ta.ID, ap.ID 
                             ) 
-                        GROUP BY
-                            kms.keterangan,
-                            kmss.keterangan,
-                            kms.kode,
-                            ap.asalproduk,
-                            kms.div,
-                            km.keterangan,
-                            ta.tahap,
-                            ta.ID,
-                            ap.ID 
+                        GROUP BY kms.keterangan, kmss.keterangan, kms.kode, ap.asalproduk, kms.div, km.keterangan, ta.tahap, ta.ID, ap.ID 
                         ) AS x 
-                    GROUP BY
-                        x.kegiatan,
-                        x.subkegiatan,
-                        x.tahap,
-                        x.id_asalproduk,
-                        x.subtotal,
-                        x.kode,
-                        x.div 
+                    GROUP BY x.kegiatan, x.subkegiatan, x.tahap, x.id_asalproduk, x.subtotal, x.kode, x.div 
                     ) AS y 
-                GROUP BY
-                    y.subkegiatan,
-                    y.tahap,
-                    y.kode,
-                    y.div 
+                GROUP BY y.subkegiatan, y.tahap, y.kode, y.div 
                 ) AS A 
             ORDER BY
                 A.kode 
@@ -4480,43 +4363,21 @@ public function suratBuktiPengembalian(Request $request)
                 * 
             FROM
                 (
-                SELECT
-                    y.kegiatan AS kegiatan,
-                    y.tahap,
-                    y.kode,
-                    y.div,
-                    SUM ( y.apbd ) AS apbd,
-                    SUM ( y.jasalayanan ) AS jasalayanan,
-                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                SELECT y.kegiatan AS kegiatan, y.tahap, y.kode, y.div, SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan, SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
                 FROM
                     (
-                    SELECT
-                        x.kegiatan,
-                        x.tahap,
-                        x.kode,
-                        x.div,
+                    SELECT x.kegiatan, x.tahap, x.kode, x.div,
                     CASE
-                            
                             WHEN x.id_asalproduk = 15 THEN
                             x.subtotal ELSE 0 
                         END AS apbd,
                     CASE
-                            
                             WHEN x.id_asalproduk = 18 THEN
                             subtotal ELSE 0 
                         END AS jasalayanan 
                     FROM
                         (
-                        SELECT
-                            kmss.keterangan kegiatan,
-                            kmss.kode,
-                            kmss.div,
-                            km.keterangan subsubkegiatan,
-                            ta.tahap,
-                            ta.ID,
-                            ap.ID AS id_asalproduk,
-                            ap.asalproduk,
-                            SUM ( kb.subtotal ) subtotal 
+                        SELECT kmss.keterangan kegiatan, kmss.kode, kmss.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, ap.ID AS id_asalproduk, ap.asalproduk, SUM ( kb.subtotal ) subtotal 
                         FROM
                             kegiatananggaran_m km
                             INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
@@ -4548,76 +4409,25 @@ public function suratBuktiPengembalian(Request $request)
                                 AND km.statusenabled = TRUE 
                                 $qterhadap
                                 and km.tahun = '$request[tahun]'
-                            GROUP BY
-                                kmss.keterangan,
-                                kmss.kode,
-                                ap.asalproduk,
-                                kmss.div,
-                                km.keterangan,
-                                ta.tahap,
-                                ta.ID 
+                            GROUP BY kmss.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 
                             ) 
-                        GROUP BY
-                            kmss.keterangan,
-                            kmss.kode,
-                            ap.asalproduk,
-                            ap.ID,
-                            kmss.div,
-                            km.keterangan,
-                            ta.tahap,
-                            ta.ID 
+                        GROUP BY kmss.keterangan, kmss.kode, ap.asalproduk, ap.ID, kmss.div, km.keterangan, ta.tahap, ta.ID 
                         ) AS x 
-                    GROUP BY
-                        x.kegiatan,
-                        x.tahap,
-                        x.asalproduk,
-                        x.subtotal,
-                        x.kode,
-                        x.div,
-                        x.id_asalproduk 
-                    ) AS y 
-                GROUP BY
-                    y.kegiatan,
-                    y.tahap,
-                    y.kode,
-                    y.div UNION ALL
-                SELECT
-                    y.subkegiatan AS kegiatan,
-                    y.tahap,
-                    y.kode,
-                    y.div,
-                    SUM ( y.apbd ) AS apbd,
-                    SUM ( y.jasalayanan ) AS jasalayanan,
-                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                    GROUP BY x.kegiatan, x.tahap, x.asalproduk, x.subtotal, x.kode, x.div, x.id_asalproduk 
+                    ) AS y GROUP BY y.kegiatan, y.tahap, y.kode, y.div UNION ALL
+                SELECT y.subkegiatan AS kegiatan, y.tahap, y.kode, y.div, SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan, SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
                 FROM
                     (
-                    SELECT
-                        x.subkegiatan,
-                        x.tahap,
-                        x.kode,
-                        x.div,
+                    SELECT x.subkegiatan, x.tahap, x.kode, x.div,
                     CASE
-                            
-                            WHEN x.id_asalproduk = 15 THEN
-                            x.subtotal ELSE 0 
+                            WHEN x.id_asalproduk = 15 THEN x.subtotal ELSE 0 
                         END AS apbd,
                     CASE
-                            
-                            WHEN x.id_asalproduk = 18 THEN
-                            subtotal ELSE 0 
+                            WHEN x.id_asalproduk = 18 THEN subtotal ELSE 0 
                         END AS jasalayanan 
                     FROM
                         (
-                        SELECT
-                            kms.keterangan subkegiatan,
-                            kms.kode,
-                            kms.div,
-                            km.keterangan subsubkegiatan,
-                            ta.tahap,
-                            ta.ID,
-                            ap.ID AS id_asalproduk,
-                            ap.asalproduk,
-                            SUM ( kb.subtotal ) subtotal 
+                        SELECT kms.keterangan subkegiatan, kms.kode, kms.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, ap.ID AS id_asalproduk, ap.asalproduk, SUM ( kb.subtotal ) subtotal 
                         FROM
                             kegiatananggaran_m km
                             INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
@@ -4637,58 +4447,63 @@ public function suratBuktiPengembalian(Request $request)
                                 km.keterangan 
                             FROM
                                 kegiatananggaran_m km
-                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
-                                AND kms.div = 3
-                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
-                                AND kmss.div = 2
+                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' AND kms.div = 3
+                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' AND kmss.div = 2
                                 INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
                                 ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
                                 LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
-                            WHERE
-                                km.kdprofile = 30 
-                                AND km.statusenabled = TRUE 
-                                $qterhadap
-                                and km.tahun = '$request[tahun]'
-                            GROUP BY
-                                kms.keterangan,
-                                kmss.kode,
-                                ap.asalproduk,
-                                kmss.div,
-                                km.keterangan,
-                                ta.tahap,
-                                ta.ID 
-                            ) 
-                        GROUP BY
-                            kms.keterangan,
-                            kms.kode,
-                            ap.asalproduk,
-                            ap.ID,
-                            kms.div,
-                            km.keterangan,
-                            ta.tahap,
-                            ta.ID 
-                        ) AS x 
-                    GROUP BY
-                        x.subkegiatan,
-                        x.tahap,
-                        x.asalproduk,
-                        x.subtotal,
-                        x.kode,
-                        x.div,
-                        x.id_asalproduk 
-                    ) AS y 
-                GROUP BY
-                    y.subkegiatan,
-                    y.tahap,
-                    y.kode,
-                    y.div 
-                ) AS A 
-            ORDER BY
-            A.kode 
-            ) AS K ON j.kegiatan = K.kegiatan
+                            WHERE km.kdprofile = 30  AND km.statusenabled = TRUE  
+                            $qterhadap 
+                            and km.tahun = '$request[tahun]'
+                            GROUP BY kms.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 
+                            ) GROUP BY kms.keterangan, kms.kode, ap.asalproduk, ap.ID, kms.div, km.keterangan, ta.tahap, ta.ID 
+                        ) AS x GROUP BY x.subkegiatan, x.tahap, x.asalproduk, x.subtotal, x.kode, x.div, x.id_asalproduk 
+                    ) AS y GROUP BY y.subkegiatan, y.tahap, y.kode, y.div 
+                ) AS A ORDER BY A.kode ) AS K ON j.kegiatan = K.kegiatan
         "));
         $pageWidth = 1200;
         //return $this->respond($result);
         return view('report.spj.cetakrekapanggaransumberdanasebelumsesudah',compact('sebelum', 'pageWidth'));
     }   
+
+    public function cetakKGB(Request $request)
+    {
+        $kdProfile = (int) $request['kdprofile'];
+        $data = \DB::select(DB::raw(""));
+        $detail = [];
+        $id=0;
+        $value="";
+        foreach ($main as $m) {
+        $id=0;
+        $value="";
+            // foreach ($data as $d) {
+            //     if ($m->id == $d->id) {
+            //         $id = $m->id;
+            //         if ($d->type == 'datetime') {
+            //             $value=$this->tanggal_indonesia(date('Y-m-d',strtotime($d->value)));
+            //         }else{
+            //             $value = $d->value;
+            //         }
+            //         break;
+            //     }else {
+            //         $id = $m->id;
+            //         $value = "";
+            //     }
+                
+            // }
+
+            // $detail[]= array(
+            //     "id"=> $id,
+            //     "value"=>$value,
+            //     "type"=> $m->type
+            // );
+        }
+
+    // dd($detail);
+        $pageWidth = 950;
+        // var_dump($detail);
+        return view('report.kgb'
+        // , compact('data','pageWidth')
+    );
+    }
 }

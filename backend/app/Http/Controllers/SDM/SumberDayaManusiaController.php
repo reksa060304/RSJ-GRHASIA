@@ -6133,8 +6133,16 @@ public function daftarKenaikanGajiBerkala(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $jenisKegiatanTemp = "";
+        $institusiTemp = "";
+        $mahasiswaTemp = "";
         if(isset($request['jeniskegiatan'])){
             $jenisKegiatanTemp = "and spe.objectdiklatkategorifk =". $request['jeniskegiatan'];
+        }
+        if(isset($request['institusipendidikan'])){
+            $institusiTemp = " and spe.institusipendidikan ilike '%$request[institusipendidikan]%'" ;
+        }
+        if(isset($request['mahasiswa'])){
+            $mahasiswaTemp = " and spd.nama ilike '%$request[mahasiswa]%'" ;
         }
 
         $data = \DB::select(DB::raw(
@@ -6156,8 +6164,12 @@ public function daftarKenaikanGajiBerkala(Request $request){
             WHERE
             spd.kdprofile = 30 and spd.statusenabled = true
             $jenisKegiatanTemp
-            and spe.tanggalmulai >= '$request[tanggalmulai]' and
-            spe.tanggalselesai > CURRENT_DATE
+            $institusiTemp
+            $mahasiswaTemp
+            -- and spe.tanggalmulai::date >= '$request[tanggalmulai]'::date 
+            -- or spe.tanggalselesai <= '$request[tanggalselesai]'::date
+            and spe.tanggalselesai > CURRENT_DATE
+            order by spe.tanggalmulai asc, spe.institusipendidikan asc
             "
         ));
         return $this->respond($data,'Fizi');

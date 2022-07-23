@@ -2,9 +2,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     var baseTransaksi = configuration.baseApiBackend;
 
-    initialize.controller('DaftarPenelitianEksternalCtrl', ['$scope', '$state', 'DateHelper', 'CacheHelper', 'MedifirstService', 'ModelItem','$mdDialog',
-        function ($scope, $state, dateHelper, cacheHelper, medifirstService, ModelItem, $mdDialog) {
+    initialize.controller('DaftarPenelitianEksternalCtrl', ['$scope', '$state', 'DateHelper', 'CacheHelper', 'MedifirstService', 'ModelItem', '$mdDialog', '$timeout',
+        function ($scope, $state, dateHelper, cacheHelper, medifirstService, ModelItem, $mdDialog, $timeout) {
             $scope.item = {};
+            $scope.itemMa = {};
             $scope.isRouteLoading = false;
             $scope.now = new Date();
             var cachetglawal = "";
@@ -108,51 +109,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.verif = true
                 $scope.tagih = true
                 
-                $scope.columnMahasiswaAktif = {
-                    toolbar: ["excel"],
-                    excel: {
-                        fileName: "Data Mahasiswa Aktif" + moment($scope.now).format('DD/MMM/YYYY'),
-                        allPages: true,
-                    },
-                    selectable: 'row',
-                    pageable: true,
-                    columns: [{
-                            "field": "no",
-                            "title": "No",
-                            "width": "20px"
-                        },
-                        {
-                            "field": "institusipendidikan",
-                            "title": "Institusi Pendidikan",
-                            "width": "100px"
-                        },
-                        {
-                            "field": "nama",
-                            "title": "Nama Lengkap",
-                            "width": "100px"
-                        },
-                        {
-                            "field": "jeniskelamin",
-                            "title": "Jenis Kelamin",
-                            "width": "40px"
-                        },
-                        {
-                            "field": "namalengkap",
-                            "title": "Pembimbing",
-                            "width": "100px"
-                        },
-                        {
-                            "field": "namaruangan",
-                            "title": "Ruangan",
-                            "width": "70px"
-                        },
-                        {
-                            "field": "periode",
-                            "title": "Periode",
-                            "width": "80px"
-                        },
-                    ]
-                }
+                
                 $scope.columnPenelitian = {
                     toolbar: ["excel"],
                     excel: {
@@ -213,6 +170,51 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         },
                     ],
                 }
+            }
+            $scope.columnMahasiswaAktif = {
+                toolbar: ["excel"],
+                excel: {
+                    fileName: "Data Mahasiswa Aktif" + moment($scope.now).format('DD/MMM/YYYY'),
+                    allPages: true,
+                },
+                selectable: 'row',
+                pageable: true,
+                columns: [{
+                        "field": "no",
+                        "title": "No",
+                        "width": "20px"
+                    },
+                    {
+                        "field": "institusipendidikan",
+                        "title": "Institusi Pendidikan",
+                        "width": "100px"
+                    },
+                    {
+                        "field": "nama",
+                        "title": "Nama Lengkap",
+                        "width": "100px"
+                    },
+                    {
+                        "field": "jeniskelamin",
+                        "title": "Jenis Kelamin",
+                        "width": "40px"
+                    },
+                    {
+                        "field": "namalengkap",
+                        "title": "Pembimbing",
+                        "width": "100px"
+                    },
+                    {
+                        "field": "namaruangan",
+                        "title": "Ruangan",
+                        "width": "70px"
+                    },
+                    {
+                        "field": "periode",
+                        "title": "Periode",
+                        "width": "80px"
+                    },
+                ]
             }
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
@@ -299,15 +301,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var tanggalmulai = "tanggalmulai=" + moment($scope.item.tanggalmulai).format('YYYY-MM-DD HH:mm');
                 var tanggalselesai = "&tanggalselesai=" + moment($scope.item.tanggalselesai).format('YYYY-MM-DD HH:mm');
                 var jeniskegiatan = "";
+                var mahasiswa = "";
+                var institusipendidikan = "";
                 if($scope.item.jeniskegiatan != undefined){
-                    var jeniskegiatan ="&jeniskegiatan="+$scope.item.jeniskegiatan.id
+                    jeniskegiatan ="&jeniskegiatan="+$scope.item.jeniskegiatan.id
                 }
-                medifirstService.get("sdm/penelitian/get-daftar-mahasiswa-aktif?"+tanggalmulai+tanggalselesai+jeniskegiatan).then(function (data) {
+                if($scope.itemMa.institusipendidikan != undefined){
+                    institusipendidikan = "&institusipendidikan=" + $scope.itemMa.institusipendidikan
+                }
+                if ($scope.itemMa.mahasiswa != undefined) {
+                    mahasiswa = "&mahasiswa=" + $scope.itemMa.mahasiswa
+                }
+                medifirstService.get("sdm/penelitian/get-daftar-mahasiswa-aktif?"+jeniskegiatan+mahasiswa+institusipendidikan).then(function (data) {
                     $scope.isRouteLoading = false;
                     var datas = data.data;
                     for (var i = 0; i < datas.length; i++) {
                         datas[i].no = i + 1
-                        datas[i].periode = moment(datas[i].tanggalmulai).format('YYYY-MM-DD ') + " S.D " + moment(datas[i].tanggalselesai).format('YYYY-MM-DD ')
+                        datas[i].periode = moment(datas[i].tanggalmulai).format('YYYY-MM-DD') + " S.D " + moment(datas[i].tanggalselesai).format('YYYY-MM-DD')
                     }
                     // $scope.idpegawai = dat.data.idpegawai[0].usereksternal;
 
@@ -601,6 +611,86 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.listJenisKegiatan = data.data.jeniskegiatan
                 })
             }
+            
+            // var timeoutPromise;
+            // $scope.$watch('item.institusipendidikan', function (newVal, oldVal) {
+            //     if (!newVal) return;
+            //     $timeout.cancel(timeoutPromise);
+            //     timeoutPromise = $timeout(function () {
+            //         if (newVal && newVal !== oldVal) {
+            //             applyFilter("institusipendidikan", newVal);
+            //         }
+            //     }, 500)
+            // });
+            // function applyFilter(filterField, filterValue) {
+                
+            //     var dataGrid = $("#kGrid").data("kendoGrid");
+            //     var currFilterObject = dataGrid.dataSource.filter();
+            //     var currentFilters = currFilterObject ? currFilterObject.filters : [];
+            //     console.log(filterField, filterValue);
+            //     if (currentFilters && currentFilters.length > 0) {
+            //         for (var i = 0; i < currentFilters.length; i++) {
+            //             if (currentFilters[i].field == filterField) {
+            //                 currentFilters.splice(i, 1);
+            //                 break;
+            //             }
+            //         }
+            //     }
+            //     if (filterField === "institusipendidikan") {
+            //         currentFilters.push({
+            //             field: filterField,
+            //             operator: "contains",
+            //             value: filterValue
+            //         });
+            //     }
+            //     // if (filterField === "objecturaianpendapatanfk") {
+            //     //     currentFilters.push({
+            //     //         field: filterField,
+            //     //         operator: "eq",
+            //     //         value: filterValue.id
+            //     //     });
+            //     // }
+            //     // if (filterField === "isperubahan") {
+            //     //     if ($scope.item.perubahans == true) {
+            //     //         currentFilters.push({
+            //     //             field: filterField,
+            //     //             operator: "eq",
+            //     //             value: true
+            //     //         });
+            //     //     }
+            //     //     if ($scope.item.nonPerubahans == true) {
+            //     //         currentFilters.push({
+            //     //             field: filterField,
+            //     //             operator: "eq",
+            //     //             value: false
+            //     //         });
+            //     //     }
+            //     // }
+            //     // if (filterField === "tahun") {
+            //     //     currentFilters.push({
+            //     //         field: filterField,
+            //     //         operator: "eq",
+            //     //         value: moment(filterValue).format('YYYY')
+
+            //     //     });
+            //     //     console.log(currentFilters);
+            //     // }
+
+            //     dataGrid.dataSource.filter({
+            //         logic: "and",
+            //         filters: currentFilters
+            //     });
+            //     var allData = dataGrid.dataSource.data();
+            //     var params = dataGrid.dataSource.filter();
+            //     var query = new kendo.data.Query(allData);
+            //     $scope.filteredData = query.filter(params).data;
+            // }
+            // $scope.resetFilters = function () {
+            //     var gridData = $("#kGrids").data("kendoGrid");
+            //     gridData.dataSource.filter({});
+            //     $scope.item = {};
+            //     $scope.filteredData = [];
+            // };
         }
     ]);
 });
