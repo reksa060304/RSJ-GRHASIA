@@ -6461,6 +6461,10 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 'nosk'=> $request['nosk'],
                 'nominal'=> $request['nominal'],
                 ]);
+
+                DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
+                    'objectgolonganfk'=> $request['objectgolonganfk']
+                ]);
                 
             }else{
                 $jns ="Ubah ";
@@ -6476,6 +6480,10 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'pejabatmenetapkan'=> $request['pejabatmenetapkan'] ,
                     'nosk'=> $request['nosk'],
                     'nominal'=> $request['nominal'],
+                ]);
+
+                DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
+                    'objectgolonganfk'=> $request['objectgolonganfk']
                 ]);
                 
             }
