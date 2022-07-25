@@ -195,6 +195,10 @@
                             <input kendo-combo-box k-ng-model="item.pegawaiPenerima" k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" ng-disabled="disableSppb" />
                         </div>
                     </div>
+                    <div class="grid_4"  style="margin-top:5px">
+                        <input type="checkbox" class="k-checkbox" ng-model="item.isMakananBasah" id="isMakananBasah" ng-click="KlikMakananBasah(item.isMakananBasah)" >
+                        <label class="c-label k-checkbox-label" for="isMakananBasah">Makanan Basah</label>
+                    </div>
                 </div>
             </div>
         </div>

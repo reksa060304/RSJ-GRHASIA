@@ -1903,6 +1903,11 @@ define(['initialize'], function (initialize) {
                     noOrder = $scope.item.noOrder
                 }
 
+                var makananbasah = null;
+                if ($scope.item.isMakananBasah == true) {
+                    makananbasah = true
+                }
+
                 var jml = 0;
                 for (var i = 0; i < data2.length; i++) {
                     if(data2[i].jumlah != 0){
@@ -1949,6 +1954,7 @@ define(['initialize'], function (initialize) {
                     namapengadaan: namapengadaan,
                     norecOrder: norecOrder,
                     tgljatuhtempo: $scope.item.TglJatuhTempo,//moment($scope.item.TglJatuhTempo).format('YYYY-MM-DD HH:mm'),
+                    isMakananBasah: makananbasah,
                 }
                 var objSave = {
                     struk: struk,

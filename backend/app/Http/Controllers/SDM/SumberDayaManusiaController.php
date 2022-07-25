@@ -802,6 +802,7 @@ class SumberDayaManusiaController extends ApiController {
             $dataRiwayatPangkatGolongan = $request['pangkatgolongan'];
             $dataRiwayatcuti = $request['cuti'];
             $dataRiwayatGajiBerkala = $request['gajiberkala'];
+            $nomor = sizeof($dataRiwayatPangkatGolongan)-1;
 //            return $this->respond($dataKeluargaPegawai);
 
 
@@ -843,7 +844,7 @@ class SumberDayaManusiaController extends ApiController {
             $dataSavePegawai->objectjeniskelaminfk= $dataPegawai['jeniskelamin'];
             $dataSavePegawai->kategorypegawai =  $dataPegawai['statuspegawai'];
             $dataSavePegawai->kedudukanfk=  $dataPegawai['kedudukan'];
-            $dataSavePegawai->objectgolonganfk=  $dataPegawai['golongan'];
+            $dataSavePegawai->objectgolonganfk=  $dataRiwayatPangkatGolongan[$nomor]['objectgolonganfk'];
             $dataSavePegawai->objectjabatanfungsionalfk= $dataPegawai['jabatan'];
             $dataSavePegawai->objectpendidikanterakhirfk=  $dataPegawai['pendidikan'];
             

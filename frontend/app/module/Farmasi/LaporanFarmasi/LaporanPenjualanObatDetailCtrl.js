@@ -490,7 +490,7 @@ define(['initialize'], function (initialize) {
                         // groupHeaderTemplate:" Departemen : #= value #"
                     },
                     {
-                        field: "gudang",
+                        field: "namaruanganpasien",
                         title: "Depo Farmasi",
                         "width": "120px",
                         aggregates: ["count"],

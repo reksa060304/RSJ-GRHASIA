@@ -3417,7 +3417,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 tt.nomorbed
             END || ']'
             ELSE
-                dep1.namadepartemen
+                dep.namadepartemen
             END AS departemen,
             ru1.namaruangan namaruanganpasien,
             ru.namaruangan AS gudang,
@@ -3446,7 +3446,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         LEFT JOIN strukresep_t AS sr ON pp.strukresepfk = sr.norec
         AND sr.statusenabled = TRUE
         AND sr.kdprofile = 30
-        LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = sr.pasienfk
+        LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
         LEFT JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
         LEFT JOIN pasien_m AS ps ON ps. ID = pd.nocmfk
         LEFT JOIN jeniskelamin_m AS jk ON jk. ID = ps.objectjeniskelaminfk

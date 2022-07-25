@@ -4759,6 +4759,7 @@ class LogistikController extends ApiController{
             $SP->tgldokumen = $req['struk']['tglorder'];
             $SP->tglkontrak = $req['struk']['tglkontrak'];
             $SP->namapengadaan = $req['struk']['namapengadaan'];
+            $SP->ismakananbasah = $req['struk']['isMakananBasah'];
             $SP->tgljatuhtempo = date('Y-m-d H:i:s', strtotime($req['struk']['tgljatuhtempo'])); //$req['struk']['tgljatuhtempo'];
             $SP->save();
 
@@ -5482,6 +5483,8 @@ class LogistikController extends ApiController{
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataLogin = $request->all();
+        $uid = $request['userData']['id'];
+        
         $data = \DB::table('strukpelayanan_t as sp')
             ->JOIN('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
             ->leftJOIN('rekanan_m as rkn', 'rkn.id', '=', 'sp.objectrekananfk')
@@ -5491,8 +5494,8 @@ class LogistikController extends ApiController{
 //            ->LEFTJOIN('produk_m as pr','pr.id','=','spd.objectprodukfk')
 //            ->LEFTJOIN('jeniskemasan_m as jkm','jkm.id','=','spd.objectjeniskemasanfk')
             ->select(DB::raw("
-                sp.tglstruk, sp.nostruk, rkn.namarekanan, pg.namalengkap, sp.nokontrak,
-                ru.namaruangan, sp.norec, sp.nofaktur, sp.tglfaktur, CAST(sp.totalharusdibayar AS FLOAT), sbk.nosbk,
+                sp.tglstruk, sp.nostruk, rkn.namarekanan, pg.namalengkap, pg.id idpenerima, sp.nokontrak,
+                ru.namaruangan, ru.id objectruanganfk, sp.norec, sp.nofaktur, sp.tglfaktur, CAST(sp.totalharusdibayar AS FLOAT), sbk.nosbk,
                 sp.nosppb, sp.noorderfk, sp.qtyproduk
             ")
 //                'spd.hargasatuan','spd.hargadiscount','spd.qtyproduk','spd.hargatambahan' ,
@@ -5500,8 +5503,17 @@ class LogistikController extends ApiController{
 //                'spd.resepke as rke','jkm.jeniskemasan'
             )
             ->where('sp.kdprofile', $idProfile)
-            ->groupBy('sp.tglstruk', 'sp.nostruk', 'rkn.namarekanan', 'pg.namalengkap', 'sp.nokontrak', 'ru.namaruangan', 'sp.norec', 'sp.nofaktur',
+            ->groupBy('sp.tglstruk', 'sp.nostruk', 'rkn.namarekanan', 'pg.namalengkap', 'sp.nokontrak', 'ru.namaruangan', 'ru.id', 'pg.id', 'sp.norec', 'sp.nofaktur',
                 'sp.tglfaktur', 'sp.totalharusdibayar', 'sbk.nosbk', 'sp.nosppb', 'sp.noorderfk', 'sp.qtyproduk');
+
+        $data->whereRaw('ru.id in(SELECT ru.id
+        FROM maploginusertoruangan_s AS mlur
+        INNER JOIN loginuser_s lu on lu.id = mlur.objectloginuserfk
+        INNER JOIN ruangan_m ru on ru.id = mlur.objectruanganfk
+        where lu.kdprofile = 30 
+        and ru.statusenabled = true 
+        and lu.id='.$uid.'
+        GROUP BY ru.id,ru.namaruangan)');
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
             $data = $data->where('sp.tglstruk', '>=', $request['tglAwal']);
@@ -5536,10 +5548,12 @@ class LogistikController extends ApiController{
                     --spd.hargappn,((spd.hargasatuan-spd.hargadiscount+spd.hargappn)*spd.qtyproduk) as total,spd.tglkadaluarsa,spd.nobatch
                     --spd.hargappn,((spd.hargasatuan * spd.qtyproduk)-spd.hargadiscount+spd.hargappn) as total,spd.tglkadaluarsa,spd.nobatch
                     spd.hargappn,CAST(((spd.qtyproduk*spd.hargasatuan)-(((spd.persendiscount*spd.hargasatuan)/100)*spd.qtyproduk))+(spd.persenppn*((spd.qtyproduk*spd.hargasatuan)-(((spd.persendiscount*spd.hargasatuan)/100)*spd.qtyproduk))/100) AS FLOAT) AS total,
-                    spd.tglkadaluarsa,spd.nobatch
+                    spd.tglkadaluarsa,spd.nobatch, ss.satuanstandar,spd.satuanstandar as satuanviewfk,ss.satuanstandar as ssview, ss.id as satuanstandarfk,
+                    spd.qtyproduk as jumlah,spd.objectasalprodukfk,spd.objectasalprodukfk asalprodukfk,ap.asalproduk,spd.hasilkonversi as nilaikonversi, spd.objectprodukfk produkfk, $item->objectruanganfk as ruanganfk, '$item->norec' as nostrukterimafk
                     from strukpelayanandetail_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
+                    left JOIN asalproduk_m as ap on ap.id = spd.objectasalprodukfk
                     where spd.kdprofile = $idProfile and nostrukfk=:norec
                     and spd.qtyproduk != 0"),
                 array(
@@ -5554,7 +5568,9 @@ class LogistikController extends ApiController{
                 'namarekanan' => $item->namarekanan,
                 'norec' => $item->norec,
                 'namaruangan' => $item->namaruangan,
+                'objectruanganfk' => $item->objectruanganfk,
                 'namapenerima' => $item->namalengkap,
+                'idpenerima' => $item->idpenerima,
                 'totalharusdibayar' => $item->totalharusdibayar,
                 'nosbk' => $item->nosbk,
                 'nosppb' => $item->nosppb,
@@ -6218,7 +6234,8 @@ class LogistikController extends ApiController{
             DB::rollBack();
             $result = array(
                 "status" => 400,
-                "message"  => $transMessage,
+                'line'=> $e->getLine(),
+                 'message'=> $e->getMessage(),
                 "as" => 'as@epic',
             );
         }

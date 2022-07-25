@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('DaftarPenerimaanBarangSuplierCtrl', ['$scope', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
-        function ($scope, $state, cacheHelper, dateHelper, medifirstService) {
+    initialize.controller('DaftarPenerimaanBarangSuplierCtrl', ['$scope', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService','$mdDialog',
+        function ($scope, $state, cacheHelper, dateHelper, medifirstService,$mdDialog) {
             $scope.item = {};
             $scope.dataVOloaded = true;
             $scope.now = new Date();
@@ -9,6 +9,7 @@ define(['initialize'], function (initialize) {
             var pegawaiUser = {};
             var statusClosingStok = false;
             $scope.passwordUbahHarga = undefined;
+            $scope.hidesmeuastok = false
             var dataDetail = [];
             var dataCeklis = [];
             LoadCache();
@@ -40,6 +41,11 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
                     $scope.listNamaBarang = data;
                 });
+
+                $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "Apoteker"){
+                    $scope.hidesmeuastok = true
+                }
             }
 
             $scope.BatalCetak = function () {
@@ -165,6 +171,8 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.noSppb != undefined) {
                     noSppb = "&noSppb=" + $scope.item.noSppb
                 }
+                $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                console.log($scope.pegawaiLogin)
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("logistik/get-daftar-penerimaan?" +
@@ -255,7 +263,8 @@ define(['initialize'], function (initialize) {
                     return;
                 }
                 // **  VALIDASI CLOSING STOK 
-
+                console.log($scope.dataSelected)
+                console.log(pegawaiUser)
                 $scope.isRouteLoading = true
                 $scope.lanjutEdit()
                 // medifirstService.get('logistik/cek-transaksi-use?norec=' + $scope.dataSelected.norec).then(function (e) {
@@ -267,6 +276,58 @@ define(['initialize'], function (initialize) {
                 //         return
                 //     }
                 // })
+            }
+
+            $scope.gunakanSemuaStok = function(){
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Apakah Anda Yakin Menggunakan Semua Stok?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('Ya')
+                $mdDialog.show(confirm).then(function () {
+                    $scope.saveGunakanSemuaStok();
+                })
+                
+            } 
+
+            $scope.saveGunakanSemuaStok = function(){
+                var data2 = []
+                data2 = $scope.dataSelected.details
+
+                var ttlTotal = 0;
+                var ttlDiskon = 0;
+                var ttlPpn = 0;
+                var grandTotal = 0;
+
+                for (var i = data2.length - 1; i >= 0; i--) {
+                    ttlTotal = ttlTotal + (parseFloat(data2[i].hargasatuan) * parseFloat(data2[i].qtyproduk))
+                    ttlDiskon = ttlDiskon + (parseFloat(data2[i].hargadiscount) * parseFloat(data2[i].qtyproduk))
+                    ttlPpn = ttlPpn + (parseFloat(data2[i].ppn) * parseFloat(data2[i].qtyproduk))
+                }
+
+                grandTotal = ttlTotal + ttlPpn - ttlDiskon
+
+                var struk = {
+                    nostruk: "",
+                    ruanganfk: $scope.dataSelected.objectruanganfk,
+                    namaruangan: $scope.dataSelected.namaruangan,
+                    tglstruk: moment($scope.item.tgl).format('YYYY-MM-DD HH:mm:ss'),
+                    pegawaimenerimafk: $scope.dataSelected.idpenerima,
+                    namapegawaipenerima: $scope.dataSelected.namapenerima,
+                    keterangan: null,
+                    qtyproduk: data2.length,
+                    total: ttlTotal
+                }
+                var objSave =
+                {
+                    struk: struk,
+                    details: data2
+                }
+
+                medifirstService.post('logistik/save-pemakaian-ruangan', objSave).then(function (e) {
+                    
+                })
             }
 
             $scope.lanjutEdit = function () {
