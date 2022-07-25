@@ -79,6 +79,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     for (var i = 0; i < datas.data.me.length; i++) {
                         datas.data.me[i].no = i + 1
                     }
+                    for (let i = 0; i < datas.data.me.length; i++) {
+                        datas.data.me2[i].no = i + 1
+                    }
                     if (dat.sp != '') {
                         if (dat.sp != undefined) {
                             $scope.peneliti = true
@@ -110,37 +113,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.columnGridDiagnosapasien = {
                     toolbar: ["excel", ],
                     excel: {
-                        fileName: "Laporan .xlsx",
+                        fileName: "Laporan.xlsx",
                         allPages: true,
                     },
                     excelExport: function (e) {
-                        var departemenss = "";
-                        if ($scope.item.departement != undefined) {
-                            departemenss = $scope.item.departement.departemen;
-                        }
-                        if ($scope.item.departemen != undefined) {
-                            departemenss = $scope.item.departemen.departemen;
-                        }
-                        if ($scope.item.departement == undefined && $scope.item.departemen == undefined) {
-                            departemenss = "Rumah Sakit Jiwa Grhasia";
-                        }
-                        var sheet = e.workbook.sheets[0];
-                        sheet.frozenRows = 1;
-                        sheet.mergedCells = ["A1:D1"];
-                        sheet.name = "Orders";
+                        
+                      var sheet = e.workbook.sheets[0];
+                      sheet.frozenRows = 1;
+                      sheet.mergedCells = ["A1:H1"];
+                      sheet.name = "Orders";
 
-                        var myHeaders = [{
-                            value: "Laporan Diagnosa Per-pasien " + departemenss,
-                            fontSize: 20,
-                            textAlign: "center",
-                            background: "#ffffff",
-                            // color:"#ffffff"
-                        }];
-                        sheet.rows.splice(0, 0, {
-                            cells: myHeaders,
-                            type: "header",
-                            height: 70
-                        });
+                      var myHeaders = [{
+                          value: "Laporan Mahasiswa Diklatlitbang",
+                          fontSize: 20,
+                          textAlign: "center",
+                          background: "#ffffff",
+                          // color:"#ffffff"
+                      }];
+                      sheet.rows.splice(0, 0, {
+                          cells: myHeaders,
+                          type: "header",
+                          height: 70
+                      });
 
                     },
                     groupable: false,
@@ -178,7 +172,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         {
                             field: "email",
                             title: "Email",
-                            width: "50px",
+                            width: "300px",
 
                         },
                         {
@@ -213,27 +207,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.columnGridDiagnosapasien = {
                     toolbar: ["excel", ],
                     excel: {
-                        fileName: "Laporan .xlsx",
+                        fileName: "Laporan.xlsx",
                         allPages: true,
                     },
                     excelExport: function (e) {
-                        var departemenss = "";
-                        if ($scope.item.departement != undefined) {
-                            departemenss = $scope.item.departement.departemen;
-                        }
-                        if ($scope.item.departemen != undefined) {
-                            departemenss = $scope.item.departemen.departemen;
-                        }
-                        if ($scope.item.departement == undefined && $scope.item.departemen == undefined) {
-                            departemenss = "Rumah Sakit Jiwa Grhasia";
-                        }
                         var sheet = e.workbook.sheets[0];
                         sheet.frozenRows = 1;
-                        sheet.mergedCells = ["A1:D1"];
+                        sheet.mergedCells = ["A1:H1"];
                         sheet.name = "Orders";
 
                         var myHeaders = [{
-                            value: "Laporan Diagnosa Per-pasien " + departemenss,
+                            value: "Laporan Mahasiswa Diklatlitbang",
                             fontSize: 20,
                             textAlign: "center",
                             background: "#ffffff",
@@ -281,7 +265,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         {
                             field: "email",
                             title: "Email",
-                            width: "50px",
+                            width: "300px",
 
                         },
                         {
@@ -491,6 +475,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         })
 
                     // } 
+                } else {
+                    ModelItem.showMessages(isValid.messages);
                 }
                 
                 

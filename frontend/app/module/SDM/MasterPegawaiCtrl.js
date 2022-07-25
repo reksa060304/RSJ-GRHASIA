@@ -1508,6 +1508,15 @@ $scope.formatRupiah = function (value, currency) {
 					}
 				}
 				grid.removeRow(row);
+				var data = {
+					'datahapus': 'ok',
+					'objectpegawaifk': $scope.item.idPegawai,
+					'norec': dataItem.norec
+				}
+				medifirstService.post('sdm/save-riwayat-pendidikan', data).then(function (data) {
+					init();
+				})
+
 			}
 
 			function EditPelatihan(e) {
@@ -1753,7 +1762,15 @@ $scope.formatRupiah = function (value, currency) {
 						dataRiwayatJabatan.splice(i, 1);
 					}
 				}
+				var data = {
+					'datahapus': 'ok',
+					'objectpegawaifk': $scope.item.idPegawai,
+					'norec': dataItem.norec
+				}
 				grid.removeRow(row);
+				medifirstService.post('sdm/save-riwayat-jabatan', data).then(function (data) {
+					init();
+				})
 			}
 
 			function HapusKomponenAdd(e) {
@@ -2358,14 +2375,18 @@ $scope.formatRupiah = function (value, currency) {
 								data.noijazah = noIjasah
 								data.tglijazah = tglIjasah
 								data.norec = $scope.item.norecPend
-
+								data.objectpegawaifk = $scope.item.idPegawai
 								dataRiwayatPendidikan[i] = data;
 								$scope.gridRiwayatPendidikan = new kendo.data.DataSource({
 									data: dataRiwayatPendidikan
 								});
 							}
+							
 						}
+						medifirstService.post('sdm/save-riwayat-pendidikan', data).then(function (data) {
+							init();
 
+						})
 					} else {
 
 						data = {
@@ -2383,12 +2404,20 @@ $scope.formatRupiah = function (value, currency) {
 							noijazah: noIjasah,
 							tglijazah: tglIjasah,
 							norec: $scope.item.norecPend,
+							objectpegawaifk: $scope.item.idPegawai
 						}
 
 						dataRiwayatPendidikan.push(data)
 						$scope.gridRiwayatPendidikan = new kendo.data.DataSource({
 							data: dataRiwayatPendidikan
 						});
+						console.log(data);
+						// return
+						medifirstService.post('sdm/save-riwayat-pendidikan', data).then(function(data){
+							init();
+
+						})
+
 					}
 					ClearDataRiwayatPendidikan();
 					$scope.popUpRiwayatPendidikan.close();
@@ -2463,12 +2492,15 @@ $scope.formatRupiah = function (value, currency) {
 								data.biayasppd = $scope.itemPelatihan.biayasppd
 								data.sumberdanafk = $scope.itemPelatihan.sumberdana.id
 								dataRiwayatPelatihan[i] = data;
+								data.objectpegawaifk = $scope.item.idPegawai
 								$scope.gridRiwayatPelatihan = new kendo.data.DataSource({
 									data: dataRiwayatPelatihan
 								});
 							}
 						}
-
+						medifirstService.post('sdm/save-riwayat-pelatihan', data).then(function (data) {
+							init();
+						})
 					} else {
 						var penyelenggara = "";
 						if ($scope.itemPelatihan.penyelenggara.id == 1) {
@@ -2492,13 +2524,17 @@ $scope.formatRupiah = function (value, currency) {
 							penyelenggara: $scope.itemPelatihan.penyelenggara.penyelenggara,
 							biayadiklat: $scope.itemPelatihan.biayadiklat,
 							biayasppd: $scope.itemPelatihan.biayasppd,
-							sumberdanafk: $scope.itemPelatihan.sumberdana.id
+							sumberdanafk: $scope.itemPelatihan.sumberdana.id,
+							objectpegawaifk: $scope.item.idPegawai
 						}
 
 						dataRiwayatPelatihan.push(data)
 						$scope.gridRiwayatPelatihan = new kendo.data.DataSource({
 							data: dataRiwayatPelatihan
 						});
+						medifirstService.post('sdm/save-riwayat-pelatihan', data).then(function (data) {
+							init();
+						})
 					}
 					ClearDataRiwayatPelatihan();
 					$scope.popUpRiwayatPelatihan.close();
@@ -2547,13 +2583,16 @@ $scope.formatRupiah = function (value, currency) {
 								data.tunjangan = $scope.itemJabatan.tunjangan
 								data.ttdsk = $scope.itemJabatan.ttdSK
 								data.ttdjabatansk = $scope.itemJabatan.jabatanTtd
-
+								data.objectpegawaifk = $scope.item.idPegawai
 								dataRiwayatJabatan[i] = data;
 								$scope.gridRiwayatJabatan = new kendo.data.DataSource({
 									data: dataRiwayatJabatan
 								});
 							}
 						}
+						medifirstService.post('sdm/save-riwayat-jabatan', data).then(function (data) {
+							init();
+						})
 
 					} else {
 
@@ -2574,12 +2613,16 @@ $scope.formatRupiah = function (value, currency) {
 							ttdsk: $scope.itemJabatan.ttdSK,
 							tunjangan: $scope.itemJabatan.tunjangan,
 							ttdjabatansk: $scope.itemJabatan.jabatanTtd,
+							objectpegawaifk: $scope.item.idPegawai
 						}
 
 						dataRiwayatJabatan.push(data)
 						$scope.gridRiwayatJabatan = new kendo.data.DataSource({
 							data: dataRiwayatJabatan
 						});
+						medifirstService.post('sdm/save-riwayat-jabatan', data).then(function (data) {
+							init();
+						})
 					}
 					ClearDataRiwayatJabatan();
 					$scope.popUpRiwayatJabatan.close();
@@ -2588,9 +2631,6 @@ $scope.formatRupiah = function (value, currency) {
 				}
 			}
 			$scope.panggoltmt = function () {
-				console.log('okray');
-				console.log($scope.itemPandG.golongan.id);
-				console.log($scope.itemPandG.tanggaltmt);
 				if (dataRiwayatPangkatGolongan.length > 0) {
 					console.log('bisa');
 					var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), new Date($scope.itemPandG.tanggaltmt));
@@ -2645,6 +2685,8 @@ $scope.formatRupiah = function (value, currency) {
 								data.golongan= $scope.itemPandG.golongan.golongan;
 								data.nosk = $scope.itemPandG.nosk
 								data.nominal = $scope.itemPandG.nominal
+								data.objectpegawaifk = $scope.item.idPegawai;
+
 								dataRiwayatPangkatGolongan[i] = data;
 								console.log(data);
 								$scope.gridRiwayatPangkatGolongan = new kendo.data.DataSource({
@@ -2652,6 +2694,9 @@ $scope.formatRupiah = function (value, currency) {
 								});
 							}
 						}
+						medifirstService.post('sdm/save-riwayat-pangkat-golongan', data).then(function (data) {
+							init();
+						})
 					} else {
 						data = {
 							no: nomorId,
@@ -2662,13 +2707,17 @@ $scope.formatRupiah = function (value, currency) {
 							objectgolonganfk: $scope.itemPandG.golongan.id,
 							golongan: $scope.itemPandG.golongan.golongan,
 							nosk: $scope.itemPandG.nosk,
-							nominal: $scope.itemPandG.nominal
+							nominal: $scope.itemPandG.nominal,
+							objectpegawaifk: $scope.item.idPegawai
 						}
 						console.log(data);
 						dataRiwayatPangkatGolongan.push(data)
 						$scope.gridRiwayatPangkatGolongan = new kendo.data.DataSource({
 							data: dataRiwayatPangkatGolongan
 						});
+						medifirstService.post('sdm/save-riwayat-pangkat-golongan', data).then(function (data) {
+							init();
+						})
 					}
 					ClearDataRiwayatPangkatGolongan();
 					$scope.popUpRiwayatPangkatGolongan.close();
@@ -2715,12 +2764,15 @@ $scope.formatRupiah = function (value, currency) {
 								data.golongan = $scope.itemGajiBerkala.golongan.golongan;
 								data.nosk = $scope.itemGajiBerkala.nosk
 								dataRiwayatGajiBerkala[i] = data;
-								
+								data.objectpegawaifk = $scope.item.idPegawai
 								$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
 									data: dataRiwayatGajiBerkala
 								});
 							}
 						}
+						medifirstService.post('sdm/save-riwayat-gaji-berkala', data).then(function (data) {
+							init();
+						})
 					} else {
 						data = {
 							no: nomorId,
@@ -2732,16 +2784,21 @@ $scope.formatRupiah = function (value, currency) {
 							gajiakhir: $scope.itemGajiBerkala.gajiakhir,
 							nosk: $scope.itemGajiBerkala.nosk,
 							golongan: $scope.itemGajiBerkala.golongan.golongan,
-							objectgolonganfk: $scope.itemGajiBerkala.golongan.id
+							objectgolonganfk: $scope.itemGajiBerkala.golongan.id,
+							objectpegawaifk: $scope.item.idPegawai
 						}
 						console.log(data);
 						dataRiwayatGajiBerkala.push(data)
 						$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
 							data: dataRiwayatGajiBerkala
 						});
+						medifirstService.post('sdm/save-riwayat-gaji-berkala', data).then(function (data) {
+							init();
+						})
 					}
 					ClearDataRiwayatGajiBerkala();
 					$scope.popUpRiwayatGajiBerkala.close();
+					
 				} else {
 					ModelItem.showMessages(isValid.messages);
 				}
@@ -2841,13 +2898,17 @@ $scope.formatRupiah = function (value, currency) {
 									data.pejabatmenetapkan = $scope.itemHukumanDisiplin.pejabatmenetapkan;
 									data.nosk = $scope.itemHukumanDisiplin.nosk;
 									data.tglsk = moment($scope.itemHukumanDisiplin.tglsk).format('YYYY-MM-DD HH:mm');
+									data.objectpegawaifk= $scope.item.idPegawai;
+
 									dataHukumanDisiplin[i] = data
 								$scope.gridHukumanDisiplin = new kendo.data.DataSource({
 									data: dataHukumanDisiplin
 								});
 							}
 						}
-
+						medifirstService.post('sdm/save-riwayat-hukuman-disiplin', data).then(function (data) {
+							init();
+						})
 					} else {
 
 						data = {
@@ -2859,7 +2920,8 @@ $scope.formatRupiah = function (value, currency) {
 							pejabatmenetapkan: $scope.itemHukumanDisiplin.pejabatmenetapkan,
 							tglsk: moment($scope.itemHukumanDisiplin.tglsk).format('YYYY-MM-DD HH:mm'),
 							jenishukuman: $scope.itemHukumanDisiplin.jenishukuman.jenishukuman,
-							nosk: $scope.itemHukumanDisiplin.nosk
+							nosk: $scope.itemHukumanDisiplin.nosk,
+							objectpegawaifk: $scope.item.idPegawai
 						}
 
 						dataHukumanDisiplin.push(data)
@@ -2867,6 +2929,9 @@ $scope.formatRupiah = function (value, currency) {
 						$scope.gridHukumanDisiplin = new kendo.data.DataSource({
 							data: dataHukumanDisiplin
 						});
+						medifirstService.post('sdm/save-riwayat-hukuman-disiplin', data).then(function (data) {
+							init();
+						})
 					}
 					ClearDataHukumanDisiplin();
 					$scope.popUpHukumanDisiplin.close();
@@ -2905,14 +2970,17 @@ $scope.formatRupiah = function (value, currency) {
 								data.pejabatmenetapkan = $scope.itemCuti.pejabatmenetapkan;
 								data.nosk = $scope.itemCuti.nosk;
 								data.tglsk = moment($scope.itemCuti.tglsk).format('YYYY-MM-DD HH:mm');
+								data.objectpegawaifk = $scope.item.idPegawai
 								dataCuti[i] = data
-						console.log(dataCuti);
 
 								$scope.gridCuti = new kendo.data.DataSource({
 									data: dataCuti
 								});
 							}
 						}
+						medifirstService.post('sdm/save-riwayat-cuti', data).then(function (data) {
+							init();
+						})
 					} else {
 						data = {
 							no: nomorIdh,
@@ -2921,14 +2989,17 @@ $scope.formatRupiah = function (value, currency) {
 							tglsampai: moment($scope.itemCuti.tglsampai).format('YYYY-MM-DD HH:mm'),
 							pejabatmenetapkan: $scope.itemCuti.pejabatmenetapkan,
 							tglsk: moment($scope.itemCuti.tglsk).format('YYYY-MM-DD HH:mm'),
-							nosk: $scope.itemCuti.nosk
+							nosk: $scope.itemCuti.nosk,
+							objectpegawaifk: $scope.item.idPegawai
+
 						}
 
-						dataCuti.push(data)
-						console.log(dataCuti);
 						$scope.gridCuti = new kendo.data.DataSource({
 							data: dataCuti
 						});
+						medifirstService.post('sdm/save-riwayat-cuti', data).then(function (data) {
+							init();
+						})
 					}
 					ClearDataCuti();
 					$scope.popUpCuti.close();

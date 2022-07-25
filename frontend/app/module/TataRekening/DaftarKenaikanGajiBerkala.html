@@ -85,32 +85,6 @@
 <c-panel item="item" header="'Daftar Kenaikan Gaji Berkala'" disabled>
 </c-panel>
 <div class="grid_12">
-    <div class="grid_2" style="margin-top:5px">
-        <label c-label item="item" c-label-text="Departement"></label>
-        <input style="width: 100%;" kendo-combo-box k-ng-model="item.departemen" k-data-text-field="'departemen'"
-            k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartement"
-            k-on-change="getIsiComboRuangan()" />
-    </div>
-    <div class="grid_2" style="margin-top:5px">
-        <label c-label c-label-text="namaRuangan" real></label>
-        <input style="width: 100%; " kendo-combo-box k-ng-model="item.ruangan" k-data-text-field=" 'ruangan' "
-            k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listRuangans " />
-    </div>
-    <!-- <div class="grid_2" style="margin-top:5px">
-        <div class="grid_12">
-            <label c-label item="item" c-label-text="Dokter"></label>
-        </div>
-        <input style="width: 100%; " kendo-combo-box k-ng-model="item.dokter" k-data-text-field=" 'namalengkap' "
-            k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listDokter " />
-    </div>     -->
-    <div class="grid_2" style="margin-top:5px">
-        <label c-label c-label-text="Kelompok" real></label>
-        <input style="width: 100%; " kendo-combo-box k-ng-model="item.kelompokpasien"
-            k-data-text-field=" 'kelompokpasien' " k-filter=" 'contains' " k-data-value-field=" 'id' "
-            k-auto-bind="false " k-data-source="listKelompokPasien " />
-    </div>
-
-
 
     <div class="grid_4" style="margin-top:5px">
         <div class="grid_12">
