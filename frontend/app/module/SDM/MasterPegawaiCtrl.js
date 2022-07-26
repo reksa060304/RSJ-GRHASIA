@@ -231,6 +231,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							var dataCachePangkatGolongan = dataCache.datapangkatgolongan;
 							var dataCacheCuti = dataCache.datacuti;
 							var dataCacheGajiBerkala = dataCache.datagajiberkala;
+							var dataCachegajiBerkala = dataCache.gajiBerkala
 							// Data Pegawai
 							$scope.item.idPegawai = dataCachePegawai.id;
 							$scope.item.nipPns = dataCachePegawai.nippns;
@@ -240,7 +241,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							$scope.item.nama = dataCachePegawai.nama;
 							$scope.item.tempatLahir = dataCachePegawai.tempatlahir;
 							$scope.item.masakerjatambahan = dataCachePegawai.masakerjatambahan;
-
+							$scope.ListGolonganGajiBerkala = dataCachegajiBerkala
+							$scope.gajiterakhir = dataCache.datapegawai[0].gajiakhir;
 							if (dataCachePegawai.tgllahir)
 								$scope.item.tglLahir = moment(dataCachePegawai.tgllahir).format('YYYY-MM-DD HH:mm');
 							if (dataCachePegawai.unitkerja)
@@ -361,34 +363,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							}
 							for (var i = 0; i < dataRiwayatPangkatGolongan.length; i++) {
 								dataRiwayatPangkatGolongan[i].no = i + 1;
-								$scope.a = dataRiwayatPangkatGolongan[i].no
-								
-								
-								// 
-
-								// var usia = (umur.year * 12) + umur.month;
-								// $scope.umur = thn + ' thn ' + bln + ' bln ' + day + ' hr '
-								if (dataRiwayatPangkatGolongan[i].no != dataRiwayatPangkatGolongan.length) {
-									$scope.tmt = new Date(dataRiwayatPangkatGolongan[i + 1].tgltmt)
-									console.log($scope.tmt);
-										var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[i].tgltmt), $scope.tmt);
-										var bln = umur.month,
-											thn = umur.year
-										// 	day = umur.day
-										console.log(bln, thn);
-										dataRiwayatPangkatGolongan[i].mkgt = thn + ' thn ' + bln + ' bln '
-								} else {
-									var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[i].tgltmt), $scope.now);
-									var bln = umur.month,
-										thn = umur.year
-										$scope.blntrkhr = umur.month
-									// 	day = umur.day
-									console.log(bln, thn);
-									dataRiwayatPangkatGolongan[i].mkgt = thn + ' thn ' + bln + ' bln '
-								}
+								// $scope.a = dataRiwayatPangkatGolongan[i].no
+								var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[i].tglawal), new Date(dataRiwayatPangkatGolongan[i].tgltmt));
+								var bln = umur.month,
+									thn = umur.year
+								// 	day = umur.day
+								dataRiwayatPangkatGolongan[i].mkgt = thn + ' thn ' + bln + ' bln '
 							}
 							
-							console.log(sum);
 							$scope.gridRiwayatPangkatGolongan = new kendo.data.DataSource({
 								data: dataRiwayatPangkatGolongan
 							})
@@ -1892,12 +1874,15 @@ $scope.formatRupiah = function (value, currency) {
 						dataRiwayatPangkatGolongan.splice(i, 1);
 					}
 				}
+				console.log(dataItem);
 				var itemDelete = {
-					"norec": dataItem.norec
+					"norec": dataItem.norec,
+					"gajiawal": dataItem.gajiawal,
+					"objectgolonganfk": dataItem.objectgolonganfk,
+					"objectpegawaifk": $scope.item.idPegawai
 				}
 				// console.log(itemDelete);
 				// return
-				grid.removeRow(row);
 				medifirstService.post('sdm/delete-data-gaji-berkala', itemDelete).then(function (e) {
 					if (e.status === 201) {
 						grid.removeRow(row);
@@ -2152,7 +2137,7 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.popUpRiwayatPendidikan.close();
 			}
 			$scope.batalRiwayatGajiBerkala = function () {
-				ClearDataRiwayatPendidikan();
+				ClearDataRiwayatGajiBerkala();
 				$scope.popUpRiwayatGajiBerkala.close();
 			}
 
@@ -2643,7 +2628,7 @@ $scope.formatRupiah = function (value, currency) {
 					var umur = dateHelper.CountAge(new Date($scope.itemPandG.tanggaltmt), new Date($scope.now));
 					var nominal = umur.year
 					console.log(nominal);
-					medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemPandG.golongan.id + '&mkg=' + nominal).then(function (data) {
+					medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemPandG.golongan.id + '&mkg=' + 0).then(function (data) {
 						console.log(data);
 						$scope.itemPandG.nominal = data.data.gajigolongan[0].gajipokok
 					})
@@ -2733,6 +2718,7 @@ $scope.formatRupiah = function (value, currency) {
 					"itemGajiBerkala.tanggalsk|k-ng-model|Tanggal SK",
 					"itemGajiBerkala.golongan|k-ng-model|Golongan",
 					"itemGajiBerkala.nosk|ng-model|NO SK",
+					"itemGajiBerkala.nosurat|ng-model|No Surat",
 					"itemGajiBerkala.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
 					"itemGajiBerkala.tanggaltmt|k-ng-model|Tanggal TMT",
 					// "itemPandG.ttdSK|k-ng-model|Penandatangan SK",
@@ -2785,9 +2771,9 @@ $scope.formatRupiah = function (value, currency) {
 							nosk: $scope.itemGajiBerkala.nosk,
 							golongan: $scope.itemGajiBerkala.golongan.golongan,
 							objectgolonganfk: $scope.itemGajiBerkala.golongan.id,
-							objectpegawaifk: $scope.item.idPegawai
+							objectpegawaifk: $scope.item.idPegawai,
+							nosurat: $scope.itemGajiBerkala.nosurat
 						}
-						console.log(data);
 						dataRiwayatGajiBerkala.push(data)
 						$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
 							data: dataRiwayatGajiBerkala
@@ -3869,7 +3855,34 @@ $scope.formatRupiah = function (value, currency) {
 					}
                 }
             });
-
+			$scope.getDataGolongan = function () {
+				// for (let i = 0; i < dataRiwayatGajiBerkala.length; i++) {
+				// 	$scope.cekobjekgolongan = dataRiwayatGajiBerkala[i].objectgolonganfk
+				// 	if ($scope.cekobjekgolongan == $scope.itemGajiBerkala.golongan.id) {
+				// 		$scope.itemGajiBerkala.gajiawal = $scope.gajiterakhir
+				// 	} else {
+				// 		$scope.itemGajiBerkala.gajiawal = $scope.itemGajiBerkala.golongan.nominal
+				// 	}
+				// }
+				var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tglawal), new Date($scope.itemGajiBerkala.tanggaltmt));
+				var mkgnya = umur.year
+				console.log(umur);
+				medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemGajiBerkala.golongan.id + '&mkg=' + mkgnya + '&pegawai='+ $scope.item.idPegawai).then(function (data) {
+					$scope.itemGajiBerkala.gajiakhir = data.data.gajigolongan[0].gajipokok
+					$scope.itemGajiBerkala.gajiawal = data.data.gajiawal[0].nominal
+				})
+				// if (dataRiwayatPangkatGolongan.length > 0) {
+					
+				// } else {
+				// 	var umur = dateHelper.CountAge(new Date($scope.itemPandG.tanggaltmt), new Date($scope.now));
+				// 	var nominal = umur.year
+				// 	console.log(nominal);
+				// 	medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemPandG.golongan.id + '&mkg=' + 0).then(function (data) {
+				// 		console.log(data);
+				// 		$scope.itemPandG.nominal = data.data.gajigolongan[0].gajipokok
+				// 	})
+				// }
+			}
 			//* BATAS SUCI *//			
 		}
 	]);

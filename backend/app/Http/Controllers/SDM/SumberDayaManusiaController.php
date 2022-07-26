@@ -98,8 +98,8 @@ class SumberDayaManusiaController extends ApiController {
         $jabatanbaru = Jabatan::where('statusenabled', true)->where('objectjenisjabatanfk', $request['jabatan'])->where('kdprofile', $kdProfile)->get();
         $jenisJabatan = JenisJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $GolonganPegawai = GolonganPegawai::where('statusenabled', true)
-                            ->select(DB::raw("id, namaexternal || ', ' || reportdisplay as golongan"))
-                            ->where('kdprofile', $kdProfile)
+                            ->select(DB::raw("id, namaexternal || '  /  ' || name as golongan"))
+                            ->where('kdprofile', $kdProfile)->orderBy('id', 'asc')
                             ->get();
         $KelompokJabatan = KelompokJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $Pendidikan = Pendidikan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
@@ -115,6 +115,7 @@ class SumberDayaManusiaController extends ApiController {
         $JenisProvider = JenisProvider::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $KomponenGajiAdd = KomponenGaji::where('statusenabled',true)->where('kdprofile',$kdProfile)->where('kdkomponen','+')->get();
         $KomponenGajiDel = KomponenGaji::where('statusenabled',true)->where('kdprofile',$kdProfile)->where('kdkomponen','-')->get();
+        
         $PangkatPegawai = \DB::table('pangkat_m as pk')
             ->where('pk.kdprofile', $kdProfile)
             ->where('pk.statusenabled', true)
@@ -621,13 +622,22 @@ class SumberDayaManusiaController extends ApiController {
         ->select('hd.tgldari', 'hd.tglsampai', 'hd.tglsk','hd.nosk','hd.pejabatmenetapkan','jh.id','jh.jenishukuman','hd.norec','hd.objectjenishukumanfk')
         ->where('pg.id','=',$request['idPegawai'])
         ->get();
-        $dataPangkatGolongan = \DB::table("pegawai_m as pg")
-        ->leftjoin("riwayatgolongan_t as rg","rg.objectpegawaifk","=","pg.id") 
-        ->join("sdm_golongan_m as gol","gol.id","=","rg.objectgolonganfk")
-        ->select(DB::raw("rg.nominal,rg.objectgolonganfk,rg.norec,rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, rg.nosk, rg.pejabatmenetapkan"))
-        ->where("pg.id",$request['idPegawai'])
-        ->orderBy('rg.tgltmt','asc')
-        ->get();
+
+        $dataPangkatGolongan = \DB::select(DB::raw("SELECT 
+            rg.nominal,rg.objectgolonganfk,rgb.tgltmt as tglawal, rg.norec,rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, rg.nosk, rg.pejabatmenetapkan
+            -- rg.nosk, rg.tglsk,gol.reportdisplay, rg.tgltmt,EXTRACT(year from age(rg.tgltmt,rgb.tgltmt)), age(rg.tgltmt,rgb.tgltmt), rgb.tgltmt as tglawal,rg.nominal 
+            FROM riwayatgolongan_t rg 
+            inner join sdm_golongan_m as gol on gol.id = rg.objectgolonganfk 
+            inner join (
+            select x.objectpegawaifk, x.tgltmt from(
+
+            select row_number()over(PARTITION by rg.objectpegawaifk ORDER BY rg.tgltmt asc)as rn, rg.* from pegawai_m as pg inner join riwayatgolongan_t as rg on rg.objectpegawaifk = pg.id 
+            )as x where x.rn=1
+            )as rgb on rgb.objectpegawaifk= rg.objectpegawaifk where rg.objectpegawaifk = $request[idPegawai]
+            ORDER BY rg.tgltmt asc
+        "));
+
+        
         $datacuti = \DB::table('riwayatcuti_t')->select("*")
         ->where("objectpegawaifk",$request['idPegawai'])
         ->get();
@@ -639,7 +649,9 @@ class SumberDayaManusiaController extends ApiController {
         ->where("gb.objectpegawaifk",$request['idPegawai'])
         ->orderBy('gb.tgltmt','asc')
         ->get();
-        
+        $gajiBerkala = \DB::select(DB::raw("SELECT gol.id, gol.namaexternal || '  /  ' || gol.name as golongan, rg.nominal FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk
+        where rg.objectpegawaifk = $request[idPegawai]
+        "));
         $result = array(
             'datapegawai' => $data,
             'datakeluarga' => $dataKeluarga,
@@ -654,14 +666,33 @@ class SumberDayaManusiaController extends ApiController {
             'datahukumandisiplin'=> $dataHukumanDisiplin,
             'datapangkatgolongan'=> $dataPangkatGolongan,
             'datacuti'=> $datacuti,
+            'gajiBerkala'=> $gajiBerkala,
             'datagajiberkala'=> $dataRiwayatGajiBerkala,
             "createby : " => 'ea@epic',
-
         );
         return $this->respond($result);
     }
 
     public function nominal(Request $request){
+        $gajiawal = "";
+        $cekgajiberkala = \DB::table('riwayatgajiberkala_t')
+        ->where('objectpegawaifk', $request['pegawai'])
+        ->where('objectgolonganfk', $request['golongan'])
+        ->get();
+        // var_dump($cekgajiberkala);
+        if(empty($cekgajiberkala)){
+            $gajiawal = \DB::table('riwayatgolongan_t')
+            ->where('objectpegawaifk', $request['pegawai'])
+            ->where('objectgolonganfk', $request['golongan'])
+            ->select('nominal')
+            ->get();
+        } else{
+            $gajiawal = \DB::table('pegawai_m')
+            ->where('id', $request['pegawai'])
+            ->select(DB::raw("gajiakhir as nominal"))
+            ->get();
+        }
+
         $gajigolongan = \DB::table("gajigolongan_m as gg")
         ->where("gg.golonganfk",$request['golongan'])
         ->where("gg.mkg",$request['mkg'])
@@ -669,6 +700,8 @@ class SumberDayaManusiaController extends ApiController {
         
         $result = array(
             'gajigolongan'=> $gajigolongan,
+            'cekgajiberkala'=> $cekgajiberkala,
+            'gajiawal'=> $gajiawal,
             "createby : " => 'IziFizi',
 
         );
@@ -714,7 +747,16 @@ class SumberDayaManusiaController extends ApiController {
      public function deleteDataGajiBerkala(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         try {
-            \DB::table('riwayatgajiberkala_t')->where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
+            $getgol = \DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->get();
+            foreach ($getgol as $gg) {
+                if($request['objectgolonganfk'] == $gg->objectgolonganfk){
+                    DB::table("pegawai_m")->where("id", $request['objectpegawaifk'])->update([
+                    // 'objectgolonganfk'=> $request['objectgolonganfk'],
+                    'gajiakhir'=> $request['gajiawal']
+                    ]);
+                }
+            }
+            $data = \DB::table('riwayatgajiberkala_t')->where('norec', $request['norec'])->where('kdprofile', $kdProfile)->delete();
             $transMessage = "Hapus Data Gaji Berkala Sukses ";
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -802,12 +844,12 @@ class SumberDayaManusiaController extends ApiController {
             $dataRiwayatPangkatGolongan = $request['pangkatgolongan'];
             $dataRiwayatcuti = $request['cuti'];
             $dataRiwayatGajiBerkala = $request['gajiberkala'];
-            $nomor = sizeof($dataRiwayatPangkatGolongan)-1;
+            $nomor = sizeof($dataRiwayatPangkatGolongan) -1;
 //            return $this->respond($dataKeluargaPegawai);
 
 
             if ($dataPegawai['id'] == '') {
-                $idPegawai = Pegawai::max('id') +1 ;
+                $idPegawai = Pegawai::max('id') + 1 ;
                 $dataSavePegawai = new Pegawai();
                 $dataSavePegawai->id = $idPegawai;
                 $dataSavePegawai->kdprofile = $kdProfile;
@@ -5868,33 +5910,20 @@ public function daftarKenaikanGajiBerkala(Request $request){
         $idProfile = (int) $kdProfile;
 
         $data = \DB::select(DB::raw("
-            SELECT x.idg,x.idx, x.apalah, x.namalengkap, x.nippns, 
-            x.pangkat, x.golongan, x.gajiakhir,x.tgltmt, y.tgltmt as awal, EXTRACT(year from age(current_date, y.tgltmt)) +1 as mkg 
-            from(SELECT gol.id as idg,  ROW_NUMBER()over(PARTITION by rgb.objectpegawaifk ORDER BY rgb.tgltmt desc)as apalah, pg.id as idx,
-            pg.namalengkap, pg.nippns, gol.namaexternal as pangkat,gol.name as golongan, rgb.gajiakhir, rgb.tgltmt from riwayatgajiberkala_t rgb  
-            INNER JOIN pegawai_m pg on pg.id = rgb.objectpegawaifk 
-            INNER JOIN sdm_golongan_m gol on gol.id = rgb.objectgolonganfk
-						
-            where pg.kdprofile = 30
-            and pg.statusenabled = true
-            and rgb.kdprofile = 30
-            and rgb.statusenabled= true
-            )as x
-						
-						inner join (SELECT gol.id as idg, pg.id as idy, ROW_NUMBER()over(PARTITION by rgb.objectpegawaifk ORDER BY rgb.tgltmt asc)as apalah, 
-            pg.namalengkap, pg.nippns, gol.namaexternal as pangkat,gol.name as golongan, rgb.gajiakhir, rgb.tgltmt from riwayatgajiberkala_t rgb  
-            INNER JOIN pegawai_m pg on pg.id = rgb.objectpegawaifk 
-            INNER JOIN sdm_golongan_m gol on gol.id = rgb.objectgolonganfk
-            where pg.kdprofile = 30
-            and pg.statusenabled = true
-            and rgb.kdprofile = 30
-            and rgb.statusenabled= true
-            )as y on x.idx = y.idy
-						
-            where x.apalah = 1 and y.apalah=1
--- 						GROUP BY x.apalah, x.namalengkap, x.nippns, x.pangkat, x.golongan, x.gajiakhir ,x.tgltmt, y.tgltmt, x.id
-						order by x.tgltmt asc 
+            SELECT fix.* FROM (
+            SELECT pg.id as id_pegawai, row_number()over(partition by rg.objectpegawaifk ORDER BY rg.tgltmt desc)as rn2, pg.namalengkap, pg.nippns, rg.tgltmt, rg.objectgolonganfk, 
+            gol.namaexternal as pangkat, gol.name as golongan, rg.gajiakhir, EXTRACT(year from age(rg.tgltmt, rgb.tgltmt))+2  as mkg FROM riwayatgajiberkala_t rg
+            inner join sdm_golongan_m as gol on gol.id = rg.objectgolonganfk 
+            inner join pegawai_m pg on pg.id = rg.objectpegawaifk
+            inner join (
+            select x.objectpegawaifk, x.tgltmt from(
+            select row_number()over(PARTITION by rg.objectpegawaifk ORDER BY rg.tgltmt asc)as rn, rg.* from pegawai_m as pg inner join riwayatgolongan_t as rg on rg.objectpegawaifk = pg.id 
+            )as x where x.rn=1
+            )as rgb on rgb.objectpegawaifk= rg.objectpegawaifk 
+            ORDER BY rg.tgltmt asc
+            )as fix where fix.rn2 = 1
         "));
+        // var_dump($data);
         $data2 = '';
         $data3 = '';
         $namalengkap = '';
@@ -5905,6 +5934,8 @@ public function daftarKenaikanGajiBerkala(Request $request){
         $gajiakhir = '';
         $gajibaru = '';
         $mkg = '';
+        $objectgolonganfk = '';
+        $idpegawai = "";
         $detail = [];
         
         foreach ($data as $dt) {
@@ -5915,10 +5946,12 @@ public function daftarKenaikanGajiBerkala(Request $request){
             $golongan = '';
             $gajiakhir = '';
             $gajibaru = '';
-        $mkg = '';
+            $mkg = '';
+            $idpegawai = "";
+            $objectgolonganfk = '';
 
             $gajigolongan = \DB::table("gajigolongan_m as gg")
-            ->where("gg.golonganfk",$dt->idg)
+            ->where("gg.golonganfk",$dt->objectgolonganfk)
             ->where("gg.mkg",$dt->mkg)
             ->select('gg.gajipokok')
             ->get();
@@ -5931,14 +5964,16 @@ public function daftarKenaikanGajiBerkala(Request $request){
             $pangkat = $dt->pangkat;
             $golongan = $dt->golongan;
             $gajiakhir = $dt->gajiakhir;
-            $data2 = $dt->idg;
-            $data3 = $dt->mkg;
+            $objectgolonganfk = $dt->objectgolonganfk;
+            // $data3 = $dt->mkg;
             $mkg = $dt->mkg;
+            $idpegawai = $dt->id_pegawai;
             foreach ($gajigolongan as $gg) {
                 $gajibaru = $gg->gajipokok;
             }
 
             $detail[]= array(
+            'id_pegawai'=> $idpegawai,
             'namalengkap' => $namalengkap,
             'nippns' => $nippns,
             'tgltmt' => $tgltmt,
@@ -5946,6 +5981,8 @@ public function daftarKenaikanGajiBerkala(Request $request){
             'golongan' => $golongan,
             'gajiakhir' => $gajiakhir,
             'gajibaru' => $gajibaru,
+            'objectgolonganfk'=> $objectgolonganfk,
+            // 'data'=> $data,
             'mkg'=> $mkg,
         );
         }
@@ -6463,7 +6500,8 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 ]);
 
                 DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
-                    'objectgolonganfk'=> $request['objectgolonganfk']
+                    'objectgolonganfk'=> $request['objectgolonganfk'],
+                    'gajiakhir'=> $request['nominal']
                 ]);
                 
             }else{
@@ -6483,7 +6521,8 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 ]);
 
                 DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
-                    'objectgolonganfk'=> $request['objectgolonganfk']
+                    'objectgolonganfk'=> $request['objectgolonganfk'],
+                    // 'gajiakhir'=> $request['nominal']
                 ]);
                 
             }
@@ -6533,7 +6572,17 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 'pejabatmenetapkan'=> $request['pejabatmenetapkan'] ,
                 'nosk'=> $request['nosk'],
                 'objectgolonganfk'=>$request['objectgolonganfk'],
+                'nosurat'=>$request['nosurat']
                 ]);
+                $getgol = \DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->get();
+                foreach ($getgol as $gg) {
+                    if($request['objectgolonganfk'] == $gg->objectgolonganfk){
+                        DB::table("pegawai_m")->where("id", $request['objectpegawaifk'])->update([
+                        // 'objectgolonganfk'=> $request['objectgolonganfk'],
+                        'gajiakhir'=> $request['gajiakhir']
+                        ]);
+                    }
+                }
             }else{
                 $jns = "Ubah ";
                 \DB::table("riwayatgajiberkala_t")
@@ -6548,9 +6597,16 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'tgltmt'=>$request['tgltmt'],
                     'pejabatmenetapkan'=> $request['pejabatmenetapkan'] ,
                     'nosk'=> $request['nosk'],
-                    'objectgolonganfk'=>$request['objectgolonganfk'],
+                    'nosurat'=>$request['nosurat']
+                    // 'objectgolonganfk'=>$request['objectgolonganfk'],
+                ]);
+
+                DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
+                    'objectgolonganfk'=> $request['objectgolonganfk'],
+                    'gajiakhir'=> $request['nominal']
                 ]);
             }
+
             
             $transStatus = true;
             

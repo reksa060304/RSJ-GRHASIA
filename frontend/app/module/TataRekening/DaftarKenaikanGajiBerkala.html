@@ -57,7 +57,8 @@
         height: 100%;
         object-fit: contain;
     }
-     .green {
+
+    .green {
         background-color: #98FB98;
         color: #000000;
         /*font-weight: bold;*/
@@ -88,7 +89,7 @@
 
     <div class="grid_4" style="margin-top:5px">
         <div class="grid_12">
-            <label c-label item="item" c-label-text="Periode Registrasi"></label>
+            <label c-label item="item" c-label-text="Periode Tanggal TMT"></label>
         </div>
         <div class="clear"></div>
 
@@ -127,8 +128,8 @@
         <div class="grid_12" style="margin-top: 10px;">
             <div class="grid_12 borderBox">
                 <kendo-grid id="kGrid" data-source="dataSourceGrid" options="columnGrid" k-selectable="'row'"
-                    k-sortable="'true'" k-resizable="'true'" k-ng-model="dataPasienSelected"
-                    ng-click="klikGrid(dataPasienSelected)">
+                    k-sortable="'true'" k-resizable="'true'" k-ng-model="dataSelected"
+                    ng-click="klikGrid(dataSelected)">
                 </kendo-grid>
             </div>
         </div>
@@ -144,6 +145,16 @@
             </md-tabs>
         </md-content> -->
     </div>
+    <div class="grid_12">
+        <div class="grid_3">
+            <button class="btnTemplate1" style="margin-left: 0;" ng-click="verif()"> <i
+                    class="fa fa-check"></i>Verif</button>
+        </div>
+        <div class="grid_3">
+            <button class="btnTemplate1" style="margin-left: 0;" ng-click="cetakGajiBerkala()"> <i
+                    class="fa fa-print"></i>Cetak</button>
+        </div>
+    </div>
     <div class="grid_12" style="margin-top:60px">
         <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
     </div>
@@ -154,4 +165,102 @@
                     class="fa fa-print"></i>Cetak</button>
         </div>
     </div> -->
+</div>
+<div kendo-window="popUpRiwayatGajiBerkala" k-title="'Data Riwayat Gaji Berkala'" k-width="850" k-height="350"
+    k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div class="grid_12">
+            <div class="grid_12">
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label>Tanggal TMT</label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_12">
+                        <input style="width: 100%" kendo-date-picker k-ng-model="itemGajiBerkala.tanggaltmt"
+                            k-format="'yyyy-MM-dd'" />
+                    </div>
+                </div>
+
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label>Tanggal SK</label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_12">
+                        <input style="width: 100%" kendo-date-picker k-ng-model="itemGajiBerkala.tanggalsk"
+                            k-format="'yyyy-MM-dd'" />
+                    </div>
+                </div>
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label item="item">Pangkat / Golongan</label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="itemGajiBerkala.golongan"
+                            k-data-text-field="'golongan'" k-data-value-field="'id'" k-auto-bind="true"
+                            k-data-source="ListGolonganGajiBerkala" k-on-change="getDataGolongan()" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid_12">
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label>Gaji Awal</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="'varchar'" class="k-textbox"
+                            ng-model="itemGajiBerkala.gajiawal" />
+                    </div>
+                </div>
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label>Gaji Akhir</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="'varchar'" class="k-textbox"
+                            ng-model="itemGajiBerkala.gajiakhir" />
+                    </div>
+                </div>
+
+
+                <div class="grid_8">
+                    <div class="grid_12">
+                        <label c-label>Pejabat Yang Menetapkan</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="'varchar'" class="k-textbox"
+                            ng-model="itemGajiBerkala.pejabatmenetapkan" />
+                    </div>
+                </div>
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label>No SK</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="'varchar'" class="k-textbox"
+                            ng-model="itemGajiBerkala.nosk" />
+                    </div>
+                </div>
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label>No Surat</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="'varchar'" class="k-textbox"
+                            ng-model="itemGajiBerkala.nosurat" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_12">
+            <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                <button class="k-button k-button-icontext k-primary k-grid-update"
+                    ng-click="tambahRiwayatGajiBerkala()"><span class="k-icon k-update"></span>Simpan</button>
+                <button class="k-button  k-button-icontext" ng-click="batalRiwayatGajiBerkala()"><span
+                        class="k-icon k-cancel"></span>Batal</button>
+            </div>
+        </div>
+    </div>
 </div>
