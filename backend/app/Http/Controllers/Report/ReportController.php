@@ -4469,41 +4469,73 @@ public function suratBuktiPengembalian(Request $request)
     public function cetakKGB(Request $request)
     {
         $kdProfile = (int) $request['kdprofile'];
-        $data = \DB::select(DB::raw(""));
+        $data = \DB::select(DB::raw("SELECT
+            fix.* 
+        FROM
+            (
+            SELECT ROW_NUMBER
+                ( ) OVER ( PARTITION BY rg.objectpegawaifk ORDER BY rg.tgltmt DESC ) AS rn2,
+                rg.objectpegawaifk,
+                pg.namalengkap,
+                pg.nippns,
+        -- 		rg.tgltmt,
+        -- 		rg.objectgolonganfk,
+                gol.namaexternal as pangkat,
+                gol.NAME as golongan,
+                rg.gajiawal,
+                rg.gajiakhir,
+                rg.nosk, rg.nosurat,rg.tglsk,
+                rg.tgltmt as tglakhir,
+                extract(year from age(rg.tgltmt, rgb.tgltmt))as thn,
+                extract(month from age(rg.tgltmt, rgb.tgltmt))as bln
+            FROM
+                riwayatgajiberkala_t rg
+                INNER JOIN sdm_golongan_m AS gol ON gol.id = rg.objectgolonganfk
+                INNER JOIN pegawai_m pg ON pg.ID = rg.objectpegawaifk
+                INNER JOIN (
+                SELECT
+                    x.objectpegawaifk,
+                    x.tgltmt 
+                FROM
+                    (
+                    SELECT
+                        row_number ( ) OVER ( PARTITION BY rg.objectpegawaifk ORDER BY rg.tgltmt ASC ) AS rn,
+                        rg.* 
+                    FROM
+                        pegawai_m AS pg
+                        INNER JOIN riwayatgolongan_t AS rg ON rg.objectpegawaifk = pg.id 
+                    ) AS x 
+                WHERE
+                    x.rn = 1 
+                ) AS rgb ON rgb.objectpegawaifk = rg.objectpegawaifk 
+            ORDER BY
+                rg.tgltmt ASC 
+            ) AS fix 
+        WHERE
+            fix.rn2 = 1 
+            AND fix.objectpegawaifk = $request[id_pegawai]"));
         $detail = [];
         $id=0;
         $value="";
-        foreach ($main as $m) {
-        $id=0;
-        $value="";
-            // foreach ($data as $d) {
-            //     if ($m->id == $d->id) {
-            //         $id = $m->id;
-            //         if ($d->type == 'datetime') {
-            //             $value=$this->tanggal_indonesia(date('Y-m-d',strtotime($d->value)));
-            //         }else{
-            //             $value = $d->value;
-            //         }
-            //         break;
-            //     }else {
-            //         $id = $m->id;
-            //         $value = "";
-            //     }
-                
-            // }
-
-            // $detail[]= array(
-            //     "id"=> $id,
-            //     "value"=>$value,
-            //     "type"=> $m->type
-            // );
+        foreach ($data as $dt) {
+            if(isset($dt->gajiawal) && isset($dt->gajiakhir) ){
+                $dt->gajiawal = $this->rupiah($dt->gajiawal);
+                $dt->gajiakhir = $this->rupiah($dt->gajiakhir);
+            }
+            if(isset($dt->tglsk) && isset($dt->tglakhir)){
+                $dt->tglsk=$this->tanggal_indonesia(date('Y-m-d',strtotime($dt->tglsk)));
+                $dt->tglakhir=$this->tanggal_indonesia(date('Y-m-d',strtotime($dt->tglakhir)));
+                $dt->tglttd=$this->tanggal_indonesia(date('Y-m-d'));
+            }
         }
-
-    // dd($detail);
+    // dd($data);
         $pageWidth = 950;
-        // var_dump($detail);
         return view('report.kgb'
-        // , compact('data','pageWidth')
-    );
+        , compact('data','pageWidth'));
+    }
+
+    function rupiah($angka){
+	$hasil_rupiah = "Rp " . number_format($angka,2,',','.');
+	return $hasil_rupiah;
     }
 }

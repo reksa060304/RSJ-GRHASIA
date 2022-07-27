@@ -546,11 +546,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             $scope.cetakGajiBerkala = function() {
                 
-                // if ($scope.dataSelected == undefined) {
-                //     alert("Data Belum Dipilih!")
-                //     return;
-                // };
-                window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgb?norec=', '_blank');
+                if ($scope.dataSelected.id_pegawai == undefined) {
+                    toastr.error("Data Belum Dipilih!")
+                    return;
+                }
+                console.log($scope.dataSelected);
+                window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgb?id_pegawai='+$scope.dataSelected.id_pegawai, '_blank');
             }
             $scope.tambahRiwayatGajiBerkala = function () {
                 var listRawRequired = [
