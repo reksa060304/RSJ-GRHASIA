@@ -1504,23 +1504,24 @@ $scope.formatRupiah = function (value, currency) {
 					alert("Data Belum Dipilih!")
 					return;
 				};
+				console.log(dataItem);
 				$scope.item.id = dataItem.id;
 				$scope.item.no = dataItem.no;
 				$scope.itemKeluarga.namaAnggotaKeluarga = dataItem.namalengkap;
-				$scope.itemKeluarga.hubunganKeluarga = { id: dataItem.hubungankeluargafk, hubungankeluarga: dataItem.hubungankeluarga };
+				$scope.itemKeluarga.hubunganKeluarga = { id: dataItem.objectkdhubunganfk, hubungankeluarga: dataItem.hubungankeluarga };
 				$scope.itemKeluarga.tglLahir = moment(dataItem.tgllahir).format('YYYY-MM-DD');
-				$scope.itemKeluarga.jenisKelaminKl = { id: dataItem.jeniskelaminfk, jeniskelamin: dataItem.jeniskelamin };
+				$scope.itemKeluarga.jenisKelaminKl = { id: dataItem.objectjeniskelaminfk, jeniskelamin: dataItem.jeniskelamin };
 				$scope.itemKeluarga.namaAyah = dataItem.namaayah;
 				$scope.itemKeluarga.namaIbu = dataItem.namaibu;
-				$scope.itemKeluarga.statusPerkawinanPegawaiKL = { id: dataItem.statusperkawinanfk, statusperkawinan: dataItem.statusperkawinan };
-				$scope.itemKeluarga.PekerjaanKL = { id: dataItem.pekerjaanfk, pekerjaan: dataItem.pekerjaan };
+				$scope.itemKeluarga.statusPerkawinanPegawaiKL = { id: dataItem.objectstatusperkawinanpegawaifk, statusperkawinan: dataItem.statusperkawinan };
+				$scope.itemKeluarga.PekerjaanKL = { id: dataItem.objectpekerjaanfk, pekerjaan: dataItem.pekerjaan };
 				$scope.itemKeluarga.nipIstriSuami = dataItem.nipistrisuami;
 				$scope.itemKeluarga.statusTanggungan = { id: dataItem.statustanggunganfk, reportdisplay: dataItem.statustanggungan };
-				$scope.itemKeluarga.noSuratKuliah = dataItem.noSuratKuliah;
+				$scope.itemKeluarga.noSuratKuliah = dataItem.nosuratkuliah;
 				$scope.itemKeluarga.tglsuratKuliah = moment(dataItem.tglsuratkuliah).format('YYYY-MM-DD');
 				$scope.itemKeluarga.alamat = dataItem.alamat;
 				$scope.itemKeluarga.keterangan = dataItem.keterangan;
-				$scope.itemKeluarga.pendidikan = { id: dataItem.pendidikanfk, pendidikan: dataItem.pendidikan };
+				$scope.itemKeluarga.pendidikan = { id: dataItem.objectpendidikanterakhirfk, pendidikan: dataItem.pendidikan };
 				$scope.popUpDataKeluarga.center().open();
 			}
 
@@ -2309,6 +2310,7 @@ $scope.formatRupiah = function (value, currency) {
 			}
 
 			$scope.batalRiwayatJabatan = function () {
+				$scope.itemJabatan = {};
 				ClearDataRiwayatJabatan();
 				$scope.popUpRiwayatJabatan.close();
 			}
@@ -2413,6 +2415,7 @@ $scope.formatRupiah = function (value, currency) {
 								data.keterangan = keterangan
 								data.alamat = $scope.itemKeluarga.alamat
 								data.id = $scope.item.id
+								data.objectpegawaifk = $scope.item.idPegawai
 								data.objectpendidikanterakhirfk = $scope.itemKeluarga.pendidikan.id
 								data.pendidikan = $scope.itemKeluarga.pendidikan.pendidikan
 
@@ -2422,7 +2425,10 @@ $scope.formatRupiah = function (value, currency) {
 								});
 							}
 						}
-
+						console.log(data);
+						medifirstService.post('sdm/save-riwayat-datakeluarga', data).then(function (data) {
+							init();
+						})
 					} else {
 
 						data = {
@@ -2449,14 +2455,17 @@ $scope.formatRupiah = function (value, currency) {
 							alamat: $scope.itemKeluarga.alamat,
 							objectpendidikanterakhirfk: $scope.itemKeluarga.pendidikan.id,
 							pendidikan: $scope.itemKeluarga.pendidikan.pendidikan,
-
+							objectpegawaifk: $scope.item.idPegawai
 						}
-
 						dataKeluarga.push(data)
-
+						
 						$scope.gridKeluarga = new kendo.data.DataSource({
 							data: dataKeluarga
 						});
+						console.log(data);
+						medifirstService.post('sdm/save-riwayat-datakeluarga', data).then(function (data) {
+							init();
+						})
 					}
 					ClearDataKeluarga();
 					$scope.popUpDataKeluarga.close();
@@ -2814,7 +2823,6 @@ $scope.formatRupiah = function (value, currency) {
 				console.log(isValid);
 				if (isValid.status) {
 					var nomorId = 0
-					console.log($scope.gridRiwayatPangkatGolongan);
 					if ($scope.gridRiwayatPangkatGolongan == undefined) {
 						nomorId = 1
 					} else {

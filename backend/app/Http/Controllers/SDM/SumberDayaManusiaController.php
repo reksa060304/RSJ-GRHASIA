@@ -916,7 +916,7 @@ class SumberDayaManusiaController extends ApiController {
             $dataSavePegawai->objectjeniskelaminfk= $dataPegawai['jeniskelamin'];
             $dataSavePegawai->kategorypegawai =  $dataPegawai['statuspegawai'];
             $dataSavePegawai->kedudukanfk=  $dataPegawai['kedudukan'];
-            $dataSavePegawai->objectgolonganfk=  $dataRiwayatPangkatGolongan[$nomor]['objectgolonganfk'];
+            // $dataSavePegawai->objectgolonganfk=  $dataRiwayatPangkatGolongan[$nomor]['objectgolonganfk'];
             $dataSavePegawai->objectjabatanfungsionalfk= $dataPegawai['jabatan'];
             $dataSavePegawai->objectpendidikanterakhirfk=  $dataPegawai['pendidikan'];
             
@@ -7053,6 +7053,72 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'tglpengajuan'=> $tahun.'-01-01 00:00:00',
                 ]);
             }
+            
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = $jns . "Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = $jns . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveRiwayatDataKeluarga(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $jns ="";
+        try {
+           
+                if($request['id'] == ""){
+                    $idKeluarga = KeluargaPegawai::max('id') + 1;
+                    $dataSaveKeluarga = new KeluargaPegawai();
+                    $dataSaveKeluarga->id = $idKeluarga;
+                    $dataSaveKeluarga->kdprofile = $kdProfile;
+                    $dataSaveKeluarga->statusenabled=true;
+                    $dataSaveKeluarga->norec = $dataSaveKeluarga->generateNewId();
+                    $dataSaveKeluarga->objectpegawaifk = $request['objectpegawaifk'];
+                    $jns = "Simpan ";
+                }else{
+                    $dataSaveKeluarga = KeluargaPegawai::where('id', $request['id'])->where('objectpegawaifk', $request['objectpegawaifk'])->first();
+                    $jns = "Ubah ";
+
+                }
+                    $dataSaveKeluarga->alamat = $request['alamat'];
+                    $dataSaveKeluarga->objectjeniskelaminfk = $request['objectjeniskelaminfk'];
+                    $dataSaveKeluarga->keterangan = $request['keterangan'];
+                    $dataSaveKeluarga->namaayah = $request['namaayah'];
+                    $dataSaveKeluarga->namaibu = $request['namaibu'];
+                    $dataSaveKeluarga->namalengkap = $request['namalengkap'];
+                    $dataSaveKeluarga->nipistrisuami = $request['nipistrisuami'];
+                    $dataSaveKeluarga->nosuratkuliah = $request['nosuratkuliah'];
+                    $dataSaveKeluarga->objectkdhubunganfk = $request['objectkdhubunganfk'];
+                    $dataSaveKeluarga->objectpekerjaanfk = $request['objectpekerjaanfk'];
+                    $dataSaveKeluarga->objectstatusperkawinanpegawaifk = $request['objectstatusperkawinanpegawaifk'];
+                    $dataSaveKeluarga->statustanggungan = $request['statustanggungan'];
+                    $dataSaveKeluarga->tgllahir = $request['tgllahir'];
+                    if (isset($request['tglsuratkuliah']) && $request['tglsuratkuliah'] != 'Invalid date'){
+                        $dataSaveKeluarga->tglsuratkuliah = $request['tglsuratkuliah'];
+                    }
+                    $dataSaveKeluarga->statustanggunganfk = $request['statustanggunganfk'];
+                    $dataSaveKeluarga->objectpendidikanterakhirfk = $request['objectpendidikanterakhirfk'];
+                    $dataSaveKeluarga->save();
             
             $transStatus = true;
             

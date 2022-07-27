@@ -349,8 +349,8 @@
 			<md-tabs md-dynamic-height md-border-bottom>
 				<md-tab label="Status Kepegawaian" ng-disabled='nondiklat'>
 					<md-content class="md-padding">
-						<div class="grid_12">
-							<div class="grid_4">
+						<div class="grid_12" ng-hide="true">
+							<div class="grid_4" >
 								<div class="grid_12">
 									<label c-label item="item" c-label-text="Tanggal Masuk"></label>
 								</div>
@@ -474,7 +474,7 @@
 										k-auto-bind="false" k-data-source="ListEselon" />
 								</div>
 							</div>
-							<div class="grid_4">
+							<div class="grid_4" ng-hide="true">
 								<div class="grid_12">
 									<label c-label item="item" c-label-text="ID Finger Print"></label>
 								</div>
@@ -483,7 +483,7 @@
 										placeholder="Id Finger" />
 								</div>
 							</div>
-							<div class="grid_4">
+							<div class="grid_4" ng-hide="true">
 								<div class="grid_12">
 									<label c-label item="item" c-label-text="Pola Kerja Shift"></label>
 								</div>
@@ -496,7 +496,7 @@
 							</div>
 						</div>
 						<div class="grid_12">
-							<div class="grid_4" style="margin-top: -6px;">
+							<div class="grid_4" style="margin-top: -6px;" ng-hide="true">
 								<div class="grid_6">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="KelasJabatan"></label>
@@ -506,7 +506,7 @@
 											class="k-textbox" ng-model="item.nilaiJabatan" />
 									</div>
 								</div>
-								<div class="grid_6">
+								<div class="grid_6" ng-hide="true">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="Grade"></label>
 									</div>
@@ -516,7 +516,15 @@
 									</div>
 								</div>
 							</div>
-							
+							<div class="grid_12">
+								<div class="grid_8"></div>
+								<div class="grid_2">
+									<button class="c-button" ng-click="simpan()">Simpan</button>
+								</div>
+								<div class="grid_2">
+									<button class="cancel c-button" ng-click="kembali()">Kembali</button>
+								</div>
+							</div>
 						</div>
 					</md-content>
 				</md-tab>
@@ -1847,15 +1855,7 @@
 	</div>
 </div>
 
-<div class="grid_12">
-	<div class="grid_8"></div>
-	<div class="grid_2">
-		<button class="c-button" ng-click="simpan()">Simpan</button>
-	</div>
-	<div class="grid_2">
-		<button class="cancel c-button" ng-click="kembali()">Kembali</button>
-	</div>
-</div>
+
 
 <style>
 	.image-preview {
