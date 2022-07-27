@@ -420,7 +420,7 @@
 						<div class="grid_12">
 							<div class="grid_4">
 								<div class="grid_12">
-									<label c-label item="item" c-label-text="Golongan"></label>
+									<label c-label item="item">Pangkat / Golongan</label>
 								</div>
 								<div class="grid_12">
 									<input style="width: 100%;" kendo-combo-box k-ng-model="item.golonganPegawai"
@@ -1064,7 +1064,7 @@
 										</div>
 										<div class="grid_4">
 											<div class="grid_12">
-												<label c-label>Golongan</label>
+												<label c-label>pangkat / Golongan</label>
 											</div>
 											<div class="grid_12">
 												<input kendo-combo-box k-ng-model="itemPandG.golongan"
@@ -1136,13 +1136,15 @@
 									<div class="grid_12">
 										<div class="grid_4">
 											<div class="grid_12">
-												<label c-label>No SK</label>
+												<label c-label>Tanggal TMT</label>
 											</div>
+											<div class="clear"></div>
 											<div class="grid_12">
-												<input c-text-box type="input" filter="'varchar'" class="k-textbox"
-													ng-model="itemGajiBerkala.nosk" />
+												<input style="width: 100%" kendo-date-picker k-ng-model="itemGajiBerkala.tanggaltmt"
+													k-format="'yyyy-MM-dd'"  />
 											</div>
 										</div>
+										
 										<div class="grid_4">
 											<div class="grid_12">
 												<label c-label>Tanggal SK</label>
@@ -1155,12 +1157,12 @@
 										</div>
 										<div class="grid_4">
 											<div class="grid_12">
-												<label c-label item="item" c-label-text="Golongan"></label>
+												<label c-label item="item">Pangkat / Golongan</label>
 											</div>
 											<div class="grid_12">
 												<input style="width: 100%;" kendo-combo-box k-ng-model="itemGajiBerkala.golongan"
 													k-data-text-field="'golongan'" k-data-value-field="'id'" k-auto-bind="true"
-													k-data-source="ListGolonganPegawai" />
+													k-data-source="ListGolonganGajiBerkala" k-on-change="getDataGolongan()"/>
 											</div>
 										</div>
 									</div>
@@ -1171,7 +1173,7 @@
 												<label c-label>Gaji Awal</label>
 											</div>
 											<div class="grid_12">
-												<input c-text-box type="number" filter="'varchar'" class="k-textbox"
+												<input c-text-box type="input" filter="'varchar'" class="k-textbox"
 													ng-model="itemGajiBerkala.gajiawal" />
 											</div>
 										</div>
@@ -1180,20 +1182,11 @@
 												<label c-label>Gaji Akhir</label>
 											</div>
 											<div class="grid_12">
-												<input c-text-box type="number" filter="'varchar'" class="k-textbox"
+												<input c-text-box type="input" filter="'varchar'" class="k-textbox"
 													ng-model="itemGajiBerkala.gajiakhir" />
 											</div>
 										</div>
-										<div class="grid_4">
-											<div class="grid_12">
-												<label c-label>Tanggal TMT</label>
-											</div>
-											<div class="clear"></div>
-											<div class="grid_12">
-												<input style="width: 100%" kendo-date-picker
-													k-ng-model="itemGajiBerkala.tanggaltmt" k-format="'yyyy-MM-dd'" />
-											</div>
-										</div>
+										
 
 										<div class="grid_8">
 											<div class="grid_12">
@@ -1202,6 +1195,22 @@
 											<div class="grid_12">
 												<input c-text-box type="input" filter="'varchar'" class="k-textbox"
 													ng-model="itemGajiBerkala.pejabatmenetapkan" />
+											</div>
+										</div>
+										<div class="grid_4">
+											<div class="grid_12">
+												<label c-label>No SK</label>
+											</div>
+											<div class="grid_12">
+												<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="itemGajiBerkala.nosk" />
+											</div>
+										</div>
+										<div class="grid_4">
+											<div class="grid_12">
+												<label c-label>No Surat</label>
+											</div>
+											<div class="grid_12">
+												<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="itemGajiBerkala.nosurat" />
 											</div>
 										</div>
 									</div>
@@ -1221,7 +1230,7 @@
 					</md-content>
 				</md-tab>
 
-				<md-tab label="KOMPONEN GAJI" ng-disabled="nondiklat">
+				<!-- <md-tab label="KOMPONEN GAJI" ng-disabled="nondiklat" ng-disabled="true">
 					<md-content class="md-padding">
 						<div class="grid_6">
 							<kendo-grid k-data-source="gridKomponenGajiAdd" k-pageable="true"
@@ -1347,7 +1356,7 @@
 							</div>
 						</div>
 					</md-content>
-				</md-tab>
+				</md-tab> -->
 
 				<md-tab label="Hukuman disiplin" ng-disabled="nondiklat">
 					<md-content class="md-padding">

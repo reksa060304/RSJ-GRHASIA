@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     initialize.controller('DaftarKenaikanGajiBerkalaCtrl', ['MedifirstService', 'CacheHelper', '$scope', 'DateHelper', '$state', 'ModelItem',
         function (medifirstService, cacheHelper, $scope, DateHelper, $state, ModelItem) {
@@ -8,6 +8,7 @@ define(['initialize'], function (initialize) {
             $scope.dataSelected = {};
             $scope.item = {};
             $scope.itemD = {};
+            $scope.itemGajiBerkala = {};
             $scope.item.listKasirMulti = [];
             $scope.item.listKasirMultis = [];
             $scope.isRouteLoading = false;
@@ -21,6 +22,14 @@ define(['initialize'], function (initialize) {
             }
             var koneng = [];
             loadCombo()
+            FormLoad()
+            function FormLoad() {
+                $scope.isRouteLoading = true;
+                medifirstService.get("sdm/get-data-combo-sdm?", true).then(function (dat) {
+                    var dataCombo = dat.data
+                    $scope.ListGolonganPegawai = dataCombo.golonganpegawai;
+                });
+            }
             var datagaji = []
             function loadCombo() {
                 $scope.isRouteLoading = true
@@ -92,7 +101,6 @@ define(['initialize'], function (initialize) {
                         if (kuning >= 21) {
                             
                             if (blntmt < blnskrg+1) {
-                                $(row.cells[0]).addClass("red");
                                 $(row.cells[1]).addClass("red");
                                 $(row.cells[2]).addClass("red");
                                 $(row.cells[3]).addClass("red");
@@ -101,7 +109,6 @@ define(['initialize'], function (initialize) {
                                 $(row.cells[6]).addClass("red");
                                 $(row.cells[7]).addClass("red");
                             }else{
-                                $(row.cells[0]).addClass("koneng");
                                 $(row.cells[1]).addClass("koneng");
                                 $(row.cells[2]).addClass("koneng");
                                 $(row.cells[3]).addClass("koneng");
@@ -198,40 +205,9 @@ define(['initialize'], function (initialize) {
             $scope.formatRupiah = function (value, currency) {
                 return currency + "Rp. " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
             }
-            $scope.klikGrid = function (dataPasienSelected) {
-                if (dataPasienSelected != undefined) {
-                    $scope.nocm = dataPasienSelected.nocm;
-                    $scope.idPasien = dataPasienSelected.nocmfk;
-                    $scope.tglMeninggal = dataPasienSelected.tglmeninggal;
-                    $scope.dataPasienSelected = dataPasienSelected;
-                }
-            }
-
-            var HttpClient = function () {
-                this.get = function (aUrl, aCallback) {
-                    var anHttpRequest = new XMLHttpRequest();
-                    anHttpRequest.onreadystatechange = function () {
-                        if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
-                            aCallback(anHttpRequest.responseText);
-                    }
-
-                    anHttpRequest.open("GET", aUrl, true);
-                    anHttpRequest.send(null);
-                }
-            }
-
-            $scope.klikdua = function (dataPasienSelected) {
-                if (dataPasienSelected.foto != null) {
-                    $scope.item.image = dataPasienSelected.foto
-                    $scope.popUpPhoto.center().open()
-
-                }
-
-            }
-
-            $scope.tutupPhoto = function () {
-                $scope.item.image = "../app/images/avatar.jpg"
-                $scope.popUpPhoto.close()
+            $scope.klikGrid = function (dataSelected) {
+                
+                console.log(dataSelected);
             }
 
             $scope.formatJam = function (tanggal) {
@@ -550,7 +526,76 @@ define(['initialize'], function (initialize) {
                     '&dokter=' + dokter + '&ruanganId=' + ruanganId + '&view=true',
                     function (response) {});
             }
+            $scope.verif = function(){
+                
+                $scope.itemGajiBerkala.gajiawal = $scope.dataSelected.gajiakhir
+                $scope.itemGajiBerkala.gajiakhir = $scope.dataSelected.gajibaru
+                if ($scope.dataSelected == undefined) {
+                    messageContainer.error("Pilih data dulu!")
+                    return
+                }
+                $scope.ListGolonganGajiBerkala = [{
+                    id: $scope.dataSelected.objectgolonganfk,
+                    golongan: $scope.dataSelected.pangkat + " / " + $scope.dataSelected.golongan
+                }]
+                $scope.itemGajiBerkala.golongan = {
+                    id: $scope.dataSelected.objectgolonganfk,
+                    golongan: $scope.dataSelected.pangkat + " / " + $scope.dataSelected.golongan
+                }
+                $scope.popUpRiwayatGajiBerkala.center().open()
+            }
+            $scope.cetakGajiBerkala = function() {
+                
+                if ($scope.dataSelected.id_pegawai == undefined) {
+                    toastr.error("Data Belum Dipilih!")
+                    return;
+                }
+                console.log($scope.dataSelected);
+                window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgb?id_pegawai='+$scope.dataSelected.id_pegawai, '_blank');
+            }
+            $scope.tambahRiwayatGajiBerkala = function () {
+                var listRawRequired = [
+                    "itemGajiBerkala.gajiawal|ng-model|gaji Pokok Lama",
+                    "itemGajiBerkala.gajiakhir|ng-model|gaji Pokok Baru",
+                    "itemGajiBerkala.tanggalsk|k-ng-model|Tanggal SK",
+                    "itemGajiBerkala.golongan|k-ng-model|Golongan",
+                    "itemGajiBerkala.nosk|ng-model|NO SK",
+                    "itemGajiBerkala.nosurat|ng-model|No Surat",
+                    "itemGajiBerkala.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
+                    "itemGajiBerkala.tanggaltmt|k-ng-model|Tanggal TMT",
+                ];
 
+                var isValid = ModelItem.setValidation($scope, listRawRequired);
+                if (isValid.status) {
+                    var objSave = {
+                        'nosurat': $scope.itemGajiBerkala.nosurat,
+                        'nosk': $scope.itemGajiBerkala.nosk,
+                        'tglsk': $scope.itemGajiBerkala.tanggalsk,
+                        'objectgolonganfk': $scope.itemGajiBerkala.golongan.id,
+                        'gajiawal': $scope.itemGajiBerkala.gajiawal,
+                        'gajiakhir': $scope.itemGajiBerkala.gajiakhir,
+                        'objectpegawaifk': $scope.dataSelected.id_pegawai,
+                        'tgltmt': moment($scope.itemGajiBerkala.tanggaltmt).format('YYYY-MM-DD'),
+                        'pejabatmenetapkan': $scope.itemGajiBerkala.pejabatmenetapkan
+                    }
+                    console.log(objSave);
+                    medifirstService.post('sdm/save-riwayat-gaji-berkala', objSave).then(function (data) {
+                    })
+                    ClearDataRiwayatGajiBerkala();
+                    $scope.popUpRiwayatGajiBerkala.close();
+                } else {
+                    ModelItem.showMessages(isValid.messages);
+                }
+            }
+            $scope.batalRiwayatGajiBerkala = function () {
+                ClearDataRiwayatGajiBerkala();
+                $scope.popUpRiwayatGajiBerkala.close();
+            }
+            function ClearDataRiwayatGajiBerkala() {
+                
+                $scope.itemGajiBerkala = {};
+                // $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
+            };
             //** BATAS */
         }
     ]);
