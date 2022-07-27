@@ -2137,6 +2137,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/get-data-urut-informasi-jabatan', 'SDM\SumberDayaManusiaController@getDataInformasijabatanStruktural');
             Route::get('sdm/get-pegawai-all', 'SDM\SumberDayaManusiaController@getPegawaiAll');
             Route::get('sdm/get-permohonan-cuti', 'SDM\SumberDayaManusiaController@getPermohonanCuti');
+            Route::get('sdm/get-total-sisa-cuti', 'SDM\SumberDayaManusiaController@getTotalSisaCuti');
+            Route::get('sdm/get-nominal-tunjangan', 'SDM\SumberDayaManusiaController@getNominalTunjangan');
+            Route::get('sdm/get-jumlah-cuti', 'SDM\SumberDayaManusiaController@getJumlahCuti');
             Route::get('sdm/get-absensi-pegawai', 'SDM\SumberDayaManusiaController@getAbsesnsiPegawai');
             Route::get('sdm/get-pegawai-by-unitkerja', 'SDM\SumberDayaManusiaController@getPegawaiByUnitKerja');
             Route::get('sdm/get-combo-jadwal', 'SDM\SumberDayaManusiaController@getJadwalAbasensiCbo');
@@ -2152,18 +2155,21 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/get-gaji-perpegawai','SDM\SumberDayaManusiaController@getGajiPerPegawai');
             Route::get('sdm/get-datajampelatihan-pegawai', 'SDM\SumberDayaManusiaController@getDataJampelatihan');
             Route::get('sdm/get-datalaporan-diklat', 'SDM\SumberDayaManusiaController@getDataLaporanDiklat');
+            Route::get('sdm/get-sisacuti', 'SDM\SumberDayaManusiaController@getSisaCuti');
             /*END GET*/
 
             /*POST*/
             
             Route::post('sdm/simpan-bayar-gaji-detail', 'SDM\SumberDayaManusiaController@simpanPembayaranGajiArray');
             Route::post('sdm/save-data-abk', 'SDM\SumberDayaManusiaController@simpanDataABK');
+            Route::post('sdm/save-sisacuti', 'SDM\SumberDayaManusiaController@simpanSisaCuti');
             Route::post('sdm/simpan-data-pembayaran-gaji', 'SDM\SumberDayaManusiaController@simpanPembayaranGaji');
             Route::post('sdm/update-false-pegawai', 'SDM\SumberDayaManusiaController@deleteDataPegawai');
             Route::post('sdm/update-idfinger-pegawai', 'SDM\SumberDayaManusiaController@updateDataIdFingerPrint');
             Route::post('sdm/delete-data-keluarga-pegawai', 'SDM\SumberDayaManusiaController@deleteDataKeluarga');
             Route::post('sdm/delete-data-hukuman-disiplin', 'SDM\SumberDayaManusiaController@deleteDataHukumanDisiplin');
             Route::post('sdm/delete-data-cuti', 'SDM\SumberDayaManusiaController@deleteDataCuti');
+            Route::post('sdm/delete-total-cuti', 'SDM\SumberDayaManusiaController@deleteTotalCuti');
             Route::post('sdm/delete-data-pangkat-golongan', 'SDM\SumberDayaManusiaController@deleteDataPangkatGolongan');
             Route::post('sdm/delete-data-gaji-berkala', 'SDM\SumberDayaManusiaController@deleteDataGajiBerkala');
             Route::post('sdm/delete-data-sipstr', 'SDM\SumberDayaManusiaController@deleteDataSipStr');
@@ -2175,6 +2181,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('sdm/save-riwayat-gaji-berkala','SDM\SumberDayaManusiaController@saveRiwayatGajiBerkala');
             Route::post('sdm/save-riwayat-hukuman-disiplin','SDM\SumberDayaManusiaController@saveRiwayatHukumanDisiplin');
             Route::post('sdm/save-riwayat-cuti','SDM\SumberDayaManusiaController@saveRiwayatCuti');
+            Route::post('sdm/save-total-cuti','SDM\SumberDayaManusiaController@saveTotalCuti');
             Route::post('sdm/upload-data-sipstr', 'SDM\SumberDayaManusiaController@simpanSipStr');
             Route::get('report/cetak-sertifikat','Report\ReportController@cetakSertifikat');
             Route::post('sdm/update-data-pegawai-form-pensiun', 'SDM\SumberDayaManusiaController@updateDataPegawaiFormPensiun');

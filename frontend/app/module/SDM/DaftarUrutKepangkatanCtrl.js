@@ -54,25 +54,20 @@ define(['initialize'], function (initialize) {
 
             function LoadData() {       
 
-                $scope.isRouteLoading = true;              
-                var idPangkatPe = "";
-                if ($scope.item.pangkatPegawai != undefined) {
-                    idPangkatPe = "&idPangkatPe=" + $scope.item.pangkatPegawai.id;
-                }
-                var idJenisPegawai = "";
-                if ($scope.item.JenisPegawai != undefined) {
-                    idJenisPegawai = "&idJenisPegawai=" + $scope.item.JenisPegawai.id;
-                }
+                $scope.isRouteLoading = true; 
             
                 var idPegawai = "";
                 if ($scope.item.namaPegawai != undefined) {
                     idPegawai = "&idPegawai=" + $scope.item.namaPegawai.id;
                 }
+
+                var idGolongan = "";
+                if ($scope.item.Golongan != undefined) {
+                    idGolongan = "&idGolongan=" + $scope.item.Golongan.id;
+                }
                 
-                medifirstService.get("sdm/get-data-urut-kepangakatan-pegawai?"                   
-                    + idPangkatPe
-                    + idJenisPegawai
-                    + idPegawai).then(function (data) {
+                medifirstService.get("sdm/get-data-urut-kepangakatan-pegawai?"  
+                    + idPegawai + idGolongan).then(function (data) {
                     $scope.isLoadingData = false;
                     // debugger;       
                     var datas = data.data.data;             
@@ -131,50 +126,40 @@ define(['initialize'], function (initialize) {
                 pageable: true,
                 columns: [
                     {
+                        "field": "nourut",
+                        "title": "No Urut",
+                        "width": "50px"
+                    },
+                    {
                         "field": "nippns",
                         "title": "NIP",
-                        "width": "100px"
+                        "width": "100px",                        
                     },
                     {
                         "field": "namalengkap",
-                        "title": "Nama Pegawai",
-                        "width": "150px",                        
+                        "title": "Nama Lengkap",
+                        "width": "150px",
+                    },
+                    {
+                        "field": "golongan",
+                        "title": "Golongan",
+                        "width": "50px"
+                    }, 
+                    {
+                        "field": "masakerjakeseluruhan",
+                        "title": "Masa Kerja Keseluruhan (hari)",
+                        "width": "100px"
+                    },
+                    {
+                        "field": "day",
+                        "title": "Masa Kerja Keseluruhan (tahun, bulan, hari)",
+                        "width": "150px"
                     },
                     {
                         "field": "tgllahir",
                         "title": "Tgl Lahir",
-                        "width": "87px",
+                        "width": "100px",
                         "template": "<span class='style-left'>{{formatTanggal('#: tgllahir #')}}</span>"
-                    },
-                    {
-                        "field": "namapangkat",
-                        "title": "Pangkat",
-                        "width": "110px"
-                    }, 
-                    {
-                        "field": "golongan",
-                        "title": "Golongan TMT",
-                        "width": "80px"
-                    },
-                    {
-                        // "field": "golongan",
-                        "title": "Golongan Eselon",
-                        "width": "80px"
-                    },
-                    {
-                        // "field": "namajabatan",
-                        "title": "Jabatan",
-                        "width": "120px"
-                    },
-                    {
-                        // "field": "jenispegawai",
-                        "title": "Pendidikan",
-                        "width": "120px"
-                    },
-                    {
-                        // "field": "umur",
-                        "title": "Masa Kerja",
-                        "width": "100px"
                     }
                 ]
             }; 

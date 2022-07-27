@@ -244,6 +244,10 @@
     {
       "nameDep": "DaftarGajiTunjanganCtrl",
       "urlDep": "module/SDM/DaftarGajiTunjanganCtrl"
+    },
+    {
+      "nameDep": "SisaCutiCtrl",
+      "urlDep": "module/SDM/SisaCutiCtrl"
     }
   ]
 }

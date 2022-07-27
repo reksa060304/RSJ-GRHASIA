@@ -41,6 +41,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			var dataStr = [];
 			var dataNoTelp = [];
 			var dataCuti = [];
+			var dataCutiAwal = [];
 			var objSave = [];
 			var objUpload = [];
 			var dataRiwayatPelatihan = [];
@@ -48,6 +49,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			var penyelenggara = "";
 			$scope.loginDisabled = false;
 			FormLoad();
+
+			$scope.yearUngkul = {
+                start: "decade",
+                depth: "decade"
+            }
 			// LoadCache();
 			$scope.clickpenyelenggara = function () {
 				if($scope.itemPelatihan.penyelenggara.id == 1){
@@ -89,6 +95,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			};
 			function ClearCuti() {
 				$scope.itemCuti = {};
+				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");				
+			};
+			function ClearCutiAwal() {
+				$scope.itemCutiAwal = {};
 				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");				
 			};
 			function ClearDataRiwayatPendidikan() {
@@ -151,6 +161,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 			function ClearDataCuti() {
 				$scope.itemCuti = {};
+				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
+			};
+			function ClearDataCutiAwal() {
+				$scope.itemCutiAwal = {};
 				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
 			};
 			function FormLoad() {
@@ -396,6 +410,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 							// data cuti
 							dataCuti = dataCacheCuti;
+							dataCutiAwal = dataCache.datacutiawal;
 							for (let i = 0; i < dataCuti.length; i++) {
 								dataCuti[i].no = i + 1;
 								var umur = dateHelper.CountAge(new Date(dataCuti[i].tgldari), new Date(dataCuti[i].tglsampai));
@@ -449,6 +464,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							}
 							$scope.gridCuti = new kendo.data.DataSource({
 								data: dataCuti
+							})
+							for(var e =0; e<dataCutiAwal.length; e++){
+								dataCutiAwal[e].no = e+1
+							}
+							$scope.gridCutiAwal = new kendo.data.DataSource({
+								data: dataCutiAwal
 							})
 							//end
 
@@ -561,6 +582,37 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 			}
 
+			$scope.$watch('itemJabatan.jenisJabatan', function (newValue, oldValue) {
+				if (newValue != oldValue) {
+					medifirstService.get("sdm/get-data-combo-sdm?jabatan=" + $scope.itemJabatan.jenisJabatan.id + "&idpegawai=" + $scope.item.idPegawai).then(function (dat) {
+						
+						if($scope.itemJabatan.jenisJabatan.id == 7 && dat.data.validasi == null){
+							toastr.warning("Data Golongan Masih Kosong");
+							return;
+						} else if($scope.itemJabatan.jenisJabatan.id == 8 && dat.data.validasi == null){
+							toastr.warning("Data Eselon Masih Kosong");
+							return;
+						} else{
+							$scope.ListTunjangan = dat.data.tunjanganbaru;
+						}
+					})
+				}
+			});
+
+			$scope.$watch('itemJabatan.tunjangan', function (newValue, oldValue) {
+				if (newValue != oldValue) {
+					var jenisjabatan = 'jenisjabatan=' + $scope.itemJabatan.jenisJabatan.id
+					var jabatan = '&jabatan=' + $scope.itemJabatan.tunjangan.id
+					medifirstService.get("sdm/get-nominal-tunjangan?" + jenisjabatan + jabatan).then(function (dat) {
+						if(dat.data.data.length == 0){
+							$scope.itemJabatan.nominaltunjangan = 0
+						} else{
+							$scope.itemJabatan.nominaltunjangan = dat.data.data[0].nominaltunjangan;
+						}
+						
+					})
+				}
+			});
 			$scope.$watch('itemSip.unitKerja', function (newValue, oldValue) {
 				if (newValue != oldValue) {
 					$scope.ListSubUnitKerja = newValue.subunit;
@@ -579,6 +631,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 			$scope.formatTanggal = function (tanggal) {
 				return moment(tanggal).format('DD-MMM-YYYY');
+			}
+
+			$scope.formatTahun = function (tanggal) {
+				return moment(tanggal).format('YYYY');
 			}
 
 			$scope.formatTahun = function (tanggal) {
@@ -1183,6 +1239,51 @@ $scope.formatRupiah = function (value, currency) {
 				]
 			}
 
+			$scope.opsiGridCutiAwal = {
+				toolbar: [{
+					name: "create",
+					text: "Tambah Total Cuti",
+					template: '<button ng-click="createCutiAwal()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah Total Cuti</button>'
+				}],
+				sortable: false,
+				reorderable: true,
+				filterable: false,
+				pageable: true,
+				columnMenu: false,
+				resizable: true,
+				selectable: 'row',
+				columns: [{
+						"field": "no",
+						"title": "No",
+						"width": "100px"
+					},
+					{
+						"field": "tglpengajuan",
+						"title": "Tahun",
+						"template": "<span class='style-left'>{{formatTahun('#: tglpengajuan #')}}</span>"
+					},
+					{
+						"field": "jumlahhari",
+						"title": "Jumlah Cuti",
+					},
+					{
+						"command": [{
+								text: "Edit",
+								click: EditCutiAwal,
+								imageClass: "k-icon k-i-pencil"
+							},
+							{
+								text: "Hapus",
+								click: HapusCutiAwal,
+								imageClass: "k-icon k-i-delete"
+							},
+						],
+						title: "Actions",
+						width: "100px",
+					}
+				]
+			}
+
 			$scope.opsiGridKomponenGajiDel = {
 				toolbar: [
 					{
@@ -1599,7 +1700,7 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.itemJabatan.tglSK = moment(dataItem.tglsk).format('YYYY-MM-DD HH:mm');
 				$scope.itemJabatan.ttdSK = dataItem.ttdsk;
 				$scope.itemJabatan.jabatanTtd = dataItem.ttdjabatansk;
-				$scope.itemJabatan.tunjangan = dataItem.tunjangan;
+				$scope.itemJabatan.nominaltunjangan = dataItem.tunjangan;
 				$scope.popUpRiwayatJabatan.center().open();
 			}
 
@@ -1681,6 +1782,21 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.itemCuti.pejabatmenetapkan = dataItem.pejabatmenetapkan;
 				$scope.itemCuti.nosk = dataItem.nosk;
 				$scope.popUpCuti.center().open();
+			}
+			function EditCutiAwal(e) {
+				$scope.itemCutiAwal = [];
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				console.log(dataItem);
+				if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+				$scope.item.nomorIdcutiAwal = dataItem.no;
+				$scope.item.noreccutiAwal = dataItem.norec;
+				$scope.itemCutiAwal.tahun = moment(dataItem.tglpengajuan).format('YYYY');
+				$scope.itemCutiAwal.jumlahcuti = dataItem.jumlahhari;
+				$scope.popUpCutiAwal.center().open();
 			}
 			function EditPangkatGolongan(e) {
 				$scope.itemPandG = [];
@@ -1841,6 +1957,35 @@ $scope.formatRupiah = function (value, currency) {
 				// return
 				grid.removeRow(row);
 				medifirstService.post('sdm/delete-data-cuti', itemDelete).then(function (e) {
+					if (e.status === 201) {
+						grid.removeRow(row);
+					}
+				})
+
+			}
+
+			function HapusCutiAwal(e) {
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+				var grid = this;
+				var row = $(e.currentTarget).closest("tr");
+				var tr = $(e.target).closest("tr");
+				for (var i = dataCutiAwal.length - 1; i >= 0; i--) {
+					if (dataCutiAwal[i].no == dataItem.no) {
+						dataCutiAwal.splice(i, 1);
+					}
+				}
+				var itemDelete = {
+					"norec": dataItem.norec
+				}
+				console.log(itemDelete);
+				// return
+				grid.removeRow(row);
+				medifirstService.post('sdm/delete-total-cuti', itemDelete).then(function (e) {
 					if (e.status === 201) {
 						grid.removeRow(row);
 					}
@@ -2111,6 +2256,18 @@ $scope.formatRupiah = function (value, currency) {
 					actions: actions
 				});
 			}
+
+			$scope.createCutiAwal = function () {
+				$scope.item.noreccutiAwal = "";
+				$scope.item.nomorIdcutiAwal = undefined;
+				$scope.popUpCutiAwal.center().open();
+				var actions = $scope.popUpCutiAwal.options.actions;
+				actions.splice(actions.indexOf("Close"), 1);
+				$scope.popUpCutiAwal.setOptions({
+					actions: actions
+				});
+			}
+
 			$scope.createKomponenDel = function () {
 				$scope.item.norecKomDel = "";
 				$scope.item.nomorId = undefined;
@@ -2145,6 +2302,11 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.batalCuti = function () {
 				ClearCuti();
 				$scope.popUpCuti.close();
+			}
+
+			$scope.batalCutiAwal = function () {
+				ClearCutiAwal();
+				$scope.popUpCutiAwal.close();
 			}
 
 			$scope.batalRiwayatPendidikan = function () {
@@ -2551,7 +2713,7 @@ $scope.formatRupiah = function (value, currency) {
 					"itemJabatan.tglSK|k-ng-model|Tgl SK",
 					"itemJabatan.ttdSK|k-ng-model|Penandatangan SK",
 					"itemJabatan.jabatanTtd|k-ng-model|Penandatangan Jabatan",
-					"itemJabatan.tunjangan|ng-model|Tunjangan",
+					"itemJabatan.nominaltunjangan|ng-model|Tunjangan",
 				];
 
 				var isValid = ModelItem.setValidation($scope, listRawRequired);
@@ -2580,7 +2742,7 @@ $scope.formatRupiah = function (value, currency) {
 								data.namajabatanttd = $scope.itemJabatan.jabatanTtd.namajabatan
 								data.pegawaipenanggungjawab = $scope.itemJabatan.ttdSK + " / " + $scope.itemJabatan.jabatanTtd
 								data.norec = $scope.item.norecJab
-								data.tunjangan = $scope.itemJabatan.tunjangan
+								data.tunjangan = $scope.itemJabatan.nominaltunjangan
 								data.ttdsk = $scope.itemJabatan.ttdSK
 								data.ttdjabatansk = $scope.itemJabatan.jabatanTtd
 								data.objectpegawaifk = $scope.item.idPegawai
@@ -2592,6 +2754,7 @@ $scope.formatRupiah = function (value, currency) {
 						}
 						medifirstService.post('sdm/save-riwayat-jabatan', data).then(function (data) {
 							init();
+							$scope.itemJabatan = {}
 						})
 
 					} else {
@@ -2611,7 +2774,7 @@ $scope.formatRupiah = function (value, currency) {
 							pegawaipenanggungjawab: $scope.itemJabatan.ttdSK + " / " + $scope.itemJabatan.jabatanTtd,
 							norec: $scope.item.norecJab,
 							ttdsk: $scope.itemJabatan.ttdSK,
-							tunjangan: $scope.itemJabatan.tunjangan,
+							tunjangan: $scope.itemJabatan.nominaltunjangan,
 							ttdjabatansk: $scope.itemJabatan.jabatanTtd,
 							objectpegawaifk: $scope.item.idPegawai
 						}
@@ -2622,6 +2785,7 @@ $scope.formatRupiah = function (value, currency) {
 						});
 						medifirstService.post('sdm/save-riwayat-jabatan', data).then(function (data) {
 							init();
+							$scope.itemJabatan = {}
 						})
 					}
 					ClearDataRiwayatJabatan();
@@ -3003,6 +3167,64 @@ $scope.formatRupiah = function (value, currency) {
 					}
 					ClearDataCuti();
 					$scope.popUpCuti.close();
+				} else {
+					ModelItem.showMessages(isValid.messages);
+				}
+			}
+
+			$scope.tambahCutiAwal = function () {
+				var listRawRequired = [
+					"itemCutiAwal.tahun|k-ng-model|Tahun",
+					"itemCutiAwal.jumlahcuti|ng-model|Jumlah Cuti",
+				];
+				
+
+				var isValid = ModelItem.setValidation($scope, listRawRequired);
+				if (isValid.status) {
+					var nomorIdcutiAwal = 0
+					if ($scope.gridCutiAwal == undefined) {
+						nomorIdcutiAwal = 1
+					} else {
+						nomorIdcutiAwal = dataCutiAwal.length + 1
+					}
+					var data = {};
+					if ($scope.item.nomorIdcutiAwal != undefined) {
+						for (var i = dataCutiAwal.length - 1; i >= 0; i--) {
+							if (dataCutiAwal[i].no == $scope.item.nomorIdcutiAwal) {
+								console.log(data);
+								data.norec = $scope.item.noreccutiAwal
+								data.no = nomorIdcutiAwal,
+								data.tglpengajuan = moment($scope.itemCutiAwal.tahun).format('YYYY'),
+								data.jumlahhari = $scope.itemCutiAwal.jumlahcuti,
+								data.objectpegawaifk = $scope.item.idPegawai
+								dataCutiAwal[i] = data
+
+								$scope.gridCutiAwal = new kendo.data.DataSource({
+									data: dataCutiAwal
+								});
+							}
+						}
+						medifirstService.post('sdm/save-total-cuti', data).then(function (data) {
+							init();
+						})
+					} else {
+						data = {
+							no: nomorIdcutiAwal,
+							norec: $scope.item.noreccutiAwal,
+							tglpengajuan: moment($scope.itemCutiAwal.tahun).format('YYYY'),
+							jumlahhari: $scope.itemCutiAwal.jumlahcuti,
+							objectpegawaifk: $scope.item.idPegawai
+						}
+
+						$scope.gridCutiAwal = new kendo.data.DataSource({
+							data: dataCutiAwal
+						});
+						medifirstService.post('sdm/save-total-cuti', data).then(function (data) {
+							init();
+						})
+					}
+					ClearDataCutiAwal();
+					$scope.popUpCutiAwal.close();
 				} else {
 					ModelItem.showMessages(isValid.messages);
 				}

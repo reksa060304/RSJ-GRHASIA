@@ -4,6 +4,7 @@ define(['initialize'], function (initialize) {
         function ($q, $rootScope, $scope, ModelItem, DateHelper, $mdDialog, cetakHelper, $state, medifirstService, $timeout) {
 
             $scope.pegawai = JSON.parse(localStorage.getItem('pegawai'));
+            $scope.hidesisacuti = true
 
             $scope.item = {};
             var urlDaftarPermohonan;
@@ -413,6 +414,10 @@ define(['initialize'], function (initialize) {
                 return dateArray;
             }
             $scope.Simpan = function () {
+                if($scope.item.jumlahHari > $scope.item.totalSisaCuti){
+                    toastr.error('Jumlah Hari Cuti Melebihi Sisa Cuti Yang Ada')
+                    return
+                }
                 var listRawRequired = [
                     "item.namaPegawai|k-ng-model|Pegawai",
                     "item.tglPengajuan|k-ng-model|Tanggal pengajuan",
@@ -552,32 +557,85 @@ define(['initialize'], function (initialize) {
                     }
                 }
             }
-            $scope.$watch('item.tglAwalCuti', function (newVal, oldVal) {
-               if(newVal != oldVal){
-                    if($scope.item.tglAkhirCuti!= undefined){
-                        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-                        const firstDate = new Date(newVal);
-                        const secondDate = new Date($scope.item.tglAkhirCuti);
-
-                        const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
-                        $scope.item.jumlahHari = diffDays +1
-                    }
-               }
             
+            $scope.$watch('item.statusPegawai', function (newVal, oldVal) {
+                if(newVal != oldVal){
+                    if($scope.item.statusPegawai.id == 8 || $scope.item.statusPegawai.id == 1){
+                        var idPegawai = 'idPegawai=' + $scope.item.namaPegawai.id
+                        var tglpengajuan = '&tglpengajuan=' + moment($scope.item.tglPengajuan).format('YYYY')
+
+                        medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
+                        .then(function (e) {
+                            //console.log(e.data)
+                            $scope.item.totalSisaCuti = e.data.data[0].sisacutikeseluruhan
+                            $scope.hidesisacuti = false
+                        });
+                    } else{
+                        $scope.hidesisacuti = true
+                    }
+                }
             });
+
+
+            
+
             $scope.$watch('item.tglAkhirCuti', function (newVal, oldVal) {
                 if(newVal != oldVal){
-                     if($scope.item.tglAwalCuti!= undefined){
-                         const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-                         const firstDate = new Date($scope.item.tglAwalCuti);
-                         const secondDate = new Date(newVal);
- 
-                         const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
-                         $scope.item.jumlahHari = diffDays+1
-                     }
+                    var tglAwal = 'tglAwal=' + moment($scope.item.tglAwalCuti).format('YYYY-MM-DD HH:mm')
+                    var tglAkhir = '&tglAkhir=' + moment($scope.item.tglAkhirCuti).format('YYYY-MM-DD HH:mm')
+
+                    medifirstService.get('sdm/get-jumlah-cuti?' + tglAwal + tglAkhir)
+                    .then(function (e) {
+                        $scope.item.jumlahHari = e.data.data[0].jumlahhari
+                    });
                 }
+            });
+
+            $scope.$watch('item.tglAwalCuti', function (newVal, oldVal) {
+                if(newVal != oldVal){
+                    var tglAwal = 'tglAwal=' + moment($scope.item.tglAwalCuti).format('YYYY-MM-DD HH:mm')
+                    var tglAkhir = '&tglAkhir=' + moment($scope.item.tglAkhirCuti).format('YYYY-MM-DD HH:mm')
+
+                    medifirstService.get('sdm/get-jumlah-cuti?' + tglAwal + tglAkhir)
+                    .then(function (e) {
+                        $scope.item.jumlahHari = e.data.data[0].jumlahhari
+                    });
+                }
+            });
+
+            $scope.$watch('item.namaPegawai', function (newVal, oldVal) {
+                if(newVal != oldVal){
+                    if($scope.item.statusPegawai.id == 8 || $scope.item.statusPegawai.id == 1){
+                        var idPegawai = 'idPegawai=' + $scope.item.namaPegawai.id
+                        var tglpengajuan = '&tglpengajuan=' + moment($scope.item.tglPengajuan).format('YYYY')
+
+                        medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
+                        .then(function (e) {
+                            //console.log(e.data)
+                            $scope.item.totalSisaCuti = e.data.data[0].sisacutikeseluruhan
+                            $scope.hidesisacuti = false
+                        });
+                    }
+                }
+            });
+
+
+            $scope.$watch('item.tglPengajuan', function (newVal, oldVal) {
+                if(newVal != oldVal){
+                    if($scope.item.statusPegawai.id == 8 || $scope.item.statusPegawai.id == 1){
+                        var idPegawai = 'idPegawai=' + $scope.item.namaPegawai.id
+                        var tglpengajuan = '&tglpengajuan=' + moment($scope.item.tglPengajuan).format('YYYY')
+
+                        medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
+                        .then(function (e) {
+                            //console.log(e.data)
+                            $scope.item.totalSisaCuti = e.data.data[0].sisacutikeseluruhan
+                            $scope.hidesisacuti = false
+                        });
+                    }
+                }
+            });
              
-             });
  
             function onChangeDate2(e) {
                 if ($scope.tanggalPermohonanBersama.length > 1) {
@@ -773,6 +831,7 @@ define(['initialize'], function (initialize) {
 
             }
             $scope.tambahCutiBaru = function () {
+                $scope.hidesisacuti = true
                 if( $scope.bukanLoginSDM ==true){
                     for (let x = 0; x < $scope.listPegawai.length; x++) {
                         const element = $scope.listPegawai[x];

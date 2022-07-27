@@ -1,0 +1,148 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .k-window-content .k-content {
+        overflow: none
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .warnaa {
+        color: black
+    }
+
+    .align-right{
+        text-align: right;
+    }
+
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+</style>
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading" c-translate>Sisa Cuti</div>
+    </div>
+    <div class="panel panel-default panel-white" ng-hide="isMasuk">
+        <fieldset class="effect-shadow" style=" border-radius: 4px">
+            <legend id="filterData">
+                <a ng-click="showAndHide()">
+                    <h2><span class="fa fa-plus warnaa">
+                        </span> &nbsp;Pencarian</h2>
+                </a>
+            </legend>
+            <div class="grid_12" id="contentPencarian">
+                <div class="grid_12">
+                    <div class="grid_4">
+                        <div class="grid_6" style="margin-top: 15px;">
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
+                                        placeholer="YYYY" k-format="'yyyy'" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_2" style="margin-top: 20px;">
+                            <button class="c-button" ng-click="cariFilter()">Cari</button>
+                        </div>
+                        <div class="grid_3" style="margin-top: 14px;">
+                            <button class="btnTemplate1" ng-click="TambahCuti()" ng-hide="dispptk">Tambah</button>           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div kendo-window="popupCuti" k-title="'Tambah Data Sisa Cuti'" k-visible="false" k-width="700" k-height="250">
+            <div class="panel panel-default container_12">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <div class="grid_6" style="text-align: left;margin-top: 15px;">
+                            Tahun
+                        </div>
+                        <div class="grid_6">
+                            <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahuncuti" kendo-date-picker
+                                placeholer="YYYY" k-format="'yyyy'" />
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_6" style="text-align: left;margin-top: 15px;">
+                            Sisa Cuti
+                        </div>
+                        <div class="grid_6" >
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.sisacuti" />
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12" style="margin-top: 20px;">
+                    <div class="grid_2">
+                        <button class="btnTemplate1" ng-click="SimpanCuti()">Simpan</button>
+                    </div>
+                    <div class="grid_5"></div>
+                </div><br>
+            </div>
+        </div>
+
+        <!-- Tabel Hasil Pencarian -->
+        <div class="grid_12">
+            <div class="grid_12 borderBox">
+                <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                </kendo-grid>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top:60px">
+            <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+        </div>
+        <div class="grid_12" style="margin-top: 15px;">
+            <div class="grid_9"></div>
+        </div>
+    </div>
+</div>
+
+</div>

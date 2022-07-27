@@ -21,24 +21,17 @@
 						<label c-label item="item" c-label-text="Nama Lengkap"></label>
 						<input style="width: 100%;" kendo-combo-box k-ng-model="item.namaPegawai" k-data-text-field="'namalengkap'" k-data-value-field="'id'"
 						 k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
-					</div>          		
-					<div class="grid_3">
-				        <label c-label item="item" c-label-text="Jenis Pegawai"></label>
-				        <input  style="width: 100%;" kendo-combo-box k-ng-model="item.JenisPegawai" k-data-text-field="'jenispegawai'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listjenisPegawai"/>
-				    </div>
-				    <div class="grid_3">
-				        <label c-label item="item" c-label-text="Pangkat Pegawai"></label>
-				        <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.pangkatPegawai" k-data-text-field="'namapangkat'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listpangkatPegawai"/>
-				    </div>
+					</div>   
 					<div class="grid_2">
 				        <label c-label item="item" c-label-text="Golongan"></label>
 				        <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.Golongan" k-data-text-field="'golongan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listGolongan"/>
 				    </div>
+					<div class="grid_2 k-edit-buttons  k-state-default " style="margin-top:20px"    >       
+						<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="Search()"  style="width:100px"  ><span class="k-sprite k-icon k-i-search"></span>Cari </button>
+						<button class="k-button  k-button-icontext" ng-click="ClearSearch()" style="width:100px" ><span class="k-sprite k-icon k-delete"></span>Clear</button>
+					</div>  
             	</div>
-            	<div class="grid_2 k-edit-buttons  k-state-default " style="margin-top:28px"    >       
-	                <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="Search()"  style="width:100px"  ><span class="k-sprite k-icon k-i-search"></span>Cari </button>
-	                <button class="k-button  k-button-icontext" ng-click="ClearSearch()" style="width:100px" ><span class="k-sprite k-icon k-delete"></span>Clear</button>
-	            </div>  
+            	
             </div>
         </fieldset>
 	</div>

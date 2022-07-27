@@ -1199,5 +1199,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "SisaCuti",
+    "url": "/U2lzYUN1dGk=",
+    "templateurl": "module/SDM/SisaCuti.html",
+    "controller": "SisaCutiCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
