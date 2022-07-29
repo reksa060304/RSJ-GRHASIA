@@ -72,6 +72,12 @@ define(['initialize'], function (initialize) {
                     $scope.listDokter = dat.data.dokter;
                     $scope.listDokter2 = dat.data.dokter;
                 })
+                medifirstService.get('sdm/get-data-pegawai-all-sdm').then(function(data){
+                    var datas = data.data;
+                    console.log(datas);
+                    $scope.listDokter2 = datas;
+
+                })
             }
 
             $scope.getIsiComboRuangan = function () {
@@ -201,8 +207,12 @@ define(['initialize'], function (initialize) {
                 } else{
                     pegawai = medifirstService.getPegawaiLogin().id
                 }
+                var dokter = "";
+                if ($scope.item.namaDokter2) {
+                    dokter = "&dokter=" + $scope.item.namaDokter2.id;
+                }
                 
-                medifirstService.get("diklat/get-daftar-kegiatan-pembimbing?pegawai="+ pegawai+tglAwal+tglAkhir).then(function (data) {
+                medifirstService.get("diklat/get-daftar-kegiatan-pembimbing?pegawai="+ pegawai+tglAwal+tglAkhir+dokter).then(function (data) {
                 $scope.isRouteLoading = false;
                 // $scope.dataDaftarPasienPulang = data[0].data;
                 var datas = data.data;

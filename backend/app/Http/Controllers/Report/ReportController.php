@@ -4469,22 +4469,71 @@ public function suratBuktiPengembalian(Request $request)
     public function cetakKGB(Request $request)
     {
         $kdProfile = (int) $request['kdprofile'];
-        $data = \DB::select(DB::raw("SELECT
+        if (isset($request['rgb'])) {
+            $data = \DB::select(DB::raw("SELECT
             fix.* 
-        FROM
+            FROM
             (
             SELECT ROW_NUMBER
                 ( ) OVER ( PARTITION BY rg.objectpegawaifk ORDER BY rg.tgltmt DESC ) AS rn2,
                 rg.objectpegawaifk,
                 pg.namalengkap,
                 pg.nippns,
-        -- 		rg.tgltmt,
-        -- 		rg.objectgolonganfk,
+            -- 		rg.tgltmt,
+            -- 		rg.objectgolonganfk,
                 gol.namaexternal as pangkat,
                 gol.NAME as golongan,
                 rg.gajiawal,
                 rg.gajiakhir,
-                rg.nosk, rg.nosurat,rg.tglsk,
+                rg.noskcetak, rg.nosurat,rg.tglsk,
+                rg.tgltmt as tglakhir,
+								rg.norec,
+                extract(year from age(rg.tgltmt, rgb.tgltmt))as thn,
+                extract(month from age(rg.tgltmt, rgb.tgltmt))as bln
+            FROM
+                riwayatgajiberkala_t rg
+                INNER JOIN sdm_golongan_m AS gol ON gol.id = rg.objectgolonganfk
+                INNER JOIN pegawai_m pg ON pg.ID = rg.objectpegawaifk
+                INNER JOIN (
+                SELECT
+                    x.objectpegawaifk,
+                    x.tgltmt 
+                FROM
+                    (
+                    SELECT
+                        row_number ( ) OVER ( PARTITION BY rg.objectpegawaifk ORDER BY rg.tgltmt ASC ) AS rn,
+                        rg.* 
+                    FROM
+                        pegawai_m AS pg
+                        INNER JOIN riwayatgolongan_t AS rg ON rg.objectpegawaifk = pg.id 
+                    ) AS x 
+                WHERE
+                    x.rn = 1 
+                ) AS rgb ON rgb.objectpegawaifk = rg.objectpegawaifk 
+            ORDER BY
+                rg.tgltmt ASC 
+            ) AS fix 
+            WHERE
+            fix.rn2 = 1 
+            AND fix.norec ='b66c84a0-0e5a-11ed-a1ba-4f36dd9f'
+            "));
+        }else{
+            $data = \DB::select(DB::raw("SELECT
+            fix.* 
+            FROM
+            (
+            SELECT ROW_NUMBER
+                ( ) OVER ( PARTITION BY rg.objectpegawaifk ORDER BY rg.tgltmt DESC ) AS rn2,
+                rg.objectpegawaifk,
+                pg.namalengkap,
+                pg.nippns,
+            -- 		rg.tgltmt,
+            -- 		rg.objectgolonganfk,
+                gol.namaexternal as pangkat,
+                gol.NAME as golongan,
+                rg.gajiawal,
+                rg.gajiakhir,
+                rg.noskcetak, rg.nosurat,rg.tglsk,
                 rg.tgltmt as tglakhir,
                 extract(year from age(rg.tgltmt, rgb.tgltmt))as thn,
                 extract(month from age(rg.tgltmt, rgb.tgltmt))as bln
@@ -4511,9 +4560,11 @@ public function suratBuktiPengembalian(Request $request)
             ORDER BY
                 rg.tgltmt ASC 
             ) AS fix 
-        WHERE
+            WHERE
             fix.rn2 = 1 
             AND fix.objectpegawaifk = $request[id_pegawai]"));
+        }
+        
         $detail = [];
         $id=0;
         $value="";

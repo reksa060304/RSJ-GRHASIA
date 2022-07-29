@@ -561,6 +561,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "itemGajiBerkala.golongan|k-ng-model|Golongan",
                     "itemGajiBerkala.nosk|ng-model|NO SK",
                     "itemGajiBerkala.nosurat|ng-model|No Surat",
+                    "itemGajiBerkala.noskcetak|ng-model|No SK Cetak",
+                    "itemGajiBerkala.jenissk|ng-model|Jenis SK",
                     "itemGajiBerkala.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
                     "itemGajiBerkala.tanggaltmt|k-ng-model|Tanggal TMT",
                 ];
@@ -576,7 +578,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         'gajiakhir': $scope.itemGajiBerkala.gajiakhir,
                         'objectpegawaifk': $scope.dataSelected.id_pegawai,
                         'tgltmt': moment($scope.itemGajiBerkala.tanggaltmt).format('YYYY-MM-DD'),
-                        'pejabatmenetapkan': $scope.itemGajiBerkala.pejabatmenetapkan
+                        'pejabatmenetapkan': $scope.itemGajiBerkala.pejabatmenetapkan,
+                        noskcetak: $scope.itemGajiBerkala.noskcetak,
+                        jenissk: $scope.itemGajiBerkala.jenissk
                     }
                     console.log(objSave);
                     medifirstService.post('sdm/save-riwayat-gaji-berkala', objSave).then(function (data) {
