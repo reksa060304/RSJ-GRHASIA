@@ -180,8 +180,6 @@ define(['initialize'], function (initialize) {
                     
                     $scope.item.jenisKemasan = dat.data.jeniskemasan[1];
 
-                    $scope.item.ruangan = dat.data.ruanganfarmasi[1];
-
                     if($scope.item.penulisResep.jenispegawai.id != 1){
                         $scope.hideSimpan =true;
                     }
