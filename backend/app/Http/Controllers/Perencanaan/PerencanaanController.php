@@ -487,37 +487,41 @@ class PerencanaanController extends ApiController {
 
         
         $mata = DB::select(DB::raw("
-                select v.id, v.kodemataanggaran,v.namamataanggaran,cast(v.total as float) as total from (
-                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+                select v.id, v.kodemataanggaran,v.namamataanggaran,cast(v.total as float) as total, idmap, mataanggaranpermen from (
+                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total, map.id idmap, map.mataanggaranpermen  from mataanggaran_m ma 
                     left join
                     (select left(ma.kodemataanggaran,9) as kode,sum(kt.subtotal) as total 
                     from mataanggaran_m ma
                     left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
                     group by left(ma.kodemataanggaran,9)) as x on x.kode=ma.kodemataanggaran
+                    left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
                     where length(ma.kodemataanggaran)=9
                     union all
-                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total, map.id idmap, map.mataanggaranpermen  from mataanggaran_m ma 
                     left join
                     (select left(ma.kodemataanggaran,5) as kode,sum(kt.subtotal) as total 
                     from mataanggaran_m ma
                     left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
                     group by left(ma.kodemataanggaran,5)) as x on x.kode=ma.kodemataanggaran
+                    left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
                     where length(ma.kodemataanggaran)=5
                     union all
-                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total, map.id idmap, map.mataanggaranpermen  from mataanggaran_m ma 
                     left join
                     (select left(ma.kodemataanggaran,3) as kode,sum(kt.subtotal) as total 
                     from mataanggaran_m ma
                     left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
                     group by left(ma.kodemataanggaran,3)) as x on x.kode=ma.kodemataanggaran
+                    left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
                     where length(ma.kodemataanggaran)=3
                     union all
-                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total  from mataanggaran_m ma 
+                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total, map.id idmap, map.mataanggaranpermen  from mataanggaran_m ma 
                     left join
                     (select left(ma.kodemataanggaran,1) as kode,sum(kt.subtotal) as total 
                     from mataanggaran_m ma
                     left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
                     group by left(ma.kodemataanggaran,1)) as x on x.kode=ma.kodemataanggaran
+                    left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
                     where length(ma.kodemataanggaran)=1
                     ) as v
                 order by v.kodemataanggaran
@@ -544,6 +548,59 @@ class PerencanaanController extends ApiController {
             ->where('kdprofile', $idProfile)
             ->where('statusenabled', 't')
             ->get();
+
+        $konsolidasi2 = \DB::table('mataanggaranpermen_m')
+            ->select('id','mataanggaranpermen', 'kode', 'mataanggaranpermenfk')
+            ->where('kdprofile', $idProfile)
+            ->where('statusenabled', true)
+            ->where('div', 2)
+            ->orderBy('id')
+            ->get();
+        
+        if(!empty($request['konsolidasi2'])){
+            $konsolidasi3 = \DB::table('mataanggaranpermen_m')
+            ->select('id','mataanggaranpermen', 'kode', 'mataanggaranpermenfk')
+            ->where('kdprofile', $idProfile)
+            ->where('statusenabled', true)
+            ->where('div', 3)
+            ->where('mataanggaranpermenfk', $request['konsolidasi2'])
+            ->orderBy('id')
+            ->get();
+        }else{
+            $konsolidasi3 = [];
+        }
+
+        if(!empty($request['konsolidasi3'])){
+            $konsolidasi4 = \DB::table('mataanggaranpermen_m')
+            ->select('id','mataanggaranpermen', 'kode', 'mataanggaranpermenfk')
+            ->where('kdprofile', $idProfile)
+            ->where('statusenabled', true)
+            ->where('div', 4)
+            ->where('mataanggaranpermenfk', $request['konsolidasi3'])
+            ->orderBy('id')
+            ->get();
+        }else{
+            $konsolidasi4 = [];
+        }
+
+        if(!empty($request['konsolidasi4'])){
+            $konsolidasi5 = \DB::table('mataanggaranpermen_m')
+            ->select('id','mataanggaranpermen', 'kode', 'mataanggaranpermenfk')
+            ->where('kdprofile', $idProfile)
+            ->where('statusenabled', true)
+            ->where('div', 5)
+            ->where('mataanggaranpermenfk', $request['konsolidasi4'])
+            ->orderBy('id')
+            ->get();
+        }else{
+            $konsolidasi5 = \DB::table('mataanggaranpermen_m')
+            ->select('id','mataanggaranpermen', 'kode', 'mataanggaranpermenfk')
+            ->where('kdprofile', $idProfile)
+            ->where('statusenabled', true)
+            ->where('div', 5)
+            ->orderBy('id')
+            ->get();
+        }
         
         $panjar = DB::select(DB::raw("
             select pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, sr.norealisasi,
@@ -594,6 +651,10 @@ class PerencanaanController extends ApiController {
             // 'kelompokkeenam' => $keenam,
             // 'rekanan' => $rekanan,
             'datalogin' => $dataLogin,
+            'konsolidasi2' => $konsolidasi2,
+            'konsolidasi3' => $konsolidasi3,
+            'konsolidasi4' => $konsolidasi4,
+            'konsolidasi5' => $konsolidasi5,
             'message' => 'epic',
         );
 
@@ -2059,6 +2120,7 @@ class PerencanaanController extends ApiController {
             $MA->div = $request['div'];
             $MA->objectjenisbelanjafk = $request['jenisbelanja'];
             $MA->objectpptkfk = $request['pptk'];
+            $MA->div = $request['div'];
             $MA->save();
 
             // if(!empty($KB)){
@@ -2087,6 +2149,45 @@ class PerencanaanController extends ApiController {
             );
         } else {
             $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteKegiatanAnggaran(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        try{
+            $MA= KegiatanAnggaran::where('id',$request['id'])
+                    ->where('kdprofile', $idProfile)
+                    ->first();
+            $MA->statusenabled = false;
+            $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
             DB::rollBack();
             $result = array(
                 'status' => 400,
@@ -2608,6 +2709,7 @@ class PerencanaanController extends ApiController {
             $MA->keterangan = $request['keterangan'];
             $MA->kodeexternal = $request['kodeexternal'];
             $MA->namaexternal = $request['namaexternal'];
+            $MA->mataanggaranpermenfk = $request['mataanggaranpermenfk'];
 
             $MA->save();
            $transStatus = 'true';
@@ -2629,7 +2731,8 @@ class PerencanaanController extends ApiController {
             DB::rollBack();
             $result = array(
                 'status' => 400,
-                'message'  => $transMessage,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
                 'result' => $MA,
                 'as' => '@epic',
             );

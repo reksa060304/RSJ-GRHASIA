@@ -12,6 +12,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.jeniskode = true;
             $scope.inputtahap = true
             $scope.norecpanjar = ''
+            $scope.konsolidasi = false;
+            $scope.diskonsolidasi5 = true
             var DataKegiatan= [];
             var DataMataAnggaran= [];
             var DataMataAnggaranCombo= [];
@@ -48,11 +50,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.totalpanjar = 0;
             $scope.subtotalbelanjasebelum = 0;
 
+            $scope.listDiv = [
+                { id: 0, div: "Urusan Pemerintahan" },
+                { id: 1, div: "Program" },
+                { id: 2, div: "Kegiatan" },
+                { id: 3, div: "Sub Kegiatan" },
+                { id: 4, div: "Sub Sub Kegiatan" },
+            ];
+
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listJenisBelanja = e.data.jenisbelanja
                 $scope.listJenisAnggaran = e.data.jenisanggaran
                 $scope.listDirektur = e.data.direktur
                 $scope.listTahap = e.data.tahap
+                $scope.listKonsolidasi2 = e.data.konsolidasi2
                 //$scope.listSubSubKegiatan = e.data.kegiatansubsub
                 $scope.listKegiatanCombo = e.data.kegiatancombo
                 $scope.listKegiatanComboakhir = e.data.kegiatancombo
@@ -60,6 +71,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.dataSourceSPP = e.data.spp
                 $scope.dataSourceCariSPM = e.data.carispm
                 $scope.dataSourceSPD = e.data.spd
+                $scope.listKonsolidasi5 = e.data.konsolidasi5
             });
 
             
@@ -251,6 +263,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             $scope.TambahMT = function(){
                 $scope.item.id = ''
+                $scope.item.kodeAddMT = undefined
+                $scope.item.keteranganAdd = undefined
+                $scope.jeniskode = true
+                $scope.item.jenisanggaran = undefined
+                $scope.konsolidasi= true
+                $scope.item.konsolidasi2 = undefined
+                $scope.item.konsolidasi3 = undefined
+                $scope.item.konsolidasi4 = undefined
+                $scope.item.konsolidasi5 = undefined
                 $scope.popupTambahMT.center().open()
             }
             function editKegiatanT(e) {
@@ -260,6 +281,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
                 console.log(dataItem)
+
+                
 
                 medifirstService.get("perencanaan/get-jenis-belanja?kegiatan=" + dataItem.keterangan).then(function (e) {
                     if(e.data.data.length == 0){
@@ -289,6 +312,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 let c1 = kodeArr2[3]  + '.' + kodeArr2[4]
                 let d1 = kodeArr2[5]  
                 if(dataItem.div == 1){
+                    $scope.item.programdiv = {div: dataItem.namakelompok, id: dataItem.div}
                     $scope.popupProgram.center().open()
                     // a1 = kodeArr2[0] + '.' + kodeArr2[1]
                     $scope.item.kodeHead = a1
@@ -299,6 +323,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // $scope.item.kodeHead = dataItem.kode.substring(0,4)
                     // $scope.item.kode = dataItem.kode.substring(5,7)
                 }else if(dataItem.div == 2){
+                    $scope.item.detaildiv = {div: dataItem.namakelompok, id: dataItem.div}
                     $scope.popupKegiatan.center().open();
                     $scope.item.kodeHead = a1 + '.' + b1
                     // c1 = kodeArr2[3]  + '.' + kodeArr2[4]
@@ -306,6 +331,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // $scope.item.kodeHead =dataItem.kode.substring(0,4) + '.' + dataItem.kode.substring(5,7)
                     // $scope.item.kode = dataItem.kode.substring(8,12)
                 }else if(dataItem.div == 3){
+                    $scope.item.subkegiatandiv = {div: dataItem.namakelompok, id: dataItem.div}
                     $scope.popupSubKegiatan.center().open();
                     $scope.item.kodeHead =  a1 +'.'+ b1 +'.'+c1
                     // d1 = kodeArr2[5]  
@@ -314,6 +340,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // $scope.item.kode = dataItem.kode.substring(13,15)
                 }else if(dataItem.div == 4){
                     buttonhide = false
+                    $scope.item.subsubkegiatandiv = {div: dataItem.namakelompok, id: dataItem.div}
                     $scope.popupSubSubKegiatan.center().open();  
                     for (let index = 0; index < $scope.dataSourceKegiatan.length; index++) {
                         let element = $scope.dataSourceKegiatan[index];
@@ -418,6 +445,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
 				})
+                $scope.item.konsolidasi3 = undefined
+                $scope.item.konsolidasi2 = undefined
+                $scope.item.konsolidasi4 = undefined
+                console.log(dataItem)
                 
                 var yangdicount = dataItem.kodemataanggaran
                 console.log(yangdicount)
@@ -430,10 +461,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.jeniskode = true;
                 }
                 
+                if(count == 4){
+                    $scope.konsolidasi = false;
+                } else{
+                    $scope.konsolidasi = true;
+                }
+
                 $scope.item.id = dataItem.id
                 $scope.item.kodeAddMT = dataItem.kodemataanggaran
                 $scope.item.keteranganAddMT = dataItem.namamataanggaran
+                $scope.item.keteranganAdd = dataItem.namamataanggaran
                 $scope.item.radioPencairan = dataItem.objectcarabayarfk
+                $scope.item.konsolidasi5 = {id: dataItem.idmap, mataanggaranpermen: dataItem.mataanggaranpermen} 
 
                 console.log($scope.item.radioPencairan)
 
@@ -1311,6 +1350,38 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             });
 
 
+            $scope.$watch('item.konsolidasi2', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    medifirstService.get("perencanaan/get-data-combo?konsolidasi2="+$scope.item.konsolidasi2.id).then(function (e) {
+                        $scope.listKonsolidasi3 = e.data.konsolidasi3
+                    });
+                    
+                }
+            });
+
+            $scope.$watch('item.konsolidasi3', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    medifirstService.get("perencanaan/get-data-combo?konsolidasi3="+$scope.item.konsolidasi3.id).then(function (e) {
+                        $scope.listKonsolidasi4 = e.data.konsolidasi4
+                    });
+                    
+                }
+            });
+
+            $scope.$watch('item.konsolidasi4', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    medifirstService.get("perencanaan/get-data-combo?konsolidasi4="+$scope.item.konsolidasi4.id).then(function (e) {
+                        $scope.diskonsolidasi5 = false
+                        $scope.listKonsolidasi5 = e.data.konsolidasi5
+                    });
+                    
+                }
+            });
+
+            
+            
+
+
             $scope.$watch('item.subSubKegiatanSPJ', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')).then(function (e) {
@@ -1362,6 +1433,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.jeniskode = false;
                     } else{
                         $scope.jeniskode = true;
+                    }
+
+                    if(count == 4){
+                        $scope.konsolidasi = false;
+                    } else{
+                        $scope.konsolidasi = true;
                     }
                 }
             });
@@ -1629,7 +1706,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         targetmasuk: null,
                         targetkeluaran: null,
                         targethasil: null,
-                        div: divS
+                        div: $scope.item.div.id
                     }
                 medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
                     loadDataGrid();
@@ -2162,9 +2239,60 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         targetmasuk: null,
                         targetkeluaran: null,
                         targethasil: null,
-                        div: divS
+                        div: $scope.item.programdiv.id
                     }
                 medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupProgram.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.SimpanPopUpProgram = function(){
+                var jmlkode = $scope.item.kodeHead + '.' + $scope.item.kode
+                jmlkode = jmlkode.length
+                var divS = 0;
+                if(jmlkode == 7){
+                    divS = 1
+                }else 
+                if(jmlkode == 12){
+                    divS = 2
+                }else if(jmlkode == 15){
+                    divS = 3
+                }else if(jmlkode > 15){
+                    divS = 4
+                }
+                var objSave =
+                    {
+                        id: $scope.item.id,
+                        kode: $scope.item.kodeHead + '.' + $scope.item.kode,
+                        keterangan: $scope.item.keterangan,
+                        kodeexternal: null,
+                        namaexternal: null,
+                        reportdisplay: null,
+                        tahun: null,
+                        tahap: null,
+                        indikatormasuk: null,
+                        indikatorkeluaran: null,
+                        indikatorhasil: null,
+                        targetmasuk: null,
+                        targetkeluaran: null,
+                        targethasil: null,
+                        div: $scope.item.programdiv.id
+                    }
+                medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupProgram.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.HapusPopUpProgram = function(){
+                var objSave =
+                    {
+                        id: $scope.item.id,
+                    }
+                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
                     loadDataGrid();
                     $scope.popupProgram.center().close()
                 }, function (error) {
@@ -2201,9 +2329,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         targetmasuk: null,
                         targetkeluaran: null,
                         targethasil: null,
-                        div: divS
+                        div: $scope.item.detaildiv.id
                     }
                 medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupKegiatan.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.HapusPopUpKegiatan = function(){
+                var objSave =
+                    {
+                        id: $scope.item.id,
+                    }
+                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
                     loadDataGrid();
                     $scope.popupKegiatan.center().close()
                 }, function (error) {
@@ -2240,9 +2380,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         targetmasuk: null,
                         targetkeluaran: null,
                         targethasil: null,
-                        div: divS
+                        div: $scope.item.subkegiatandiv.id
                     }
                 medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupSubKegiatan.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.HapusPopUpSubKegiatan = function(){
+                var objSave =
+                    {
+                        id: $scope.item.id,
+                    }
+                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
                     loadDataGrid();
                     $scope.popupSubKegiatan.center().close()
                 }, function (error) {
@@ -2288,7 +2440,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         targetkeluaran:  $scope.item.targetKinerjaKeluaran,
                         targethasil:  $scope.item.targetKinerjaHasil,
                         pptk:  $scope.item.savepptk,
-                        div: divS
+                        div: $scope.item.subsubkegiatandiv.id
                     }
                 medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
                     loadDataGrid();
@@ -2631,9 +2783,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     divS = 4
                 }
 
-                var jenisanggaran = ""
-                if ($scope.item.jenisanggaran.id != undefined) {
+                var jenisanggaran = null
+                if ($scope.item.jenisanggaran != undefined) {
                     jenisanggaran = $scope.item.jenisanggaran.id
+                }
+
+                var konsolidasi5 = null
+                if ($scope.item.konsolidasi5 != undefined) {
+                    konsolidasi5 = $scope.item.konsolidasi5.id
                 }
 
                 
@@ -2647,8 +2804,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         keterangan: null,
                         kodeexternal: null,
                         namaexternal: null,
+                        mataanggaranpermenfk: konsolidasi5,
                     }
                 medifirstService.post('perencanaan/save-mata-anggaran', objSave).then(function (e) {
+                    $scope.item.jenisanggaran = undefined
+                    $scope.item.konsolidasi5 = undefined
+                    $scope.item.konsolidasi4 = undefined
+                    $scope.item.konsolidasi3 = undefined
+                    $scope.item.konsolidasi2 = undefined
                     loadDataGrid();
                     $scope.popupTambahMT.center().close()
                 }, function (error) {
