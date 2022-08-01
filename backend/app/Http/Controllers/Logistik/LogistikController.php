@@ -57,6 +57,7 @@ class LogistikController extends ApiController{
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataLogin = $request->all();
+        $id = $request['userData']['id'];
         $dataPegawaiUser = \DB::select(DB::raw("select pg.id,pg.namalengkap,lu.objectkelompokuserfk
                 from loginuser_s as lu
                 INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
@@ -185,19 +186,27 @@ class LogistikController extends ApiController{
             );
         }
 
-        $dataProduk = \DB::table('produk_m as pr')
-            ->JOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
-            ->JOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
-            ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
-            ->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
-            ->select('pr.id','pr.kdproduk as kdsirs','pr.namaproduk','ss.id as ssid','ss.satuanstandar', 'pr.namaexternal')
-            ->where('pr.statusenabled',true)
-            ->where('pr.kdprofile', $idProfile)
-//            ->where('jp.id',97)
-            ->where('spd.qtyproduk','>',0)
-            ->groupBy('pr.id','pr.kdproduk','pr.namaproduk','ss.id','ss.satuanstandar', 'pr.namaexternal')
-            ->orderBy('pr.namaproduk')
-            ->get();
+        $dataProduk = DB::select(DB::raw("select pr.id,pr.kdproduk as kdsirs,pr.namaproduk,ss.id as ssid,ss.satuanstandar, pr.namaexternal
+        from produk_m as pr
+        inner join detailjenisproduk_m as djp on djp.id = pr.objectdetailjenisprodukfk
+        inner join jenisproduk_m as jp on jp.id = djp.objectjenisprodukfk
+        left join satuanstandar_m as ss on ss.id = pr.objectsatuanstandarfk
+        inner join stokprodukdetail_t as spd on spd.objectprodukfk = pr.id
+        where pr.statusenabled = true
+        and pr.kdprofile = $idProfile
+        and spd.qtyproduk > 0
+        and spd.objectruanganfk in(
+            SELECT ru.id
+            FROM maploginusertoruangan_s AS mlur
+            INNER JOIN loginuser_s lu on lu.id = mlur.objectloginuserfk
+            INNER JOIN ruangan_m ru on ru.id = mlur.objectruanganfk
+            where lu.kdprofile = $idProfile 
+            and ru.statusenabled = true 
+            and lu.id=$id
+            GROUP BY ru.id,ru.namaruangan
+        ) 
+        group by pr.id,pr.kdproduk,pr.namaproduk,ss.id,ss.satuanstandar, pr.namaexternal
+        order by pr.namaproduk"));
 
         $dataKonversiProduk = \DB::table('konversisatuan_t as ks')
             ->JOIN('satuanstandar_m as ss','ss.id','=','ks.satuanstandar_asal')

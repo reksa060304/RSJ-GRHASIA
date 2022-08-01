@@ -382,7 +382,29 @@ class PerencanaanController extends ApiController {
         $idmataanggaran = $request['idmataanggaran'];
         $tahapaktif = $request['tahapaktif'];
 
-        $kegiatan = \DB::table('kegiatananggaran_m as dp')
+        if(isset($request['idpegawai'])){
+            if($request['idpegawai'] != ''){
+                $kegiatan = \DB::table('kegiatananggaran_m as dp')
+                ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
+                ->leftJoin('pegawai_m as pg','pg.id','=','dp.objectpptkfk')
+                ->select('dp.*','kp.namakelompok', 'pg.namalengkap')
+                ->where('dp.kdprofile', $idProfile)
+                ->where('dp.statusenabled', true)
+                ->where('dp.objectpptkfk', $request['idpegawai'])
+                ->orderBy('dp.kode')
+                ->get();
+            } else{
+                $kegiatan = \DB::table('kegiatananggaran_m as dp')
+                ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
+                ->leftJoin('pegawai_m as pg','pg.id','=','dp.objectpptkfk')
+                ->select('dp.*','kp.namakelompok', 'pg.namalengkap')
+                ->where('dp.kdprofile', $idProfile)
+                ->where('dp.statusenabled', true)
+                ->orderBy('dp.kode')
+                ->get();
+            }
+        } else{
+            $kegiatan = \DB::table('kegiatananggaran_m as dp')
             ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
             ->leftJoin('pegawai_m as pg','pg.id','=','dp.objectpptkfk')
             ->select('dp.*','kp.namakelompok', 'pg.namalengkap')
@@ -390,6 +412,8 @@ class PerencanaanController extends ApiController {
             ->where('dp.statusenabled', true)
             ->orderBy('dp.kode')
             ->get();
+        }
+        
 
         $kegiatansubsub = \DB::table('kegiatananggaran_m as dp')
             ->join('keteranganbelanja_t as ktb','ktb.objectkegiatanfk','=','dp.id')
@@ -2797,6 +2821,7 @@ class PerencanaanController extends ApiController {
     public function getTotalMataAnggaran(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $idpegawai = $request['idpegawai'];
 
         $stahun = '';
         if(isset($request['tahun']) || $request['tahun'] != ''){
@@ -2821,7 +2846,58 @@ class PerencanaanController extends ApiController {
                 order by ma.kodemataanggaran;
             ")
         );
-        $dataKeteranganBelanja = DB::select(DB::raw("
+
+        if(isset($request['idpegawai'])){
+            if($request['idpegawai'] != ''){
+                $dataKeteranganBelanja = DB::select(DB::raw("
+                select kb.*,ma.kodemataanggaran || ' ' || ma.namamataanggaran as mataanggaran,
+                ka.kode || ' ' || ka.keterangan as kegiatan,ap.asalproduk,
+                ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap
+                --,1 as jan,1 as feb,1 as mar, 1 as apr,
+                --1 as mei,1 as juni, 1 as juli,1 as agst,1 as sep,1 as okt, 1 as nov,1 as des
+                from keteranganbelanja_t kb
+                INNER JOIN mataanggaran_m ma on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN asalproduk_m ap on ap.id=kb.objectasalprodukfk
+                INNER JOIN tahapanggaran_m ta on ta.id=kb.objecttahapfk
+                --inner join settinganggaran_t sa on sa.objecttahapaktivfk = ta.id
+                where kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.objectpptkfk = $idpegawai
+                $stahun
+                $stahap
+                group by kb.norec, kb.kdprofile, kb.statusenabled, kb.objectkegiatanfk, kb.objectmataanggaranfk, kb.keteranganbelanja,
+                ma.kodemataanggaran || ' ' || ma.namamataanggaran, kb.nourut, kb.jml, kb.hargasatuan, kb.subtotal, kb.satuan,
+                kb.objectasalprodukfk, kb.objecttahapfk,
+                ka.kode || ' ' || ka.keterangan,ap.asalproduk,
+                ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap"
+                )
+                );
+            } else{
+                $dataKeteranganBelanja = DB::select(DB::raw("
+                select kb.*,ma.kodemataanggaran || ' ' || ma.namamataanggaran as mataanggaran,
+                ka.kode || ' ' || ka.keterangan as kegiatan,ap.asalproduk,
+                ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap
+                --,1 as jan,1 as feb,1 as mar, 1 as apr,
+                --1 as mei,1 as juni, 1 as juli,1 as agst,1 as sep,1 as okt, 1 as nov,1 as des
+                from keteranganbelanja_t kb
+                INNER JOIN mataanggaran_m ma on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN asalproduk_m ap on ap.id=kb.objectasalprodukfk
+                INNER JOIN tahapanggaran_m ta on ta.id=kb.objecttahapfk
+                --inner join settinganggaran_t sa on sa.objecttahapaktivfk = ta.id
+                where kb.kdprofile = 30 and kb.statusenabled = true
+                $stahun
+                $stahap
+                group by kb.norec, kb.kdprofile, kb.statusenabled, kb.objectkegiatanfk, kb.objectmataanggaranfk, kb.keteranganbelanja,
+                ma.kodemataanggaran || ' ' || ma.namamataanggaran, kb.nourut, kb.jml, kb.hargasatuan, kb.subtotal, kb.satuan,
+                kb.objectasalprodukfk, kb.objecttahapfk,
+                ka.kode || ' ' || ka.keterangan,ap.asalproduk,
+                ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap"
+                )
+                );
+            }
+        } else{
+            $dataKeteranganBelanja = DB::select(DB::raw("
                 select kb.*,ma.kodemataanggaran || ' ' || ma.namamataanggaran as mataanggaran,
                 ka.kode || ' ' || ka.keterangan as kegiatan,ap.asalproduk,
                 ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap
@@ -2842,7 +2918,10 @@ class PerencanaanController extends ApiController {
                 ka.kode || ' ' || ka.keterangan,ap.asalproduk,
                 ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap"
             )
-        );
+            );
+        }
+
+        
         $arrALokasi = [];
         foreach($dataKeteranganBelanja as $item){
             $dataAlokasi = \DB::table('alokasiketeranganbelanja_t as ap')

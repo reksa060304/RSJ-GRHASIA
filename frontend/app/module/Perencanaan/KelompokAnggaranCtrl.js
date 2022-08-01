@@ -30,6 +30,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var buttonhide = true
             $scope.dispanjar = false
             $scope.norecspj = ''
+            $scope.hidespj = true
 
             $scope.rcn = {};
             $scope.rcn.mataAnggaranlv1 = ""
@@ -49,6 +50,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.totalrealisasidetail = 0;
             $scope.totalpanjar = 0;
             $scope.subtotalbelanjasebelum = 0;
+
+            
 
             $scope.listDiv = [
                 { id: 0, div: "Urusan Pemerintahan" },
@@ -91,6 +94,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             loadDataGrid();
             function loadDataGrid() {
                 $scope.isRouteLoading = true;
+
+                var idpegawai = '';
+                $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                console.log($scope.pegawaiLogin)
+                if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
+                    $scope.hidespj = false
+                    idpegawai = $scope.pegawaiLogin.id
+                }
+                console.log($scope.hidespj)
                 // medifirstService.get("perencanaan/get-total-mata-anggaran").then(function (e) {
                 //     DataTotalMataAnggaran = e.data.data
                 //     $scope.listAsalProduk = e.data.asalproduk
@@ -110,7 +122,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // })
                 LoadTotalKeterangan()
                 LoadSPJ()
-                medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')).then(function (e) {
+                medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')+"&idpegawai=" + idpegawai).then(function (e) {
                     $scope.isRouteLoading = false
                     $scope.dataSourceKegiatan = e.data.kegiatan
                     $scope.dataSourceSetting = e.data.setting
@@ -1975,7 +1987,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         tahap = stahap
                     }
 
-                    medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+tahun+"&tahap="+tahap).then(function (e) {
+                    var idpegawai = ''
+                    $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                    console.log($scope.pegawaiLogin)
+                    if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
+                        $scope.hidespj = false
+                        idpegawai = $scope.pegawaiLogin.id
+                    }
+
+                    medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+tahun+"&tahap="+tahap+"&idpegawai="+idpegawai).then(function (e) {
                         DataTotalMataAnggaran = e.data.data
                         $scope.listAsalProduk = e.data.asalproduk
                         $scope.dataSourceDetailMT = new kendo.data.DataSource({

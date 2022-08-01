@@ -1479,6 +1479,7 @@ class PelayananResepController extends ApiController
     public function getInformasiStok(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $id = $request['userData']['id'];
         $results = DB::select(DB::raw("select sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk, 
                             spd.harganetto2,spd.hargadiscount,ru.namaruangan,
                    CAST(sum(spd.qtyproduk) AS FLOAT) as qtyproduk,spd.objectruanganfk as kdruangan
@@ -1489,6 +1490,16 @@ class PelayananResepController extends ApiController
                     and ru.statusenabled = true                    
                     -- and ru.statusenabled = true
                     --and spd.objectruanganfk =:ruanganid
+                    and ru.id in(
+                        SELECT ru.id
+                        FROM maploginusertoruangan_s AS mlur
+                        INNER JOIN loginuser_s lu on lu.id = mlur.objectloginuserfk
+                        INNER JOIN ruangan_m ru on ru.id = mlur.objectruanganfk
+                        where lu.kdprofile = $idProfile 
+                        and ru.statusenabled = true 
+                        and lu.id=$id
+                        GROUP BY ru.id,ru.namaruangan
+                    )
                     group by sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk, 
                             spd.harganetto2,spd.hargadiscount,ru.namaruangan,
                     spd.objectruanganfk
