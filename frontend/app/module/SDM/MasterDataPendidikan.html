@@ -1,0 +1,45 @@
+<div class="grid_12">
+    <div class="panel panel-default container_12" style="background-color:transparant">
+        <div class="panel-heading"><label class='title' c-label item="item" real>Master Data Pendidikan</label></div>
+        <div class="panel-body">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <kendo-grid k-data-source="gridPendidikan" k-pageable="true" k-ng-model="dataPendidikan"
+                        k-selectable="'row'" options="opsiGridPendidikan" ng-click="klikGrid(dataPendidikan)"
+                        style="font-size: small;"></kendo-grid>
+
+                    <div kendo-window="popUpDataPendidikan" k-title="'Data Pendidikan'" k-width="500" k-height="150"
+                        k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+                        <div class="panel panel-default container_12" style="padding: 0px 10px;">
+                            <div class="grid_12">
+                                <div class="grid_6">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Nama Pendidikan"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input c-text-box type="input"  class="k-textbox"
+                                            ng-model="item.pendidikanPegawai" />
+                                    </div>
+                                </div>
+
+                                <div class="grid_6">
+                                    <div class="grid_12"></div>
+                                    <div class="grid_12">
+                                        <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                                            <button class="k-button k-button-icontext k-primary k-grid-update"
+                                                ng-click="tambahPendidikanPegawai()"><span
+                                                    class="k-icon k-update"></span>Simpan</button>
+                                            <button class="k-button  k-button-icontext"
+                                                ng-click="batalPendidikanPegawai()"><span
+                                                    class="k-icon k-cancel"></span>Batal</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

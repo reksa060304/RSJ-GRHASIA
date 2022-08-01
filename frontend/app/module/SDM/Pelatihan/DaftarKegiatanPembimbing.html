@@ -61,10 +61,18 @@
                     <input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-datetimepicker
                         placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
                 </div>
-                <div class="clear"></div>
+                
             </div>
-        </div>
 
+            
+        </div>
+        <div class="grid_4">
+            <label c-label item="item" c-label-text="Nama Dokter"></label>
+
+            <input style="width: 100%;" kendo-combo-box k-ng-model="item.namaDokter2" k-data-text-field="'namalengkap'"
+                k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDokter2" />
+        </div>
+        <div class="clear"></div>
 
 
         <!-- Button Search -->

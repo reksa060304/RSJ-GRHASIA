@@ -1016,7 +1016,12 @@ $scope.formatRupiah = function (value, currency) {
 							{
 								text: "Hapus",
 								click: HapusGajiBerkala,
-								imageClass: "k-icon k-i-delete"
+								imageClass: "k-icon k-delete"
+							},
+							{
+								text: "Cetak",
+								click: cetakGajiBerkala,
+								imageClass: "k-icon k-print"
 							},
 						],
 						title: "",
@@ -1813,13 +1818,15 @@ $scope.formatRupiah = function (value, currency) {
 					return;
 				};
 				$scope.item.IdGajiBerkala = dataItem.no;
-				console.log(dataItem);
+				// console.log(dataItem);
 				$scope.item.norecGajiBerkala = dataItem.norec;
 				$scope.itemGajiBerkala.golongan = {
 					id: dataItem.objectgolonganfk,
 					golongan: dataItem.name
 				};
-				console.log(dataItem);
+				$scope.itemGajiBerkala.noskcetak = dataItem.noskcetak
+				$scope.itemGajiBerkala.jenissk = dataItem.jenissk
+				// console.log(dataItem);
 				$scope.itemGajiBerkala.tanggaltmt = moment(dataItem.tgltmt).format('YYYY-MM-DD HH:mm');
 				$scope.itemGajiBerkala.tanggalsk = moment(dataItem.tglsk).format('YYYY-MM-DD HH:mm');
 				$scope.itemGajiBerkala.pejabatmenetapkan = dataItem.pejabatmenetapkan;
@@ -2893,6 +2900,8 @@ $scope.formatRupiah = function (value, currency) {
 					"itemGajiBerkala.nosurat|ng-model|No Surat",
 					"itemGajiBerkala.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
 					"itemGajiBerkala.tanggaltmt|k-ng-model|Tanggal TMT",
+					"itemGajiBerkala.noskcetak|ng-model|No SK Cetak",
+					"itemGajiBerkala.jenissk|ng-model|Jenis SK",
 					// "itemPandG.ttdSK|k-ng-model|Penandatangan SK",
 					// "itemPandG.jabatanTtd|k-ng-model|Penandatangan Jabatan",
 				];
@@ -2923,6 +2932,8 @@ $scope.formatRupiah = function (value, currency) {
 								data.nosk = $scope.itemGajiBerkala.nosk
 								dataRiwayatGajiBerkala[i] = data;
 								data.objectpegawaifk = $scope.item.idPegawai
+								data.noskcetak= $scope.itemGajiBerkala.noskcetak,
+								data.jenissk= $scope.itemGajiBerkala.jenissk
 								$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
 									data: dataRiwayatGajiBerkala
 								});
@@ -2944,7 +2955,9 @@ $scope.formatRupiah = function (value, currency) {
 							golongan: $scope.itemGajiBerkala.golongan.golongan,
 							objectgolonganfk: $scope.itemGajiBerkala.golongan.id,
 							objectpegawaifk: $scope.item.idPegawai,
-							nosurat: $scope.itemGajiBerkala.nosurat
+							nosurat: $scope.itemGajiBerkala.nosurat,
+							noskcetak: $scope.itemGajiBerkala.noskcetak,
+							jenissk: $scope.itemGajiBerkala.jenissk
 						}
 						dataRiwayatGajiBerkala.push(data)
 						$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
@@ -4086,14 +4099,7 @@ $scope.formatRupiah = function (value, currency) {
                 }
             });
 			$scope.getDataGolongan = function () {
-				// for (let i = 0; i < dataRiwayatGajiBerkala.length; i++) {
-				// 	$scope.cekobjekgolongan = dataRiwayatGajiBerkala[i].objectgolonganfk
-				// 	if ($scope.cekobjekgolongan == $scope.itemGajiBerkala.golongan.id) {
-				// 		$scope.itemGajiBerkala.gajiawal = $scope.gajiterakhir
-				// 	} else {
-				// 		$scope.itemGajiBerkala.gajiawal = $scope.itemGajiBerkala.golongan.nominal
-				// 	}
-				// }
+				
 				var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tglawal), new Date($scope.itemGajiBerkala.tanggaltmt));
 				var mkgnya = umur.year
 				console.log(umur);
@@ -4101,17 +4107,18 @@ $scope.formatRupiah = function (value, currency) {
 					$scope.itemGajiBerkala.gajiakhir = data.data.gajigolongan[0].gajipokok
 					$scope.itemGajiBerkala.gajiawal = data.data.gajiawal[0].nominal
 				})
-				// if (dataRiwayatPangkatGolongan.length > 0) {
-					
-				// } else {
-				// 	var umur = dateHelper.CountAge(new Date($scope.itemPandG.tanggaltmt), new Date($scope.now));
-				// 	var nominal = umur.year
-				// 	console.log(nominal);
-				// 	medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemPandG.golongan.id + '&mkg=' + 0).then(function (data) {
-				// 		console.log(data);
-				// 		$scope.itemPandG.nominal = data.data.gajigolongan[0].gajipokok
-				// 	})
-				// }
+				
+			}
+			function cetakGajiBerkala(e){
+				
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				if (dataItem == undefined) {
+					toastr.error("Data Belum Dipilih!")
+					return;
+				}
+				// console.log($scope.dataSelected);
+				window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgb?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
 			}
 			//* BATAS SUCI *//			
 		}

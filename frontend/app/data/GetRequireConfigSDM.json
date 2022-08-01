@@ -248,6 +248,10 @@
     {
       "nameDep": "SisaCutiCtrl",
       "urlDep": "module/SDM/SisaCutiCtrl"
+    },
+    {
+      "nameDep": "MasterDataPendidikanCtrl",
+      "urlDep": "module/SDM/MasterDataPendidikanCtrl"
     }
   ]
 }

@@ -198,7 +198,7 @@
                             <td>6. </td>
                             <td>Berdasarkan SK No.</td>
                             <td> : </td>
-                            <td>{{$data[0]->nosk}}</td>
+                            <td>{{$data[0]->noskcetak}}</td>
                         </tr>
                         <tr>
                             <td></td>
@@ -250,7 +250,7 @@
                             <td>Yogyakarta, {{$data[0]->tglttd}}</td>
                         </tr>
                         <tr>
-                            <td style="padding-bottom: 100px">Direktur</td>
+                            <td style="padding-bottom: 90px">Direktur</td>
                         </tr>
                         <tr>
                             <td><b><u>dr. Akhmad Akhadi S., M.P.H.</u></b></td>

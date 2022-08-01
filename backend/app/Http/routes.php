@@ -2157,10 +2157,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/get-datajampelatihan-pegawai', 'SDM\SumberDayaManusiaController@getDataJampelatihan');
             Route::get('sdm/get-datalaporan-diklat', 'SDM\SumberDayaManusiaController@getDataLaporanDiklat');
             Route::get('sdm/get-sisacuti', 'SDM\SumberDayaManusiaController@getSisaCuti');
+            Route::get('sdm/get-data-master-pendidikan', 'SDM\SumberDayaManusiaController@getMasterPendidikanPegawai');
+            
             /*END GET*/
 
             /*POST*/
-            
+            Route::post('sdm/save-master-pendidikan-pegawai','SDM\SumberDayaManusiaController@saveMasterPendidikanPegawai');
             Route::post('sdm/simpan-bayar-gaji-detail', 'SDM\SumberDayaManusiaController@simpanPembayaranGajiArray');
             Route::post('sdm/save-data-abk', 'SDM\SumberDayaManusiaController@simpanDataABK');
             Route::post('sdm/save-sisacuti', 'SDM\SumberDayaManusiaController@simpanSisaCuti');

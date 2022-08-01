@@ -6384,6 +6384,10 @@ public function daftarKenaikanGajiBerkala(Request $request){
         if (isset($request['pegawai']) && $request['pegawai'] != "") {
             $pegawai = "and pdr.objectpegawaifk =". $request['pegawai'];
         }
+        $dokter = "";
+        if (isset($request['dokter']) && $request['dokter'] != "") {
+            $dokter = " and pdr.objectpegawaifk =". $request['dokter'];
+        }
         $data = \DB::select(DB::raw("
         SELECT x.id as id_pegawai, x.norec as kegiatanfk, x.detailjenisproduk as kegiatan, x.diklatkategori, x.namalengkap, string_agg(x.nama, ', ')as peserta, x.periode, x.namaruangan,x.id_ruangan, x.institusipendidikan, x.tglmasukbimbingan, x.tglkeluarbimbingan FROM (SELECT 
         djp.detailjenisproduk, pde.norec, pg.namalengkap, pdd.nama, dk.diklatkategori, pde.tanggalmulai::date || ' s.d ' || pde.tanggalselesai::date as periode, 
@@ -6397,6 +6401,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
             inner join ruangan_m ru on ru.id = pdr.objectruanganlastfk
             inner join diklatkategori_m dk on dk.id = pde.objectdiklatkategorifk where pdr.tglmasuk::date between '$request[tglawal]' and '$request[tglakhir]' 
             $pegawai
+            $dokter
             )as x
             GROUP BY x.norec, x.id,x.detailjenisproduk, x.namalengkap, x.diklatkategori, x.periode,x.namaruangan, x.institusipendidikan,x.id_ruangan, x.tglmasukbimbingan, x.tglkeluarbimbingan
         "));
@@ -6465,7 +6470,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
             and hk.tglmasukbimbingan = '$request[tglmasukbimbingan]'
             and hk.tglkeluarbimbingan = '$request[tglkeluarbimbingan]'
             and hk.kegiatanfk ilike '$request[noregistrasifk]'
-            and hk.objectpegawaifk = $request[pegawaifk]
+            -- and hk.objectpegawaifk = $request[pegawaifk]
             "));
 
         return $this->respond($data);
@@ -6888,7 +6893,9 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 'pejabatmenetapkan'=> $request['pejabatmenetapkan'] ,
                 'nosk'=> $request['nosk'],
                 'objectgolonganfk'=>$request['objectgolonganfk'],
-                'nosurat'=>$request['nosurat']
+                'nosurat'=>$request['nosurat'],
+                'noskcetak'=>$request['noskcetak'],
+                'jenissk'=>$request['jenissk'],
                 ]);
                 $getgol = \DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->get();
                 foreach ($getgol as $gg) {
@@ -6913,8 +6920,9 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'tgltmt'=>$request['tgltmt'],
                     'pejabatmenetapkan'=> $request['pejabatmenetapkan'] ,
                     'nosk'=> $request['nosk'],
-                    'nosurat'=>$request['nosurat']
-                    // 'objectgolonganfk'=>$request['objectgolonganfk'],
+                    'nosurat'=>$request['nosurat'],
+                    'noskcetak'=>$request['noskcetak'],
+                    'jenissk'=>$request['jenissk'],
                 ]);
 
                 DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
@@ -7194,6 +7202,90 @@ public function daftarKenaikanGajiBerkala(Request $request){
             );
         } else {
             $transMessage = $jns . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getMasterPendidikanPegawai(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $pendidikan = PendidikanPegawai::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
+        $result = array(
+            'data'=> $pendidikan,
+            'as'=> 'FiziLuckNut',
+        );
+        return $this->respond($result);
+    }
+    public function saveMasterPendidikanPegawai(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $idMaxPendidikanPegawai = PendidikanPegawai::max('id');
+        $nourutMaxPendidikanPegawai = PendidikanPegawai::max('nourut');
+        $crud="";
+        try {
+           
+            // $dataPendidikanPegawai = new PendidikanPegawai();
+            //     $dataPendidikanPegawai->id = $idMaxPendidikanPegawai + 1;
+            //     $dataPendidikanPegawai->kdprofile = $kdProfile;
+            //     $dataPendidikanPegawai->statusenabled = true;
+            //     $dataPendidikanPegawai->kodeexternal= $idMaxPendidikanPegawai + 1;
+            //     $dataPendidikanPegawai->namaexternal= $request['pendidikanpegawai'];
+            //     $dataPendidikanPegawai->reportdisplay= $request['pendidikanpegawai'];
+            //     $dataPendidikanPegawai->pendidikanpegawai= $request['pendidikanpegawai'];
+            //     $dataPendidikanPegawai->nourut= $nourutMaxPendidikanPegawai + 1;
+            //     $dataPendidikanPegawai->save();
+            if(isset($request['hapus'])){
+                $dataPendidikanPegawai = PendidikanPegawai::where('id', $request['idDelete'])->where('kdprofile', $kdProfile)->where('statusenabled', true)->first();
+                $dataPendidikanPegawai->delete();
+                $crud = "Hapus";
+            }else if ($request['id'] == "") {
+                \DB::table('pendidikanpegawai_m')->insert([
+                'id'=>$idMaxPendidikanPegawai+1,
+                'kdprofile'=>30,
+                'statusenabled'=>true,
+                'kodeexternal'=> $idMaxPendidikanPegawai+1,
+                'namaexternal'=> $request['pendidikanpegawai'],
+                'reportdisplay'=> $request['pendidikanpegawai'],
+                'pendidikanpegawai'=> $request['pendidikanpegawai'],
+                'nourut'=> $nourutMaxPendidikanPegawai+1,
+                ]);
+            $crud = "Simpan";
+                
+            }
+            else if($request['id'] != ""){
+                \DB::table('pendidikanpegawai_m')->where('id', $request['id'])
+                ->where('statusenabled', true)
+                ->where('kdprofile', $kdProfile)
+                ->update([
+                'namaexternal'=> $request['pendidikanpegawai'],
+                'reportdisplay'=> $request['pendidikanpegawai'],
+                'pendidikanpegawai'=> $request['pendidikanpegawai'],
+                ]);
+            $crud = "Ubah";
+
+            }
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = $crud . " Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = $crud . " Gagal";
             DB::rollBack();
             $result = array(
                 'status' => 400,
