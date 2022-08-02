@@ -101,7 +101,7 @@ class SumberDayaManusiaController extends ApiController {
 
         if(isset($request['jabatan']) && $request['jabatan']!="" && $request['jabatan']!="undefined"){
             if($request['jabatan'] == 6){
-                $tunjanganbaru = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
+                $tunjanganbaru = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->where('objectjenisjabatanfk', 6)->get();
             } else if($request['jabatan'] == 7){
                 $tunjanganbaru = GolonganPegawai::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
             } else if($request['jabatan'] == 8){
@@ -3470,15 +3470,45 @@ class SumberDayaManusiaController extends ApiController {
                 where pps.kdprofile = 30
                 and pps.statusenabled = true
                 and (
-                    (date_part('year', pps.tglpengajuan::timestamp) = date_part('year',('$tahun-01-01 00:00'::timestamp - interval '1 year')) and sjc.id = 8)
-                    or 
                     (date_part('year', pps.tglpengajuan::timestamp) = date_part('year',('$tahun-01-01 00:00'::timestamp - interval '1 year')) and sjc.id is null)
                 )
+								and pg.id not in(
+									select pg.id
+									from pegawai_m pg
+									inner join planningpegawaistatus_t pps on pps.objectpegawaifk = pg.id
+									inner join sisacuti_t sc on sc.tahun = date_part('year', ('$tahun-01-01 00:00'::timestamp - interval '1 year'))
+									left join sdm_jeniscuti_m sjc on sjc.id = pps.objectstatuspegawaiplanfk
+									where pps.kdprofile = 30
+									and pps.statusenabled = true
+									and (
+											(date_part('year', pps.tglpengajuan::timestamp) = date_part('year',('$tahun-01-01 00:00'::timestamp - interval '1 year')) and sjc.id = 8)
+									)
+								)
             ) as x
             group by idpegawai, tahun, namalengkap, jumlahcutipertahun
+
+			union all
+
+			select idpegawai, tahun, namalengkap, jumlahcutipertahun, 
+			sum(jumlahtotalcutipertahun) as jumlahcutitahunsekarang, 
+            0 sisacutitahunsekarang
+            from(
+			    select pg.id idpegawai, date_part('year',('$tahun-01-01 00:00'::timestamp - interval '1 year')) tahun, pg.namalengkap, pps.tglpengajuan, sc.sisa jumlahcutipertahun, pps.jumlahhari jumlahtotalcutipertahun, sjc.name, sjc.id
+                from pegawai_m pg
+                inner join planningpegawaistatus_t pps on pps.objectpegawaifk = pg.id
+                inner join sisacuti_t sc on sc.tahun = date_part('year', ('$tahun-01-01 00:00'::timestamp - interval '1 year'))
+                left join sdm_jeniscuti_m sjc on sjc.id = pps.objectstatuspegawaiplanfk
+                where pps.kdprofile = 30
+                and pps.statusenabled = true
+                and (
+                    (date_part('year', pps.tglpengajuan::timestamp) = date_part('year',('$tahun-01-01 00:00'::timestamp - interval '1 year')) and sjc.id = 8)
+                )
+			) as x
+            group by idpegawai, tahun, namalengkap, jumlahcutipertahun, id
         )as a on pg.id = a.idpegawai
         left join (
-            select idpegawai, tahun, namalengkap, jumlahcutipertahun, sum(jumlahtotalcutipertahun) jumlahcutitahunsekarang, 
+            select idpegawai, tahun, namalengkap, jumlahcutipertahun, 
+            sum(jumlahtotalcutipertahun) as jumlahcutitahunsekarang, 
             jumlahcutipertahun - sum(jumlahtotalcutipertahun) sisacutitahunsekarang
             from(
                 select pg.id idpegawai, date_part('year','$tahun-01-01 00:00'::timestamp) tahun, pg.namalengkap, pps.tglpengajuan, sc.sisa jumlahcutipertahun, pps.jumlahhari jumlahtotalcutipertahun, sjc.name, sjc.id
@@ -3491,12 +3521,41 @@ class SumberDayaManusiaController extends ApiController {
                 and (
                     (date_part('year', pps.tglpengajuan::timestamp) = date_part('year','$tahun-01-01 00:00'::timestamp) and sjc.id is null)
                     or 
-                    (date_part('year', pps.tglpengajuan::timestamp) = date_part('year','$tahun-01-01 00:00'::timestamp ) and sjc.id = 8)
-                    or 
                     (date_part('year', pps.tglpengajuan::timestamp) = date_part('year','$tahun-01-01 00:00'::timestamp ) and sjc.id = 1)
                 )
+								and pg.id not in(
+									select pg.id
+									from pegawai_m pg
+									inner join planningpegawaistatus_t pps on pps.objectpegawaifk = pg.id
+									inner join sisacuti_t sc on sc.tahun = date_part('year', '$tahun-01-01 00:00'::timestamp)
+									left join sdm_jeniscuti_m sjc on sjc.id = pps.objectstatuspegawaiplanfk
+									where pps.kdprofile = 30
+									and pps.statusenabled = true
+									and (
+											(date_part('year', pps.tglpengajuan::timestamp) = date_part('year','$tahun-01-01 00:00'::timestamp ) and sjc.id = 8)
+									)
+								)
             ) as x
-            group by idpegawai, tahun, namalengkap, jumlahcutipertahun
+            group by idpegawai, tahun, namalengkap, jumlahcutipertahun, id
+
+            union all
+
+            select idpegawai, tahun, namalengkap, jumlahcutipertahun, 
+            sum(jumlahtotalcutipertahun) as jumlahcutitahunsekarang, 
+            0 sisacutitahunsekarang
+            from(
+				select pg.id idpegawai, date_part('year','$tahun-01-01 00:00'::timestamp) tahun, pg.namalengkap, pps.tglpengajuan, sc.sisa jumlahcutipertahun, pps.jumlahhari jumlahtotalcutipertahun, sjc.name, sjc.id
+                from pegawai_m pg
+                inner join planningpegawaistatus_t pps on pps.objectpegawaifk = pg.id
+                inner join sisacuti_t sc on sc.tahun = date_part('year', '$tahun-01-01 00:00'::timestamp)
+                left join sdm_jeniscuti_m sjc on sjc.id = pps.objectstatuspegawaiplanfk
+                where pps.kdprofile = 30
+                and pps.statusenabled = true
+                and (
+                    (date_part('year', pps.tglpengajuan::timestamp) = date_part('year','$tahun-01-01 00:00'::timestamp ) and sjc.id = 8)
+                )
+			) as x
+            group by idpegawai, tahun, namalengkap, jumlahcutipertahun, id
         ) as b on pg.id = b.idpegawai
         where pg.id = $idpegawai"));
 

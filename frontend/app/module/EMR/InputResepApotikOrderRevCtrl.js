@@ -176,22 +176,9 @@ define(['initialize'], function (initialize) {
                     // $scope.listRoute = dat.data.route;
                     $scope.listAturanPakai = dat.data.signa;
                     $scope.listJenisRacikan = dat.data.jenisracikan;
-                    if ($scope.item.departemen == 25){
-                        $scope.item.ruangan = dat.data.ruanganfarmasi[0];
-                    } else if ($scope.item.departemen == 24){
-                        $scope.item.ruangan = dat.data.ruanganfarmasi[1];
-                    } else if ($scope.item.departemen == 18 && $scope.item.jenispelayanan == 2){
-                        $scope.item.ruangan = dat.data.ruanganfarmasi[4];
-                    } else if ($scope.item.departemen == 18){
-                        $scope.item.ruangan = dat.data.ruanganfarmasi[2];
-                    } else if ($scope.item.departemen == 16){
-                        $scope.item.ruangan = dat.data.ruanganfarmasi[3];
-                    } else {
-                        $scope.item.ruangan = dat.data.ruanganfarmasi[4];
-                    }
+                    $scope.item.ruangan = {id:94, namaruangan:'FARMASI'};
+                    
                     $scope.item.jenisKemasan = dat.data.jeniskemasan[1];
-
-                    $scope.item.ruangan = dat.data.ruanganfarmasi[1];
 
                     if($scope.item.penulisResep.jenispegawai.id != 1){
                         $scope.hideSimpan =true;

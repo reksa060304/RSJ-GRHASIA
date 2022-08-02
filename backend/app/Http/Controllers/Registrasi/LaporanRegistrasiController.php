@@ -2703,9 +2703,24 @@ select '-' as smf,* from  (
             $paramRuanganApdt = ' and apdt.objectruanganfk = ' . $ruanganId;
         }
 
+        if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined" && ($ruanganId == 803 || $ruanganId == 794)) {
+            $paramRuangan = ' and apd.objectruanganfk in(803,794)';
+            $paramRuangany = ' and y.ruangantujuan in(803,794)';
+            $paramRuanganSatu = ' and pd.objectruanganlastfk in(803,794)';
+            $paramRuanganKeluar = ' and apd.objectruanganfk in(803,794)';
+            $paramRuanganPindah = ' and rpp.objectruanganfk in(803,794)';
+            $paramRuanganDiPindah = ' and apd.objectruanganasalfk in(803,794)';
+            $paramRuanganApdt = ' and apdt.objectruanganfk in(803,794)';
+        }
+
         $paramRuanganRM = '';
         if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined") {
             $paramRuanganRM = ' and rm.objectruanganfk = ' . $ruanganId;
+        }
+
+        $paramRuanganRM = '';
+        if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined" && ($ruanganId == 803 || $ruanganId == 794)) {
+            $paramRuanganRM = ' and rm.objectruanganfk in(803,794)';
         }
 
         $paramKelasRM = ' ';

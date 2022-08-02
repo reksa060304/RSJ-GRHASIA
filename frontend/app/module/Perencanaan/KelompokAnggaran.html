@@ -120,7 +120,7 @@
 			<md-content>
 				<md-tabs md-dynamic-height md-border-bottom>
 					
-					<md-tab label="Setting">
+					<md-tab label="Setting" ng-if="hidespj === true">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding" ng-hide="false">
 
@@ -340,7 +340,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Mata Anggaran">
+					<md-tab label="Mata Anggaran" ng-if="hidespj === true">
 						<md-content class="md-padding">
 							
 								
@@ -366,7 +366,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="List Keterangan">
+					<md-tab label="Anggaran Kas">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 
@@ -421,7 +421,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="SPJ">
+					<md-tab label="SPJ" ng-if="hidespj === true">
 						<md-content class="md-padding">
 
 							<br />
@@ -456,7 +456,7 @@
 							</div> -->
 						</md-content>
 					</md-tab>
-					<md-tab label="Panjar">
+					<md-tab label="Panjar" ng-if="hidespj === true">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 							<div class="grid_12">
@@ -468,7 +468,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Surat Permintaan Pembayaran (SPP)">
+					<md-tab label="Surat Permintaan Pembayaran (SPP)" ng-if="hidespj === true">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 							<div class="grid_12">
@@ -484,7 +484,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Surat Perintah Membayar (SPM)">
+					<md-tab label="Surat Perintah Membayar (SPM)" ng-if="hidespj === true">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 							<div class="grid_12">
@@ -659,12 +659,22 @@
 					<input c-text-box type="input" class="k-textbox" ng-model="item.kodeAdd"  />
 				</div>
 			</div>
-			<div class="grid_12">
+			<div class="grid_6">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Keterangan"></label>
 				</div>
 				<div class="grid_12">
 					<input c-text-box type="input" class="k-textbox" ng-model="item.keteranganAdd" />
+				</div>
+			</div>
+			<div class="grid_6">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Div"></label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.div"
+					k-data-text-field="'div'" k-data-value-field="'id'"
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" />
 				</div>
 			</div>
 		</div>
@@ -700,12 +710,22 @@
 					<input c-text-box type="input" class="k-textbox" ng-model="item.kode"  />
 				</div>
 			</div>
-			<div class="grid_12">
+			<div class="grid_6">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Program"></label>
 				</div>
 				<div class="grid_12">
 					<input c-text-box type="input" class="k-textbox" ng-model="item.keterangan" />
+				</div>
+			</div>
+			<div class="grid_6">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Div"></label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.programdiv"
+					k-data-text-field="'div'" k-data-value-field="'id'"
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" disabled/>
 				</div>
 			</div>
 		</div>
@@ -740,12 +760,22 @@
 					<input c-text-box type="input" class="k-textbox" ng-model="item.kode"  />
 				</div>
 			</div>
-			<div class="grid_12">
+			<div class="grid_6">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Kegiatan"></label>
 				</div>
 				<div class="grid_12">
 					<input c-text-box type="input" class="k-textbox" ng-model="item.keterangan" />
+				</div>
+			</div>
+			<div class="grid_6">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Div"></label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.detaildiv"
+					k-data-text-field="'div'" k-data-value-field="'id'"
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" disabled/>
 				</div>
 			</div>
 		</div>
@@ -780,12 +810,22 @@
 					<input c-text-box type="input" class="k-textbox" ng-model="item.kode"  />
 				</div>
 			</div>
-			<div class="grid_12">
+			<div class="grid_6">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Sub Kegiatan"></label>
 				</div>
 				<div class="grid_12">
 					<input c-text-box type="input" class="k-textbox" ng-model="item.keterangan" />
+				</div>
+			</div>
+			<div class="grid_6">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Div"></label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.subkegiatandiv"
+					k-data-text-field="'div'" k-data-value-field="'id'"
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" disabled/>
 				</div>
 			</div>
 		</div>
@@ -955,6 +995,17 @@
                                         resize: none;" ng-model="item.targetKinerjaHasil"></textarea>
 				</div>
 			</div>
+
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					DIV
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.subsubkegiatandiv"
+					k-data-text-field="'div'" k-data-value-field="'id'"
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" disabled/>
+				</div>
+			</div>
 		</div>
 		
 		<div class="grid_12">
@@ -1002,7 +1053,53 @@
 						k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisAnggaran" />
 				</div>
 			</div>
+			<div class="grid_12" ng-hide="konsolidasi">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Konsolidasi"></label>
+				</div>
+				<br><br>
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Jenis Permendagri"></label>
+				</div>
+				<br>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi2"
+						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi2" />
+				</div>
+				<br><br>
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Permendagri 3"></label>
+				</div>
+				<br>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi3"
+						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi3" />
+				</div>
+				<br><br>
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Permendagri 4"></label>
+				</div>
+				<br>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi4"
+						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi4" />
+				</div>
+				<br><br>
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Permendagri 5"></label>
+				</div>
+				<br>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi5"
+						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi5"/>
+				</div>
+			</div>
 			
+
 		</div>
 		
 		<div class="grid_12">
