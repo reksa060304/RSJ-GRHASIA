@@ -171,74 +171,8 @@
 <div class="grid_12">
     <div class="grid_12">
         <div class="panel panel-default container_12">
-            <div class="panel-heading" c-translate> Asesmen Medis Gawat Darurat</div>
+            <div class="panel-heading" c-translate> Asesmen Medis IGD Non Jiwa</div>
         </div>
-
-
-        <!-- <div class="grid_2"></div> -->
-        <!-- <div class="grid_12" style="margin-top: 20px">
-            <table style="width:100%;">
-                <tr>
-
-                    <th style="width:20px;text-align: center;" colspan="3">SKRINING DAN TRIAGE</th>
-
-                </tr>
-                <tr>
-                    <th style="text-align: center;">FISIK </th>
-                    <th style="text-align: center;">SKRINING DAN TRIAGE</th>
-
-                </tr>
-                <tr>
-                    <td style="text-align:center"><span class="dot1" ng-class="{'activeDot': activeTriaseStatus == 'merah'}"></span>
-                        <span class="dot2" ng-class="{'activeDot': activeTriaseStatus == 'kuning'}"></span>
-                        <span class="dot3" ng-class="{'activeDot': activeTriaseStatus == 'hijau'}"></span>
-                        <span class="dot4" ng-class="{'activeDot': activeTriaseStatus == 'hitam'}"></span>
-                    </td>
-                    <td>
-                        <div class="grid_12">
-                            <div class="grid_3">
-                                <label c-label item="item">SKOR CTRS</label>
-                            </div>
-                            <div class="grid_9" style="margin-top: -10px;">
-                                <input class="k-textbox" ng-model="item.obj[4189]" type="text"
-                                  >
-                            </div>
-                        </div>
-                        <div class="grid_12">
-                            <div class="grid_3"> <label c-label item="item">SKOR CTRS</label></div>
-
-                            <div class="grid_3" ng-repeat="jawab in listSkor| orderBy:'id'"
-                                ng-init="jawabIndex = $index">
-                                <div ng-switch on="jawabIndex">
-                                    <div ng-switch-default>
-
-                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
-                                            ng-model="item.obj[jawab.id]" ng-click="getSkor(jawab)">
-                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
-                                            &nbsp;{{jawab.nama}}</label>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td colspan="3">
-                        <div class="grid_3" style="margin-top: 10px;">
-                            <label c-label item="item">Tanggal/Jam Kedatangan</label></div>
-                        <div class="grid_9">
-                            <input k-ng-model="item.obj[4192]" kendo-datetimepicker 
-                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
-                                parsedate="yyyy-MM-dd HH:mm">
-                        </div>
-                    </td>
-                </tr>
-
-            </table>
-        </div> -->
         <div class="grid_12 margin-top-30">
             <label c-label item="item">Tanggal</label>
             </div>
@@ -251,22 +185,11 @@
         <div class="grid_12">
             <fieldset style="margin-top: 10px;">
                 <div class="grid_12 margin-top-30 text-center margin-bottom">
-                    <label c-label item="item">ALLOANAMNESIS / ANAMNESIS</label>
+                    <label c-label item="item">Asesmen Medis IGD Non Jiwa</label>
                 </div>
-                <div class="grid_12 margin-top-30">
-                    <div class="grid_6">
-                        <label c-label item="item" class="margin-bottom">A. Diperoleh dari:</label>
-                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300346]"
-                            style="height: 30px; width: 98%; "/>
-                    </div>
-                    <div class="grid_6">
-                        <label c-label item="item" class="margin-bottom">Hubungan dengan pasien:</label>
-                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300347]"
-                            style="height: 30px; width: 98%; "/>
-                    </div>
-                </div>
+                
                 <div class="grid_12 margin-top">
-                    <label c-label item="item" class="margin-bottom">B. Riwayat Penyakit:</label>
+                    <label c-label item="item" class="margin-bottom">A. ANAMNESIS</label>
                 </div>
                 <div class="grid_12 margin-top-20 margin-bottom">
                     <label c-label item="item" class="margin-bottom">1. Keluhan Utama</label>
@@ -274,33 +197,74 @@
                             style="height: 55px; width: 98%; "/>
                 </div>
                 <div class="grid_12 margin-bottom">
-                    <label c-label item="item" class="margin-bottom">2. Sejak kapan terjadi perubahan tingkah laku / peningkatan gejala?</label>
+                    <label c-label item="item" class="margin-bottom">2. Riwayat Penyakit Sekarang</label>
                     <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300349]"
                             style="height: 55px; width: 98%; "/>
                 </div>
                 <div class="grid_12 margin-bottom">
-                    <label c-label item="item" class="margin-bottom">3. Gejala yang ditunjukkan</label>
+                    <label c-label item="item" class="margin-bottom">3. Riwayat Penyakit Dahulu</label>
                     <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300350]"
                             style="height: 80px; width: 98%; "/>
                 </div>
-                
-                <div class="grid_12 margin-top" ng-repeat="list in listRiwayatPenyakitJiwa">
-                    <div class="grid_6">
-                        <div class="grid_12">
-                            <label c-label item="item" class="margin-bottom">4. Riwayat Penyakit Jiwa Sebelumnya:</label>
-                        </div>
+                <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">4. Riwayat Penyakit Keluarga</label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                        ng-model="item.obj[1901300346]" style="height: 80px; width: 98%; " />
+                </div>
+                <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">5. Riwayat Alergi</label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                        ng-model="item.obj[22034924]" style="height: 80px; width: 98%; " />
+                </div>
+                <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">6. Pengaruh Faktor Psikososial Spiritual dan Ekonomi</label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[22034830]"
+                        style="height: 80px; width: 98%; " />
+                </div>
+                <div class="grid_12 margin-top">
+                    <label c-label item="item" class="margin-bottom">B. ANAMNESIS</label>
+                </div>
+                <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">1. Pemeriksaan Fisik</label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[22034831]"
+                        style="height: 80px; width: 98%; " />
+                </div>
+                <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">2. Pemeriksaan Penunjang</label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[22034832]"
+                        style="height: 80px; width: 98%; " />
+                </div>
+                <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">C. Diagnosis</label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                        ng-model="item.obj[1901300355]"
+                        style="height: 80px; width: 98%; " />
+                </div>
+                <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">D. Penatalaksanaan</label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                        ng-model="item.obj[22034833]" style="height: 80px; width: 98%; " />
                     </div>
-                    <div class="grid_6">
+                <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">Keadaan waktu keluar:</label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                        ng-model="item.obj[1901300426]" style="height: 55px; width: 98%; " />
+                    </div>
+                <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">Edukasi tentang diagnosis, penatalaksanaan dan prognosis kepada:</label>
+                </div>
+                <div class="grid_12 margin-top margin-bottom" ng-repeat="list in listEdukasiDiagnosis">
+                    <div class="grid_12">
                         <div ng-repeat="jawab in list.detail">
                             <div ng-switch on="jawab.type">
-                                <div class="grid_6" ng-switch-when="checkbox" style="margin-top: -5px;">
+                                <div class="grid_4 text-center" ng-switch-when="checkbox" style="margin-top: -5px;">
                                     <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
                                         ng-model="item.obj[jawab.id]">
                                     <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
                                         &nbsp;{{jawab.nama}}</label>
                                 
                                 </div>
-                                <div class="grid_6" ng-switch-when="textbox" style="margin-top: -5px;">
+                                <div class="grid_4 text-center" ng-switch-when="textbox" style="margin-top: -5px;">
                                     <div class="grid_12">
                                         <label>{{jawab.nama}}</label>
                                     </div>
@@ -311,11 +275,27 @@
                                             style="margin-top: 5px;margin-right: 60px">{{jawab.satuan}}</label>
                                     </div>
                                 </div>
+                                <div class="grid_4" ng-switch-when="checkboxtextbox" style="margin-top: -5px;">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                        &nbsp;{{jawab.nama}}</label>
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text=""></label>
+                                    </div>
+                                    <div class="grid_12 parentKeteranganFieldTambahan">
+                                        <input c-text-box type="text" filter="" class="k-textbox"
+                                            ng-model="item.obj[jawab.idd]" />
+                                        <label class="keteranganFieldTambahan"
+                                            style="margin-top: 5px;margin-right: 30px"></label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="grid_12 margin-bottom">
+
+                <!-- <div class="grid_12 margin-bottom">
                     <div class="grid_6">
                         <div class="grid_3">
                             <label c-label item="item" class="margin-bottom">Pertama kali (kapan):</label>
@@ -334,8 +314,8 @@
                             style="height: 30px; width: 98%; "/>
                         </div>
                     </div>
-                </div>
-                <div class="grid_12 margin-top" ng-repeat="list in listPernahSembuh">
+                </div> -->
+                <!-- <div class="grid_12 margin-top" ng-repeat="list in listPernahSembuh">
                     <div class="grid_6">
                         <div class="grid_12">
                             <label c-label item="item" class="margin-bottom">Pernah Sembuh:</label>
@@ -365,8 +345,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="grid_12 margin-top" ng-repeat="list in listBerobatJalan">
+                </div> -->
+                <!-- <div class="grid_12 margin-top" ng-repeat="list in listBerobatJalan">
                     <div class="grid_6">
                         <div class="grid_12">
                             <label c-label item="item" class="margin-bottom">Berobat Jalan:</label>
@@ -430,8 +410,8 @@
                             </div>
                         </div>                       
                     </div>
-                </div>
-                <div class="grid_12 margin-bottom margin-top-10">
+                </div> -->
+                <!-- <div class="grid_12 margin-bottom margin-top-10">
                     <div class="grid_6">
                         <label c-label item="item" class="margin-bottom">Spiritual Psikososial:</label>
                     </div>
@@ -439,8 +419,8 @@
                         <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300365]"
                             style="height: 30px; width: 98%; "/>
                     </div>
-                </div>
-                <div class="grid_12 margin-bottom">
+                </div> -->
+                <!-- <div class="grid_12 margin-bottom">
                     <div class="grid_6">
                         <label c-label item="item" class="margin-bottom">Ekonomi:</label>
                     </div>
@@ -448,8 +428,8 @@
                         <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300366]"
                             style="height: 30px; width: 98%; "/>
                     </div>
-                </div>
-                <div class="grid_12 margin-bottom">
+                </div> -->
+                <!-- <div class="grid_12 margin-bottom">
                     <div class="grid_6">
                         <label c-label item="item" class="margin-bottom">Lain-lain:</label>
                     </div>
@@ -457,13 +437,13 @@
                         <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300367]"
                             style="height: 30px; width: 98%; "/>
                     </div>
-                </div>
-                <div class="grid_12 margin-bottom">
+                </div> -->
+                <!-- <div class="grid_12 margin-bottom">
                     <label c-label item="item" class="margin-bottom">6. Riwayat gangguan jiwa dalam keluarga</label>
                     <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300368]"
                             style="height: 55px; width: 98%; "/>
-                </div>
-                <div class="grid_12 margin-bottom">
+                </div> -->
+                <!-- <div class="grid_12 margin-bottom">
                     <label c-label item="item" class="margin-bottom">7. Silsilah Keluarga</label>
                     <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300369]"
                             style="height: 55px; width: 98%; "/>
@@ -506,8 +486,8 @@
                         <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300373]"
                             style="height: 30px; width: 98%; "/>
                     </div>
-                </div>
-                <div class="grid_12 margin-bottom">
+                </div> -->
+                <!-- <div class="grid_12 margin-bottom">
                     <div class="grid_6">
                         <label c-label item="item" class="margin-bottom">Perkawinan:</label>
                     </div>
@@ -525,7 +505,7 @@
                     <label c-label item="item" class="margin-bottom">10. Riwayat Alergi</label>
                     <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300376]"
                             style="height: 55px; width: 98%; "/>
-                </div>
+                </div> -->
                 <!-- <div class="grid_12 margin-bottom">
                     <div class="grid_6">
                         <div class="grid_3">
@@ -548,8 +528,84 @@
                 </div> -->
             </fieldset>
         </div>
-
         <div class="grid_12">
+            <fieldset style="margin-top: 10px;">
+                <div class="grid_6 margin-top-30 text-center margin-bottom border-right">
+                    <div class="grid_12">
+                        <label c-label item="item">INTEGRASI ASUHAN</label>
+                    </div>
+                    <div class="grid_12 margin-top margin-bottom" ng-repeat="list in listIntegrasiAsuhan">
+                        <div class="grid_12">
+                            <div ng-repeat="jawab in list.detail">
+                                <div ng-switch on="jawab.type">
+                                    <div class="grid_4" ng-switch-when="checkboxtextbox" style="margin-top: -5px;">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text=""></label>
+                                        </div>
+                                        <div class="grid_12 parentKeteranganFieldTambahan">
+                                            <input c-text-box type="text" filter="" class="k-textbox"
+                                                ng-model="item.obj[jawab.idd]" />
+                                            <label class="keteranganFieldTambahan"
+                                                style="margin-top: 5px;margin-right: 30px"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-bottom margin-top">
+                        <label c-label item="item" class="margin-bottom">Catatan / Notasi DPJP:</label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                            ng-model="item.obj[1901300417]" style="height: 55px; width: 98%; " />
+                        </div>
+                    <div class="grid_12 margin-top">
+                        <div class="grid_6"></div>
+                        <div class="grid_6">
+                            <label c-label item="item" c-label-text="Dokter"></label>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_6"></div>
+                        <div class="grid_6">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[1901300424]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_6 margin-top-30 text-center margin-bottom">
+                    <div class="grid_12">
+                        <label c-label item="item">RENCANA PEMULANGAN PASIEN</label>
+                    </div>
+                    <div class="grid_12 margin-top margin-bottom" ng-repeat="list in listPemulanganPasien">
+                        <div class="grid_12">
+                            <div ng-repeat="jawab in list.detail">
+                                <div ng-switch on="jawab.type">
+                                    <div class="grid_6" ng-switch-when="checkboxtextbox" style="margin-top: -5px;">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                        <div class="grid_12 parentKeteranganFieldTambahan">
+                                            <input c-text-box type="text" filter="" class="k-textbox"
+                                                ng-model="item.obj[jawab.idd]" />
+                                            <label class="keteranganFieldTambahan"
+                                                style="margin-top: 5px;margin-right: 30px"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- <div class="grid_12">
             <fieldset style="margin-top: 10px;">
                 <div class="grid_12 margin-top-30 text-center margin-bottom">
                     <label c-label item="item">PEMERIKSAAN FISIK</label>
@@ -603,9 +659,9 @@
                             style="height: 90px; width: 98%; "/>
                 </div>
             </fieldset>
-        </div>
+        </div> -->
 
-        <div class="grid_12">
+        <!-- <div class="grid_12">
             <fieldset style="margin-top: 10px;">
                 <div class="grid_12 margin-top-30 text-center margin-bottom">
                     <label c-label item="item">PEMERIKSAAN PSIKIATRIK</label>
@@ -809,9 +865,9 @@
                             style="height: 55px; width: 98%; "/>
                 </div>
             </fieldset>
-        </div>
+        </div> -->
 
-        <div class="grid_12">
+        <!-- <div class="grid_12">
             <fieldset style="margin-top: 10px;">
                 <div class="grid_12 margin-top-30 text-center margin-bottom">
                     <label c-label item="item">PEMERIKSAAN PENUNJANG</label>
@@ -821,9 +877,9 @@
                             style="height: 100px; width: 98%; "/>
                 </div>
             </fieldset>
-        </div>
+        </div> -->
 
-        <div class="grid_12">
+        <!-- <div class="grid_12">
             <fieldset style="margin-top: 10px;">
                 <div class="grid_12 margin-top-30 text-center margin-bottom">
                     <label c-label item="item">DIAGNOSIS</label>
@@ -872,9 +928,9 @@
                     </div>
                 </div>
             </fieldset>
-        </div>
+        </div> -->
 
-        <div class="grid_12">
+        <!-- <div class="grid_12">
             <fieldset style="margin-top: 10px;">
                 <div class="grid_12 margin-top-30 text-center margin-bottom">
                     <label c-label item="item">PENATALAKSANAAN</label>
@@ -883,58 +939,10 @@
                     <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300410]"
                             style="height: 100px; width: 98%; "/>
                 </div>
-                <div class="grid_12 margin-bottom">
-                    <label c-label item="item" class="margin-bottom">Keadaan waktu keluar:</label>
-                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300426]"
-                            style="height: 55px; width: 98%; "/>
-                </div>
-                <div class="grid_12 margin-bottom">
-                    <label c-label item="item" class="margin-bottom">Edukasi tentang diagnosis, penatalaksanaan dan prognosis kepada:</label>
-                </div>
-                <div class="grid_12 margin-top margin-bottom" ng-repeat="list in listEdukasiDiagnosis">
-                    <div class="grid_12">
-                        <div ng-repeat="jawab in list.detail">
-                            <div ng-switch on="jawab.type">
-                                <div class="grid_4 text-center" ng-switch-when="checkbox" style="margin-top: -5px;">
-                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
-                                        ng-model="item.obj[jawab.id]">
-                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
-                                        &nbsp;{{jawab.nama}}</label>
-                                
-                                </div>
-                                <div class="grid_4 text-center" ng-switch-when="textbox" style="margin-top: -5px;">
-                                    <div class="grid_12">
-                                        <label>{{jawab.nama}}</label>
-                                    </div>
-                                    <div class="grid_12 parentKeteranganFieldTambahan">
-                                        <input c-text-box type="text" filter="" class="k-textbox"
-                                            ng-model="item.obj[jawab.id]" style="width: 95%" />
-                                        <label class="keteranganFieldTambahan"
-                                            style="margin-top: 5px;margin-right: 60px">{{jawab.satuan}}</label>
-                                    </div>
-                                </div>
-                                <div class="grid_4" ng-switch-when="checkboxtextbox" style="margin-top: -5px;">
-                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
-                                        ng-model="item.obj[jawab.id]">
-                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
-                                        &nbsp;{{jawab.nama}}</label>
-                                    <div class="grid_12">
-                                        <label c-label item="item" c-label-text=""></label>
-                                    </div>
-                                    <div class="grid_12 parentKeteranganFieldTambahan">
-                                        <input c-text-box type="text" filter="" class="k-textbox"
-                                            ng-model="item.obj[jawab.idd]" />
-                                        <label class="keteranganFieldTambahan"
-                                            style="margin-top: 5px;margin-right: 30px"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
             </fieldset>
-        </div>
-
+        </div> -->
+<!-- 
         <div class="grid_12">
             <fieldset style="margin-top: 10px;">
                 <div class="grid_6 margin-top-30 text-center margin-bottom border-right">
@@ -1010,7 +1018,7 @@
                     </div>
                 </div>
             </fieldset>
-        </div>
+        </div> -->
 
         <div class="grid_12">
             <fieldset style="margin-top: 10px;">

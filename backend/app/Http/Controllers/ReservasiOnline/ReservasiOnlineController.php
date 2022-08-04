@@ -748,6 +748,8 @@ class ReservasiOnlineController extends ApiController
 			$result = array(
 //				"noRec" =>$noRec,
 				"status" => 400,
+                'e'=> $e->getLine(),
+                'msg'=> $e->getMessage(),
 				"message" => $transMessage,
 			);
 		}
@@ -4240,4 +4242,69 @@ class ReservasiOnlineController extends ApiController
    
            return $this->setStatusCode($result['status'])->respond($result, $transMessage);
        }
+        public function getDaftarJadwalDokter(Request $request)
+        {
+            $kdProfile = $this->getDataKdProfile($request);
+            $jddokter = \DB::table('slottingonline_m as son')
+            ->join('ruangan_m as ru','ru.id','=','son.objectruanganfk')
+            ->join('pegawai_m as pg', 'pg.id', '=', 'son.objectpegawaifk')
+            ->where('son.statusenabled', true)
+            ->where('son.kdprofile', $kdProfile)
+            ->select('pg.namalengkap', 'ru.namaruangan', 'son.jambuka', 'son.jamtutup','son.hari', 'son.quota')
+            ->get();
+            
+            $result = array(
+                'jddokter'=> $jddokter,
+                'as'=> 'Fizi@Epic'
+            );
+            return $this->respond($result);
+        }
+        public function getDaftarInfoTT(Request $request)
+        {
+            $kdProfile = $this->getDataKdProfile($request);
+            $data= \DB::select(DB::raw("SELECT 
+                x.namaruangan, 
+                case 
+                when sum(x.kosong)is null then sum(x.isi+0)
+                when sum(x.isi)is null then sum(x.kosong+0)
+                else sum(x.kosong)+ sum(x.isi)end as qty,
+                case 
+                when sum(x.kosong)is null then 0
+                else sum(x.kosong)end as kosong, 
+                case when sum(x.isi)is null then 0
+                else sum(x.isi)end as isi FROM (
+                SELECT
+                    ru.id AS idruangan,
+                    ru.namaruangan,
+                    CASE 
+                    WHEN sb.id = 1 THEN
+                        count(sb.id)
+                END as isi,
+                CASE 
+                    WHEN sb.id = 2 THEN
+                        count(sb.id)
+                END as kosong
+
+                FROM
+                    tempattidur_m AS tt
+                    LEFT JOIN kamar_m AS km ON km.id = tt.objectkamarfk
+                    LEFT JOIN ruangan_m AS ru ON ru.id = km.objectruanganfk
+                    LEFT JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
+                    LEFT JOIN kelas_m AS kl ON kl.id = km.objectkelasfk 
+                WHERE
+                    tt.kdprofile = 30 
+                    AND ru.objectdepartemenfk IN ( 16 ) 
+                    AND ru.statusenabled = true
+                    AND km.statusenabled = true 
+                    AND tt.statusenabled = TRUE
+                    GROUP BY ru.id,sb.id
+                    )as x
+                    group by x.namaruangan
+            "));
+                $result = array(
+                'data'=> $data,
+                'as'=> 'Fizi@Epic'
+            );
+            return $this->respond($result);
+        }
 }

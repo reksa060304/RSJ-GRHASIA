@@ -24,6 +24,7 @@ define(['initialize'], function (initialize) {
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
+                $scope.listPegawai2 = data
             })
 
             medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000412).then(function (e) {
@@ -171,6 +172,57 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
+            $scope.listInsight = [{
+                        "id": 1,
+                        "nama": "1",
+                        "satuan": "",
+                        "type": "checkbox"
+                    },
+                    {
+                        "id": 2,
+                        "nama": "2",
+                        "satuan": "",
+                        "type": "checkbox"
+                    },
+                    {
+                        "id": 3,
+                        "nama": "3",
+                        "satuan": "",
+                        "type": "checkbox"
+                    },
+                    {
+                        "id": 4,
+                        "nama": "4",
+                        "satuan": "",
+                        "type": "checkbox"
+                    },
+                    {
+                        "id": 5,
+                        "nama": "5",
+                        "satuan": "",
+                        "type": "checkbox"
+                    },
+                    {
+                        "id": 6,
+                        "nama": "6",
+                        "satuan": "",
+                        "type": "checkbox"
+                    },
+                    ]
+                    $scope.listBaikJelek = [{
+                            "id": 1,
+                            "nama": "Baik",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 2,
+                            "nama": "Jelek",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        
+                    ]
 
             $scope.listBerobatJalan = [
                 {
@@ -282,7 +334,15 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj[116216] = true
                 $scope.item.obj[116219] = true
                 $scope.item.obj[116222] = true
-
+                for (let i = 0; i < dat.data.data.length; i++) {
+                    if (dat.data.data[i].emrdfk == 3002058) {
+                        $scope.item.obj[3002058] = dat.data.data[i].value
+                        console.log($scope.item.obj[3002058]);
+                    }
+                    if (dat.data.data[i].emrdfk == 3002093) {
+                        $scope.item.obj[3002093] = dat.data.data[i].value
+                    }
+                }
                 // $scope.item.obj[111056]=$scope.now
                 // $scope.item.obj[14563]={ value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp }
                 dataLoad = dat.data.data
@@ -575,7 +635,6 @@ define(['initialize'], function (initialize) {
                     }
 
                 })
-                
             $scope.SkorSkalaFlacc[21008224] = 0;
             $scope.SkorSkalaFlacc[21008229] = 0;
             $scope.SkorSkalaFlacc[21008234] = 0;

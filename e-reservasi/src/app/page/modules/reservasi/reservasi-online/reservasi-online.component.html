@@ -83,7 +83,7 @@
                 [color]="color"
                 [checked]="checked"
                 [disabled]="disabled">
-          
+
             </mat-slide-toggle> -->
 
                   <!-- <mat-form-field>
@@ -570,7 +570,7 @@
                   <input matInput placeholder="Pencarian" #gs>
                 </mat-form-field>
                 <!-- <div style="text-align: left;margin-left: 10px" class="ng-star-inserted"><i class="fa fa-search"
-                  style="margin:4px 4px 0px 0"></i><input pinputtext="" placeholder="Filter Data" 
+                  style="margin:4px 4px 0px 0"></i><input pinputtext="" placeholder="Filter Data"
                   style="width:auto" type="text" #gs class="ui-inputtext ui-corner-all ui-state-default ui-widget">
               </div> -->
               </div>
@@ -634,7 +634,7 @@
                   scrollable="true" expandableRows="true">
                   <p-column [style]="{'min-width':'100px','width':'100px'}">
                     <ng-template let-h="rowData" pTemplate="body">
-                      <button pButton type="button" (click)="cetakHistory(h)" icon="fa-print" 
+                      <button pButton type="button" (click)="cetakHistory(h)" icon="fa-print"
                         pTooltip="Lihat Bukti Reservasi" tooltipPosition="top"></button>
                       <button pButton type="button" class="ui-button ui-button-danger" (click)="hapusHistory(h)" icon="fa-trash" pTooltip="Batal Reservasi"
                       tooltipPosition="top"></button>
@@ -645,7 +645,7 @@
                   <p-column field="namaruangan" header="Poliklinik" [sortable]="true" [style]="{'width':'200px'}"></p-column>
                   <p-column field="dokter" header="Dokter" [sortable]="true" [style]="{'width':'200px'}"></p-column>
                   <p-column field="tanggalreservasi" header="Estimasi Dilayani" [sortable]="true" [style]="{'width':'150px'}"></p-column>
-                  
+
                 </p-dataTable>
               </div>
               <!-- <p-dialog header="Details History" [(visible)]="displayDialog" [responsive]="true" showEffect="fade"
@@ -667,9 +667,9 @@
                         </div>
                       </div>
                       <div class="ui-g-6 ui-md-6 ui-lg-6">
-  
+
                         <img style="-webkit-user-select: none;" src="{{qrCode}}">
-         
+
                       </div>
                       <div class="ui-g-6 ui-md-6 ui-lg-6">
                         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input">Tgl Reservasi</label></div>
@@ -687,7 +687,7 @@
                         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input"
                             class="label-popup">{{dokter}}</label></div>
                       </div>
-                   
+
                     </div>
                     <div class="ui-g-12">
                       <div class="ui-g-12 ui-md-12 ui-lg-9"></div>
@@ -732,7 +732,7 @@
       <div class="ui-g-6 ui-md-6 ui-lg-6">
         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input">Tgl Reservasi </label></div>
         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input" class="label-popup">{{tglReservasi}}</label></div>
-      </div>  
+      </div>
       <div class="ui-g-6 ui-md-6 ui-lg-6">
         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input">Waktu </label></div>
         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input" class="label-popup">{{jamR}}</label></div>
@@ -1259,6 +1259,51 @@
           </p-accordionTab>
 
         </p-accordion>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="activeItem.label == 'Jadwal Dokter' && !isBuktiReservasi">
+  <div class="card card-w-title" style="margin-top:10px" *ngIf="!isShowRiwayatRegis">
+    <div class="card card-form-header">
+      <h1>Jadwal Dokter</h1>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-12 ui-md-12 ui-lg-12">
+
+       <p-dataTable [globalFilter]="gs" [value]="dataSourceJadwalDokter" [rows]="10" [paginator]="true" [pageLinks]="3"
+         [rowsPerPageOptions]="[5,10,20]" selectionMode="single" [(selection)]="selected" [loading]="loadingHistory"
+         loadingIcon="fa fa-spinner" (onRowSelect)="onRowSelect($event)" scrollable="true" expandableRows="true">
+         <p-column field="namaruangan" header="Ruangan" [sortable]="true" [style]="{'width':'150px'}"></p-column>
+         <p-column field="namalengkap" header="Dokter" [sortable]="true" [style]="{'width':'150px'}"></p-column>
+         <p-column field="jambuka" header="Jam Buka" [sortable]="true" [style]="{'width':'100px'}"></p-column>
+         <p-column field="jamtutup" header="Jam Tutup" [sortable]="true" [style]="{'width':'100px'}"></p-column>
+         <p-column field="hari" header="Hari" [sortable]="true" [style]="{'width':'100px'}"></p-column>
+         <p-column field="quota" header="Kuota" [sortable]="true" [style]="{'width':'100px'}"></p-column>
+       </p-dataTable>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="activeItem.label == 'Info Tempat Tidur' && !isBuktiReservasi">
+  <div class="card card-w-title" style="margin-top:10px" *ngIf="!isShowRiwayatRegis">
+    <div class="card card-form-header">
+      <h1>Informasi Tempat Tidur</h1>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-12 ui-md-12 ui-lg-12">
+        <p-dataTable  [value]="dataSourceInfoTT" [rows]="10" [paginator]="true" [pageLinks]="3"
+          [rowsPerPageOptions]="[5,10,20]" selectionMode="single" [(selection)]="selected"
+          loadingIcon="fa fa-spinner" scrollable="true" expandableRows="true">
+          <p-column field="namaruangan" header="Nama Ruangan" [sortable]="true"
+            [style]="{'width':'150px'}"></p-column>
+          <p-column field="qty" header="QTY" [sortable]="true" [style]="{'width':'50px','text-align':'center'}">
+          </p-column>
+          <p-column field="isi" header="Jumlah Isi Bed" [sortable]="true"
+            [style]="{'width':'50px','text-align':'center'}"></p-column>
+          <p-column field="kosong" header="Jumlah Kosong Bed" [sortable]="true"
+            [style]="{'width':'50px','text-align':'center'}"></p-column>
+        </p-dataTable>
       </div>
     </div>
   </div>

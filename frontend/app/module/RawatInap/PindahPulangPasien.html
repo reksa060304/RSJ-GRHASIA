@@ -21,11 +21,11 @@
                         <label c-label item="item" c-label-text="statusPulang"></label>
                         <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusPulang" k-data-text-field="'statuspulang'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" k-data-source="listStatusPulang" />
                     </div>
-                    <div class="grid_1"  style="margin-top:5px" ng-show="item.statusKeluar.id === 2">
+                    <!-- <div class="grid_1"  style="margin-top:5px" ng-show="item.statusKeluar.id === 2">
                          <input type="checkbox" class="k-checkbox" id="rawatGabung" ng-model="item.rawatGabung" ng-click="cekRawatGabung(item.rawatGabung)">
                                     <label class="k-checkbox-label" for="rawatGabung"><b>Rawat Gabung</b></label>
-                   </div>
-                    <div class="grid_3" ng-show="item.statusKeluar.id === 2">
+                   </div> -->
+                    <div class="grid_4" ng-show="item.statusKeluar.id === 2">
                         <label c-label item="item" c-label-text="tanggalRencanaPindah"></label>
                         <input kendo-date-time-picker k-options="formatJam24" k-ng-model="item.tglRencanaKeluar" style="width: 100%"/>
                     </div> 

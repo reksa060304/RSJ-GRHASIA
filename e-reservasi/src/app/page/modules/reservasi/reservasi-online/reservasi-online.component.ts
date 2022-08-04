@@ -136,6 +136,8 @@ export class ReservasiOnlineComponent implements OnInit {
   totalKlaim: any;
   isShowRiwayatRegis: boolean;
   dataSourceBank: any[]
+  dataSourceJadwalDokter: any[];
+  dataSourceInfoTT: any[];
   selectedNorek: any
   titleKlaim: any = 'Total Klaim'
   statusRujukanBerlaku: any = true
@@ -264,7 +266,7 @@ export class ReservasiOnlineComponent implements OnInit {
           const element = e.libur[i];
           arr.push(element.tgllibur)
         }
-      }  
+      }
       this.myFilter = (d): boolean => {
         const day: number = d._d.getDay()
         if(arr.length>0){
@@ -275,7 +277,7 @@ export class ReservasiOnlineComponent implements OnInit {
             }
           }
         }
-      
+
         // Prevent Saturday and Sunday from being selected.
         // return day != 0 && day != 6 ? true : false;
        return day != 0  ? true : false;
@@ -295,7 +297,7 @@ export class ReservasiOnlineComponent implements OnInit {
     // })
 
     // $("#barcode").JsBarcode("Hi!");
-    // $("#barcode").barcode("1234567890128", "ean13");  
+    // $("#barcode").barcode("1234567890128", "ean13");
 
     // JsBarcode("#barcode", "Hi world!");
     // this.carService.getCarsLarge().then(cars => this.cars = cars);
@@ -304,6 +306,7 @@ export class ReservasiOnlineComponent implements OnInit {
     //   // Light or Dark theme
     //   darktheme: true
     //   });
+    //buat menunya disini
     this.items2 = [
       { label: 'Reservasi', icon: 'fa fa-fw fa-calendar' },
       { label: 'History', icon: 'fa fa-fw fa-history' },
@@ -311,6 +314,9 @@ export class ReservasiOnlineComponent implements OnInit {
       { label: 'E-Billing', icon: 'fa fa-fw fa-heartbeat' },
       // { label: 'Bank Account', icon: 'fa fa-fw fa fa-bank' },
       { label: 'Panduan', icon: 'fa fa-fw fa-question-circle' },
+      { label: 'Jadwal Dokter', icon: 'fa fa-fw fa-stethoscope' },
+      { label: 'Info Tempat Tidur', icon: 'fa fa-fw fa-bed' },
+
       // { label: 'Denah', icon: 'fa fa-fw fa-map-marker' },
     ];
 
@@ -405,6 +411,21 @@ export class ReservasiOnlineComponent implements OnInit {
       map(value => (typeof value === 'string' ? value : value.namalengkap)),
       map(name => (name ? this._filter2(name) : this.listDokter.slice())),
     );
+    this.dataSourceJadwalDokter = []
+
+    this.httpService.get('medifirst2000/reservasionline/daftar-jadwal-dokter').subscribe(e => {
+      this.dataSourceJadwalDokter = e.jddokter
+    }, error => {
+    })
+
+    this.dataSourceJadwalDokter = []
+    this.httpService.get('medifirst2000/reservasionline/daftar-info-tt').subscribe(e => {
+      this.dataSourceInfoTT = e.data
+      console.log(e);
+    }, error => {
+    })
+
+
 
   }
   setValueRu(eve) {
@@ -610,7 +631,7 @@ export class ReservasiOnlineComponent implements OnInit {
   }
   cetakHistory(selected) {
     this.kodeReservasi = selected.noreservasi
-    this.tglReservasi = selected.tanggal 
+    this.tglReservasi = selected.tanggal
     this.jamR =  selected.jamreservasi
     this.poliTujuan = selected.namaruangan
     this.dokter = selected.dokter
@@ -1136,7 +1157,7 @@ export class ReservasiOnlineComponent implements OnInit {
     this.formGroup.get('jamReservasi').reset()
     this.formGroup.get('dokter').setValue('')
     this.formGroup.get('dokter').reset()
-   
+
     this.getListDokter()
   }
   getSlotDok(event) {
@@ -1156,7 +1177,7 @@ export class ReservasiOnlineComponent implements OnInit {
           this.messageService.info('Info', e.list.length+ ' Dokter tersedia di Poli ini')
           this.listDokter = e.list
         }
-      
+
       })
   }
   setJam(e){
@@ -1215,7 +1236,7 @@ export class ReservasiOnlineComponent implements OnInit {
         // let interval = res.slot.interval
         // let quota = res.slot.quota
         this.listJam = res.listjam;
-  
+
         if (this.listJam.length == 0)
           this.messageService.error('Maaf', 'Jadwal Reservasi Sudah Penuh, Coba dihari lain')
         else

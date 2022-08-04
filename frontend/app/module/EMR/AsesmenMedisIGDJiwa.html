@@ -739,8 +739,24 @@
                 </div>
                 <div class="grid_12 margin-bottom">
                     <label c-label item="item" class="margin-bottom">12. Insight:</label>
-                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3002058]"
-                            style="height: 55px; width: 98%; "/>
+                    <div ng-repeat="stat in listInsight  | orderBy:'id'">
+                        <div class="grid_1">
+                            <md-radio-group ng-model="item.obj[3002058]">
+                                <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.nama}}
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                    <div ng-repeat="stat in listBaikJelek  | orderBy:'id'">
+                        <div class="grid_1">
+                            <md-radio-group ng-model="item.obj[3002093]">
+                                <md-radio-button value="{{stat.id}}" class="md-primary">{{stat.nama}}
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                    <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3002058]"
+                            style="height: 55px; width: 98%; "/> -->
                 </div>
             </fieldset>
         </div>
@@ -957,7 +973,7 @@
                     <label c-label item="item" c-label-text="Dokter Pemeriksa/DPJP"></label>
                     <input style="width: 80%;" kendo-combo-box k-ng-model="item.obj[3002091]"
                             k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
-                            k-auto-bind="false" k-data-source="listPegawai" />
+                            k-auto-bind="false" k-data-source="listPegawai2" />
                 </div>
                 <div class="grid_4 margin-top-30 text-center margin-bottom">
                     <label c-label item="item" c-label-text="Selesai Pemeriksaan Pukul"></label>

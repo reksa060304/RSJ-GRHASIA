@@ -2695,6 +2695,9 @@ class EMRController  extends ApiController
             ->select('id as value', 'namalengkap as text')
             ->where('statusenabled', true)
             ->where('kdprofile',$idProfile)
+            ->whereNotIn('namalengkap', ['-'])
+            ->whereNotIn('namalengkap', ['Programmer Administrator'])
+            ->whereNull('usereksternal')
             ->orderBy('namalengkap');
         if (isset($req['filter']['filters'][0]['value']) &&
             $req['filter']['filters'][0]['value'] != "" &&

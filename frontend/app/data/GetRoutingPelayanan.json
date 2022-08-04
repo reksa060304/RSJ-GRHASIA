@@ -18176,5 +18176,24 @@
             "define": "MedifirstService"
           }
         ]
+      },
+  {
+    "name": "RekamMedis.AsesmenMedis.PanssEC",
+    "url": "/asesmenPansEc",
+    "templateurl": "module/EMR/PanssEcTable.html",
+    "controller": "PanssEcTableCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
       }
+    ]
+  }
 ]
