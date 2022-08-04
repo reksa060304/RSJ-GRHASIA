@@ -5569,6 +5569,10 @@ class EMRController  extends ApiController
         DB::beginTransaction();
         // $pasien = DB::table('pasien_m')->where('id',$dataPD->nocmfk)->first();
         try {
+            $alergi = Pasien::where('nocm',$request['data'][0]['strukorder']['nocm'])->first();
+            $alergi->alergi = $request['data'][0]['strukorder']['alergi'];
+            $alergi->save();
+
             foreach($request['data'] as $data)
             {
 

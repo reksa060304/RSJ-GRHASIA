@@ -505,50 +505,12 @@ class PerencanaanController extends ApiController {
             $keteranganperubahan = [];
         }
 
-
         
-        
-
-        
-        $mata = DB::select(DB::raw("
-                select v.id, v.kodemataanggaran,v.namamataanggaran,cast(v.total as float) as total, idmap, mataanggaranpermen from (
-                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total, map.id idmap, map.mataanggaranpermen  from mataanggaran_m ma 
-                    left join
-                    (select left(ma.kodemataanggaran,9) as kode,sum(kt.subtotal) as total 
-                    from mataanggaran_m ma
-                    left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
-                    group by left(ma.kodemataanggaran,9)) as x on x.kode=ma.kodemataanggaran
-                    left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
-                    where length(ma.kodemataanggaran)=9
-                    union all
-                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total, map.id idmap, map.mataanggaranpermen  from mataanggaran_m ma 
-                    left join
-                    (select left(ma.kodemataanggaran,5) as kode,sum(kt.subtotal) as total 
-                    from mataanggaran_m ma
-                    left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
-                    group by left(ma.kodemataanggaran,5)) as x on x.kode=ma.kodemataanggaran
-                    left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
-                    where length(ma.kodemataanggaran)=5
-                    union all
-                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total, map.id idmap, map.mataanggaranpermen  from mataanggaran_m ma 
-                    left join
-                    (select left(ma.kodemataanggaran,3) as kode,sum(kt.subtotal) as total 
-                    from mataanggaran_m ma
-                    left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
-                    group by left(ma.kodemataanggaran,3)) as x on x.kode=ma.kodemataanggaran
-                    left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
-                    where length(ma.kodemataanggaran)=3
-                    union all
-                    select ma.id, ma.kodemataanggaran,ma.namamataanggaran,(x.total) as total, map.id idmap, map.mataanggaranpermen  from mataanggaran_m ma 
-                    left join
-                    (select left(ma.kodemataanggaran,1) as kode,sum(kt.subtotal) as total 
-                    from mataanggaran_m ma
-                    left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
-                    group by left(ma.kodemataanggaran,1)) as x on x.kode=ma.kodemataanggaran
-                    left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
-                    where length(ma.kodemataanggaran)=1
-                    ) as v
-                order by v.kodemataanggaran
+        $mata = DB::select(DB::raw("select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen  
+                from mataanggaran_m ma 
+                left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
+                where ma.statusenabled = true and ma.kdprofile = 30
+                order by ma.kodemataanggaran
             ")
         );
 
@@ -2191,6 +2153,45 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
         try{
             $MA= KegiatanAnggaran::where('id',$request['id'])
+                    ->where('kdprofile', $idProfile)
+                    ->first();
+            $MA->statusenabled = false;
+            $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteMataAnggaran(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        try{
+            $MA= MataAnggaran::where('id',$request['id'])
                     ->where('kdprofile', $idProfile)
                     ->first();
             $MA->statusenabled = false;

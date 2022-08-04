@@ -1,5 +1,6 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('TransaksiPelayananApotikCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', '$mdDialog', 'CetakHelper', 'MedifirstService', '$q',
         function (saveToWindow, $rootScope, $scope, ModelItem, $state, cacheHelper, DateHelper, $mdDialog, cetakHelper, medifirstService, $q) {
             $scope.item = {};
@@ -995,26 +996,37 @@ define(['initialize'], function (initialize) {
                 });
             }
             $scope.cetakResep = function () {
-                var user = medifirstService.getPegawaiLogin();
-                if ($scope.dataSelected == undefined) {
-                    alert('Pilih resep yg akan di cetak')
-                    return;
-                }
-                var stt = 'false'
-                if (confirm('View resep? ')) {
-                    // Save it!
-                    stt = 'true';
-                } else {
-                    // Do nothing!
-                    stt = 'false'
-                } 
-                var client = new HttpClient();
-                // client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep=1&nores=' + $scope.dataSelected.norec_resep + '&view=' + stt + '&user=' + user.namaLengkap, function (response) {
+                // var user = medifirstService.getPegawaiLogin();
+                // if ($scope.dataSelected == undefined) {
+                //     alert('Pilih resep yg akan di cetak')
+                //     return;
+                // }
+                // var stt = 'false'
+                // if (confirm('View resep? ')) {
+                //     // Save it!
+                //     stt = 'true';
+                // } else {
+                //     // Do nothing!
+                //     stt = 'false'
+                // } 
+                // var client = new HttpClient();
+                // // client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep=1&nores=' + $scope.dataSelected.norec_resep + '&view=' + stt + '&user=' + user.namaLengkap, function (response) {
+                // //     // aadc=response;
+                // // });
+                // client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep-new=1&nores=' + $scope.dataSelected.norec_resep + '&view=' + stt + '&user=' + user.namaLengkap, function (response) {
                 //     // aadc=response;
                 // });
-                client.get('http://127.0.0.1:1237/printvb/farmasiApotik?cetak-strukresep-new=1&nores=' + $scope.dataSelected.norec_resep + '&view=' + stt + '&user=' + user.namaLengkap, function (response) {
-                    // aadc=response;
-                });
+
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+                console.log($scope.dataSelected)
+                
+                    var stt = 1
+                    window.open(baseTransaksi + "report/cetak-resep-dokter-rev?noorder=" + 0 + "&norec=" + $scope.dataSelected.norec_resep 
+                    + "&nocm=" + $scope.dataSelected.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt);
+                    // // window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
+                    //     + '&user=' + user + '&jenis=his', '_blank');
+                
             }
             $scope.cetakLabelResep = function () {
                 // if ($scope.dataSelected == undefined || ) {

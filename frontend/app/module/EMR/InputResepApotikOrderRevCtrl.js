@@ -57,13 +57,7 @@ define(['initialize'], function (initialize) {
 
             LoadCacheHelper();
             function LoadCacheHelper() {
-                // medifirstService.get("akutansi/get-terakhir-posting", true).then(function(dat){
-                //     var tgltgltgltgl = dat.data.data[0].max
-                //     $scope.startDateOptions = {
-                //         min: new Date(tgltgltgltgl),
-                //         max: new Date($scope.now)
-                //     };
-                // })
+                
                 medifirstService.get("sysadmin/general/get-tgl-posting", true).then(function (dat) {
                     var tgltgltgltgl = dat.data.mindate[0].max
                     var tglkpnaja = dat.data.datedate
@@ -163,6 +157,7 @@ define(['initialize'], function (initialize) {
             function init() {
                 // debugger;
                 $scope.isRouteLoading = true;
+                
                 medifirstService.get("emr/get-combo-resep-emr", true).then(function (dat) {
                     $scope.isRouteLoading = false;
                     // $scope.listPenulisResep = dat.data.penulisresep;
@@ -203,6 +198,12 @@ define(['initialize'], function (initialize) {
                     loadRiwayat('nocm=' + $scope.item.noMr)
                     loadOrder('nocm=' + $scope.item.noMr)
                 }
+
+                medifirstService.get("farmasi/get-alergi?nocm=" + $scope.item.noMr, true).then(function(dat){
+                    $scope.item.alergi = dat.data[0].data[0].alergi
+                    console.log(dat.data[0].data[0].alergi)
+                })
+                
                 // medifirstService.get("emr/get-daftar-detail-order?" + $riwayat).then(function (e) {
                 //     for (var i = e.data.length - 1; i >= 0; i--) {
                 //         e.data[i].no = i + 1                        
@@ -1107,6 +1108,11 @@ define(['initialize'], function (initialize) {
                     checkRP = 1;
                 }
 
+                var dataalergi =  null
+                if($scope.item.alergi != undefined){
+                    dataalergi = $scope.item.alergi
+                }
+
                 var tglResepHari = ''
                 var objSaves = [];
                 for (var i = diffDays - 1; i >= 0; i--) {
@@ -1124,6 +1130,8 @@ define(['initialize'], function (initialize) {
                         noruangan: $scope.item.noRuang != undefined ? $scope.item.noRuang : null,
                         isreseppulang: checkRP,
                         iscito: $scope.item.iscito != undefined && $scope.item.iscito == true ? $scope.item.iscito : false,
+                        alergi: dataalergi,
+                        nocm: $scope.header.nocm,
                     }
                     var objSave = {
                         strukorder: strukorder,

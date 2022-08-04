@@ -323,7 +323,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 let b1 = kodeArr2[2]
                 let c1 = kodeArr2[3]  + '.' + kodeArr2[4]
                 let d1 = kodeArr2[5]  
-                if(dataItem.div == 1){
+                if(dataItem.div == 0){
+                    $scope.item.urusandiv = {div: dataItem.namakelompok, id: dataItem.div}
+                    $scope.popupUrusan.center().open()
+                    // a1 = kodeArr2[0] + '.' + kodeArr2[1]
+                    $scope.item.kode = a1
+                    //$scope.jeniskode = false;
+                    
+                    // $scope.item.kodeHead = dataItem.kode.substring(0,4)
+                    // $scope.item.kode = dataItem.kode.substring(5,7)
+                }
+                else if(dataItem.div == 1){
                     $scope.item.programdiv = {div: dataItem.namakelompok, id: dataItem.div}
                     $scope.popupProgram.center().open()
                     // a1 = kodeArr2[0] + '.' + kodeArr2[1]
@@ -2268,7 +2278,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 })
             }
-            $scope.SimpanPopUpProgram = function(){
+            $scope.SimpanPopUpUrusan = function(){
                 var jmlkode = $scope.item.kodeHead + '.' + $scope.item.kode
                 jmlkode = jmlkode.length
                 var divS = 0;
@@ -2285,7 +2295,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var objSave =
                     {
                         id: $scope.item.id,
-                        kode: $scope.item.kodeHead + '.' + $scope.item.kode,
+                        kode: $scope.item.kode,
                         keterangan: $scope.item.keterangan,
                         kodeexternal: null,
                         namaexternal: null,
@@ -2298,11 +2308,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         targetmasuk: null,
                         targetkeluaran: null,
                         targethasil: null,
-                        div: $scope.item.programdiv.id
+                        div: $scope.item.urusandiv.id
                     }
                 medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
                     loadDataGrid();
-                    $scope.popupProgram.center().close()
+                    $scope.popupUrusan.center().close()
                 }, function (error) {
 
                 })
@@ -2315,6 +2325,42 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
                     loadDataGrid();
                     $scope.popupProgram.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.HapusPopUpUrusan = function(){
+                var objSave =
+                    {
+                        id: $scope.item.id,
+                    }
+                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupUrusan.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.HapusPopUpSubSubKegiatan = function(){
+                var objSave =
+                    {
+                        id: $scope.item.id,
+                    }
+                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupSubSubKegiatan.center().close()
+                }, function (error) {
+
+                })
+            }
+            $scope.HapusPopUpTambahMT = function(){
+                var objSave =
+                    {
+                        id: $scope.item.id,
+                    }
+                medifirstService.post('perencanaan/delete-mata-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                    $scope.popupTambahMT.center().close()
                 }, function (error) {
 
                 })

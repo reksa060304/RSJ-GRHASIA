@@ -860,7 +860,7 @@
                                         <div class="grid_4">
                                             <label c-label>Masalah</label>
                                         </div>
-                                        <div class="grid_4">
+                                        <div class="grid_4" ng-hide="true">
                                             <label c-label>Penjelasan/Rekomendasi</label>
                                         </div>
                                     </div>
@@ -882,7 +882,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetPenulis" />
                                         </div>
@@ -905,7 +905,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetTanggal" />
                                         </div>
@@ -914,7 +914,30 @@
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
                                                 <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>3. Tepat Dosis</label>
+                                                <label c-label>3. Klinis</label>
+                                            </div>
+                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
+                                            <div ng-repeat="stat in listKlinis | orderBy:'id'">
+                                                <div class="grid_2">
+                                                    <md-radio-group ng-model="data.klinis">
+                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
+                                                            {{stat.name}}
+                                                        </md-radio-button>
+                                                    </md-radio-group>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="grid_1"></div>
+                                        <div class="grid_5" ng-hide="true">
+                                            <input c-text-box type="input" filter="" class="k-textbox"
+                                                ng-model="data.KetKlinis" />
+                                        </div>
+                                    </div>
+                                    <div class="grid_12">
+                                        <div class="grid_6">
+                                            <div class="grid_8" style="padding-top:10px">
+                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
+                                                <label c-label>4. Tepat Dosis</label>
                                             </div>
                                             <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
                                             <div ng-repeat="stat in listDataRM | orderBy:'id'">
@@ -928,7 +951,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetRM" />
                                         </div>
@@ -937,7 +960,7 @@
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
                                                 <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>4. Tepat Rute</label>
+                                                <label c-label>5. Tepat Rute</label>
                                             </div>
                                             <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
                                             <div ng-repeat="stat in listDataPasien| orderBy:'id'">
@@ -951,7 +974,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetPasien" />
                                         </div>
@@ -960,7 +983,7 @@
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
                                                 <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>5. Tepat Waktu</label>
+                                                <label c-label>6. Tepat Waktu</label>
                                             </div>
                                             <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
                                             <div ng-repeat="stat in listDataLahir| orderBy:'id'">
@@ -974,7 +997,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetLahir" />
                                         </div>
@@ -983,7 +1006,7 @@
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
                                                 <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>6. Duplikasi</label>
+                                                <label c-label>7. Duplikasi</label>
                                             </div>
                                             <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
                                             <div ng-repeat="stat in listDataBerat| orderBy:'id'">
@@ -997,7 +1020,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetBerat" />
                                         </div>
@@ -1006,7 +1029,7 @@
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
                                                 <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>7. Kontrak Indikasi</label>
+                                                <label c-label>8. Kontrak Indikasi</label>
                                             </div>
                                             <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
                                             <div ng-repeat="stat in listDataDokter| orderBy:'id'">
@@ -1020,7 +1043,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetDokter" />
                                         </div>
@@ -1029,7 +1052,7 @@
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
                                                 <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>8. Obat Sesuai</label>
+                                                <label c-label>9. Obat Sesuai</label>
                                             </div>
                                             <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
                                             <div ng-repeat="stat in listDataRuang| orderBy:'id'">
@@ -1043,7 +1066,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetRuang" />
                                         </div>
@@ -1052,7 +1075,7 @@
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
                                                 <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>9. Dosis</label>
+                                                <label c-label>10. Dosis</label>
                                             </div>
                                             <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
                                             <div ng-repeat="stat in listDataStatus| orderBy:'id'">
@@ -1066,7 +1089,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetStatus" />
                                         </div>
@@ -1075,7 +1098,7 @@
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
                                                 <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>10. Jumlah</label>
+                                                <label c-label>11. Jumlah</label>
                                             </div>
                                             <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
                                             <div ng-repeat="stat in listDataObat| orderBy:'id'">
@@ -1089,7 +1112,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetObat" />
                                         </div>
@@ -1098,7 +1121,7 @@
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
                                                 <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>11. Frekuensi</label>
+                                                <label c-label>12. Frekuensi</label>
                                             </div>
                                             <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
                                             <div ng-repeat="stat in listDataKekuatan| orderBy:'id'">
@@ -1112,7 +1135,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetKekuatan" />
                                         </div>
@@ -1121,7 +1144,7 @@
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
                                                 <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>12. Rute</label>
+                                                <label c-label>13. Rute</label>
                                             </div>
                                             <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
                                             <div ng-repeat="stat in listDataJumlah| orderBy:'id'">
@@ -1135,220 +1158,24 @@
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
-                                        <div class="grid_5">
+                                        <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetJumlah" />
                                         </div>
                                     </div>
-                                    <!-- <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <label c-label item="item" c-label-text="Alergi"></label>
-                                                <label c-label>13. Stabilitas</label>
-                                            </div>
-                                            <div class="grid_" style="padding-top:10px" align="right"></div>                    
-                                            <div ng-repeat="stat in listDataStabilitas| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataStabilitas">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetStabilitas" />
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <label c-label item="item" c-label-text="Alergi"></label>
-                                                <label c-label>14. Aturan/Cara Pakai</label>
-                                            </div>
-                                            <div class="grid_" style="padding-top:10px" align="right"></div>                    
-                                            <div ng-repeat="stat in listDataAturan| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataAturan">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetAturan" />
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <label c-label item="item" c-label-text="Alergi"></label>
-                                                <label c-label>15. Indikasi</label>
-                                            </div>
-                                            <div class="grid_" style="padding-top:10px" align="right"></div>                    
-                                            <div ng-repeat="stat in listDataIndikasi| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataIndikasi">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetIndikasi" />
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <label c-label item="item" c-label-text="Alergi"></label>
-                                                <label c-label>16. Alergi</label>
-                                            </div>
-                                            <div class="grid_" style="padding-top:10px" align="right"></div>                    
-                                            <div ng-repeat="stat in listDataAlergi| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataAlergi">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetAlergi" />
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <label c-label item="item" c-label-text="Alergi"></label>
-                                                <label c-label>17. Konsumsi Obat Lain</label>
-                                            </div>
-                                            <div class="grid_" style="padding-top:10px" align="right"></div>                    
-                                            <div ng-repeat="stat in listDataKonsumsi| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataKonsumsi">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetKonsumsi" />
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <label c-label item="item" c-label-text="Alergi"></label>
-                                                <label c-label>18. Duplikat Obat</label>
-                                            </div>
-                                            <div class="grid_" style="padding-top:10px" align="right"></div>                    
-                                            <div ng-repeat="stat in listDataDuplikat| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataDuplikat">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetDuplikat" />
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <label c-label item="item" c-label-text="Alergi"></label>
-                                                <label c-label>19. Interaksi Obat</label>
-                                            </div>
-                                            <div class="grid_" style="padding-top:10px" align="right"></div>                    
-                                            <div ng-repeat="stat in listDataInteraksi| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataInteraksi">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetInteraksi" />
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <label c-label item="item" c-label-text="Alergi"></label>
-                                                <label c-label>20. Antibiotik (1 > Item)</label>
-                                            </div>
-                                            <div class="grid_" style="padding-top:10px" align="right"></div>                    
-                                            <div ng-repeat="stat in listDataAntibiotik| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataAntibiotik">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetAntibiotik" />
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <label c-label item="item" c-label-text="Alergi"></label>
-                                                <label c-label>21. Poli Farmasi (5 > item)</label>
-                                            </div>
-                                            <div class="grid_" style="padding-top:10px" align="right"></div>                    
-                                            <div ng-repeat="stat in listDataPoli| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataPoli">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetPoli" />
-                                        </div>
-                                    </div> -->
                                 </div>
-                                <div class="grid_12">
+                                <div class="grid_5">
+                                    <div class="grid_12">
+                                        <label c-label>Keterangan Skrining</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input c-text-box type="input" filter="" class="k-textbox"
+                                            ng-model="data.keteranganskrining" />
+                                    </div>
+                                </div>
+                                <input c-text-box type="input" filter="" class="k-textbox"
+                                            ng-model="data.noresep" ng-hide="true"/>
+                                <div class="grid_12" ng-hide="true">
                                     <div class="grid_4">
                                         <div class="grid_12">
                                             <label c-label>Nama Penyekrining Resep</label>
@@ -1386,7 +1213,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="grid_12" ng-repeat="list in listPrinsipBesar | orderBy:'id'"
+                                <div class="grid_12" ng-hide="true" ng-repeat="list in listPrinsipBesar | orderBy:'id'"
                                     style="margin-top: 10px;">
                                     <b>{{list.nama}}</b>
                                     <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px;">
@@ -1398,7 +1225,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="grid_12">
+                                <div class="grid_12" ng-hide="true">
                                     <div class="grid_6">
                                         <div class="grid_6">
                                             <div class="grid_12">
@@ -1442,17 +1269,18 @@
                                     </div>
                                 </div>
                                 <div class="grid_12">
-                                    <div class="grid_6">
-                                    </div>
-                                    <div class="grid_2" style="margin-top: 22px" ng-show='tombolSimpanVis'>
-                                        <button class="c-button" ng-click="simpanSkrining()">Simpan</button>
-                                    </div>
                                     <div class="grid_2" style="margin-top: 22px">
                                         <button class="c-button" ng-click="BatalSkring()">Batal</button>
                                     </div>
                                     <div class="grid_2" style="margin-top: 22px">
                                         <button class="c-button" ng-click="kembaliSKiring()">Kembali</button>
                                     </div>
+                                    <div class="grid_6">
+                                    </div>
+                                    <div class="grid_2" style="margin-top: 22px" ng-show='false'>
+                                        <button class="c-button" ng-click="simpanSkrining()">Simpan</button>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </md-content>

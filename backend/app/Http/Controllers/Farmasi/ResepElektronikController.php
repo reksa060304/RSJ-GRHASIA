@@ -533,6 +533,22 @@ class ResepElektronikController extends ApiController
         return $this->respond($result);
     }
 
+    public function getAlergi(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $nocm= $request['nocm'];
+
+        $data = DB::select(DB::raw("
+                    SELECT alergi from pasien_m where nocm = '$nocm' 
+                ")
+            );
+
+        $result[] = array(
+            'data' => $data,
+        );
+        return $this->respond($result);
+    }
+
     
     public function saveStatusResepElektronik(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
@@ -692,72 +708,59 @@ class ResepElektronikController extends ApiController
         try{
 
             if ($request['norec'] == ''){
-                $dataPP = new SkriningFarmasi();
-                $dataPP->kdprofile = $idProfile;
-                $dataPP->statusenabled = true;
-                $dataPP->norec = $dataPP->generateNewId();
                 $keterangan = 'Input Skrining Farmasi';
+
+                $dataPP = \DB::table('skriningfarmasi_t')->insert([
+                    'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=>true,
+                    'norec_apd' => $request['norec'],
+                    'objectruanganfk' => $request['objectruanganfk'],
+                    'rpenulis' => $request['rpenulis'],
+                    'rtanggalresep' => $request['rtanggalresep'],
+                    'rklinis' => $request['rklinis'],
+                    'rmr' => $request['rmr'],
+                    'rpasien' => $request['rpasien'],
+                    'rtanggallahir' => $request['rtanggallahir'],
+                    'rberatbedan' => $request['rberatbedan'],
+                    'rdokter' => $request['rdokter'],
+                    'rruang' => $request['rruang'],
+                    'rstatusjamin' => $request['rstatusjamin'],
+                    'robat' => $request['robat'],
+                    'rkekuatan' => $request['rkekuatan'],
+                    'rjumlahobat' => $request['rjumlahobat'],
+                    'ketskrining' => $request['ketskrining'],
+                    'norec_apd' => $request['norec_apd'],
+                    'tglinput' => date('Y-m-d H:m:s'),
+                    ]);
             }else{
-                $dataPP =  SkriningFarmasi::where('norec',$request['norec'])->first();
                 $keterangan = 'Edit Skrining Farmasi';
+
+                $dataPP = \DB::table('skriningfarmasi_t')->where('norec',$request['norec'])->update([
+                    'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=>true,
+                    'norec_apd' => $request['norec'],
+                    'objectruanganfk' => $request['objectruanganfk'],
+                    'rpenulis' => $request['rpenulis'],
+                    'rtanggalresep' => $request['rtanggalresep'],
+                    'rklinis' => $request['rklinis'],
+                    'rmr' => $request['rmr'],
+                    'rpasien' => $request['rpasien'],
+                    'rtanggallahir' => $request['rtanggallahir'],
+                    'rberatbedan' => $request['rberatbedan'],
+                    'rdokter' => $request['rdokter'],
+                    'rruang' => $request['rruang'],
+                    'rstatusjamin' => $request['rstatusjamin'],
+                    'robat' => $request['robat'],
+                    'rkekuatan' => $request['rkekuatan'],
+                    'rjumlahobat' => $request['rjumlahobat'],
+                    'ketskrining' => $request['ketskrining'],
+                    'norec_apd' => $request['norec_apd'],
+                    'tglinput' => date('Y-m-d H:m:s'),
+                    ]);
             }
-                $dataPP->norec_apd = $request['norec'];
-                $dataPP->objectruanganfk = $request['objectruanganfk'];
-                $dataPP->rpenulis = $request['rpenulis'];
-                $dataPP->rtanggalresep = $request['rtanggalresep'];
-                $dataPP->rmr = $request['rmr'];
-                $dataPP->rpasien = $request['rpasien'];
-                $dataPP->rtanggallahir = $request['rtanggallahir'];
-                $dataPP->rberatbedan = $request['rberatbedan'];
-                $dataPP->rdokter = $request['rdokter'];
-                $dataPP->rruang = $request['rruang'];
-                $dataPP->rstatusjamin = $request['rstatusjamin'];
-                $dataPP->robat = $request['robat'];
-                $dataPP->rkekuatan = $request['rkekuatan'];
-                $dataPP->rjumlahobat = $request['rjumlahobat'];
-                $dataPP->rstabilitas = $request['rstabilitas'];
-                $dataPP->raturan = $request['raturan'];
-                $dataPP->rindikasiobat = $request['rindikasiobat'];
-                $dataPP->ralergi = $request['ralergi'];
-                $dataPP->rkonsumsi = $request['rkonsumsi'];
-                $dataPP->rduplikat = $request['rduplikat'];
-                $dataPP->rinteraksi = $request['rinteraksi'];
-                $dataPP->rantibiotik = $request['rantibiotik'];
-                $dataPP->rpolifarmasi = $request['rpolifarmasi'];
-                $dataPP->namapenyekriningresep = $request['namapenyekriningresep'];
-                $dataPP->namaperacik = $request['namaperacik'];
-                $dataPP->namapengecek = $request['namapengecek'];
-                $dataPP->namapenyrahobat = $request['namapenyrahobat'];
-                $dataPP->namapenerimaobat = $request['namapenerimaobat'];
-                $dataPP->prinsipbesar = $request['prinsipbesar'];
-//                $dataPP->strukresepfk = $request['norec'];
-//                $dataPP->noresepfk = $request['norec'];
-                $dataPP->ketpenulis = $request['ketpenulis'];
-                $dataPP->kettanggal = $request['kettanggal'];
-                $dataPP->ketrm = $request['ketrm'];
-                $dataPP->ketpasien = $request['ketpasien'];
-                $dataPP->kettanggallahir = $request['kettanggallahir'];
-                $dataPP->ketberat = $request['ketberat'];
-                $dataPP->ketdokter = $request['ketdokter'];
-                $dataPP->ketruang = $request['ketruang'];
-                $dataPP->ketstatus = $request['ketstatus'];
-                $dataPP->ketobat = $request['ketobat'];
-                $dataPP->ketkekuatan = $request['ketkekuatan'];
-                $dataPP->ketjumlah = $request['ketjumlah'];
-                $dataPP->ketstabilitas = $request['ketstabilitas'];
-                $dataPP->ketaturan = $request['ketaturan'];
-                $dataPP->ketalergi = $request['ketalergi'];
-                $dataPP->ketkonsumsi = $request['ketkonsumsi'];
-                $dataPP->ketduplikasi = $request['ketduplikasi'];
-                $dataPP->ketinteraski = $request['ketinteraski'];
-                $dataPP->ketantibiotik = $request['ketantibiotik'];
-                $dataPP->ketpolifarmasi = $request['ketpolifarmasi'];
-                $dataPP->tglinput = date('Y-m-d H:i:s');
-                $dataPP->ketindikasi = $request['ketindikasi'];
-                $dataPP->rcek = $request['rcek'];
-                $dataPP->strukresepfk = $request['strukresepfk'];
-                $dataPP->save();
-                $idPP=$dataPP->norec;
+                $idPP=$dataPP['norec'];
 
             //## Logging User
             $newId = LoggingUser::max('id');
@@ -788,11 +791,12 @@ class ResepElektronikController extends ApiController
                 'as' => 'ea@epic',
             );
         } else {
-            $transMessage = "Gagal Simpan Gagal";
+            $transMessage = "Simpan Gagal";
             DB::rollBack();
             $result = array(
                 'status' => 400,
-                'message'  => $transStatus,
+                'message'  => $e->getMessage(),
+                'line'  => $e->getLine(),
                 'as' => 'ea@epic',
             );
         }
@@ -802,21 +806,18 @@ class ResepElektronikController extends ApiController
     public function getDataSkriningFarmasi(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $data = \DB::table('skriningfarmasi_t as sf')
-            ->join('pegawai_m as pg1', 'pg1.id', '=', 'sf.namapenyekriningresep')
-            ->join('pegawai_m as pg2', 'pg2.id', '=', 'sf.namaperacik')
-            ->join('pegawai_m as pg3', 'pg3.id', '=', 'sf.namapengecek')
-            ->select(DB::raw("sf.norec, sf.rpenulis,rtanggalresep,sf.rmr,sf.rpasien,sf.rtanggallahir,sf.rberatbedan,sf.rdokter,sf.rruang,sf.rstatusjamin,sf.robat,sf.rkekuatan,
-                     sf.rjumlahobat,sf.rstabilitas,sf.raturan,sf.rindikasiobat,sf.ralergi,sf.rindikasi,sf.rkonsumsi,sf.rduplikat,sf.rinteraksi,sf.rantibiotik,
-                     sf.rpolifarmasi,sf.namapenyekriningresep as idnamapenyekriningresep, pg1.namalengkap as namapenyekriningresep, sf.namaperacik as idnamaperacik, pg2.namalengkap as namaperacik,sf.namapengecek as idnamapengecek, pg3.namalengkap as namapengecek,sf.namapenyrahobat,sf.namapenerimaobat,sf.prinsipbesar,sf.strukresepfk,
-                     sf.ketpenulis,sf.kettanggal,sf.ketrm,sf.ketpasien,sf.kettanggallahir,sf.ketberat,sf.ketdokter,sf.ketruang,sf.ketstatus,sf.ketobat,sf.ketkekuatan,sf.ketjumlah,
-                     sf.ketstabilitas,sf.ketaturan,sf.ketalergi,sf.ketkonsumsi,sf.ketduplikasi,sf.ketinteraski,sf.ketantibiotik,sf.ketpolifarmasi,sf.tglinput,sf.ketindikasi,sf.rcek"))
-            ->where('sf.kdprofile',$idProfile);
+        $nresep = $request['norecResep'];
+
+        $sf="";
         if(isset($request['norecResep']) && $request['norecResep']!="" && $request['norecResep']!="undefined"){
-            $data = $data->where('sf.strukresepfk',$request['norecResep']);
+            $sf = "and sf.norec_apd = '$nresep'";
         }
-        $data = $data->orderBy('tglinput', 'desc');
-        $data = $data->get();
+        $data = DB::select(DB::raw("select sf.norec, sf.rpenulis,sf.rtanggalresep,sf.rmr,sf.rpasien,sf.rtanggallahir,sf.rberatbedan,sf.rdokter,sf.rruang,sf.rstatusjamin,sf.robat,sf.rkekuatan,
+        sf.rjumlahobat, sf.ketskrining, sf.rklinis
+        from skriningfarmasi_t as sf
+        where sf.kdprofile = 30
+        $sf
+        order by sf.tglinput desc"));
         return $this->respond($data);
     }
     public function getAlamat(Request $request){

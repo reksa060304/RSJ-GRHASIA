@@ -1457,6 +1457,25 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     //     + '&user=' + user + '&jenis=his', '_blank');
                 }
             }
+            $scope.cetakResepDokterRev = function(){
+                if ($scope.item.statusorder != 'Menunggu') {
+                    var local = JSON.parse(localStorage.getItem('profile'));
+                    var profile = local.id;
+                    if ($scope.item.noorder == null){
+                        toastr.error("PILIH NO ORDER !!")
+                        return;
+                    }else{
+                        var stt = 1
+                        window.open(config.baseApiBackend + "report/cetak-resep-dokter-rev?noorder=" + $scope.item.noorder + "&norec=" + $scope.item.norecresep 
+                        + "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt);
+                        // // window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
+                        //     + '&user=' + user + '&jenis=his', '_blank');
+                    }
+                } else {
+                    toastr.error("Status Data Belum Diverifikasi !!")
+                    return;
+                }
+            }
             $scope.grab = {
                 lokasiPengirim :  medifirstService.getProfile().alamatlengkap,
                 lokasiPengirimLat :  medifirstService.getProfile().lat,
