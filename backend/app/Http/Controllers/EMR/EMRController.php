@@ -10259,5 +10259,98 @@ class EMRController  extends ApiController
 
         return $this->respond($result);
     }
+    public function saveLembarPanssEc(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $tglAyeuna = date('Y-m-d H:i:s');
+        $dataLogin = $request->all();
+        \DB::beginTransaction();
+        $crud = "";
+        try {
+            if(isset($request['norec_del'])){
+                \DB::table('panssec_t')->where('norec', $request['norec_del'])->delete();
+                $crud = "Hapus";
+            }
+            else if ($request['norec'] == "") {
+                \DB::table('panssec_t')->insert([
+                    'norec'=> substr(Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'p4'=> $request['p4'],
+                    'p7'=> $request['p7'],
+                    'g4'=> $request['g4'],
+                    'g8'=> $request['g8'],
+                    'g14'=> $request['g14'],
+                    'jumlah'=> $request['jumlah'],
+                    'objectpegawaifk'=> $request['objectpegawaifk'],
+                    'tglinput'=> $request['tglinput'],
+                    'norec_apd'=> $request['norec_apd'],
+                ]);
+                $crud = "Simpan";
+            } else{
+                \DB::table('panssec_t')->where('norec', $request['norec'])->update([
+                    'p4'=> $request['p4'],
+                    'p7'=> $request['p7'],
+                    'g4'=> $request['g4'],
+                    'g8'=> $request['g8'],
+                    'g14'=> $request['g14'],
+                    'jumlah'=> $request['jumlah'],
+                    'objectpegawaifk'=> $request['objectpegawaifk'],
+                    'tglinput'=> $request['tglinput'],
+                    'norec_apd'=> $request['norec_apd'],
+                ]);
+                $crud = "Ubah";
+            }
+            // logging user
+            $newId = LoggingUser::max('id');
+            $newId = $newId + 1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile = $kdProfile;
+            $logUser->statusenabled = 1;
+            $logUser->jenislog = 'EMR Lembar Penilaian PANSS EC';
+            // $logUser->noreff = ;
+            $logUser->referensi = 'EMR Lembar Penilaian PANSS EC';
+            $logUser->objectloginuserfk = $dataLogin['userData']['id'];
+            $logUser->tanggal = $tglAyeuna;
+            $logUser->keterangan = $crud .' EMR Lembar Penilaian PANSS EC';
+            $logUser->save();
+
+            $transStatus = 'true';
+        } catch (\Throwable $th) {
+            $transStatus = 'false';
+
+        }
+        if ($transStatus == 'true') {
+            $transMessage = $crud .  ' Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = $crud . " Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getLembarPanssEc(Request $request)
+    {
+        $data = \DB::table('panssec_t as pa')
+        ->join('pegawai_m as pg', 'pg.id', '=','pa.objectpegawaifk')
+        ->select('pa.*', 'pg.namalengkap')
+        ->where('pa.statusenabled', true)->where('pa.norec_apd', $request['norec_apd'])->get();
+        $result = array(
+            'data'=> $data,
+        );
+        return $this->respond($result);
+    }
 
 }
