@@ -3461,17 +3461,17 @@ class ReportController extends ApiController{
 
         $sebelum = DB::select(DB::raw("
         SELECT o.*, p.subtotal, p.tahap
-from
-(
-	select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
-	case 
-		when kodemataanggaran ilike 'I%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
-		when kodemataanggaran ilike 'II%' then (char_length(kodemataanggaran) = 4 or char_length(kodemataanggaran) = 2)
-		when kodemataanggaran ilike 'III%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
-	end
-) as o
-left join
-(
+        from
+        (
+            select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
+            case 
+                when kodemataanggaran ilike 'I%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
+                when kodemataanggaran ilike 'II%' then (char_length(kodemataanggaran) = 4 or char_length(kodemataanggaran) = 2)
+                when kodemataanggaran ilike 'III%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
+            end
+        ) as o
+        left join
+        (
 			select id, tahap,
 			case 
 				when kodemataanggaran = 'A' then 'I.A'
@@ -3547,7 +3547,9 @@ left join
 			$qtahap
 			and km.tahun = '$tahun'
 			group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran
-) as p on o.kodemataanggaran = p.kodemataanggaran order by o.kodemataanggaran"));
+        ) as p on o.kodemataanggaran = p.kodemataanggaran 
+        group by o.kodemataanggaran, o.namamataanggaran, p.subtotal, p.tahap
+        order by o.kodemataanggaran"));
 
         $jumlah = DB::select(DB::raw("select sum(subtotal) totalawalsebelum from(
                         select id, tahap,
