@@ -264,6 +264,63 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-warning">
+                                        <div class="panel-heading bg-dark">
+                                            Analisis Beban Kerja (ABK)
+                                        </div>
+                                        <div class="panel-body" >
+                                            <div class="row" style="padding:10px 20px;">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive" >
+                                                    @php
+                                                        $abk =  App\Http\Controllers\MainController::getABK(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'),'seminggu');
+                                                    @endphp
+                                                        <table class="table  table-striped table-sm table-styling" id="t_Layanan"
+                                                               style="width:100%">
+                                                            <thead class="table-default">
+                                                            <tr>
+                                                                <th style="color:black" rowspan="2">KATEGORI </th>
+                                                                <th style="color:black" rowspan="2">SUB KATEGORI</th>
+                                                                <th style="color:black" rowspan="2">PENDIDIKAN</th>
+                                                                <th style="color:black" colspan="2">KEBUTUHAN</th>
+                                                                <th style="color:black" colspan="2">KEKURANGAN</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th style="color:black">LAKI-LAKI</th>
+                                                                <th style="color:black">PEREMPUAN</th>
+                                                                <th style="color:black">LAKI-LAKI</th>
+                                                                <th style="color:black">PEREMPUAN</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+
+                                                            @forelse($abk as $i => $d)
+                                                                <tr>
+                                                                    <td >{{ $d->kategorifk }}</td>
+                                                                    <td >{{ $d->subkategorifk }}</td>
+                                                                    <td >{{ $d->pendidikanpegawai }}</td>
+                                                                    <td >{{ $d->kebutuhanl }}</td>
+                                                                    <td >{{ $d->kebutuhanp }}</td>
+                                                                    <td >{{ $d->kekuranganl }}</td>
+                                                                    <td >{{ $d->kekuranganp }}</td>
+                                                                </tr>
+                                                            @empty
+                                                                <tr>
+                                                                    <td colspan="3" style="text-align: center">Data Tidak ada</td>
+                                                                </tr>
+                                                            @endforelse
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                 </div>

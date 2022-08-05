@@ -1292,6 +1292,34 @@ class MainController extends ApiController
                 "));
             return $results;
     }
+    public static function getABK($tglAwal,$tglAkhir,$kdProfile)
+    {
+
+        $idProfile = (int)$kdProfile;
+
+        $results = DB::select(DB::raw("select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
+        from pendidikanpegawai_m ppg
+        inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+        left join (
+            select distinct on(kategorifk) nourut, kategorifk
+            from pendidikanpegawai_m
+            where kdprofile = 30
+            and statusenabled = true
+            order by kategorifk asc, nourut asc
+        ) as a on a.nourut = ppg.nourut
+        left join (
+            select distinct on(subkategorifk) nourut, subkategorifk
+            from pendidikanpegawai_m
+            where kdprofile = 30
+            and statusenabled = true
+            order by subkategorifk asc, nourut asc
+        ) as b on b.nourut = ppg.nourut
+        where ppg.kdprofile = 30
+        and ppg.statusenabled = true
+        order by ppg.nourut asc"));
+        
+        return $results;
+    }
     public static function getLaporanLayananDPJP($tglAwal,$tglAkhir,$kdProfile)
     {
 

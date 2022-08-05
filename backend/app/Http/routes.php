@@ -806,6 +806,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
         // Route::group(['prefix' => 'farmasi'], function () {
           Route::get('farmasi/get-daftar-order', 'Farmasi\ResepElektronikController@getDaftarOrder');
+          Route::get('farmasi/get-alergi', 'Farmasi\ResepElektronikController@getAlergi');
           Route::get('farmasi/get-daftar-detail-order', 'Farmasi\ResepElektronikController@getDaftarDetailOrder');
           Route::post('farmasi/save-status-resepelektonik', 'Farmasi\ResepElektronikController@saveStatusResepElektronik');
           Route::post('farmasi/update-status-grabexpress', 'Farmasi\ResepElektronikController@updateStatusGrabExpress');
@@ -1135,6 +1136,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/diklat-nametag','Report\ReportController@nametagDiklat');
           Route::get('report/cetak-hasil-lab-histopatologi','Report\ReportController@cetakHispatologi');
           Route::get('report/cetak-resep-dokter','Report\ReportController@cetakResepDokter');
+          Route::get('report/cetak-resep-dokter-rev','Report\ReportController@cetakResepDokterRev');
           Route::get('report/get-cetak-suratketerangandokter','Report\ReportController@CetakSKDokter');
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
@@ -1428,6 +1430,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-kel-anggaran','Perencanaan\PerencanaanController@saveKelompokAnggaran');
             Route::post('perencanaan/save-kegiatan-anggaran','Perencanaan\PerencanaanController@saveKegiatanAnggaran');
             Route::post('perencanaan/delete-kegiatan-anggaran','Perencanaan\PerencanaanController@deleteKegiatanAnggaran');
+            Route::post('perencanaan/delete-mata-anggaran','Perencanaan\PerencanaanController@deleteMataAnggaran');
             Route::post('perencanaan/save-setting-anggaran','Perencanaan\PerencanaanController@saveSettingAnggaran');
             Route::post('perencanaan/save-mata-anggaran','Perencanaan\PerencanaanController@saveMataAnggaran');
             Route::post('perencanaan/save-keterangan-belanja','Perencanaan\PerencanaanController@saveKeteranganBelanja');

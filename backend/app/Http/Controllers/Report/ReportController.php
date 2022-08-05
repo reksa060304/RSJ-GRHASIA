@@ -1162,6 +1162,90 @@ class ReportController extends ApiController{
             compact('raw', 'pageWidth','r','details','profile'));
     }
 
+    public function cetakResepDokterRev(Request $r) {
+        $kdProfile = (int)$r['kodeprofile'];
+        $noorder = $r['noorder'];
+        $norec = $r['norec'];
+        $nocm = $r['nocm'];
+        $qtybagi = 1;
+        if ($r['qtybagi'] == "1/2"){
+            $qtybagi = 0.5;
+        }else{
+            $qtybagi = (int)$r['qtybagi'];
+        }
+        $profile = \DB::select(DB::raw("
+                select * from profile_m where id = $kdProfile limit 1
+            "));
+        $raw = collect(DB::select("
+            select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruanganasal, ra.namaruangan ruangantujuan, pm2.alergi, 
+            to_char(st.tglorder,'dd-mm-yyyy MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
+            from strukorder_t st
+            inner join pasien_m pm2 on pm2.id = st.nocmfk
+            inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
+            inner join pegawai_m pm3 on pm3.id = st.objectpegawaiorderfk
+            inner join ruangan_m rm on rm.id = st.objectruanganfk 
+            inner join ruangan_m ra on ra.id = st.objectruangantujuanfk 
+            inner join pasiendaftar_t AS pd ON pd.norec = st.noregistrasifk
+            left join kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+            where st.noorder = '$noorder'
+        "))->first();
+        $detel = [];
+        $details = \DB::select(DB::raw("
+                select pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan from pelayananpasien_t pt 
+                inner join produk_m pm on pm.id = pt.produkfk 
+                where strukresepfk = '$norec'
+            "));
+//        dd($raw);
+        if(!empty($raw)){
+            // $raw->umur = $this->getAge($raw->tgllahir ,date('Y-m-d'));
+        }else if (empty($raw)){
+            $raw = collect(DB::select("
+                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi
+                from strukresep_t s
+                inner join antrianpasiendiperiksa_t at2 on at2.norec = s.pasienfk 
+                inner join pasiendaftar_t pt on pt.norec = at2.noregistrasifk 
+                inner join pasien_m pm2 on pm2.id = pt.nocmfk 
+                inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
+                inner join pegawai_m pm3 on pm3.id = s.penulisresepfk 
+                inner join ruangan_m rm on rm.id = s.ruanganfk 
+                left join ruangan_m ra on ra.id = at2.objectruanganasalfk 
+                left join kelompokpasien_m AS kp ON kp.id = pt.objectkelompokpasienlastfk
+                where s.norec = '$norec'
+            "))->first();
+            $details = \DB::select(DB::raw("
+                select pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan from pelayananpasien_t pt 
+                inner join produk_m pm on pm.id = pt.produkfk 
+                where strukresepfk = '$norec'
+            "));
+        }else{
+            echo 'Data Tidak ada ';
+            return;
+        }
+
+        $skrining = collect(DB::select("
+            select st.rpenulis, st.rtanggalresep, st.rklinis, st.rmr, st.rpasien,
+            st.rtanggallahir,
+            st.rberatbedan,
+            st.rdokter,
+            st.rruang,
+            st.rstatusjamin,
+            st.robat,
+            st.rkekuatan,
+            st.rjumlahobat, st.ketskrining
+            from strukresep_t s
+            left join skriningfarmasi_t st on st.norec_apd = s.norec
+            where s.norec = '$norec'
+        "))->first();
+//        dd($raw);
+        $pageWidth = 550;
+        //var_dump($skrining);
+
+        // return $r['norec'];
+
+        return view('report.apotik.resepdokterrev',
+            compact('raw', 'pageWidth','r','details','profile', 'skrining'));
+    }
+
     public function cetakAntrianKiosk(Request $request) {
         $kdProfile = (int)$request['kdprofile'];
         $norec = $request['norec'];
@@ -3377,17 +3461,17 @@ class ReportController extends ApiController{
 
         $sebelum = DB::select(DB::raw("
         SELECT o.*, p.subtotal, p.tahap
-from
-(
-	select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
-	case 
-		when kodemataanggaran ilike 'I%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
-		when kodemataanggaran ilike 'II%' then (char_length(kodemataanggaran) = 4 or char_length(kodemataanggaran) = 2)
-		when kodemataanggaran ilike 'III%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
-	end
-) as o
-left join
-(
+        from
+        (
+            select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
+            case 
+                when kodemataanggaran ilike 'I%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
+                when kodemataanggaran ilike 'II%' then (char_length(kodemataanggaran) = 4 or char_length(kodemataanggaran) = 2)
+                when kodemataanggaran ilike 'III%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
+            end
+        ) as o
+        left join
+        (
 			select id, tahap,
 			case 
 				when kodemataanggaran = 'A' then 'I.A'
@@ -3463,7 +3547,9 @@ left join
 			$qtahap
 			and km.tahun = '$tahun'
 			group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran
-) as p on o.kodemataanggaran = p.kodemataanggaran order by o.kodemataanggaran"));
+        ) as p on o.kodemataanggaran = p.kodemataanggaran 
+        group by o.kodemataanggaran, o.namamataanggaran, p.subtotal, p.tahap
+        order by o.kodemataanggaran"));
 
         $jumlah = DB::select(DB::raw("select sum(subtotal) totalawalsebelum from(
                         select id, tahap,

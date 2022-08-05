@@ -741,6 +741,48 @@
 		</div>
 	</div>
 </div>
+<div kendo-window="popupUrusan" k-title="'Detail Urusan Pemerintah'" k-visible="false" k-width="1000" k-height="600">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Kode"></label>
+				</div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.kode"  />
+				</div>
+			</div>
+			<div class="grid_6">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Urusan Pemerintahan"></label>
+				</div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.keterangan" />
+				</div>
+			</div>
+			<div class="grid_6">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Div"></label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.urusandiv"
+					k-data-text-field="'div'" k-data-value-field="'id'"
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" disabled/>
+				</div>
+			</div>
+		</div>
+		
+		<div class="grid_12">
+			<div class="grid_2">
+				<button class="btnTemplate1" ng-click="SimpanPopUpUrusan()">Simpan</button>
+			</div>
+			<div class="grid_1"></div>
+			<div class="grid_2">
+				<button class="btnTemplate1" ng-click="HapusPopUpUrusan()">Hapus</button>
+			</div>
+		</div>
+	</div>
+</div>
 <div kendo-window="popupKegiatan" k-title="'Detail Kegiatan'" k-visible="false" k-width="1000" k-height="600">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
@@ -1009,7 +1051,12 @@
 		</div>
 		
 		<div class="grid_12">
-			<div class="grid_8"></div>
+			<div class="grid_6"></div>
+			<div class="grid_2">
+				<div class="grid_11">
+					<button class="btnTemplate1" ng-click="HapusPopUpSubSubKegiatan()">Hapus</button>
+				</div>
+			</div>
 			<div class="grid_2">
 				<div class="grid_11">
 					<button class="btnTemplate1" ng-click="SimpanPopUpSubSubKegiatan()">Simpan</button>

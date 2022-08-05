@@ -69,6 +69,10 @@ define(['initialize'], function (initialize) {
                 { name: "Ya", id: 1 },
                 { name: "Tidak", id: 2 }
             ];
+            $scope.listKlinis = [
+                { name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }
+            ];
             $scope.listDataRM = [
                 { name: "Ya", id: 1 },
                 { name: "Tidak", id: 2 }
@@ -405,6 +409,7 @@ define(['initialize'], function (initialize) {
             function loadDefaultSkrining() {
                 $scope.data.Penulis = 1;
                 $scope.data.Tanggal = 1;
+                $scope.data.klinis = 1;
                 $scope.data.DataRM = 1;
                 $scope.data.Pasien = 1;
                 $scope.data.DataLahir = 1;
@@ -461,6 +466,7 @@ define(['initialize'], function (initialize) {
                     // $scope.item.penulisResep = {id:data_ih.data.detailresep.pgid,namalengkap:data_ih.data.detailresep.namalengkap}
 
                     if (noOrder != '') {
+                        console.log(noOrder)
                         if (noOrder == 'EditResep') {
                             medifirstService.get("farmasi/get_detail-resep?norecResep=" + norecResep, true).then(function (data_ih) {
                                 $scope.isRouteLoading = false;
@@ -662,11 +668,13 @@ define(['initialize'], function (initialize) {
             }
 
             function LoadSkrining() {
+                console.log(norecResep)
                 medifirstService.get("farmasi/get-histori-skrining?norecResep=" + norecResep, true).then(function (data_ih) {
                     var datas = data_ih.data[0]
                     norecSkrining = datas.norec;
                     $scope.data.Penulis = datas.rpenulis;
                     $scope.data.Tanggal = datas.rtanggalresep;
+                    $scope.data.klinis = datas.rklinis;
                     $scope.data.DataRM = datas.rmr;
                     $scope.data.Pasien = datas.rpasien;
                     $scope.data.DataLahir = datas.rtanggallahir;
@@ -677,43 +685,7 @@ define(['initialize'], function (initialize) {
                     $scope.data.Obat = datas.robat;
                     $scope.data.DataKekuatan = datas.rkekuatan;
                     $scope.data.DataJumlah = datas.rjumlahobat;
-                    $scope.data.DataStabilitas = datas.rstabilitas;
-                    $scope.data.DataAturan = datas.raturan;
-                    $scope.data.DataIndikasi = datas.rindikasiobat;
-                    $scope.data.DataAlergi = datas.ralergi;
-                    $scope.data.DataKonsumsi = datas.rkonsumsi;
-                    $scope.data.DataDuplikat = datas.rduplikat;
-                    $scope.data.DataInteraksi = datas.rinteraksi;
-                    $scope.data.DataAntibiotik = datas.rantibiotik;
-                    $scope.data.DataPoli = datas.rpolifarmasi;
-                    $scope.data.PenyekriningResep = { id: datas.idnamapenyekriningresep, namalengkap : datas.namapenyekriningresep };
-                    $scope.data.Peracik = {id: datas.idnamaperacik, namalengkap: datas.namaperacik };
-                    $scope.data.Pengecek = {id: datas.idnamapengecek, namalengkap: datas.namapengecek };
-                    $scope.data.Penyerah = datas.namapenyrahobat;
-                    $scope.data.Penerima = datas.namapenerimaobat;
-
-                    $scope.data.KetPoli = datas.ketpolifarmasi;
-                    $scope.data.KetAntibiotik = datas.ketantibiotik;
-                    $scope.data.KetInteraksi = datas.ketinteraski;
-                    $scope.data.KetDuplikat = datas.ketduplikasi;
-                    $scope.data.KetKonsumsi = datas.ketkonsumsi;
-                    $scope.data.KetAlergi = datas.ketalergi;
-                    $scope.data.KetIndikasi = datas.ketindikasi;
-                    $scope.data.KetAturan = datas.ketaturan;
-                    $scope.data.KetStabilitas = datas.ketstabilitas;
-                    $scope.data.KetJumlah = datas.ketjumlah;
-                    $scope.data.KetKekuatan = datas.ketkekuatan;
-                    $scope.data.KetObat = datas.ketobat;
-                    $scope.data.KetStatus = datas.ketstatus;
-                    $scope.data.KetRuang = datas.ketruang;
-                    $scope.data.KetDokter = datas.ketdokter;
-                    $scope.data.KetBerat = datas.ketberat;
-                    $scope.data.KetLahir = datas.kettanggallahir;
-                    $scope.data.KetPasien = datas.ketpasien;
-                    $scope.data.KetRM = datas.ketrm;
-                    $scope.data.KetTanggal = datas.kettanggal;
-                    $scope.data.KetPenulis = datas.ketpenulis;
-                    $scope.data.DataCek = datas.rcek;
+                    $scope.data.keteranganskrining = datas.ketskrining;
                     if (datas.prinsipbesar != '' || datas.prinsipbesar != null) {
                         var prinsipbesar = datas.prinsipbesar.split(',')
                         prinsipbesar.forEach(function (data) {
@@ -1886,6 +1858,9 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
                         $scope.tombolSimpanVis = false;
                         medifirstService.post('farmasi/save-pelayananobat', objSave).then(function (e) {
+                            $scope.data.noresep = e.data.noresep.norec
+                            console.log($scope.data.noresep)
+                            $scope.simpanSkrining()
                             $scope.tombolSimpanVis = true;
                             $scope.item.resep = e.data.noresep.norec;
                             if (dataOK.length > 0) {                        
@@ -2113,6 +2088,10 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 if ($scope.data.KetTanggal != undefined) {
                     var ketTanggal = $scope.data.KetTanggal
                 }
+                var ketKlinis = ""
+                if ($scope.data.KetKlinis != undefined) {
+                    var ketKlinis = $scope.data.KetKlinis
+                }
                 var ketRM = ""
                 if ($scope.data.KetRM != undefined) {
                     var ketRM = $scope.data.KetRM
@@ -2190,15 +2169,15 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     var KetPoli = $scope.data.KetPoli
                 }
                 var PenyekriningResep = ""
-                if ($scope.data.PenyekriningResep.id != undefined) {
+                if ($scope.data.PenyekriningResep != undefined) {
                     var PenyekriningResep = $scope.data.PenyekriningResep.id
                 }
                 var Peracik = ""
-                if ($scope.data.Peracik.id != undefined) {
+                if ($scope.data.Peracik != undefined) {
                     var Peracik = $scope.data.Peracik.id
                 }
                 var Pengecek = ""
-                if ($scope.data.Pengecek.id != undefined) {
+                if ($scope.data.Pengecek != undefined) {
                     var Pengecek = $scope.data.Pengecek.id
                 }
                 var Penyerah = ""
@@ -2209,72 +2188,40 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 if ($scope.data.Penerima != undefined) {
                     var Penerima = $scope.data.Penerima
                 }
+                var ketskrining = null
+                if ($scope.data.keteranganskrining != undefined) {
+                    ketskrining = $scope.data.keteranganskrining
+                }
 
                 var objSave = {
                     "norec": norecSkrining,
-                    "norec_apd": norec_apd,
+                    "norec_apd": $scope.data.noresep,
                     "objectruanganfk": $scope.item.ruangan.id,
-                    "rpenulis": $scope.data.Penulis,
-                    "rtanggalresep": $scope.data.Tanggal,
-                    "rmr": $scope.data.DataRM,
-                    "rpasien": $scope.data.Pasien,
-                    "rtanggallahir": $scope.data.DataLahir,
-                    "rberatbedan": $scope.data.Berat,
-                    "rdokter": $scope.data.DataDokter,
-                    "rruang": $scope.data.DataRuang,
-                    "rstatusjamin": $scope.data.DataStatus,
-                    "robat": $scope.data.Obat,
-                    "rkekuatan": $scope.data.DataKekuatan,
-                    "rjumlahobat": $scope.data.DataJumlah,
-                    "rstabilitas": $scope.data.DataStabilitas,
-                    "raturan": $scope.data.DataAturan,
-                    "rindikasiobat": $scope.data.DataIndikasi,
-                    "ralergi": $scope.data.DataAlergi,
-                    "rkonsumsi": $scope.data.DataKonsumsi,
-                    "rduplikat": $scope.data.DataDuplikat,
-                    "rinteraksi": $scope.data.DataInteraksi,
-                    "rantibiotik": $scope.data.DataAntibiotik,
-                    "rpolifarmasi": $scope.data.DataPoli,
-                    "namapenyekriningresep": PenyekriningResep,
-                    "namaperacik": Peracik,
-                    "namapengecek": Pengecek,
-                    "namapenyrahobat": Penyerah,
-                    "namapenerimaobat": Penerima,
-                    "prinsipbesar": listPrinsipBesar,
-                    "strukresepfk": norecResep != undefined ? norecResep : null,
-                    // "noresepfk" : ,
-                    "ketpenulis": penulis,
-                    "kettanggal": ketTanggal,
-                    "ketrm": ketRM,
-                    "ketpasien": KetPasien,
-                    "kettanggallahir": KetLahir,
-                    "ketberat": KetBerat,
-                    "ketdokter": KetDokter,
-                    "ketruang": KetRuang,
-                    "ketstatus": KetStatus,
-                    "ketobat": KetObat,
-                    "ketkekuatan": KetKekuatan,
-                    "ketjumlah": KetJumlah,
-                    "ketstabilitas": KetStabilitas,
-                    "ketaturan": KetAturan,
-                    "ketalergi": KetAlergi,
-                    "ketkonsumsi": KetKonsumsi,
-                    "ketduplikasi": KetDuplikat,
-                    "ketinteraski": KetInteraksi,
-                    "ketantibiotik": KetAntibiotik,
-                    "ketpolifarmasi": KetPoli,
-                    "ketindikasi": KetIndikasi,
-                    "rcek": $scope.data.DataCek
+                    "rpenulis": parseInt($scope.data.Penulis),
+                    "rtanggalresep": parseInt($scope.data.Tanggal),
+                    "rklinis": parseInt($scope.data.klinis),
+                    "rmr": parseInt($scope.data.DataRM),
+                    "rpasien": parseInt($scope.data.Pasien),
+                    "rtanggallahir": parseInt($scope.data.DataLahir),
+                    "rberatbedan": parseInt($scope.data.Berat),
+                    "rdokter": parseInt($scope.data.DataDokter),
+                    "rruang": parseInt($scope.data.DataRuang),
+                    "rstatusjamin": parseInt($scope.data.DataStatus),
+                    "robat": parseInt($scope.data.Obat),
+                    "rkekuatan": parseInt($scope.data.DataKekuatan),
+                    "rjumlahobat": parseInt($scope.data.DataJumlah),
+                    "ketskrining": ketskrining,
                 }
 
                 medifirstService.post('farmasi/save-data-skrining-farmasi', objSave).then(function (e) {
-                    window.history.back();
+                    
                 })
             }
 
             $scope.BatalSkring = function () {
                 $scope.data = {}
                 $scope.data.Penulis = 2;
+                $scope.data.klinis = 2;
                 $scope.data.Tanggal = 2;
                 $scope.data.DataRM = 2;
                 $scope.data.Pasien = 2;
