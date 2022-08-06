@@ -1432,17 +1432,19 @@ class MainController extends ApiController
         $tglAkhir = date($sampai.' 23:59');
 
         $results = DB::select(DB::raw("
-        select namalengkap as dokter,count(noregistrasi),pegawaifk as iddokter from ( SELECT DISTINCT 
-        pg.id pegawaifk,
-        pg.namalengkap, pd.noregistrasi 
-        FROM
-            emrpasien_t AS ep
-        inner join pasiendaftar_t pd on pd.noregistrasi = ep.noregistrasifk
-        inner join pegawai_m AS pg on pg.id = pd.objectpegawaifk 
-        WHERE
-        ep.statusenabled = 't' 
-        AND pd.tglregistrasi BETWEEN '$tglAwal'  and '$tglAkhir' and pg.objectjenispegawaifk='1' and 
-        ep.statusenabled = 't' and ep.kdprofile=$idProfile
+        select namalengkap as dokter,count(noregistrasi),pegawaifk as iddokter from ( 
+            SELECT DISTINCT 
+            emrd.pegawaifk,
+            pg.namalengkap, pd.noregistrasi, emrd.emrfk, emrd.emrpasienfk 
+            FROM
+                emrpasien_t AS ep
+            inner join emrpasiend_t emrd on emrd.emrpasienfk = ep.noemr
+            inner join pasiendaftar_t pd on pd.noregistrasi = ep.noregistrasifk
+            inner join pegawai_m AS pg on pg.id = pd.objectpegawaifk  and emrd.pegawaifk = pg.id
+            WHERE
+            ep.statusenabled = 't' 
+            AND pd.tglregistrasi BETWEEN '$tglAwal'  and '$tglAkhir' and pg.objectjenispegawaifk='1' and 
+            ep.statusenabled = 't' and ep.kdprofile=$idProfile
         ) as  d GROUP BY dokter,iddokter;
 
            
