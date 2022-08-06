@@ -1,0 +1,556 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+
+    .photo-pasiens {
+        /* display: inline-block; */
+        width: 400px;
+        height: auto;
+        border-radius: 50%;
+        /* background-size: 32px 35px; */
+        /* background-position: center center; */
+        vertical-align: middle;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+
+    fieldset {
+        border: 1px solid #c8c8c8;
+        background-color: #ffffff;
+        color: #333333;
+    }
+
+    img.photo-pasien {
+        width: 300px;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .green {
+        background-color: #98FB98;
+        color: #000000;
+        /*font-weight: bold;*/
+    }
+
+    .red {
+        background-color: #ff3860;
+        color: #FFFFFF;
+        /*font-weight: bold;*/
+    }
+
+    .blue {
+        background-color: #1E90FF;
+        color: #ffffff;
+        /*font-weight: bold;*/
+    }
+
+    .koneng {
+        background-color: #FFFF00;
+        color: #191970;
+        /*font-weight: bold;*/
+    }
+</style>
+
+<c-panel item="item" header="'LEMBAR PENILAIAN PANSS-EC'" disabled>
+</c-panel>
+<div class="grid_12">
+    <div class="grid_1" style="margin-top:5px">
+        <div class="grid_12">
+            <label>&nbsp;</label>
+        </div>
+        <div class="clear"></div>
+
+        <div class="grid_12">
+            <button class="btnTemplate1" style="margin-left: 0;" ng-click="SearchData()"> <i
+                    class="fa fa-refresh"></i>Refresh</button>
+        </div>
+    </div>
+
+    <div class="grid_12">
+        <div class="grid_12" style="margin-top: 10px;">
+            <div class="grid_12 borderBox">
+                <kendo-grid id="kGrid" data-source="dataSourceGrid" options="columnGrid" k-selectable="'row'"
+                    k-sortable="'true'" k-resizable="'true'" k-ng-model="dataSelected"
+                    ng-click="klikGrid(dataSelected)">
+                </kendo-grid>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid_12">
+        <fieldset style="margin-top: 10px;">
+            <h3>PANSS - EXCITED COMPONENT</h3>
+            <table>
+                <tr>
+                    <td colspan="3"><b>P4. GADUH GELISAH</b></td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        Hiperaktifitas yang ditampilkan dalam bentuk percepatan perilaku motorik, peningkatan
+                        respons
+                        terhadap stimuli, waspada berlebihan atau labilitas alam perasaan yang berlebihan.
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Dasar Penilaian</td>
+                    <td>
+                        manifastasi perilaku selama wawancara dan juga laporan perawat atau keluarga tentang
+                        perilaku.
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 20px;">1</td>
+                    <td style="width: 30px;">Tidak Ada</td>
+                    <td>Definisi tidak terpenuhi. </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Minimal</td>
+                    <td>Patologis diragukan; mungkin suatu ujung ekstrim dari batas normal.</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Ringan</td>
+                    <td>Cenderung sedikit agitatif, waspada berlebihan atau sedikit mudah terangsang selama
+                        wawancara, tetapi tanpa episode yang jelas dari gaduh gelisah atau labilitas alam perasaan
+                        yang mencolok. Pembicaraan mungkin sedikit mendesak.</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Sedang</td>
+                    <td>Agitasi atau mudah terangsang yang jelas terbukti selama wawancara, mempengaruhi pembicaraan
+                        dan mobilitas umum atau ledakan-ledakan episodik yang terjadi secara sporadik.</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Agak berat</td>
+                    <td>tampak Hiperaktifitas yang bermakna, atau sering terjadi ledakan-ledakan atau aktifitas
+                        motoik yang menyebabkan kesulitanbagi pasien tetap duduk untuk waktu yang lebih lama dari
+                        beberapa menit dalam setiap kesempatan. </td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Berat</td>
+                    <td>Gaduh gelisah yang mencolok mendominasi wawancara, membatasi perhatian sedemikian rupa
+                        sehingga mempengaruhi fungsi sehari </td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Sangat Berat</td>
+                    <td>Gaduh gelisah yang mencolok, sangat serius mempengaruhi kegiatan makan dan tidur, serta
+                        jelas tidak memungkinkan interaksi interpersonal. Percepatan pembicaraan dan aktivitas
+                        motorik dapat menimbulkan inkoherensi dan kelelahan </td>
+                </tr>
+
+                <tr>
+                    <td colspan="3"><b>P7. PERMUSUHAN</b></td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        Ekspresi Verbal dan non verbal tentang kemarahan dan kebencian, termasuk sarkasme, perilaku
+                        pasif agresif, caci maki dan penyerangan.
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Dasar Penilaian</td>
+                    <td>
+                        perilaku interpersonal yang diamati selama wawancara dan laporan oleh perawat atau keluarga.
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 20px;">1</td>
+                    <td style="width: 30px;">Tidak Ada</td>
+                    <td>Definisi tidak terpenuhi. </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Minimal</td>
+                    <td>Patologis diragukan; mungkin suatu ujung ekstrim dari batas normal.</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Ringan</td>
+                    <td>Melampiaskan kemarahan secaa tidak langsung atau ditahan seperti sarkasme, sikap tidak
+                        sopan, ekspesi bermusuhan</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Sedang</td>
+                    <td>adanya sikap bermusuhan yang nyata, sering memperlihatkan iritabilitas dan ekspresi
+                        kemarahan atau kebencian yang langsung</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Agak berat</td>
+                    <td>pasien sangat mudah marah dan kadang-kadang memaki dengan kata-kata kasar atau mengancam
+                    </td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Berat</td>
+                    <td>tidak kooperatif dan mencaci maki dengan kasar atau mengancam khususnya mempengaruhi
+                        wawancara dan berdampak serius terhadap relasi sosial. pasien dapat beringas dan merusak
+                        tetapi tidak menyerang orang lain secara fisik </td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Sangat Berat</td>
+                    <td>kemarahan yang hebat berakibat sangat tidak kooperatif, menghalangi interaksi atau secara
+                        episodik melakukan penyerangan fisik</td>
+                </tr>
+
+                <tr>
+                    <td colspan="3"><b>G4. KETEGANGAN</b></td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        Manifestasi yang jelas tentang ketakutan, anxietas, dan agitasi, seperti kelakukan, tremor,
+                        keringat berlebihan dan ketidaktenangan
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Dasar Penilaian</td>
+                    <td>
+                        Laporan lisan membuktikan adanya anxietas dan karenanya derajat keparahan manifestasi fisik
+                        ketegangan dapat dilihat selama wawancara.
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 20px;">1</td>
+                    <td style="width: 30px;">Tidak Ada</td>
+                    <td>Definisi tidak terpenuhi. </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Minimal</td>
+                    <td>Patologis diragukan; mungkin suatu ujung ekstrim dari batas normal.</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Ringan</td>
+                    <td>Postur dan gerakan - gerakan menunjukan kekhawatiran ringan seperti rigiditas yang ringan,
+                        ketidaktenangan yang sekali - sekali, perubahan posisi atau tremor tangan yang halus dan
+                        cepat</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Sedang</td>
+                    <td>suatu penampilan yang nyata - nyata gelisah yang terbukti dari adanya pelbagai manifestasi
+                        seperti perilaku tidak tenang, tremor tangan yang nyata, keringat berlebihan atau menerisme
+                        karena gugup.</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Agak berat</td>
+                    <td>ketegangan yang berat yang dibuktikan oleh pelbagai manifestasi seperti gemetaran karena
+                        gugup, keringat sangat berlebihan dan ketidaktenangan, tetapi perilaku selama wawancara
+                        tidak terpengaruh secara bermakna.
+                    </td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Berat</td>
+                    <td>ketegangan berat sedemikian rupa sehingga taraf interaksi interpesonal terganggu. Misalnya
+                        pasien mungkin terus - menerus bergerak seperti cacing kepanasan, tidak dapat tetap duduk
+                        untuk waktu lama atau menunjukkan hiperventilasi.</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Sangat Berat</td>
+                    <td>Ketegangan yang sangat mencolok yang memanifestasikan oleh tanda-tanda panik atau
+                        perpcepatan gerakan motorik kasar, seperti langkah cepat yang gelisah dan ketidakmampuan
+                        tetap duduk waktu lebih lama dari semenit yang menyebabkan percakapan tidak mungkin
+                        diteruskan.</td>
+                </tr>
+
+                <tr>
+                    <td colspan="3"><b>G8. KETIDAKKOOPERATIFAN</b></td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        aktif menolak untuk patuh terhadap tokoh bermakna termasuk pewawancara, staf rumah sakit
+                        atau keluargaa yang mungkin disertai dengan rasa tidak percaya, defensif, keras kepala,
+                        negativistik, penolakan terhadap otoritas, hostilitas atau suka membangkang.
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Dasar Penilaian</td>
+                    <td>
+                        perilaku interpersonal yang diobservasi selama wawancara dan juga dilaporkan oleh perawat
+                        atau keluarga.
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 20px;">1</td>
+                    <td style="width: 30px;">Tidak Ada</td>
+                    <td>Definisi tidak terpenuhi. </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Minimal</td>
+                    <td>Patologis diragukan; mungkin suatu ujung ekstrim dari batas normal.</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Ringan</td>
+                    <td>
+                        patuh tetapi disertai sikap marah, tidak sabaran / sarkasme. Mungkin ada penolakan yang
+                        tidak mengganggu, terhadap penyelidikan.
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Sedang</td>
+                    <td>
+                        kadang-kadangg terdapat penolakan langsung untuk patuh terhadpa tuntutan-tuntuan yang normal
+                        seperti merapikan tempat tidur, mengikuti acara yang telah dijadwalkan dan sebagainya.
+                        pasien mungkin memproyeksikan hostiiltas, defensif atau bersikap.
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Agak berat</td>
+                    <td>
+                        pasien seringkali tidak patuh terhadap tuntutan lingkungannya dan mungkin dijuluki sebagai
+                        "orang buangan" atau "orang yang mempunyai problem yang serius". Ketidakkooperatifan
+                        tercermin jelas dalam sikap defensif atau iritabilitas terhadap pemeriksa dan mungkin tidak
+                        bersedia menghadapi banyak pertanyaan
+                    </td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Berat</td>
+                    <td>
+                        pasien sangat tidak kooperati, negativistik, dan mungkin suka membangkang. menolak untuk
+                        patuh terhadap sebagian besar tuntutan
+                        sosial dan mungkin tidak mau memulai atau mengikuti wawancara sepenuhnya.
+                    </td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Sangat Berat</td>
+                    <td>
+                        Resistensi aktif yang jelas berdampak serius terhadap benar-benar seluruh bidang fungsi
+                        utama. pasien mungkin menolak untuk ikut dalam aktivitas sosial apapun, mengurus kebersihan
+                        diri, bercakap-cakap dengan keluarga atau staf dan bahkan untuk berpartisipasi.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="3"><b>G14. PENGENDALIAN IMPULS YANG BURUK</b></td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        Gangguan pengaturan dan pengendalian impuls yang mengakibatkan pelepasan ketegangan dan
+                        emosi yang tiba-tiba tidak teratur, sewenang-wenang atau tidak terarah tanpa merisaukan
+                        konsekuensinya.
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Dasar Penilaian</td>
+                    <td>
+                        perilaku selama wawancara dan yang dilaporkan perawat atau tetangga.
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 20px;">1</td>
+                    <td style="width: 30px;">Tidak Ada</td>
+                    <td>Definisi tidak terpenuhi. </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Minimal</td>
+                    <td>Patologis diragukan; mungkin suatu ujung ekstrim dari batas normal.</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Ringan</td>
+                    <td>
+                        Pasien cenderung mudah marah dan frustasi bila menghadapi stres atau pemuasannya ditolak
+                        tetapi jarang bertindak impulsif.
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Sedang</td>
+                    <td>
+                        dengan provokasi yang minimal pasien menjadi marah dan mencaci maki. Mungkin sekali-sekali
+                        mengancam, merusak atau terdapat satu atau dua episode yang melibatkan konfrontasi fisik
+                        atau perselisihan ringan
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Agak berat</td>
+                    <td>
+                        pasien memperlihatkan episode implsif yang berulang-ulang, termasuk mencaci maki,
+                        pengrusakan harta benda atau ancaman fisik. Mungkin ada satu atau dua episode yang
+                        melibatkan serangan serius sehingga pasien perlu diisolasi, difiksasi dan bila perlu diberi
+                        sedasi.
+                    </td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Berat</td>
+                    <td>
+                        pasien sering agresif secara impulsif, mengancam, menuntut dan merusak, tanpa pertimbangan
+                        yang nyata tentang konsekuensinya. menunjukan perilaku menyerang dan mungkin juga serangan
+                        seksual dan kemungkinan berperilaku yang merupakan respons terhadap pasien.
+                    </td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Sangat Berat</td>
+                    <td>
+                        pasien memperlihatkan serangan yang dapat membunuh orang, oenyerangan seksusal, kebrutalan
+                        yang berulang atau perilaku yang merusak diri sendiri. Membutuhkan pengawasan langsung yang
+                        terus-menerus atau fiksasi karena ketidakmampuan mengendalikan impuls yang berbahaya
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+    
+
+</div>
+
+
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+<div kendo-window="popUpLembarPanssEc" k-title="'DATA LEMBAR PANSS EC'" k-width="650" k-height="550"
+    k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div class="grid_12">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label>TANGGAL</label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_12">
+                        <input style="width: 100%" kendo-date-picker k-ng-model="item.tglinput"
+                            k-format="'yyyy-MM-dd'" />
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12" style="padding-top: 10px">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label>P4 GADUH GELISAH</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="number" filter="'varchar'" class="k-textbox" ng-model="item.p4" ng-change="getJumlah()" />
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12" style="padding-top: 10px">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label>P7 PERMUSUHAN</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="number" filter="'varchar'" class="k-textbox" ng-model="item.p7"
+                            ng-change="getJumlah()" />
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12" style="padding-top: 10px">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label>G4 KETEGANGAN</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="number" filter="'varchar'" class="k-textbox" ng-model="item.g4"
+                            ng-change="getJumlah()" />
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12" style="padding-top: 10px">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label>G8 KETIDAK KOOPERATIFAN</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="number" filter="'varchar'" class="k-textbox" ng-model="item.g8"
+                            ng-change="getJumlah()" />
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12" style="padding-top: 10px">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label>G14 PENGENDALIAN IMPULS YANG BURUK</label>
+                    </div>
+                    <div class="grid_12" style="padding-top: 10px">
+                        <input c-text-box type="number" filter="'varchar'" class="k-textbox" ng-model="item.g14"
+                            ng-change="getJumlah()" />
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12" style="padding-top: 10px">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label>jUMLAH</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="number" filter="'varchar'" class="k-textbox" ng-model="item.jumlah"
+                            ng-change="getJumlah()" />
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12" style="padding-top: 10px">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item">PARAF DOKTER PENILAIAN</label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.pegawai"
+                            k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-auto-bind="true"
+                            k-data-source="listPegawai" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_12" style="padding-top: 10px">
+            <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                <button class="k-button k-button-icontext k-primary k-grid-update"
+                    ng-click="simpanPanssEc()"><span class="k-icon k-update"></span>Simpan</button>
+                <button class="k-button  k-button-icontext" ng-click="batalSimpanPanssEc()"><span
+                        class="k-icon k-cancel"></span>Batal</button>
+            </div>
+        </div>
+    </div>
+</div>

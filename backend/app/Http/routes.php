@@ -621,6 +621,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-datacombo-part-diagnosa-tindakan', 'EMR\EMRController@getDataComboDiagnosa9Part');
           Route::get('emr/get-data-diagnosis', 'EMR\EMRController@getDataDiagnosis');
           Route::post('emr/save-data-odontogram', 'EMR\EMRController@SaveTransaksiEMROdontogram');
+          Route::post('emr/save-lembar-panss-ec','EMR\EMRController@saveLembarPanssEc');
+          Route::get('emr/get-lembar-panss-ec','EMR\EMRController@getLembarPanssEc');
           Route::get('emr/get-data-odontogram', 'EMR\EMRController@getDataOdontogram');
           Route::post('emr/hapus-emr-transaksi', 'EMR\EMRController@hapusEMRTransaksi');
           Route::get('emr/get-daftar-dokumen-rekmed', 'EMR\EMRController@getDaftarDokumenRekamMedis');
