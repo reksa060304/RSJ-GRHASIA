@@ -890,7 +890,6 @@
         }
       
         let datazz = @json($array);
-       
         $(".click-layanan").click(function(e) {
             e.preventDefault();
             var dokter = $(this).attr("data-dokter");

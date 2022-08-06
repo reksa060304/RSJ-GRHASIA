@@ -91,6 +91,8 @@ Route::group(["middleware" => "login_check"], function () {
     Route::get('/get-detail-pegawai','MainController@getDetailPegawai');
     Route::get('/get-detail-kamar','MainController@getPasienMasihDirawat');
     Route::get('/get-detail-layanan','MainController@getDetailLayanan');
+    Route::get('/get-detail-layanan-eresep','MainController@getDetailLayananRESEP');
+    Route::get('/get-detail-layanan-emr','MainController@getDetailLayananEMR');
     Route::get('{role}/{pages}', "MainController@show_page")->name("show_page");
 //    Route::get('/pegawai-show', "MainController@showDataPegawai")->name("showPegawai");
 //    Route::post('/pegawai-save', "MainController@savePegawai")->name("savePegawai");

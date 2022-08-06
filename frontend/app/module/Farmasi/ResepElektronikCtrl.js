@@ -1541,7 +1541,90 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         title: 'Penerima Berada Disini',
                     });
                     marker.addListener("click", toggleBounce);
-             }
+            }
+
+            $scope.showPop =  function () {
+                cacheHelper.set('norec_resep_qwertyuio',undefined);
+                if($scope.item== undefined){
+                   toastr.error('Pilih data dulu')
+                   return
+               }
+               console.log($scope.item)
+
+               medifirstService.get("sysadmin/general/get-status-close/" + $scope.item.noregistrasi, false).then(function (rese) {
+                   if (rese.data.status == true) {
+                       toastr.error('Pemeriksaan sudah ditutup tanggal ' + moment(new Date(rese.data.tglclosing)).format('DD-MMM-YYYY HH:mm'), 'Peringatan!')
+                       $scope.isSelesaiPeriksa = true
+                       return
+                   } else {
+                       $scope.listRuanganApd = []
+
+                       $scope.listRuanganApd = JSON.parse(localStorage.getItem('mapLoginUserToRuangan'))
+                       $scope.item.ruanganAntrian = $scope.listRuanganApd[0]
+                       $scope.popupAntrians.center().open()
+
+                   }
+               })
+            }
+
+
+            $scope.inputTindakan = function () {
+                if($scope.item.ruanganAntrian == undefined)return
+                medifirstService.get("radiologi/get-apd?noregistrasi="
+                    + $scope.item.noregistrasi
+                ).then(function (data) {
+                    $scope.daftarApd = data.data.ruangan;
+                    if ($scope.daftarApd.length > 0) {
+                        var status = false
+                        var norec_apd = ''
+                        for (var i = 0; i < $scope.daftarApd.length; i++) {
+                            status = false
+                            if ($scope.daftarApd[i].id == $scope.item.ruanganAntrian.id) {
+                                status = true
+                                norec_apd = $scope.daftarApd[i].norec_apd
+                                break
+                            }
+                        }
+                        if (status == true) {
+                            $scope.showTindakan(norec_apd)
+                        } else {
+                            $scope.saveAPD()
+                        }
+                    }
+                })
+            }
+
+            $scope.showTindakan = function (norec_apd) {
+                cacheHelper.set('norec_resep_qwertyuio',$scope.item.norecresep);
+                $state.go('InputTindakan', {
+                    norecPD: $scope.item.norec_pd,
+                    norecAPD: norec_apd,
+
+                });
+               
+            }
+
+            $scope.saveAPD = function (argument) {
+                $scope.tombolSimpanVis = true;
+                var dataKonsul = {
+                    "asalrujukanfk": 5, //datang sendiri
+                    "norec_pd": $scope.item.norec_pd,
+                    "dokterfk": $scope.item.pgid,
+                    "objectruangantujuanfk": $scope.item.ruanganAntrian.id,
+                    "objectruanganasalfk": $scope.item.ruid,
+                    "objectkelasfk": $scope.item.klid,
+                    "tglregistrasidate":moment($scope.item.tglregistrasi).format('YYYY-MM-DD')
+                }
+                medifirstService.post('radiologi/save-apd', dataKonsul).then(function (e) {
+                    $scope.tombolSimpanVis = false;
+                    var norec_apd = e.data.data.norec
+                   
+                    $scope.showTindakan(norec_apd)
+
+                }, function (error) {
+                    $scope.tombolSimpanVis = true;
+                })
+            }
 
             $scope.lanjutOrderGrab = function(){
                 if($scope.grab.sender.firstName == undefined || $scope.grab.sender.firstName == null || $scope.grab.sender.firstName == '-'){
