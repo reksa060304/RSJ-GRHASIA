@@ -1326,8 +1326,8 @@ class MainController extends ApiController
     public function getDetailLayananRESEP(Request $r){
         $idProfile = (int) session("kdProfile");
 
-        $tglAwal = date($r['tglawal'].'00:00');
-        $tglAkhir = date($r['tglakhir'].'23:59');
+        $tglAwal = date($r['tglawal'].' 00:00');
+        $tglAkhir = date($r['tglakhir'].' 23:59');
 
         $data = DB::select(DB::raw("
                 select pg.id as iddokter,so.norec,pg.namalengkap as dokter,so.tglorder,so.noorder,sr.noresep,
@@ -1411,8 +1411,8 @@ class MainController extends ApiController
     public function getDetailLayananEMR(Request $r){
         $idProfile = (int) session("kdProfile");
 
-        $tglAwal = date($r['tglawal'].'00:00');
-        $tglAkhir = date($r['tglakhir'].'23:59');
+        $tglAwal = date($r['tglawal'].' 00:00');
+        $tglAkhir = date($r['tglakhir'].' 23:59');
 
         $data = DB::select(DB::raw("
                 SELECT
