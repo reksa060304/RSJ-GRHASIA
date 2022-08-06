@@ -61,8 +61,7 @@
             }
 
             @page {
-                margin-left: -5px;
-                margin-top: -5px;
+                margin: 0;
             }
         </style>
     </head>
