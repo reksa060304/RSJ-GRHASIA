@@ -542,11 +542,17 @@ class PerencanaanController extends ApiController {
         }
 
         
-        $mata = DB::select(DB::raw("select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen  
-                from mataanggaran_m ma 
-                left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
-                where ma.statusenabled = true and ma.kdprofile = 30
-                order by ma.kodemataanggaran
+        $mata = DB::select(DB::raw("select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen 
+        , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+        , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+        , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+                        from mataanggaran_m ma 
+                        left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
+                        where ma.statusenabled = true and ma.kdprofile = 30
+                        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc 
+        
             ")
         );
 
