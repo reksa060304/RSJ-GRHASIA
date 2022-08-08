@@ -9516,8 +9516,10 @@ class RegistrasiController extends ApiController
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
         $deptId = '';
-        if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
-            $deptId = ' and ru.objectdepartemenfk = ' . $request['idDept'];
+        if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined" && $request['idDept'] == 1) {
+            $deptId = ' and ru.objectdepartemenfk <> 16';
+        } else if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined" && $request['idDept'] == 2) {
+            $deptId = ' and ru.objectdepartemenfk = 16';
         }
         $carabayarId = '';
         if (isset($request['idCaraBayar']) && $request['idCaraBayar'] != "" && $request['idCaraBayar'] != "undefined") {

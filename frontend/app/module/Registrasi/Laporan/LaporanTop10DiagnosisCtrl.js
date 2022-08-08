@@ -21,9 +21,14 @@ define(['initialize'], function (initialize) {
                 $scope.item.tglawal =  moment($scope.now).format('YYYY-MM-DD 00:00');
                 $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD 23:59');
                 medifirstService.get("tatarekening/get-data-combo-daftarregpasien", true).then(function (dat) {                                    
-                    $scope.listDepartemen = dat.data.departemen; 
+                    
                     $scope.listJenisDiagnosa = dat.data.jenisdiagnosa;                                    
                 });
+
+                $scope.listDepartemen = [
+                    { id: 1, departemen: "Instalasi Rawat Jalan" },
+                    { id: 2, departemen: "Instalasi Rawat Inap"}
+                ];
 
                 medifirstService.get("registrasi/daftar-registrasi/get-data-combo-operator", false).then(function (data) {
 					$scope.listKelompokPasien = data.data.kelompokpasien;
