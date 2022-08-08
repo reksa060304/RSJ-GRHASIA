@@ -13,7 +13,7 @@
             }
 
             .fs-9{
-                font-size: 7px;
+                font-size: 11px;
                 font-family: 'Times New Roman';
             }
 
@@ -26,21 +26,21 @@
 
             td.description,
             th.description {
-                width: 75px;
-                max-width: 75px;
+                width: 160px;
+                max-width: 160px;
             }
 
             td.quantity,
             th.quantity {
-                width: 40px;
-                max-width: 40px;
+                width: 95px;
+                max-width: 95px;
                 word-break: break-all;
             }
 
             td.price,
             th.price {
-                width: 40px;
-                max-width: 40px;
+                width: 95px;
+                max-width: 95px;
             }
 
             .centered {
@@ -49,8 +49,8 @@
             }
 
             .ticket {
-                width: 155px;
-                max-width: 155px;
+                width: 350px;
+                max-width: 350px;
             }
 
             @media print {
@@ -90,7 +90,7 @@
                         <td class=" fs-9" style="text-align: right" width="200"><b><u>RESEP {{ $raw->kelompokpasien }}</u></b></td>
                     </tr>
                 </tbody>
-            </table><br>
+            </table>
 
             <p class="centered fs-9">------Resep-----</p>
             <table>
@@ -112,21 +112,65 @@
                         </tr>
                     <?php } ?>
                     <tr style="height: 10px;"><td></td></tr>
+                </tbody>
+            </table>
+
+            <p class="centered fs-9">------Identitas Pasien-----</p>
+            <table>
+                <tbody>
                     <tr>
-                        <td class="price fs-9" style="text-align: center"></td>
-                        <td class="quantity fs-9" style="text-align: left"></td>
-                        <td class="price fs-9" style="text-align: center"></td>
-                        <td class="price fs-9" style="text-align: center">Paraf Dokter</td>
+                        <td class="price fs-9"><strong>Status Pembiayaan</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->kelompokpasien }}</td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong>Sumber Resep</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->ruangantujuan }}</td>
+                    </tr>
+                    <tr>
+                        <td class="price fs-9"><strong>No. Rekam Medik</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->nocm }}</td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong>Tanggal Resep</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->tglorder }}</td>
+                    </tr>
+                    <tr>
+                        <td class="price fs-9"><strong>Nama Pasien</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->namapasien }}</td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong>Nama Dokter</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->namalengkap }}</td>
+                    </tr>
+                    <tr>
+                        <td class="price fs-9"><strong>Tgl Lahir</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->tgllahir }}</td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong>Jenis Kelamin</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->jeniskelamin }}</td>
+                    </tr>
+                    <tr>
+                        <td class="price fs-9"><strong>Alergi</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->alergi }}</td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong>Ruangan Asal</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->ruanganasal }}</td>
+                    </tr>
+                    <tr style="height: 10px;"><td></td></tr>
+                    <tr>
+                        <td class="price fs-9"><strong></strong></td>
+                        <td class="description fs-9" style="text-align: left"></td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong></strong></td>
+                        <td class="price fs-9" style="text-align: center">Tanda Tangan Penerima</td>
                     </tr>
                     <tr style="height: 30px;"><td></td></tr>
                     <tr>
-                        <td class="price fs-9" style="text-align: center"></td>
-                        <td class="quantity fs-9" style="text-align: left"></td>
-                        <td class="price fs-9" style="text-align: center"></td>
-                        <td class="price fs-9" style="text-align: center">({{ $raw->namalengkap }})</td>
+                        <td class="price fs-9"><strong></strong></td>
+                        <td class="description fs-9" style="text-align: left"></td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong></strong></td>
+                        <td class="price fs-9" style="text-align: center">(...............)</td>
                     </tr>
                 </tbody>
-            </table><br>
+            </table>
 
             <p class="fs-9" style="text-align: left">I. TELAAH RESEP</p>
             <table>
@@ -253,7 +297,7 @@
                         @endif
                     </tr>
                 </tbody>
-            </table><br>
+            </table>
 
             <p class="fs-9" style="text-align: left">II. TELAAH OBAT</p>
             <table>
@@ -378,51 +422,8 @@
                     </tr>
                 </tbody>
             </table>
-            <p class="fs-9" style="text-align: left">Ket: </p><br>
+            <p class="fs-9" style="text-align: left">Ket: </p>
             @endif
-            
-            <p class="centered fs-9">------Identitas Pasien-----</p>
-            <table>
-                <tbody>
-                    <tr>
-                        <td class="price fs-9"><strong>Status Pembiayaan</strong></td>
-                        <td class="description fs-9" style="text-align: left">: {{ $raw->kelompokpasien }}</td>
-                        <td style="width: 10px;"><strong></strong></td>
-                        <td class="price fs-9"><strong>Sumber Resep</strong></td>
-                        <td class="description fs-9" style="text-align: left">: {{ $raw->ruangantujuan }}</td>
-                    </tr>
-                    <tr>
-                        <td class="price fs-9"><strong>No. Rekam Medik</strong></td>
-                        <td class="description fs-9" style="text-align: left">: {{ $raw->nocm }}</td>
-                        <td style="width: 10px;"><strong></strong></td>
-                        <td class="price fs-9"><strong>Tanggal Resep</strong></td>
-                        <td class="description fs-9" style="text-align: left">: {{ $raw->tglorder }}</td>
-                    </tr>
-                    <tr>
-                        <td class="price fs-9"><strong>Nama Pasien</strong></td>
-                        <td class="description fs-9" style="text-align: left">: {{ $raw->namapasien }}</td>
-                        <td style="width: 10px;"><strong></strong></td>
-                        <td class="price fs-9"><strong>Nama Dokter</strong></td>
-                        <td class="description fs-9" style="text-align: left">: {{ $raw->namalengkap }}</td>
-                    </tr>
-                    <tr>
-                        <td class="price fs-9"><strong>Tgl Lahir</strong></td>
-                        <td class="description fs-9" style="text-align: left">: {{ $raw->tgllahir }}</td>
-                        <td style="width: 10px;"><strong></strong></td>
-                        <td class="price fs-9"><strong>Jenis Kelamin</strong></td>
-                        <td class="description fs-9" style="text-align: left">: {{ $raw->jeniskelamin }}</td>
-                    </tr>
-                    <tr>
-                        <td class="price fs-9"><strong>Alergi</strong></td>
-                        <td class="description fs-9" style="text-align: left">: {{ $raw->alergi }}</td>
-                        <td style="width: 10px;"><strong></strong></td>
-                        <td class="price fs-9"><strong>Ruangan Asal</strong></td>
-                        <td class="description fs-9" style="text-align: left">: {{ $raw->ruanganasal }}</td>
-                    </tr>
-                </tbody>
-            </table><br>
-            
-            
             
             <p class="centered fs-9">------Petugas Farmasi-----</p>
             <table>
@@ -449,20 +450,7 @@
                             ............
                         </td>
                     </tr>
-                    <tr style="height: 10px;"><td></td></tr>
-                    <tr>
-                        <td class="price fs-9" style="text-align: center"></td>
-                        <td class="quantity fs-9" style="text-align: left"></td>
-                        <td class="price fs-9" style="text-align: center"></td>
-                        <td class="price fs-9" style="text-align: center">Tanda Tangan Penerima</td>
-                    </tr>
-                    <tr style="height: 30px;"><td></td></tr>
-                    <tr>
-                        <td class="price fs-9" style="text-align: center"></td>
-                        <td class="quantity fs-9" style="text-align: left"></td>
-                        <td class="price fs-9" style="text-align: center"></td>
-                        <td class="price fs-9" style="text-align: center">(...............)</td>
-                    </tr>
+                    
                 </thead>
             </table>
         </div>

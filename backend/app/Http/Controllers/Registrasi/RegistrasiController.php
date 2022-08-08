@@ -9519,29 +9519,39 @@ class RegistrasiController extends ApiController
         if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
             $deptId = ' and ru.objectdepartemenfk = ' . $request['idDept'];
         }
+        $carabayarId = '';
+        if (isset($request['idCaraBayar']) && $request['idCaraBayar'] != "" && $request['idCaraBayar'] != "undefined") {
+            $carabayarId = ' and kp.id = ' . $request['idCaraBayar'];
+        }
+        $ruanganId = '';
+        if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
+            $ruanganId = ' and ru.id = ' . $request['idRuangan'];
+        }
 
-        $data = DB::select(DB::raw("select *,sum(z.kasusbarulk)+sum(z.kasusbarup) as kasus45 from (
+        $data = DB::select(DB::raw("select sum(z.jumlah) jumlah, z.kddiagnosa,z.namadiagnosa, sum(z.kasusbarulk) kasusbarulk, sum(z.kasusbarup) kasusbarup, sum(z.kasusbarulk)+sum(z.kasusbarup) as kasus45 from (
             select count(x.kddiagnosa)as jumlah,x.kddiagnosa,x.namadiagnosa,
             sum(case when x.kasusbaru = 1 and x.jeniskelamin like 'LAKI-LAKI' then 1 else 0 end) as kasusbarulk,
             sum(case when x.kasusbaru = 1 and x.jeniskelamin like 'PEREMPUAN' then 1 else 0 end) as kasusbarup from (
-            select dm.kddiagnosa,dm.namadiagnosa, case when dp.iskasusbaru = true then 1 else 0 end as kasusbaru,jk.jeniskelamin 
-                            from antrianpasiendiperiksa_t as app
-                            left join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
-                            left join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-                            inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
-                            inner join pasiendaftar_t as pd on pd.norec = app.noregistrasifk
-                            inner join pasien_m as ps on ps.id = pd.nocmfk
-                            inner join jeniskelamin_m as jk on jk.id = ps.objectjeniskelaminfk 
-                            left join alamat_m as alm on alm.nocmfk = ps.id
-                             left join kecamatan_m as kec on kec.id = alm.objectkecamatanfk
-                            left join kotakabupaten_m as kot on kot.id = alm.objectkotakabupatenfk
-                            left join propinsi_m as pro on pro.id = alm.objectpropinsifk
-                            left join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-                            where app.kdprofile = $idProfile and dm.kddiagnosa <> '-'  and
-                            pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir' $deptId
-                            )as x GROUP BY x.namadiagnosa ,x.kddiagnosa) as z
-                            group by z.jumlah,z.kddiagnosa,z.namadiagnosa,z.kasusbarulk,z.kasusbarup
-                            ORDER BY z.jumlah desc limit 10"
+            select dm.kddiagnosa,dm.namadiagnosa, case when dp.iskasusbaru = true then 1 else 0 end as kasusbaru,jk.jeniskelamin
+                            from pasiendaftar_t as pd
+														inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+														inner join pasien_m as ps on ps.id = pd.nocmfk
+														inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+														inner join ruangan_m ru on ru.id = app.objectruanganfk
+														inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+														inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+														inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
+														inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
+														inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+														left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+                            where pd.kdprofile = $idProfile and pd.statusenabled = true and dm.kddiagnosa <> '-'  and
+                            pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir' 
+                            $deptId
+                            $carabayarId
+                            $ruanganId
+                            )as x GROUP BY x.namadiagnosa ,x.kddiagnosa, x.kasusbaru, x.jeniskelamin) as z
+                            group by z.kddiagnosa,z.namadiagnosa
+                            ORDER BY jumlah desc limit 10;"
                         ));
         if (count($data)>0){
             foreach ($data as $item){
@@ -9563,6 +9573,74 @@ class RegistrasiController extends ApiController
                 'kasusbarulk' => 0,
                 'kasusbarup' => 0,
                 'kasus45' => 0
+            );
+        }
+
+        $results = array(
+            'result' => $result,
+            'message' => 'dy',
+        );
+        return $this->respond($result);
+    }
+
+    public function getTopTenDiagnosa9(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        // $dataLogin = $request->all();
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $deptId = '';
+        if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
+            $deptId = ' and ru.objectdepartemenfk = ' . $request['idDept'];
+        }
+        $carabayarId = '';
+        if (isset($request['idCaraBayar']) && $request['idCaraBayar'] != "" && $request['idCaraBayar'] != "undefined") {
+            $carabayarId = ' and kp.id = ' . $request['idCaraBayar'];
+        }
+        $ruanganId = '';
+        if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
+            $ruanganId = ' and ru.id = ' . $request['idRuangan'];
+        }
+
+        $data = DB::select(DB::raw("select x.namaruangan, x.kelompokpasien, count(x.kddiagnosa)as jumlah,x.kddiagnosa,x.namadiagnosa from (
+            select ru.namaruangan, kp.kelompokpasien, dm.kddiagnosatindakan kddiagnosa,dm.namadiagnosatindakan namadiagnosa
+                            from antrianpasiendiperiksa_t as app
+                            inner join diagnosatindakanpasien_t as dp on dp.objectpasienfk = app.norec
+                            inner join detaildiagnosatindakanpasien_t as ddp on ddp.objectdiagnosatindakanpasienfk = dp.norec
+                            inner join diagnosatindakan_m as dm on ddp.objectdiagnosatindakanfk = dm.id
+                            left join pasiendaftar_t as pd on pd.norec = app.noregistrasifk
+                            left join pasien_m as ps on ps.id = pd.nocmfk
+                            left join jeniskelamin_m as jk on jk.id = ps.objectjeniskelaminfk 
+														left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+                            left join alamat_m as alm on alm.nocmfk = ps.id
+                            left join kecamatan_m as kec on kec.id = alm.objectkecamatanfk
+                            left join kotakabupaten_m as kot on kot.id = alm.objectkotakabupatenfk
+                            left join propinsi_m as pro on pro.id = alm.objectpropinsifk
+                            left join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+                            where app.kdprofile = $idProfile and dm.kddiagnosatindakan <> '-'  and
+                            pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir'
+                            $deptId
+                            $carabayarId
+                            $ruanganId
+                            )as x GROUP BY x.namaruangan, x.kelompokpasien, x.namadiagnosa ,x.kddiagnosa
+							order by jumlah desc limit 10;"
+                        ));
+        if (count($data)>0){
+            foreach ($data as $item){
+                $result[] = array(
+                    'jumlah' =>$item->jumlah,
+                    'kddiagnosa' => $item->kddiagnosa  ,
+                    'namadiagnosa' => $item->namadiagnosa,
+                    'kelompokpasien' => $item->kelompokpasien,
+                );
+            }
+
+        }else{
+            $result[] = array(
+                'jumlah' => 0,
+                'kddiagnosa' => null,
+                'namadiagnosa' => null,
+                'kelompokpasien' => null,
             );
         }
 

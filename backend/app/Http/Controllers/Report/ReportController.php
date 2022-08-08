@@ -1194,6 +1194,7 @@ class ReportController extends ApiController{
                 select pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan from pelayananpasien_t pt 
                 inner join produk_m pm on pm.id = pt.produkfk 
                 where strukresepfk = '$norec'
+                and pt.isobat = true
             "));
 //        dd($raw);
         if(!empty($raw)){
@@ -1216,6 +1217,7 @@ class ReportController extends ApiController{
                 select pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan from pelayananpasien_t pt 
                 inner join produk_m pm on pm.id = pt.produkfk 
                 where strukresepfk = '$norec'
+                and pt.isobat = true
             "));
         }else{
             echo 'Data Tidak ada ';

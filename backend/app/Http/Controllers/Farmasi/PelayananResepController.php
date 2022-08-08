@@ -5862,6 +5862,8 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
     public function getLaporanJasaPelayananIT(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
 
         $dataz = DB::select(DB::raw("select 
         pr.namaproduk, 
@@ -5888,6 +5890,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
         left  join produk_m pr on pr.id=pp.produkfk
         where pd.kdprofile = $kdProfile
+        and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
         and pd.statusenabled = true
         and pr.id in (5008637, 5008635, 5008644, 5008636, 5008645, 5007133, 5007131, 5007129, 5007130, 5007132, 5007127)
         group by pr.namaproduk"));

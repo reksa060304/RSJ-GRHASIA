@@ -69,6 +69,33 @@
         <div class="panel-heading" c-translate>Laporan Jasa Pelayanan TI</div>
     </div>
     <div class="panel panel-default panel-white" ng-hide="isMasuk">
+        <fieldset class="effect-shadow" style=" border-radius: 4px">
+            <legend id="filterData">
+                <a ng-click="showAndHide()">
+                    <h2><span class="fa fa-plus warnaa">
+                        </span> &nbsp;Pencarian</h2>
+                </a>
+            </legend>
+            <div class="grid_12" id="contentPencarian">
+                <div class="grid_12">
+                    <div class="grid_6">
+                        <div class="grid_4">
+                            <label c-label item="item" c-label-text="Tanggal awal"></label>
+                            <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                        </div>
+                        <div class="grid_4">
+                            <label c-label item="item" c-label-text="Tanggal Akhir"></label>
+                            <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                        </div>
+                        <div class="grid_4" style="margin-top: 20px;">
+                            <button class="c-button" ng-click="cariFilter()">Cari</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
         <!-- Tabel Hasil Pencarian -->
         <div class="grid_12" style="margin-top:50px;">
             <div class="grid_12 borderBox">
