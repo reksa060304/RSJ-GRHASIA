@@ -100,6 +100,7 @@
                         <th class="description fs-9">Nama Obat</th>
                         <th class="price fs-9">Jumlah</th>
                         <th class="price fs-9">Aturan Pakai</th>
+                        <th class="price fs-9">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -109,6 +110,7 @@
                             <td class="price fs-9" style="text-align: left"><?= $d->namaproduk; ?></td>
                             <td class="price fs-9" style="text-align: center"><?= $d->jumlah; ?></td>
                             <td class="description fs-9" style="text-align: center"><?= $d->aturanpakai; ?></td>
+                            <td class="description fs-9" style="text-align: center"><?= $d->keteranganpakai; ?></td>
                         </tr>
                     <?php } ?>
                     <tr style="height: 10px;"><td></td></tr>
