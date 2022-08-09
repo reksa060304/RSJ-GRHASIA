@@ -112,7 +112,9 @@
 </style>
 
 <div ng-show="dataVOloaded">
-	<c-panel item="item" header="'ANGGARAN'" disabled>
+	<c-panel item="item" header="'ANGGARAN'" disabled ng-if="hidekeuangan === true">
+	</c-panel>
+	<c-panel item="item" header="'KEUANGAN'" disabled ng-if="hidekeuangan === false">
 	</c-panel>
 	<!-- -->
 	<div class="grid_12">
@@ -120,7 +122,7 @@
 			<md-content>
 				<md-tabs md-dynamic-height md-border-bottom>
 					
-					<md-tab label="Setting" ng-if="hidespj === true">
+					<md-tab label="Setting" ng-if="hidespj === true && hidekeuangan === true">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding" ng-hide="false">
 
@@ -297,7 +299,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Kegiatan">
+					<md-tab label="Kegiatan" ng-if="hidekeuangan === true">
 						<md-content class="md-padding">
 							
 							<!-- <br /> -->
@@ -340,7 +342,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Mata Anggaran" ng-if="hidespj === true">
+					<md-tab label="Mata Anggaran" ng-if="hidespj === true && hidekeuangan === true">
 						<md-content class="md-padding">
 							
 								
@@ -366,7 +368,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Anggaran Kas">
+					<md-tab label="Anggaran Kas" ng-if="hidekeuangan === true">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 
