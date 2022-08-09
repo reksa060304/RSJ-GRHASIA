@@ -399,19 +399,32 @@ Dim namaRs As String
 '                     "WHERE   pd.noregistrasi = '" & strNorec & "' "
                      'and lg.jenislog='Pendaftaran Pasien'"
 '                        " where pd.noregistrasi ='" & strNorec & "' and lg.jenislog='Pendaftaran Pasien' "
-            strSQL = "SELECT  pd.noregistrasi,    ps.nocm,    ps.tgllahir,    ps.namapasien,  pd.tglregistrasi,   jk.reportdisplay AS jk, " & _
-                    "case when ap.alamatlengkap ilike '%kec.%' or ap.alamatlengkap ilike '%kab.%' or ap.alamatlengkap ilike '%kel.%'  then ap.alamatlengkap " & _
-                    "else ap.alamatlengkap ||' - Kel. '|| ap.namadesakelurahan || ' - Kec. '|| ap.namakecamatan || ' - '|| ap.namakotakabupaten end " & _
-                     " as alamatlengkap,   ap.mobilephone2,    ru.namaruangan AS ruanganPeriksa,   pp.namalengkap AS namadokter, " & _
-                     "kp.kelompokpasien,  apdp.noantrian,pd.statuspasien,apr.noreservasi,apr.tanggalreservasi " & _
-                     "FROM    pasiendaftar_t pd " & _
-                     "INNER JOIN pasien_m ps ON pd.nocmfk = ps.id LEFT JOIN alamat_m ap ON ap.nocmfk = ps.id " & _
-                     "INNER JOIN jeniskelamin_m jk ON ps.objectjeniskelaminfk = jk.id INNER JOIN ruangan_m ru ON pd.objectruanganlastfk = ru.id " & _
-                     "LEFT JOIN pegawai_m pp ON pd.objectpegawaifk = pp.id INNER JOIN kelompokpasien_m kp ON pd.objectkelompokpasienlastfk = kp.id " & _
-                     "INNER JOIN antrianpasiendiperiksa_t apdp ON apdp.noregistrasifk = pd.norec " & _
-                     "LEFT JOIN antrianpasienregistrasi_t as apr on apr.noreservasi=pd.statusschedule " & _
-                     "WHERE   pd.noregistrasi = '" & strNorec & "' "
-                                 
+'            strSQL = "SELECT  pd.noregistrasi,    ps.nocm,    ps.tgllahir,    ps.namapasien,  pd.tglregistrasi,   jk.reportdisplay AS jk, " & _
+'                    "case when ap.alamatlengkap ilike '%kec.%' or ap.alamatlengkap ilike '%kab.%' or ap.alamatlengkap ilike '%kel.%'  then ap.alamatlengkap " & _
+'                    "else ap.alamatlengkap ||' - Kel. '|| ap.namadesakelurahan || ' - Kec. '|| ap.namakecamatan || ' - '|| ap.namakotakabupaten end " & _
+'                     " as alamatlengkap,   ap.mobilephone2,    ru.namaruangan AS ruanganPeriksa,   pp.namalengkap AS namadokter, " & _
+'                     "kp.kelompokpasien,  apdp.noantrian,pd.statuspasien,apr.noreservasi,apr.tanggalreservasi " & _
+'                     "FROM    pasiendaftar_t pd " & _
+'                     "INNER JOIN pasien_m ps ON pd.nocmfk = ps.id LEFT JOIN alamat_m ap ON ap.nocmfk = ps.id " & _
+'                     "INNER JOIN jeniskelamin_m jk ON ps.objectjeniskelaminfk = jk.id INNER JOIN ruangan_m ru ON pd.objectruanganlastfk = ru.id " & _
+'                     "LEFT JOIN pegawai_m pp ON pd.objectpegawaifk = pp.id INNER JOIN kelompokpasien_m kp ON pd.objectkelompokpasienlastfk = kp.id " & _
+'                     "INNER JOIN antrianpasiendiperiksa_t apdp ON apdp.noregistrasifk = pd.norec " & _
+'                     "LEFT JOIN antrianpasienregistrasi_t as apr on apr.noreservasi=pd.statusschedule " & _
+'                     "WHERE   pd.noregistrasi = '" & strNorec & "' "
+            
+            strSQL = "SELECT x.jk, x.noregistrasi, x.nocm, x.tgllahir, x.namapasien," & _
+                    "case when x.bln = 1 then x.hr || ' Januari ' || x.thn || ' '|| x.time when x.bln = 2 then x.hr || ' Februari ' || x.thn || ' '|| x.time " & _
+                    "when x.bln = 3 then x.hr || ' Maret ' || x.thn || ' '|| x.time when x.bln = 4 then x.hr || ' April ' || x.thn || ' '|| x.time " & _
+                    "when x.bln = 5 then x.hr || ' Mei ' || x.thn || ' '|| x.time when x.bln = 6 then x.hr || ' Juni ' || x.thn || ' '|| x.time " & _
+                    "when x.bln = 7 then x.hr || ' Juli ' || x.thn || ' '|| x.time when x.bln = 8 then x.hr || ' Agustus ' || x.thn || ' '|| x.time " & _
+                    "when x.bln = 9 then x.hr || ' September ' || x.thn || ' '|| x.time when x.bln = 10 then x.hr || ' Oktober ' || x.thn || ' '|| x.time " & _
+                    "when x.bln = 11 then x.hr || ' Nopember ' || x.thn || ' '|| x.time when x.bln = 12 then x.hr || ' Desember ' || x.thn || ' '|| x.time end as tglregistrasi," & _
+                    "x.alamatlengkap , x.mobilephone2, x.ruanganperiksa, x.namaDokter, x.KelompokPasien, x.noantrian, x.statuspasien, x.noReservasi, x.tanggalreservasi " & _
+                    "FROM (SELECT pd.noregistrasi, ps.nocm, ps.tgllahir, ps.namapasien,pd.tglregistrasi,jk.reportdisplay AS jk, EXTRACT(year from pd.tglregistrasi)as thn, EXTRACT(month from pd.tglregistrasi)as bln, EXTRACT(day from pd.tglregistrasi)as hr,pd.tglregistrasi::time as time," & _
+                    "CASE WHEN ap.alamatlengkap ILIKE'%kec.%' OR ap.alamatlengkap ILIKE'%kab.%' OR ap.alamatlengkap ILIKE'%kel.%' THEN " & _
+                    "ap.alamatlengkap ELSE ap.alamatlengkap || ' - Kel. ' || ap.namadesakelurahan || ' - Kec. ' || ap.namakecamatan || ' - ' || ap.namakotakabupaten END AS alamatlengkap,ap.mobilephone2,ru.namaruangan AS ruanganPeriksa,pp.namalengkap AS namadokter,kp.kelompokpasien,apdp.noantrian,pd.statuspasien,apr.noreservasi,apr.tanggalreservasi " & _
+                    "from pasiendaftar_t pd INNER JOIN pasien_m ps ON pd.nocmfk = ps.ID LEFT JOIN alamat_m ap ON ap.nocmfk = ps.ID INNER JOIN jeniskelamin_m jk ON ps.objectjeniskelaminfk = jk.ID INNER JOIN ruangan_m ru ON pd.objectruanganlastfk = ru.ID LEFT JOIN pegawai_m pp ON pd.objectpegawaifk = pp.ID INNER JOIN kelompokpasien_m kp ON pd.objectkelompokpasienlastfk = kp.ID INNER JOIN antrianpasiendiperiksa_t apdp ON apdp.noregistrasifk = pd.norec LEFT JOIN antrianpasienregistrasi_t AS apr ON apr.noreservasi = pd.statusschedule " & _
+                    "WHERE pd.noregistrasi = '" & strNorec & "')as x"
                      
             adoReport.CommandText = strSQL
             adoReport.CommandType = adCmdUnknown
