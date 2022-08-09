@@ -385,7 +385,7 @@ class PerencanaanController extends ApiController {
         if(isset($request['idpegawai'])){
             if($request['idpegawai'] != ''){
                 $kegiatan = \DB::table('kegiatananggaran_m as dp')
-                ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
+                ->leftJoin('kelompokanggaran_m as kp','kp.id','=','dp.div')
                 ->leftJoin('pegawai_m as pg','pg.id','=','dp.objectpptkfk')
                 ->select('dp.*','kp.namakelompok', 'pg.namalengkap', DB::raw("cast(split_part(kode, '.', 1) as int4) as subkodeawal
                 , cast(split_part(kode, '.', 2) as int4) as subkodekedua
@@ -407,7 +407,7 @@ class PerencanaanController extends ApiController {
                 ->get();
             } else{
                 $kegiatan = \DB::table('kegiatananggaran_m as dp')
-                ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
+                ->leftJoin('kelompokanggaran_m as kp','kp.id','=','dp.div')
                 ->leftJoin('pegawai_m as pg','pg.id','=','dp.objectpptkfk')
                 ->select('dp.*','kp.namakelompok', 'pg.namalengkap', DB::raw("cast(split_part(kode, '.', 1) as int4) as subkodeawal
                 , cast(split_part(kode, '.', 2) as int4) as subkodekedua
@@ -429,7 +429,7 @@ class PerencanaanController extends ApiController {
             }
         } else{
             $kegiatan = \DB::table('kegiatananggaran_m as dp')
-            ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
+            ->leftJoin('kelompokanggaran_m as kp','kp.id','=','dp.div')
             ->leftJoin('pegawai_m as pg','pg.id','=','dp.objectpptkfk')
             ->select('dp.*','kp.namakelompok', 'pg.namalengkap', DB::raw("cast(split_part(kode, '.', 1) as int4) as subkodeawal
             , cast(split_part(kode, '.', 2) as int4) as subkodekedua

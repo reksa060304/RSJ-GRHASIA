@@ -31,6 +31,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.dispanjar = false
             $scope.norecspj = ''
             $scope.hidespj = true
+            $scope.hidekeuangan = true
 
             $scope.rcn = {};
             $scope.rcn.mataAnggaranlv1 = ""
@@ -101,6 +102,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
                     $scope.hidespj = false
                     idpegawai = $scope.pegawaiLogin.id
+                } else if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "Kasir"){
+                    $scope.hidekeuangan = false
+                    idpegawai = $scope.pegawaiLogin.id
+                    $scope.item.title = "KEUANGAN"
                 }
                 console.log($scope.hidespj)
                 // medifirstService.get("perencanaan/get-total-mata-anggaran").then(function (e) {
@@ -315,7 +320,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				// })
 
                 
-                
+                $scope.item.organisasi = '1.02.2.22.0.00.01.0004 - RS Jiwa GRHASIA DINKES DIY'
                 $scope.item.id = dataItem.id
                 let kodeArr = dataItem.kode.split(" ");
                 let kodeArr2 = kodeArr[0].split(".");
@@ -410,7 +415,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.targetKinerjaMasukan = formatRupiah(TotalAnggaran, "Rp. ")
                         
                     })
-                    $scope.item.subSubKegiatankode = kodeArr[1]//dataItem.kode//.substring(16) 
+                    $scope.item.subSubKegiatankode = kodeArr[0]//dataItem.kode//.substring(16) 
                     $scope.item.subSubKegiatan =  dataItem.keterangan
                     $scope.item.thnAnggaran = dataItem.tahun
                     $scope.item.pptktext = dataItem.namalengkap
@@ -2002,6 +2007,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     console.log($scope.pegawaiLogin)
                     if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
                         $scope.hidespj = false
+                        idpegawai = $scope.pegawaiLogin.id
+                    } else if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "Kasir"){
+                        $scope.hidekeuangan = false
                         idpegawai = $scope.pegawaiLogin.id
                     }
 
