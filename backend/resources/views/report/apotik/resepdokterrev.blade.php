@@ -9,12 +9,12 @@
         <style>
             .fs-11{
                 font-size: 11px;
-                font-family: 'Times New Roman';
+                font-family: 'Tahoma';
             }
 
             .fs-9{
                 font-size: 11px;
-                font-family: 'Times New Roman';
+                font-family: 'Tahoma';
             }
 
             
@@ -92,7 +92,7 @@
                 </tbody>
             </table>
 
-            <p class="centered fs-9">------Resep-----</p>
+            <p class="centered fs-11">------Resep-----</p>
             <table>
                 <thead>
                     <tr>
@@ -115,7 +115,7 @@
                 </tbody>
             </table>
 
-            <p class="centered fs-9">------Identitas Pasien-----</p>
+            <p class="centered fs-11">------Identitas Pasien-----</p>
             <table>
                 <tbody>
                     <tr>
@@ -425,7 +425,7 @@
             <p class="fs-9" style="text-align: left">Ket: </p>
             @endif
             
-            <p class="centered fs-9">------Petugas Farmasi-----</p>
+            <p class="centered fs-11">------Petugas Farmasi-----</p>
             <table>
                 <thead>
                     <tr>
@@ -436,12 +436,12 @@
                         </td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;">
                             Penelaah Resep
-                            <br><br><br><br>
+                            <br><br><br><br><br>
                             ............
                         </td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;">
                             Peracik dan Penelaah Obat
-                            <br><br><br>
+                            <br><br><br><br>
                             ............
                         </td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;">
