@@ -756,6 +756,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-data-dg-primary/{Noregistrasi}', 'EMR\EMRController@getDataDiagnosaPrimary');
           Route::post('emr/update-jawaban-konsultasi', 'EMR\EMRController@jawabKonsul');
           Route::get('emr/get-vital-sign', 'EMR\EMRController@getVitalSign');
+          Route::get('emr/get-emr-otomatis', 'EMR\EMRController@getEmrOtomatis');
+          Route::get('emr/get-validasi-emr', 'EMR\EMRController@getValidasiEMR');
           Route::get('emr/get-emrbyid', 'EMR\EMRController@getMenuEmrById');
           Route::get('emr/get-info-emr-pasien', 'EMR\EMRController@getInfoEMRPasien');
           Route::get('emr/get-data-kepatuhan-handhygiene-ipcn','EMR\EMRController@getDataKepatuhanHandHygieneIPCN');

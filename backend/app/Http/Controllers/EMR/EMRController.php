@@ -10356,5 +10356,67 @@ class EMRController  extends ApiController
         );
         return $this->respond($result);
     }
+    public function getEmrOtomatis(Request $request)
+    {
+        $noemr = $request['noemr'];
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $emrfk = $request['emrfk'];
+        $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = $emrfk and statusenabled = true and kdprofile = $kdProfile order by id
+        "));
+
+        $sec = \DB::select(DB::raw("SELECT id,id2, type from emrd_t where emrfk = $request[emrid] and statusenabled = true and kdprofile = $kdProfile order by id
+        "));
+
+        $data = \DB::select(DB::raw("SELECT emd.id,empd.emrdfk, empd.value, emd.type FROM emrpasiend_t empd 
+        inner join emrd_t emd on emd.id = empd.emrdfk 
+        where emd.emrfk = $emrfk and empd.emrpasienfk ilike '$noemr' 
+        ORDER BY empd.emrfk asc"));
+        $detail = [];
+        $id=0;
+        $value="";
+        $id2=0;
+        foreach ($main as $m) {
+            $id=0;
+            $id2=0;
+            $value="";
+            foreach ($data as $dt) {
+                if($m->id == $dt->id){
+                    $value = $dt->value;
+                    
+                }
+            }
+            foreach($sec as $s){
+                if($m->id == $s->id2){
+                    $id2= $s->id;
+                }
+            }
+            $detail[]= array(
+                "id"=> $m->id,
+                "value"=>$value,
+                "type"=> $m->type,
+                "id2"=>$id2,
+                
+            );
+            
+        }
+        $result = array(
+                'data'=> $detail,
+                // "sec"=> $sec,
+                // 'data2'=> $data,
+                'as'=> 'Fizi@Epic'
+            );
+        return $this->respond($result);
+    }
+    public function getValidasiEMR(Request $request)
+    {
+        $data = null;
+        $data = \DB::table('emrpasiend_t')->where('emrpasienfk', $request['noemr'])->where('emrfk', $request['emrfk'])->where('statusenabled', true)->where('kdprofile', 30)->get();
+        $result = array(
+            'data'=>$data,
+            'as'=>'Fizi'
+        );
+        return $this->respond($result);
+    }
 
 }
