@@ -1359,23 +1359,23 @@ define(['initialize'], function (initialize) {
                             $scope.isRouteLoading = false
                             for (let i = 0; i < datas.length; i++) {
                                 if (datas[i].id == 3002093 && datas[i].value == 2) {
-                                    $scope.item.obj[3002093] = 2
+                                    $scope.item.obj[120253] = true
                                 } else if (datas[i].id == 3002093 && datas[i].value == 1) {
-                                    $scope.item.obj[3002093] = 1
+                                    $scope.item.obj[120252] = true
                                 }
-                                
+
                                 if (datas[i].id == 3002058 && datas[i].value == 1) {
-                                    $scope.item.obj[3002058] = 1
+                                    $scope.item.obj[120246] = true
                                 } else if (datas[i].id == 3002058 && datas[i].value == 2) {
-                                    $scope.item.obj[3002058] = 2
+                                    $scope.item.obj[120247] = true
                                 } else if (datas[i].id == 3002058 && datas[i].value == 3) {
-                                    $scope.item.obj[3002058] = 3
+                                    $scope.item.obj[120248] = true
                                 } else if (datas[i].id == 3002058 && datas[i].value == 4) {
-                                    $scope.item.obj[3002058] = 4
+                                    $scope.item.obj[120249] = true
                                 } else if (datas[i].id == 3002058 && datas[i].value == 5) {
-                                    $scope.item.obj[3002058] = 5
+                                    $scope.item.obj[120250] = true
                                 } else if (datas[i].id == 3002058 && datas[i].value == 6) {
-                                    $scope.item.obj[3002058] = 6
+                                    $scope.item.obj[120251] = true
                                 }
 
                                 if (datas[i].id2 != 0) {
@@ -1383,8 +1383,10 @@ define(['initialize'], function (initialize) {
 
                                 }
                                 if (datas[i].type == "checkbox") {
-                                    $scope.item.obj[datas[i].id2] = true
-                                    console.log(datas[i].type);
+                                    if (datas[i].value == "1") {
+                                        $scope.item.obj[datas[i].id2] = true
+                                        console.log(datas[i].type);
+                                    }
                                 }
                             }
 
