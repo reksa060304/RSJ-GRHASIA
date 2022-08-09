@@ -387,30 +387,66 @@ class PerencanaanController extends ApiController {
                 $kegiatan = \DB::table('kegiatananggaran_m as dp')
                 ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
                 ->leftJoin('pegawai_m as pg','pg.id','=','dp.objectpptkfk')
-                ->select('dp.*','kp.namakelompok', 'pg.namalengkap')
+                ->select('dp.*','kp.namakelompok', 'pg.namalengkap', DB::raw("cast(split_part(kode, '.', 1) as int4) as subkodeawal
+                , cast(split_part(kode, '.', 2) as int4) as subkodekedua
+                , case when split_part(kode, '.', 3) = '' then '0' else split_part(kode, '.', 3)::int4 end as subkodeketiga
+                , case when split_part(kode, '.', 4) = '' then '0' else split_part(kode, '.', 4)::int4 end as subkodekeempat
+                , case when split_part(kode, '.', 5) = '' then '0' else split_part(kode, '.', 5)::int4 end as subkodekelima
+                , case when split_part(kode, '.', 6) = '' then '0' else split_part(kode, '.', 6)::int4 end as subkodekeenam
+                , case when split_part(kode, '.', 7) = '' then '0' else split_part(kode, '.', 7)::int4 end as subkodeakhir"))
                 ->where('dp.kdprofile', $idProfile)
                 ->where('dp.statusenabled', true)
                 ->where('dp.objectpptkfk', $request['idpegawai'])
-                ->orderBy('dp.kode')
+                ->orderBy('subkodeawal', 'asc')
+            ->orderBy('subkodekedua', 'asc')
+            ->orderBy('subkodeketiga', 'asc')
+            ->orderBy('subkodekeempat', 'asc')
+            ->orderBy('subkodekelima', 'asc')
+            ->orderBy('subkodekeenam', 'asc')
+            ->orderBy('subkodeakhir', 'asc')
                 ->get();
             } else{
                 $kegiatan = \DB::table('kegiatananggaran_m as dp')
                 ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
                 ->leftJoin('pegawai_m as pg','pg.id','=','dp.objectpptkfk')
-                ->select('dp.*','kp.namakelompok', 'pg.namalengkap')
+                ->select('dp.*','kp.namakelompok', 'pg.namalengkap', DB::raw("cast(split_part(kode, '.', 1) as int4) as subkodeawal
+                , cast(split_part(kode, '.', 2) as int4) as subkodekedua
+                , case when split_part(kode, '.', 3) = '' then '0' else split_part(kode, '.', 3)::int4 end as subkodeketiga
+                , case when split_part(kode, '.', 4) = '' then '0' else split_part(kode, '.', 4)::int4 end as subkodekeempat
+                , case when split_part(kode, '.', 5) = '' then '0' else split_part(kode, '.', 5)::int4 end as subkodekelima
+                , case when split_part(kode, '.', 6) = '' then '0' else split_part(kode, '.', 6)::int4 end as subkodekeenam
+                , case when split_part(kode, '.', 7) = '' then '0' else split_part(kode, '.', 7)::int4 end as subkodeakhir"))
                 ->where('dp.kdprofile', $idProfile)
                 ->where('dp.statusenabled', true)
-                ->orderBy('dp.kode')
+                ->orderBy('subkodeawal', 'asc')
+            ->orderBy('subkodekedua', 'asc')
+            ->orderBy('subkodeketiga', 'asc')
+            ->orderBy('subkodekeempat', 'asc')
+            ->orderBy('subkodekelima', 'asc')
+            ->orderBy('subkodekeenam', 'asc')
+            ->orderBy('subkodeakhir', 'asc')
                 ->get();
             }
         } else{
             $kegiatan = \DB::table('kegiatananggaran_m as dp')
             ->join('kelompokanggaran_m as kp','kp.id','=','dp.div')
             ->leftJoin('pegawai_m as pg','pg.id','=','dp.objectpptkfk')
-            ->select('dp.*','kp.namakelompok', 'pg.namalengkap')
+            ->select('dp.*','kp.namakelompok', 'pg.namalengkap', DB::raw("cast(split_part(kode, '.', 1) as int4) as subkodeawal
+            , cast(split_part(kode, '.', 2) as int4) as subkodekedua
+            , case when split_part(kode, '.', 3) = '' then '0' else split_part(kode, '.', 3)::int4 end as subkodeketiga
+            , case when split_part(kode, '.', 4) = '' then '0' else split_part(kode, '.', 4)::int4 end as subkodekeempat
+            , case when split_part(kode, '.', 5) = '' then '0' else split_part(kode, '.', 5)::int4 end as subkodekelima
+            , case when split_part(kode, '.', 6) = '' then '0' else split_part(kode, '.', 6)::int4 end as subkodekeenam
+            , case when split_part(kode, '.', 7) = '' then '0' else split_part(kode, '.', 7)::int4 end as subkodeakhir"))
             ->where('dp.kdprofile', $idProfile)
             ->where('dp.statusenabled', true)
-            ->orderBy('dp.kode')
+            ->orderBy('subkodeawal', 'asc')
+            ->orderBy('subkodekedua', 'asc')
+            ->orderBy('subkodeketiga', 'asc')
+            ->orderBy('subkodekeempat', 'asc')
+            ->orderBy('subkodekelima', 'asc')
+            ->orderBy('subkodekeenam', 'asc')
+            ->orderBy('subkodeakhir', 'asc')
             ->get();
         }
         
@@ -506,11 +542,17 @@ class PerencanaanController extends ApiController {
         }
 
         
-        $mata = DB::select(DB::raw("select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen  
-                from mataanggaran_m ma 
-                left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
-                where ma.statusenabled = true and ma.kdprofile = 30
-                order by ma.kodemataanggaran
+        $mata = DB::select(DB::raw("select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen 
+        , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+        , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+        , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+                        from mataanggaran_m ma 
+                        left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
+                        where ma.statusenabled = true and ma.kdprofile = 30
+                        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc 
+        
             ")
         );
 

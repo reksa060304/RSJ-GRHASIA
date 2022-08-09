@@ -637,8 +637,217 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div class="col-lg-6 col-md-12">
+                                            <div class="card">
+                                                <div class="panel panel-purple">
+                                                    <div class="panel-heading bg-purple">
+                                                        E-Resep Dokter
+                                                    </div>
+                                                    @php
+            
+                                                        $sama = false;
+                                                 
+                                                        $resultSumDep =   App\Http\Controllers\MainController::getOrderResep(request()->get("tglawal"),request()->get("tglakhir"));
+                                            
+                                                     
+                                                    @endphp
+                                                    <div class="panel-body" >
+                                                        <div class="row" style="padding:10px 20px;">
+                                                            <div class="col-md-12">
+                                                                <div class="table-responsive" >
+                                                                    <table class="table  table-striped table-sm table-styling" id="t_E-RESEP"
+                                                                        style="width:100%">
+                                                                        <thead class="table-default">
+                                                                        <tr>
+                                                                            <th style="color:black;width: 10%">NO </th>
+                                                                            <th style="color:black">DOKTER </th>
+                                                                            <th style="color:black">JUMLAH RESEP </th>
+                                                                            <th style="color:black;width: 10%"># </th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+            
+                                                                        @forelse($resultSumDep as $i => $d)
+            
+                                                                            <tr>
+                                                                                <td >{{ $i +1 }}</td>
+                                                                                <td >{{ $d->dokter }}</td>
+                                                                                <td >{{ $d->count }}</td>
+                                                                                <td ><a href='#'   class="btn btn-danger btn-outline-danger btn-mini click-eresep"
+                                                                                    data-doktere="{{ $d->iddokter }}"
+                                                                                    nama-doktere="{{ $d->dokter }}" >
+                                                                                <i class='icofont icofont-search'></i></a>
+                                                                            </td>
+                                                                            </tr>
+                                                                        @empty
+                                                                            <tr>
+                                                                                <td colspan="4" style="text-align: center">Data Tidak ada</td>
+                                                                            </tr>
+                                                                        @endforelse
+            
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="card">
+                                                <div class="panel panel-purple">
+                                                    <div class="panel-heading bg-info">
+                                                        Elektronik Medical Record
+                                                    </div>
+                                                    @php
+            
+                                                        $sama = false;
+                                                 
+                                                        $resultSumDep =   App\Http\Controllers\MainController::getEMR(request()->get("tglawal"),request()->get("tglakhir"));
+                                            
+                                                     
+                                                    @endphp
+                                                    <div class="panel-body" >
+                                                        <div class="row" style="padding:10px 20px;">
+                                                            <div class="col-md-12">
+                                                                <div class="table-responsive" >
+                                                                    <table class="table  table-striped table-sm table-styling" id="t_EMR"
+                                                                        style="width:100%">
+                                                                        <thead class="table-default">
+                                                                        <tr>
+                                                                            <th style="color:black;width: 10%">NO </th>
+                                                                            <th style="color:black">Nama </th>
+                                                                            <th style="color:black">Jumlah  </th>
+                                                                            <th style="color:black;width: 10%"># </th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+            
+                                                                        @forelse($resultSumDep as $i => $d)
+            
+                                                                            <tr>
+                                                                                <td >{{ $i +1 }}</td>
+                                                                                <td >{{ $d->dokter }}</td>
+                                                                                <td >{{ $d->count }}</td>
+                                                                                <td ><a href='#'   class="btn btn-danger btn-outline-danger btn-mini click-EMR"
+                                                                                data-doktere="{{ $d->iddokter }}"
+                                                                                nama-doktere="{{ $d->dokter }}" >   
+                                                                                
+                                                                                <i class='icofont icofont-search'></i></a>
+                                                                            </td>
+                                                                            </tr>
+                                                                        @empty
+                                                                            <tr>
+                                                                                <td colspan="4" style="text-align: center">Data Tidak ada</td>
+                                                                            </tr>
+                                                                        @endforelse
+            
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="card">
+                                                <div class="panel panel-purple">
+                                                    <div class="panel-heading bg-info">
+                                                        Persentase Elektronik Medical Record
+                                                    </div>
+                                                    @php
+            
+                                                        $sama = false;
+                                                 
+                                                        $resultSumDep =   App\Http\Controllers\MainController::getEMRPersentase(request()->get("tglawal"),request()->get("tglakhir"));
+                                            
+                                                     
+                                                    @endphp
+                                                    <div class="panel-body" >
+                                                        <div class="row" style="padding:10px 20px;">
+                                                            <div class="col-md-12">
+                                                                <div class="table-responsive" >
+                                                                    <table class="table  table-striped table-sm table-styling" id="t_PersenEMR"
+                                                                        style="width:100%">
+                                                                        <thead class="table-default">
+                                                                        <tr>
+                                                                            <th style="color:black;width: 10%">NO </th>
+                                                                            <th style="color:black">Nama </th>
+                                                                            <th style="color:black">Pasien </th>
+                                                                            <th style="color:black">EMR </th>
+                                                                            <th style="color:black">Persentase  </th>
+                                                                            
+                                                                            
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+            
+                                                                        @forelse($resultSumDep as $i => $d)
+            
+                                                                            <tr>
+                                                                                <td >{{ $i +1 }}</td>
+                                                                                <td >{{ $d->dokter }}</td>
+                                                                                <td >{{ $d->jmlpasien }}</td>
+                                                                                <td >{{ $d->count }}</td>
+                                                                                <td >{{ $d->persen }}</td>
+                                                                            </tr>
+                                                                               
+                                                                            </tr>
+                                                                        @empty
+                                                                            <tr>
+                                                                                <td colspan="4" style="text-align: center">Data Tidak ada</td>
+                                                                            </tr>
+                                                                        @endforelse
+            
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                             
+                        <div class="modal fade" id="modalERESEP" tabindex="-1" role="dialog">
+                            <div class="modal-dialog modal-lg"  role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title"><span id="titleModalERESEP"></span></h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" id="load_eresep">
+                                    </div>
+
+                                    <div class="modal-footer">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="modalEMR" tabindex="-1" role="dialog">
+                            <div class="modal-dialog modal-lg"  role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title"><span id="titleModalEMR"></span></h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" id="load_EMR">
+                                    </div>
+
+                                    <div class="modal-footer">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         </div >
 
                     </form>
@@ -2227,6 +2436,43 @@
                 }
             });
         })
+
+        
+
+        $(".click-eresep").click(function(e) {
+            e.preventDefault();
+            var dokter = $(this).attr("data-doktere");
+            var nama = $(this).attr("nama-doktere");
+            
+            document.getElementById("titleModalERESEP").innerHTML = nama
+            $.ajax({
+                type    : 'GET',
+                url     : APP_URL+'/get-detail-layanan-eresep',
+                data    : { dokter:dokter,tglawal:$('#tglawal').val(),tglakhir:$('#tglakhir').val()},
+                success : function(respond){
+                    $('#modalERESEP').modal("show");
+                    $("#load_eresep").html(respond);
+                }
+            })
+        })
+
+        $(".click-EMR").click(function(e) {
+            e.preventDefault();
+            var dokter = $(this).attr("data-doktere");
+            var nama = $(this).attr("nama-doktere");
+            
+            document.getElementById("titleModalEMR").innerHTML = nama
+            $.ajax({
+                type    : 'GET',
+                url     : APP_URL+'/get-detail-layanan-emr',
+                data    : { dokter:dokter,tglawal:$('#tglawal').val(),tglakhir:$('#tglakhir').val()},
+                success : function(respond){
+                    $('#modalEMR').modal("show");
+                    $("#load_EMR").html(respond);
+                }
+            })
+        })
+       
 
         $("#comboAsalRujukan").on('select2:select', function(){
             var tglawal = $("#tglawal").val();

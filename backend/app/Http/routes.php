@@ -808,6 +808,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
         // Route::group(['prefix' => 'farmasi'], function () {
           Route::get('farmasi/get-daftar-order', 'Farmasi\ResepElektronikController@getDaftarOrder');
+          Route::get('farmasi/get-penjagaan-order-sudah-verif', 'Farmasi\ResepElektronikController@getPenjagaanOrderSudahVerif');
           Route::get('farmasi/get-alergi', 'Farmasi\ResepElektronikController@getAlergi');
           Route::get('farmasi/get-daftar-detail-order', 'Farmasi\ResepElektronikController@getDaftarDetailOrder');
           Route::post('farmasi/save-status-resepelektonik', 'Farmasi\ResepElektronikController@saveStatusResepElektronik');
@@ -1924,6 +1925,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-lap-paseinrj-per-dokpemeriksa','Registrasi\LaporanPengunjungController@getLaporanPasienRJPerDokterPemeriksa');
               Route::get('registrasi/laporan/get-data-lap-pasien-dpjp','Registrasi\LaporanPengunjungController@getLaporanPasienDPJP');
               Route::get('registrasi/laporan/get-laporan-topten-diagnosa','Registrasi\RegistrasiController@getTopTenDiagnosa');
+              Route::get('registrasi/laporan/get-laporan-topten-diagnosa-9','Registrasi\RegistrasiController@getTopTenDiagnosa9');
               Route::get('registrasi/laporan/get-data-lap-kinerja-bayar-rj','Registrasi\RegistrasiController@getLaporanKinerjaBayarRJ');
               Route::get('registrasi/laporan/get-data-lap-kinerja-bayar-ri','Registrasi\RegistrasiController@getLaporanKinerjaBayarRI');
               Route::get('registrasi/laporan/get-data-lap-kinerja-kun-igd','Registrasi\RegistrasiController@getLaporanKinerjaKunjunganIGD');

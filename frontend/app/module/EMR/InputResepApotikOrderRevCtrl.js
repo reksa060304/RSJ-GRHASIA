@@ -1525,57 +1525,60 @@ define(['initialize'], function (initialize) {
                     toastr.error('Pilih data dulu')
                     return
                 }
-                if ($scope.dataSelectedRiwayat.statusorder != "Menunggu") {
-                    toastr.error('Tidak bisa di edit sudah di verifikasi')
-                    return
-                }
 
-                medifirstService.get("farmasi/get-detail-order?noorder=" + $scope.dataSelectedRiwayat.noorder, true).then(function (dat) {
-                    $scope.isRouteLoading = false;
-                    $scope.norecOrder = $scope.dataSelectedRiwayat.norec_order
-                    $scope.item.resep = $scope.dataSelectedRiwayat.noorder
-                    $scope.item.ruangan = { id: dat.data.strukorder.id, namaruangan: dat.data.strukorder.namaruangan }
-                    $scope.disabledRuangan = true;
-                    $scope.item.penulisResep = { id: dat.data.strukorder.pgid, namalengkap: dat.data.strukorder.namalengkap }
-                    $scope.item.tglresep = new Date(dat.data.strukorder.tglorder)
-                    $scope.item.tglresepAkhir = new Date(dat.data.strukorder.tglorder)
-                    if ($scope.dataSelectedRiwayat.reseppulang == "✔") {
-                        $scope.checkResepPulang = true;
-                    }else{
-                        $scope.checkResepPulang = false;
+
+                medifirstService.get("farmasi/get-penjagaan-order-sudah-verif?noorder=" + $scope.dataSelectedRiwayat.noorder, true).then(function (dat) {
+                    if (dat.data[0].data[0].statusorder == 5) {
+                        messageContainer.error('Tidak bisa di edit sudah di verifikasi');
+                    } else if (dat.data[0].data[0].statusorder == 0) {
+                        medifirstService.get("farmasi/get-detail-order?noorder=" + $scope.dataSelectedRiwayat.noorder, true).then(function (dat) {
+                            $scope.isRouteLoading = false;
+                            $scope.norecOrder = $scope.dataSelectedRiwayat.norec_order
+                            $scope.item.resep = $scope.dataSelectedRiwayat.noorder
+                            $scope.item.ruangan = { id: dat.data.strukorder.id, namaruangan: dat.data.strukorder.namaruangan }
+                            $scope.disabledRuangan = true;
+                            $scope.item.penulisResep = { id: dat.data.strukorder.pgid, namalengkap: dat.data.strukorder.namalengkap }
+                            $scope.item.tglresep = new Date(dat.data.strukorder.tglorder)
+                            $scope.item.tglresepAkhir = new Date(dat.data.strukorder.tglorder)
+                            if ($scope.dataSelectedRiwayat.reseppulang == "✔") {
+                                $scope.checkResepPulang = true;
+                            }else{
+                                $scope.checkResepPulang = false;
+                            }
+        
+                            if ($scope.dataSelectedRiwayat.cito == "✔") {
+                                $scope.item.iscito = true;
+                            }else{
+                                $scope.item.iscito = false;
+                            }
+                            
+                            data2 = dat.data.orderpelayanan
+                            for (var i = data2.length - 1; i >= 0; i--) {
+        
+        
+        
+                                data2[i].noregistrasifk = norec_apd//$scope.item.noRegistrasi
+                                data2[i].tglregistrasi = $scope.item.tglregistrasi
+        
+                                data2[i].kelasfk = $scope.item.kelas.id
+        
+                            }
+        
+                            $scope.dataGrid = new kendo.data.DataSource({
+                                data: data2
+                            });
+        
+        
+                            var subTotal = 0;
+                            for (var i = data2.length - 1; i >= 0; i--) {
+                                subTotal = subTotal + parseFloat(data2[i].total)
+                            }
+                            $scope.item.totalSubTotal = subTotal
+                            $scope.riwayatFormResep = false
+                            $scope.riwayatForm = false
+                            $scope.inputObatOrder = true;
+                        });
                     }
-
-                    if ($scope.dataSelectedRiwayat.cito == "✔") {
-                        $scope.item.iscito = true;
-                    }else{
-                        $scope.item.iscito = false;
-                    }
-                    
-                    data2 = dat.data.orderpelayanan
-                    for (var i = data2.length - 1; i >= 0; i--) {
-
-
-
-                        data2[i].noregistrasifk = norec_apd//$scope.item.noRegistrasi
-                        data2[i].tglregistrasi = $scope.item.tglregistrasi
-
-                        data2[i].kelasfk = $scope.item.kelas.id
-
-                    }
-
-                    $scope.dataGrid = new kendo.data.DataSource({
-                        data: data2
-                    });
-
-
-                    var subTotal = 0;
-                    for (var i = data2.length - 1; i >= 0; i--) {
-                        subTotal = subTotal + parseFloat(data2[i].total)
-                    }
-                    $scope.item.totalSubTotal = subTotal
-                    $scope.riwayatFormResep = false
-                    $scope.riwayatForm = false
-                    $scope.inputObatOrder = true;
                 });
             }
 

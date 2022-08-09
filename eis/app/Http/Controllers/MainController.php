@@ -1292,6 +1292,200 @@ class MainController extends ApiController
                 "));
             return $results;
     }
+    public static function getOrderResep($dari, $sampai)
+    {
+
+        $idProfile = (int)session("kdProfile");
+
+        $tglAwal = date($dari.' 00:00');
+        $tglAkhir = date($sampai.' 23:59');
+
+        $results = DB::select(DB::raw("
+        select pg.id as iddokter,pg.namalengkap as dokter,count(so.norec) as count
+        from strukorder_t as so 
+        inner join pasiendaftar_t as pd on pd.norec = so.noregistrasifk
+        inner JOIN pasien_m AS ps ON ps.id = so.nocmfk
+        inner join pegawai_m as pg on pg.id =so.objectpegawaiorderfk
+        left join strukresep_t as sr on sr.orderfk=so.norec
+        where  so.tglorder BETWEEN '$tglAwal'  and '$tglAkhir'
+        and so.kdprofile=$idProfile
+        and so.objectkelompoktransaksifk = 4 and so.keteranganorder = 'Order Farmasi'
+        and so.statusenabled = true
+        group by pg.namalengkap,pg.id
+        "));
+        if(count($results) > 0){
+            foreach ($results as $key => $row) {
+                $count2[$key] = $row->count;
+            }
+            array_multisort($count2, SORT_DESC, $results);
+        }
+        return $results;
+    }
+    public function getDetailLayananRESEP(Request $r){
+        $idProfile = (int) session("kdProfile");
+
+        $tglAwal = date($r['tglawal'].' 00:00');
+        $tglAkhir = date($r['tglakhir'].' 23:59');
+
+        $data = DB::select(DB::raw("
+                select pg.id as iddokter,so.norec,pg.namalengkap as dokter,so.tglorder,so.noorder,sr.noresep,
+                ps.namapasien,ps.nocm,pd.noregistrasi
+                from strukorder_t as so 
+                inner join pasiendaftar_t as pd on pd.norec = so.noregistrasifk
+                inner JOIN pasien_m AS ps ON ps.id = so.nocmfk
+                inner join pegawai_m as pg on pg.id =so.objectpegawaiorderfk
+                left join strukresep_t as sr on sr.orderfk=so.norec
+                where  so.tglorder BETWEEN '$tglAwal'  and '$tglAkhir'
+                and so.kdprofile=$idProfile
+                and so.objectkelompoktransaksifk = 4 and so.keteranganorder = 'Order Farmasi'
+                and so.statusenabled = true
+                and pg.id='$r[dokter]'
+        "));
+ 
+        return view('module.shared.detail-eresep',compact('data'));
+
+
+    }
+    public static function getEMR($dari, $sampai)
+    {
+
+        $idProfile = (int)session("kdProfile");
+
+        $tglAwal = date($dari.' 00:00');
+        $tglAkhir = date($sampai.' 23:59');
+
+        $results = DB::select(DB::raw("
+            select namalengkap as dokter,count(noemr),pegawaifk as iddokter from ( SELECT DISTINCT 
+            ep.noemr ,pegawaifk,
+            pg.namalengkap 
+            FROM
+                emrpasien_t AS ep
+             LEFT JOIN pegawai_m  as pg ON ep.pegawaifk = pg.id 
+            WHERE
+            ep.statusenabled = 't' 
+            AND tglemr BETWEEN '$tglAwal'  and '$tglAkhir' and
+            ep.statusenabled = 't' and ep.kdprofile=$idProfile and pg.objectjenispegawaifk='1' 
+            ) as  d GROUP BY dokter,iddokter
+
+           
+        "));
+        $jmldata = DB::select(DB::raw("
+            SELECT
+                count(objectpegawaifk) as jumlah,objectpegawaifk
+            FROM
+                pasiendaftar_t AS pd         
+            WHERE
+            pd.statusenabled = 't' 
+            AND tglregistrasi BETWEEN '$tglAwal'  and '$tglAkhir' and
+            pd.kdprofile=$idProfile 
+            GROUP BY objectpegawaifk     
+        "));
+        if(count($results) > 0){
+            $i =0;
+            foreach ($results as $key => $row) {
+                $results[$i]->persen = 0;
+                $results[$i]->jmlpasien =0;
+                foreach($jmldata as $jml){
+                    if ($results[$i]->iddokter==$jml->objectpegawaifk  ){
+                        $results[$i]->persen = $results[$i]->count/$jml->jumlah*100;
+                        $results[$i]->jmlpasien =$jml->jumlah;
+                        // dd( $results[$i]->persen); 
+                    }
+
+                } 
+                $i++;
+
+                $count2[$key] = $row->count;
+            }
+            array_multisort($count2, SORT_DESC, $results);
+        }
+        // dd($results);
+        return $results;
+    }
+    public function getDetailLayananEMR(Request $r){
+        $idProfile = (int) session("kdProfile");
+
+        $tglAwal = date($r['tglawal'].' 00:00');
+        $tglAkhir = date($r['tglakhir'].' 23:59');
+
+        $data = DB::select(DB::raw("
+                SELECT
+                ep.tglemr,ep.noemr,ep.namapasien,emr.caption
+                FROM
+                emrpasien_t AS ep
+                INNER JOIN emr_t as emr ON ep.emrfk = emr.id
+                where  ep.tglemr BETWEEN '$tglAwal'  and '$tglAkhir'
+                and ep.kdprofile=$idProfile       
+                and ep.pegawaifk='$r[dokter]'
+        "));
+ 
+        return view('module.shared.detail-emr',compact('data'));
+
+
+    }
+    public static function getEMRPersentase($dari, $sampai)
+    {
+
+        $idProfile = (int)session("kdProfile");
+
+        $tglAwal = date($dari.' 00:00');
+        $tglAkhir = date($sampai.' 23:59');
+
+        $results = DB::select(DB::raw("
+        select namalengkap as dokter,count(noregistrasi),pegawaifk as iddokter from ( 
+            SELECT DISTINCT 
+            emrd.pegawaifk,
+            pg.namalengkap, pd.noregistrasi, emrd.emrfk, emrd.emrpasienfk 
+            FROM
+                emrpasien_t AS ep
+            inner join emrpasiend_t emrd on emrd.emrpasienfk = ep.noemr
+            inner join pasiendaftar_t pd on pd.noregistrasi = ep.noregistrasifk
+            inner join pegawai_m AS pg on pg.id = pd.objectpegawaifk  and emrd.pegawaifk = pg.id
+            WHERE
+            ep.statusenabled = 't' 
+            AND pd.tglregistrasi BETWEEN '$tglAwal'  and '$tglAkhir' and pg.objectjenispegawaifk='1' and 
+            ep.statusenabled = 't' and ep.kdprofile=$idProfile
+        ) as  d GROUP BY dokter,iddokter;
+
+           
+        "));
+        $jmldata = DB::select(DB::raw("
+            SELECT
+                count(pd.noregistrasi) as jumlah,pg.id objectpegawaifk
+            FROM
+                pasiendaftar_t AS pd 
+            inner join pegawai_m AS pg on pg.id = pd.objectpegawaifk        
+            WHERE
+            pd.statusenabled = 't' 
+            AND pd.tglregistrasi BETWEEN '$tglAwal'  and '$tglAkhir' and
+            pd.kdprofile=$idProfile  
+            GROUP BY pg.id    
+        "));
+        //dd($results);
+        if(count($results) > 0){
+            $i =0;
+            foreach ($results as $key => $row) {
+                $results[$i]->persen = 0;
+                $results[$i]->jmlpasien =0;
+                foreach($jmldata as $jml){
+                    if ($results[$i]->iddokter==$jml->objectpegawaifk  ){
+                        $results[$i]->persen = $results[$i]->count/$jml->jumlah*100;
+                        $results[$i]->jmlpasien =$jml->jumlah;
+                        // dd( $results[$i]->persen); 
+                    }
+
+                } 
+                $i++;
+
+                $count2[$key] = $row->count;
+            }
+            array_multisort($count2, SORT_DESC, $results);
+        } else{
+            $results = $results;
+        }
+        
+        return $results;
+    }
     public static function getABK($tglAwal,$tglAkhir,$kdProfile)
     {
 

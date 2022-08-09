@@ -10,6 +10,8 @@ define(['initialize'], function (initialize) {
             $scope.date = new Date();
             $scope.dataSelected = {};
             $scope.item.jmlRows = 50;
+            $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
+            $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
             FormLoad();
 
             function LoadCombo() {
@@ -25,12 +27,21 @@ define(['initialize'], function (initialize) {
                 $scope.listRuangan = $scope.item.departement.ruangan
             }
 
+            $scope.cariFilter = function(){
+                init()
+            }
+
             
             function init() {
                 $scope.isRouteLoading = true;
+
+                var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
+                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
-                medifirstService.get("farmasi/get-laporan-jasa-pelayanan-it?"
+                medifirstService.get("farmasi/get-laporan-jasa-pelayanan-it?" +
+                "tglAwal=" + tglAwal +
+                "&tglAkhir=" + tglAkhir
                     ).then(function (dat) {
                         
                         for (var i = 0; i < dat.data.detail.length; i++) {

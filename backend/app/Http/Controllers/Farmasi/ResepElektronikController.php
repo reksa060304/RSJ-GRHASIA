@@ -126,7 +126,7 @@ class ResepElektronikController extends ApiController
                         kp.kelompokpasien,apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,so.tglambilorder,
                         sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,sr.norec AS norecresep,sr.noresep,so.nourutruangan AS noruangan,
                         so.isreseppulang as checkreseppulang,so.isambilobat,so.cito,so.no_hp as nohp,so.alamat_kirim AS alamatlengkap,so.isordergrab,
-                        so.iskurir , pd.statusschedule as noreservasi,case when sp.norec is not null then true else false end as isbayar
+                        so.iskurir , pd.statusschedule as noreservasi,case when sp.norec is not null then true else false end as isbayar, pd.norec norec_pd
                  FROM strukorder_t AS so
                  INNER JOIN pasien_m AS ps ON ps.id = so.nocmfk
                  INNER JOIN alamat_m AS alm ON ps.id = alm.nocmfk
@@ -169,7 +169,7 @@ class ResepElektronikController extends ApiController
                          apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,sr.tglambilresep AS tglambilorder,
                          sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,sr.norec AS norecresep,sr.noresep,NULL AS noruangan,
                          sr.isreseppulang as checkreseppulang,null as isambilobat,null as cito,ps.nohp,alm.alamatlengkap, null as isordergrab,
-                         null as iskurir, '' as noreservasi,case when sp.norec is not null then true else false end as isbayar
+                         null as iskurir, '' as noreservasi,case when sp.norec is not null then true else false end as isbayar, pd.norec norec_pd
                 FROM strukresep_t AS sr
                 INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = sr.pasienfk
                 INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
@@ -222,6 +222,7 @@ class ResepElektronikController extends ApiController
                 'norec' => $item->noregistrasifk,
                 'tglregistrasi' => $item->tglregistrasi,
                 'norec_apd' => $item->norec_apd,
+                'norec_pd' => $item->norec_pd,
                 'noorder' => $item->noorder,
                 'nocm' => $item->nocm,
                 'namapasien' => $item->namapasien,
@@ -255,6 +256,21 @@ class ResepElektronikController extends ApiController
 
         return $this->respond($result);
 
+    }
+
+    public function getPenjagaanOrderSudahVerif(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $noorder = $request['noorder'];
+
+        $data = DB::select(DB::raw("
+            SELECT statusorder from strukorder_t where noorder = '$noorder'
+        "));
+
+        $result[] = array(
+            'data' =>$data,
+        );
+
+        return $this->respond($result);
     }
 
 //    public function getDaftarOrderNew(Request $request){

@@ -5113,30 +5113,31 @@ class LaporanRekamMedisController extends   ApiController
                 (case when jk.id = 2 and sk.id != 5  then count(dm.kddiagnosa) else 0 end) as jumlahhmp,
                 (case when jk.id = 1 and sk.id = 5 then count(dm.kddiagnosa) else 0 end) as jumlahml,
                 (case when jk.id = 2 and sk.id = 5 then count(dm.kddiagnosa) else 0 end) as jumlahmp,
-                ((case when jk.id = 1 and sk.id != 5 then count(dm.kddiagnosa) else 0 end) + (case when jk.id = 2 and sk.id != 5 then count(dm.kddiagnosa) else 0 end) + (case when jk.id = 1 and sk.id = 5 then count(dm.kddiagnosa) else 0 end) + (case when jk.id = 2 and sk.id = 5 then count(dm.kddiagnosa) else 0 end)) as totalall,
+								count(dm.kddiagnosa) totalall,
                 pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id idprofile
                 from pasiendaftar_t as pd
-        inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
-        inner join pasien_m as ps on ps.id = pd.nocmfk
-        inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
-        inner join ruangan_m ru on ru.id = app.objectruanganfk
-        inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
-        inner join profile_m pr on pr.id = pd.kdprofile
-        inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
-        inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
-		inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
-		inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
-		left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
-        left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
+                inner join antrianpasiendiperiksa_t as app on app.noregistrasifk = pd.norec 
+                inner join pasien_m as ps on ps.id = pd.nocmfk
+                inner join jeniskelamin_m as jk on ps.objectjeniskelaminfk = jk.id
+                inner join ruangan_m ru on ru.id = app.objectruanganfk
+                inner join departemen_m dpm on dpm.id = ru.objectdepartemenfk
+                inner join profile_m pr on pr.id = pd.kdprofile
+                inner join diagnosapasien_t as dp on dp.noregistrasifk = app.norec
+                inner join detaildiagnosapasien_t as ddp on ddp.objectdiagnosapasienfk = dp.norec
+                inner join diagnosa_m as dm on ddp.objectdiagnosafk = dm.id
+                inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
+								left join statuskeluar_m sk on sk.id = pd.objectstatuskeluarfk
+								left join statuspulang_m sp on sp.id = pd.objectstatuspulangfk
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
         and ru.objectdepartemenfk = 16
+				and dm.kddiagnosa <> '-'
         --and (jd.id = 1 or jd.id = 7)
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
-                group by to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'), dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
+        and pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir' 
+        group by to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'), dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
         ) as x
         group by x.month, x.idmonth, x.year,x.nodaftarterperinci, x.golongansebabpenyakit, x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile
-        order by totalall desc limit 10;"));
+        order by totalall desc limit 10"));
         
 
         $result = array(
@@ -5154,7 +5155,7 @@ class LaporanRekamMedisController extends   ApiController
 
         $data = DB::select(DB::raw("select x.month, x.idmonth, x.year,x.nodaftarterperinci, x.golongansebabpenyakit, 
         sum(x.jumlahbarul) jumlahbarul, sum(x.jumlahbarup) jumlahbarup, sum(x.jumlahbaru) jumlahbaru, sum(x.jumlahkunjungan) jumlahkunjungan,
-        x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile, x.iskasusbaru
+        x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile
         from(
                 select to_char(pd.tglregistrasi, 'Month') as month, to_char(pd.tglregistrasi, 'mm') as idmonth, to_char(pd.tglregistrasi, 'YYYY') as year,dm.kddiagnosa as nodaftarterperinci, dm.namadiagnosa as golongansebabpenyakit,
                 (case when jk.id = 1 and dp.iskasusbaru = true  then count(dm.kddiagnosa) else 0 end) as jumlahbarul,
@@ -5176,12 +5177,12 @@ class LaporanRekamMedisController extends   ApiController
         where pd.statusenabled = true 
         and pd.kdprofile = $kdProfile 
         and ru.objectdepartemenfk <> 16
-        --and (jd.id = 1 or jd.id = 7)
         and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+				and dm.kddiagnosa <> '-'
         group by to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'), dm.kddiagnosa, dm.namadiagnosa, jk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, dp.iskasusbaru
         ) as x
-        group by x.month, x.idmonth, x.year,x.nodaftarterperinci, x.golongansebabpenyakit, x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile, x.iskasusbaru
-        order by jumlahbaru desc, jumlahkunjungan desc limit 10;"));
+        group by x.month, x.idmonth, x.year,x.nodaftarterperinci, x.golongansebabpenyakit, x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile
+        order by jumlahkunjungan desc limit 10"));
         
         $result = array(
             'data' => $data,
