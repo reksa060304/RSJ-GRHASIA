@@ -3271,6 +3271,14 @@
         {
             "nameDep": "PanssEcTableCtrl",
             "urlDep": "module/EMR/PanssEcTableCtrl"
+        },
+        {
+            "nameDep": "MenuIndexCtrl",
+            "urlDep": "module/EMR/MenuIndexCtrl"
+        },
+        {
+            "nameDep": "NormaPsikologiCtrl",
+            "urlDep": "module/RawatJalan/NormaPsikologiCtrl"
         }
     ]
 }

@@ -8787,7 +8787,7 @@ class EMRController  extends ApiController
 
     public function getMenuEmrById(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        if(  $request['id']!='' && $request['id']!='null'){
+        if(  $request['id']!='' && $request['id']!='null' &&  $request['id']!='undefined'){
              $dataRaw = \DB::table('emr_t as emr')
             ->where('emr.kdprofile',$kdProfile)
             ->where('emr.statusenabled', true)
@@ -8975,7 +8975,10 @@ class EMRController  extends ApiController
 
         DB::beginTransaction();
         try {
-
+            $idx = null;
+            if (isset($head['index'])) {
+                $idx = $head['index'];
+            }
             if ($head['norec_emr'] == '-') {
 
                 $noemr = $this->generateCodeBySeqTable(new EMRPasien, 'noemr', 15, 'MR' . date('ym') . '/',$kdProfile);
@@ -9018,6 +9021,7 @@ class EMRController  extends ApiController
                 $EMRPASIENDETAIL = EMRPasienD::where('emrpasienfk', $noemr)
                     ->select('emrdfk','value')
                     ->where('emrfk', $head['emrfk'])
+                    ->where('index', $idx)
                     ->where('kdprofile',$kdProfile)
                     ->where('statusenabled', 1)
                     ->orderBy('emrdfk')
@@ -9026,11 +9030,22 @@ class EMRController  extends ApiController
                     $EMRPASIENDETAILIMG = EmrFoto::where('noemrpasienfk', $noemr)
                         ->select('emrdfk','image')
                         ->where('emrfk', $head['emrfk'])
+                        ->where('index', $idx)
                         ->where('kdprofile',$kdProfile)
                         ->where('statusenabled', 1)
                         ->orderBy('emrdfk')
                         ->get();
-                 }  
+                }
+                // if((!empty($EMR) && isset($head['nocm']) )&& trim($EMR->nocm) != $head['nocm']){
+                //     $transMessage = "Kesalahan loading data..!";
+                //     DB::rollBack();
+                //     $result = array(
+                //         "status" => 400,
+                //         "message" => $transMessage,
+                //         "as" => 'as@epic',
+                //     );
+                //     return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+                // }  
 
 //                $EMRDelete = EMRPasienD::where('emrpasienfk', $noemr)
 //                ->where('emrfk', $head['emrfk'])
@@ -9130,7 +9145,7 @@ class EMRController  extends ApiController
                 $sama = 0;
                 foreach ($EMRPASIENDETAIL as $emrupdate){
                     $sama = 0;
-                    if ($emrupdate->emrdfk == $emrdfk ){
+                    if ($emrupdate->emrdfk == $emrdfk && $idx == $emrupdate->index   ){
                         $sama =  1;
                         if ($emrupdate->value != $valueemr){
                             $sama =  2;
@@ -9144,6 +9159,7 @@ class EMRController  extends ApiController
                     $EMRPasienDUpdatekeun = EMRPasienD::where('emrpasienfk', $norec_EMR)
                         ->where('emrfk', $head['emrfk'])
                         ->where('emrdfk', $emrdfk)
+                        ->where('index', $idx)
                            ->where('kdprofile',$kdProfile)
                         ->where('statusenabled', 1)
                         ->update([
@@ -9169,6 +9185,7 @@ class EMRController  extends ApiController
                     }
                     // dd($EMRD->pegawaifk);
                     $EMRD->tgl = $this->getDateTime()->format('Y-m-d H:i:s');
+                    $EMRD->index = $idx;
                     $EMRD->save();
                     $h++;
                 }
@@ -9217,6 +9234,7 @@ class EMRController  extends ApiController
 
                 }
                 $emrFto->image = \DB::raw("CONVERT(VARBINARY(MAX), $datas)");
+                $emrFto->index = $idx;
                 $emrFto->save();
             }
 
@@ -9235,7 +9253,7 @@ class EMRController  extends ApiController
                     $sama2 = 0;
                     foreach ($EMRPASIENDETAILIMG as $emrupdate){
                         $sama2 = 0;
-                        if ($emrupdate->emrdfk == $emrdfk2 ){
+                        if ($emrupdate->emrdfk == $emrdfk2  && $idx == $emrupdate->index ){
                             $sama2 =  1;
                             if ($emrupdate->image != $valueemr2){
                                 $sama2 =  2;
@@ -9248,6 +9266,7 @@ class EMRController  extends ApiController
                     if($sama2 ==  2){
                         $EMRPasienDUpdatekeun2 = EmrFoto::where('noemrpasienfk', $norec_EMR)
                             ->where('emrfk', $head['emrfk'])
+                            ->where('index', $idx)
                             ->where('emrdfk', $emrdfk2)
                             ->where('kdprofile',$kdProfile)
                             ->where('statusenabled', 1)
@@ -9267,6 +9286,7 @@ class EMRController  extends ApiController
                         $EMRD2->image = $valueemr2;
                         $EMRD2->emrdfk = $emrdfk2;
                         $EMRD2->emrfk = $head['emrfk'];
+                        $EMRD2->index = $idx;
                         $EMRD2->save();
                         $h2++;
                     }
@@ -9290,6 +9310,7 @@ class EMRController  extends ApiController
                 // "data2" => $EMRD,
                "jumlah" => count($EMRPASIENDETAIL),
                "update" => $j,
+               "index" => $idx,
                "new" => $h,
                 "as" => 'as@epic',
             );
@@ -10415,6 +10436,27 @@ class EMRController  extends ApiController
         $result = array(
             'data'=>$data,
             'as'=>'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function getEMRTransaksiDetailIndex(Request $request)
+    {
+        //todo : detail
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $data = \DB::table('emrpasiend_t as emrdp')
+            ->select('emrdp.index')
+            ->where('emrdp.statusenabled', true)
+            ->where('emrdp.kdprofile',$kdProfile )
+            ->where('emrdp.emrpasienfk', $request['noemr'])
+            ->where('emrdp.emrfk', $request['emrfk'])
+            ->groupBy('emrdp.index');
+         
+        
+        $data = $data->get();
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
         );
         return $this->respond($result);
     }

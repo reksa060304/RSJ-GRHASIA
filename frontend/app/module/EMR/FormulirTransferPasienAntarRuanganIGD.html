@@ -1039,7 +1039,85 @@
         </div>
     </div>
 </div>
-
+<div class="grid_12">
+    <fieldset style="margin-top: 5px;">
+        <div class="grid_4" style="margin-top: 20px;" ng-show="showSign1">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_12"
+                        style="width: 160px; height: 160px; border-style: solid; margin: auto; float: none;">
+                        <div id="iframe">
+                            <canvas id="signature_1" width="160px" height="160px"></canvas>
+                            <input class="k-textbox" ng-model="item.ttd1" type="hidden">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12" style="text-align:center">
+                    <button class="k-button batal btnKoneng" style="margin-top: 10px"
+                        ng-click="batalTTd('signature_1')">Hapus</button>
+                    <!-- <button class="k-button clear btnKoneng" style="margin-top: 20px"  ng-click="wakom('signature_1')">Sign Pad</button> -->
+                </div>
+            </div>
+            <div class="grid_12" style="text-align:center">
+                <label c-label item="item">Saksi 1 :</label>
+            </div>
+            <div class="grid_12" style="text-align:center">
+                <input class="k-textbox" ng-model="item.obj[3100592]" type="text" style="width: auto;">
+            </div>
+        </div>
+        <div class="grid_4" style="margin-top: 20px;" ng-show="showSign2">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_12"
+                        style="width: 160px; height: 160px; border-style: solid; margin: auto; float: none;">
+                        <div id="iframe">
+                            <canvas id="signature_2" width="160px" height="160px"></canvas>
+                            <input class="k-textbox" ng-model="item.ttd2" type="hidden">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12" style="text-align:center">
+                    <button class="k-button batal btnKoneng" style="margin-top: 10px"
+                        ng-click="batalTTd('signature_2')">Hapus</button>
+                    <!-- <button class="k-button clear btnKoneng" style="margin-top: 20px"  ng-click="wakom('signature_2')">Sign Pad</button> -->
+                </div>
+            </div>
+            <div class="grid_12" style="text-align:center">
+                <label c-label item="item">Saksi 2 :</label>
+            </div>
+            <div class="grid_12" style="text-align:center">
+                <input class="k-textbox" ng-model="item.obj[3100593]" type="text" style="width: auto;">
+            </div>
+        </div>
+        <div class="grid_4" style="margin-top: 20px;" ng-show="showSign3">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_12"
+                        style="width: 160px; height: 160px; border-style: solid; margin: auto; float: none;">
+                        <div id="iframe">
+                            <canvas id="signature_3" width="160px" height="160px"></canvas>
+                            <input class="k-textbox" ng-model="item.ttd2" type="hidden">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12" style="text-align:center">
+                    <button class="k-button batal btnKoneng" style="margin-top: 10px"
+                        ng-click="batalTTd('signature_3')">Hapus</button>
+                    <!-- <button class="k-button clear btnKoneng" style="margin-top: 20px"  ng-click="wakom('signature_3')">Sign Pad</button> -->
+                </div>
+            </div>
+            <div class="grid_12" style="text-align:center">
+                <label c-label item="item">Yang menyatakan :</label>
+            </div>
+            <div class="grid_12" style="text-align:center">
+                <input class="k-textbox" ng-model="item.obj[3100594]" type="text" style="width: auto;">
+            </div>
+        </div>
+    </fieldset>
+    <div class="grid_12">
+        <div ui-view></div>
+    </div>
+</div>
 <br />
 <br />
 <div class="grid_12">

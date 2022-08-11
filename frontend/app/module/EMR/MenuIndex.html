@@ -1,0 +1,310 @@
+<div class="panel panel-default container_12">
+    <div class="panel-heading"><span c-translate>List Menu</span>
+        <span class="icon fa fa-plus-circle" style="right:40px" ng-click="tabIndex('+')"></span>
+        <span class="icon fa fa-minus-circle" style="right:10px" ng-click="tabIndex('-')"></span>
+    </div>
+    <div class="panel-body">
+
+        <div class="breadcrum detail" style='margin-top: 0px;'>
+            <div class="grid_2" ng-repeat="data in lisIndex">
+                <a class="n1 default" ng-class="{'active': activeMenuTransfer == URLFORM +data.index}"
+                    ng-click="nav(URLFORM,data.index)">&nbsp;&nbsp;Page {{data.index}}
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style type="text/css">
+    .active {
+        /* background-color: white !important; */
+        background-color: rgb(255, 64, 129) !important;
+        color: white !important;
+        display: block;
+        padding: 10px 0 20px;
+        font-weight: 600;
+    }
+
+    .breadcrum a.default {
+        background: white;
+    }
+
+    .breadcrum a:hover {
+        background: #41abf2;
+        color: white;
+        border-bottom: solid 5px rgb(255, 64, 129);
+    }
+
+    .breadcrum a {
+        color: rgb(63, 81, 181);
+        border-bottom: solid 5px rgb(255, 64, 129);
+        border-top: solid 1px #cccccc;
+        border-right: solid 1px #cccccc;
+        border-radius: 10px;
+    }
+
+
+    .p-button {
+        color: #ffffff;
+        background: #2196F3;
+        border: 1px solid #2196F3;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+        border-radius: 3px;
+    }
+
+    .p-button:enabled:hover {
+        background: #0d89ec;
+        color: #ffffff;
+        border-color: #0d89ec;
+    }
+
+    .p-button:enabled:active {
+        background: #0b7ad1;
+        color: #ffffff;
+        border-color: #0b7ad1;
+    }
+
+    .p-button.p-button-outlined {
+        background-color: transparent;
+        color: #2196F3;
+        border: 1px solid;
+    }
+
+    .p-button.p-button-outlined:enabled:hover {
+        background: rgba(33, 150, 243, 0.04);
+        color: #2196F3;
+        border: 1px solid;
+    }
+
+    .p-button.p-button-outlined:enabled:active {
+        background: rgba(33, 150, 243, 0.16);
+        color: #2196F3;
+        border: 1px solid;
+    }
+
+    .p-button.p-button-outlined.p-button-plain {
+        color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .p-button.p-button-outlined.p-button-plain:enabled:hover {
+        background: #e9ecef;
+        color: #6c757d;
+    }
+
+    .p-button.p-button-outlined.p-button-plain:enabled:active {
+        background: #dee2e6;
+        color: #6c757d;
+    }
+
+    .p-button.p-button-text {
+        background-color: transparent;
+        color: #2196F3;
+        border-color: transparent;
+    }
+
+    .p-button.p-button-text:enabled:hover {
+        background: rgba(33, 150, 243, 0.04);
+        color: #2196F3;
+        border-color: transparent;
+    }
+
+    .p-button.p-button-text:enabled:active {
+        background: rgba(33, 150, 243, 0.16);
+        color: #2196F3;
+        border-color: transparent;
+    }
+
+    .p-button.p-button-text.p-button-plain {
+        color: #6c757d;
+    }
+
+    .p-button.p-button-text.p-button-plain:enabled:hover {
+        background: #e9ecef;
+        color: #6c757d;
+    }
+
+    .p-button.p-button-text.p-button-plain:enabled:active {
+        background: #dee2e6;
+        color: #6c757d;
+    }
+
+    .p-button:focus {
+        outline: 0 none;
+        outline-offset: 0;
+        box-shadow: 0 0 0 0.2rem #a6d5fa;
+    }
+
+    .p-button .p-button-icon-left {
+        margin-right: 0.5rem;
+    }
+
+    .p-button .p-button-icon-right {
+        margin-left: 0.5rem;
+    }
+
+    .p-button .p-button-icon-bottom {
+        margin-top: 0.5rem;
+    }
+
+    .p-button .p-button-icon-top {
+        margin-bottom: 0.5rem;
+    }
+
+    .p-button .p-badge {
+        margin-left: 0.5rem;
+        min-width: 1rem;
+        height: 1rem;
+        line-height: 1rem;
+        color: #2196F3;
+        background-color: #ffffff;
+    }
+
+    .p-button.p-button-raised {
+        box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .p-button.p-button-rounded {
+        border-radius: 2rem;
+    }
+
+    .p-button.p-button-icon-only {
+        width: 2rem;
+        /* padding: 0.5rem 0; */
+        padding: 0
+    }
+
+    .p-button.p-button-icon-only .p-button-icon-left,
+    .p-button.p-button-icon-only .p-button-icon-right {
+        margin: 0;
+    }
+
+    .p-button.p-button-icon-only.p-button-rounded {
+        border-radius: 50%;
+        height: 2rem;
+    }
+
+    .p-button.p-button-sm {
+        font-size: 0.875rem;
+        padding: 0.4375rem 0.875rem;
+    }
+
+    .p-button.p-button-sm .p-button-icon {
+        font-size: 0.875rem;
+    }
+
+    .p-button.p-button-lg {
+        font-size: 1.25rem;
+        padding: 0.625rem 1.25rem;
+    }
+
+    .p-button.p-button-lg .p-button-icon {
+        font-size: 1.25rem;
+    }
+
+    .p-button.p-button-loading-label-only .p-button-label {
+        margin-left: 0.5rem;
+    }
+
+    .p-button.p-button-loading-label-only .p-button-loading-icon {
+        margin-right: 0;
+    }
+
+    .p-fluid .p-button {
+        width: 100%;
+    }
+
+    .p-fluid .p-button-icon-only {
+        width: 2.357rem;
+    }
+
+    .p-fluid .p-buttonset {
+        display: flex;
+    }
+
+    .p-fluid .p-buttonset .p-button {
+        flex: 1;
+    }
+
+    .p-button.p-button-success,
+    .p-buttonset.p-button-success>.p-button,
+    .p-splitbutton.p-button-success>.p-button {
+        color: #ffffff;
+        background: #689F38;
+        border: 1px solid #689F38;
+    }
+
+    .p-button.p-button-success:enabled:hover,
+    .p-buttonset.p-button-success>.p-button:enabled:hover,
+    .p-splitbutton.p-button-success>.p-button:enabled:hover {
+        background: #5e8f32;
+        color: #ffffff;
+        border-color: #5e8f32;
+    }
+
+    .p-button.p-button-success:enabled:focus,
+    .p-buttonset.p-button-success>.p-button:enabled:focus,
+    .p-splitbutton.p-button-success>.p-button:enabled:focus {
+        box-shadow: 0 0 0 0.2rem #c2e0a8;
+    }
+
+    .p-button.p-button-success:enabled:active,
+    .p-buttonset.p-button-success>.p-button:enabled:active,
+    .p-splitbutton.p-button-success>.p-button:enabled:active {
+        background: #537f2d;
+        color: #ffffff;
+        border-color: #537f2d;
+    }
+
+    .p-button.p-button-success.p-button-outlined,
+    .p-buttonset.p-button-success>.p-button.p-button-outlined,
+    .p-splitbutton.p-button-success>.p-button.p-button-outlined {
+        background-color: transparent;
+        color: #689F38;
+        border: 1px solid;
+    }
+
+    .p-button.p-button-success.p-button-outlined:enabled:hover,
+    .p-buttonset.p-button-success>.p-button.p-button-outlined:enabled:hover,
+    .p-splitbutton.p-button-success>.p-button.p-button-outlined:enabled:hover {
+        background: rgba(104, 159, 56, 0.04);
+        color: #689F38;
+        border: 1px solid;
+    }
+
+    .p-button.p-button-success.p-button-outlined:enabled:active,
+    .p-buttonset.p-button-success>.p-button.p-button-outlined:enabled:active,
+    .p-splitbutton.p-button-success>.p-button.p-button-outlined:enabled:active {
+        background: rgba(104, 159, 56, 0.16);
+        color: #689F38;
+        border: 1px solid;
+    }
+
+    .p-button.p-button-success.p-button-text,
+    .p-buttonset.p-button-success>.p-button.p-button-text,
+    .p-splitbutton.p-button-success>.p-button.p-button-text {
+        background-color: transparent;
+        color: #689F38;
+        border-color: transparent;
+    }
+
+    .p-button.p-button-success.p-button-text:enabled:hover,
+    .p-buttonset.p-button-success>.p-button.p-button-text:enabled:hover,
+    .p-splitbutton.p-button-success>.p-button.p-button-text:enabled:hover {
+        background: rgba(104, 159, 56, 0.04);
+        border-color: transparent;
+        color: #689F38;
+    }
+
+    .p-button.p-button-success.p-button-text:enabled:active,
+    .p-buttonset.p-button-success>.p-button.p-button-text:enabled:active,
+    .p-splitbutton.p-button-success>.p-button.p-button-text:enabled:active {
+        background: rgba(104, 159, 56, 0.16);
+        border-color: transparent;
+        color: #689F38;
+    }
+</style>
+<div ui-view></div>
