@@ -1225,7 +1225,7 @@ class ReportController extends ApiController{
         }
 
         $skrining = collect(DB::select("
-            select st.rpenulis, st.rtanggalresep, st.rklinis, st.rmr, st.rpasien,
+            select s.noresep, st.rpenulis, st.rtanggalresep, st.rklinis, st.rmr, st.rpasien,
             st.rtanggallahir,
             st.rberatbedan,
             st.rdokter,
