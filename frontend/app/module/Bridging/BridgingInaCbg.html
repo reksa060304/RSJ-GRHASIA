@@ -462,6 +462,9 @@
 			<div class="grid_2" >
 				<button class="btnTemplate1"  ng-click="uploadKelengkapan()">Kelengkapan Dokumen</button>
 			</div>
+			<div class="grid_2" style="margin-top: 10px; margin-left: 5px;">
+				<button class="c-button" ng-click="Riwayat()">Riwayat Resep</button>
+			</div>
 			<!-- <div class="grid_2" >
 				<button class="btnTemplate1"  ng-click="editKlaimm()">Edit Klaim Masal</button>
 			</div>
@@ -498,6 +501,22 @@
 		</div>
 	</div> -->
 </div>
+
+<div kendo-window="popUpRiwayat" k-title="'Riwayat Obat'" k-width="1500" k-visible="false" k-on-open="win2visible = true"
+    k-on-close="win2visible = false">
+        <kendo-grid id="kGrid" k-data-source="dataGridRiwayatObat" k-selectable="'row'" k-columns="columnGridRiwayatObat"
+            k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelectedSss" ng-click="klikGridSss(dataSelectedSss)">
+            <div k-detail-template>
+                <kendo-tabstrip>
+                    <div>
+                        <div id="kGridDetail" kendo-grid k-options="data22(dataItem)" k-sortable="'true'"
+                            k-selectable="'row'" k-ng-model="dataSelected2" ng-click="klikDetail(dataSelected2)">
+                        </div>
+                    </div>
+                </kendo-tabstrip>
+            </div>
+        </kendo-grid>
+    </div>
 
 <div kendo-window="popUpMasal" k-title="'Data Order '" k-visible="false" k-width="900" k-height="500">
 	<div class="panel panel-default container_12">
