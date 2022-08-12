@@ -354,6 +354,7 @@ export class ReservasiOnlineComponent implements OnInit {
       'nik': new FormControl(null),
       'resumeNIK': new FormControl({ value: null, disabled: true }),
       'namaPasienDukcapil': new FormControl(null),
+      'alamatLengkap': new FormControl(null),
     });
 
     this.sortOptions = [
@@ -1054,11 +1055,11 @@ export class ReservasiOnlineComponent implements OnInit {
     let tglReservasi = this.formGroup.get('tglReservasi').value
     tglReservasi = new Date(tglReservasi._i.year, tglReservasi._i.month, tglReservasi._i.date)
     var tanggal: any = moment(tglReservasi).format('YYYY/MM/DD') + ' ' + this.formGroup.get('jamReservasi').value.jam
-    // console.log(tanggal)
+    console.log(this.formGroup)
     this.formGroup.get('tglReservasiFix').setValue(tanggal)
 
     this.formGroup.get('dokter').setValue({ id: this.formGroup.get('dokter').value.id, namalengkap: this.formGroup.get('dokter').value.namalengkap })
-    // this.formGroup.get('dokter').setValue(null)
+    this.formGroup.get('dokter').setValue(null)
     this.confirmationService.confirm({
       message: 'Yakin mau menyimpan data?',
       accept: () => {
