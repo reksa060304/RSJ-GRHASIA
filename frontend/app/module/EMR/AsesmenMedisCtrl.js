@@ -40,7 +40,7 @@ define(['initialize'], function (initialize) {
                 else
                     return false
             }
-
+            
             LoadCacheHelper();
             function LoadCacheHelper() {
                 var chacePeriode = cacheHelper.get('cacheRekamMedis');
@@ -525,10 +525,11 @@ define(['initialize'], function (initialize) {
 
             };
             $scope.data2 = function (dataItem) {
-                // for (var i = 0; i < dataItem.details.length; i++) {
-                //     dataItem.details[i].no = i+1
+                console.log("punya asesmen medis data item"+dataItem);
+                for (var i = 0; i < dataItem.details.length; i++) {
+                    dataItem.details[i].no = i+1
 
-                // }
+                }
                 // debugger
                 dataItem.details.sort(function (a, b) {
                     if (a.namaform < b.namaform) { return -1; }
@@ -549,9 +550,9 @@ define(['initialize'], function (initialize) {
 
                             "template": "# for(var i=0; i < details.length;i++){# <span class=\"button-details\" )\" >#= details[i].namaform #  <em class=\"k-button k-button-icon k-primary\""
                                 + " style=\" margin: 3px;padding-left: .4em;padding-right: .4em;\"  ng-click=\"asupKaForm('#=details[i].emrpasienfk#','#=details[i].reportdisplay#',"
-                                + "'#=details[i].emrfk#','#=details[i].norec#')\" > <span class=\"k-sprite k-icon k-i-search\">Details</span></em> <em class=\"k-button k-button-icon  k-primary \""
+                                +"'#=details[i].emrfk#','#=details[i].norec#','#=details[i].index#','#=details[i].noregistrasi#')\" > <span class=\"k-sprite k-icon k-i-search\">Details</span></em> <em class=\"k-button k-button-icon  k-primary \""
                                 + " style=\" margin: 3px;padding-left: .4em;padding-right: .4em; margin-left: -3px;\"  ng-click=\"hapusFormHiji('#=details[i].emrpasienfk#','#=details[i].reportdisplay#',"
-                                + "'#=details[i].emrfk#','#=details[i].norec#')\" > <span class=\"k-sprite fa fa-trash\" style=\"float: left;margin-top: 0.3em;padding-bottom: 2px;\"</span></em></span> #}#",
+                                +"'#=details[i].emrfk#','#=details[i].norec#','#=details[i].index#')\" > <span class=\"k-sprite fa fa-trash\" style=\"float: left;margin-top: 0.3em;padding-bottom: 2px;\"</span></em></span> #}#",
 
                             // "template": "# for(var i=0; i < details.length;i++){# <button class=\"k-button custom-button\" style=\"margin:0 0 5px\"  ng-click=\"asupKaForm('#=details[i].emrpasienfk#','#=details[i].reportdisplay#','#=details[i].emrfk#','#=details[i].norec#')\" >#= details[i].namaform #</button> #}#",
                         }
@@ -559,7 +560,7 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             };
-            $scope.hapusFormHiji = function (noemr, reportdisplay, emrfk, norec) {
+            $scope.hapusFormHiji = function (noemr, reportdisplay, emrfk, norec, index) {
 
                 var noemr2 = '-'
                 if (noemr != undefined) {
@@ -575,16 +576,21 @@ define(['initialize'], function (initialize) {
                     .cancel('Tidak')
                     .ok('Ya')
                 $mdDialog.show(confirm).then(function () {
-                    $scope.hapusEMRDetail(noemr2, reportdisplay, emrfk, norec);
+                    $scope.hapusEMRDetail(noemr2, reportdisplay, emrfk, norec, index);
                 })
             }
-            $scope.hapusEMRDetail = function (noemr, reportdisplay, idemr, norec) {
+            $scope.hapusEMRDetail = function (noemr, reportdisplay, idemr, norec, index) {
+                if (index == 'tabindex') {
+                    toastr.error('Tidak bisa dihapus')
+                    return
+                }
                 var json = {
                     'noemr': noemr,
                     'reportdisplay': reportdisplay,
                     'idemr': idemr,
                     'norec': norec,
                     'idpegawai': medifirstService.getPegawaiLogin().id,
+                    'index': index === undefined ? null : index,
                 }
                 medifirstService.post('emr/disable-emr-details', json).then(function (e) {
                     cacheHelper.set('cacheNomorEMR', undefined);
@@ -596,7 +602,7 @@ define(['initialize'], function (initialize) {
                     init()
                 })
             }
-            $scope.asupKaForm = function (noemr, reportdisplay, emrfk, norec) {
+            $scope.asupKaForm = function (noemr, reportdisplay, emrfk, norec, index, noregistrasi) {
                 // var json = JSON.parse(selec)
                 cacheHelper.set('cacheNomorEMR', undefined);
                 // emrfk
@@ -609,13 +615,23 @@ define(['initialize'], function (initialize) {
                 if (noemr2 != '-')
                     noemr2.trim()
                 var url = "RekamMedis.AsesmenMedis.AsesmenMedisDetail"
-                if (reportdisplay != 'null')
+                if (reportdisplay != 'null'){
                     url = reportdisplay
-                $state.go(url, {
-                    namaEMR: emrfk,
-                    nomorEMR: noemr2
-                });
-
+                    if (index == null) {
+                        $state.go(url);
+                    } else {
+                        // $state.go(url,{index:index,idEMR:emrfk});
+                        $state.go(url, {
+                            index: 1,
+                            idEMR: emrfk
+                        });
+                    }
+                }else {
+                    $state.go(url, {
+                        namaEMR: emrfk,
+                        nomorEMR: noemr2
+                    });
+                }
                 var arrStr = {
                     0: noemr2,
                     1: norec
@@ -992,6 +1008,7 @@ define(['initialize'], function (initialize) {
                 var uid_select = e.node.dataset.uid
                 var idTree = '';
                 var urlTrue = null;
+                var tabIndex = null;
                 // for (var i = data3.length - 1; i >= 0; i--) {
                 //     if (uid_select == data3[i].uid) {
                 //         idTree = data3[i].id
@@ -1028,6 +1045,8 @@ define(['initialize'], function (initialize) {
                     if(uid_select == element.uid){
                         idTree = element.id
                         urlTrue = element.reportdisplay
+                        tabIndex = element.namaexternal
+
                         break
                     }
                     if(element.child != undefined){
@@ -1036,6 +1055,7 @@ define(['initialize'], function (initialize) {
                             if(element2.uid == uid_select){
                                 idTree = element2.id
                                 urlTrue = element2.reportdisplay
+                                tabIndex = element2.namaexternal
                                 break
                             }
                             if(element2.child!=undefined){
@@ -1044,6 +1064,8 @@ define(['initialize'], function (initialize) {
                                     if(element3.uid == uid_select){
                                         idTree = element3.id
                                         urlTrue = element3.reportdisplay
+                                        tabIndex = element3.namaexternal
+
                                         break
                                     }
                                     if(element3.child!=undefined){
@@ -1052,7 +1074,22 @@ define(['initialize'], function (initialize) {
                                             if(element4.uid == uid_select){
                                                 idTree = element4.id
                                                 urlTrue = element4.reportdisplay
+                                                tabIndex = element4.namaexternal
+
                                                 break
+                                            }
+                                            if (element4.child != undefined) {
+                                                for (let i5 = 0; i5 < element4.child.length; i5++) {
+                                                    const element5 = element4.child[i5];
+                                                    if (element5.uid == uid_select) {
+                                                        idTree = element5.id
+                                                        urlTrue = element5.reportdisplay
+                                                        tabIndex = element5.namaexternal
+                                                        tabIndex = element5.namaexternal
+
+                                                        break
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -1065,6 +1102,7 @@ define(['initialize'], function (initialize) {
                 if ($scope.dataSelected != undefined) {
                     noemr = $scope.dataSelected.noemr
                 }
+                console.log(urlTrue);
                 if (urlTrue == null) {
                     $state.go("RekamMedis.AsesmenMedis.AsesmenMedisDetail", {
                         namaEMR: idTree,
@@ -1082,14 +1120,51 @@ define(['initialize'], function (initialize) {
                         6: $scope.header.notelepon,
                     }
                     // cacheHelper.set('RekamMedisIGDCtrl', arrStr);       
-                    $state.go(urlTrue);
+                    // $state.go(urlTrue);
+                    console.log("tabIndex"+tabIndex);
+                    if (tabIndex == null) {
+                        $state.go(urlTrue);
+                    } else {
+                        $state.go(urlTrue, {index: 1,idEMR: idTree
+                        });
+                        console.log("dibawah state go asesmen medis"+ idTree);
+                        if ($rootScope.loadEMRTab === undefined) {
+                            $rootScope.loadEMRTab = function (EMRFK) {
+                                loadPage(noemr, EMRFK)
+                            }
+                        }
+                        $rootScope.loadEMRTab(idTree)
+                        // $state.go(urlTrue,{index:1,idEMR:idTree});
+                    }
                 }
-
-
-
-
             }
             var timeoutPromise;
+
+            function loadPage(nomorEMR, EMRFK) {
+                console.log("loadPage");
+                console.log("halaman asesmen medis "+nomorEMR, EMRFK);
+                medifirstService.get("emr/get-emr-transaksi-detail-index?noemr=" + nomorEMR + "&emrfk=" + EMRFK, true).then(function (dat) {
+                    if (dat.data.data.length > 0) {
+                        $scope.lisIndex = []
+                        for (let x = 0; x < dat.data.data.length; x++) {
+                            const element = dat.data.data[x];
+                            if (element.index != null) {
+                                $scope.lisIndex.push({
+                                    index: parseInt(element.index),
+                                    url: $state.current.name
+                                })
+                            }
+                        }
+                    } else {
+                        $scope.lisIndex = []
+                        $scope.lisIndex = [{
+                            index: 1,
+                            url: $state.current.name
+                        }]
+                        console.log($scope.lisIndex);
+                    }
+                })
+            }
 
             $scope.$watch('item.filter', function (newVal, oldVal) {
 

@@ -16970,8 +16970,8 @@
   ]
 },
 {
-  "name": "RekamMedis.AsesmenMedis.FormulirTransferPaisenAntarRuanganIGD",
-  "url": "/FormulirTransferPasienAntarRuanganIGDCtrl",
+  "name": "RekamMedis.AsesmenMedis.MenuIndex.FormulirTransferPaisenAntarRuanganIGD",
+  "url": "/FormulirTransferPasienAntarRuanganIGD/:index/:idEMR",
   "templateurl": "module/EMR/FormulirTransferPasienAntarRuanganIGD.html",
   "controller": "FormulirTransferPasienAntarRuanganIGDCtrl",
   "deps": [
@@ -18182,6 +18182,47 @@
     "url": "/asesmenPansEc",
     "templateurl": "module/EMR/PanssEcTable.html",
     "controller": "PanssEcTableCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex",
+    "url": "/MenuIndex",
+    "templateurl": "module/EMR/MenuIndex.html",
+    "controller": "MenuIndexCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "NormaPsikologi",
+    "url": "/NormaPsikologi",
+    "templateurl": "module/RawatJalan/NormaPsikologi.html",
+    "controller": "NormaPsikologiCtrl",
     "deps": [{
         "module": "Services",
         "define": "Service"
