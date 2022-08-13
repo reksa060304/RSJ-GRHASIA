@@ -2171,10 +2171,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/get-datalaporan-diklat', 'SDM\SumberDayaManusiaController@getDataLaporanDiklat');
             Route::get('sdm/get-sisacuti', 'SDM\SumberDayaManusiaController@getSisaCuti');
             Route::get('sdm/get-data-master-pendidikan', 'SDM\SumberDayaManusiaController@getMasterPendidikanPegawai');
-            
+            //psikologi
+            Route::get('psikologi/get-data-psikologi', 'RawatJalan\RawatJalanController@getComboPsikologi');
+            Route::get('psikologi/get-daftar-pasien-psikologi', 'RawatJalan\RawatJalanController@getDdaftarRegistrasiPsikologi');
             /*END GET*/
 
             /*POST*/
+            Route::post('psikologi/save-master-norma-psikologi', 'RawatJalan\RawatJalanController@saveNormaPsikologi');
             Route::post('sdm/save-master-pendidikan-pegawai','SDM\SumberDayaManusiaController@saveMasterPendidikanPegawai');
             Route::post('sdm/simpan-bayar-gaji-detail', 'SDM\SumberDayaManusiaController@simpanPembayaranGajiArray');
             Route::post('sdm/save-data-abk', 'SDM\SumberDayaManusiaController@simpanDataABK');
