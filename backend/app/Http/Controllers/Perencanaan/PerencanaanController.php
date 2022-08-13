@@ -649,7 +649,8 @@ class PerencanaanController extends ApiController {
 
         $carispm = DB::select(DB::raw("select spm.*, spp.nospp
         from spm_t spm
-        left join spp_t spp on spp.norec = spm.objectsppfk"));
+        left join spp_t spp on spp.norec = spm.objectsppfk
+        where spm.statusenabled = true"));
 
 
         $result = array(
