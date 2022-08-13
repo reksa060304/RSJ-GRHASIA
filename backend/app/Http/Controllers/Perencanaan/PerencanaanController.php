@@ -2906,6 +2906,7 @@ class PerencanaanController extends ApiController {
                 --inner join settinganggaran_t sa on sa.objecttahapaktivfk = ta.id
                 where kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.objectpptkfk = $idpegawai
+                and ka.kdprofile = 30 and ka.statusenabled = true
                 $stahun
                 $stahap
                 group by kb.norec, kb.kdprofile, kb.statusenabled, kb.objectkegiatanfk, kb.objectmataanggaranfk, kb.keteranganbelanja,
@@ -2929,6 +2930,7 @@ class PerencanaanController extends ApiController {
                 INNER JOIN tahapanggaran_m ta on ta.id=kb.objecttahapfk
                 --inner join settinganggaran_t sa on sa.objecttahapaktivfk = ta.id
                 where kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
                 $stahun
                 $stahap
                 group by kb.norec, kb.kdprofile, kb.statusenabled, kb.objectkegiatanfk, kb.objectmataanggaranfk, kb.keteranganbelanja,
@@ -2953,6 +2955,7 @@ class PerencanaanController extends ApiController {
                 INNER JOIN tahapanggaran_m ta on ta.id=kb.objecttahapfk
                 --inner join settinganggaran_t sa on sa.objecttahapaktivfk = ta.id
                 where kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
                 $stahun
                 $stahap
                 group by kb.norec, kb.kdprofile, kb.statusenabled, kb.objectkegiatanfk, kb.objectmataanggaranfk, kb.keteranganbelanja,
@@ -2999,7 +3002,7 @@ class PerencanaanController extends ApiController {
         $tahap = $request['tahap'];
         $subsubkegiatan = $request['subsubkegiatan'];
         $data = DB::select(DB::raw("
-        select sum(kb.subtotal) totalketerangan
+        select coalesce(sum(kb.subtotal),0) totalketerangan
         from kegiatananggaran_m ka 
         inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
         where kb.objecttahapfk = $tahap
@@ -3008,7 +3011,7 @@ class PerencanaanController extends ApiController {
         );
 
         $detail = DB::select(DB::raw("
-        select sum(rd.subtotal) totalrealisasidetail
+        select coalesce(sum(rd.subtotal),0) totalrealisasidetail
         from kegiatananggaran_m ka 
         inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
         inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
@@ -3350,6 +3353,7 @@ class PerencanaanController extends ApiController {
                 left JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
                 where sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
                 and sr.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled=true
 								group by sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
                 ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun
             ")

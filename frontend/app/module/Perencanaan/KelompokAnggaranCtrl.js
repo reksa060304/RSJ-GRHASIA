@@ -1418,7 +1418,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         if(e.data.panjar.length > 0){
                             $scope.panjar = e.data.panjar[0].jumlah
                             $scope.pengembalian = e.data.panjar[0].jumlahpengembalian
-                            $scope.item.sisaAnggaranSPJ = parseInt($scope.totalketerangan) - parseInt($scope.totalrealisasidetail) + parseInt($scope.panjar) - parseInt($scope.pengembalian)
+                            $scope.item.sisaAnggaranSPJ = parseInt($scope.totalketerangan) - parseInt($scope.totalrealisasidetail)
                         }else if(e.data.panjar.length == 0){
                             $scope.item.sisaAnggaranSPJ = parseInt($scope.totalketerangan) - parseInt($scope.totalrealisasidetail)
                         }

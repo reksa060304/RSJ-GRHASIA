@@ -339,6 +339,7 @@ class ReservasiOnlineController extends ApiController
             $newptp->noantrian = $antrian['antrian'];
             $newptp->tanggal = $tglDoang;
             $newptp->jamreservasi = $request['jamReservasi']['jam'];
+            $newptp->alamatlengkap= $request['alamatLengkap'];
             $newptp->save();
             $newptp->namaruangan =Ruangan::where('id',$newptp->objectruanganfk )
                                 ->where('kdprofile',(int) $kdProfile )
@@ -371,6 +372,8 @@ class ReservasiOnlineController extends ApiController
             $result = array(
                 "status" => 400,
                 "message" => $transMessage,
+                'e'=> $e->getLine(),
+                'msg'=> $e->getMessage(),
             );
         }
 
