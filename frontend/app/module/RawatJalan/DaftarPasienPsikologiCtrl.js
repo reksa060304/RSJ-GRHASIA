@@ -249,6 +249,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.no = 1;
                 $scope.popUpDataDaftarPsikologi.center().open()
             }
+            $scope.inputEPPS = function(){
+                if ($scope.dataDaftarPsikologi == undefined) {
+                    toastr.error('Data Belum dipilih')
+                    return
+                }
+
+                console.log($scope.dataDaftarPsikologi)
+
+                var obj = {
+                    noRegistrasi: $scope.dataDaftarPsikologi.noregistrasi,
+                    nocm: $scope.dataDaftarPsikologi.nocm,
+                    norec_apd: $scope.dataDaftarPsikologi.norec,
+                }
+
+                $state.go('EPPSpsikologi', {
+                    dataPasien: JSON.stringify(obj)
+                });
+            }
             $scope.dataDaftarHasil = {
                 sortable: true,
                 filterable: false,

@@ -640,8 +640,8 @@ class PerencanaanController extends ApiController {
             and pj.statusenabled = true;
         "));
 
-        $spp = DB::select(DB::raw("select spp.*, spd.nospd from spp_t spp inner join spd_t spd on spd.norec = spp.objectspdfk"));
-        $spd = DB::select(DB::raw("select spd.*, spp.nospp from spd_t spd left join spp_t spp on spp.objectspdfk = spd.norec"));
+        $spp = DB::select(DB::raw("select spp.*, spd.nospd from spp_t spp inner join spd_t spd on spd.norec = spp.objectspdfk where spp.statusenabled = true and spd.statusenabled = true"));
+        $spd = DB::select(DB::raw("select spd.*, spp.nospp from spd_t spd left join spp_t spp on spp.objectspdfk = spd.norec where spp.statusenabled = true and spd.statusenabled = true"));
         $carispd = DB::select(DB::raw("select spd.nospd, spd.tglspd, spd.nilaispd, spp.norec
         from spd_t spd
         left join spp_t spp on spd.norec = spp.objectspdfk 
@@ -2881,7 +2881,7 @@ class PerencanaanController extends ApiController {
         $data = DB::select(DB::raw("
                 select ma.id, ma.kodemataanggaran,ma.namamataanggaran,cast(sum(kt.subtotal) as float) as total 
                 from mataanggaran_m ma
-                left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+                left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id and kt.statusenabled = true
                 where 
                 length(ma.kodemataanggaran)= 9 
                 and ma.kdprofile=$idProfile
@@ -3264,6 +3264,7 @@ class PerencanaanController extends ApiController {
                 INNER JOIN asalproduk_m ap on ap.id=kt.objectasalprodukfk
                 INNER JOIN mataanggaran_m ma on ma.id=kt.objectmataanggaranfk
                 where kt.objectkegiatanfk= $idkegiatanfk
+                and kt.statusenabled = true
             ")
         );
 
