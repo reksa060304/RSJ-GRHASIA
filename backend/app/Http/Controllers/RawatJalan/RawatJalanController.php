@@ -1541,4 +1541,111 @@ class RawatJalanController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function getComboPsikologi(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $jenisnorma = \DB::table('jenisnorma_m')->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->get();
+        $normapsikologi = \DB::table('normapsikologi_m as np')
+        ->join('jenisnorma_m as jn', 'jn.id','=','np.objectjenisnormafk')
+        ->select('np.*', 'jn.jenisnorma')
+        ->where('np.kdprofile', $kdProfile)
+        ->where('np.statusenabled', true)->orderBy('jn.id','asc')
+        ->get();
+        $result = array(
+            'jenisnorma'=>$jenisnorma,
+            'normapsikologi'=> $normapsikologi,
+            'as'=>'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function saveNormaPsikologi(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+        try {
+            if (isset($request['iddel'])) {
+                $crud = "Hapus";
+                \DB::table('normapsikologi_m')->where('id', $request['iddel'])->delete();
+            } else {
+                if($request['id'] == null){
+                    $crud = "Simpan";
+                    \DB::table('normapsikologi_m')->insert([
+                        'id'=> $idMax+1,
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'kodeexternal'=> $idMax+1,
+                        'objectjenisnormafk'=> $request['objectjenisnormafk'],
+                        'umurmin'=> $request['umurmin'],
+                        'umurmax'=> $request['umurmax'],
+                        'nilai'=> $request['nilai'],
+                    ]);
+                }else if($request['id'] != null){
+                    $crud = "Ubah";
+                    \DB::table('normapsikologi_m')->where('id', $request['id'])->update([
+                        'objectjenisnormafk'=> $request['objectjenisnormafk'],
+                        'umurmin'=> $request['umurmin'],
+                        'umurmax'=> $request['umurmax'],
+                        'nilai'=> $request['nilai'],
+                    ]);
+                }
+            }
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getDdaftarRegistrasiPsikologi(Request $request)
+    {
+        $data = \DB::select(DB::raw("SELECT
+            apd.norec,
+            apd.tglmasuk,
+            pd.noregistrasi,
+            ps.nocm,
+            ps.namapasien,
+            ru.namaruangan,
+            ke.namakelas,
+            apd.tglkeluar
+        FROM
+            antrianpasiendiperiksa_t apd
+            INNER JOIN pasiendaftar_t pd ON pd.norec = apd.noregistrasifk
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk 
+            INNER JOIN kelas_m ke on ke.id = apd.objectkelasfk
+        WHERE
+            apd.objectruanganfk = 767
+            and pd.statusenabled = true
+            and pd.kdprofile = 30
+            
+        "));
+        $result = array(
+            "data"=> $data,
+            "as"=> 'FIzi'
+        );
+        return $this->respond($result);
+    }
 }
