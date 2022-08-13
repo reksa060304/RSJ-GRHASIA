@@ -2498,7 +2498,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var objSave =
                     {
                         id: $scope.item.id,
-                        kode: $scope.item.kode4 + ' ' + $scope.item.subSubKegiatankode,
+                        kode: $scope.item.subSubKegiatankode,
                         keterangan: $scope.item.subSubKegiatan,
                         kodeexternal: null,
                         namaexternal: null,
