@@ -4,7 +4,7 @@
         <div class="panel-body">
             <div class="grid_12">
                 <div class="grid_12 borderBox containerBorderBox">
-                    <div class="grid_2">
+                    <!-- <div class="grid_2">
                         <div class="grid_12">
                             <label c-label item="item" c-label-text="Dokter"></label>
                         </div>
@@ -15,7 +15,7 @@
                                 k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listDokter2" />
                         </div>
-                    </div>
+                    </div> -->
                     <div class="grid_2">
                         <div class="grid_12">
                             <label c-label item="item" c-label-text="Instalasi"></label>
@@ -103,28 +103,49 @@
         </div>
     </div>
 </div>
-<div kendo-window="popUpDataDaftarPsikologi" k-title="'Input Hasil Psikologi'" k-width="600" k-height="350"
+<div kendo-window="popUpDataDaftarPsikologi" k-title="'Input Hasil Psikologi'" k-width="600" k-height="650"
     k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
     <div class="panel panel-default container_12" style="padding: 0px 10px;">
         <div class="grid_12">
-            <!-- <div class="grid_6">
+            <div class="grid_12">
                 <div class="grid_12">
-                    <label c-label item="item">Jenis Norma</label>
+                    <label c-label item="item">CFIT</label>
                 </div>
                 <div class="clear"></div>
 
-                <div class="grid_12">
-                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.jenisnorma"
-                        k-data-text-field="'jenisnorma'" k-data-value-field="'id'" k-filter="'contains'"
-                        k-auto-bind="false" k-data-source="listJenisNorma" />
+                <div class="grid_6">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.cfit" k-data-text-field="'cfit'"
+                        k-data-value-field="'idcfit'" k-filter="'contains'" k-auto-bind="false" k-data-source="listCfit" k-on-change="cfit()"/>
                 </div>
-            </div> -->
+            </div>
+            <div class="grid_12">
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label item="item">Test</label>
+                    </div>
+                    <div class="clear"></div>
+
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.test" k-data-text-field="'test'"
+                            k-data-value-field="'idtest'" k-filter="'contains'" k-auto-bind="false" k-data-source="listTest"
+                            k-on-change="test()" />
+                    </div>
+                </div>
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label item="item">Umur</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" class="k-textbox" ng-model="item.umur" disabled/>
+                    </div>
+                </div>
+            </div>
             <div class="grid_6">
                 <div class="grid_12">
                     <label c-label item="item">No</label>
                 </div>
                 <div class="grid_12">
-                    <input c-text-box type="number" class="k-textbox" ng-model="item.no" placeholder="no" />
+                    <input c-text-box type="number" class="k-textbox" ng-model="item.nomor" placeholder="no" />
                 </div>
             </div>
             <div class="grid_6">
@@ -132,7 +153,9 @@
                     <label c-label item="item">Jawaban</label>
                 </div>
                 <div class="grid_12">
-                    <input c-text-box type="number" class="k-textbox" ng-model="item.jawaban" placeholder="jawaban" />
+                    <input c-text-box type="input" class="k-textbox" ng-model="item.jawaban"
+                        onkeyup="this.value = this.value.toUpperCase();" placeholder="jawaban"
+                        ng-keypress="($event.which == 13)? jawaban():item.jawaban" />
                 </div>
             </div>
 
@@ -144,21 +167,63 @@
                     <input c-text-box type="number" class="k-textbox" ng-model="item.nilai" />
                 </div>
             </div> -->
+            
             <div class="grid_12">
-                <div class="grid_12"></div>
-                <div class="grid_12">
-                    <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px; margin-bottom: 10px;">
+                <kendo-grid k-data-source="gridDaftarHasil" k-pageable="true" k-ng-model="dataDaftarHasil"
+                    k-selectable="'row'" options="dataDaftarHasil" ng-click="klikGridd(dataDaftarHasil)"
+                    style="font-size: small;"></kendo-grid>
+            </div>
+            <div class="grid_12">
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label item="item">Skor</label>
+                    </div>
+                    <div class="grid_6">
+                        <input c-text-box type="input" class="k-textbox" ng-model="totalSkor" placeholder="skor A" />
+
+                    </div>
+                    <div class="grid_6">
+                        <input c-text-box type="input" class="k-textbox" ng-model="totalSkorB" placeholder="skor B" />
+
+                    </div>
+                </div>
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label item="item">Ambil Nilai Norma Skala</label>
+                    </div>
+                    <div class="grid_12">
                         <button class="k-button k-button-icontext k-primary k-grid-update"
-                            ng-click="simpanNormaPsikologi()"><span class="k-icon k-update"></span>Simpan</button>
-                        <button class="k-button  k-button-icontext" ng-click="batalNormaPsikologi()"><span
-                                class="k-icon k-cancel"></span>Batal</button>
+                            ng-click="getNormaSkala()"><span class="k-icon k-update"></span>Get Norma Skala</button>
                     </div>
                 </div>
             </div>
+            <div class="grid_6">
+                <div class="grid_12">
+                    <label c-label item="item">Norma Skala</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" class="k-textbox" ng-model="normaSkala" placeholder="norma skala" />
+                </div>
+            </div>
+            <div class="grid_6">
+                <div class="grid_12">
+                    <label c-label item="item">Kategori</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" class="k-textbox" ng-model="kategoriSkala" placeholder="Kategori"disabled />
+                </div>
+            </div>
             <div class="grid_12">
-                <kendo-grid k-data-source="gridDaftarHasil" k-pageable="true" k-ng-model="dataDaftarHasil"
-                    k-selectable="'row'" options="dataDaftarHasil" ng-click="klikGrid(dataDaftarHasil)"
-                    style="font-size: small;"></kendo-grid>
+                <div class="grid_12"></div>
+                <div class="grid_12">
+                    <div class="k-edit-buttons  k-state-default pull-right"
+                        style="margin-top:10px; margin-bottom: 10px;">
+                        <button class="k-button k-button-icontext k-primary k-grid-update"
+                            ng-click="simpanPsikologi()"><span class="k-icon k-update"></span>Simpan</button>
+                        <button class="k-button  k-button-icontext" ng-click="batalPsikologi()"><span
+                                class="k-icon k-cancel"></span>Batal</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

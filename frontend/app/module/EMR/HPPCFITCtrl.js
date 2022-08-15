@@ -18,7 +18,8 @@ define(['initialize','Configuration'], function (initialize,configuration) {
             // $scope.isCetak = true
             $scope.isCetakV = true
             var norecEMR = ''
-
+            // var cache = cacheHelper.get('normaSkala')[0]
+            // console.log(cache);
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
                 
@@ -33,6 +34,7 @@ define(['initialize','Configuration'], function (initialize,configuration) {
              medifirstService.getPart('emr/get-datacombo-part-diagnosa', true, true, 20).then(function (data) {
                 $scope.listDiagnosa = data
             })
+
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
             var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
             if(cacheNoREC!= undefined){
@@ -111,6 +113,7 @@ define(['initialize','Configuration'], function (initialize,configuration) {
                 $scope.cc.DataNoregis = chacePeriode[12]
                 $scope.cc.tglLahir = chacePeriode[18]
                 $scope.cc.alamat = chacePeriode[15]
+                $scope.cc.skoriq = chacePeriode[34]
                 if (nomorEMR == '-') {
                     $scope.cc.norec_emr = '-'
                 } else {
@@ -118,7 +121,6 @@ define(['initialize','Configuration'], function (initialize,configuration) {
                 }
             }
             var chekedd = false
-
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
@@ -128,8 +130,30 @@ define(['initialize','Configuration'], function (initialize,configuration) {
                 $scope.item.obj[3004002]=moment($scope.cc.tglLahir).format('DD-MMMM-YYYY ');
                 $scope.item.obj[3004003]=$scope.cc.alamat
                 $scope.item.obj[3004008]=$scope.cc.namapasien
-
-
+                $scope.item.obj[3004009] = $scope.cc.skoriq
+                if (parseInt($scope.item.obj[3004009]) >= 170) {
+                    $scope.item.obj[3004010] = 'Genius'
+                } else if (parseInt($scope.item.obj[3004009]) >= 140 && parseInt($scope.item.obj[3004009]) <= 169) {
+                    $scope.item.obj[3004010] = 'Very Superior'
+                } else if (parseInt($scope.item.obj[3004009]) >= 120 && parseInt($scope.item.obj[3004009]) <= 139) {
+                    $scope.item.obj[3004010] = 'Superior'
+                } else if (parseInt($scope.item.obj[3004009]) >= 110 && parseInt($scope.item.obj[3004009]) <= 119) {
+                    $scope.item.obj[3004010] = 'High Average'
+                } else if (parseInt($scope.item.obj[3004009]) >= 90 && parseInt($scope.item.obj[3004009]) <= 109) {
+                    $scope.item.obj[3004010] = 'Average'
+                } else if (parseInt($scope.item.obj[3004009]) >= 80 && parseInt($scope.item.obj[3004009]) <= 89) {
+                    $scope.item.obj[3004010] = 'Low Average'
+                } else if (parseInt($scope.item.obj[3004009]) >= 70 && parseInt($scope.item.obj[3004009]) <= 79) {
+                    $scope.item.obj[3004010] = 'Borderline Mental Retardation'
+                } else if (parseInt($scope.item.obj[3004009]) >= 50 && parseInt($scope.item.obj[3004009]) <= 69) {
+                    $scope.item.obj[3004010] = 'Mild Mental Retardation'
+                } else if (parseInt($scope.item.obj[3004009]) >= 36 && parseInt($scope.item.obj[3004009]) <= 49) {
+                    $scope.item.obj[3004010] = 'Moderate Mental Retardation'
+                } else if (parseInt($scope.item.obj[3004009]) >= 20 && parseInt($scope.item.obj[3004009]) <= 35) {
+                    $scope.item.obj[3004010] = 'Severe Mental Retardation'
+                } else if (parseInt($scope.item.obj[3004009]) <= 19) {
+                    $scope.item.obj[3004010] = 'Profound Mental Retardation'
+                }
                 $scope.item.obj[101008]=$scope.now
                 $scope.item.obj[101011]=$scope.now
                 $scope.item.obj[101012] = { value:peagawaiLogin.id,text:peagawaiLogin.namaLengkap}
