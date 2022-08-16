@@ -3789,4 +3789,40 @@ public function loadComboRincian(Request $request)
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function deleteAnggaranKas(Request $request)
+    {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = "";
+        try {
+            $data = \DB::table('keteranganbelanja_t')->where('norec', $request['norec'])->where('kdprofile', $idProfile)->update([
+                'statusenabled'=> false
+            ]);
+            $transStatus = 'true';
+        } catch (\Throwable $th) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $data,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $th->getLine(),
+                'message'=> $th->getMessage(),
+                // 'result' => $MA,
+                'as' => 'Fizi@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

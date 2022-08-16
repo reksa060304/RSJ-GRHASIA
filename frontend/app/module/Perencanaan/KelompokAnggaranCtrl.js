@@ -2707,7 +2707,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "field": "des",
                         "title": "Des",
                         "width": "40px"
-                    }
+                    },
+                    {
+                        "command": [{
+                            text: "Hapus",
+                            click: HapusAnggaranKas,
+                            
+                        }, ],
+                        title: "",
+                        width: "40px",
+                    },
                 ]
             };
             $scope.columnSPJ = {
@@ -4137,6 +4146,30 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     $scope.rcn.sisaAnggaran = formatRupiah(TotalAnggaran - 0, "Rp. ")
                     
                 // })
+            }
+            function HapusAnggaranKas(e){
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                };
+                console.log(dataItem)
+                // return 
+                var confirm = $mdDialog.confirm()
+                    .title('Informasi')
+                    .htmlContent("Apakah anda yakin ingin menghapus " + dataItem.keteranganbelanja + "?")
+                    .ariaLabel('Lucky day')
+                    .cancel('Batal')
+                    .ok('Ok');
+                $mdDialog.show(confirm).then(function () {
+                    var itemDelete = {
+                        "norec": dataItem.norec
+                    }
+                    medifirstService.post('anggaran/delete-anggaran-kas', itemDelete).then(function (e) {
+                        LoadTotalKeterangan()
+                    })
+                })
             }
 
 

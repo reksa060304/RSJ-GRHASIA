@@ -2250,6 +2250,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sdm/pelatihan/get-daftar-narasumber', 'SDM\PelatihanController@getDataNarasumber');
                 Route::get('anggaran/load-combo-rincian-pendapatan','Perencanaan\PerencanaanController@loadComboRincian');
                 Route::get('anggaran/load-data-rincian-pendapatan','Perencanaan\PerencanaanController@loadDataRincian');
+                Route::post('anggaran/delete-anggaran-kas', 'Perencanaan\PerencanaanController@deleteAnggaranKas');
                 Route::post('anggaran/save-rincian-pendapatan', 'Perencanaan\PerencanaanController@saveRincianPendapatan');
                 Route::post('anggaran/hapus-rincian-pendapatan', 'Perencanaan\PerencanaanController@hapusRincianPendapatan');
                 Route::get('sdm/daftar-gaji-tunjangan', 'SDM\SumberDayaManusiaController@getGajiTunjangan');
