@@ -2953,9 +2953,56 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "field": "asalproduk",
                         "title": "Sumber Dana",
                         "width": "100px"
+                    },
+                    {
+                        command: [{
+                            text: "Hapus",
+                            click: HapusRincianKas
+                        }],
+                        title: "",
+                        width: "40px",
                     }
                 ]
             };
+            function HapusRincianKas(e){
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                };
+                console.log(dataItem);
+                // return 
+                var confirm = $mdDialog.confirm()
+                    .title('Informasi')
+                    .htmlContent("Apakah anda yakin ingin menghapus " + dataItem.keteranganbelanja + "?")
+                    .ariaLabel('Lucky day')
+                    .cancel('Batal')
+                    .ok('Ok');
+                $mdDialog.show(confirm).then(function () {
+                    var itemDelete = {
+                        "norec": dataItem.norec
+                    }
+                    medifirstService.post('anggaran/delete-anggaran-kas', itemDelete).then(function (e) {
+                         medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id + "&idmataanggaran=" + $scope.rcn.idmataanggaran).then(function (e) {
+                             DataKeteranganBelanja = e.data.data
+                             $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                                 data: DataKeteranganBelanja
+                             });
+                             for (let index = 0; index < DataKeteranganBelanja.length; index++) {
+                                 let element = DataKeteranganBelanja[index];
+                                 TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
+                             }
+                             TotalAnggaran = parseFloat(TotalAnggaran)
+                             $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
+                             $scope.rcn.totalAnggaran = formatRupiah(TotalAnggaran, "Rp. ")
+                             //$scope.rcn.sisaAnggaran = formatRupiah(TotalAnggaran - 0, "Rp. ")
+                             $scope.item.targetKinerjaMasukan = formatRupiah(TotalAnggaran, "Rp. ")
+
+                         })
+                    })
+                })
+            }
             $scope.columnDetailSPJ = {
                 toolbar:[
                     {
