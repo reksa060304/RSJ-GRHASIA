@@ -3287,6 +3287,10 @@
         {
             "nameDep": "EPPSpsikologiCtrl",
             "urlDep": "module/RawatJalan/EPPSpsikologiCtrl"
+        },
+        {
+            "nameDep": "LaporanJumlahPasienCtrl",
+            "urlDep": "module/Registrasi/LaporanJumlahPasienCtrl"
         }
     ]
 }
