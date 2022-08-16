@@ -2416,9 +2416,11 @@ class RawatJalanController extends ApiController
 
     public function getDdaftarRegistrasiPsikologi(Request $request)
     {
+        //norec dibawah adalah norec apd
         $data = \DB::select(DB::raw("SELECT
             apd.norec,
             apd.tglmasuk,
+            ps.tgllahir,
             pd.noregistrasi,
             ps.nocm,
             ps.namapasien,
@@ -2437,12 +2439,157 @@ class RawatJalanController extends ApiController
             apd.objectruanganfk = 767
             and pd.statusenabled = true
             and pd.kdprofile = 30
-            
+            and apd.tglmasuk between '$request[tglawal]' and '$request[tglakhir]' 
         "));
         $result = array(
             "data"=> $data,
             "as"=> 'FIzi'
         );
         return $this->respond($result);
+    }
+    public function saveInputHasilPsikologi(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+            $datapsikologi = $request['datapsikologi'];
+
+        try {
+            foreach ($datapsikologi as $dp) {
+                if($dp['norec'] == ""){
+                \DB::table('inputhasilpsikologi_t')->insert([
+                    'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> date('Y-m-d'),
+                    'nomor'=>$dp['nomor'],
+                    'norec_apd'=>$dp['norec_apd'],
+                    'jawaban'=>$dp['jawaban'],
+                    'test'=>$dp['test'],
+                    'cfit'=>$dp['cfit'],
+                    'nilai'=>$dp['nilai'],
+                ]);
+                $crud = "Simpan CFIT";
+                } else {
+                    \DB::table('inputhasilpsikologi_t')->where('norec', $request['norec'])->update([
+                    'tglinput'=> date('Y-m-d'),
+                    'nomor'=>$dp['nomor'],
+                    'norec_apd'=>$dp['norec_apd'],
+                    'jawaban'=>$dp['jawaban'],
+                    'test'=>$dp['test'],
+                    'cfit'=>$dp['cfit'],
+                    'nilai'=>$dp['nilai'],
+                ]);
+                $crud = "Simpan CFIT";
+                }
+            }
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'msg'=> $th->getMessage(),
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getHasilCFITDetail(Request $request)
+    {
+        $data = \DB::select(DB::raw("
+        select * from inputhasilpsikologi_t where norec_apd ilike '$request[norec_apd]' order by cfit asc, test asc, nomor asc
+        "));
+        $result = array(
+            'data'=> $data,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function getKunciJawabanCFIT(Request $request)
+    {   
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = \DB::select(DB::raw("SELECT * from kuncijawabancfit_m where kdprofile = $kdProfile and statusenabled = true"));
+        $result = array(
+            "data"=> $data,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function getNormaSkala(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $umurmax = '';
+        if($request['umurmax']=='null'){
+            $umurmax = 'and umurmax is null';
+        } else{
+            $umurmax = 'and umurmax = ' . $request['umurmax'];
+
+        }
+        $data = \DB::select(DB::raw("SELECT * from normaskala_m where rawscores = $request[rawscores] and umurmin = $request[umurmin] and statusenabled = true and kdprofile = $kdProfile
+        $umurmax
+        "));
+        $result = array(
+            'data'=> $data,
+            'as'=>'Fizi' 
+        );
+        return $this->respond($result);
+    }
+    public function kirimIQNormaSkala(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+            $datapsikologi = $request['datapsikologi'];
+
+        try {
+           
+            \DB::table('antrianpasiendiperiksa_t')->where('norec', $request['norec'])->update([
+                'skoriq'=> $request['skoriq']
+            ]);
+            $crud = "Simpan CFIT";
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

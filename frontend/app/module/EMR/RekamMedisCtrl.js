@@ -94,7 +94,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     30: $scope.header.noreservasi,
                     31: $scope.header.pekerjaan,
                     32: $scope.header.tempatlahir,
-                    33: $scope.header.statuspasien
+                    33: $scope.header.statuspasien,
+                    34: $scope.header.skoriq
                 }
                 cacheHelper.set('CacheInputDiagnosaDokter', arrStr);
                 cacheHelper.set('InputResepApotikOrderRevCtrl', arrStr);

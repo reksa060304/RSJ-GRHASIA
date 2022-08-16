@@ -2174,13 +2174,18 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             //psikologi
             Route::get('psikologi/get-data-psikologi', 'RawatJalan\RawatJalanController@getComboPsikologi');
             Route::get('psikologi/get-daftar-pasien-psikologi', 'RawatJalan\RawatJalanController@getDdaftarRegistrasiPsikologi');
+            Route::get('psikologi/get-hasil-cfit-detail', 'RawatJalan\RawatJalanController@getHasilCFITDetail');
+            Route::get('psikologi/kunci-jawaban-cfit','RawatJalan\RawatJalanController@getKunciJawabanCFIT');
+            Route::get('psikologi/get-norma-skala', 'RawatJalan\RawatJalanController@getNormaSkala');
             /*END GET*/
 
             /*POST*/
+            //psikologi
+            Route::post('psikologi/kirim-iq-norma-skala', 'RawatJalan\RawatJalanController@kirimIQNormaSkala');
             Route::post('psikologi/save-master-norma-psikologi', 'RawatJalan\RawatJalanController@saveNormaPsikologi');
-            Route::post('epps/save-epps', 'RawatJalan\RawatJalanController@saveEPPS');
-            Route::get('epps/get-eppps-by-apd', 'RawatJalan\RawatJalanController@getEPPS');
-            Route::post('sdm/save-master-pendidikan-pegawai','SDM\SumberDayaManusiaController@saveMasterPendidikanPegawai');
+			Route::post('psikologi/save-hasil-psikologi','RawatJalan\RawatJalanController@saveInputHasilPsikologi');
+			Route::post('epps/save-epps', 'RawatJalan\RawatJalanController@saveEPPS');
+			Route::get('epps/get-eppps-by-apd', 'RawatJalan\RawatJalanController@getEPPS');            Route::post('sdm/save-master-pendidikan-pegawai','SDM\SumberDayaManusiaController@saveMasterPendidikanPegawai');
             Route::post('sdm/simpan-bayar-gaji-detail', 'SDM\SumberDayaManusiaController@simpanPembayaranGajiArray');
             Route::post('sdm/save-data-abk', 'SDM\SumberDayaManusiaController@simpanDataABK');
             Route::post('sdm/save-sisacuti', 'SDM\SumberDayaManusiaController@simpanSisaCuti');
