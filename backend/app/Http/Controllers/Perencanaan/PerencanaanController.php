@@ -2877,17 +2877,27 @@ class PerencanaanController extends ApiController {
             $stahap = "and kb.objecttahapfk = ".$request['tahap'];
         }
 
+        $skegiatan = '';
+        if(isset($request['kegiatan']) && $request['kegiatan'] != '' && $request['kegiatan'] != 'undefined'){
+            $skegiatan = "and kt.objectkegiatanfk = ".$request['kegiatan'];
+        }
+
 
 
         $data = DB::select(DB::raw("
-                select ma.id, ma.kodemataanggaran,ma.namamataanggaran,cast(sum(kt.subtotal) as float) as total 
+                select ma.id, ma.kodemataanggaran,ma.namamataanggaran,cast(sum(kt.subtotal) as float) as total
+                , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+                , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+                , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+                , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+                , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima 
                 from mataanggaran_m ma
-                left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id and kt.statusenabled = true
+                left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id and kt.statusenabled = true $skegiatan
                 where 
-                length(ma.kodemataanggaran)= 9 
+                length(ma.kodemataanggaran) in(9,10) 
                 and ma.kdprofile=$idProfile
                 group by  ma.id,ma.kodemataanggaran,ma.namamataanggaran
-                order by ma.kodemataanggaran;
+                order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;
             ")
         );
 
@@ -2981,6 +2991,7 @@ class PerencanaanController extends ApiController {
         $dataAsalProduk = \DB::table('asalproduk_m as ap')
             ->select('ap.id','ap.asalproduk')
             ->where('ap.statusenabled',true)
+            ->where('ap.isanggaran',true)
             ->orderBy('ap.asalproduk')
             ->get();
 
@@ -3257,6 +3268,12 @@ class PerencanaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $idkegiatanfk= $request['objectkegiatanfk'];
+        $mata = '';
+        if(isset($request['idmataanggaran']) && $request['idmataanggaran'] != '' && $request['idmataanggaran'] != "undefined"){
+            $mata = ' and ma.id = '.$request['idmataanggaran'];
+        }
+        $idmataanggaran= $request['idmataanggaran'];
+        
         $data = DB::select(DB::raw("
                 select kt.norec	,kt.kdprofile	,kt.statusenabled	,kt.objectkegiatanfk	,kt.objectmataanggaranfk	
                 ,kt.keteranganbelanja	,kt.nourut	,kt.jml	,cast(kt.hargasatuan as float) as hargasatuan	 ,cast(kt.subtotal as float) as subtotal	,
@@ -3265,7 +3282,11 @@ class PerencanaanController extends ApiController {
                 INNER JOIN asalproduk_m ap on ap.id=kt.objectasalprodukfk
                 INNER JOIN mataanggaran_m ma on ma.id=kt.objectmataanggaranfk
                 where kt.objectkegiatanfk= $idkegiatanfk
+                $mata
                 and kt.statusenabled = true
+                and ma.kdprofile = 30
+                and ma.statusenabled = true
+                order by kt.nourut
             ")
         );
 

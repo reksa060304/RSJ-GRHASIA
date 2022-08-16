@@ -3283,6 +3283,10 @@
         {
             "nameDep": "DaftarPasienPsikologiCtrl",
             "urlDep": "module/RawatJalan/DaftarPasienPsikologiCtrl"
+        },
+        {
+            "nameDep": "EPPSpsikologiCtrl",
+            "urlDep": "module/RawatJalan/EPPSpsikologiCtrl"
         }
     ]
 }

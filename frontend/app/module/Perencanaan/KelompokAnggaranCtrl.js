@@ -32,6 +32,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.norecspj = ''
             $scope.hidespj = true
             $scope.hidekeuangan = true
+            $scope.subsubketerangan = ''
 
             $scope.rcn = {};
             $scope.rcn.mataAnggaranlv1 = ""
@@ -125,7 +126,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     });
                     
                 // })
-                LoadTotalKeterangan()
+                
                 LoadSPJ()
                 medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')+"&idpegawai=" + idpegawai).then(function (e) {
                     $scope.isRouteLoading = false
@@ -322,6 +323,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 $scope.item.organisasi = '1.02.2.22.0.00.01.0004 - RS Jiwa GRHASIA DINKES DIY'
                 $scope.item.id = dataItem.id
+                $scope.item.subsubketerangan = dataItem.id
+                console.log($scope.item.subsubketerangan)
                 let kodeArr = dataItem.kode.split(" ");
                 let kodeArr2 = kodeArr[0].split(".");
                 let a1 = kodeArr2[0] + '.' + kodeArr2[1]
@@ -399,22 +402,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         
                     }
                     let TotalAnggaran = 0;
-                    medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id).then(function (e) {
-                        DataKeteranganBelanja = e.data.data
-                        $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
-                            data: DataKeteranganBelanja
-                        });
-                        for (let index = 0; index < DataKeteranganBelanja.length; index++) {
-                            let element = DataKeteranganBelanja[index];
-                            TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
-                        }
-                        TotalAnggaran = parseFloat(TotalAnggaran)
-                        $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
-                        $scope.rcn.totalAnggaran = formatRupiah(TotalAnggaran, "Rp. ")
-                        //$scope.rcn.sisaAnggaran = formatRupiah(TotalAnggaran - 0, "Rp. ")
-                        $scope.item.targetKinerjaMasukan = formatRupiah(TotalAnggaran, "Rp. ")
-                        
-                    })
+                    
                     $scope.item.subSubKegiatankode = kodeArr[0]//dataItem.kode//.substring(16) 
                     $scope.item.subSubKegiatan =  dataItem.keterangan
                     $scope.item.thnAnggaran = dataItem.tahun
@@ -446,6 +434,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 $scope.item.keterangan = dataItem.keterangan
                 $scope.item.div = dataItem.div
+                LoadTotalKeterangan()
             }
             function occurrences(string, subString, allowOverlapping) {
 
@@ -2013,7 +2002,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         idpegawai = $scope.pegawaiLogin.id
                     }
 
-                    medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+tahun+"&tahap="+tahap+"&idpegawai="+idpegawai).then(function (e) {
+                    medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+tahun+"&tahap="+tahap+"&idpegawai="+idpegawai+"&kegiatan="+$scope.item.subsubketerangan).then(function (e) {
                         DataTotalMataAnggaran = e.data.data
                         $scope.listAsalProduk = e.data.asalproduk
                         $scope.dataSourceDetailMT = new kendo.data.DataSource({
@@ -3319,17 +3308,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
                     //     data: DataKeteranganBelanja
                     // });
-
-                    var data = []
-                    for (let index = 0; index < DataKeteranganBelanja.length; index++) {
-                        let element = DataKeteranganBelanja[index];
-                        if (element.kodemataanggaran.match(dataMataAnggaranSelected.kodemataanggaran)) {
-                            data.push(element)
+                    let TotalAnggaran = 0;
+                    medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
+                        DataKeteranganBelanja = e.data.data
+                        $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                            data: DataKeteranganBelanja
+                        });
+                        for (let index = 0; index < DataKeteranganBelanja.length; index++) {
+                            let element = DataKeteranganBelanja[index];
+                            TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
                         }
-                    }
-                    $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
-                        data: data
-                    });
+                        TotalAnggaran = parseFloat(TotalAnggaran)
+                        $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
+                        $scope.rcn.totalAnggaran = formatRupiah(TotalAnggaran, "Rp. ")
+                        //$scope.rcn.sisaAnggaran = formatRupiah(TotalAnggaran - 0, "Rp. ")
+                        $scope.item.targetKinerjaMasukan = formatRupiah(TotalAnggaran, "Rp. ")
+                        
+                    })
 
                     // $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
                     // $scope.rcn.totalAnggaran = formatRupiah(dataMataAnggaranSelected.total, "Rp. ")
@@ -3364,7 +3359,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.post('perencanaan/save-keterangan-belanja', objSave).then(function (e) {
                     
                     let TotalAnggaran = 0;
-                    medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id).then(function (e) {
+                    medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
                         DataKeteranganBelanja = e.data.data
                         $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
                             data: DataKeteranganBelanja
@@ -3403,7 +3398,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
             }
             $scope.TambahKeterangan = function(){
-                $scope.item.noUrutKT = DataKeteranganBelanja.length + 1
+                medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
+                    DataKeteranganBelanja = e.data.data
+                    $scope.item.noUrutKT = DataKeteranganBelanja.length + 1
+                })
+                
                 $scope.item.keteranganKT = ''
                 $scope.item.jmlKT = ''
                 $scope.item.hargaSatuanKT = ''
@@ -4121,6 +4120,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             
             $scope.nextSubSubKegiatan = function () {
+                $scope.dataSourceRincianAnggaran = []
                 $scope.popupRincianAnggaran.center().open()
                 // medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id).then(function (e) {
                 //     DataKeteranganBelanja = e.data.data

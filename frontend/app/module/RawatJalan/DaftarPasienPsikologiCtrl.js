@@ -250,23 +250,38 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.popUpDataDaftarPsikologi.center().open()
             }
             $scope.inputEPPS = function(){
+                $scope.changePage("EPPSpsikologi");
+            }
+
+            $scope.changePage = function (stateName) {
+
                 if ($scope.dataDaftarPsikologi == undefined) {
                     toastr.error('Data Belum dipilih')
                     return
                 }
-
-                console.log($scope.dataDaftarPsikologi)
-
+        
                 var obj = {
                     noRegistrasi: $scope.dataDaftarPsikologi.noregistrasi,
                     nocm: $scope.dataDaftarPsikologi.nocm,
                     norec_apd: $scope.dataDaftarPsikologi.norec,
                 }
 
-                $state.go('EPPSpsikologi', {
+                var arrStr = {
+                    0: $scope.dataDaftarPsikologi.noregistrasi,
+                    1: $scope.dataDaftarPsikologi.nocm,
+                    2: $scope.dataDaftarPsikologi.norec,
+                    3: $scope.dataDaftarPsikologi.objectjeniskelaminfk,
+                    4: $scope.dataDaftarPsikologi.namapasien,
+                    5: $scope.dataDaftarPsikologi.tgllahir,
+                    6: $scope.dataDaftarPsikologi.umur,
+                }
+                cacheHelper.set('EPPSpsikologiCtrl', arrStr);
+        
+                  $state.go(stateName, {
                     dataPasien: JSON.stringify(obj)
-                });
-            }
+                  });
+              }
+
             $scope.dataDaftarHasil = {
                 sortable: true,
                 filterable: false,

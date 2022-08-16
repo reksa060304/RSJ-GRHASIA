@@ -1,0 +1,403 @@
+<div class="grid_12">
+    <div class="panel panel-default container_12" style="background-color:transparant">
+        <div class="panel-heading"><label class='title' c-label item="item" real>Input EPPS</label></div>
+        <div class="panel-body">
+            <div class="grid_12">
+                <div class="grid_12 borderBox containerBorderBox">
+                    <div class="grid_12">
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item">Jenis Kelamin</label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.jeniskelamin"
+                                    k-data-text-field="'jeniskelamin'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listJenisKelamin" disabled/>
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item">Nama Pasien</label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="text" class="k-textbox" ng-model="item.namapasien" placeholder="namapasien" disabled/>
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item">Umur</label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="text" class="k-textbox" ng-model="item.umur" placeholder="umur" disabled/>
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item">Tanggal Tes</label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%" k-ng-model="item.tglTes" kendo-datetimepicker
+                                    k-max="now" placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm:ss'"
+                                    parsedate="yyyy-MM-dd HH:mm:ss" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item">No</label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="number" class="k-textbox" ng-model="item.no" placeholder="no" />
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item">Jawaban</label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="text" class="k-textbox" ng-model="item.jawaban" placeholder="jawaban" ng-keypress="$event.which == 13 && TambahData()"/>
+                            </div>
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="grid_12">
+                        <div class="grid_8">
+                            <div class="grid_4">
+                                <p style="text-align: center; width:85%">No. 1-25</p>
+                                <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
+                                    <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
+                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban0[$index].konsistensi == true && listEPPS1Fix.jawaban0[$index].diagonal == true">{{ listEPPS1Fix.jawaban0[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban0[$index].konsistensi == false">{{ listEPPS1Fix.jawaban0[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban1[$index].konsistensi == true && listEPPS1Fix.jawaban1[$index].diagonal == true">{{ listEPPS1Fix.jawaban1[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban1[$index].konsistensi == false">{{ listEPPS1Fix.jawaban1[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban2[$index].konsistensi == true && listEPPS1Fix.jawaban2[$index].diagonal == true">{{ listEPPS1Fix.jawaban2[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban2[$index].konsistensi == false">{{ listEPPS1Fix.jawaban2[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban3[$index].konsistensi == true && listEPPS1Fix.jawaban3[$index].diagonal == true">{{ listEPPS1Fix.jawaban3[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban3[$index].konsistensi == false">{{ listEPPS1Fix.jawaban3[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban4[$index].konsistensi == true && listEPPS1Fix.jawaban4[$index].diagonal == true">{{ listEPPS1Fix.jawaban4[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban4[$index].konsistensi == false">{{ listEPPS1Fix.jawaban4[$index].jawaban}}</th>
+                                    </tr> 
+                                </table>
+    
+                            </div>
+    
+                            <div class="grid_4">
+                                <p style="text-align: center; width:85%">No. 26-50</p>
+                                <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
+                                    <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban5[$index].konsistensi == true">{{ listEPPS1Fix.jawaban5[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban5[$index].konsistensi == false">{{ listEPPS1Fix.jawaban5[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban6[$index].konsistensi == true">{{ listEPPS1Fix.jawaban6[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban6[$index].konsistensi == false">{{ listEPPS1Fix.jawaban6[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban7[$index].konsistensi == true">{{ listEPPS1Fix.jawaban7[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban7[$index].konsistensi == false">{{ listEPPS1Fix.jawaban7[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban8[$index].konsistensi == true">{{ listEPPS1Fix.jawaban8[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban8[$index].konsistensi == false">{{ listEPPS1Fix.jawaban8[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban9[$index].konsistensi == true">{{ listEPPS1Fix.jawaban9[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban9[$index].konsistensi == false">{{ listEPPS1Fix.jawaban9[$index].jawaban}}</th>
+                                    </tr> 
+                                </table>
+                            </div>
+    
+                            <div class="grid_4">
+                                <p style="text-align: center;width:85%">No. 51-75</p>
+                                <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
+                                    <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban10[$index].konsistensi == true">{{ listEPPS1Fix.jawaban10[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban10[$index].konsistensi == false">{{ listEPPS1Fix.jawaban10[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban11[$index].konsistensi == true">{{ listEPPS1Fix.jawaban11[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban11[$index].konsistensi == false">{{ listEPPS1Fix.jawaban11[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban12[$index].konsistensi == true">{{ listEPPS1Fix.jawaban12[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban12[$index].konsistensi == false">{{ listEPPS1Fix.jawaban12[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban13[$index].konsistensi == true">{{ listEPPS1Fix.jawaban13[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban13[$index].konsistensi == false">{{ listEPPS1Fix.jawaban13[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban14[$index].konsistensi == true">{{ listEPPS1Fix.jawaban14[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban14[$index].konsistensi == false">{{ listEPPS1Fix.jawaban14[$index].jawaban}}</th>
+                                    </tr> 
+                                </table>
+                            </div>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%">r</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom1" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom2" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom3" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom4" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom5" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%">c</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom1" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom2" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom3" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom4" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom5" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%">Need</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" placeholder="Ach" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="Def" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="Ord" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="Exh" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="Aut" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%">s</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" ng-model="item.skolom1" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom2" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom3" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom4" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom5" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    
+                    <div class="grid_12">
+                        <div class="grid_8">
+                            <div class="grid_4">
+                                <p style="text-align: center; width:85%">No. 76-100</p>
+                                <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
+                                    <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban15[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban16[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban17[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban18[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban19[$index].jawaban}}</th>
+                                    </tr> 
+                                </table>
+                            </div>
+    
+                            <div class="grid_4">
+                                <p style="text-align: center; width:85%">No. 101-125</p>
+                                <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
+                                    <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
+
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban20[$index].konsistensi == true && listEPPS1Fix.jawaban20[$index].diagonal == true">{{ listEPPS1Fix.jawaban20[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;  " ng-if=" listEPPS1Fix.jawaban20[$index].diagonal == true && listEPPS1Fix.jawaban20[$index].konsistensi == false">{{ listEPPS1Fix.jawaban20[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban20[$index].konsistensi == false && listEPPS1Fix.jawaban20[$index].diagonal == false">{{ listEPPS1Fix.jawaban20[$index].jawaban}}</th>
+
+                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban21[$index].konsistensi == true && listEPPS1Fix.jawaban21[$index].diagonal == true">{{ listEPPS1Fix.jawaban21[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban21[$index].konsistensi == false && listEPPS1Fix.jawaban21[$index].diagonal == true">{{ listEPPS1Fix.jawaban21[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban21[$index].konsistensi == false && listEPPS1Fix.jawaban21[$index].diagonal == false">{{ listEPPS1Fix.jawaban21[$index].jawaban}}</th>
+
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban22[$index].konsistensi == true && listEPPS1Fix.jawaban22[$index].diagonal == true">{{ listEPPS1Fix.jawaban22[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban22[$index].konsistensi == false">{{ listEPPS1Fix.jawaban22[$index].jawaban}}</th>
+
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban23[$index].konsistensi == true && listEPPS1Fix.jawaban23[$index].diagonal == true">{{ listEPPS1Fix.jawaban23[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban23[$index].konsistensi == false">{{ listEPPS1Fix.jawaban23[$index].jawaban}}</th>
+
+                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban24[$index].konsistensi == true && listEPPS1Fix.jawaban24[$index].diagonal == true">{{ listEPPS1Fix.jawaban24[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban24[$index].diagonal == true && listEPPS1Fix.jawaban24[$index].konsistensi == false">{{ listEPPS1Fix.jawaban24[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban24[$index].konsistensi == false && listEPPS1Fix.jawaban24[$index].diagonal == false">{{ listEPPS1Fix.jawaban24[$index].jawaban}}</th>
+                                    </tr> 
+                                </table>
+                            </div>
+    
+                            <div class="grid_4">
+                                <p style="text-align: center;width:85%">No. 126-150</p>
+                                <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
+                                    <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban25[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban26[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban27[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban28[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban29[$index].jawaban}}</th>
+                                    </tr> 
+                                </table>
+                            </div>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%; COLOR: WHITE;">r</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom6" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom7" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom8" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom9" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom10" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%; COLOR: WHITE;">c</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom6" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom7" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom8" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom9" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom10" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%; color:white;">Need</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" placeholder="Aff" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="Int" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="Suc" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="Dom" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="Aba" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%; COLOR: WHITE;">s</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" ng-model="item.skolom6" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom7" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom8" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom9" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom10" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="grid_12">
+                        <div class="grid_8">
+                            <div class="grid_4">
+                                <p style="text-align: center; width:85%">No. 151-175</p>
+                                <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
+                                    <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban30[$index].konsistensi == true">{{ listEPPS1Fix.jawaban30[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban30[$index].konsistensi == false">{{ listEPPS1Fix.jawaban30[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban31[$index].konsistensi == true">{{ listEPPS1Fix.jawaban31[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban31[$index].konsistensi == false">{{ listEPPS1Fix.jawaban31[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban32[$index].konsistensi == true">{{ listEPPS1Fix.jawaban32[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban32[$index].konsistensi == false">{{ listEPPS1Fix.jawaban32[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban33[$index].konsistensi == true">{{ listEPPS1Fix.jawaban33[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban33[$index].konsistensi == false">{{ listEPPS1Fix.jawaban33[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban34[$index].konsistensi == true">{{ listEPPS1Fix.jawaban34[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban34[$index].konsistensi == false">{{ listEPPS1Fix.jawaban34[$index].jawaban}}</th>
+                                    </tr> 
+                                </table>
+                            </div>
+    
+                            <div class="grid_4">
+                                <p style="text-align: center; width:85%">No. 176-200</p>
+                                <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
+                                    <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban35[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban36[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban37[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban38[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban39[$index].jawaban}}</th>
+                                    </tr> 
+                                </table>
+                            </div>
+    
+                            <div class="grid_4">
+                                <p style="text-align: center;width:85%">No. 201-225</p>
+                                <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
+                                    <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban40[$index].konsistensi == true && listEPPS1Fix.jawaban40[$index].diagonal == true">{{ listEPPS1Fix.jawaban40[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;  " ng-if=" listEPPS1Fix.jawaban40[$index].diagonal == true && listEPPS1Fix.jawaban40[$index].konsistensi == false">{{ listEPPS1Fix.jawaban40[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban40[$index].konsistensi == false && listEPPS1Fix.jawaban40[$index].diagonal == false">{{ listEPPS1Fix.jawaban40[$index].jawaban}}</th>
+
+                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban41[$index].konsistensi == true && listEPPS1Fix.jawaban41[$index].diagonal == true">{{ listEPPS1Fix.jawaban41[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban41[$index].konsistensi == false && listEPPS1Fix.jawaban41[$index].diagonal == true">{{ listEPPS1Fix.jawaban41[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban41[$index].konsistensi == false && listEPPS1Fix.jawaban41[$index].diagonal == false">{{ listEPPS1Fix.jawaban41[$index].jawaban}}</th>
+
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban42[$index].konsistensi == true && listEPPS1Fix.jawaban42[$index].diagonal == true">{{ listEPPS1Fix.jawaban42[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban42[$index].konsistensi == false">{{ listEPPS1Fix.jawaban42[$index].jawaban}}</th>
+
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban43[$index].konsistensi == true && listEPPS1Fix.jawaban43[$index].diagonal == true">{{ listEPPS1Fix.jawaban43[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban43[$index].konsistensi == false">{{ listEPPS1Fix.jawaban43[$index].jawaban}}</th>
+
+                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban44[$index].konsistensi == true && listEPPS1Fix.jawaban44[$index].diagonal == true">{{ listEPPS1Fix.jawaban44[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban44[$index].diagonal == true && listEPPS1Fix.jawaban44[$index].konsistensi == false">{{ listEPPS1Fix.jawaban44[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban44[$index].konsistensi == false && listEPPS1Fix.jawaban44[$index].diagonal == false">{{ listEPPS1Fix.jawaban44[$index].jawaban}}</th>
+                                    </tr> 
+                                </table>
+                            </div>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%; COLOR: WHITE;">r</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom11" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom12" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom13" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom14" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.rkolom15" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%; COLOR: WHITE;">c</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom11" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom12" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom13" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom14" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.ckolom15" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%; color:white;">Need</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" placeholder="Nur" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="Chg" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="End" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="Het" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" placeholder="Agg" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                        <div class="grid_1">
+                            <p style="text-align: center; width:100%; COLOR: WHITE;">s</p>
+                            <table style="border: 1px solid black; width: 60%; height: 60%; margin-left: 30px; margin-top: 15px;">
+                                <tr><th height="10"><input c-text-box type="text" class="k-textbox" ng-model="item.skolom11" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:0px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom12" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom13" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom14" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                                <tr><th><input c-text-box type="text" class="k-textbox" ng-model="item.skolom15" placeholder="0" style="text-align: center; height: 20px;border: none;outline: none;margin-top:2px"/></th></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <br><br>
+
+                    <div class="grid_12">
+                        <div class="grid_8"></div>
+                        <div class="grid_2" style="margin-top: 10px;margin-left:30px;">
+                            <button class="k-button  k-button-icontext" ng-click="hitung()"><span
+                                class="k-icon k-update"></span>Hitung</button>
+                        </div>
+                        <div class="grid_2"></div>
+                        <div class="grid_6"></div>
+                        <div class="grid_1">
+                            <div class="grid_12" style="margin-top:10px;margin-left:30px;">
+                                <div class="grid_12">
+                                    <label c-label item="item">Konsistensi</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input c-text-box type="text" class="k-textbox" ng-model="item.poinkonsistensi" placeholder="konsistensi"/>
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="grid_1">
+                            <div class="grid_12" style="margin-top:10px;margin-left:30px;">
+                                <div class="grid_12">
+                                    <label c-label item="item">Total Score</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input c-text-box type="text" class="k-textbox" ng-model="item.totalscore" placeholder="score"/>
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="grid_8"></div>
+                        <div class="grid_2" style="margin-top:10px;margin-left:30px;">
+                            <button class="k-button  k-button-icontext" ng-click="simpan()"><span
+                                class="k-icon k-update"></span>Simpan</button>
+                        </div>  
+                        
+                        
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

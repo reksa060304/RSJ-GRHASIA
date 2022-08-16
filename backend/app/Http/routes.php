@@ -2178,6 +2178,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
             /*POST*/
             Route::post('psikologi/save-master-norma-psikologi', 'RawatJalan\RawatJalanController@saveNormaPsikologi');
+            Route::post('epps/save-epps', 'RawatJalan\RawatJalanController@saveEPPS');
+            Route::get('epps/get-eppps-by-apd', 'RawatJalan\RawatJalanController@getEPPS');
             Route::post('sdm/save-master-pendidikan-pegawai','SDM\SumberDayaManusiaController@saveMasterPendidikanPegawai');
             Route::post('sdm/simpan-bayar-gaji-detail', 'SDM\SumberDayaManusiaController@simpanPembayaranGajiArray');
             Route::post('sdm/save-data-abk', 'SDM\SumberDayaManusiaController@simpanDataABK');
