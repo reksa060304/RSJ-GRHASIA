@@ -18291,7 +18291,52 @@
       {
         "module": "MedifirstService",
         "define": "MedifirstService"
+
+      }
+
+    ]
+  },
+  {
+    "name": "StatistikPerPeriode",
+    "url": "/TGFwb3JhblNlbnN1c1JhbmFwU3RhdGlzdGlrUGVyUGVyaW9kZQ==",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/StatistikPerPeriode.html",
+    "controller": "StatistikPerPeriodeCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+
+    ]
+  },
+  {
+    "name": "StatistikPerBangsal",
+    "url": "/TGFwb3JhblNlbnN1c1JhbmFwU3RhdGlzdGlrUGVyQmFuZ3NhbA==",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/StatistikPerBangsal.html",
+    "controller": "StatistikPerBangsalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
       }
     ]
   }
 ]
+
+

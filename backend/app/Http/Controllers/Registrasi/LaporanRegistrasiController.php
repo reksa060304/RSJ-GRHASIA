@@ -2687,6 +2687,7 @@ select '-' as smf,* from  (
         }
 
         $paramRuangan = '';
+        $paramRuanganRU = '';
         $paramRuangany = '';
         $paramRuanganSatu = '';
         $paramRuanganKeluar = '';
@@ -2701,6 +2702,7 @@ select '-' as smf,* from  (
             $paramRuanganPindah = ' and rpp.objectruanganfk = ' . $ruanganId;
             $paramRuanganDiPindah = ' and apd.objectruanganasalfk = ' . $ruanganId;
             $paramRuanganApdt = ' and apdt.objectruanganfk = ' . $ruanganId;
+            $paramRuanganRU = ' and ru.id = ' . $ruanganId;
         }
 
         if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined" && ($ruanganId == 803 || $ruanganId == 794)) {
@@ -2711,6 +2713,7 @@ select '-' as smf,* from  (
             $paramRuanganPindah = ' and rpp.objectruanganfk in(803,794)';
             $paramRuanganDiPindah = ' and apd.objectruanganasalfk in(803,794)';
             $paramRuanganApdt = ' and apdt.objectruanganfk in(803,794)';
+            $paramRuanganRU = ' and ru.id in(803,794)';
         }
 
         $paramRuanganRM = '';
@@ -3391,8 +3394,10 @@ select '-' as smf,* from  (
                 ) as x	
                 on rm.objectruanganfk=x.objectruanganfk and rm.objectkamarfk=x.objectkamarfk and rm.tanggalawal = x.tanggal
                 where rm.kdprofile = 30 and rm.statusenabled = true
-                $paramRuanganRM;
+                $paramRuanganRU;
                 "));
+
+           
 
             $lamadirawat = DB::select(DB::raw("select sum(y.totallama) as totalfix from(
                 select x.tanggalpulang, sum(x.lamadirawat) as totallama from(
