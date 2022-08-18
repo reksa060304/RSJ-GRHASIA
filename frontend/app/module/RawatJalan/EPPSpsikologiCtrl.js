@@ -191,7 +191,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             {
                                 no: 26, 
                                 jawaban: "",
-                                konsistensi: false
+                                konsistensi: true
                             },
                             {
                                 no: 27,
@@ -220,7 +220,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             {
                                 no: 32,
                                 jawaban: "",
-                                konsistensi: false
+                                konsistensi: true
                             }, {
                                 no: 33,
                                 jawaban: "",
@@ -304,7 +304,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             },{
                                 no: 50,
                                 jawaban: "",
-                                konsistensi: false
+                                konsistensi: true
                             }
                         ],
 
@@ -345,7 +345,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             {
                                 no: 57,
                                 jawaban: "",
-                                konsistensi: false
+                                konsistensi: true
                             }, {
                                 no: 58,
                                 jawaban: "",
@@ -429,7 +429,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             },{
                                 no: 75,
                                 jawaban: "",
-                                konsistensi: false
+                                konsistensi: true
                             }
                         ],
 
@@ -542,7 +542,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             {
                                 no: 101, 
                                 jawaban: "",
-                                konsistensi: false,
+                                konsistensi: true,
                                 diagonal: true
                             },
                             {
@@ -577,7 +577,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             {
                                 no: 107,
                                 jawaban: "",
-                                konsistensi: false,
+                                konsistensi: true,
                                 diagonal: true
                             }, {
                                 no: 108,
@@ -679,7 +679,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             },{
                                 no: 125,
                                 jawaban: "",
-                                konsistensi: false,
+                                konsistensi: true,
                                 diagonal: true
                             }
                         ],
@@ -1050,7 +1050,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             {
                                 no: 207,
                                 jawaban: "",
-                                konsistensi: false,
+                                konsistensi: true,
                                 diagonal: true
                             }, {
                                 no: 208,
@@ -1152,7 +1152,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             },{
                                 no: 225,
                                 jawaban: "",
-                                konsistensi: false,
+                                konsistensi: true,
                                 diagonal: true
                             }
                         ],
@@ -1428,7 +1428,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             },{
                                 no: 50,
                                 jawaban: "",
-                                konsistensi: false
+                                konsistensi: true
                             }
                         ],
 
@@ -1803,7 +1803,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             },{
                                 no: 125,
                                 jawaban: "",
-                                konsistensi: false,
+                                konsistensi: true,
                                 diagonal: true
                             }
                         ],
@@ -2719,8 +2719,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listEPPS1Fix.jawaban44[mod].jawaban = $scope.item.jawaban
                     }
 
-                    $scope.item.no++
-
+                    if($scope.item.no != 225){
+                        $scope.item.no++
+                    }
+                    $scope.item.jawaban = undefined
 
 
                     //konsistensi
@@ -2796,21 +2798,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.listEPPS1Fix.jawaban13[3].jawaban == $scope.listEPPS1Fix.jawaban43[3].jawaban && $scope.listEPPS1Fix.jawaban13[3].jawaban != '' && $scope.listEPPS1Fix.jawaban43[3].jawaban != ''){
                     poinkonsistensi ++
                 }
-
-
-                if($scope.item.jeniskelamin.id == 1){
-                    if($scope.listEPPS1Fix.jawaban5[0].jawaban == $scope.listEPPS1Fix.jawaban20[0].jawaban && $scope.listEPPS1Fix.jawaban5[0].jawaban != '' && $scope.listEPPS1Fix.jawaban20[0].jawaban != ''){
-                        poinkonsistensi ++
-                    }
-                    if($scope.listEPPS1Fix.jawaban6[1].jawaban == $scope.listEPPS1Fix.jawaban21[1].jawaban && $scope.listEPPS1Fix.jawaban6[1].jawaban != '' && $scope.listEPPS1Fix.jawaban21[1].jawaban != ''){
-                        poinkonsistensi ++
-                    }
-                    if($scope.listEPPS1Fix.jawaban11[1].jawaban == $scope.listEPPS1Fix.jawaban41[1].jawaban && $scope.listEPPS1Fix.jawaban11[1].jawaban != '' && $scope.listEPPS1Fix.jawaban41[1].jawaban != ''){
-                        poinkonsistensi ++
-                    }
-                    if($scope.listEPPS1Fix.jawaban14[4].jawaban == $scope.listEPPS1Fix.jawaban44[4].jawaban && $scope.listEPPS1Fix.jawaban14[4].jawaban != '' && $scope.listEPPS1Fix.jawaban44[4].jawaban != ''){
-                        poinkonsistensi ++
-                    }
+                
+                if($scope.listEPPS1Fix.jawaban5[0].jawaban == $scope.listEPPS1Fix.jawaban20[0].jawaban && $scope.listEPPS1Fix.jawaban5[0].jawaban != '' && $scope.listEPPS1Fix.jawaban20[0].jawaban != ''){
+                    poinkonsistensi ++
+                }
+                if($scope.listEPPS1Fix.jawaban6[1].jawaban == $scope.listEPPS1Fix.jawaban21[1].jawaban && $scope.listEPPS1Fix.jawaban6[1].jawaban != '' && $scope.listEPPS1Fix.jawaban21[1].jawaban != ''){
+                    poinkonsistensi ++
+                }
+                if($scope.listEPPS1Fix.jawaban11[1].jawaban == $scope.listEPPS1Fix.jawaban41[1].jawaban && $scope.listEPPS1Fix.jawaban11[1].jawaban != '' && $scope.listEPPS1Fix.jawaban41[1].jawaban != ''){
+                    poinkonsistensi ++
+                }
+                if($scope.listEPPS1Fix.jawaban14[4].jawaban == $scope.listEPPS1Fix.jawaban44[4].jawaban && $scope.listEPPS1Fix.jawaban14[4].jawaban != '' && $scope.listEPPS1Fix.jawaban44[4].jawaban != ''){
+                    poinkonsistensi ++
+                }
+                if($scope.listEPPS1Fix.jawaban9[4].jawaban == $scope.listEPPS1Fix.jawaban24[4].jawaban && $scope.listEPPS1Fix.jawaban14[4].jawaban != '' && $scope.listEPPS1Fix.jawaban44[4].jawaban != ''){
+                    poinkonsistensi ++
                 }
 
 
