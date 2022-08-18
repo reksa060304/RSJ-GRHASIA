@@ -3291,11 +3291,6 @@
         {
             "nameDep": "LaporanJumlahPasienCtrl",
             "urlDep": "module/Registrasi/LaporanJumlahPasienCtrl"
-
-
-
-
-        
 		},
         {
             "nameDep": "StatistikPerPeriodeCtrl",
@@ -3304,6 +3299,10 @@
         {
             "nameDep": "StatistikPerBangsalCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/StatistikPerBangsalCtrl"
+        },
+        {
+            "nameDep": "LaporanSensusHarianRawatJalanCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanSensusHarianRawatJalanCtrl"
         }
         
     ]
