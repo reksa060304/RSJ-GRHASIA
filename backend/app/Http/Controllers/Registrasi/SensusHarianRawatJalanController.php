@@ -1256,4 +1256,297 @@ GROUP BY pd.namaruangan, pd.id"));
             return $this->respond($result);
 
     }
+    public function getLaporanSensusHarianRawatJalan(Request $request)
+    {
+        $tglawal = $request['tglawal'];
+        $tglakhir = $request['tglakhir'];
+        $main = \DB::select(DB::raw("SELECT date_part('day', i )as tgl FROM generate_series('$tglawal'::date,'$tglakhir'::date, '1 day')i;"));
+        $data = \DB::select(DB::raw("SELECT * FROM (
+        SELECT date_part('day', apd.tglmasuk::date)::integer as tgl, 
+        count(apd.statuskunjungan)filter(where apd.statuskunjungan = 'BARU')as br,
+        count(apd.statuskunjungan)filter(where apd.statuskunjungan = 'LAMA')as lm
+        FROM antrianpasiendiperiksa_t apd 
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        where pd.statusenabled = true and apd.statusenabled = true and apd.kdprofile = 30 and ru.id in(29,752,753,755,756,757,758,759,761,762,764,765,29,767,768,769,770,771,772,773,774,777,782,575,576) and apd.tglmasuk::date BETWEEN '$tglawal' and '$tglakhir' GROUP BY apd.tglmasuk::date)as status
+
+        left join (
+        SELECT date_part('day', apd.tglmasuk::date)::integer as tgl, 
+        count(ps.objectjeniskelaminfk)filter(where ps.objectjeniskelaminfk = 1)as lk,
+        count(ps.objectjeniskelaminfk)filter(where ps.objectjeniskelaminfk = 2)as pr
+        FROM antrianpasiendiperiksa_t apd 
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        where pd.statusenabled = true and apd.statusenabled = true and apd.kdprofile = 30 and ru.id in(29,752,753,755,756,757,758,759,761,762,764,765,29,767,768,769,770,771,772,773,774,777,782,575,576)and apd.tglmasuk::date BETWEEN '$tglawal' and '$tglakhir' GROUP BY apd.tglmasuk::date
+        )as jeniskelamin on jeniskelamin.tgl = status.tgl
+
+        left join (
+        SELECT date_part('day', apd.tglmasuk::date)::integer as tgl, 
+        count(EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date)))filter(where EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date))between 0 and 4)as umur1,
+        count(EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date)))filter(where EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date))between 5 and 14)as umur2,
+        count(EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date)))filter(where EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date))between 15 and 24)as umur3,
+        count(EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date)))filter(where EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date))between 25 and 44)as umur4,
+        count(EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date)))filter(where EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date))between 45 and 64)as umur5,
+        count(EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date)))filter(where EXTRACT(year  from age(apd.tglmasuk::date, ps.tgllahir::date))>64)as umur6
+        FROM antrianpasiendiperiksa_t apd 
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        where pd.statusenabled = true and apd.statusenabled = true and apd.kdprofile = 30 and ru.id in(29,752,753,755,756,757,758,759,761,762,764,765,29,767,768,769,770,771,772,773,774,777,782,575,576) and apd.tglmasuk::date BETWEEN '$tglawal' and '$tglakhir' GROUP BY apd.tglmasuk::date
+        )as umur on umur.tgl = status.tgl
+
+
+        left join (
+        SELECT date_part('day', apd.tglmasuk::date)::integer as tgl, 
+        count(ps.objectagamafk)filter(where ps.objectagamafk=1)as agama1,
+        count(ps.objectagamafk)filter(where ps.objectagamafk=2)as agama2,
+        count(ps.objectagamafk)filter(where ps.objectagamafk=3)as agama3,
+        count(ps.objectagamafk)filter(where ps.objectagamafk=4)as agama4,
+        count(ps.objectagamafk)filter(where ps.objectagamafk=5)as agama5
+        FROM antrianpasiendiperiksa_t apd 
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        where pd.statusenabled = true and apd.statusenabled = true and apd.kdprofile = 30 and ru.id in(29,752,753,755,756,757,758,759,761,762,764,765,29,767,768,769,770,771,772,773,774,777,782,575,576) and apd.tglmasuk::date BETWEEN '$tglawal' and '$tglakhir' GROUP BY apd.tglmasuk::date
+        )as agama on agama.tgl = status.tgl
+
+
+        left join (
+        SELECT date_part('day', apd.tglmasuk::date)::integer as tgl, 
+        count(al.namakotakabupaten)filter(where al.objectkotakabupatenfk = 227)as alamat1,
+        count(al.namakotakabupaten)filter(where al.objectkotakabupatenfk = 224)as alamat2,
+        count(al.namakotakabupaten)filter(where al.objectkotakabupatenfk = 223)as alamat3,
+        count(al.namakotakabupaten)filter(where al.objectkotakabupatenfk = 225)as alamat4,
+        count(al.namakotakabupaten)filter(where al.objectkotakabupatenfk = 226)as alamat5,
+        count(al.namakotakabupaten)filter(where al.objectkotakabupatenfk not in (223,224,225,226,227))as alamat6
+        FROM antrianpasiendiperiksa_t apd 
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        left join alamat_m al on al.nocmfk = ps.id
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        where pd.statusenabled = true and apd.statusenabled = true and apd.kdprofile = 30 and ru.id in(29,752,753,755,756,757,758,759,761,762,764,765,29,767,768,769,770,771,772,773,774,777,782,575,576) and apd.tglmasuk::date BETWEEN '$tglawal' and '$tglakhir' GROUP BY apd.tglmasuk::date
+        )as alamat on alamat.tgl = status.tgl
+
+        left join (
+        SELECT date_part('day', apd.tglmasuk::date)::integer as tgl, 
+        count(ps.objectpendidikanfk)filter(where ps.objectpendidikanfk in (0,1,17))as pendidikan1,
+        count(ps.objectpendidikanfk)filter(where ps.objectpendidikanfk in (2))as pendidikan2,
+        count(ps.objectpendidikanfk)filter(where ps.objectpendidikanfk in (3))as pendidikan3,
+        count(ps.objectpendidikanfk)filter(where ps.objectpendidikanfk in (4))as pendidikan4,
+        count(ps.objectpendidikanfk)filter(where ps.objectpendidikanfk in (5,6,7,8,9,10,11))as pendidikan5
+        FROM antrianpasiendiperiksa_t apd 
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        left join alamat_m al on al.nocmfk = ps.id
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        where pd.statusenabled = true and apd.statusenabled = true and apd.kdprofile = 30 and ru.id in(29,752,753,755,756,757,758,759,761,762,764,765,29,767,768,769,770,771,772,773,774,777,782,575,576) and apd.tglmasuk::date BETWEEN '$tglawal' and '$tglakhir' GROUP BY apd.tglmasuk::date
+        )as pendidikan on pendidikan.tgl = status.tgl
+
+        left join (
+        SELECT date_part('day', apd.tglmasuk::date)::integer as tgl, 
+        count(ps.objectpekerjaanfk)filter(where ps.objectpekerjaanfk in (11))as pekerjaan1,
+        count(ps.objectpekerjaanfk)filter(where ps.objectpekerjaanfk in (15))as pekerjaan2,
+        count(ps.objectpekerjaanfk)filter(where ps.objectpekerjaanfk in (16))as pekerjaan3,
+        count(ps.objectpekerjaanfk)filter(where ps.objectpekerjaanfk in (16,18,25,28))as pekerjaan4,
+        count(ps.objectpekerjaanfk)filter(where ps.objectpekerjaanfk in (17))as pekerjaan5,
+        count(ps.objectpekerjaanfk)filter(where ps.objectpekerjaanfk in (1,12,23))as pekerjaan6,
+        count(ps.objectpekerjaanfk)filter(where ps.objectpekerjaanfk in (3,20,26))as pekerjaan7
+        FROM antrianpasiendiperiksa_t apd 
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        left join alamat_m al on al.nocmfk = ps.id
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        where pd.statusenabled = true and apd.statusenabled = true and apd.kdprofile = 30 and ru.id in(29,752,753,755,756,757,758,759,761,762,764,765,29,767,768,769,770,771,772,773,774,777,782,575,576) and apd.tglmasuk::date BETWEEN '$tglawal' and '$tglakhir' GROUP BY apd.tglmasuk::date
+        )as pekerjaan on pekerjaan.tgl = status.tgl;
+        "));
+        // variable
+        $tgl = 0;
+        $br=0;
+        $lm = 0;
+        $lk = 0;
+        $pr = 0;
+        $umur1 = 0;
+        $umur2 = 0;
+        $umur3 = 0;
+        $umur4 = 0;
+        $umur5 = 0;
+        $umur6 = 0;
+        $agama1 = 0;
+        $agama2 = 0;
+        $agama3 = 0;
+        $agama4 = 0;
+        $agama5 = 0;
+        $alamat1 = 0;
+        $alamat2 = 0;
+        $alamat3 = 0;
+        $alamat4 = 0;
+        $alamat5 = 0;
+        $alamat6 = 0;
+        $pendidikan1 = 0;
+        $pendidikan2 = 0;
+        $pendidikan3 = 0;
+        $pendidikan4 = 0;
+        $pendidikan5 = 0;
+        $pekerjaan1 = 0;
+        $pekerjaan2 = 0;
+        $pekerjaan3 = 0;
+        $pekerjaan4 = 0;
+        $pekerjaan5 = 0;
+        $pekerjaan6 = 0;
+        $pekerjaan7 = 0;
+        $detail = [];
+        foreach ($main as $m) {
+            $tgl = 0;
+            $br=0;
+            $lm = 0;
+            $lk = 0;
+            $pr = 0;
+            $umur1 = 0;
+            $umur2 = 0;
+            $umur3 = 0;
+            $umur4 = 0;
+            $umur5 = 0;
+            $umur6 = 0;
+            $agama1 = 0;
+            $agama2 = 0;
+            $agama3 = 0;
+            $agama4 = 0;
+            $agama5 = 0;
+            $alamat1 = 0;
+            $alamat2 = 0;
+            $alamat3 = 0;
+            $alamat4 = 0;
+            $alamat5 = 0;
+            $alamat6 = 0;
+            $pendidikan1 = 0;
+            $pendidikan2 = 0;
+            $pendidikan3 = 0;
+            $pendidikan4 = 0;
+            $pendidikan5 = 0;
+            $pekerjaan1 = 0;
+            $pekerjaan2 = 0;
+            $pekerjaan3 = 0;
+            $pekerjaan4 = 0;
+            $pekerjaan5 = 0;
+            $pekerjaan6 = 0;
+            $pekerjaan7 = 0;
+            
+            foreach ($data as $dt) {
+                if($m->tgl == $dt->tgl){
+                    $tgl = $m->tgl;
+                    $br=$dt->br;
+                    $lm = $dt->lm;
+                    $lk = $dt->lk;
+                    $pr = $dt->pr;
+                    $umur1 = $dt->umur1;
+                    $umur2 = $dt->umur2;
+                    $umur3 = $dt->umur3;
+                    $umur4 = $dt->umur4;
+                    $umur5 = $dt->umur5;
+                    $umur6 = $dt->umur6;
+                    $agama1 = $dt->agama1;
+                    $agama2 = $dt->agama2;
+                    $agama3 = $dt->agama3;
+                    $agama4 = $dt->agama4;
+                    $agama5 = $dt->agama5;
+                    $alamat1 = $dt->alamat1;
+                    $alamat2 = $dt->alamat2;
+                    $alamat3 = $dt->alamat3;
+                    $alamat4 = $dt->alamat4;
+                    $alamat5 = $dt->alamat5;
+                    $alamat6 = $dt->alamat6;
+                    $pendidikan1 = $dt->pendidikan1;
+                    $pendidikan2 = $dt->pendidikan2;
+                    $pendidikan3 = $dt->pendidikan3;
+                    $pendidikan4 = $dt->pendidikan4;
+                    $pendidikan5 = $dt->pendidikan5;
+                    $pekerjaan1 = $dt->pekerjaan1;
+                    $pekerjaan2 = $dt->pekerjaan2;
+                    $pekerjaan3 = $dt->pekerjaan3;
+                    $pekerjaan4 = $dt->pekerjaan4;
+                    $pekerjaan5 = $dt->pekerjaan5;
+                    $pekerjaan6 = $dt->pekerjaan6;
+                    $pekerjaan7 = $dt->pekerjaan7;
+                    break;
+                } else{
+                    $tgl = $m->tgl;
+                    $br=0;
+                    $lm = 0;
+                    $lk = 0;
+                    $pr = 0;
+                    $umur1 = 0;
+                    $umur2 = 0;
+                    $umur3 = 0;
+                    $umur4 = 0;
+                    $umur5 = 0;
+                    $umur6 = 0;
+                    $agama1 = 0;
+                    $agama2 = 0;
+                    $agama3 = 0;
+                    $agama4 = 0;
+                    $agama5 = 0;
+                    $alamat1 = 0;
+                    $alamat2 = 0;
+                    $alamat3 = 0;
+                    $alamat4 = 0;
+                    $alamat5 = 0;
+                    $alamat6 = 0;
+                    $pendidikan1 = 0;
+                    $pendidikan2 = 0;
+                    $pendidikan3 = 0;
+                    $pendidikan4 = 0;
+                    $pendidikan5 = 0;
+                    $pekerjaan1 = 0;
+                    $pekerjaan2 = 0;
+                    $pekerjaan3 = 0;
+                    $pekerjaan4 = 0;
+                    $pekerjaan5 = 0;
+                    $pekerjaan6 = 0;
+                    $pekerjaan7 = 0;
+                }
+            }
+            $detail[] = array(
+                'tgl'=>$tgl,
+                'br'=>$br,
+                'lm'=>$lm,
+                'lk'=>$lk,
+                'pr'=>$pr,
+                'umur1'=>$umur1,
+                'umur2'=>$umur2,
+                'umur3'=>$umur3,
+                'umur4'=>$umur4,
+                'umur5'=>$umur5,
+                'umur6'=>$umur6,
+                'agama1'=>$agama1,
+                'agama2'=>$agama2,
+                'agama3'=>$agama3,
+                'agama4'=>$agama4,
+                'agama5'=>$agama5,
+                'alamat1'=>$alamat1,
+                'alamat2'=>$alamat2,
+                'alamat3'=>$alamat3,
+                'alamat4'=>$alamat4,
+                'alamat5'=>$alamat5,
+                'alamat6'=>$alamat6,
+                'pendidikan1'=>$pendidikan1,
+                'pendidikan2'=>$pendidikan2,
+                'pendidikan3'=>$pendidikan3,
+                'pendidikan4'=>$pendidikan4,
+                'pendidikan5'=>$pendidikan5,
+                'pekerjaan1'=>$pekerjaan1,
+                'pekerjaan2'=>$pekerjaan2,
+                'pekerjaan3'=>$pekerjaan3,
+                'pekerjaan4'=>$pekerjaan4,
+                'pekerjaan5'=>$pekerjaan5,
+                'pekerjaan6'=>$pekerjaan6,
+                'pekerjaan7'=>$pekerjaan7,
+            );
+        }
+        $result = array(
+            'data'=> $detail,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
 }
