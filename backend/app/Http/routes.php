@@ -1913,6 +1913,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-data-lap-darah','Registrasi\LaporanPengunjungController@getLapDarah');
               //sensusharianrawatjalan
               Route::get('registrasi/laporan/get-data-sensus-harian','Registrasi\SensusHarianRawatJalanController@getSensusHarianRawatJalan');
+              Route::get('laporan/get-data-sensus-harian-rawat-jalan','Registrasi\SensusHarianRawatJalanController@getLaporanSensusHarianRawatJalan');
               Route::get('registrasi/get-datacombo-sensus', 'SensusHarianRawatJalanController@getDataCombo');
               Route::get('registrasi/get-data-grafik','Registrasi\SensusHarianRawatJalanController@GrafikRajal');
               Route::get('registrasi/laporan/get-data-lap-jumlah-pasien-cara-v2', 'Registrasi\RegistrasiController@getLaporanJumlahPasienDanCaraBayarv2'); 
