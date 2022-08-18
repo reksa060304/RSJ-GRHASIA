@@ -3287,7 +3287,16 @@
         {
             "nameDep": "EPPSpsikologiCtrl",
             "urlDep": "module/RawatJalan/EPPSpsikologiCtrl"
-        },
+		},
+        {
+            "nameDep": "LaporanJumlahPasienCtrl",
+            "urlDep": "module/Registrasi/LaporanJumlahPasienCtrl"
+
+
+
+
+        
+		},
         {
             "nameDep": "StatistikPerPeriodeCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/StatistikPerPeriodeCtrl"
@@ -3296,5 +3305,6 @@
             "nameDep": "StatistikPerBangsalCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/StatistikPerBangsalCtrl"
         }
+        
     ]
 }

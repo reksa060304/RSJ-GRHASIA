@@ -18276,6 +18276,27 @@
     ]
   },
   {
+    "name": "LaporanJumlahPasien",
+    "url": "/JumlahPasien",
+    "templateurl": "module/Registrasi/LaporanJumlahPasien.html",
+    "controller": "LaporanJumlahPasienCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+
+      }
+
+    ]
+  },
+  {
     "name": "StatistikPerPeriode",
     "url": "/TGFwb3JhblNlbnN1c1JhbmFwU3RhdGlzdGlrUGVyUGVyaW9kZQ==",
     "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/StatistikPerPeriode.html",
@@ -18293,6 +18314,7 @@
         "module": "MedifirstService",
         "define": "MedifirstService"
       }
+
     ]
   },
   {
@@ -18316,3 +18338,5 @@
     ]
   }
 ]
+
+
