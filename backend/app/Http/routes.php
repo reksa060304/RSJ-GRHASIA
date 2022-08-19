@@ -1391,8 +1391,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         // Route::group(['prefix' => 'perencanaan'], function () {
 
             Route::get('perencanaan/get-data-combo', 'Perencanaan\PerencanaanController@getDataCombo');
+            Route::get('perencanaan/get-data-combo-item-rincian', 'Perencanaan\PerencanaanController@getDataComboItemRincian');
             Route::get('perencanaan/get-penjagaan-setting-anggaran', 'Perencanaan\PerencanaanController@getPenjagaanSettingAnggaran');
             Route::get('perencanaan/get-jenis-angagran', 'Perencanaan\PerencanaanController@getJenisAnggaran');
+            Route::get('perencanaan/get-sisa-panjar', 'Perencanaan\PerencanaanController@getSisaPanjar');
             Route::get('report/get-cetak-spj', 'Report\ReportController@getCetakSPJ');
             Route::get('report/get-cetak-spj-satu-lampiran', 'Report\ReportController@getCetakSPJSatuLampiran');
             Route::get('perencanaan/get-datacombo-part-rekanan', 'Perencanaan\PerencanaanController@getDataComboRekananPart');

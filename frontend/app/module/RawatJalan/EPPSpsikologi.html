@@ -48,7 +48,7 @@
                                 <label c-label item="item">No</label>
                             </div>
                             <div class="grid_12">
-                                <input c-text-box type="number" class="k-textbox" ng-model="item.no" placeholder="no" />
+                                <input min="1" id="nourut" c-text-box type="number" class="k-textbox" ng-model="item.no" placeholder="no" />
                             </div>
                         </div>
                         <div class="grid_3">
@@ -56,7 +56,7 @@
                                 <label c-label item="item">Jawaban</label>
                             </div>
                             <div class="grid_12">
-                                <input c-text-box type="text" class="k-textbox" ng-model="item.jawaban" placeholder="jawaban" ng-keypress="$event.which == 13 && TambahData()"/>
+                                <input c-text-box type="text" class="k-textbox" ng-model="item.jawaban" placeholder="jawaban" ng-change="item.jawaban=item.jawaban.toUpperCase();" ng-keypress="$event.which == 13 && TambahData()"/>
                             </div>
                         </div>
                     </div>
@@ -67,16 +67,16 @@
                                 <p style="text-align: center; width:85%">No. 1-25</p>
                                 <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
                                     <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
-                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban0[$index].konsistensi == true && listEPPS1Fix.jawaban0[$index].diagonal == true">{{ listEPPS1Fix.jawaban0[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban0[$index].konsistensi == false">{{ listEPPS1Fix.jawaban0[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban1[$index].konsistensi == true && listEPPS1Fix.jawaban1[$index].diagonal == true">{{ listEPPS1Fix.jawaban1[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban1[$index].konsistensi == false">{{ listEPPS1Fix.jawaban1[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban2[$index].konsistensi == true && listEPPS1Fix.jawaban2[$index].diagonal == true">{{ listEPPS1Fix.jawaban2[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban2[$index].konsistensi == false">{{ listEPPS1Fix.jawaban2[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban3[$index].konsistensi == true && listEPPS1Fix.jawaban3[$index].diagonal == true">{{ listEPPS1Fix.jawaban3[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban3[$index].konsistensi == false">{{ listEPPS1Fix.jawaban3[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban4[$index].konsistensi == true && listEPPS1Fix.jawaban4[$index].diagonal == true">{{ listEPPS1Fix.jawaban4[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban4[$index].konsistensi == false">{{ listEPPS1Fix.jawaban4[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban0[$index].konsistensi == true && listEPPS1Fix.jawaban0[$index].diagonal == true">{{ listEPPS1Fix.jawaban0[$index].no}}. {{ listEPPS1Fix.jawaban0[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban0[$index].konsistensi == false">{{ listEPPS1Fix.jawaban0[$index].no}}. {{ listEPPS1Fix.jawaban0[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban1[$index].konsistensi == true && listEPPS1Fix.jawaban1[$index].diagonal == true">{{ listEPPS1Fix.jawaban1[$index].no}}. {{ listEPPS1Fix.jawaban1[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban1[$index].konsistensi == false">{{ listEPPS1Fix.jawaban1[$index].no}}. {{ listEPPS1Fix.jawaban1[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban2[$index].konsistensi == true && listEPPS1Fix.jawaban2[$index].diagonal == true">{{ listEPPS1Fix.jawaban2[$index].no}}. {{ listEPPS1Fix.jawaban2[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban2[$index].konsistensi == false">{{ listEPPS1Fix.jawaban2[$index].no}}. {{ listEPPS1Fix.jawaban2[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban3[$index].konsistensi == true && listEPPS1Fix.jawaban3[$index].diagonal == true">{{ listEPPS1Fix.jawaban3[$index].no}}. {{ listEPPS1Fix.jawaban3[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban3[$index].konsistensi == false">{{ listEPPS1Fix.jawaban3[$index].no}}. {{ listEPPS1Fix.jawaban3[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color: red  " ng-if=" listEPPS1Fix.jawaban4[$index].konsistensi == true && listEPPS1Fix.jawaban4[$index].diagonal == true">{{ listEPPS1Fix.jawaban4[$index].no}}. {{ listEPPS1Fix.jawaban4[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban4[$index].konsistensi == false">{{ listEPPS1Fix.jawaban4[$index].no}}. {{ listEPPS1Fix.jawaban4[$index].jawaban}}</th>
                                     </tr> 
                                 </table>
     
@@ -86,16 +86,16 @@
                                 <p style="text-align: center; width:85%">No. 26-50</p>
                                 <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
                                     <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
-                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban5[$index].konsistensi == true">{{ listEPPS1Fix.jawaban5[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban5[$index].konsistensi == false">{{ listEPPS1Fix.jawaban5[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban6[$index].konsistensi == true">{{ listEPPS1Fix.jawaban6[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban6[$index].konsistensi == false">{{ listEPPS1Fix.jawaban6[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban7[$index].konsistensi == true">{{ listEPPS1Fix.jawaban7[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban7[$index].konsistensi == false">{{ listEPPS1Fix.jawaban7[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban8[$index].konsistensi == true">{{ listEPPS1Fix.jawaban8[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban8[$index].konsistensi == false">{{ listEPPS1Fix.jawaban8[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban9[$index].konsistensi == true">{{ listEPPS1Fix.jawaban9[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban9[$index].konsistensi == false">{{ listEPPS1Fix.jawaban9[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban5[$index].konsistensi == true">{{ listEPPS1Fix.jawaban5[$index].no}}. {{ listEPPS1Fix.jawaban5[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban5[$index].konsistensi == false">{{ listEPPS1Fix.jawaban5[$index].no}}. {{ listEPPS1Fix.jawaban5[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban6[$index].konsistensi == true">{{ listEPPS1Fix.jawaban6[$index].no}}. {{ listEPPS1Fix.jawaban6[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban6[$index].konsistensi == false">{{ listEPPS1Fix.jawaban6[$index].no}}. {{ listEPPS1Fix.jawaban6[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban7[$index].konsistensi == true">{{ listEPPS1Fix.jawaban7[$index].no}}. {{ listEPPS1Fix.jawaban7[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban7[$index].konsistensi == false">{{ listEPPS1Fix.jawaban7[$index].no}}. {{ listEPPS1Fix.jawaban7[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban8[$index].konsistensi == true">{{ listEPPS1Fix.jawaban8[$index].no}}. {{ listEPPS1Fix.jawaban8[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban8[$index].konsistensi == false">{{ listEPPS1Fix.jawaban8[$index].no}}. {{ listEPPS1Fix.jawaban8[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban9[$index].konsistensi == true">{{ listEPPS1Fix.jawaban9[$index].no}}. {{ listEPPS1Fix.jawaban9[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban9[$index].konsistensi == false">{{ listEPPS1Fix.jawaban9[$index].no}}. {{ listEPPS1Fix.jawaban9[$index].jawaban}}</th>
                                     </tr> 
                                 </table>
                             </div>
@@ -104,16 +104,16 @@
                                 <p style="text-align: center;width:85%">No. 51-75</p>
                                 <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
                                     <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
-                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban10[$index].konsistensi == true">{{ listEPPS1Fix.jawaban10[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban10[$index].konsistensi == false">{{ listEPPS1Fix.jawaban10[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban11[$index].konsistensi == true">{{ listEPPS1Fix.jawaban11[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban11[$index].konsistensi == false">{{ listEPPS1Fix.jawaban11[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban12[$index].konsistensi == true">{{ listEPPS1Fix.jawaban12[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban12[$index].konsistensi == false">{{ listEPPS1Fix.jawaban12[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban13[$index].konsistensi == true">{{ listEPPS1Fix.jawaban13[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban13[$index].konsistensi == false">{{ listEPPS1Fix.jawaban13[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban14[$index].konsistensi == true">{{ listEPPS1Fix.jawaban14[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban14[$index].konsistensi == false">{{ listEPPS1Fix.jawaban14[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban10[$index].konsistensi == true">{{ listEPPS1Fix.jawaban10[$index].no}}. {{ listEPPS1Fix.jawaban10[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban10[$index].konsistensi == false">{{ listEPPS1Fix.jawaban10[$index].no}}. {{ listEPPS1Fix.jawaban10[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban11[$index].konsistensi == true">{{ listEPPS1Fix.jawaban11[$index].no}}. {{ listEPPS1Fix.jawaban11[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban11[$index].konsistensi == false">{{ listEPPS1Fix.jawaban11[$index].no}}. {{ listEPPS1Fix.jawaban11[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban12[$index].konsistensi == true">{{ listEPPS1Fix.jawaban12[$index].no}}. {{ listEPPS1Fix.jawaban12[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban12[$index].konsistensi == false">{{ listEPPS1Fix.jawaban12[$index].no}}. {{ listEPPS1Fix.jawaban12[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban13[$index].konsistensi == true">{{ listEPPS1Fix.jawaban13[$index].no}}. {{ listEPPS1Fix.jawaban13[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban13[$index].konsistensi == false">{{ listEPPS1Fix.jawaban13[$index].no}}. {{ listEPPS1Fix.jawaban13[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;" ng-if=" listEPPS1Fix.jawaban14[$index].konsistensi == true">{{ listEPPS1Fix.jawaban14[$index].no}}. {{ listEPPS1Fix.jawaban14[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban14[$index].konsistensi == false">{{ listEPPS1Fix.jawaban14[$index].no}}. {{ listEPPS1Fix.jawaban14[$index].jawaban}}</th>
                                     </tr> 
                                 </table>
                             </div>
@@ -167,11 +167,11 @@
                                 <p style="text-align: center; width:85%">No. 76-100</p>
                                 <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
                                     <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban15[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban16[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban17[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban18[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban19[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban15[$index].no}}. {{ listEPPS1Fix.jawaban15[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban16[$index].no}}. {{ listEPPS1Fix.jawaban16[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban17[$index].no}}. {{ listEPPS1Fix.jawaban17[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban18[$index].no}}. {{ listEPPS1Fix.jawaban18[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban19[$index].no}}. {{ listEPPS1Fix.jawaban19[$index].jawaban}}</th>
                                     </tr> 
                                 </table>
                             </div>
@@ -181,23 +181,23 @@
                                 <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
                                     <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
 
-                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban20[$index].konsistensi == true && listEPPS1Fix.jawaban20[$index].diagonal == true">{{ listEPPS1Fix.jawaban20[$index].jawaban}}</th>
-                                        <th style="padding:5px;color:red;  " ng-if=" listEPPS1Fix.jawaban20[$index].diagonal == true && listEPPS1Fix.jawaban20[$index].konsistensi == false">{{ listEPPS1Fix.jawaban20[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban20[$index].konsistensi == false && listEPPS1Fix.jawaban20[$index].diagonal == false">{{ listEPPS1Fix.jawaban20[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban20[$index].konsistensi == true && listEPPS1Fix.jawaban20[$index].diagonal == true">{{ listEPPS1Fix.jawaban20[$index].no}}. {{ listEPPS1Fix.jawaban20[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;  " ng-if=" listEPPS1Fix.jawaban20[$index].diagonal == true && listEPPS1Fix.jawaban20[$index].konsistensi == false">{{ listEPPS1Fix.jawaban20[$index].no}}. {{ listEPPS1Fix.jawaban20[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban20[$index].konsistensi == false && listEPPS1Fix.jawaban20[$index].diagonal == false">{{ listEPPS1Fix.jawaban20[$index].no}}. {{ listEPPS1Fix.jawaban20[$index].jawaban}}</th>
 
-                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban21[$index].konsistensi == true && listEPPS1Fix.jawaban21[$index].diagonal == true">{{ listEPPS1Fix.jawaban21[$index].jawaban}}</th>
-                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban21[$index].konsistensi == false && listEPPS1Fix.jawaban21[$index].diagonal == true">{{ listEPPS1Fix.jawaban21[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban21[$index].konsistensi == false && listEPPS1Fix.jawaban21[$index].diagonal == false">{{ listEPPS1Fix.jawaban21[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban21[$index].konsistensi == true && listEPPS1Fix.jawaban21[$index].diagonal == true">{{ listEPPS1Fix.jawaban21[$index].no}}. {{ listEPPS1Fix.jawaban21[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban21[$index].konsistensi == false && listEPPS1Fix.jawaban21[$index].diagonal == true">{{ listEPPS1Fix.jawaban21[$index].no}}. {{ listEPPS1Fix.jawaban21[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban21[$index].konsistensi == false && listEPPS1Fix.jawaban21[$index].diagonal == false">{{ listEPPS1Fix.jawaban21[$index].no}}. {{ listEPPS1Fix.jawaban21[$index].jawaban}}</th>
 
-                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban22[$index].konsistensi == true && listEPPS1Fix.jawaban22[$index].diagonal == true">{{ listEPPS1Fix.jawaban22[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban22[$index].konsistensi == false">{{ listEPPS1Fix.jawaban22[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban22[$index].konsistensi == true && listEPPS1Fix.jawaban22[$index].diagonal == true">{{ listEPPS1Fix.jawaban22[$index].no}}. {{ listEPPS1Fix.jawaban22[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban22[$index].konsistensi == false">{{ listEPPS1Fix.jawaban22[$index].no}}. {{ listEPPS1Fix.jawaban22[$index].jawaban}}</th>
 
-                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban23[$index].konsistensi == true && listEPPS1Fix.jawaban23[$index].diagonal == true">{{ listEPPS1Fix.jawaban23[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban23[$index].konsistensi == false">{{ listEPPS1Fix.jawaban23[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban23[$index].konsistensi == true && listEPPS1Fix.jawaban23[$index].diagonal == true">{{ listEPPS1Fix.jawaban23[$index].no}}. {{ listEPPS1Fix.jawaban23[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban23[$index].konsistensi == false">{{ listEPPS1Fix.jawaban23[$index].no}}. {{ listEPPS1Fix.jawaban23[$index].jawaban}}</th>
 
-                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban24[$index].konsistensi == true && listEPPS1Fix.jawaban24[$index].diagonal == true">{{ listEPPS1Fix.jawaban24[$index].jawaban}}</th>
-                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban24[$index].diagonal == true && listEPPS1Fix.jawaban24[$index].konsistensi == false">{{ listEPPS1Fix.jawaban24[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban24[$index].konsistensi == false && listEPPS1Fix.jawaban24[$index].diagonal == false">{{ listEPPS1Fix.jawaban24[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban24[$index].konsistensi == true && listEPPS1Fix.jawaban24[$index].diagonal == true">{{ listEPPS1Fix.jawaban24[$index].no}}. {{ listEPPS1Fix.jawaban24[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban24[$index].diagonal == true && listEPPS1Fix.jawaban24[$index].konsistensi == false">{{ listEPPS1Fix.jawaban24[$index].no}}. {{ listEPPS1Fix.jawaban24[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban24[$index].konsistensi == false && listEPPS1Fix.jawaban24[$index].diagonal == false">{{ listEPPS1Fix.jawaban24[$index].no}}. {{ listEPPS1Fix.jawaban24[$index].jawaban}}</th>
                                     </tr> 
                                 </table>
                             </div>
@@ -206,11 +206,11 @@
                                 <p style="text-align: center;width:85%">No. 126-150</p>
                                 <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
                                     <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban25[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban26[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban27[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban28[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban29[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban25[$index].no}}. {{ listEPPS1Fix.jawaban25[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban26[$index].no}}. {{ listEPPS1Fix.jawaban26[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban27[$index].no}}. {{ listEPPS1Fix.jawaban27[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban28[$index].no}}. {{ listEPPS1Fix.jawaban28[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban29[$index].no}}. {{ listEPPS1Fix.jawaban29[$index].jawaban}}</th>
                                     </tr> 
                                 </table>
                             </div>
@@ -263,16 +263,16 @@
                                 <p style="text-align: center; width:85%">No. 151-175</p>
                                 <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
                                     <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
-                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban30[$index].konsistensi == true">{{ listEPPS1Fix.jawaban30[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban30[$index].konsistensi == false">{{ listEPPS1Fix.jawaban30[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban31[$index].konsistensi == true">{{ listEPPS1Fix.jawaban31[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban31[$index].konsistensi == false">{{ listEPPS1Fix.jawaban31[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban32[$index].konsistensi == true">{{ listEPPS1Fix.jawaban32[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban32[$index].konsistensi == false">{{ listEPPS1Fix.jawaban32[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban33[$index].konsistensi == true">{{ listEPPS1Fix.jawaban33[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban33[$index].konsistensi == false">{{ listEPPS1Fix.jawaban33[$index].jawaban}}</th>
-                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban34[$index].konsistensi == true">{{ listEPPS1Fix.jawaban34[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban34[$index].konsistensi == false">{{ listEPPS1Fix.jawaban34[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban30[$index].konsistensi == true">{{ listEPPS1Fix.jawaban30[$index].no}}. {{ listEPPS1Fix.jawaban30[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban30[$index].konsistensi == false">{{ listEPPS1Fix.jawaban30[$index].no}}. {{ listEPPS1Fix.jawaban30[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban31[$index].konsistensi == true">{{ listEPPS1Fix.jawaban31[$index].no}}. {{ listEPPS1Fix.jawaban31[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban31[$index].konsistensi == false">{{ listEPPS1Fix.jawaban31[$index].no}}. {{ listEPPS1Fix.jawaban31[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban32[$index].konsistensi == true">{{ listEPPS1Fix.jawaban32[$index].no}}. {{ listEPPS1Fix.jawaban32[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban32[$index].konsistensi == false">{{ listEPPS1Fix.jawaban32[$index].no}}. {{ listEPPS1Fix.jawaban32[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban33[$index].konsistensi == true">{{ listEPPS1Fix.jawaban33[$index].no}}. {{ listEPPS1Fix.jawaban33[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban33[$index].konsistensi == false">{{ listEPPS1Fix.jawaban33[$index].no}}. {{ listEPPS1Fix.jawaban33[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;  " ng-if=" listEPPS1Fix.jawaban34[$index].konsistensi == true">{{ listEPPS1Fix.jawaban34[$index].no}}. {{ listEPPS1Fix.jawaban34[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban34[$index].konsistensi == false">{{ listEPPS1Fix.jawaban34[$index].no}}. {{ listEPPS1Fix.jawaban34[$index].jawaban}}</th>
                                     </tr> 
                                 </table>
                             </div>
@@ -281,11 +281,11 @@
                                 <p style="text-align: center; width:85%">No. 176-200</p>
                                 <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
                                     <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban35[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban36[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban37[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban38[$index].jawaban}}</th>
-                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban39[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban35[$index].no}}. {{ listEPPS1Fix.jawaban35[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban36[$index].no}}. {{ listEPPS1Fix.jawaban36[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban37[$index].no}}. {{ listEPPS1Fix.jawaban37[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban38[$index].no}}. {{ listEPPS1Fix.jawaban38[$index].jawaban}}</th>
+                                        <th style="padding:5px;">{{ listEPPS1Fix.jawaban39[$index].no}}. {{ listEPPS1Fix.jawaban39[$index].jawaban}}</th>
                                     </tr> 
                                 </table>
                             </div>
@@ -294,23 +294,23 @@
                                 <p style="text-align: center;width:85%">No. 201-225</p>
                                 <table style="border: 1px solid black; width: 85%; margin-left: 30px; margin-top: 15px;">
                                     <tr ng-repeat="arr in  listEPPS1Fix.jawaban1" ng-init="jawabIndex = $index">
-                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban40[$index].konsistensi == true && listEPPS1Fix.jawaban40[$index].diagonal == true">{{ listEPPS1Fix.jawaban40[$index].jawaban}}</th>
-                                        <th style="padding:5px;color:red;  " ng-if=" listEPPS1Fix.jawaban40[$index].diagonal == true && listEPPS1Fix.jawaban40[$index].konsistensi == false">{{ listEPPS1Fix.jawaban40[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban40[$index].konsistensi == false && listEPPS1Fix.jawaban40[$index].diagonal == false">{{ listEPPS1Fix.jawaban40[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban40[$index].konsistensi == true && listEPPS1Fix.jawaban40[$index].diagonal == true">{{ listEPPS1Fix.jawaban40[$index].no}}. {{ listEPPS1Fix.jawaban40[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;  " ng-if=" listEPPS1Fix.jawaban40[$index].diagonal == true && listEPPS1Fix.jawaban40[$index].konsistensi == false">{{ listEPPS1Fix.jawaban40[$index].no}}. {{ listEPPS1Fix.jawaban40[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban40[$index].konsistensi == false && listEPPS1Fix.jawaban40[$index].diagonal == false">{{ listEPPS1Fix.jawaban40[$index].no}}. {{ listEPPS1Fix.jawaban40[$index].jawaban}}</th>
 
-                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban41[$index].konsistensi == true && listEPPS1Fix.jawaban41[$index].diagonal == true">{{ listEPPS1Fix.jawaban41[$index].jawaban}}</th>
-                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban41[$index].konsistensi == false && listEPPS1Fix.jawaban41[$index].diagonal == true">{{ listEPPS1Fix.jawaban41[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban41[$index].konsistensi == false && listEPPS1Fix.jawaban41[$index].diagonal == false">{{ listEPPS1Fix.jawaban41[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban41[$index].konsistensi == true && listEPPS1Fix.jawaban41[$index].diagonal == true">{{ listEPPS1Fix.jawaban41[$index].no}}. {{ listEPPS1Fix.jawaban41[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban41[$index].konsistensi == false && listEPPS1Fix.jawaban41[$index].diagonal == true">{{ listEPPS1Fix.jawaban41[$index].no}}. {{ listEPPS1Fix.jawaban41[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban41[$index].konsistensi == false && listEPPS1Fix.jawaban41[$index].diagonal == false">{{ listEPPS1Fix.jawaban41[$index].no}}. {{ listEPPS1Fix.jawaban41[$index].jawaban}}</th>
 
-                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban42[$index].konsistensi == true && listEPPS1Fix.jawaban42[$index].diagonal == true">{{ listEPPS1Fix.jawaban42[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban42[$index].konsistensi == false">{{ listEPPS1Fix.jawaban42[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban42[$index].konsistensi == true && listEPPS1Fix.jawaban42[$index].diagonal == true">{{ listEPPS1Fix.jawaban42[$index].no}}. {{ listEPPS1Fix.jawaban42[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban42[$index].konsistensi == false">{{ listEPPS1Fix.jawaban42[$index].no}}. {{ listEPPS1Fix.jawaban42[$index].jawaban}}</th>
 
-                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban43[$index].konsistensi == true && listEPPS1Fix.jawaban43[$index].diagonal == true">{{ listEPPS1Fix.jawaban43[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban43[$index].konsistensi == false">{{ listEPPS1Fix.jawaban43[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color:red;  " ng-if=" listEPPS1Fix.jawaban43[$index].konsistensi == true && listEPPS1Fix.jawaban43[$index].diagonal == true">{{ listEPPS1Fix.jawaban43[$index].no}}. {{ listEPPS1Fix.jawaban43[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban43[$index].konsistensi == false">{{ listEPPS1Fix.jawaban43[$index].no}}. {{ listEPPS1Fix.jawaban43[$index].jawaban}}</th>
 
-                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban44[$index].konsistensi == true && listEPPS1Fix.jawaban44[$index].diagonal == true">{{ listEPPS1Fix.jawaban44[$index].jawaban}}</th>
-                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban44[$index].diagonal == true && listEPPS1Fix.jawaban44[$index].konsistensi == false">{{ listEPPS1Fix.jawaban44[$index].jawaban}}</th>
-                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban44[$index].konsistensi == false && listEPPS1Fix.jawaban44[$index].diagonal == false">{{ listEPPS1Fix.jawaban44[$index].jawaban}}</th>
+                                        <th style="padding:5px;background-color:greenyellow;color:red;" ng-if=" listEPPS1Fix.jawaban44[$index].konsistensi == true && listEPPS1Fix.jawaban44[$index].diagonal == true">{{ listEPPS1Fix.jawaban44[$index].no}}. {{ listEPPS1Fix.jawaban44[$index].jawaban}}</th>
+                                        <th style="padding:5px;color:red;" ng-if=" listEPPS1Fix.jawaban44[$index].diagonal == true && listEPPS1Fix.jawaban44[$index].konsistensi == false">{{ listEPPS1Fix.jawaban44[$index].no}}. {{ listEPPS1Fix.jawaban44[$index].jawaban}}</th>
+                                        <th style="padding:5px;" ng-if=" listEPPS1Fix.jawaban44[$index].konsistensi == false && listEPPS1Fix.jawaban44[$index].diagonal == false">{{ listEPPS1Fix.jawaban44[$index].no}}. {{ listEPPS1Fix.jawaban44[$index].jawaban}}</th>
                                     </tr> 
                                 </table>
                             </div>
@@ -401,3 +401,11 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+
+
+

@@ -525,7 +525,11 @@ class PerencanaanController extends ApiController {
             and ka.id = $idsubsub
             group by ma.id, ma.kodemataanggaran, ma.namamataanggaran"));
         } else{
-            $mataanggarancombo = [];
+            $mataanggarancombo = \DB::table('mataanggaran_m as cbs')
+            ->select('cbs.id', 'cbs.kodemataanggaran', 'cbs.namamataanggaran')
+            ->where('cbs.kdprofile', $idProfile)
+            ->where('cbs.statusenabled', true)
+            ->get();
         }
 
         if(!empty($idmataanggaran) && !empty($tahapaktif)){
@@ -542,7 +546,7 @@ class PerencanaanController extends ApiController {
         }
 
         
-        $mata = DB::select(DB::raw("select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen 
+        $mata = DB::select(DB::raw("select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen, coalesce(sum(kt.subtotal),0) as total
         , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
         , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
         , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
@@ -550,8 +554,15 @@ class PerencanaanController extends ApiController {
         , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
                         from mataanggaran_m ma 
                         left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
+												left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
                         where ma.statusenabled = true and ma.kdprofile = 30
-                        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc 
+        group by ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id, map.mataanggaranpermen
+                , split_part(ma.kodemataanggaran, '.', 1)
+                , split_part(ma.kodemataanggaran, '.', 2)
+                , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end
+                , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end 
+                , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end
+        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;
         
             ")
         );
@@ -632,12 +643,14 @@ class PerencanaanController extends ApiController {
         
         $panjar = DB::select(DB::raw("
             select pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, sr.norealisasi,
-            case when sr.norec is not null then pj.jumlah - coalesce(pj.jumlahpengembalian, 0) else 0 end as jumlahspj,
+            sr.totalbelanja as jumlahspj,
             coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian,  pj.sumberpanjar
             from panjar_t pj
             left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec
             where pj.kdprofile = 30
-            and pj.statusenabled = true;
+            and pj.statusenabled = true
+            and sr.kdprofile = 30
+            and sr.statusenabled = true;
         "));
 
         $spp = DB::select(DB::raw("select spp.*, spd.nospd from spp_t spp inner join spd_t spd on spd.norec = spp.objectspdfk where spp.statusenabled = true and spd.statusenabled = true"));
@@ -689,6 +702,23 @@ class PerencanaanController extends ApiController {
 
         return $this->respond($result);
     }
+
+    public function getDataComboItemRincian(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $kode =$request['mataanggaran'];
+        $idkegiatan = $request['kegiatan'];
+        $ma = DB::select(DB::raw("select id from mataanggaran_m where kodemataanggaran = '$kode'"));
+        $idma = $ma[0]->id;
+        $data = DB::select(DB::raw("select * from keteranganbelanja_t where objectkegiatanfk = $idkegiatan and objectmataanggaranfk = $idma"));
+
+        $result = array(
+            'data' => $data,
+        );
+
+        return $this->respond($result);
+    }
+
     public function getDataComboRekananPart(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -2877,13 +2907,6 @@ class PerencanaanController extends ApiController {
             $stahap = "and kb.objecttahapfk = ".$request['tahap'];
         }
 
-        $skegiatan = '';
-        if(isset($request['kegiatan']) && $request['kegiatan'] != '' && $request['kegiatan'] != 'undefined'){
-            $skegiatan = "and kt.objectkegiatanfk = ".$request['kegiatan'];
-        }
-
-
-
         $data = DB::select(DB::raw("
                 select ma.id, ma.kodemataanggaran,ma.namamataanggaran,cast(sum(kt.subtotal) as float) as total
                 , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
@@ -2892,7 +2915,7 @@ class PerencanaanController extends ApiController {
                 , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
                 , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima 
                 from mataanggaran_m ma
-                left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id and kt.statusenabled = true $skegiatan
+                left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id and kt.statusenabled = true
                 where 
                 length(ma.kodemataanggaran) in(9,10) 
                 and ma.kdprofile=$idProfile
@@ -3121,15 +3144,15 @@ class PerencanaanController extends ApiController {
     public function getPanjarAktif(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $kode = $request['kodemataanggaran'];
 
         $data = DB::select(DB::raw("
-        select pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.jumlahpengembalian, pj.sumberpanjar, sr.objectpanjarfk
+        select pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.jumlahpengembalian, pj.sumberpanjar
         from panjar_t pj
-        left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec
+        inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
         where pj.kdprofile = 30
         and pj.statusenabled = true
-        and sr.objectpanjarfk is null
-            ")
+        and ma.kodemataanggaran = '$kode'")
         );
 
         $result = array(
@@ -3254,6 +3277,28 @@ class PerencanaanController extends ApiController {
         jenisbelanja_m jb 
         inner join kegiatananggaran_m ka on ka.objectjenisbelanjafk = jb.id
         where ka.keterangan = '$keterangan'
+        ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+    public function getSisaPanjar(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $panjar = $request['panjar'];
+        $data = DB::select(DB::raw("
+        select pj.norec, pj.nopanjar, pj.jumlah-coalesce(pj.jumlahpengembalian,0) as jumlah, coalesce(sum(sr.totalbelanja),0) totalbelanja, (pj.jumlah - coalesce(pj.jumlahpengembalian,0))- coalesce(sum(sr.totalbelanja),0) sisapanjar
+        from panjar_t pj
+        left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
+        where pj.kdprofile = 30
+        and pj.statusenabled = true
+		and pj.norec = '$panjar'
+        group by pj.norec, pj.nopanjar, pj.jumlah;
         ")
         );
 
@@ -3624,6 +3669,8 @@ class PerencanaanController extends ApiController {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $kode = $request['mataanggaran'];
+        $ma = DB::select(DB::raw("select id from mataanggaran_m where kodemataanggaran = '$kode'"));
         try{
             
             $MA = new Panjar();
@@ -3638,6 +3685,9 @@ class PerencanaanController extends ApiController {
             $MA->jumlah = $request['jumlahpanjar'];
             $MA->jenispanjar = 'Pengeluaran';
             $MA->sumberpanjar = $request['sumberPanjar'];
+            $MA->objectsubkegiatanfk = $request['subkegiatan'];
+            $MA->objectsubsubkegiatanfk = $request['subsusbkegiatan'];
+            $MA->objectmataanggaranfk = $ma[0]->id;
             $MA->save();
            $transStatus = 'true';
        } catch (\Exception $e) {

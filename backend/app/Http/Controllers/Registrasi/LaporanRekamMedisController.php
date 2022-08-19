@@ -1716,21 +1716,35 @@ class LaporanRekamMedisController extends   ApiController
                 
                 
                 
-                    if($jumlahpulang == 0){
-                        $bor = $jumlahhariperawatantt/$ttperperiode*100;
-                        $alos = 0;
-                        $toi = 0;
-                        $bto = $jumlahpulang/$tt;
-                        $ndr = 0;
-                        $gdr = 0;
-                    } else{
-                        $bor = $jumlahhariperawatantt/$ttperperiode*100;
-                        $alos = $jumlahharidirawat/$jumlahpulang;
-                        $toi = ($ttperperiode - $jumlahhariperawatantt)/$jumlahpulang;
-                        $bto = $jumlahpulang/$tt;
-                        $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
-                        $gdr = $jumlahpasienmeninggal/$jumlahpulang*1000;
-                    }
+                if($jumlahpulang == 0 && $ttperperiode != 0 && $tt != 0 ){
+                    $bor = $jumlahhariperawatantt/$ttperperiode*100;
+                    $alos = 0;
+                    $toi = 0;
+                    $bto = $jumlahpulang/$tt;
+                    $ndr = 0;
+                    $gdr = 0;
+                } else if($ttperperiode == 0 && $tt == 0 && $jumlahpulang != 0){
+                    $bor = 0;
+                    $alos = $jumlahharidirawat/$jumlahpulang;
+                    $toi = ($ttperperiode - $jumlahhariperawatantt)/$jumlahpulang;
+                    $bto = 0;
+                    $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
+                    $gdr = $jumlahpasienmeninggal/$jumlahpulang*1000;
+                } else if($ttperperiode == 0 && $tt == 0 && $jumlahpulang == 0){
+                    $bor = 0;
+                    $alos = 0;
+                    $toi = 0;
+                    $bto = 0;
+                    $ndr = 0;
+                    $gdr = 0;
+                } else{
+                    $bor = $jumlahhariperawatantt/$ttperperiode*100;
+                    $alos = $jumlahharidirawat/$jumlahpulang;
+                    $toi = ($ttperperiode - $jumlahhariperawatantt)/$jumlahpulang;
+                    $bto = $jumlahpulang/$tt;
+                    $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
+                    $gdr = $jumlahpasienmeninggal/$jumlahpulang*1000;
+                }
                 
                 
     
