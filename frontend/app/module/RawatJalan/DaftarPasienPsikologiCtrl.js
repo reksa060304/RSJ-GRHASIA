@@ -3,12 +3,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
     initialize.controller('DaftarPasienPsikologiCtrl', ['$scope', '$state', 'ModelItem', '$mdDialog', 'MedifirstService', 'CacheHelper', 'DateHelper',
         function ($scope, $state, ModelItem, $mdDialog, medifirstService, cacheHelper, dateHelper) {
             $scope.item = {}
+            $scope.itemKraepelin = {}
             $scope.totalSkor = 0
             $scope.totalSkorB = 0
             // $scope.item.idNormaPsikologi = null;
             $scope.now = new Date();
             var dataPsikologi = [];
+            var dataKraepelin = [];
             var norec = "";
+            var norecKraepelin = "";
             $scope.item.periodeAwal = moment($scope.now).format("YYYY-MM-DD 00:00:00")
             $scope.item.periodeAkhir = moment($scope.now).format("YYYY-MM-DD 23:59:59")
             loadCombo()
@@ -75,6 +78,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.nomor = 1
             }
             $scope.jawaban = function () {
+                console.log($scope.item.test.test);
+                if($scope.item.test.test == 'Test 1' && $scope.item.nomor > 13){
+                    toastr.error('NOMOR Test 1 MAX')
+                    return
+                } 
+                if ($scope.item.test.test == 'Test 2' && $scope.item.nomor > 14) {
+                    toastr.error('NOMOR Test 2 MAX')
+                    return
+                }
+                if ($scope.item.test.test == 'Test 3' && $scope.item.nomor > 13) {
+                    toastr.error('NOMOR Test 3 MAX')
+                    return
+                }
+                if ($scope.item.test.test == 'Test 4' && $scope.item.nomor > 10) {
+                    toastr.error('NOMOR Test 4 MAX')
+                    return
+                }
                 for (let i = 0; i < dataPsikologi.length; i++) {
                     // const element = dataPsikologi[i];
                     if (dataPsikologi[i].nomor == $scope.item.nomor &&
@@ -507,7 +527,107 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item = {}
                 $scope.popUpDataDaftarPsikologi.close()
             }
-            
+            $scope.inputKraepelin = function(){
+                if ($scope.dataDaftarPsikologi == undefined) {
+                    toastr.error("data Belum dipilih")
+                    return
+                }
+                $scope.popUpKraepelin.center().open()
+            }
+            $scope.opsiGridKraepelin = {
+                sortable: true,
+                filterable: false,
+                pageable: true,
+                selectable: 'row',
+                resizable: true,
+                scrollable: true,
+                columns: [{
+                        "field": "lajur",
+                        "title": "Lajur",
+                        "width": "30px"
+                    },
+                    {
+                        "field": "nilai",
+                        "title": "Nilai",
+                        "width": "40px"
+                    },
+                    {
+                        'command': [{
+                                text: "Hapus",
+                                click: HapusDetailLajur,
+                                imageClass: "k-icon k-i-delete",
+
+                            },
+
+                        ],
+                        width: "100px"
+                    }
+                    
+                ]
+
+            }
+            $scope.nilai = function(){
+                
+                for (let i = 0; i < dataKraepelin.length; i++) {
+                    if( dataKraepelin[i].lajur == $scope.itemKraepelin.lajur){
+                    toastr.error('tidak bisa ditambah')
+                    return
+                    }
+                    if (dataKraepelin[i].lajur > 49) {
+                        toastr.error('Lajur Max')
+                        // $scope.itemKraepelin.lajur= undefined
+                        // $scope.itemKraepelin.nilai = undefined
+                        return
+                    }
+                }
+                var data = "";
+                data = {
+                    norec: norecKraepelin,
+                    norec_apd: $scope.dataDaftarPsikologi.norec,
+                    lajur: $scope.itemKraepelin.lajur,
+                    nilai: $scope.itemKraepelin.nilai
+                }
+                dataKraepelin.push(data)
+                $scope.gridKraepelin = new kendo.data.DataSource({
+                    data: dataKraepelin,
+                    pageSize: 50,
+                    total: dataKraepelin.length,
+                    // serverPaging: true,
+                    schema: {
+                        model: {
+                            fields: {}
+                        }
+                    }
+                });
+                $scope.itemKraepelin.lajur = $scope.itemKraepelin.lajur + 1
+                $scope.itemKraepelin.nilai = undefined
+            }
+            $scope.simpanKraepelin = function(){
+                var objSave = {
+                    data: dataKraepelin
+                }
+                medifirstService.post('psikologi/save-kraepelin', objSave).then(function(data){
+
+                })
+            }
+            function HapusDetailLajur(e){
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                };
+                var grid = this;
+                var row = $(e.currentTarget).closest("tr");
+                for (var i = dataKraepelin.length - 1; i >= 0; i--) {
+                    if (dataKraepelin[i].lajur == dataItem.lajur) {
+                        dataKraepelin.splice(i, 1);
+                    }
+                }
+                $scope.itemKraepelin = {}
+                grid.removeRow(row);
+            }
+
         }
     ])
 });

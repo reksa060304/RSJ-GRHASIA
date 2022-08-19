@@ -2592,4 +2592,63 @@ class RawatJalanController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function saveKraepelin(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+            $datapsikologi = $request['data'];
+
+        try {
+          foreach ($datapsikologi as $dp) {
+                if($dp['norec'] == ""){
+                \DB::table('inputhasilkraepelin_t')->insert([
+                    'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> date('Y-m-d'),
+                    'lajur'=>$dp['lajur'],
+                    'norec_apd'=>$dp['norec_apd'],
+                    'nilai'=>$dp['nilai'],
+                ]);
+                $crud = "Simpan Kraepelin";
+                } else {
+                    \DB::table('inputhasilkraepelin_t')->where('norec', $request['norec'])->update([
+                    'tglinput'=> date('Y-m-d'),
+                    'lajur'=>$dp['lajur'],
+                    'norec_apd'=>$dp['norec_apd'],
+                    'nilai'=>$dp['nilai'],
+                ]);
+                $crud = "Simpan Kraepelin";
+                }
+            }
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'ee'=> $th->getMessage(),
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

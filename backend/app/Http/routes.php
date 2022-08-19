@@ -2185,6 +2185,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
             /*POST*/
             //psikologi
+            Route::post('psikologi/save-kraepelin', 'RawatJalan\RawatJalanController@saveKraepelin');
             Route::post('psikologi/kirim-iq-norma-skala', 'RawatJalan\RawatJalanController@kirimIQNormaSkala');
             Route::post('psikologi/save-master-norma-psikologi', 'RawatJalan\RawatJalanController@saveNormaPsikologi');
 			Route::post('psikologi/save-hasil-psikologi','RawatJalan\RawatJalanController@saveInputHasilPsikologi');
