@@ -2737,7 +2737,50 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     },
                 ]
             };
+            $scope.klikSPJ = function (dataSPJSelected) {
+                console.log(dataSPJSelected);
+            }
+            var onDataBound = function (e) {
+                var kendoGrid = $("#kGridsSPJ").data("kendoGrid"); // get the grid widget
+                var rows = e.sender.element.find("tbody tr"); // get all rows
+                for (let i = 0; i < rows.length; i++) {
+                    // const element = rows[i];
+                    var row = rows[i];
+                    var status = kendoGrid.dataItem(row).status;
+                    console.log(status);
+                    if (status == "Revisi") {
+                        $(row.cells[1]).addClass("koneng");
+                        $(row.cells[2]).addClass("koneng");
+                        $(row.cells[3]).addClass("koneng");
+                        $(row.cells[4]).addClass("koneng");
+                        $(row.cells[5]).addClass("koneng");
+                        $(row.cells[6]).addClass("koneng");
+                        $(row.cells[7]).addClass("koneng");
+                        $(row.cells[8]).addClass("koneng");
+                        $(row.cells[9]).addClass("koneng");
+                        $(row.cells[10]).addClass("koneng");
+                        $(row.cells[11]).addClass("koneng");
+                        $(row.cells[12]).addClass("koneng");
+                    } else if (status == "Sudah Diverifikasi") {
+                        $(row.cells[1]).addClass("green");
+                        $(row.cells[2]).addClass("green");
+                        $(row.cells[3]).addClass("green");
+                        $(row.cells[4]).addClass("green");
+                        $(row.cells[5]).addClass("green");
+                        $(row.cells[6]).addClass("green");
+                        $(row.cells[7]).addClass("green");
+                        $(row.cells[8]).addClass("green");
+                        $(row.cells[9]).addClass("green");
+                        $(row.cells[10]).addClass("green");
+                        $(row.cells[11]).addClass("green");
+                        $(row.cells[12]).addClass("green");
+                    }
+
+                }
+            }
+            
             $scope.columnSPJ = {
+                dataBound: onDataBound,
                 toolbar:[
                     {
                         name: "add", 
