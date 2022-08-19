@@ -491,7 +491,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     }
                                 },
                                 "DPJP": dpjp,
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }

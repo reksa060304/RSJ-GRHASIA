@@ -2431,7 +2431,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     "kodeDokter": $scope.kontrol.kodeDokter.kode,
                                     "poliKontrol": $scope.kontrol.poliKontrol.kdinternal,
                                     "tglRencanaKontrol": moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'),
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }
@@ -2460,7 +2460,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     "kodeDokter": $scope.kontrol.kodeDokter.kode,
                                     "poliKontrol": $scope.kontrol.poliKontrol.kdinternal,
                                     "tglRencanaKontrol": moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'),
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }
@@ -2490,7 +2490,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     "kodeDokter": $scope.kontrol.kodeDokter.kode,
                                     "poliKontrol": $scope.kontrol.poliKontrol.kdinternal,
                                     "tglRencanaKontrol": moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'),
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }
@@ -2519,7 +2519,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     "kodeDokter": $scope.kontrol.kodeDokter.kode,
                                     "poliKontrol": $scope.kontrol.poliKontrol.kdinternal,
                                     "tglRencanaKontrol": moment($scope.kontrol.tglRencanaKontrol).format('YYYY-MM-DD'),
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }

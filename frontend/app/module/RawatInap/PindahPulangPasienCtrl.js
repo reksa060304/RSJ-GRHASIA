@@ -410,7 +410,7 @@ define(['initialize'], function (initialize) {
                                 "tglMeninggal": statusPulang == 4 ? moment($scope.item.tglMeninggal).format('YYYY-MM-DD') : "",
                                 "tglPulang": new moment(moment($scope.item.tglKeluar).format('YYYY-MM-DD HH:mm:ss')).format('YYYY-MM-DD'),
                                 "noLPManual": "",
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }
@@ -425,7 +425,7 @@ define(['initialize'], function (initialize) {
                                     {
                                         "noSep": $scope.item.noSep,
                                         "tglPulang": new moment(moment($scope.item.tglKeluar).format('YYYY-MM-DD HH:mm:ss')).format('YYYY-MM-DD'),
-                                        "user": "Ramdanegie"
+                                        "user": medifirstService.getPegawaiLogin().namaLengkap
                                     }
                                 }
 
