@@ -13,6 +13,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 			$scope.item.periodeAkhirMasal = new Date();
 			$scope.item.tanggalPulang = new Date();
 			$scope.dataPasienSelected = {};
+			$scope.dataSelectedSss = {}
 			$scope.cboDokter = false;
 			$scope.pasienPulang = false;
 			$scope.cboUbahDokter = true;
@@ -138,6 +139,201 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					//   if ($(this).text() == '') {$(this).addClass('red')}
 				})
 			}
+
+			$scope.Riwayat = function () {
+
+                var noregistrasi = "";
+                if ($scope.dataPasienSelected.noregistrasi) {
+                    noregistrasi = $scope.dataPasienSelected.noregistrasi;
+                }
+
+
+                medifirstService.get("farmasi/get-transaksi-pelayanan?noReg=" + noregistrasi, true).then(function (dat) {
+                    let group = [];
+                    if (dat.statResponse == true) {
+                        for (var i = 0; i < dat.data.length; i++) {
+                            dat.data[i].no = i + 1
+                            dat.data[i].total = parseFloat(dat.data[i].jumlah) * (parseFloat(dat.data[i].hargasatuan) - parseFloat(dat.data[i].hargadiscount))
+                            dat.data[i].total = parseFloat(dat.data[i].total) + parseFloat(dat.data[i].jasa)
+                            if (dat.data[i].reseppulang == '1') {
+                                dat.data[i].cekreseppulang = '✔'
+                            } else {
+                                dat.data[i].cekreseppulang = '-'
+                            }
+                        }
+                        var array = dat.data;
+                        let sama = false
+
+                        for (let i in array) {
+                            array[i].count = 1
+                            sama = false
+                            for (let x in group) {
+                                if (group[x].noresep == array[i].noresep) {
+                                    sama = true;
+                                    group[x].count = parseFloat(group[x].count) + parseFloat(array[i].count)
+
+                                }
+                            }
+                            if (sama == false) {
+                                var dataDetail0 = [];
+                                for (var f = 0; f < array.length; f++) {
+                                    if (array[i].noresep == array[f].noresep) {
+                                        dataDetail0.push(array[f]);
+                                    };
+                                }
+                                let result = {
+                                    noregistrasi: array[i].noregistrasi,
+									nocm: array[i].nocm,
+									norec_resep: array[i].norec_resep,
+                                    tglpelayanan: array[i].tglpelayanan,
+                                    tglorder: array[i].tglorder,
+                                    noresep: array[i].noresep,
+                                    count: array[i].count,
+                                    aturanpakai: array[i].aturanpakai,
+                                    namaruangandepo: array[i].namaruangandepo,
+                                    namaruangan: array[i].namaruangan,
+                                    dokter: array[i].dokter,
+                                    cekreseppulang: array[i].cekreseppulang,
+                                    details: dataDetail0,
+                                   // keterangan:  array[i].keteranganpakai,
+                                }
+                                group.push(result)
+                            }
+                        }
+                    }
+
+                    $scope.dataGridRiwayatObat = group
+                    console.log(group)
+                    $scope.isRouteLoading = false;
+                    $scope.popUpRiwayat.center().open();
+                });
+            }
+
+			function CetakResep(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				console.log(dataItem)
+				var stt = 1
+                window.open(baseTransaksi + "report/cetak-resep-dokter-rev?noorder=" + 0 + "&norec=" + dataItem.norec_resep 
+                + "&nocm=" + dataItem.nocm + '&kodeprofile=' + 30 + '&qtybagi=' + stt);
+			}
+
+			$scope.columnGridRiwayatObat = [
+				{
+					"command": [
+						  {
+							 text: "Cetak",
+							 click: CetakResep,
+							 imageClass: "clinic fa"
+						  },
+					  ],
+						 title: "",
+						 width: "100px",
+				  },
+                {
+                    "field": "noresep",
+                    "title": "No.Resep",
+                    "width": "100px",
+                },
+                {
+                    "field": "tglpelayanan",
+                    "title": "Tgl Resep",
+                    "width": "120px",
+                },
+                {
+                    "field": "tglorder",
+                    "title": "Tgl Order",
+                    "width": "120px",
+                },
+                {
+                    "field": "noregistrasi",
+                    "title": "No.Registrasi",
+                    "width": "100px",
+                },
+                {
+                    "field": "dokter",
+                    "title": "Penulis Resep",
+                    "width": "170px",
+                },
+                {
+                    "field": "namaruangan",
+                    "title": "Ruangan",
+                    "width": "100px",
+                },
+                {
+                    "field": "namaruangandepo",
+                    "title": "Depo",
+                    "width": "90px",
+                },
+                {
+                    "field": "cekreseppulang",
+                    "title": "Resep Pulang",
+                    "width": "90px",
+                    "template": "<span class='style-center'>#: cekreseppulang #</span>"
+                }
+            ];
+
+
+			$scope.data22 = function (dataItem) {
+                // debugger
+                for (var i = 0; i < dataItem.details.length; i++) {
+                    dataItem.details[i].no = i + 1
+
+                }
+                return {
+                    dataSource: new kendo.data.DataSource({
+                        data: dataItem.details,
+                        sort:[{ field: "rke", dir: "asc" }],
+
+                    }),
+                    resizable: true,
+                    columns: [
+                        {
+                            "field": "no",
+                            "title": "No",
+                            "width": "15px",
+                            "hidden": "true",
+                        },
+                        {
+                            "field": "rke",
+                            "title": "R/",
+                            "width": "35px",
+                        },
+                        {
+                            "field": "namaproduk",
+                            "title": "Deskripsi",
+                            "width": "200px",
+                        },
+                        {
+                            "field": "aturanpakai",
+                            "title": "Aturan Pakai",
+                            "width": "80px",
+                        },
+                        {
+                            "field": "satuanstandar",
+                            "title": "Satuan",
+                            "width": "80px",
+                        },
+                        {
+                            "field": "jumlah",
+                            "title": "Qty",
+                            "width": "40px",
+                        },
+                        {
+                            "field": "keteranganpakai",
+                            "title": "Keterangan",
+                            "width": "400px",
+                        },
+                        {
+                            "field": "kekuatan",
+                            "title": "Kekuatan",
+                            "width": "80px",
+                        }
+
+                    ]
+                }
+            };
+
 			$scope.columnDaftarPasienPulang = {
 				toolbar: [
 					"excel",

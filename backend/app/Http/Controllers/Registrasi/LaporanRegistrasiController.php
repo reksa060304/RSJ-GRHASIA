@@ -2687,6 +2687,7 @@ select '-' as smf,* from  (
         }
 
         $paramRuangan = '';
+        $paramRuanganRU = '';
         $paramRuangany = '';
         $paramRuanganSatu = '';
         $paramRuanganKeluar = '';
@@ -2701,6 +2702,7 @@ select '-' as smf,* from  (
             $paramRuanganPindah = ' and rpp.objectruanganfk = ' . $ruanganId;
             $paramRuanganDiPindah = ' and apd.objectruanganasalfk = ' . $ruanganId;
             $paramRuanganApdt = ' and apdt.objectruanganfk = ' . $ruanganId;
+            $paramRuanganRU = ' and ru.id = ' . $ruanganId;
         }
 
         if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined" && ($ruanganId == 803 || $ruanganId == 794)) {
@@ -2711,6 +2713,7 @@ select '-' as smf,* from  (
             $paramRuanganPindah = ' and rpp.objectruanganfk in(803,794)';
             $paramRuanganDiPindah = ' and apd.objectruanganasalfk in(803,794)';
             $paramRuanganApdt = ' and apdt.objectruanganfk in(803,794)';
+            $paramRuanganRU = ' and ru.id in(803,794)';
         }
 
         $paramRuanganRM = '';
@@ -3391,8 +3394,10 @@ select '-' as smf,* from  (
                 ) as x	
                 on rm.objectruanganfk=x.objectruanganfk and rm.objectkamarfk=x.objectkamarfk and rm.tanggalawal = x.tanggal
                 where rm.kdprofile = 30 and rm.statusenabled = true
-                $paramRuanganRM;
+                $paramRuanganRU;
                 "));
+
+           
 
             $lamadirawat = DB::select(DB::raw("select sum(y.totallama) as totalfix from(
                 select x.tanggalpulang, sum(x.lamadirawat) as totallama from(
@@ -3639,5 +3644,52 @@ select '-' as smf,* from  (
         // print_r($result);
         //return $this->respond($detail);
         return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
+    public function LaporanJumlahPasien(Request $request)
+    {
+        $jenisLaporan = "";
+        $jenisPasien = "";
+        if($request['jenislaporan'] == 2){
+            $jenisLaporan = "AND pd.objectruanganlastfk IN (792,793,794,795,796,797,798,799,800,801,802,803,804,805,806)";
+            if($request['jenispasien'] == 1){
+                $jenisPasien = "WHERE x.objectruanganlastfk NOT IN (800, 799)";
+            } elseif($request['jenispasien'] == 2){
+                $jenisPasien = "WHERE x.objectruanganlastfk IN (800)";
+            } else if($request['jenispasien'] == 3){
+                $jenisPasien = "WHERE x.objectruanganlastfk IN (799)";
+            }
+        } 
+        if($request['jenislaporan'] == 1){
+            $jenisLaporan = "AND pd.objectruanganlastfk IN (752,753,754,755,756,757,758,765,759,762,764,768,769,770,771,772,773,774,775,776,777,778,781,782,783,784,785,786,787,788,789,790,791,766,767,807)";
+            if(isset($request['jenispasien'])){
+                if($request['jenispasien'] == 1){
+                    $jenisPasien = "WHERE x.objectruanganlastfk IN (752, 785, 782)";
+                } elseif($request['jenispasien'] == 2){
+                    $jenisPasien = "WHERE x.objectruanganlastfk NOT IN (789, 752, 785, 782)";
+                } else if($request['jenispasien'] == 3){
+                    $jenisPasien = "WHERE x.objectruanganlastfk IN (789)";
+                }
+            }    
+        }
+        $data = \DB::select(DB::raw("SELECT
+            x.tahun, SUM ( x.jumlahpasien ) as jumlahpasien
+        FROM (
+            SELECT date_part( 'year', pd.tglregistrasi ) AS tahun,COUNT ( pd.norec ) AS jumlahpasien,pd.objectruanganlastfk FROM pasiendaftar_t pd 
+            WHERE
+                pd.kdprofile = 30 AND pd.statusenabled = TRUE 
+                $jenisLaporan 
+            GROUP BY pd.norec, pd.objectruanganlastfk ) AS x 
+            $jenisPasien
+            -- WHERE x.objectruanganlastfk in(804,805,806)
+        GROUP BY
+            x.tahun
+            order by x.tahun asc
+        "));
+        $result = array(
+            'data'=> $data,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
     }
 }

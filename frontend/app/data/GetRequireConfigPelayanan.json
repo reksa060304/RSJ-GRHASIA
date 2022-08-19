@@ -3271,6 +3271,39 @@
         {
             "nameDep": "PanssEcTableCtrl",
             "urlDep": "module/EMR/PanssEcTableCtrl"
+        },
+        {
+            "nameDep": "MenuIndexCtrl",
+            "urlDep": "module/EMR/MenuIndexCtrl"
+        },
+        {
+            "nameDep": "NormaPsikologiCtrl",
+            "urlDep": "module/RawatJalan/NormaPsikologiCtrl"
+        },
+        {
+            "nameDep": "DaftarPasienPsikologiCtrl",
+            "urlDep": "module/RawatJalan/DaftarPasienPsikologiCtrl"
+        },
+        {
+            "nameDep": "EPPSpsikologiCtrl",
+            "urlDep": "module/RawatJalan/EPPSpsikologiCtrl"
+		},
+        {
+            "nameDep": "LaporanJumlahPasienCtrl",
+            "urlDep": "module/Registrasi/LaporanJumlahPasienCtrl"
+		},
+        {
+            "nameDep": "StatistikPerPeriodeCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/StatistikPerPeriodeCtrl"
+        },
+        {
+            "nameDep": "StatistikPerBangsalCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/StatistikPerBangsalCtrl"
+        },
+        {
+            "nameDep": "LaporanSensusHarianRawatJalanCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanSensusHarianRawatJalanCtrl"
         }
+        
     ]
 }

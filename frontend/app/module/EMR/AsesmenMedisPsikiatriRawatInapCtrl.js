@@ -12,13 +12,14 @@ define(['initialize'], function (initialize) {
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
             $scope.cc = {}
+            $scope.isRouteLoading = false
             var nomorEMR = '-'
             $scope.cc.emrfk = 777
             var dataLoad = []
             var pegawaiInputDetail = ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
-
+            // $scope.item.obj[120001] = new Date()
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
             })
@@ -1260,97 +1261,141 @@ define(['initialize'], function (initialize) {
 
           
 
-            medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
-                $scope.item.obj = []
-                $scope.item.obj2 = []
-                $scope.item.obj[116062] = $scope.now
-                $scope.item.obj[116068] = {
-                    text: $scope.cc.namaruangan,
-                    value: $scope.cc.objectruanganfk
-                }
-
-                $scope.item.obj[116201] = true
-                $scope.item.obj[116204] = true
-                $scope.item.obj[116207] = true
-                $scope.item.obj[116210] = true
-                $scope.item.obj[116213] = true
-                $scope.item.obj[116216] = true
-                $scope.item.obj[116219] = true
-                $scope.item.obj[116222] = true
-
-                dataLoad = dat.data.data
-              
-                for (var i = 0; i <= dataLoad.length - 1; i++) {
-                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
-
-                        if (dataLoad[i].type == "textbox") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            if (dataLoad[i].emrdfk == 21008669)
-                                $scope.totalSkor = parseFloat(dataLoad[i].value)
-                            if (dataLoad[i].emrdfk == 21030766)
-                                $scope.totalSkor5 = parseFloat(dataLoad[i].value)
-                            if (dataLoad[i].emrdfk == 21008720)
-                                $scope.totalSkor4 = parseFloat(dataLoad[i].value)
-                            if (dataLoad[i].emrdfk == 21008753)
-                                $scope.skorNutrisi = parseFloat(dataLoad[i].value)
-
-                        }
-                        if (dataLoad[i].type == "checkbox") {
-                            chekedd = false
-                            if (dataLoad[i].value == '1') {
-                                chekedd = true
+            
+            loadValidasi()
+            function loadValidasi(){
+                $scope.isRouteLoading = true
+                medifirstService.get('emr/get-validasi-emr?noemr=' + nomorEMR + '&emrfk=' + $scope.cc.emrfk).then(function (data) {
+                    var datas = data.data.data;
+                    console.log(datas.length);
+                    if (datas.length > 0) {
+                    $scope.isRouteLoading = false
+                        medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
+                            $scope.item.obj = []
+                            $scope.item.obj2 = []
+                            $scope.item.obj[116062] = $scope.now
+                            $scope.item.obj[116068] = {
+                                text: $scope.cc.namaruangan,
+                                value: $scope.cc.objectruanganfk
                             }
-                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
-                       
 
+                            $scope.item.obj[116201] = true
+                            $scope.item.obj[116204] = true
+                            $scope.item.obj[116207] = true
+                            $scope.item.obj[116210] = true
+                            $scope.item.obj[116213] = true
+                            $scope.item.obj[116216] = true
+                            $scope.item.obj[116219] = true
+                            $scope.item.obj[116222] = true
 
-                        }
-                        if (dataLoad[i].type == "checkbox2") {
-                            chekedd = false
-                            if (dataLoad[i].value == '1') {
-                                chekedd = true
+                            dataLoad = dat.data.data
+
+                            for (var i = 0; i <= dataLoad.length - 1; i++) {
+                                if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
+
+                                    if (dataLoad[i].type == "textbox") {
+                                        $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                                        if (dataLoad[i].emrdfk == 21008669)
+                                            $scope.totalSkor = parseFloat(dataLoad[i].value)
+                                        if (dataLoad[i].emrdfk == 21030766)
+                                            $scope.totalSkor5 = parseFloat(dataLoad[i].value)
+                                        if (dataLoad[i].emrdfk == 21008720)
+                                            $scope.totalSkor4 = parseFloat(dataLoad[i].value)
+                                        if (dataLoad[i].emrdfk == 21008753)
+                                            $scope.skorNutrisi = parseFloat(dataLoad[i].value)
+
+                                    }
+                                    if (dataLoad[i].type == "checkbox") {
+                                        chekedd = false
+                                        if (dataLoad[i].value == '1') {
+                                            chekedd = true
+                                        }
+                                        $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+
+                                    }
+                                    if (dataLoad[i].type == "checkbox2") {
+                                        chekedd = false
+                                        if (dataLoad[i].value == '1') {
+                                            chekedd = true
+                                        }
+                                        $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+
+                                    }
+
+                                    if (dataLoad[i].type == "datetime") {
+                                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                                    }
+                                    if (dataLoad[i].type == "time") {
+                                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                                    }
+                                    if (dataLoad[i].type == "date") {
+                                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                                    }
+
+                                    if (dataLoad[i].type == "checkboxtextbox") {
+                                        $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                                        $scope.item.obj2[dataLoad[i].emrdfk] = true
+                                    }
+                                    if (dataLoad[i].type == "textarea") {
+                                        $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                                    }
+                                    if (dataLoad[i].type == "combobox") {
+                                        var str = dataLoad[i].value
+                                        if (str != undefined) {
+                                            var res = str.split("~");
+                                            $scope.item.obj[dataLoad[i].emrdfk] = {
+                                                value: res[0],
+                                                text: res[1]
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
-                          
-                        }
+                        })
+                    } else {
+                        medifirstService.get("emr/get-emr-otomatis?noemr=" + nomorEMR + "&emrfk=3000412" + "&emrid=" + $scope.cc.emrfk).then(function (data) {
+                            var datas = data.data.data
+                            console.log(datas);
+                            $scope.isRouteLoading = false
+                            for (let i = 0; i < datas.length; i++) {
+                                if (datas[i].id == 3002093 && datas[i].value == 2) {
+                                    $scope.item.obj[120253] = true
+                                } else if (datas[i].id == 3002093 && datas[i].value == 1) {
+                                    $scope.item.obj[120252] = true
+                                }
 
-                        if (dataLoad[i].type == "datetime") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "time") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "date") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
+                                if (datas[i].id == 3002058 && datas[i].value == 1) {
+                                    $scope.item.obj[120246] = true
+                                } else if (datas[i].id == 3002058 && datas[i].value == 2) {
+                                    $scope.item.obj[120247] = true
+                                } else if (datas[i].id == 3002058 && datas[i].value == 3) {
+                                    $scope.item.obj[120248] = true
+                                } else if (datas[i].id == 3002058 && datas[i].value == 4) {
+                                    $scope.item.obj[120249] = true
+                                } else if (datas[i].id == 3002058 && datas[i].value == 5) {
+                                    $scope.item.obj[120250] = true
+                                } else if (datas[i].id == 3002058 && datas[i].value == 6) {
+                                    $scope.item.obj[120251] = true
+                                }
 
-                        if (dataLoad[i].type == "checkboxtextbox") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            $scope.item.obj2[dataLoad[i].emrdfk] = true
-                        }
-                        if (dataLoad[i].type == "textarea") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                        }
-                        if (dataLoad[i].type == "combobox") {
-                            var str = dataLoad[i].value
-                            if (str != undefined) {
-                                var res = str.split("~");
-                                // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                                $scope.item.obj[dataLoad[i].emrdfk] = {
-                                    value: res[0],
-                                    text: res[1]
+                                if (datas[i].id2 != 0) {
+                                    $scope.item.obj[datas[i].id2] = datas[i].value
+
+                                }
+                                if (datas[i].type == "checkbox") {
+                                    if (datas[i].value == "1") {
+                                        $scope.item.obj[datas[i].id2] = true
+                                        console.log(datas[i].type);
+                                    }
                                 }
                             }
 
-                        }
-                        // pegawaiInputDetail = dataLoad[i].pegawaifk
+                        })
                     }
 
-                }
-              
-
-            })
-
+                })
+            }
+            
             $scope.GCSKuantitatif = function () {
                 let e = parseInt($scope.item.obj[21008563]) || 0;
                 let v = parseInt($scope.item.obj[21008564]) || 0;
@@ -1876,7 +1921,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.Save = function () {
-
+                $scope.isRouteLoading = true
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
@@ -1894,10 +1939,11 @@ define(['initialize'], function (initialize) {
                     data: arrSave
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
                         'AsesmenMedisPsikiatriRawatInapCtrl ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
                         $scope.cc.noregistrasi).then(function (res) {})
-
+                    $scope.isRouteLoading = false
                     var arrStr = {
                         0: e.data.data.noemr
                     }

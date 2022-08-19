@@ -77,7 +77,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="4" style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 55px;">
+            <td colspan="4" style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 10px;">
                 <font style="font-size: 12pt" color="#000000">Yaitu untuk membayar: </font>
             </td>
         </tr>

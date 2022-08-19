@@ -1191,7 +1191,7 @@ class ReportController extends ApiController{
         "))->first();
         $detel = [];
         $details = \DB::select(DB::raw("
-                select pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan from pelayananpasien_t pt 
+                select pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai from pelayananpasien_t pt 
                 inner join produk_m pm on pm.id = pt.produkfk 
                 where strukresepfk = '$norec'
                 and pt.isobat = true
@@ -1214,7 +1214,7 @@ class ReportController extends ApiController{
                 where s.norec = '$norec'
             "))->first();
             $details = \DB::select(DB::raw("
-                select pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan from pelayananpasien_t pt 
+                select pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai from pelayananpasien_t pt 
                 inner join produk_m pm on pm.id = pt.produkfk 
                 where strukresepfk = '$norec'
                 and pt.isobat = true
@@ -1225,7 +1225,7 @@ class ReportController extends ApiController{
         }
 
         $skrining = collect(DB::select("
-            select st.rpenulis, st.rtanggalresep, st.rklinis, st.rmr, st.rpasien,
+            select s.noresep, st.rpenulis, st.rtanggalresep, st.rklinis, st.rmr, st.rpasien,
             st.rtanggallahir,
             st.rberatbedan,
             st.rdokter,

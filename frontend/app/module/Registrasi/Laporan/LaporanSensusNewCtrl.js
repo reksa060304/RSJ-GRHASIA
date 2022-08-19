@@ -1104,7 +1104,10 @@ define(['initialize'], function (initialize) {
                         
                         for (var i = 0; i < datas.length; i++) {
                             datas[i].no = i + 1;
-                            if(datas[i].jumlahtt != null){
+                            if($scope.item.ruangan != undefined){
+                                jumlahtt = datas[0].jumlahtt;
+                            }
+                            else{
                                 jumlahtt = datas[i].jumlahtt;
                             }
                             if(datas[i].jumlahttruangan != null){

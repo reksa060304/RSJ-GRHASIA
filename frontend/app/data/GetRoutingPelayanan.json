@@ -16970,8 +16970,8 @@
   ]
 },
 {
-  "name": "RekamMedis.AsesmenMedis.FormulirTransferPaisenAntarRuanganIGD",
-  "url": "/FormulirTransferPasienAntarRuanganIGDCtrl",
+  "name": "RekamMedis.AsesmenMedis.MenuIndex.FormulirTransferPaisenAntarRuanganIGD",
+  "url": "/FormulirTransferPasienAntarRuanganIGD/:index/:idEMR",
   "templateurl": "module/EMR/FormulirTransferPasienAntarRuanganIGD.html",
   "controller": "FormulirTransferPasienAntarRuanganIGDCtrl",
   "deps": [
@@ -18195,5 +18195,167 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex",
+    "url": "/MenuIndex",
+    "templateurl": "module/EMR/MenuIndex.html",
+    "controller": "MenuIndexCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "NormaPsikologi",
+    "url": "/NormaPsikologi",
+    "templateurl": "module/RawatJalan/NormaPsikologi.html",
+    "controller": "NormaPsikologiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  }, 
+  {
+    "name": "DaftarPasienPsikologi",
+    "url": "/DaftarPasienPsikologi",
+    "templateurl": "module/RawatJalan/DaftarPasienPsikologi.html",
+    "controller": "DaftarPasienPsikologiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "EPPSpsikologi",
+    "url": "/EPPSpsikologi",
+    "templateurl": "module/RawatJalan/EPPSpsikologi.html",
+    "controller": "EPPSpsikologiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanJumlahPasien",
+    "url": "/JumlahPasien",
+    "templateurl": "module/Registrasi/LaporanJumlahPasien.html",
+    "controller": "LaporanJumlahPasienCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+
+      }
+
+    ]
+  },
+  {
+    "name": "StatistikPerPeriode",
+    "url": "/TGFwb3JhblNlbnN1c1JhbmFwU3RhdGlzdGlrUGVyUGVyaW9kZQ==",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/StatistikPerPeriode.html",
+    "controller": "StatistikPerPeriodeCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+
+    ]
+  },
+  {
+    "name": "StatistikPerBangsal",
+    "url": "/TGFwb3JhblNlbnN1c1JhbmFwU3RhdGlzdGlrUGVyQmFuZ3NhbA==",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/StatistikPerBangsal.html",
+    "controller": "StatistikPerBangsalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanSensusHarianRawatJalan",
+    "url": "/SensusHarianRawatJalan",
+    "templateurl": "module/Registrasi/Laporan/LaporanSensusHarianRawatJalan.html",
+    "controller": "LaporanSensusHarianRawatJalanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
+
+

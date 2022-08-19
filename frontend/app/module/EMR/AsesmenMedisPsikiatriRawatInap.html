@@ -42,13 +42,12 @@
         text-align: left;
     }
 </style>
-
+<div ng-include=' "../app/template/Shared/TemplateLoading" '></div>
 <div class="grid_12" disable-contents="allDisabled">
     <div class="grid_12">
         <div class="panel panel-default container_12">
             <div class="panel-heading" c-translate>Asesmen Medis Psikiatri Rawat Inap</div>
         </div>
-
         <div class="grid_12" style="margin-top: 10px;">
             <fieldset style="margin-top: 10px;">
                 <div class="grid_12">
@@ -62,9 +61,9 @@
                     <div>
                         <label c-label item="item"> ALLOANAMNESIS / ANAMNESIS : </label>
                     </div>
-                    <div>
+                    <!-- <div>
                         <input class="k-textbox" style="width: 80%" ng-model="item.obj[120002]" type="text">
-                    </div>
+                    </div> -->
                 </div>
             </fieldset>
 
@@ -410,7 +409,7 @@
                                     <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
                                         &nbsp;{{jawab.nama}}</label>
                                 </div>
-
+                                
                                 <!-- checkboxtextboxkhusus -->
                                 <div ng-switch-when="checkboxtextbox1">
                                     <div class="grid_12" style="margin-top: -15px">
@@ -439,7 +438,17 @@
                                             style="margin-top: 5px;margin-right: 30px">{{jawab.satuan}}</label>
                                     </div>
                                 </div>
-
+                                <div class="grid_3" ng-switch-when="textbox3">
+                                    <div>
+                                        <label>{{jawab.nama}}</label>
+                                    </div>
+                                    <div class="grid_12 parentKeteranganFieldTambahan">
+                                        <input class="k-textbox" style="width: 70%" ng-model="item.obj[jawab.id]"
+                                            type="text" placeholder="{{jawab.placeholder}}">
+                                        <label class="keteranganFieldTambahan"
+                                            style="margin-top: 5px;margin-right: 30px">{{jawab.satuan}}</label>
+                                    </div>
+                                </div>
                                 <div class="grid_6" ng-switch-when="textbox6">
                                     <div>
                                         <label>{{jawab.nama}}</label>
@@ -1485,7 +1494,6 @@
                 </div>
             </fieldset>
         </div>
-
     </div>
         <div class="grid_12">
             <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>

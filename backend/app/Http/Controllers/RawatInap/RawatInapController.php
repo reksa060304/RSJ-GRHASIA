@@ -1044,6 +1044,7 @@ class RawatInapController extends ApiController
     public function updateKamar(Request $request){
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
+        $rpp="data";
         try {
             $antrians = AntrianPasienDiperiksa::where('noregistrasifk',$request['norec_pd'])
                 ->where('objectruanganfk',$request['ruanganlastfk'])
@@ -1103,6 +1104,9 @@ class RawatInapController extends ApiController
             DB::rollBack();
             $result = array(
                 "status" => 400,
+                'e'=> $e->getLine(),
+                'msg'=> $e->getMessage(),
+                'rpp'=> $rpp,
                 "message"  => $transMessage,
             );
         }

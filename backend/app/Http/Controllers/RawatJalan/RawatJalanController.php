@@ -48,6 +48,8 @@ use App\Master\Departemen;
 
 //use App\Transaksi\StrukPelayananDetailK;
 use App\Transaksi\HistoriCetakDokumen;
+use App\Transaksi\EPPS;
+use App\Transaksi\EPPSDetail;
 use App\Traits\Valet;
 use App\Traits\PelayananPasienTrait;
 use DB;
@@ -1536,6 +1538,1114 @@ class RawatJalanController extends ApiController
             $result = array(
                 'status' => 400,
                 'message'  => $transMessage,
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getComboPsikologi(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $jenisnorma = \DB::table('jenisnorma_m')->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->get();
+        $normapsikologi = \DB::table('normapsikologi_m as np')
+        ->join('jenisnorma_m as jn', 'jn.id','=','np.objectjenisnormafk')
+        ->select('np.*', 'jn.jenisnorma')
+        ->where('np.kdprofile', $kdProfile)
+        ->where('np.statusenabled', true)->orderBy('jn.id','asc')
+        ->get();
+        $result = array(
+            'jenisnorma'=>$jenisnorma,
+            'normapsikologi'=> $normapsikologi,
+            'as'=>'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function saveNormaPsikologi(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+        try {
+            if (isset($request['iddel'])) {
+                $crud = "Hapus";
+                \DB::table('normapsikologi_m')->where('id', $request['iddel'])->delete();
+            } else {
+                if($request['id'] == null){
+                    $crud = "Simpan";
+                    \DB::table('normapsikologi_m')->insert([
+                        'id'=> $idMax+1,
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'kodeexternal'=> $idMax+1,
+                        'objectjenisnormafk'=> $request['objectjenisnormafk'],
+                        'umurmin'=> $request['umurmin'],
+                        'umurmax'=> $request['umurmax'],
+                        'nilai'=> $request['nilai'],
+                    ]);
+                }else if($request['id'] != null){
+                    $crud = "Ubah";
+                    \DB::table('normapsikologi_m')->where('id', $request['id'])->update([
+                        'objectjenisnormafk'=> $request['objectjenisnormafk'],
+                        'umurmin'=> $request['umurmin'],
+                        'umurmax'=> $request['umurmax'],
+                        'nilai'=> $request['nilai'],
+                    ]);
+                }
+            }
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveEPPS(Request $request)
+    {
+        
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $crud="";
+        $norecMA = substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
+        \DB::beginTransaction();
+        try {
+            $crud = "Simpan";
+            if($request['norec'] == ''){
+                $MA = new EPPS();
+                $MA->norec = $norecMA;
+                $MA->kdprofile = $kdProfile;
+                $MA->statusenabled = true;
+            } else if($request['norec'] != ''){
+                $MA= EPPS::where('norec',$request['norec'])
+                    ->where('kdprofile', $kdProfile)
+                    ->first();
+            }
+            
+            $MA->objectapdfk =  $request['norec_apd'];
+            $MA->tgltes =  $request['tgltes'];
+            $MA->konsistensi =  $request['konsistensi'];
+            $MA->ach = $request['skolom1'];
+            $MA->def = $request['skolom2'];
+            $MA->ord = $request['skolom3'];
+            $MA->exh = $request['skolom4'];
+            $MA->aut = $request['skolom5'];
+            $MA->aff = $request['skolom6'];
+            $MA->int = $request['skolom7'];
+            $MA->suc = $request['skolom8'];
+            $MA->dom = $request['skolom9'];
+            $MA->aba = $request['skolom10'];
+            $MA->nur = $request['skolom11'];
+            $MA->chg = $request['skolom12'];
+            $MA->end = $request['skolom13'];
+            $MA->het = $request['skolom14'];
+            $MA->agg = $request['skolom15'];
+            $MA->r1 = $request['rkolom1'];
+            $MA->r2 = $request['rkolom2'];
+            $MA->r3 = $request['rkolom3'];
+            $MA->r4 = $request['rkolom4'];
+            $MA->r5 = $request['rkolom5'];
+            $MA->r6 = $request['rkolom6'];
+            $MA->r7 = $request['rkolom7'];
+            $MA->r8 = $request['rkolom8'];
+            $MA->r9 = $request['rkolom9'];
+            $MA->r10 = $request['rkolom10'];
+            $MA->r11 = $request['rkolom11'];
+            $MA->r12 = $request['rkolom12'];
+            $MA->r13 = $request['rkolom13'];
+            $MA->r14 = $request['rkolom14'];
+            $MA->r15 = $request['rkolom15'];
+            $MA->c1 = $request['ckolom1'];
+            $MA->c2 = $request['ckolom2'];
+            $MA->c3 = $request['ckolom3'];
+            $MA->c4 = $request['ckolom4'];
+            $MA->c5 = $request['ckolom5'];
+            $MA->c6 = $request['ckolom6'];
+            $MA->c7 = $request['ckolom7'];
+            $MA->c8 = $request['ckolom8'];
+            $MA->c9 = $request['ckolom9'];
+            $MA->c10 = $request['ckolom10'];
+            $MA->c11 = $request['ckolom11'];
+            $MA->c12 = $request['ckolom12'];
+            $MA->c13 = $request['ckolom13'];
+            $MA->c14 = $request['ckolom14'];
+            $MA->c15 = $request['ckolom15'];
+            $MA->save();
+
+            for($i = 0; $i < 5; $i++){
+
+                if($request['norec'] == ''){
+                    $MAD = new EPPSDetail();
+                    $MAD->norec = $MAD->generateNewId();
+                    $MAD->kdprofile = $kdProfile;
+                    $MAD->statusenabled = true;
+                    $MAD->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban0'][$i]['no'])
+                    ->first();
+                }
+                $MAD->nourut = $request['array']['jawaban0'][$i]['no'];
+                $MAD->jawaban = $request['array']['jawaban0'][$i]['jawaban'];
+                $MAD->save();
+
+                if($request['norec'] == ''){
+                    $MAD1 = new EPPSDetail();
+                    $MAD1->norec = $MAD1->generateNewId();
+                    $MAD1->kdprofile = $kdProfile;
+                    $MAD1->statusenabled = true;
+                    $MAD1->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD1= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban1'][$i]['no'])
+                    ->first();
+                }
+                $MAD1->nourut = $request['array']['jawaban1'][$i]['no'];
+                $MAD1->jawaban = $request['array']['jawaban1'][$i]['jawaban'];
+                $MAD1->save();
+                
+                if($request['norec'] == ''){
+                    $MAD2 = new EPPSDetail();
+                    $MAD2->norec = $MAD2->generateNewId();
+                    $MAD2->kdprofile = $kdProfile;
+                    $MAD2->statusenabled = true;
+                    $MAD2->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD2= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban2'][$i]['no'])
+                    ->first();
+                }
+                $MAD2->nourut = $request['array']['jawaban2'][$i]['no'];
+                $MAD2->jawaban = $request['array']['jawaban2'][$i]['jawaban'];
+                $MAD2->save();
+
+                if($request['norec'] == ''){
+                    $MAD3 = new EPPSDetail();
+                    $MAD3->norec = $MAD3->generateNewId();
+                    $MAD3->kdprofile = $kdProfile;
+                    $MAD3->statusenabled = true;
+                    $MAD3->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD3= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban3'][$i]['no'])
+                    ->first();
+                }
+                $MAD3->nourut = $request['array']['jawaban3'][$i]['no'];
+                $MAD3->jawaban = $request['array']['jawaban3'][$i]['jawaban'];
+                $MAD3->save();
+
+                if($request['norec'] == ''){
+                    $MAD4 = new EPPSDetail();
+                    $MAD4->norec = $MAD4->generateNewId();
+                    $MAD4->kdprofile = $kdProfile;
+                    $MAD4->statusenabled = true;
+                    $MAD4->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD4= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban4'][$i]['no'])
+                    ->first();
+                }
+                $MAD4->nourut = $request['array']['jawaban4'][$i]['no'];
+                $MAD4->jawaban = $request['array']['jawaban4'][$i]['jawaban'];
+                $MAD4->save();
+
+                if($request['norec'] == ''){
+                    $MAD5 = new EPPSDetail();
+                    $MAD5->norec = $MAD5->generateNewId();
+                    $MAD5->kdprofile = $kdProfile;
+                    $MAD5->statusenabled = true;
+                    $MAD5->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD5= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban5'][$i]['no'])
+                    ->first();
+                }
+                $MAD5->nourut = $request['array']['jawaban5'][$i]['no'];
+                $MAD5->jawaban = $request['array']['jawaban5'][$i]['jawaban'];
+                $MAD5->save();
+
+                if($request['norec'] == ''){
+                    $MAD6 = new EPPSDetail();
+                    $MAD6->norec = $MAD6->generateNewId();
+                    $MAD6->kdprofile = $kdProfile;
+                    $MAD6->statusenabled = true;
+                    $MAD6->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD6= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban6'][$i]['no'])
+                    ->first();
+                }
+                $MAD6->nourut = $request['array']['jawaban6'][$i]['no'];
+                $MAD6->jawaban = $request['array']['jawaban6'][$i]['jawaban'];
+                $MAD6->save();
+
+                if($request['norec'] == ''){
+                    $MAD7 = new EPPSDetail();
+                    $MAD7->norec = $MAD7->generateNewId();
+                    $MAD7->kdprofile = $kdProfile;
+                    $MAD7->statusenabled = true;
+                    $MAD7->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD7= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban7'][$i]['no'])
+                    ->first();
+                }
+                $MAD7->nourut = $request['array']['jawaban7'][$i]['no'];
+                $MAD7->jawaban = $request['array']['jawaban7'][$i]['jawaban'];
+                $MAD7->save();
+
+                if($request['norec'] == ''){
+                    $MAD8 = new EPPSDetail();
+                    $MAD8->norec = $MAD8->generateNewId();
+                    $MAD8->kdprofile = $kdProfile;
+                    $MAD8->statusenabled = true;
+                    $MAD8->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD8= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban8'][$i]['no'])
+                    ->first();
+                }
+                $MAD8->nourut = $request['array']['jawaban8'][$i]['no'];
+                $MAD8->jawaban = $request['array']['jawaban8'][$i]['jawaban'];
+                $MAD8->save();
+
+                if($request['norec'] == ''){
+                    $MAD9 = new EPPSDetail();
+                    $MAD9->norec = $MAD9->generateNewId();
+                    $MAD9->kdprofile = $kdProfile;
+                    $MAD9->statusenabled = true;
+                    $MAD9->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD9= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban9'][$i]['no'])
+                    ->first();
+                }
+                $MAD9->nourut = $request['array']['jawaban9'][$i]['no'];
+                $MAD9->jawaban = $request['array']['jawaban9'][$i]['jawaban'];
+                $MAD9->save();
+
+                if($request['norec'] == ''){
+                    $MAD10 = new EPPSDetail();
+                    $MAD10->norec = $MAD10->generateNewId();
+                    $MAD10->kdprofile = $kdProfile;
+                    $MAD10->statusenabled = true;
+                    $MAD10->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD10= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban10'][$i]['no'])
+                    ->first();
+                }
+                $MAD10->nourut = $request['array']['jawaban10'][$i]['no'];
+                $MAD10->jawaban = $request['array']['jawaban10'][$i]['jawaban'];
+                $MAD10->save();
+
+                if($request['norec'] == ''){
+                    $MAD11 = new EPPSDetail();
+                    $MAD11->norec = $MAD11->generateNewId();
+                    $MAD11->kdprofile = $kdProfile;
+                    $MAD11->statusenabled = true;
+                    $MAD11->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD11= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban11'][$i]['no'])
+                    ->first();
+                }
+                $MAD11->nourut = $request['array']['jawaban11'][$i]['no'];
+                $MAD11->jawaban = $request['array']['jawaban11'][$i]['jawaban'];
+                $MAD11->save();
+
+                if($request['norec'] == ''){
+                    $MAD12 = new EPPSDetail();
+                    $MAD12->norec = $MAD12->generateNewId();
+                    $MAD12->kdprofile = $kdProfile;
+                    $MAD12->statusenabled = true;
+                    $MAD12->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD12= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban12'][$i]['no'])
+                    ->first();
+                }
+                $MAD12->nourut = $request['array']['jawaban12'][$i]['no'];
+                $MAD12->jawaban = $request['array']['jawaban12'][$i]['jawaban'];
+                $MAD12->save();
+
+                if($request['norec'] == ''){
+                    $MAD13 = new EPPSDetail();
+                    $MAD13->norec = $MAD13->generateNewId();
+                    $MAD13->kdprofile = $kdProfile;
+                    $MAD13->statusenabled = true;
+                    $MAD13->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD13= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban13'][$i]['no'])
+                    ->first();
+                }
+                $MAD13->nourut = $request['array']['jawaban13'][$i]['no'];
+                $MAD13->jawaban = $request['array']['jawaban13'][$i]['jawaban'];
+                $MAD13->save();
+
+                if($request['norec'] == ''){
+                    $MAD14 = new EPPSDetail();
+                    $MAD14->norec = $MAD14->generateNewId();
+                    $MAD14->kdprofile = $kdProfile;
+                    $MAD14->statusenabled = true;
+                    $MAD14->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD14= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban14'][$i]['no'])
+                    ->first();
+                }
+                $MAD14->nourut = $request['array']['jawaban14'][$i]['no'];
+                $MAD14->jawaban = $request['array']['jawaban14'][$i]['jawaban'];
+                $MAD14->save();
+
+                if($request['norec'] == ''){
+                    $MAD15 = new EPPSDetail();
+                    $MAD15->norec = $MAD15->generateNewId();
+                    $MAD15->kdprofile = $kdProfile;
+                    $MAD15->statusenabled = true;
+                    $MAD15->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD15= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban15'][$i]['no'])
+                    ->first();
+                }
+                $MAD15->nourut = $request['array']['jawaban15'][$i]['no'];
+                $MAD15->jawaban = $request['array']['jawaban15'][$i]['jawaban'];
+                $MAD15->save();
+
+                if($request['norec'] == ''){
+                    $MAD16 = new EPPSDetail();
+                    $MAD16->norec = $MAD16->generateNewId();
+                    $MAD16->kdprofile = $kdProfile;
+                    $MAD16->statusenabled = true;
+                    $MAD16->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD16= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban16'][$i]['no'])
+                    ->first();
+                }
+                $MAD16->nourut = $request['array']['jawaban16'][$i]['no'];
+                $MAD16->jawaban = $request['array']['jawaban16'][$i]['jawaban'];
+                $MAD16->save();
+
+                if($request['norec'] == ''){
+                    $MAD17 = new EPPSDetail();
+                    $MAD17->norec = $MAD17->generateNewId();
+                    $MAD17->kdprofile = $kdProfile;
+                    $MAD17->statusenabled = true;
+                    $MAD17->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD17= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban17'][$i]['no'])
+                    ->first();
+                }
+                $MAD17->nourut = $request['array']['jawaban17'][$i]['no'];
+                $MAD17->jawaban = $request['array']['jawaban17'][$i]['jawaban'];
+                $MAD17->save();
+
+                if($request['norec'] == ''){
+                    $MAD18 = new EPPSDetail();
+                    $MAD18->norec = $MAD18->generateNewId();
+                    $MAD18->kdprofile = $kdProfile;
+                    $MAD18->statusenabled = true;
+                    $MAD18->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD18= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban18'][$i]['no'])
+                    ->first();
+                }
+                $MAD18->nourut = $request['array']['jawaban18'][$i]['no'];
+                $MAD18->jawaban = $request['array']['jawaban18'][$i]['jawaban'];
+                $MAD18->save();
+
+                if($request['norec'] == ''){
+                    $MAD19 = new EPPSDetail();
+                    $MAD19->norec = $MAD19->generateNewId();
+                    $MAD19->kdprofile = $kdProfile;
+                    $MAD19->statusenabled = true;
+                    $MAD19->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD19= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban19'][$i]['no'])
+                    ->first();
+                }
+                $MAD19->nourut = $request['array']['jawaban19'][$i]['no'];
+                $MAD19->jawaban = $request['array']['jawaban19'][$i]['jawaban'];
+                $MAD19->save();
+
+                if($request['norec'] == ''){
+                    $MAD20 = new EPPSDetail();
+                    $MAD20->norec = $MAD20->generateNewId();
+                    $MAD20->kdprofile = $kdProfile;
+                    $MAD20->statusenabled = true;
+                    $MAD20->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD20= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban20'][$i]['no'])
+                    ->first();
+                }
+                $MAD20->nourut = $request['array']['jawaban20'][$i]['no'];
+                $MAD20->jawaban = $request['array']['jawaban20'][$i]['jawaban'];
+                $MAD20->save();
+
+                if($request['norec'] == ''){
+                    $MAD21 = new EPPSDetail();
+                    $MAD21->norec = $MAD21->generateNewId();
+                    $MAD21->kdprofile = $kdProfile;
+                    $MAD21->statusenabled = true;
+                    $MAD21->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD21= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban21'][$i]['no'])
+                    ->first();
+                }
+                $MAD21->nourut = $request['array']['jawaban21'][$i]['no'];
+                $MAD21->jawaban = $request['array']['jawaban21'][$i]['jawaban'];
+                $MAD21->save();
+
+                if($request['norec'] == ''){
+                    $MAD22 = new EPPSDetail();
+                    $MAD22->norec = $MAD22->generateNewId();
+                    $MAD22->kdprofile = $kdProfile;
+                    $MAD22->statusenabled = true;
+                    $MAD22->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD22= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban22'][$i]['no'])
+                    ->first();
+                }
+                $MAD22->nourut = $request['array']['jawaban22'][$i]['no'];
+                $MAD22->jawaban = $request['array']['jawaban22'][$i]['jawaban'];
+                $MAD22->save();
+
+                if($request['norec'] == ''){
+                    $MAD23 = new EPPSDetail();
+                    $MAD23->norec = $MAD23->generateNewId();
+                    $MAD23->kdprofile = $kdProfile;
+                    $MAD23->statusenabled = true;
+                    $MAD23->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD23= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban23'][$i]['no'])
+                    ->first();
+                }
+                $MAD23->nourut = $request['array']['jawaban23'][$i]['no'];
+                $MAD23->jawaban = $request['array']['jawaban23'][$i]['jawaban'];
+                $MAD23->save();
+
+                if($request['norec'] == ''){
+                    $MAD24 = new EPPSDetail();
+                    $MAD24->norec = $MAD24->generateNewId();
+                    $MAD24->kdprofile = $kdProfile;
+                    $MAD24->statusenabled = true;
+                    $MAD24->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD24= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban24'][$i]['no'])
+                    ->first();
+                }
+                $MAD24->nourut = $request['array']['jawaban24'][$i]['no'];
+                $MAD24->jawaban = $request['array']['jawaban24'][$i]['jawaban'];
+                $MAD24->save();
+
+                if($request['norec'] == ''){
+                    $MAD25 = new EPPSDetail();
+                    $MAD25->norec = $MAD25->generateNewId();
+                    $MAD25->kdprofile = $kdProfile;
+                    $MAD25->statusenabled = true;
+                    $MAD25->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD25= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban25'][$i]['no'])
+                    ->first();
+                }
+                $MAD25->nourut = $request['array']['jawaban25'][$i]['no'];
+                $MAD25->jawaban = $request['array']['jawaban25'][$i]['jawaban'];
+                $MAD25->save();
+
+                if($request['norec'] == ''){
+                    $MAD26 = new EPPSDetail();
+                    $MAD26->norec = $MAD26->generateNewId();
+                    $MAD26->kdprofile = $kdProfile;
+                    $MAD26->statusenabled = true;
+                    $MAD26->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD26= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban26'][$i]['no'])
+                    ->first();
+                }
+                $MAD26->nourut = $request['array']['jawaban26'][$i]['no'];
+                $MAD26->jawaban = $request['array']['jawaban26'][$i]['jawaban'];
+                $MAD26->save();
+
+                if($request['norec'] == ''){
+                    $MAD27 = new EPPSDetail();
+                    $MAD27->norec = $MAD27->generateNewId();
+                    $MAD27->kdprofile = $kdProfile;
+                    $MAD27->statusenabled = true;
+                    $MAD27->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD27= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban27'][$i]['no'])
+                    ->first();
+                }
+                $MAD27->nourut = $request['array']['jawaban27'][$i]['no'];
+                $MAD27->jawaban = $request['array']['jawaban27'][$i]['jawaban'];
+                $MAD27->save();
+
+                if($request['norec'] == ''){
+                    $MAD28 = new EPPSDetail();
+                    $MAD28->norec = $MAD28->generateNewId();
+                    $MAD28->kdprofile = $kdProfile;
+                    $MAD28->statusenabled = true;
+                    $MAD28->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD28= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban28'][$i]['no'])
+                    ->first();
+                }
+                $MAD28->nourut = $request['array']['jawaban28'][$i]['no'];
+                $MAD28->jawaban = $request['array']['jawaban28'][$i]['jawaban'];
+                $MAD28->save();
+
+                if($request['norec'] == ''){
+                    $MAD29 = new EPPSDetail();
+                    $MAD29->norec = $MAD29->generateNewId();
+                    $MAD29->kdprofile = $kdProfile;
+                    $MAD29->statusenabled = true;
+                    $MAD29->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD29= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban29'][$i]['no'])
+                    ->first();
+                }
+                $MAD29->nourut = $request['array']['jawaban29'][$i]['no'];
+                $MAD29->jawaban = $request['array']['jawaban29'][$i]['jawaban'];
+                $MAD29->save();
+
+                if($request['norec'] == ''){
+                    $MAD30 = new EPPSDetail();
+                    $MAD30->norec = $MAD30->generateNewId();
+                    $MAD30->kdprofile = $kdProfile;
+                    $MAD30->statusenabled = true;
+                    $MAD30->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD30= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban30'][$i]['no'])
+                    ->first();
+                }
+                $MAD30->nourut = $request['array']['jawaban30'][$i]['no'];
+                $MAD30->jawaban = $request['array']['jawaban30'][$i]['jawaban'];
+                $MAD30->save();
+
+                if($request['norec'] == ''){
+                    $MAD31 = new EPPSDetail();
+                    $MAD31->norec = $MAD31->generateNewId();
+                    $MAD31->kdprofile = $kdProfile;
+                    $MAD31->statusenabled = true;
+                    $MAD31->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD31= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban31'][$i]['no'])
+                    ->first();
+                }
+                $MAD31->nourut = $request['array']['jawaban31'][$i]['no'];
+                $MAD31->jawaban = $request['array']['jawaban31'][$i]['jawaban'];
+                $MAD31->save();
+
+                if($request['norec'] == ''){
+                    $MAD32 = new EPPSDetail();
+                    $MAD32->norec = $MAD32->generateNewId();
+                    $MAD32->kdprofile = $kdProfile;
+                    $MAD32->statusenabled = true;
+                    $MAD32->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD32= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban32'][$i]['no'])
+                    ->first();
+                }
+                $MAD32->nourut = $request['array']['jawaban32'][$i]['no'];
+                $MAD32->jawaban = $request['array']['jawaban32'][$i]['jawaban'];
+                $MAD32->save();
+
+                if($request['norec'] == ''){
+                    $MAD33 = new EPPSDetail();
+                    $MAD33->norec = $MAD33->generateNewId();
+                    $MAD33->kdprofile = $kdProfile;
+                    $MAD33->statusenabled = true;
+                    $MAD33->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD33= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban33'][$i]['no'])
+                    ->first();
+                }
+                $MAD33->nourut = $request['array']['jawaban33'][$i]['no'];
+                $MAD33->jawaban = $request['array']['jawaban33'][$i]['jawaban'];
+                $MAD33->save();
+
+                if($request['norec'] == ''){
+                    $MAD34 = new EPPSDetail();
+                    $MAD34->norec = $MAD34->generateNewId();
+                    $MAD34->kdprofile = $kdProfile;
+                    $MAD34->statusenabled = true;
+                    $MAD34->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD34= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban34'][$i]['no'])
+                    ->first();
+                }
+                $MAD34->nourut = $request['array']['jawaban34'][$i]['no'];
+                $MAD34->jawaban = $request['array']['jawaban34'][$i]['jawaban'];
+                $MAD34->save();
+
+                if($request['norec'] == ''){
+                    $MAD35 = new EPPSDetail();
+                    $MAD35->norec = $MAD35->generateNewId();
+                    $MAD35->kdprofile = $kdProfile;
+                    $MAD35->statusenabled = true;
+                    $MAD35->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD35= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban35'][$i]['no'])
+                    ->first();
+                }
+                $MAD35->nourut = $request['array']['jawaban35'][$i]['no'];
+                $MAD35->jawaban = $request['array']['jawaban35'][$i]['jawaban'];
+                $MAD35->save();
+
+                if($request['norec'] == ''){
+                    $MAD36 = new EPPSDetail();
+                    $MAD36->norec = $MAD36->generateNewId();
+                    $MAD36->kdprofile = $kdProfile;
+                    $MAD36->statusenabled = true;
+                    $MAD36->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD36= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban36'][$i]['no'])
+                    ->first();
+                }
+                $MAD36->nourut = $request['array']['jawaban36'][$i]['no'];
+                $MAD36->jawaban = $request['array']['jawaban36'][$i]['jawaban'];
+                $MAD36->save();
+
+                if($request['norec'] == ''){
+                    $MAD37 = new EPPSDetail();
+                    $MAD37->norec = $MAD37->generateNewId();
+                    $MAD37->kdprofile = $kdProfile;
+                    $MAD37->statusenabled = true;
+                    $MAD37->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD37= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban37'][$i]['no'])
+                    ->first();
+                }
+                $MAD37->nourut = $request['array']['jawaban37'][$i]['no'];
+                $MAD37->jawaban = $request['array']['jawaban37'][$i]['jawaban'];
+                $MAD37->save();
+
+                if($request['norec'] == ''){
+                    $MAD38 = new EPPSDetail();
+                    $MAD38->norec = $MAD38->generateNewId();
+                    $MAD38->kdprofile = $kdProfile;
+                    $MAD38->statusenabled = true;
+                    $MAD38->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD38= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban38'][$i]['no'])
+                    ->first();
+                }
+                $MAD38->nourut = $request['array']['jawaban38'][$i]['no'];
+                $MAD38->jawaban = $request['array']['jawaban38'][$i]['jawaban'];
+                $MAD38->save();
+
+                if($request['norec'] == ''){
+                    $MAD39 = new EPPSDetail();
+                    $MAD39->norec = $MAD39->generateNewId();
+                    $MAD39->kdprofile = $kdProfile;
+                    $MAD39->statusenabled = true;
+                    $MAD39->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD39= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban39'][$i]['no'])
+                    ->first();
+                }
+                $MAD39->nourut = $request['array']['jawaban39'][$i]['no'];
+                $MAD39->jawaban = $request['array']['jawaban39'][$i]['jawaban'];
+                $MAD39->save();
+
+                if($request['norec'] == ''){
+                    $MAD40 = new EPPSDetail();
+                    $MAD40->norec = $MAD40->generateNewId();
+                    $MAD40->kdprofile = $kdProfile;
+                    $MAD40->statusenabled = true;
+                    $MAD40->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD40= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban40'][$i]['no'])
+                    ->first();
+                }
+                $MAD40->nourut = $request['array']['jawaban40'][$i]['no'];
+                $MAD40->jawaban = $request['array']['jawaban40'][$i]['jawaban'];
+                $MAD40->save();
+
+                if($request['norec'] == ''){
+                    $MAD41 = new EPPSDetail();
+                    $MAD41->norec = $MAD41->generateNewId();
+                    $MAD41->kdprofile = $kdProfile;
+                    $MAD41->statusenabled = true;
+                    $MAD41->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD41= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban41'][$i]['no'])
+                    ->first();
+                }
+                $MAD41->nourut = $request['array']['jawaban41'][$i]['no'];
+                $MAD41->jawaban = $request['array']['jawaban41'][$i]['jawaban'];
+                $MAD41->save();
+
+                if($request['norec'] == ''){
+                    $MAD42 = new EPPSDetail();
+                    $MAD42->norec = $MAD42->generateNewId();
+                    $MAD42->kdprofile = $kdProfile;
+                    $MAD42->statusenabled = true;
+                    $MAD42->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD42= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban42'][$i]['no'])
+                    ->first();
+                }
+                $MAD42->nourut = $request['array']['jawaban42'][$i]['no'];
+                $MAD42->jawaban = $request['array']['jawaban42'][$i]['jawaban'];
+                $MAD42->save();
+
+                if($request['norec'] == ''){
+                    $MAD43 = new EPPSDetail();
+                    $MAD43->norec = $MAD43->generateNewId();
+                    $MAD43->kdprofile = $kdProfile;
+                    $MAD43->statusenabled = true;
+                    $MAD43->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD43= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban43'][$i]['no'])
+                    ->first();
+                }
+                $MAD43->nourut = $request['array']['jawaban43'][$i]['no'];
+                $MAD43->jawaban = $request['array']['jawaban43'][$i]['jawaban'];
+                $MAD43->save();
+
+                if($request['norec'] == ''){
+                    $MAD44 = new EPPSDetail();
+                    $MAD44->norec = $MAD44->generateNewId();
+                    $MAD44->kdprofile = $kdProfile;
+                    $MAD44->statusenabled = true;
+                    $MAD44->objecteppsfk = $MA->norec;
+                }else if($request['norec'] != ''){
+                    $MAD44= EPPSDetail::where('objecteppsfk',$request['norec'])
+                    ->where('nourut', $request['array']['jawaban44'][$i]['no'])
+                    ->first();
+                }
+                $MAD44->nourut = $request['array']['jawaban44'][$i]['no'];
+                $MAD44->jawaban = $request['array']['jawaban44'][$i]['jawaban'];
+                $MAD44->save();
+            }
+
+
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $th->getLine(),
+                'message'=> $th->getMessage(),
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getEPPS(Request $request)
+    {
+        $apd = $request['apd'];
+        $data = \DB::select(DB::raw("select ep.*, epd.nourut, REPLACE(epd.jawaban, ' ', '') jawaban FROM
+        epps_t ep
+        inner join eppsdetail_t epd on ep.norec = epd.objecteppsfk
+        where ep.statusenabled = true and ep.kdprofile = 30
+        and epd.statusenabled = true and epd.kdprofile = 30 
+        and ep.objectapdfk = '$apd'
+        "));
+        $result = array(
+            "data"=> $data,
+            "as"=> 'Laras'
+        );
+        return $this->respond($result);
+    }
+
+    public function getDdaftarRegistrasiPsikologi(Request $request)
+    {
+        //norec dibawah adalah norec apd
+        $data = \DB::select(DB::raw("SELECT
+            apd.norec,
+            apd.tglmasuk,
+            ps.tgllahir,
+            pd.noregistrasi,
+            ps.nocm,
+            ps.namapasien,
+            ru.namaruangan,
+            ke.namakelas,
+            apd.tglkeluar,
+            ps.objectjeniskelaminfk,
+            ps.namapasien, EXTRACT(YEAR from AGE(now(), ps.tgllahir)) as umur
+        FROM
+            antrianpasiendiperiksa_t apd
+            INNER JOIN pasiendaftar_t pd ON pd.norec = apd.noregistrasifk
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk 
+            INNER JOIN kelas_m ke on ke.id = apd.objectkelasfk
+        WHERE
+            apd.objectruanganfk = 767
+            and pd.statusenabled = true
+            and pd.kdprofile = 30
+            and apd.tglmasuk between '$request[tglawal]' and '$request[tglakhir]' 
+        "));
+        $result = array(
+            "data"=> $data,
+            "as"=> 'FIzi'
+        );
+        return $this->respond($result);
+    }
+    public function saveInputHasilPsikologi(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+            $datapsikologi = $request['datapsikologi'];
+
+        try {
+            foreach ($datapsikologi as $dp) {
+                if($dp['norec'] == ""){
+                \DB::table('inputhasilpsikologi_t')->insert([
+                    'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> date('Y-m-d'),
+                    'nomor'=>$dp['nomor'],
+                    'norec_apd'=>$dp['norec_apd'],
+                    'jawaban'=>$dp['jawaban'],
+                    'test'=>$dp['test'],
+                    'cfit'=>$dp['cfit'],
+                    'nilai'=>$dp['nilai'],
+                ]);
+                $crud = "Simpan CFIT";
+                } else {
+                    \DB::table('inputhasilpsikologi_t')->where('norec', $request['norec'])->update([
+                    'tglinput'=> date('Y-m-d'),
+                    'nomor'=>$dp['nomor'],
+                    'norec_apd'=>$dp['norec_apd'],
+                    'jawaban'=>$dp['jawaban'],
+                    'test'=>$dp['test'],
+                    'cfit'=>$dp['cfit'],
+                    'nilai'=>$dp['nilai'],
+                ]);
+                $crud = "Simpan CFIT";
+                }
+            }
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'msg'=> $th->getMessage(),
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getHasilCFITDetail(Request $request)
+    {
+        $data = \DB::select(DB::raw("
+        select * from inputhasilpsikologi_t where norec_apd ilike '$request[norec_apd]' order by cfit asc, test asc, nomor asc
+        "));
+        $result = array(
+            'data'=> $data,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function getKunciJawabanCFIT(Request $request)
+    {   
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = \DB::select(DB::raw("SELECT * from kuncijawabancfit_m where kdprofile = $kdProfile and statusenabled = true"));
+        $result = array(
+            "data"=> $data,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function getNormaSkala(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $umurmax = '';
+        if($request['umurmax']=='null'){
+            $umurmax = 'and umurmax is null';
+        } else{
+            $umurmax = 'and umurmax = ' . $request['umurmax'];
+
+        }
+        $data = \DB::select(DB::raw("SELECT * from normaskala_m where rawscores = $request[rawscores] and umurmin = $request[umurmin] and statusenabled = true and kdprofile = $kdProfile
+        $umurmax
+        "));
+        $result = array(
+            'data'=> $data,
+            'as'=>'Fizi' 
+        );
+        return $this->respond($result);
+    }
+    public function kirimIQNormaSkala(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+            $datapsikologi = $request['datapsikologi'];
+
+        try {
+           
+            \DB::table('antrianpasiendiperiksa_t')->where('norec', $request['norec'])->update([
+                'skoriq'=> $request['skoriq']
+            ]);
+            $crud = "Simpan CFIT";
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveKraepelin(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+            $datapsikologi = $request['data'];
+
+        try {
+          foreach ($datapsikologi as $dp) {
+                if($dp['norec'] == ""){
+                \DB::table('inputhasilkraepelin_t')->insert([
+                    'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> date('Y-m-d'),
+                    'lajur'=>$dp['lajur'],
+                    'norec_apd'=>$dp['norec_apd'],
+                    'nilai'=>$dp['nilai'],
+                ]);
+                $crud = "Simpan Kraepelin";
+                } else {
+                    \DB::table('inputhasilkraepelin_t')->where('norec', $request['norec'])->update([
+                    'tglinput'=> date('Y-m-d'),
+                    'lajur'=>$dp['lajur'],
+                    'norec_apd'=>$dp['norec_apd'],
+                    'nilai'=>$dp['nilai'],
+                ]);
+                $crud = "Simpan Kraepelin";
+                }
+            }
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'ee'=> $th->getMessage(),
                 'as' => 'ea@epic',
             );
         }

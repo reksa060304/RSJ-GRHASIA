@@ -559,6 +559,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-diagnosa-by-no-transaksi', 'EMR\EMRController@getDiagnosaByNotransaksi');
           Route::get('emr/get-resume-medis-db-lama/{notransaksi}', 'EMR\EMRController@getResumeMedisDbLama');
           Route::get('emr/get-menu-rekam-medis-dynamic-db-lama', 'EMR\EMRController@getMenuRekamMedisAtuhDbLama');
+          Route::get('emr/get-emr-transaksi-detail-index', 'EMR\EMRController@getEMRTransaksiDetailIndex');
+
           //2019-12 penambahan arif akhir
 
           Route::post('emr/save-data-rekam-medis', 'EMR\EMRController@saveRekamMedis');
@@ -756,6 +758,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-data-dg-primary/{Noregistrasi}', 'EMR\EMRController@getDataDiagnosaPrimary');
           Route::post('emr/update-jawaban-konsultasi', 'EMR\EMRController@jawabKonsul');
           Route::get('emr/get-vital-sign', 'EMR\EMRController@getVitalSign');
+          Route::get('emr/get-emr-otomatis', 'EMR\EMRController@getEmrOtomatis');
+          Route::get('emr/get-validasi-emr', 'EMR\EMRController@getValidasiEMR');
           Route::get('emr/get-emrbyid', 'EMR\EMRController@getMenuEmrById');
           Route::get('emr/get-info-emr-pasien', 'EMR\EMRController@getInfoEMRPasien');
           Route::get('emr/get-data-kepatuhan-handhygiene-ipcn','EMR\EMRController@getDataKepatuhanHandHygieneIPCN');
@@ -1387,8 +1391,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         // Route::group(['prefix' => 'perencanaan'], function () {
 
             Route::get('perencanaan/get-data-combo', 'Perencanaan\PerencanaanController@getDataCombo');
+            Route::get('perencanaan/get-data-combo-item-rincian', 'Perencanaan\PerencanaanController@getDataComboItemRincian');
             Route::get('perencanaan/get-penjagaan-setting-anggaran', 'Perencanaan\PerencanaanController@getPenjagaanSettingAnggaran');
             Route::get('perencanaan/get-jenis-angagran', 'Perencanaan\PerencanaanController@getJenisAnggaran');
+            Route::get('perencanaan/get-sisa-panjar', 'Perencanaan\PerencanaanController@getSisaPanjar');
             Route::get('report/get-cetak-spj', 'Report\ReportController@getCetakSPJ');
             Route::get('report/get-cetak-spj-satu-lampiran', 'Report\ReportController@getCetakSPJSatuLampiran');
             Route::get('perencanaan/get-datacombo-part-rekanan', 'Perencanaan\PerencanaanController@getDataComboRekananPart');
@@ -1835,6 +1841,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('registrasi/orderlabel/save-update-order-label', 'Registrasi\OrderLabelController@simpanUpdatePenerimaLabel');
             // });
             // Route::group(['prefix' => 'laporan'], function () {
+              Route::get('laporan/get-data-jumlah-pasien','Registrasi\LaporanRegistrasiController@LaporanJumlahPasien');
               Route::get('registrasi/laporan/get-data-combo-laporan','Registrasi\LaporanRegistrasiController@getDataCombo');
               Route::get('registrasi/laporan/get-laporan-pasien-daftar','Registrasi\LaporanRegistrasiController@getDataLaporanPasienDaftar');
               Route::get('registrasi/laporan/get-data-pasien-masuk-ranap','Registrasi\LaporanRegistrasiController@getDataLaporanPasienMasukRawatInap');
@@ -1866,6 +1873,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
               Route::get('registrasi/laporan/get-laporan-pasien-rujukan-perbulan','Registrasi\LaporanRekamMedisController@getRujukanPerbulan');
               Route::get('registrasi/laporan/get-laporan-rl12', 'Registrasi\LaporanRekamMedisController@getDataRL31RawatInap');
+              Route::get('registrasi/laporan/get-laporan-rl12-perperiode', 'Registrasi\LaporanRekamMedisController@getDataRL31RawatInapPerPeriode');
+              Route::get('registrasi/laporan/get-laporan-rl12-perbangsal', 'Registrasi\LaporanRekamMedisController@getDataRL31RawatInapPerBangsal');
               Route::get('registrasi/laporan/get-laporan-rl2', 'Registrasi\LaporanRekamMedisController@getDataRL2');
               Route::get('registrasi/laporan/get-grafik-barber-johnson', 'Registrasi\LaporanRekamMedisController@getGrafikBarberJohnson');
               Route::get('registrasi/laporan/get-laporan-rl13', 'Registrasi\LaporanRekamMedisController@getDataRL13TempatTidur');
@@ -1904,6 +1913,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-data-lap-darah','Registrasi\LaporanPengunjungController@getLapDarah');
               //sensusharianrawatjalan
               Route::get('registrasi/laporan/get-data-sensus-harian','Registrasi\SensusHarianRawatJalanController@getSensusHarianRawatJalan');
+              Route::get('laporan/get-data-sensus-harian-rawat-jalan','Registrasi\SensusHarianRawatJalanController@getLaporanSensusHarianRawatJalan');
               Route::get('registrasi/get-datacombo-sensus', 'SensusHarianRawatJalanController@getDataCombo');
               Route::get('registrasi/get-data-grafik','Registrasi\SensusHarianRawatJalanController@GrafikRajal');
               Route::get('registrasi/laporan/get-data-lap-jumlah-pasien-cara-v2', 'Registrasi\RegistrasiController@getLaporanJumlahPasienDanCaraBayarv2'); 
@@ -2167,11 +2177,22 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/get-datalaporan-diklat', 'SDM\SumberDayaManusiaController@getDataLaporanDiklat');
             Route::get('sdm/get-sisacuti', 'SDM\SumberDayaManusiaController@getSisaCuti');
             Route::get('sdm/get-data-master-pendidikan', 'SDM\SumberDayaManusiaController@getMasterPendidikanPegawai');
-            
+            //psikologi
+            Route::get('psikologi/get-data-psikologi', 'RawatJalan\RawatJalanController@getComboPsikologi');
+            Route::get('psikologi/get-daftar-pasien-psikologi', 'RawatJalan\RawatJalanController@getDdaftarRegistrasiPsikologi');
+            Route::get('psikologi/get-hasil-cfit-detail', 'RawatJalan\RawatJalanController@getHasilCFITDetail');
+            Route::get('psikologi/kunci-jawaban-cfit','RawatJalan\RawatJalanController@getKunciJawabanCFIT');
+            Route::get('psikologi/get-norma-skala', 'RawatJalan\RawatJalanController@getNormaSkala');
             /*END GET*/
 
             /*POST*/
-            Route::post('sdm/save-master-pendidikan-pegawai','SDM\SumberDayaManusiaController@saveMasterPendidikanPegawai');
+            //psikologi
+            Route::post('psikologi/save-kraepelin', 'RawatJalan\RawatJalanController@saveKraepelin');
+            Route::post('psikologi/kirim-iq-norma-skala', 'RawatJalan\RawatJalanController@kirimIQNormaSkala');
+            Route::post('psikologi/save-master-norma-psikologi', 'RawatJalan\RawatJalanController@saveNormaPsikologi');
+			Route::post('psikologi/save-hasil-psikologi','RawatJalan\RawatJalanController@saveInputHasilPsikologi');
+			Route::post('epps/save-epps', 'RawatJalan\RawatJalanController@saveEPPS');
+			Route::get('epps/get-eppps-by-apd', 'RawatJalan\RawatJalanController@getEPPS');            Route::post('sdm/save-master-pendidikan-pegawai','SDM\SumberDayaManusiaController@saveMasterPendidikanPegawai');
             Route::post('sdm/simpan-bayar-gaji-detail', 'SDM\SumberDayaManusiaController@simpanPembayaranGajiArray');
             Route::post('sdm/save-data-abk', 'SDM\SumberDayaManusiaController@simpanDataABK');
             Route::post('sdm/save-sisacuti', 'SDM\SumberDayaManusiaController@simpanSisaCuti');
@@ -2235,6 +2256,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sdm/pelatihan/get-daftar-narasumber', 'SDM\PelatihanController@getDataNarasumber');
                 Route::get('anggaran/load-combo-rincian-pendapatan','Perencanaan\PerencanaanController@loadComboRincian');
                 Route::get('anggaran/load-data-rincian-pendapatan','Perencanaan\PerencanaanController@loadDataRincian');
+                Route::post('anggaran/delete-anggaran-kas', 'Perencanaan\PerencanaanController@deleteAnggaranKas');
                 Route::post('anggaran/save-rincian-pendapatan', 'Perencanaan\PerencanaanController@saveRincianPendapatan');
                 Route::post('anggaran/hapus-rincian-pendapatan', 'Perencanaan\PerencanaanController@hapusRincianPendapatan');
                 Route::get('sdm/daftar-gaji-tunjangan', 'SDM\SumberDayaManusiaController@getGajiTunjangan');

@@ -9,12 +9,17 @@
         <style>
             .fs-11{
                 font-size: 11px;
-                font-family: 'Times New Roman';
+                font-family: 'Tahoma';
+            }
+
+            .fs-13{
+                font-size: 15px;
+                font-family: 'Tahoma';
             }
 
             .fs-9{
                 font-size: 11px;
-                font-family: 'Times New Roman';
+                font-family: 'Tahoma';
             }
 
             
@@ -92,30 +97,32 @@
                 </tbody>
             </table>
 
-            <p class="centered fs-9">------Resep-----</p>
+            <p class="centered fs-13">No. Resep: {{$skrining->noresep}}<br>------Resep-----</p>
             <table>
                 <thead>
                     <tr>
-                        <th class="quantity fs-9">R/</th>
-                        <th class="description fs-9">Nama Obat</th>
-                        <th class="price fs-9">Jumlah</th>
-                        <th class="price fs-9">Aturan Pakai</th>
+                        <th class="quantity fs-13">R/</th>
+                        <th class="description fs-13">Nama Obat</th>
+                        <th class="price fs-13">Jumlah</th>
+                        <th class="price fs-13">Aturan Pakai</th>
+                        <th class="price fs-13">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($details as $d){ ?>
                         <tr>
-                            <td class="price fs-9" style="text-align: center"><?= $d->rke; ?></td>
-                            <td class="price fs-9" style="text-align: left"><?= $d->namaproduk; ?></td>
-                            <td class="price fs-9" style="text-align: center"><?= $d->jumlah; ?></td>
-                            <td class="description fs-9" style="text-align: center"><?= $d->aturanpakai; ?></td>
+                            <td class="price fs-13" style="text-align: center"><?= $d->rke; ?></td>
+                            <td class="price fs-13" style="text-align: left"><?= $d->namaproduk; ?></td>
+                            <td class="price fs-13" style="text-align: center"><?= $d->jumlah; ?></td>
+                            <td class="description fs-13" style="text-align: center"><?= $d->aturanpakai; ?></td>
+                            <td class="description fs-13" style="text-align: center"><?= $d->keteranganpakai; ?></td>
                         </tr>
                     <?php } ?>
                     <tr style="height: 10px;"><td></td></tr>
                 </tbody>
             </table>
 
-            <p class="centered fs-9">------Identitas Pasien-----</p>
+            <p class="centered fs-11">------Identitas Pasien-----</p>
             <table>
                 <tbody>
                     <tr>
@@ -425,7 +432,7 @@
             <p class="fs-9" style="text-align: left">Ket: </p>
             @endif
             
-            <p class="centered fs-9">------Petugas Farmasi-----</p>
+            <p class="centered fs-11">------Petugas Farmasi-----</p>
             <table>
                 <thead>
                     <tr>
@@ -436,12 +443,12 @@
                         </td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;">
                             Penelaah Resep
-                            <br><br><br><br>
+                            <br><br><br><br><br>
                             ............
                         </td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;">
                             Peracik dan Penelaah Obat
-                            <br><br><br>
+                            <br><br><br><br>
                             ............
                         </td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;">

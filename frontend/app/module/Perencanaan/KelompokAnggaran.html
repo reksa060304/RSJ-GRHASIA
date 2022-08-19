@@ -10,7 +10,17 @@
         text-align: right;
         width: 100%;
     }
-
+	.floatAboveEverything {
+	z-index: 1000;
+	position: absolute;
+	}
+	.md-dialog-container,
+	md-dialog {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	z-index: 200000;
+	}
     .style-left {
         display: inline-block;
         text-align: left;
@@ -112,7 +122,9 @@
 </style>
 
 <div ng-show="dataVOloaded">
-	<c-panel item="item" header="'ANGGARAN'" disabled>
+	<c-panel item="item" header="'ANGGARAN'" disabled ng-if="hidekeuangan === true">
+	</c-panel>
+	<c-panel item="item" header="'KEUANGAN'" disabled ng-if="hidekeuangan === false">
 	</c-panel>
 	<!-- -->
 	<div class="grid_12">
@@ -120,7 +132,7 @@
 			<md-content>
 				<md-tabs md-dynamic-height md-border-bottom>
 					
-					<md-tab label="Setting" ng-if="hidespj === true">
+					<md-tab label="Setting" ng-if="hidespj === true && hidekeuangan === true">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding" ng-hide="false">
 
@@ -297,7 +309,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Kegiatan">
+					<md-tab label="Kegiatan" ng-if="hidekeuangan === true">
 						<md-content class="md-padding">
 							
 							<!-- <br /> -->
@@ -310,7 +322,17 @@
 										<input c-text-box type="input" class="k-textbox" ng-model="item.organisasi" disabled="true" />
 									</div>
 								</div>
-								<div class="grid_5"></div>
+								<div class="grid_2"></div>
+								<div class="grid_3">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="Tahap"></label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchtahap"
+											k-data-text-field="'tahap'" k-data-value-field="'id'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+									</div>
+								</div>
 								<div class="grid_1">
 									<!-- <div class="grid_3"> -->
 									<div class="grid_12">
@@ -340,7 +362,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Mata Anggaran" ng-if="hidespj === true">
+					<md-tab label="Mata Anggaran" ng-if="hidespj === true && hidekeuangan === true">
 						<md-content class="md-padding">
 							
 								
@@ -366,7 +388,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Anggaran Kas">
+					<md-tab label="Anggaran Kas" ng-if="hidekeuangan === true">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 
@@ -442,7 +464,7 @@
 							<div class="grid_12">
 
 								<div class="grid_12 borderBox">
-									<kendo-grid id="kGrids" k-data-source="dataSourceSPJ" k-selectable="'row'"  class="max-height"
+									<kendo-grid id="kGridsSPJ" k-data-source="dataSourceSPJ" k-selectable="'row'"  class="max-height"
 										k-options="columnSPJ" k-ng-model="dataSPJSelected" ng-click="klikSPJ(dataSPJSelected)">
 										<!-- TambahSPJ editDetailSPJ item.searchSPJ -->
 									</kendo-grid>
@@ -1165,6 +1187,7 @@
 		<div class="grid_12" style="font-size: large;">
 			Sub Sub Kegiatan : {{rcn.judulKegiatan}}
 		</div>
+		<input c-text-box type="input" class="k-textbox" ng-model="item.subsubketerangan" ng-hide="true" />
 		<div class="grid_4" style="    margin-top: 22px;">
 			<div class="grid_12" style="font-size: large;text-align: left;">
 				1 : {{rcn.mataAnggaranlv1}}
@@ -1741,9 +1764,41 @@
 		</div>
 	</div>
 </div>
-<div kendo-window="popupPanjar" k-title="'Tambah Data Panjar'" k-visible="false" k-width="700" k-height="600">
+<div kendo-window="popupPanjar" k-title="'Tambah Data Panjar'" k-visible="false" k-width="700" k-height="650">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Sub Kegiatan
+				</div>
+				<div class="grid_6" >
+					<input kendo-combo-box k-ng-model="item.subkegiatanpanjar"
+						k-data-text-field="'keterangan'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false"
+						disabled />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Sub Sub Kegiatan
+				</div>
+				<div class="grid_6" >
+					<input kendo-combo-box k-ng-model="item.subsubkegiatanpanjar"
+						k-data-text-field="'keterangan'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false"
+						disabled />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Dari Rekening
+				</div>
+				<div class="grid_6" >
+					<input kendo-combo-box k-ng-model="item.darirekeningpanjar"
+						k-data-text-field="'namamataanggaran'" k-data-value-field="'kodemataanggaran'"
+						k-filter="'contains'" k-auto-bind="false" disabled/>
+				</div>
+			</div>
 			<div class="grid_12">
 				<div class="grid_3" style="text-align: left;">
 					Tanggal Panjar
