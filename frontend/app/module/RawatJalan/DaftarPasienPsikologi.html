@@ -38,7 +38,7 @@
                                 k-auto-bind="false" k-data-source="listRuangan" />
                         </div>
                     </div>
-                    <div class="grid_1">
+                    <!-- <div class="grid_1">
                         <div class="grid_12">
                             <label c-label item="item" c-label-text="Kelompok"></label>
                         </div>
@@ -48,7 +48,7 @@
                                 k-data-text-field="'kelompokpasien'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listKelompokPasien" />
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Periode Pulang -->
                     <div class="grid_4">
@@ -124,7 +124,6 @@
                     <label c-label item="item">CFIT</label>
                 </div>
                 <div class="clear"></div>
-
                 <div class="grid_6">
                     <input style="width: 100%;" kendo-combo-box k-ng-model="item.cfit" k-data-text-field="'cfit'"
                         k-data-value-field="'idcfit'" k-filter="'contains'" k-auto-bind="false" k-data-source="listCfit" k-on-change="cfit()"/>
@@ -240,44 +239,22 @@
         </div>
     </div>
 </div>
-<div kendo-window="popUpKraepelin" k-title="'Input Kraepelin'" k-width="600" k-height="650"
+<div kendo-window="popUpKraepelin" k-title="'Input Kraepelin'" k-width="1300" k-height="550"
     k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
     <div class="panel panel-default container_12" style="padding: 0px 10px;">
-        <div class="grid_12">
-            <!-- <div class="grid_12">
+        <div class="grid_4">
+            <div class="grid_12">
                 <div class="grid_12">
-                    <label c-label item="item">CFIT</label>
+                    <label c-label item="item">Pendidikan</label>
                 </div>
                 <div class="clear"></div>
-
                 <div class="grid_6">
-                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.cfit" k-data-text-field="'cfit'"
-                        k-data-value-field="'idcfit'" k-filter="'contains'" k-auto-bind="false" k-data-source="listCfit"
-                        k-on-change="cfit()" />
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.pendidikan" k-data-text-field="'pendidikan'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPendidikan"
+                        />
                 </div>
             </div>
-            <div class="grid_12">
-                <div class="grid_6">
-                    <div class="grid_12">
-                        <label c-label item="item">Test</label>
-                    </div>
-                    <div class="clear"></div>
-
-                    <div class="grid_12">
-                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.test" k-data-text-field="'test'"
-                            k-data-value-field="'idtest'" k-filter="'contains'" k-auto-bind="false"
-                            k-data-source="listTest" k-on-change="test()" />
-                    </div>
-                </div>
-                <div class="grid_6">
-                    <div class="grid_12">
-                        <label c-label item="item">Umur</label>
-                    </div>
-                    <div class="grid_12">
-                        <input c-text-box type="input" class="k-textbox" ng-model="item.umur" disabled />
-                    </div>
-                </div>
-            </div> -->
+            
             <div class="grid_6">
                 <div class="grid_12">
                     <label c-label item="item">Lajur</label>
@@ -296,16 +273,6 @@
                         />
                 </div>
             </div>
-
-            <!-- <div class="grid_6">
-                <div class="grid_12">
-                    <label c-label item="item">Nilai</label>
-                </div>
-                <div class="grid_12">
-                    <input c-text-box type="number" class="k-textbox" ng-model="item.nilai" />
-                </div>
-            </div> -->
-
             <div class="grid_12">
                 <kendo-grid k-data-source="gridKraepelin" k-pageable="true" k-ng-model="dataKraepelinSelected"
                     k-selectable="'row'" options="opsiGridKraepelin" ng-click="klikGridKraepelin(dataKraepelinSelected)"
@@ -326,34 +293,65 @@
                         <input c-text-box type="input" class="k-textbox" ng-model="skip" placeholder="SKIP" />
                     </div>
                 </div>
-                <!-- <div class="grid_6">
-                    <div class="grid_12">
-                        <label c-label item="item">Ambil Nilai Norma Skala</label>
+                <div class="grid_6">
+                    <div class="grd_12">
+                        <div class="grid_6">
+                            <label c-label item="item">Jumlah</label>
+                            <input c-text-box type="input" class="k-textbox" ng-model="jumlah" placeholder="Jumlah" />
+                        </div>
+                        <div class="grid_6" style="margin-top: 20px;">
+                            <label c-label item="item"></label>
+                            <button class="k-button k-button-icontext k-primary k-grid-update"
+                                ng-click="getNilaiKraepelin()"><span class="k-icon k-update"></span>Get
+                                Kraepelin</button>
+                        </div>
                     </div>
-                    <div class="grid_12">
-                        <button class="k-button k-button-icontext k-primary k-grid-update"
-                            ng-click="getNormaSkala()"><span class="k-icon k-update"></span>Get Norma Skala</button>
-                    </div>
-                </div> -->
+                </div>
             </div>
         </div>
-            <!-- <div class="grid_6">
-                <div class="grid_12">
-                    <label c-label item="item">Norma Skala</label>
-                </div>
-                <div class="grid_12">
-                    <input c-text-box type="input" class="k-textbox" ng-model="normaSkala" placeholder="norma skala" />
+        <div class="grid_8" style="margin-top: 57px;">
+            <div class="grid_12">
+                <h1>HASIL</h1>
+            </div>
+            <div class="grid_12">
+                <kendo-grid k-data-source="gridNormaKraepelin" k-pageable="true" k-ng-model="dataNormaKraepelinSelected"
+                    k-selectable="'row'" options="opsiGridNormaKraepelin" ng-click="klikGridNormaKraepelin(dataNormaKraepelinSelected)"
+                    style="font-size: small;"></kendo-grid>
+            </div>
+            <div class="grid_12">
+                <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px; margin-bottom: 10px;">
+                    <button class="k-button k-button-icontext k-primary k-grid-update"
+                        ng-click="simpanHasilKraepelin()"><span class="k-icon k-update"></span>Simpan Hasil</button>
+            </div>
+        </div>
+        
+        <div class="grid_12">
+            <div class="grd`_3">
+                <div class="grid_3">
+                    <label c-label item="item">PANKER</label>
+                    <input c-text-box type="input" class="k-textbox" ng-model="mean" placeholder="mean" />
                 </div>
             </div>
-            <div class="grid_6">
-                <div class="grid_12">
-                    <label c-label item="item">Kategori</label>
+            <div class="grd_3">
+                <div class="grid_3">
+                    <label c-label item="item">JANKER</label>
+                    <input c-text-box type="input" class="k-textbox" ng-model="avdev" placeholder="avdev" />
                 </div>
-                <div class="grid_12">
-                    <input c-text-box type="input" class="k-textbox" ng-model="kategoriSkala" placeholder="Kategori"
-                        disabled />
+            </div>
+            <div class="grd_3">
+                <div class="grid_3">
+                    <label c-label item="item">HANKER</label>
+                    <input c-text-box type="input" class="k-textbox" ng-model="hanker" placeholder="hangker" />
                 </div>
-            </div> -->
+            </div>
+            <div class="grd_3">
+                <div class="grid_3">
+                    <label c-label item="item">TIANKER</label>
+                    <input c-text-box type="input" class="k-textbox" ng-model="salkos" placeholder="salkos" />
+                </div>
+            </div>
+               
+        </div>
             <div class="grid_12">
                 <div class="grid_12"></div>
                 <div class="grid_12">

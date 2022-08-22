@@ -2651,4 +2651,104 @@ class RawatJalanController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function getDataKraepelin(Request $request)
+    {
+        $data = \DB::select(DB::raw("
+        select * from inputhasilkraepelin_t where norec_apd ilike '$request[norec_apd]' order by lajur asc, nilai asc
+        "));
+        $data2 = \DB::select(DB::raw("
+        select * from inputhasilkraepelind_t where norec_apd ilike '$request[norec_apd]' 
+        "));
+        $result = array(
+            'data'=> $data,
+            'data2'=> $data2,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function getNormaKraepelin(Request $request)
+    {
+        $panker = $request['panker'];
+        $hanker = $request['hanker'];
+        $tianker = $request['tianker'];
+        $janker = $request['janker'];
+        $pendidikan = $request['pendidikan'];
+        $data = \DB::select(DB::raw("
+        SELECT 'Kecepatan Kerja' as kompetensi, 'Kuantitas pekerjaan dalam satu waktu' as pengertian, '$panker' as skor, hasil as hasil FROM normakraepelin_m where objectpendidikanfk = $pendidikan and min <= $panker and max >= $panker  and keterangan ilike 'Panker'
+        union all
+        SELECT 'Ketelitian Kerja' as kompetensi, 'Jumlah kesalahan saat bekerja' as pengertian, '$tianker' as skor, hasil as hasil FROM normakraepelin_m where objectpendidikanfk = $pendidikan and min >= $tianker and max <= $tianker and keterangan ilike 'Tianker'
+        union all
+        SELECT 'Keajegan Kerja' as kompetensi, 'Kestabilan kerja saat menghadapi tekanan' as pengertian, '$janker' as skor, hasil as hasil FROM normakraepelin_m where objectpendidikanfk = $pendidikan and min >= $janker and max <= $janker and keterangan ilike 'Janker'
+        union all
+        SELECT 'Ketahanan Kerja' as kompetensi, 'Kemampuan bertahan dalam pekerjaan monoton' as pengertian, '$hanker' as skor, hasil as hasil FROM normakraepelin_m where objectpendidikanfk = $pendidikan and min <= $hanker and max >= $hanker and keterangan ilike 'Hanker'
+        "));
+        $result = array(
+            'data'=>$data,
+            'as'=>'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function saveHasilKraepelin(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+            $datapsikologi = $request['data'];
+
+        try {
+          foreach ($datapsikologi as $dp) {
+                if($request['norec'] == ""){
+                \DB::table('inputhasilkraepelind_t')->insert([
+                    'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> date('Y-m-d'),
+                    'kompetensi'=>$dp['kompetensi'],
+                    'norec_apd'=>$request['norec_apd'],
+                    'pengertian'=>$dp['pengertian'],
+                    'skor'=>$dp['skor'],
+                    'hasil'=>$dp['hasil'],
+                ]);
+                $crud = "Simpan Hasil Kraepelin";
+                } else {
+                    \DB::table('inputhasilkraepelind_t')->where('norec', $request['norec'])->update([
+                    'tglinput'=> date('Y-m-d'),
+                    'kompetensi'=>$dp['kompetensi'],
+                    'norec_apd'=>$request['norec_apd'],
+                    'pengertian'=>$dp['pengertian'],
+                    'skor'=>$dp['skor'],
+                    'hasil'=>$dp['hasil'],
+                ]);
+                $crud = "Ubah Hasil Kraepelin";
+                }
+            }
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'ee'=> $th->getMessage(),
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

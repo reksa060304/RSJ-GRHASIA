@@ -6,18 +6,54 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.itemKraepelin = {}
             $scope.totalSkor = 0
             $scope.totalSkorB = 0
+            $scope.jumlah = 0;
+            $scope.avdev = 0;
+            $scope.mean = 0;
+            $scope.salkos = 0;
+            $scope.hanker = 0;
+            $scope.salah = 0;
+            $scope.skip = 0;
             // $scope.item.idNormaPsikologi = null;
             $scope.now = new Date();
             var dataPsikologi = [];
             var dataKraepelin = [];
             var norec = "";
             var norecKraepelin = "";
+            var dataHasilKraepelin = []
             $scope.item.periodeAwal = moment($scope.now).format("YYYY-MM-DD 00:00:00")
             $scope.item.periodeAkhir = moment($scope.now).format("YYYY-MM-DD 23:59:59")
             loadCombo()
             getLoadData()
-
+            $scope.SearchData = function(){
+                getLoadData()
+            }
             function loadCombo() {
+                $scope.listPendidikan = [
+                    {
+                        id: 1,
+                        pendidikan: "SMA IPS"
+                    },
+                    {
+                        id: 2,
+                        pendidikan: "SMA IPA"
+                    },
+                    {
+                        id: 3,
+                        pendidikan: "D3 IPS"
+                    },
+                    {
+                        id: 4,
+                        pendidikan: "D3 IPA"
+                    },
+                    {
+                        id: 5,
+                        pendidikan: "SARJANA IPS"
+                    },
+                    {
+                        id: 6,
+                        pendidikan: "SARJANA IPA"
+                    }
+                ]
                 $scope.listCfit = [{
                     idcfit: 1,
                     cfit: "A"
@@ -152,8 +188,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             function getLoadData() {
-
-                medifirstService.get('psikologi/get-daftar-pasien-psikologi?tglawal=' + $scope.item.periodeAwal + "&tglakhir=" + $scope.item.periodeAkhir).then(function (data) {
+                var tglawal = moment($scope.item.periodeAwal).format("YYYY-MM-DD 00:00:00")
+                var tglakhir = moment($scope.item.periodeAkhir).format("YYYY-MM-DD 23:59:59")
+                medifirstService.get('psikologi/get-daftar-pasien-psikologi?tglawal=' + tglawal + "&tglakhir=" + tglakhir).then(function (data) {
                     var datas = data.data
                     // $scope.listJenisNorma = datas.jenisnorma
                     $scope.gridDaftarPsikologi = new kendo.data.DataSource({
@@ -532,6 +569,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error("data Belum dipilih")
                     return
                 }
+                getDataKraepelin()
                 $scope.popUpKraepelin.center().open()
             }
             $scope.opsiGridKraepelin = {
@@ -607,9 +645,164 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     data: dataKraepelin
                 }
                 medifirstService.post('psikologi/save-kraepelin', objSave).then(function(data){
-
+                    getDataKraepelin()
                 })
             }
+            function getDataKraepelin(){
+                medifirstService.get('psikologi/get-data-kraepelin?norec_apd='+ $scope.dataDaftarPsikologi.norec).then(function(data){
+                    var datas = data.data.data
+                    var datas2 = data.data.data2
+                    dataKraepelin = datas
+                    dataHasilKraepelin = datas2
+                    for (let i = 0; i < dataKraepelin.length; i++) {
+                        // const element = datas[i];
+                    $scope.jumlah = $scope.jumlah+ dataKraepelin[i].nilai
+                    }
+                    $scope.gridKraepelin = new kendo.data.DataSource({
+                        data: dataKraepelin,
+                        pageSize: 50,
+                        total: dataKraepelin.length,
+                        // serverPaging: true,
+                        schema: {
+                            model: {
+                                fields: {}
+                            }
+                        }
+                    });
+                    $scope.gridNormaKraepelin = new kendo.data.DataSource({
+                        data: dataHasilKraepelin,
+                        pageSize: 50,
+                        total: dataHasilKraepelin.length,
+                        // serverPaging: true,
+                        schema: {
+                            model: {
+                                fields: {}
+                            }
+                        }
+                    });
+                })
+            }
+            $scope.getNilaiKraepelin = function(){
+                $scope.mean = ($scope.jumlah / 50).toFixed(3);
+                var data = {}
+                var process1 = []
+                $scope.process = 0
+                //nyari adouse
+                $scope.x = 0
+                $scope.y = 0
+                $scope.xy = 0
+                $scope.x2 = 0
+                for (let i = 0; i < dataKraepelin.length; i++) {
+                    data = {
+                        input: dataKraepelin[i].nilai - $scope.mean
+                    }
+                    if(data.input < 0){
+                        data.input = (data.input * -1)
+                    }
+                    process1.push(data)
+                    $scope.process = $scope.process + process1[i].input 
+                    $scope.x += dataKraepelin[i].lajur
+                    $scope.y += dataKraepelin[i].nilai
+                    $scope.xy += dataKraepelin[i].lajur * dataKraepelin[i].nilai
+                    $scope.x2 += dataKraepelin[i].lajur * dataKraepelin[i].lajur
+                }
+                $scope.sxx = $scope.x2-($scope.x*$scope.x)/50
+                $scope.sxy = $scope.xy-($scope.x*$scope.y)/50
+                $scope.b1 = $scope.sxy / $scope.sxx
+                $scope.a = $scope.mean-($scope.b1-25*5)
+                $scope.x50 = $scope.a+($scope.b1*50)
+                $scope.x0 = $scope.a
+                $scope.hanker = ($scope.x50 - $scope.x0).toFixed(3)
+                // console.log($scope.x, $scope.y, $scope.xy, $scope.x2, $scope.sxx, $scope.sxy, $scope.b1);
+                $scope.avdev = ($scope.process / 50).toFixed(3)
+                $scope.salkos = ($scope.salah + $scope.skip).toFixed(3)
+                hasilKrapealin()
+            }
+            function hasilKrapealin(){
+                medifirstService.get('psikologi/get-norma-kraepelin?pendidikan='+ $scope.item.pendidikan.id + 
+                '&panker=' + $scope.mean + '&janker=' + $scope.avdev + '&hanker=' + $scope.hanker +
+                '&tianker=' + $scope.salkos).then(function (data) {
+                    var datas = data.data.data
+                    dataHasilKraepelin.push(datas)
+                    $scope.gridNormaKraepelin = new kendo.data.DataSource({
+                        data: datas
+                    })
+                })
+            }
+            $scope.opsiGridNormaKraepelin = {
+                columns: [
+                    {
+                        "title": "Norma",
+                        "columns": [
+                            {
+                                "field": "kompetensi",
+                                "title": "Kompetensi",
+                                "width": "70px"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Pendidikan",
+                        "columns": [
+                            {
+                                "field": "pengertian",
+                                "title": "Pengertian",
+                                "width": "80px"
+                            },
+                        ]
+                    },
+                    {
+                        "field": "skor",
+                        "title": "Skor",
+                        "width": "40px"
+                        
+                    },
+                    {
+                        "title": "Hasil",
+                        "columns": [
+                            {
+                                "title": "BS",
+                                "width": "25px",
+                                "template": "#: hasil == 'BS'? '✘' : ''#"
+                            },
+                            {
+                                "title": "B",
+                                "width": "25px",
+                                "template": "#: hasil == 'B'? '✘' : ''#"
+                            },
+                            {
+                                "title": "S",
+                                "width": "25px",
+                                "template": "#: hasil == 'S'? '✘' : ''#"
+                            },
+                            {
+                                "title": "K",
+                                "width": "25px",
+                                "template": "#: hasil == 'K'? '✘' : ''#"
+                            },
+                            {
+                                "title": "KS",
+                                "width": "25px",
+                                "template": "#: hasil == 'KS'? '✘' : ''#"
+                            }
+                        ]
+                    },
+                   
+                ]
+            }
+            $scope.simpanHasilKraepelin = function(){
+                var objSave = {
+                    norec: "",
+                    data: dataHasilKraepelin[0],
+                    norec_apd: $scope.dataDaftarPsikologi.norec
+                }
+                console.log(objSave);
+                // return
+                medifirstService.post('psikologi/save-hasil-kraepelin', objSave).then(function(){
+                    getDataKraepelin()
+                })
+            }
+
             function HapusDetailLajur(e){
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
