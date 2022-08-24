@@ -2185,11 +2185,15 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('psikologi/get-norma-skala', 'RawatJalan\RawatJalanController@getNormaSkala');
             Route::get('psikologi/get-data-kraepelin', 'RawatJalan\RawatJalanController@getDataKraepelin');
             Route::get('psikologi/get-norma-kraepelin', 'RawatJalan\RawatJalanController@getNormaKraepelin');
-            
+            Route::get('psikologi/kunci-jawaban-ist', 'RawatJalan\RawatJalanController@getKunJawIST');
+            Route::get('psikologi/get-hasil-ist', 'RawatJalan\RawatJalanController@getHasilIST');
             /*END GET*/
 
             /*POST*/
             //psikologi
+            Route::post('psikologi/save-hasil-ist-detail', 'RawatJalan\RawatJalanController@saveHasilISTDetail');
+            Route::post('psikologi/get-norma-ist', 'RawatJalan\RawatJalanController@getNormaIST');
+            Route::post('psikologi/save-ist', 'RawatJalan\RawatJalanController@saveIST');
             Route::post('psikologi/save-hasil-kraepelin', 'RawatJalan\RawatJalanController@saveHasilKraepelin');
             Route::post('psikologi/save-kraepelin', 'RawatJalan\RawatJalanController@saveKraepelin');
             Route::post('psikologi/kirim-iq-norma-skala', 'RawatJalan\RawatJalanController@kirimIQNormaSkala');
