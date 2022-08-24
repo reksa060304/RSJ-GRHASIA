@@ -1630,6 +1630,16 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     "width": "200px",
                 },
                 {
+                    "field": "jumlahracikan",
+                    "title": "Jml Racikan",
+                    "width": "100px",
+                },
+                {
+                    "field": "dosis",
+                    "title": "Dosis",
+                    "width": "70px",
+                },
+                {
                     "field": "aturanpakai",
                     "title": "Aturan Pakai",
                     "width": "100px",

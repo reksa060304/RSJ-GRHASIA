@@ -888,6 +888,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           
           Route::get('farmasi/get-daftar-satuanresep', 'Farmasi\PelayananResepController@getDaftarSatuanResep');
           Route::post('farmasi/save-data-satuanresep', 'Farmasi\PelayananResepController@saveDataSatuanResep');
+          Route::post('farmasi/save-kekuatan-obat', 'Farmasi\PelayananResepController@saveKekuatanObat');
+          Route::get('farmasi/get-kekuatan-obat', 'Farmasi\PelayananResepController@getKekuatanObat');
           Route::get('farmasi/get-laporan-penjualan-perkwitansi', 'Farmasi\PelayananObatBebasController@getLaporanPenjualanObatPerKwitansi');
           Route::get('farmasi/get-data-antrian-pasien', 'Farmasi\PelayananResepController@getRuanganTerakhirPasien');
           Route::get('farmasi/get-data-registrasi-pasien-farmasi', 'Farmasi\PelayananResepController@getDaftarRegistrasiPasien');

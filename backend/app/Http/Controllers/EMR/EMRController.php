@@ -5754,6 +5754,7 @@ class EMRController  extends ApiController
                         $newPP->hasilkonversi = $r_PPL['nilaikonversi'];;
                         $newPP->jeniskemasanfk = $r_PPL['jeniskemasanfk'];
                         $newPP->dosis = $r_PPL['dosis'];
+                        $newPP->jumlahracikan = $r_PPL['jumlahxmakan'];
                         $newPP->rke = $r_PPL['rke'];
                         $newPP->satuanviewfk = $r_PPL['satuanviewfk'];
                         $newPP->ispagi = $r_PPL['ispagi'];

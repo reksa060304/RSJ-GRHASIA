@@ -43,6 +43,7 @@ use App\Transaksi\PelayananPasienPetugas;
 use App\Transaksi\StrukRetur;
 use App\Transaksi\PelayananPasienRetur;
 use App\Transaksi\AntrianApotik;
+use App\Master\Produk;
 
 
 
@@ -1117,7 +1118,7 @@ class PelayananResepController extends ApiController
                 'op.objectsatuanstandarfk','ss.satuanstandar','op.satuanviewfk','ss2.satuanstandar as ssview',
                 'op.qtyproduk','op.hargadiscount','op.hasilkonversi','op.qtystokcurrent','op.dosis','op.jenisobatfk',
                 'op.hargasatuan','op.hargadiscount','pr.kekuatan','sdn.name as sediaan','op.ispagi','op.issiang','op.ismalam',
-                'op.issore','op.keteranganpakai','op.satuanresepfk','sn.satuanresep','op.tglkadaluarsa','so.isreseppulang')
+                'op.issore','op.keteranganpakai','op.satuanresepfk','sn.satuanresep','op.tglkadaluarsa','so.isreseppulang', 'op.jumlahracikan')
             ->where('so.kdprofile', $idProfile);
 
         if(isset($request['noorder']) && $request['noorder']!="" && $request['noorder']!="undefined"){
@@ -1267,6 +1268,7 @@ class PelayananResepController extends ApiController
                 'jmlstok' => $item->qtystokcurrent,
                 'jumlah' => ceil($item->qtyproduk),
                 'jumlahobat' => $item->qtyproduk,
+                'jumlahracikan' => $item->jumlahracikan,
                 'dosis' => $item->dosis,
                 'kekuatan' => $item->kekuatan,
                 'hargasatuan' => $hargasatuan,
@@ -1893,7 +1895,7 @@ class PelayananResepController extends ApiController
         $cekKekuatanSupranatural = DB::select(DB::raw("
 
             select pr.kekuatan,sdn.name as sediaan from produk_m as pr 
-            inner join rm_sediaan_m as sdn on sdn.id=pr.objectsediaanfk
+            left join rm_sediaan_m as sdn on sdn.id=pr.objectsediaanfk
             where pr.kdprofile = $idProfile and pr.id=:produkfk;
             
             "),
@@ -3612,6 +3614,39 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function saveKekuatanObat(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try{
+            $TP = Produk::where('id', $request['idproduk'])->first();
+            $TP->kekuatan =  $request['kekuatan'];
+            $TP->save();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Kekuatan Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = "Simpan Kekuatan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function getDaftarRegistrasiPasien(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data = \DB::table('pasiendaftar_t as pd')
@@ -3688,6 +3723,16 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
             LEFT JOIN kelas_m AS kls ON kls.id = apd.objectkelasfk
             LEFT JOIN pegawai_m AS pg ON pg.id = apd.objectpegawaifk
             WHERE pd.kdprofile = $kdProfile  AND pd.statusenabled = TRUE AND pd.noregistrasi = '$NoRegistrasi'
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function getKekuatanObat(Request $request){
+        $kdProfile = (int)$this->getDataKdProfile($request);
+        $id = $request['idproduk'];
+        $data = DB::select(DB::raw("
+            SELECT kekuatan from produk_m where id = $id
         "));
 
         return $this->respond($data);

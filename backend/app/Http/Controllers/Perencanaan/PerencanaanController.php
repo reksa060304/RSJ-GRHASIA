@@ -3591,6 +3591,16 @@ class PerencanaanController extends ApiController {
             $stahap = "and kb.objecttahapfk = ".$request['tahap'];
         }
 
+        $skegiatan = '';
+        if(isset($request['kegiatan']) && $request['kegiatan'] != '' && $request['kegiatan'] != 'undefined'){
+            $skegiatan = "and kb.objectkegiatanfk = ".$request['kegiatan'];
+        }
+
+        $smataanggaran = '';
+        if(isset($request['mataanggaran']) && $request['mataanggaran'] != '' && $request['mataanggaran'] != 'undefined'){
+            $smataanggaran = "and ma.kodemataanggaran = '".$request['mataanggaran']."'";
+        }
+
         $data = DB::select(DB::raw("
                 select ma.id, ma.kodemataanggaran,ma.namamataanggaran,cast(sum(kt.subtotal) as float) as total
                 , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
@@ -3702,10 +3712,24 @@ class PerencanaanController extends ApiController {
             ->orderBy('ap.asalproduk')
             ->get();
 
+        $asalproduk = DB::select(DB::raw("select ap.id, ap.asalproduk
+        from kegiatananggaran_m as dp 
+        inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
+        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk 
+        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+        where kb.kdprofile = 30 and kb.statusenabled = true 
+        and dp.kdprofile = 30 and dp.statusenabled = true 
+        and ap.kdprofile = 30 and ap.statusenabled = true 
+        $stahap
+        $skegiatan
+        $smataanggaran
+        group by ap.id, ap.asalproduk"));
+
         $result = array(
             'data' => $data,
             'keteranganbelanja' => $dataKeteranganBelanja,
             'asalproduk' => $dataAsalProduk,
+            'asal' => $asalproduk,
             'alokasi' => $arrALokasi,
             'message' => '@epic',
         );

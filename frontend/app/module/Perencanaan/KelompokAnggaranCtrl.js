@@ -3861,9 +3861,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 console.log($scope.item.mataAnggaranSPJ)
                 //$scope.item.sisaAnggaranSPJ = formatRupiah($scope.item.mataAnggaranSPJ.subtotal, "Rp. ")
+                var tahap = $scope.item.searchtahap.id
                 $scope.item.sisaAnggaranSPJ2 = $scope.item.mataAnggaranSPJ.subtotal
-                $scope.listAsalProduk = [ $scope.item.mataAnggaranSPJ.asalproduk]
-                $scope.item.sumberDanaSPJ = $scope.item.mataAnggaranSPJ.asalproduk
+                medifirstService.get("perencanaan/get-total-mata-anggaran?tahap="+tahap+"&kegiatan="+$scope.item.subSubKegiatanSPJ.id+"&mataanggaran="+$scope.item.mataAnggaranSPJ.kodemataanggaran).then(function (e) {
+                    $scope.listAsalProduk = e.data.asalproduk
+                    if(e.data.asal.length != 0){
+                        $scope.item.sumberDanaSPJ = {id: e.data.asal[0].id, asalproduk: e.data.asal[0].asalproduk}
+                    } else{
+                        $scope.item.sumberDanaSPJ = undefined
+                    }
+                    
+                });
+                //$scope.listAsalProduk = [ $scope.item.mataAnggaranSPJ.asalproduk]
+                
             }
             $scope.TambahRincianBelanjaSPJ = function(){
                 if( $scope.item.mataAnggaranSPJ ==  undefined){
