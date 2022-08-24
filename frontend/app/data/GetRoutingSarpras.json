@@ -4974,5 +4974,85 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LPJ",
+    "url": "/LPJ",
+    "templateurl": "module/Perencanaan/LPJ.html",
+    "controller": "LPJCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "PemungutanPenyetoranPajak",
+    "url": "/UGVtdW5ndXRhbmRhblBlbnlldG9yYW5QYWphaw==",
+    "templateurl": "module/Perencanaan/PemungutanPenyetoranPajak.html",
+    "controller": "PemungutanPenyetoranPajakCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "JasaGiro",
+    "url": "/SmFzYUdpcm8=",
+    "templateurl": "module/Perencanaan/JasaGiro.html",
+    "controller": "JasaGiroCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "BukuKasUmum",
+    "url": "/QnVrdUthc1VtdW0=",
+    "templateurl": "module/Perencanaan/BukuKasUmum.html",
+    "controller": "BukuKasUmumCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

@@ -263,6 +263,7 @@ define(['initialize'], function (initialize) {
 			}
 
 			$scope.checkboxClicked = function (dat) {
+				
 				let jml723 = 0
 				if (dat) {
 					$scope.item.datachecklist = []
