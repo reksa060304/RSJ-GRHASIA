@@ -2592,4 +2592,403 @@ class RawatJalanController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function saveKraepelin(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+            $datapsikologi = $request['data'];
+
+        try {
+          foreach ($datapsikologi as $dp) {
+                if($dp['norec'] == ""){
+                \DB::table('inputhasilkraepelin_t')->insert([
+                    'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> date('Y-m-d'),
+                    'lajur'=>$dp['lajur'],
+                    'norec_apd'=>$dp['norec_apd'],
+                    'nilai'=>$dp['nilai'],
+                ]);
+                $crud = "Simpan Kraepelin";
+                } else {
+                    \DB::table('inputhasilkraepelin_t')->where('norec', $request['norec'])->update([
+                    'tglinput'=> date('Y-m-d'),
+                    'lajur'=>$dp['lajur'],
+                    'norec_apd'=>$dp['norec_apd'],
+                    'nilai'=>$dp['nilai'],
+                ]);
+                $crud = "Simpan Kraepelin";
+                }
+            }
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'ee'=> $th->getMessage(),
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getDataKraepelin(Request $request)
+    {
+        $data = \DB::select(DB::raw("
+        select * from inputhasilkraepelin_t where norec_apd ilike '$request[norec_apd]' order by lajur asc, nilai asc
+        "));
+        $data2 = \DB::select(DB::raw("
+        select * from inputhasilkraepelind_t where norec_apd ilike '$request[norec_apd]' 
+        "));
+        $result = array(
+            'data'=> $data,
+            'data2'=> $data2,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function getNormaKraepelin(Request $request)
+    {
+        $panker = $request['panker'];
+        $hanker = $request['hanker'];
+        $tianker = $request['tianker'];
+        $janker = $request['janker'];
+        $pendidikan = $request['pendidikan'];
+        $data = \DB::select(DB::raw("
+        SELECT 'Kecepatan Kerja' as kompetensi, 'Kuantitas pekerjaan dalam satu waktu' as pengertian, '$panker' as skor, hasil as hasil FROM normakraepelin_m where objectpendidikanfk = $pendidikan and min <= $panker and max >= $panker  and keterangan ilike 'Panker'
+        union all
+        SELECT 'Ketelitian Kerja' as kompetensi, 'Jumlah kesalahan saat bekerja' as pengertian, '$tianker' as skor, hasil as hasil FROM normakraepelin_m where objectpendidikanfk = $pendidikan and min >= $tianker and max <= $tianker and keterangan ilike 'Tianker'
+        union all
+        SELECT 'Keajegan Kerja' as kompetensi, 'Kestabilan kerja saat menghadapi tekanan' as pengertian, '$janker' as skor, hasil as hasil FROM normakraepelin_m where objectpendidikanfk = $pendidikan and min >= $janker and max <= $janker and keterangan ilike 'Janker'
+        union all
+        SELECT 'Ketahanan Kerja' as kompetensi, 'Kemampuan bertahan dalam pekerjaan monoton' as pengertian, '$hanker' as skor, hasil as hasil FROM normakraepelin_m where objectpendidikanfk = $pendidikan and min <= $hanker and max >= $hanker and keterangan ilike 'Hanker'
+        "));
+        $result = array(
+            'data'=>$data,
+            'as'=>'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function saveHasilKraepelin(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+            $datapsikologi = $request['data'];
+
+        try {
+          foreach ($datapsikologi as $dp) {
+                if($request['norec'] == ""){
+                \DB::table('inputhasilkraepelind_t')->insert([
+                    'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> date('Y-m-d'),
+                    'kompetensi'=>$dp['kompetensi'],
+                    'norec_apd'=>$request['norec_apd'],
+                    'pengertian'=>$dp['pengertian'],
+                    'skor'=>$dp['skor'],
+                    'hasil'=>$dp['hasil'],
+                ]);
+                $crud = "Simpan Hasil Kraepelin";
+                } else {
+                    \DB::table('inputhasilkraepelind_t')->where('norec', $request['norec'])->update([
+                    'tglinput'=> date('Y-m-d'),
+                    'kompetensi'=>$dp['kompetensi'],
+                    'norec_apd'=>$request['norec_apd'],
+                    'pengertian'=>$dp['pengertian'],
+                    'skor'=>$dp['skor'],
+                    'hasil'=>$dp['hasil'],
+                ]);
+                $crud = "Ubah Hasil Kraepelin";
+                }
+            }
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'ee'=> $th->getMessage(),
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveIST(Request $request)
+    {
+         $kdProfile = (int) $this->getDataKdProfile($request);
+        // $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+            $datapsikologi = $request['data'];
+
+        try {
+          foreach ($datapsikologi as $dp) {
+                if($request['norec'] == ""){
+                    \DB::table('inputhasilist_t')->insert([
+                        'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'tglinput'=> date('Y-m-d'),
+                        'tujuan'=>$dp['tujuan'],
+                        'nomor'=>$dp['nomor'],
+                        'test'=>$dp['test'],
+                        'jawaban'=>$dp['jawaban'],
+                        'nilai'=>$dp['nilai'],
+                        'norec_apd'=>$dp['norec_apd'],
+                        
+                    ]);
+                    $crud = "Simpan Hasil IST";
+                }
+                else {
+                    \DB::table('inputhasilist_t')->where('norec', $dp['norec'])->update([
+                    'tglinput'=> date('Y-m-d'),
+                    'kompetensi'=>$dp['kompetensi'],
+                    'tglinput'=> date('Y-m-d'),
+                    'tujuan'=>$dp['tujuan'],
+                    'nomor'=>$dp['nomor'],
+                    'test'=>$dp['test'],
+                    'jawaban'=>$dp['jawaban'],
+                    'nilai'=>$dp['nilai'],
+                    'norec_apd'=>$dp['norec_apd'],
+                ]);
+                $crud = "Ubah Hasil IST";
+                }
+        }
+            if(isset($request['delete'])){
+                    \DB::table('inputhasilist_t')->where('norec', $request['norec'])->delete();
+                $crud = "Hapus Data IST";
+
+            } 
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'ee'=> $th->getMessage(),
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getKunJawIST(Request $request)
+    {
+        $data = \DB::select(DB::raw("SELECT * FROM kuncijawabanist_m where kdprofile = 30 and statusenabled = true"));
+
+        $result = array(
+            'data'=> $data,
+            'as'=> 'FIziInipi'
+        );
+        return $this->respond($result);
+    }
+    public function getHasilIST(Request $request)
+    {
+        $data = \DB::select(DB::raw("SELECT * from inputhasilist_t where norec_apd ilike '$request[norec_apd]' order by nomor asc"));
+        $result = array(
+            "data"=> $data,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function getNormaIST(Request $request)
+    {
+        $rw = $request['norma'];
+        $data = \DB::select(DB::raw("
+        SELECT sw, rw, test from normaist_m where umur >= $request[umur1] and umur <= $request[umur2] and rw = $rw[se] and test ilike 'se'
+        union all
+        SELECT sw, rw, test from normaist_m where umur >= $request[umur1] and umur <= $request[umur2] and rw = $rw[wa] and test ilike 'wa'
+        union all
+        SELECT sw, rw, test from normaist_m where umur >= $request[umur1] and umur <= $request[umur2] and rw = $rw[an] and test ilike 'an'
+        union all
+        SELECT sw, rw, test from normaist_m where umur >= $request[umur1] and umur <= $request[umur2] and rw = $rw[ge] and test ilike 'ge'
+        union all
+        SELECT sw, rw, test from normaist_m where umur >= $request[umur1] and umur <= $request[umur2] and rw = $rw[me] and test ilike 'me'
+        union all
+        SELECT sw, rw, test from normaist_m where umur >= $request[umur1] and umur <= $request[umur2] and rw = $rw[ra] and test ilike 'ra'
+        union all
+        SELECT sw, rw, test from normaist_m where umur >= $request[umur1] and umur <= $request[umur2] and rw = $rw[zr] and test ilike 'zr'
+        union all
+        SELECT sw, rw, test from normaist_m where umur >= $request[umur1] and umur <= $request[umur2] and rw = $rw[fa] and test ilike 'fa'
+        union all
+        SELECT sw, rw, test from normaist_m where umur >= $request[umur1] and umur <= $request[umur2] and rw = $rw[wu] and test ilike 'wu'
+        "));
+        $test = "";
+        $rwsum= 0;
+        $umur = $request['umur1'];
+        $gesamt = 0;
+        $iq=0;
+        foreach ($data as $dt) {
+            $rwsum+=$dt->rw;
+        }
+        if($umur >= 19 && $umur <= 20){
+            $umur = 20;
+        } else if($umur >= 21 && $umur <= 24){
+            $umur = 24;
+        } else if($umur >= 25 && $umur <= 28){
+            $umur = 28;
+        } else if($umur >= 29 && $umur <= 33){
+            $umur = 33;
+        } else if($umur >= 34 && $umur <= 39){
+            $umur = 39;
+        } else if($umur >= 40 && $umur <= 45){
+            $umur = 45;
+        } else if($umur >= 46){
+            $umur = 60;
+        }
+        $datagesamt = \DB::table('gesamt_m')->where('umur', $umur)->where('rw', $rwsum)->select('sw')->get();
+        foreach ($datagesamt as $dg) {
+            $gesamt = $dg->sw;
+        }
+
+        $dataiq = \DB::table('gesamt_m')->where('umur', $umur)->where('rw', $gesamt)->select('iq')->get();
+        foreach ($dataiq as $di) {
+            $iq = $di->iq;
+        }
+        $result = array(
+            "data"=> $data,
+            'rw'=> $rwsum,
+            'umur'=>$umur,
+            'gesamt'=>$gesamt,
+            'iq'=>$iq,
+            'as'=> 'Fizi'
+        );
+        
+        return $this->respond($result);
+    }
+    public function saveHasilISTDetail(Request $request)
+    {
+          $kdProfile = (int) $this->getDataKdProfile($request);
+        // $idMax = \DB::table('normapsikologi_m')->max('id');
+        $crud="";
+        \DB::beginTransaction();
+            $se= $request['se'];
+            $an= $request['an'];
+            $fa= $request['fa'];
+            $wa= $request['wa'];
+            $ge= $request['ge'];
+            $me= $request['me'];
+            $zr= $request['zr'];
+            $wu= $request['wu'];
+            $ra= $request['ra'];
+            $jml= $request['jml'];
+        try {
+
+            $ceknorec_apd = \DB::table('inputhasilistd_t')->where('norec_apd', $request['norec_apd'])->get();
+            if(count($ceknorec_apd) > 0){
+                \DB::table('inputhasilistd_t')->where('norec_apd', $request['norec_apd'])->update([
+                    'statusenabled'=> false
+                ]);
+            }else{
+
+            }
+            if($request['norec'] == ""){
+            \DB::table('inputhasilistd_t')->insert([
+                'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                'kdprofile'=> $kdProfile,
+                'statusenabled'=> true,
+                'tglinput'=> date('Y-m-d'),
+                'norec_apd'=>$request['norec_apd'],
+                'se_rw'=>$se['rw'],'se_sw'=>$se['sw'],
+                'an_rw'=>$an['rw'],'an_sw'=>$an['sw'],
+                'fa_rw'=>$fa['rw'],'fa_sw'=>$fa['sw'],
+                'wa_rw'=>$wa['rw'],'wa_sw'=>$wa['sw'],
+                'ge_rw'=>$ge['rw'],'ge_sw'=>$ge['sw'],
+                'me_rw'=>$me['rw'],'me_sw'=>$me['sw'],
+                'zr_rw'=>$zr['rw'],'zr_sw'=>$zr['sw'],
+                'wu_rw'=>$wu['rw'],'wu_sw'=>$wu['sw'],
+                'ra_rw'=>$ra['rw'],'ra_sw'=>$ra['sw'],
+                'jml_rw'=>$jml['rw'],'jml_sw'=>$jml['sw'],
+                'iq'=>$request['iq'],
+                'dominasi'=>$request['dominasi']
+            ]);
+            $crud = "Simpan Hasil IST";
+            } else {
+                \DB::table('inputhasilistd_t')->where('norec', $dp['norec'])->update([
+                'tglinput'=> date('Y-m-d'),
+                'norec_apd'=>$request['norec_apd'],
+            ]);
+            $crud = "Ubah Hasil IST";
+            }
+            
+            
+            $transStatus= 'true';
+        } catch (\Throwable $th) {
+            $transStatus= 'false';
+            
+        }
+        if ($transStatus == 'true') {
+            DB::commit();
+            $transMessage = $crud.' berhasil';
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = $crud." gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'ee'=> $th->getMessage(),
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

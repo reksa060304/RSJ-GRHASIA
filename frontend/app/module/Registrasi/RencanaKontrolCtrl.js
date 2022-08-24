@@ -219,7 +219,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     "kodeDokter": $scope.item.kodeDokter ? $scope.item.kodeDokter.kode: "",
                                     "poliKontrol": $scope.item.poliKontrol? $scope.item.poliKontrol.kdinternal:"",
                                     "tglRencanaKontrol": moment($scope.item.tglRencanaKontrol).format('YYYY-MM-DD'),
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }
@@ -268,7 +268,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     "kodeDokter": $scope.item.kodeDokter ? $scope.item.kodeDokter.kode: "",
                                     "poliKontrol": $scope.item.poliKontrol? $scope.item.poliKontrol.kdinternal:"",
                                     "tglRencanaKontrol": moment($scope.item.tglRencanaKontrol).format('YYYY-MM-DD'),
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }
@@ -292,7 +292,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     "kodeDokter": $scope.item.kodeDokter ? $scope.item.kodeDokter.kode: "",
                                     "poliKontrol": $scope.item.poliKontrol? $scope.item.poliKontrol.kdinternal:"",
                                     "tglRencanaKontrol": moment($scope.item.tglRencanaKontrol).format('YYYY-MM-DD'),
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }
@@ -498,7 +498,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "request": {
                             "t_suratkontrol": {
                                 "noSuratKontrol": $scope.dataSelected.noSuratKontrol,
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }

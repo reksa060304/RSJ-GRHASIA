@@ -3,18 +3,76 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
     initialize.controller('DaftarPasienPsikologiCtrl', ['$scope', '$state', 'ModelItem', '$mdDialog', 'MedifirstService', 'CacheHelper', 'DateHelper',
         function ($scope, $state, ModelItem, $mdDialog, medifirstService, cacheHelper, dateHelper) {
             $scope.item = {}
+            $scope.itemKraepelin = {}
+            $scope.itemIST = {}
             $scope.totalSkor = 0
             $scope.totalSkorB = 0
+            $scope.jumlah = 0;
+            $scope.avdev = 0;
+            $scope.mean = 0;
+            $scope.salkos = 0;
+            $scope.hanker = 0;
+            $scope.salah = 0;
+            $scope.skip = 0;
+            $scope.itemIST.nilai = 0;
+            //norma ist
+            $scope.itemIST.se = 0
+            $scope.itemIST.wa = 0
+            $scope.itemIST.an = 0
+            $scope.itemIST.ge = 0
+            $scope.itemIST.me = 0
+            $scope.itemIST.ra = 0
+            $scope.itemIST.zr = 0
+            $scope.itemIST.fa = 0
+            $scope.itemIST.wu = 0
+            var nilaiD = 0
             // $scope.item.idNormaPsikologi = null;
             $scope.now = new Date();
             var dataPsikologi = [];
+            var dataKraepelin = [];
+            var dataHasilKraepelin = [];
+            var dataIST = [];
+            var kunJawIST = []
+            var dataNormaIST = []
+            var dataBuatHasilIST = []
             var norec = "";
+            var norecKraepelin = "";
+            var norecIST = "";
+            var norecISTDetail = "";
             $scope.item.periodeAwal = moment($scope.now).format("YYYY-MM-DD 00:00:00")
             $scope.item.periodeAkhir = moment($scope.now).format("YYYY-MM-DD 23:59:59")
             loadCombo()
             getLoadData()
-
+            $scope.SearchData = function(){
+                getLoadData()
+            }
             function loadCombo() {
+                $scope.listPendidikan = [
+                    {
+                        id: 1,
+                        pendidikan: "SMA IPS"
+                    },
+                    {
+                        id: 2,
+                        pendidikan: "SMA IPA"
+                    },
+                    {
+                        id: 3,
+                        pendidikan: "D3 IPS"
+                    },
+                    {
+                        id: 4,
+                        pendidikan: "D3 IPA"
+                    },
+                    {
+                        id: 5,
+                        pendidikan: "SARJANA IPS"
+                    },
+                    {
+                        id: 6,
+                        pendidikan: "SARJANA IPA"
+                    }
+                ]
                 $scope.listCfit = [{
                     idcfit: 1,
                     cfit: "A"
@@ -67,6 +125,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.getPart('registrasi/get-daftar-combo-pegawai-all', true, 10).then(function (e) {
                     $scope.listDataPegawai = e;
                 })
+                medifirstService.get('psikologi/kunci-jawaban-ist').then(function (data) {
+                    kunJawIST = data.data.data
+
+                    
+                })
             }
             $scope.cfit = function () {
                 $scope.item.nomor = 1
@@ -75,6 +138,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.nomor = 1
             }
             $scope.jawaban = function () {
+                console.log($scope.item.test.test);
+                if($scope.item.test.test == 'Test 1' && $scope.item.nomor > 13){
+                    toastr.error('NOMOR Test 1 MAX')
+                    return
+                } 
+                if ($scope.item.test.test == 'Test 2' && $scope.item.nomor > 14) {
+                    toastr.error('NOMOR Test 2 MAX')
+                    return
+                }
+                if ($scope.item.test.test == 'Test 3' && $scope.item.nomor > 13) {
+                    toastr.error('NOMOR Test 3 MAX')
+                    return
+                }
+                if ($scope.item.test.test == 'Test 4' && $scope.item.nomor > 10) {
+                    toastr.error('NOMOR Test 4 MAX')
+                    return
+                }
                 for (let i = 0; i < dataPsikologi.length; i++) {
                     // const element = dataPsikologi[i];
                     if (dataPsikologi[i].nomor == $scope.item.nomor &&
@@ -132,8 +212,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             function getLoadData() {
-
-                medifirstService.get('psikologi/get-daftar-pasien-psikologi?tglawal=' + $scope.item.periodeAwal + "&tglakhir=" + $scope.item.periodeAkhir).then(function (data) {
+                var tglawal = moment($scope.item.periodeAwal).format("YYYY-MM-DD 00:00:00")
+                var tglakhir = moment($scope.item.periodeAkhir).format("YYYY-MM-DD 23:59:59")
+                medifirstService.get('psikologi/get-daftar-pasien-psikologi?tglawal=' + tglawal + "&tglakhir=" + tglakhir).then(function (data) {
                     var datas = data.data
                     // $scope.listJenisNorma = datas.jenisnorma
                     $scope.gridDaftarPsikologi = new kendo.data.DataSource({
@@ -403,7 +484,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     if (dataItem.nilai == 1) {
                         console.log('masuk nilai nihh');
                         $scope.totalSkor = $scope.totalSkor - 1
-        }
+                }
                 } else if (dataItem.cfit == 'B') {
                     if (dataItem.nilai == 1) {
                         $scope.totalSkorB = $scope.totalSkorB - 1
@@ -507,7 +588,600 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item = {}
                 $scope.popUpDataDaftarPsikologi.close()
             }
-            
+            $scope.inputKraepelin = function(){
+                if ($scope.dataDaftarPsikologi == undefined) {
+                    toastr.error("data Belum dipilih")
+                    return
+                }
+                getDataKraepelin()
+                $scope.popUpKraepelin.center().open()
+            }
+            $scope.opsiGridKraepelin = {
+                sortable: true,
+                filterable: false,
+                pageable: true,
+                selectable: 'row',
+                resizable: true,
+                scrollable: true,
+                columns: [{
+                        "field": "lajur",
+                        "title": "Lajur",
+                        "width": "30px"
+                    },
+                    {
+                        "field": "nilai",
+                        "title": "Nilai",
+                        "width": "40px"
+                    },
+                    {
+                        'command': [{
+                                text: "Hapus",
+                                click: HapusDetailLajur,
+                                imageClass: "k-icon k-i-delete",
+
+                            },
+
+                        ],
+                        width: "100px"
+                    }
+                    
+                ]
+
+            }
+            $scope.nilai = function(){
+                
+                for (let i = 0; i < dataKraepelin.length; i++) {
+                    if( dataKraepelin[i].lajur == $scope.itemKraepelin.lajur){
+                    toastr.error('tidak bisa ditambah')
+                    return
+                    }
+                    if (dataKraepelin[i].lajur > 49) {
+                        toastr.error('Lajur Max')
+                        // $scope.itemKraepelin.lajur= undefined
+                        // $scope.itemKraepelin.nilai = undefined
+                        return
+                    }
+                }
+                var data = "";
+                data = {
+                    norec: norecKraepelin,
+                    norec_apd: $scope.dataDaftarPsikologi.norec,
+                    lajur: $scope.itemKraepelin.lajur,
+                    nilai: $scope.itemKraepelin.nilai
+                }
+                dataKraepelin.push(data)
+                $scope.gridKraepelin = new kendo.data.DataSource({
+                    data: dataKraepelin,
+                    pageSize: 50,
+                    total: dataKraepelin.length,
+                    // serverPaging: true,
+                    schema: {
+                        model: {
+                            fields: {}
+                        }
+                    }
+                });
+                $scope.itemKraepelin.lajur = $scope.itemKraepelin.lajur + 1
+                $scope.itemKraepelin.nilai = undefined
+            }
+            $scope.simpanKraepelin = function(){
+                var objSave = {
+                    data: dataKraepelin
+                }
+                medifirstService.post('psikologi/save-kraepelin', objSave).then(function(data){
+                    getDataKraepelin()
+                })
+            }
+            function getDataKraepelin(){
+                medifirstService.get('psikologi/get-data-kraepelin?norec_apd='+ $scope.dataDaftarPsikologi.norec).then(function(data){
+                    var datas = data.data.data
+                    var datas2 = data.data.data2
+                    dataKraepelin = datas
+                    dataHasilKraepelin = datas2
+                    for (let i = 0; i < dataKraepelin.length; i++) {
+                        // const element = datas[i];
+                    $scope.jumlah = $scope.jumlah+ dataKraepelin[i].nilai
+                    }
+                    $scope.gridKraepelin = new kendo.data.DataSource({
+                        data: dataKraepelin,
+                        pageSize: 50,
+                        total: dataKraepelin.length,
+                        // serverPaging: true,
+                        schema: {
+                            model: {
+                                fields: {}
+                            }
+                        }
+                    });
+                    $scope.gridNormaKraepelin = new kendo.data.DataSource({
+                        data: dataHasilKraepelin,
+                        pageSize: 50,
+                        total: dataHasilKraepelin.length,
+                        // serverPaging: true,
+                        schema: {
+                            model: {
+                                fields: {}
+                            }
+                        }
+                    });
+                })
+            }
+            $scope.getNilaiKraepelin = function(){
+                $scope.mean = ($scope.jumlah / 50).toFixed(3);
+                var data = {}
+                var process1 = []
+                $scope.process = 0
+                //nyari adouse
+                $scope.x = 0
+                $scope.y = 0
+                $scope.xy = 0
+                $scope.x2 = 0
+                for (let i = 0; i < dataKraepelin.length; i++) {
+                    data = {
+                        input: dataKraepelin[i].nilai - $scope.mean
+                    }
+                    if(data.input < 0){
+                        data.input = (data.input * -1)
+                    }
+                    process1.push(data)
+                    $scope.process = $scope.process + process1[i].input 
+                    $scope.x += dataKraepelin[i].lajur
+                    $scope.y += dataKraepelin[i].nilai
+                    $scope.xy += dataKraepelin[i].lajur * dataKraepelin[i].nilai
+                    $scope.x2 += dataKraepelin[i].lajur * dataKraepelin[i].lajur
+                }
+                $scope.sxx = $scope.x2-($scope.x*$scope.x)/50
+                $scope.sxy = $scope.xy-($scope.x*$scope.y)/50
+                $scope.b1 = $scope.sxy / $scope.sxx
+                $scope.a = $scope.mean-($scope.b1-25*5)
+                $scope.x50 = $scope.a+($scope.b1*50)
+                $scope.x0 = $scope.a
+                $scope.hanker = ($scope.x50 - $scope.x0).toFixed(3)
+                // console.log($scope.x, $scope.y, $scope.xy, $scope.x2, $scope.sxx, $scope.sxy, $scope.b1);
+                $scope.avdev = ($scope.process / 50).toFixed(3)
+                $scope.salkos = ($scope.salah + $scope.skip).toFixed(3)
+                hasilKrapealin()
+            }
+            function hasilKrapealin(){
+                medifirstService.get('psikologi/get-norma-kraepelin?pendidikan='+ $scope.item.pendidikan.id + 
+                '&panker=' + $scope.mean + '&janker=' + $scope.avdev + '&hanker=' + $scope.hanker +
+                '&tianker=' + $scope.salkos).then(function (data) {
+                    var datas = data.data.data
+                    dataHasilKraepelin.push(datas)
+                    $scope.gridNormaKraepelin = new kendo.data.DataSource({
+                        data: datas
+                    })
+                })
+            }
+            $scope.opsiGridNormaKraepelin = {
+                columns: [
+                    {
+                        "title": "Norma",
+                        "columns": [
+                            {
+                                "field": "kompetensi",
+                                "title": "Kompetensi",
+                                "width": "70px"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Pendidikan",
+                        "columns": [
+                            {
+                                "field": "pengertian",
+                                "title": "Pengertian",
+                                "width": "80px"
+                            },
+                        ]
+                    },
+                    {
+                        "field": "skor",
+                        "title": "Skor",
+                        "width": "40px"
+                        
+                    },
+                    {
+                        "title": "Hasil",
+                        "columns": [
+                            {
+                                "title": "BS",
+                                "width": "25px",
+                                "template": "#: hasil == 'BS'? '✘' : ''#"
+                            },
+                            {
+                                "title": "B",
+                                "width": "25px",
+                                "template": "#: hasil == 'B'? '✘' : ''#"
+                            },
+                            {
+                                "title": "S",
+                                "width": "25px",
+                                "template": "#: hasil == 'S'? '✘' : ''#"
+                            },
+                            {
+                                "title": "K",
+                                "width": "25px",
+                                "template": "#: hasil == 'K'? '✘' : ''#"
+                            },
+                            {
+                                "title": "KS",
+                                "width": "25px",
+                                "template": "#: hasil == 'KS'? '✘' : ''#"
+                            }
+                        ]
+                    },
+                   
+                ]
+            }
+            $scope.simpanHasilKraepelin = function(){
+                var objSave = {
+                    norec: "",
+                    data: dataHasilKraepelin[0],
+                    norec_apd: $scope.dataDaftarPsikologi.norec
+                }
+                console.log(objSave);
+                // return
+                medifirstService.post('psikologi/save-hasil-kraepelin', objSave).then(function(){
+                    getDataKraepelin()
+                })
+            }
+
+            function HapusDetailLajur(e){
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                };
+                var grid = this;
+                var row = $(e.currentTarget).closest("tr");
+                for (var i = dataKraepelin.length - 1; i >= 0; i--) {
+                    if (dataKraepelin[i].lajur == dataItem.lajur) {
+                        dataKraepelin.splice(i, 1);
+                    }
+                }
+                $scope.itemKraepelin = {}
+                grid.removeRow(row);
+            }
+
+            $scope.inputIST = function(){
+                if($scope.dataDaftarPsikologi == undefined){
+                    toastr.error('Data Belum Dipilih')
+                    return
+                }
+                getDataIST()
+                $scope.tgllahir = $scope.dataDaftarPsikologi.tgllahir
+                $scope.tglmasuk = $scope.dataDaftarPsikologi.tglmasuk
+
+                $scope.itemIST.nomor = 1;
+                if ($scope.itemIST.nomor >= 1 && $scope.itemIST.nomor <= 20) {
+                    $scope.itemIST.test = "SE"
+                } else if ($scope.itemIST.nomor >= 21 && $scope.itemIST.nomor <= 40) {
+                    $scope.itemIST.test = "WA"
+                }
+                var date = dateHelper.CountAge(new Date($scope.tgllahir), new Date($scope.tglmasuk))
+                var umuryear = date.year,
+                    umurmonth = date.month
+                $scope.itemIST.umurIST = umuryear
+                $scope.popUpIST.center().open()
+            }
+            $scope.gridIST = {
+                columns: [
+                    {
+                        "field": "nomor",
+                        "title": "No"
+                    },
+                    {
+                        "field": "jawaban",
+                        "title": "Jawaban"
+                    },
+                    {
+                        "field": "test",
+                        "title": ""
+                    },
+                    {
+                        "field": "nilai",
+                        "title": "Nilai"
+                    },
+                    {
+                        'command': [{
+                                text: "Hapus",
+                                click: HapusIST,
+                                imageClass: "k-icon k-i-delete",
+
+                            },
+
+                        ],
+                        width: "100px"
+                    }
+
+                ]
+            }
+            function HapusIST(e){
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                };
+                if (dataItem.cfit == 'A') {
+                    if (dataItem.nilai == 1) {
+                        console.log('masuk nilai nihh');
+                        $scope.totalSkor = $scope.totalSkor - 1
+                    }
+                } else if (dataItem.cfit == 'B') {
+                    if (dataItem.nilai == 1) {
+                        $scope.totalSkorB = $scope.totalSkorB - 1
+                    }
+                }
+                var grid = this;
+                var row = $(e.currentTarget).closest("tr");
+                for (var i = dataIST.length - 1; i >= 0; i--) {
+                    if (dataIST[i].nomor == dataItem.nomor) {
+                        dataIST.splice(i, 1);
+                    }
+                }
+                $scope.itemIST.nomor = undefined
+                $scope.itemIST.jawaban = undefined
+                grid.removeRow(row);
+                console.log(dataItem.norec);
+                
+                if(dataItem.norec == ""){
+                    console.log('oke');
+                }else{
+                    var objSave = {
+                        norec: dataItem.norec,
+                        delete: true,
+                        data: []
+                    }
+                    medifirstService.post('psikologi/save-ist',objSave).then(function(){
+                        getDataIST()
+                    })
+                }
+            }
+            $scope.jawabanIST = function(){
+                for (let i = 0; i < dataIST.length; i++) {
+                    // const element = dataIST[i];
+                    if (dataIST[i].nomor == $scope.itemIST.nomor && $scope.dataIST.norec == "") {
+                        toastr.error('Nomor Sudah diisi')
+                        $scope.itemIST.nomor = undefined
+                        $scope.itemIST.jawaban = undefined
+                        return
+                    }
+                }
+                
+                if($scope.itemIST.nomor >= 1 && $scope.itemIST.nomor <= 20){
+                    $scope.itemIST.test = "SE"
+                } else if ($scope.itemIST.nomor >= 21 && $scope.itemIST.nomor <= 40) {
+                    $scope.itemIST.test = "WA"
+                } else if ($scope.itemIST.nomor >= 41 && $scope.itemIST.nomor <= 60) {
+                    $scope.itemIST.test = "AN"
+                } else if ($scope.itemIST.nomor >= 61 && $scope.itemIST.nomor <= 76) {
+                    $scope.itemIST.test = "GE"
+                } else if ($scope.itemIST.nomor >= 77 && $scope.itemIST.nomor <= 96) {
+                    $scope.itemIST.test = "RA"
+                } else if ($scope.itemIST.nomor >= 97 && $scope.itemIST.nomor <= 116) {
+                    $scope.itemIST.test = "ZR"
+                } else if ($scope.itemIST.nomor >= 117 && $scope.itemIST.nomor <= 136) {
+                    $scope.itemIST.test = "FA"
+                } else if ($scope.itemIST.nomor >= 137 && $scope.itemIST.nomor <= 156) {
+                    $scope.itemIST.test = "WU"
+                } else if ($scope.itemIST.nomor >= 157 && $scope.itemIST.nomor <= 176) {
+                    $scope.itemIST.test = "ME"
+                } 
+                if ($scope.itemIST.nomor == undefined) {
+                    toastr.error('Nomor Kosong')
+                    $scope.itemIST.nomor = undefined
+                    $scope.itemIST.jawaban = undefined
+                    return
+                }
+
+                if ($scope.itemIST.nomor > 176) {
+                    toastr.error('Nomor sudah Maksimal')
+                    $scope.itemIST.nomor = undefined
+                    $scope.itemIST.jawaban = undefined
+                    return
+                }
+                // var nilaiD = 0
+                for (let i = 0; i < kunJawIST.length; i++) {
+                    if (kunJawIST[i].nomor == $scope.itemIST.nomor && kunJawIST[i].jawaban == $scope.itemIST.jawaban) {
+                        console.log("jawaban harusnya ada");
+                        $scope.itemIST.nilai = $scope.itemIST.nilai + kunJawIST[i].nilai
+                        nilaiD = kunJawIST[i].nilai
+                        break;
+                    } else{
+                        $scope.itemIST.nilai = $scope.itemIST.nilai + 0
+                        nilaiD = 0
+                    }
+                }
+                console.log(nilaiD);
+                var data = {}
+                // if (dataIST.norec != "") {
+                //     norecIST = dataIST.norec
+                // }
+                data = {
+                    norec: norecIST,
+                    nomor:$scope.itemIST.nomor,
+                    test: $scope.itemIST.test,
+                    tujuan: $scope.itemIST.tujuantest,
+                    jawaban: $scope.itemIST.jawaban.toLowerCase(),
+                    norec_apd: $scope.dataDaftarPsikologi.norec,
+                    nilai: nilaiD
+                }
+                
+                dataIST.push(data)
+                $scope.dataGridIST = new kendo.data.DataSource({
+                    data: dataIST,
+                    // pageSize: 50,
+                    total: dataIST.length,
+                })
+                $scope.itemIST.jawaban = undefined
+                $scope.itemIST.nomor = $scope.itemIST.nomor + 1
+            }
+            $scope.simpanIST = function(){
+                var objSave  = {
+                    data: dataIST
+                }
+                console.log(objSave);
+                // return 
+                medifirstService.post('psikologi/save-ist', objSave).then(function(){
+                    getDataIST()
+                })
+            }
+            $scope.batalIST = function(){
+                $scope.itemIST = {}
+                $("#kendoGrid").data("kendoGrid").dataSource.data([]);
+                $scope.dataIST = []
+                $scope.jml = []
+                $scope.x30 = []
+                $scope.x31 = []
+                $scope.x32 = []
+                $scope.popUpIST.close()
+            }
+            $scope.klikGridIST = function(dataIST){
+                // $scope.itemIST.nomor = dataIST.nomor
+                // $scope.itemIST.jawaban = dataIST.jawaban
+            }
+            function getDataIST(){
+                //norma ist
+                $scope.itemIST.se = 0;$scope.itemIST.wa = 0;$scope.itemIST.an = 0;$scope.itemIST.ge = 0;$scope.itemIST.me = 0;
+                $scope.itemIST.ra = 0;$scope.itemIST.zr = 0;$scope.itemIST.fa = 0;$scope.itemIST.wu = 0;
+                medifirstService.get('psikologi/get-hasil-ist?norec_apd='+$scope.dataDaftarPsikologi.norec).then(function(data){
+                    var datas = data.data.data
+                    dataIST = datas
+                    $scope.itemIST.tujuantest = datas[0].tujuan
+                    // $scope.norecIST = 
+                    //untuk ngeget nilai pertestnya
+                    for (let i = 0; i < dataIST.length; i++) {
+                        console.log('y');
+                        console.log(dataIST[i].test);
+                        if(dataIST[i].test == 'SE'){
+                            $scope.itemIST.se += dataIST[i].nilai
+                            console.log($scope.itemIST.se);
+                        } else if (dataIST[i].test == 'WA') {
+                            $scope.itemIST.wa += dataIST[i].nilai
+                        } else if (dataIST[i].test == 'AN') {
+                            $scope.itemIST.an += dataIST[i].nilai
+                        } else if (dataIST[i].test == 'GE') {
+                            $scope.itemIST.ge += dataIST[i].nilai
+                        } else if (dataIST[i].test == 'ME') {
+                            $scope.itemIST.me += dataIST[i].nilai
+                        } else if (dataIST[i].test == 'RA') {
+                            $scope.itemIST.ra += dataIST[i].nilai
+                        } else if (dataIST[i].test == 'ZR') {
+                            $scope.itemIST.zr += dataIST[i].nilai
+                        } else if (dataIST[i].test == 'FA') {
+                            $scope.itemIST.fa += dataIST[i].nilai
+                        } else if (dataIST[i].test == 'WU') {
+                            $scope.itemIST.wu += dataIST[i].nilai
+                        }
+                    }
+                    //dibuat array nilainya
+                    $scope.getNorma = {
+                        // se: $scope.itemIST.se,
+                        se:$scope.itemIST.se,
+                        wa:$scope.itemIST.wa,
+                        an:$scope.itemIST.an,
+                        ge:$scope.itemIST.ge,
+                        me:$scope.itemIST.me,
+                        ra:$scope.itemIST.ra,
+                        zr:$scope.itemIST.zr,
+                        fa:$scope.itemIST.fa,
+                        wu:$scope.itemIST.wu,
+                        
+                    } 
+                    // console.log($scope.getNorma);
+                    $scope.dataGridIST = new kendo.data.DataSource({
+                        data: dataIST,
+                        // pageSize: 50,
+                        total: dataIST.length,
+                    })
+                })
+            }
+            $scope.getIST = function(){
+                // $scope.itemIST.umurIST
+                var umur1 = $scope.itemIST.umurIST;
+                var umur2 = $scope.itemIST.umurIST;
+                if ($scope.itemIST.umurIST >= 19 && $scope.itemIST.umurIST <= 20) {
+                    umur1 = $scope.itemIST.umurIST
+                    umur2 = 20
+                } else if ($scope.itemIST.umurIST >= 21 && $scope.itemIST.umurIST <= 24) {
+                    umur1 = $scope.itemIST.umurIST
+                    umur2 = 24
+                } else if ($scope.itemIST.umurIST >= 25 && $scope.itemIST.umurIST <= 28) {
+                    umur1 = $scope.itemIST.umurIST
+                    umur2 = 28
+                } else if ($scope.itemIST.umurIST >= 29 && $scope.itemIST.umurIST <= 33) {
+                    umur1 = $scope.itemIST.umurIST
+                    umur2 = 33
+                } else if ($scope.itemIST.umurIST >= 34 && $scope.itemIST.umurIST <= 39) {
+                    umur1 = $scope.itemIST.umurIST
+                    umur2 = 39
+                } else if ($scope.itemIST.umurIST >= 40 && $scope.itemIST.umurIST <= 45) {
+                    umur1 = $scope.itemIST.umurIST
+                    umur2 = 45
+                } else if ($scope.itemIST.umurIST >= 46) {
+                    umur1 = 46
+                    umur2 = 46
+                }
+                var objPost = {
+                    norma: $scope.getNorma,
+                    umur1: umur1,
+                    umur2: umur2
+                }
+                console.log(objPost);
+                // return
+                medifirstService.post('psikologi/get-norma-ist',objPost).then(function(data){
+                    var datas = data.data.data
+                    $scope.dataIST = datas
+                    $scope.jml = data.data
+                    $scope.x30 = {
+                        x30: datas[3].sw + datas[5].sw
+                    }
+                    $scope.x31 = {
+                        x31: datas[2].sw + datas[6].sw
+                    }
+                    if ($scope.x30.x30 > $scope.x31.x31) {
+                        $scope.x32={'x32':$scope.x30.x30-$scope.x31.x31};
+                    } else{
+                        $scope.x32 ={'x32':$scope.x31.x31 - $scope.x30.x30};
+                    }
+                    console.log(dataBuatHasilIST);
+                    if($scope.x32.x32 <=10){
+                        $scope.dominasi = "Seimbang";
+                    } else if ($scope.x30.x30 >= $scope.x31.x31) {
+                        $scope.dominasi = "Eksak";
+                    } else if ($scope.x30.x30 <= $scope.x31.x31) {
+                        $scope.dominasi = "Non Eksak";
+                    }
+                })
+            }
+            $scope.simpanHasilIST = function(){
+                var objSave = {
+                    'norec': norecISTDetail,
+                    'se': $scope.dataIST[0],
+                    'wa': $scope.dataIST[1],
+                    'an': $scope.dataIST[2],
+                    'ge': $scope.dataIST[3],
+                    'me': $scope.dataIST[4],
+                    'ra': $scope.dataIST[5],
+                    'zr': $scope.dataIST[6],
+                    'fa': $scope.dataIST[7],
+                    'wu': $scope.dataIST[8],
+                    'jml': {
+                        rw: $scope.jml.rw,
+                        sw: $scope.jml.gesamt
+                    },
+                    'iq': $scope.jml.iq,
+                    'dominasi': $scope.dominasi,
+                    'norec_apd':$scope.dataDaftarPsikologi.norec
+                }
+                medifirstService.post('psikologi/save-hasil-ist-detail', objSave).then(function(){
+
+                })
+                // console.log(objSave);
+            }
         }
     ])
 });

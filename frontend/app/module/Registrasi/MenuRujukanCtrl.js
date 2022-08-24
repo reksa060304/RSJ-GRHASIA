@@ -333,7 +333,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     "diagRujukan": $scope.itemV2.diagRujukan.kddiagnosa,
                                     "tipeRujukan": $scope.itemV2.tipeRujukan.value,
                                     "poliRujukan": poliRujukan,
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }
@@ -354,7 +354,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     "diagRujukan": $scope.itemV2.diagRujukan.kddiagnosa,
                                     "tipeRujukan": $scope.itemV2.tipeRujukan.value,
                                     "poliRujukan": poliRujukan,
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }
@@ -984,7 +984,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "request": {
                             "t_rujukan": {
                                 "noRujukan": $scope.dataSelected.norujukan,
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }
@@ -1149,7 +1149,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "t_rujukan": {
                                 "idRujukan": data.idRujukan,
                                 "noRujukan": data.noRujukan,
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }
@@ -1595,7 +1595,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "noRujukan": $scope.item.noRujukan,
                         "diagnosa": diagnosa,
                         "procedure": diagnosa2,
-                        "user": "Ramdanegie"
+                        "user": medifirstService.getPegawaiLogin().namaLengkap
                     }
                 }
                 medifirstService.postNonMessage('bridging/bpjs/tools', json).then(function (e) {

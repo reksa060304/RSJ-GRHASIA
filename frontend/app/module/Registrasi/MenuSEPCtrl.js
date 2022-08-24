@@ -527,7 +527,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         },
                                         "dpjpLayan": $scope.item.dpjpLayan != undefined ? $scope.item.dpjpLayan.kode : "",
                                         "noTelp": $scope.item.noTelpon === undefined ? 0 : $scope.item.noTelpon,
-                                        "user": "Ramdanegie"
+                                        "user": medifirstService.getPegawaiLogin().namaLengkap
                                     }
                                 }
                             }
@@ -588,7 +588,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                                         "dpjpLayan": $scope.item.dpjpLayan != undefined ? $scope.item.dpjpLayan.kode : "",
                                         "noTelp": $scope.item.noTelpon === undefined ? 0 : $scope.item.noTelpon,
-                                        "user": "Ramdanegie"
+                                        "user": medifirstService.getPegawaiLogin().namaLengkap
                                     }
                                 }
                             }
@@ -870,7 +870,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 "noSurat": data.noSurat,
                                 "tglRujukanInternal": moment(data.tglRujukanInternal).format('YYYY-MM-DD'),
                                 "kdPoliTuj": data.kdPoliTuj.kdinternal,
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }
@@ -892,7 +892,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "request": {
                             "t_sep": {
                                 "noSep": data,
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }
@@ -965,7 +965,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     "jnsPelayanan": $scope.approval.jenisPelayanan.idjenispelayanan,
                                     "jnsPengajuan": $scope.approval.jenisPengajuan.idjenispengajuan,
                                     "keterangan": $scope.approval.keterangan === undefined ? "" : $scope.approval.keterangan,
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }
@@ -983,7 +983,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     "tglSep": moment($scope.approval.tglSep).format('YYYY-MM-DD'),
                                     "jnsPelayanan": $scope.approval.jenisPelayanan.idjenispelayanan,
                                     "keterangan": $scope.approval.keterangan === undefined ? "" : $scope.approval.keterangan,
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }
@@ -1020,7 +1020,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 "jnsPelayanan": $scope.pengajuan.jenisPelayanan.idjenispelayanan,
                                 "jnsPengajuan": $scope.pengajuan.jenisPengajuan.idjenispengajuan,
                                 "keterangan": $scope.pengajuan.keterangan === undefined ? "" : $scope.pengajuan.keterangan,
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }
@@ -1081,7 +1081,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 "tglMeninggal": data.statusPulang != undefined && data.statusPulang.id == 4 ? moment(data.tglMeninggal).format('YYYY-MM-DD') : "",
                                 "tglPulang": moment(data.tglPulang).format('YYYY-MM-DD'),
                                 "noLPManual": data.statusPulang != undefined && data.statusPulang.id == 4 ? (data.noLPManual!=undefined?data.noLPManual:"") : "",
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }

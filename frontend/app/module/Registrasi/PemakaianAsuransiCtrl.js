@@ -1471,7 +1471,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         }
                                     },
                                     "noTelp": noTelp,
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }
@@ -1527,7 +1527,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         "kodeDPJP": $scope.model.dokterDPJP != undefined ? $scope.model.dokterDPJP.kode : ""
                                     },
                                     "noTelp": noTelp,
-                                    "user": "Ramdanegie"
+                                    "user": medifirstService.getPegawaiLogin().namaLengkap
                                 }
                             }
                         }

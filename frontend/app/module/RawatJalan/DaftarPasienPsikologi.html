@@ -38,7 +38,7 @@
                                 k-auto-bind="false" k-data-source="listRuangan" />
                         </div>
                     </div>
-                    <div class="grid_1">
+                    <!-- <div class="grid_1">
                         <div class="grid_12">
                             <label c-label item="item" c-label-text="Kelompok"></label>
                         </div>
@@ -48,7 +48,7 @@
                                 k-data-text-field="'kelompokpasien'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listKelompokPasien" />
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Periode Pulang -->
                     <div class="grid_4">
@@ -105,6 +105,18 @@
                                 class="fa fa-pencil"></i>Input EPPS</button>
                     </div>
                 </div>
+                <div class="grid_2">
+                    <div class="grid_12" style="margin-top: 16px">
+                        <button class="btnTemplate1" style="margin-left: 0;" ng-click="inputKraepelin()"> <i
+                                class="fa fa-pencil"></i>Input Kraepelin</button>
+                    </div>
+                </div>
+                <div class="grid_2">
+                    <div class="grid_12" style="margin-top: 16px">
+                        <button class="btnTemplate1" style="margin-left: 0;" ng-click="inputIST()"> <i
+                                class="fa fa-pencil"></i>Input IST</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -118,7 +130,6 @@
                     <label c-label item="item">CFIT</label>
                 </div>
                 <div class="clear"></div>
-
                 <div class="grid_6">
                     <input style="width: 100%;" kendo-combo-box k-ng-model="item.cfit" k-data-text-field="'cfit'"
                         k-data-value-field="'idcfit'" k-filter="'contains'" k-auto-bind="false" k-data-source="listCfit" k-on-change="cfit()"/>
@@ -230,6 +241,316 @@
                                 class="k-icon k-cancel"></span>Batal</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div kendo-window="popUpKraepelin" k-title="'Input Kraepelin'" k-width="1000" k-height="350"
+    k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div class="grid_4">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <label c-label item="item">Pendidikan</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_6">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.pendidikan" k-data-text-field="'pendidikan'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPendidikan"
+                        />
+                </div>
+            </div>
+            
+            <div class="grid_6">
+                <div class="grid_12">
+                    <label c-label item="item">Lajur</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="number" class="k-textbox" ng-model="itemKraepelin.lajur" placeholder="lajur" />
+                </div>
+            </div>
+            <div class="grid_6">
+                <div class="grid_12">
+                    <label c-label item="item">Nilai</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="number" class="k-textbox" ng-model="itemKraepelin.nilai"
+                        ng-keypress="($event.which == 13)? nilai():itemKraepelin.nilai"
+                        />
+                </div>
+            </div>
+            <div class="grid_12">
+                <kendo-grid k-data-source="gridKraepelin" k-pageable="true" k-ng-model="dataKraepelinSelected"
+                    k-selectable="'row'" options="opsiGridKraepelin" ng-click="klikGridKraepelin(dataKraepelinSelected)"
+                    style="font-size: small;"></kendo-grid>
+            </div>
+            <div class="grid_12">
+                <div class="grid_6">
+                    <div class="grid_6" style="margin-top: 10px;">
+                        <label c-label item="item">SALAH</label>
+                    </div>
+                    <div class="grid_6">
+                        <input c-text-box type="input" class="k-textbox" ng-model="salah" placeholder="SALAH" />
+                    </div>
+                    <div class="grid_6" style="margin-top: 10px;">
+                        <label c-label item="item">SKIP</label>
+                    </div>
+                    <div class="grid_6">
+                        <input c-text-box type="input" class="k-textbox" ng-model="skip" placeholder="SKIP" />
+                    </div>
+                </div>
+                <div class="grid_6">
+                    <div class="grd_12">
+                        <div class="grid_6">
+                            <label c-label item="item">Jumlah</label>
+                            <input c-text-box type="input" class="k-textbox" ng-model="jumlah" placeholder="Jumlah" />
+                        </div>
+                        <div class="grid_6" style="margin-top: 20px;">
+                            <label c-label item="item"></label>
+                            <button class="k-button k-button-icontext k-primary k-grid-update"
+                                ng-click="getNilaiKraepelin()"><span class="k-icon k-update"></span>Get
+                                Kraepelin</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_8" style="margin-top: 57px;">
+            <div class="grid_12">
+                <h1>HASIL</h1>
+            </div>
+            <div class="grid_12">
+                <kendo-grid k-data-source="gridNormaKraepelin" k-pageable="true" k-ng-model="dataNormaKraepelinSelected"
+                    k-selectable="'row'" options="opsiGridNormaKraepelin" ng-click="klikGridNormaKraepelin(dataNormaKraepelinSelected)"
+                    style="font-size: small;"></kendo-grid>
+            </div>
+            <div class="grid_12">
+                <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px; margin-bottom: 10px;">
+                    <button class="k-button k-button-icontext k-primary k-grid-update"
+                        ng-click="simpanHasilKraepelin()"><span class="k-icon k-update"></span>Simpan Hasil</button>
+            </div>
+        </div>
+        
+        <div class="grid_12">
+            <div class="grd`_3">
+                <div class="grid_3">
+                    <label c-label item="item">PANKER</label>
+                    <input c-text-box type="input" class="k-textbox" ng-model="mean" placeholder="mean" />
+                </div>
+            </div>
+            <div class="grd_3">
+                <div class="grid_3">
+                    <label c-label item="item">JANKER</label>
+                    <input c-text-box type="input" class="k-textbox" ng-model="avdev" placeholder="avdev" />
+                </div>
+            </div>
+            <div class="grd_3">
+                <div class="grid_3">
+                    <label c-label item="item">HANKER</label>
+                    <input c-text-box type="input" class="k-textbox" ng-model="hanker" placeholder="hangker" />
+                </div>
+            </div>
+            <div class="grd_3">
+                <div class="grid_3">
+                    <label c-label item="item">TIANKER</label>
+                    <input c-text-box type="input" class="k-textbox" ng-model="salkos" placeholder="salkos" />
+                </div>
+            </div>
+               
+        </div>
+            <div class="grid_12">
+                <div class="grid_12"></div>
+                <div class="grid_12">
+                    <div class="k-edit-buttons  k-state-default pull-right"
+                        style="margin-top:10px; margin-bottom: 10px;">
+                        <button class="k-button k-button-icontext k-primary k-grid-update"
+                            ng-click="simpanKraepelin()"><span class="k-icon k-update"></span>Simpan</button>
+                        <button class="k-button  k-button-icontext" ng-click="batalKraepelin()"><span
+                                class="k-icon k-cancel"></span>Batal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div kendo-window="popUpIST" k-title="'Input Hasil IST'" k-width="1000" k-height="500"
+    k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div class="grid_6">
+            <div class="grid_12">
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label item="item">Umur</label>
+                    </div>
+                    <div class="grid_6">
+                        <input c-text-box type="number" class="k-textbox" ng-model="itemIST.umurIST" />
+                    </div>
+                    <div class="grid_6" style="margin-top: 10px;">
+                        <label c-label item="item">Thn</label>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label item="item">Tujuan Test</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" class="k-textbox" ng-model="itemIST.tujuantest" />
+                    </div>
+                </div>
+                <div class="grid_6" style="margin-top: 15px;">
+                    <div class="grid_12">
+                        <label c-label item="item"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" class="k-textbox" ng-model="itemIST.test" disabled />
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12">
+                
+            </div>
+            <div class="grid_6">
+                <div class="grid_12">
+                    <label c-label item="item">No</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="number" class="k-textbox" ng-model="itemIST.nomor" placeholder="no" />
+                </div>
+            </div>
+            <div class="grid_6">
+                <div class="grid_12">
+                    <label c-label item="item">Jawaban</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" class="k-textbox" ng-model="itemIST.jawaban"
+                        placeholder="jawaban"
+                        ng-keypress="($event.which == 13)? jawabanIST():itemIST.jawaban" />
+                </div>
+            </div>
+
+            <!-- <div class="grid_6">
+                <div class="grid_12">
+                    <label c-label item="item">Nilai</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="number" class="k-textbox" ng-model="item.nilai" />
+                </div>
+            </div> -->
+
+            <div class="grid_12">
+                <kendo-grid id="kendoGrid" k-data-source="dataGridIST" k-pageable="true" k-ng-model="dataIST"
+                    k-selectable="'row'" options="gridIST" ng-click="klikGridIST(dataIST)"
+                    style="font-size: small;"></kendo-grid>
+            </div>
+            <div class="grid_12">
+                <!-- <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label item="item">Nilai</label>
+                    </div>
+                    <div class="grid_6">
+                        <input c-text-box type="input" class="k-textbox" ng-model="itemIST.nilai" placeholder="nilai" />
+                    </div>
+                    
+                </div> -->
+                
+            </div>
+            
+            <!-- <div class="grid_6">
+                <div class="grid_12">
+                    <label c-label item="item">Norma Skala</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" class="k-textbox" ng-model="normaSkala" placeholder="norma skala" />
+                </div>
+            </div> -->
+            <!-- <div class="grid_6">
+                <div class="grid_12">
+                    <label c-label item="item">Kategori</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" class="k-textbox" ng-model="kategoriSkala" placeholder="Kategori"
+                        disabled />
+                </div>
+            </div> -->
+            <div class="grid_12">
+                <div class="grid_12"></div>
+                <div class="grid_12">
+                    <div class="k-edit-buttons  k-state-default pull-right"
+                        style="margin-top:10px; margin-bottom: 10px;">
+                        <button class="k-button k-button-icontext k-primary k-grid-update"
+                            ng-click="simpanIST()"><span class="k-icon k-update"></span>Simpan</button>
+                        <button class="k-button  k-button-icontext" ng-click="batalIST()"><span
+                                class="k-icon k-cancel"></span>Batal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_6" style="margin-top:50px">
+            <div class="grid_12">
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="getIST()"><span
+                                class="k-icon k-update"></span>Get IST</button>
+                    </div>
+                </div>
+                <!-- <kendo-grid k-data-source="dataGridNormaIST" k-pageable="true" k-ng-model="dataNormaIST"
+                    k-selectable="'row'" options="gridNormaIST" ng-click="klikGrid(dataNormaIST)"
+                    style="font-size: small;"></kendo-grid> -->
+                    <div class="grid_12">
+                        <table class="table">
+                            <tr>
+                                <td></td>
+                                <td>
+                                    RW
+                                </td>
+                                <td>
+                                    SW
+                                </td>
+                                <td>Kategori</td>
+                            </tr>
+                            <tr ng-repeat="data in dataIST">
+                                <td>{{data.test}}</td>
+                                <td>{{data.rw}}</td>
+                                <td>{{data.sw}}</td>
+                                <td>{{data.sw <= 80 ? 'Sangat Rendah' : data.sw <= 94 ? 'Rendah' : data.sw <=99 ? 'Sedang' : data.sw <= 104 ? 'Cukup': data.sw <=118 ? 'Tinggi': 'Sangat Tinggi'}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>JML</td>
+                                <td>
+                                    {{jml.rw}}
+                                </td>
+                                <td>
+                                    {{jml.gesamt}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>IQ</td>
+                                <td colspan="2">{{jml.iq}}</td>
+                                <td>
+                                    {{jml.iq <= 65 ? "Mentally Defective" : jml.iq<=79 ? "Borderline Defective"
+                                : jml.iq<=90 ? "Low Average": jml.iq<= 110 ? "Average" : jml.iq<=119 ? "High Average"
+                                : jml.iq<=127 ? "Superior" : jml.iq<= 139 ? "Very Superior" : "Genius"}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Dominasi</td>
+                                <td>
+                                    {{x32.x32 <= 10 ? "Seimbang" : x30.x30 >= x31.x31 ? "Eksak" : x30.x30 <= x31.x31 ? "Non Eksak": "" }}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="grid_12">
+                        <div class="k-edit-buttons  k-state-default pull-right"
+                            style="margin-top:10px; margin-bottom: 10px;">
+                            <button class="k-button k-button-icontext k-primary k-grid-update"
+                                ng-click="simpanHasilIST()"><span class="k-icon k-update"></span>Simpan</button>
+                        </div>
+                    </div>
             </div>
         </div>
     </div>

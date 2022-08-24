@@ -1341,7 +1341,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "request": {
                             "t_sep": {
                                 "noSep": $scope.model.noSep,
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }
@@ -1645,7 +1645,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         },
                                         "dpjpLayan": $scope.model.DPJPMelayani ? $scope.model.DPJPMelayani.kode : "",
                                         "noTelp": noTelp,
-                                        "user": "Ramdanegie"
+                                        "user": medifirstService.getPegawaiLogin().namaLengkap
                                     }
                                 }
                             }
@@ -1718,7 +1718,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                             },
                                             "dpjpLayan": $scope.model.DPJPMelayani ? $scope.model.DPJPMelayani.kode : "",
                                             "noTelp": noTelp,
-                                            "user": "Ramdanegie"
+                                            "user": medifirstService.getPegawaiLogin().namaLengkap
                                         }
                                     }
                                 }
@@ -3264,7 +3264,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 "diagRujukan": $scope.rujukan.diagnosa ? $scope.rujukan.diagnosa.kode : "",
                                 "tipeRujukan": $scope.rujukan.tipe,
                                 "poliRujukan": $scope.rujukan.tipe == 2 ? "" : ($scope.rujukan.poli ? $scope.rujukan.poli.kode : ""),
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }
@@ -3496,7 +3496,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "request": {
                             "t_rujukan": {
                                 "noRujukan": dataItem.norujukan,
-                                "user": "Ramdanegie"
+                                "user": medifirstService.getPegawaiLogin().namaLengkap
                             }
                         }
                     }
