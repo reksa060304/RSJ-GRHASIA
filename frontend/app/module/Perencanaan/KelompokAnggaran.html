@@ -328,7 +328,7 @@
 										<label c-label item="item" c-label-text="Tahap"></label>
 									</div>
 									<div class="grid_12">
-										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchtahap"
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchtahapkeg"
 											k-data-text-field="'tahap'" k-data-value-field="'id'"
 											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
 									</div>
@@ -1910,24 +1910,6 @@
 		<div class="grid_12">
 			<div class="grid_12">
 				<div class="grid_3" style="text-align: left;">
-					Tanggal Panjar
-				</div>
-				<div class="grid_6" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglPengembalian" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'" disabled="true"/>
-				</div>
-			</div>
-			<input c-text-box type="input" class="k-textbox" ng-model="item.norecpengembalian" ng-hide="true"/>
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;">
-					Sumber Panjar
-				</div>
-				<div class="grid_3" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.sumberpengembalian" disabled="true"/>
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;">
 					Uraian Panjar
 				</div>
 				<div class="grid_6" style="margin-top: -10px;">
@@ -1950,12 +1932,15 @@
 				<div class="grid_3" style="text-align: left;margin-top: 15px;">
 					Uang Pengembalian
 				</div>
-				<div class="grid_6" >
+				<div class="grid_4" >
 					<input c-text-box type="input" class="k-textbox" ng-model="item.uangpengembalian"/>
+				</div>
+				<div class="grid_1" style="margin-top: 0px;">
+					<button class="btnTemplate1" ng-click="TambahPengembalian()" ng-hide="dispptk">Add</button>           
 				</div>
 			</div>
 		</div>
-		<div class="grid_12" style="margin-top: 20px;">
+		<div class="grid_12" style="margin-top: 20px;" ng-hide="true">
 			<div class="grid_2">
 				<button class="btnTemplate1" ng-click="SimpanPengembalian()">Simpan</button>
 			</div>
@@ -2184,6 +2169,94 @@
 		<div class="grid_12">
 			<kendo-grid id="kGrids" k-data-source="dataSourceSPM" k-selectable="'row'"  class="max-height"
 				k-options="columnSPM" k-ng-model="dataSPMSelected" ng-click="klikPanjar(dataSPPSelected)">
+			</kendo-grid>
+		</div>
+	</div>
+</div>
+<div kendo-window="popupPengembalian" k-title="'Pengembalian Panjar'" k-visible="false" k-width="700" k-height="550">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Tanggal Panjar
+				</div>
+				<div class="grid_9" style="margin-top: -10px;">
+					<input style="width: 100%" k-ng-model="item.tglPengembalian" kendo-datetimepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'" disabled="true"/>
+				</div>
+			</div>
+			<input c-text-box type="input" class="k-textbox" ng-model="item.norecpengembalian" ng-hide="true"/>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Sumber Panjar
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.sumberpengembalian" disabled="true"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Sub Kegiatan
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.subkegiatanpengembalian" disabled="true"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Sub Sub Kegiatan
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.subsubkegiatanpengembalian" disabled="true"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Dari Rekening
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.rekeningpengembalian" disabled="true"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Tanggal Pengembalian
+				</div>
+				<div class="grid_9" style="margin-top: -10px;">
+					<input style="width: 100%" k-ng-model="item.tglPengembalian" kendo-datetimepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Jumlah Pengembalian
+				</div>
+				<div class="grid_9" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.jumlahpengembalianpanjar"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					Keterangan
+				</div>
+				<div class="grid_9" style="margin-top: -10px;">
+					<!-- <input c-text-box type="input" class="k-textbox" ng-model="item.tolokUkurKeluaran"  /> -->
+					<textarea required class="k-textbox" style="    height: 76px;
+                                        width: 100%;
+                                        margin-top: 5px;
+                                        resize: none;" ng-model="item.keteranganpengembalian"></textarea>
+				</div>
+			</div>
+		</div>
+		<div class="grid_12" style="margin-top: 20px;">
+			<div class="grid_2">
+				<button class="btnTemplate1" ng-click="SimpanPengembalianPanjar()">Simpan</button>
+			</div>
+			<div class="grid_5"></div>
+		</div><br><br>
+		<div class="grid_12">
+			<kendo-grid id="kGrids" k-data-source="dataSourcePengembalian" k-selectable="'row'"  class="max-height"
+				k-options="columnPengembalian" k-ng-model="dataPengembalianSelected" ng-click="klikPanjar(dataSPPSelected)">
 			</kendo-grid>
 		</div>
 	</div>

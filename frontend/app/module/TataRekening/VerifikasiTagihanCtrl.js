@@ -266,47 +266,9 @@ define(['initialize'], function (initialize) {
 				// 	});
 				// }								
 			}
-			function ResetVerifTagihan() {
-				// 	medifirstService.get("tatarekening/verifikasi-tagihan2?noRegister=" + $scope.dataParams.noRegistrasi)
-				// .then(function (data) {
-				// 	DataRespone = data
-				// 	console.log(data);
-				// 	if (data.statResponse) {
-				// 		// $scope.item = data[0];
-				// 		// $scope.item = data.data;
-				// 		$scope.item.cekMultiPenjamin = false
-				// 		$scope.item.multiPenjamin = []
-				// 		$scope.item.jumlahBayar = 0;
-				// 		$scope.item.billing = 0;
-				// 		if (data.data.deposit != undefined) {
-				// 			$scope.item.deposit = data.data.deposit;
-				// 		} else {
-				// 			$scope.item.deposit = 0;
-				// 		}
-
-				// 		if (data.data.needDokument) {
-				// 			$scope.showKelengkapanDokumen = true;
-				// 			$scope.dataKelengkapanDokumen = new kendo.data.DataSource({
-				// 				data: data.data.dokuments
-				// 			});
-				// 		}
-
-				// 		$scope.showTtlKlaim = true
-				// 		$scope.showTtlKlaim2 = true
-				// 	}
-				// });
-
-				// dataLayanan = [];
-				// dataResep = [];
-						
-			}
-			// $scope.isRouteLoading = true
 			$scope.checkboxClicked = function (dat) {
-				// debugger;
-				// ResetVerifTagihan()
-				
 				medifirstService.get("tatarekening/detail-tagihan-verifikasi?noRegister=" + $scope.dataParams.noRegistrasi).then(function (data2) {
-				$scope.isRouteLoading = true;
+					$scope.isRouteLoading = true;
 					if (data2.statResponse) {
 						dataLayanan = [];
 						dataResep = [];
@@ -479,6 +441,7 @@ define(['initialize'], function (initialize) {
 				//                 $scope.item.kasuslama = true
 				//             }
 			}
+			
 
 
 			// function loadDataResep(){

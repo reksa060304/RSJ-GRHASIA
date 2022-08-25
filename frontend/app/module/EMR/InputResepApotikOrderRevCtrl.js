@@ -45,6 +45,7 @@ define(['initialize'], function (initialize) {
             var dataPaket = [];
             $scope.item.noRuang = 0;
             $scope.copynoresep = ""
+            $scope.rke = ''
             $scope.listJumlah =  [
                 { "jml": 7 },
                 { "jml": 14 },
@@ -300,6 +301,8 @@ define(['initialize'], function (initialize) {
                         $scope.item.stok = dat.data.jmlstok / $scope.item.nilaiKonversi
                         if (dat.data.kekuatan == 0) {
                             dat.data.kekuatan = 1
+                        } else{
+                            dat.data.kekuatan = dat.data.kekuatan
                         }
                         $scope.item.kekuatan = dat.data.kekuatan
                         $scope.item.sediaan = dat.data.sediaan
@@ -336,6 +339,13 @@ define(['initialize'], function (initialize) {
                         $scope.item.total = 0// parseFloat(newValue) * 
                         // (hrg1-hrgsdk)
                     // }
+                }
+            });
+            $scope.$watch('item.rke', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    if($scope.rke != $scope.item.rke){
+                        $scope.item.jumlahxmakan = ''
+                    }
                 }
             });
             $scope.$watch('item.hari', function (newValue, oldValue) {
@@ -644,122 +654,271 @@ define(['initialize'], function (initialize) {
                 } else {
                     nomor = data2.length + 1
                 }
-                var data = {};
-                $scope.disabledRuangan = true;
-                if ($scope.item.no != undefined) {
-                    for (var i = data2.length - 1; i >= 0; i--) {
-                        if (data2[i].no == $scope.item.no) {
-                            data.no = $scope.item.no
 
-                            data.noregistrasifk = norec_apd//$scope.item.noRegistrasi
-                            //data.tglregistrasi = $scope.item.tglregistrasi
-                            data.generik = null
-                            data.hargajual = $scope.item.hargaSatuan
-                            data.jenisobatfk = jRacikan
-                            //data.kelasfk = $scope.item.kelas.id
-                            data.stock = $scope.item.stok
-                            data.harganetto = $scope.item.hargaSatuan
-                            data.nostrukterimafk = noTerima
-                            data.ruanganfk = $scope.item.ruangan.id
+                var cek = $scope.item.kekuatan
 
-                            data.rke = $scope.item.rke
-                            data.jeniskemasanfk = $scope.item.jenisKemasan.id
-                            data.jeniskemasan = $scope.item.jenisKemasan.jeniskemasan
-                            data.aturanpakaifk = 0//$scope.item.aturanPakai.id
-                            data.aturanpakai = $scope.item.aturanpakaitxt//aturanPakai.name
-                            data.ispagi = $scope.item.chkp
-                            data.issiang = $scope.item.chks
-                            data.issore = $scope.item.chksr
-                            data.ismalam = $scope.item.chkm
-                            data.asalprodukfk = 0//$scope.item.asal.id
-                            data.asalproduk = ''//$scope.item.asal.asalproduk
-                            data.produkfk = $scope.item.produk.id
-                            data.namaproduk = $scope.item.produk.namaproduk
-                            data.nilaikonversi = $scope.item.nilaiKonversi
-                            data.satuanstandarfk = $scope.item.satuan.ssid
-                            data.satuanstandar = $scope.item.satuan.satuanstandar
-                            data.satuanviewfk = $scope.item.satuan.ssid
-                            data.satuanview = $scope.item.satuan.satuanstandar
-                            data.jmlstok = $scope.item.stok
-                            data.jumlah = $scope.item.jumlah
-                            data.hargasatuan = $scope.item.hargaSatuan
-                            data.hargadiscount = 0
-                            data.total = $scope.item.total
-                            data.dosis = dosis
-                            data.jumlahxmakan = $scope.item.jumlahxmakan
-                            data.jmldosis = String(($scope.item.jumlah) / dosis) + '/' + String(dosis)
-                            data.keterangan = KetPakai,
-                            data.satuanresepfk = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null
-                            data.satuanresep = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null
-                            data.tglkadaluarsa = $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
-                            data.isoutofstok = isOutOfStok,
-                            data2[i] = data;
-                            $scope.dataGrid = new kendo.data.DataSource({
-                                data: data2
+                var objSave = {
+                    idproduk: $scope.item.produk.id,
+                    kekuatan: $scope.item.kekuatan,
+                }
+
+                medifirstService.get('farmasi/get-kekuatan-obat?idproduk='+$scope.item.produk.id).then(function (e) {
+                    if(e.data[0].kekuatan == null || e.data[0].kekuatan == ''){
+                        medifirstService.post('farmasi/save-kekuatan-obat',objSave).then(function (e) {
+                            var data = {};
+                                $scope.disabledRuangan = true;
+                                if ($scope.item.no != undefined) {
+                                    for (var i = data2.length - 1; i >= 0; i--) {
+                                        if (data2[i].no == $scope.item.no) {
+                                            data.no = $scope.item.no
+
+                                            data.noregistrasifk = norec_apd//$scope.item.noRegistrasi
+                                            //data.tglregistrasi = $scope.item.tglregistrasi
+                                            data.generik = null
+                                            data.hargajual = $scope.item.hargaSatuan
+                                            data.jenisobatfk = jRacikan
+                                            //data.kelasfk = $scope.item.kelas.id
+                                            data.stock = $scope.item.stok
+                                            data.harganetto = $scope.item.hargaSatuan
+                                            data.nostrukterimafk = noTerima
+                                            data.ruanganfk = $scope.item.ruangan.id
+
+                                            data.rke = $scope.item.rke
+                                            data.jeniskemasanfk = $scope.item.jenisKemasan.id
+                                            data.jeniskemasan = $scope.item.jenisKemasan.jeniskemasan
+                                            data.aturanpakaifk = 0//$scope.item.aturanPakai.id
+                                            data.aturanpakai = $scope.item.aturanpakaitxt//aturanPakai.name
+                                            data.ispagi = $scope.item.chkp
+                                            data.issiang = $scope.item.chks
+                                            data.issore = $scope.item.chksr
+                                            data.ismalam = $scope.item.chkm
+                                            data.asalprodukfk = 0//$scope.item.asal.id
+                                            data.asalproduk = ''//$scope.item.asal.asalproduk
+                                            data.produkfk = $scope.item.produk.id
+                                            data.namaproduk = $scope.item.produk.namaproduk
+                                            data.nilaikonversi = $scope.item.nilaiKonversi
+                                            data.satuanstandarfk = $scope.item.satuan.ssid
+                                            data.satuanstandar = $scope.item.satuan.satuanstandar
+                                            data.satuanviewfk = $scope.item.satuan.ssid
+                                            data.satuanview = $scope.item.satuan.satuanstandar
+                                            data.jmlstok = $scope.item.stok
+                                            data.jumlah = $scope.item.jumlah
+                                            data.hargasatuan = $scope.item.hargaSatuan
+                                            data.hargadiscount = 0
+                                            data.total = $scope.item.total
+                                            data.dosis = dosis
+                                            data.jumlahxmakan = $scope.item.jumlahxmakan
+                                            data.jmldosis = String(($scope.item.jumlah) / dosis) + '/' + String(dosis)
+                                            data.keterangan = KetPakai,
+                                            data.satuanresepfk = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null
+                                            data.satuanresep = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null
+                                            data.tglkadaluarsa = $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
+                                            data.isoutofstok = isOutOfStok,
+                                            data2[i] = data;
+                                            $scope.dataGrid = new kendo.data.DataSource({
+                                                data: data2
+                                            });
+
+                                        }
+                                    }
+
+                                } else {
+                                    data = {
+                                        no: nomor,
+                                        generik: null,
+                                        hargajual: $scope.item.hargaSatuan,
+                                        jenisobatfk: jRacikan,
+                                        //kelasfk:$scope.item.kelas.id,
+                                        stock: $scope.item.stok,
+                                        harganetto: $scope.item.hargaSatuan,
+                                        nostrukterimafk: noTerima,
+                                        ruanganfk: $scope.item.ruangan.id,//£££
+                                        rke: $scope.item.rke,
+                                        jeniskemasanfk: $scope.item.jenisKemasan.id,
+                                        jeniskemasan: $scope.item.jenisKemasan.jeniskemasan,
+                                        aturanpakaifk: 0,//$scope.item.aturanPakai.id,
+                                        aturanpakai: $scope.item.aturanpakaitxt,//aturanPakai.name,
+                                        ispagi: $scope.item.chkp,
+                                        issiang: $scope.item.chks,
+                                        issore: $scope.item.chksr,
+                                        ismalam: $scope.item.chkm,
+                                        asalprodukfk: 0,//$scope.item.asal.id,
+                                        asalproduk: '',//$scope.item.asal.asalproduk,
+                                        produkfk: $scope.item.produk.id,
+                                        namaproduk: $scope.item.produk.namaproduk,
+                                        nilaikonversi: $scope.item.nilaiKonversi,
+                                        satuanstandarfk: $scope.item.satuan.ssid,
+                                        satuanstandar: $scope.item.satuan.satuanstandar,
+                                        satuanviewfk: $scope.item.satuan.ssid,
+                                        satuanview: $scope.item.satuan.satuanstandar,
+                                        jmlstok: $scope.item.stok,
+                                        jumlah: $scope.item.jumlah,
+                                        hargasatuan: $scope.item.hargaSatuan,
+                                        hargadiscount: 0,
+                                        total: $scope.item.total,
+                                        dosis: dosis,
+                                        jumlahxmakan: $scope.item.jumlahxmakan,
+                                        jmldosis: String(($scope.item.jumlah) / dosis) + '/' + String(dosis),
+                                        keterangan: KetPakai,
+                                        satuanresepfk : $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null,
+                                        satuanresep : $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null,
+                                        tglkadaluarsa : $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
+                                        isoutofstok : isOutOfStok,
+                                    }
+                                    data2.push(data)
+                                    // $scope.dataGrid.add($scope.dataSelected)
+                                    $scope.dataGrid = new kendo.data.DataSource({
+                                        data: data2
+                                    });
+                                    var subTotal = 0;
+                                    for (var i = data2.length - 1; i >= 0; i--) {
+                                        subTotal = subTotal + parseFloat(data2[i].total)
+                                    }
+                                    $scope.item.totalSubTotal = subTotal
+                                }
+                                if ($scope.item.jenisKemasan.jeniskemasan != 'Racikan') {
+                                    $scope.item.rke = parseFloat($scope.item.rke) + 1
+                                }
+                                Kosongkan();
+                                clear();
+                        });
+                    }
+                    else if(e.data[0].kekuatan != null && e.data[0].kekuatan != '' && (parseInt(e.data[0].kekuatan) != cek)){
+                        var confirm = $mdDialog.confirm()
+							.title('Peringatan!')
+							.textContent('Apakah Anda yakin data kekuatan sudah benar?')
+							.ariaLabel('Lucky day')
+                            .cancel('Tidak')
+							.ok('Ok')
+
+						$mdDialog.show(confirm).then(function () {
+                            medifirstService.post('farmasi/save-kekuatan-obat',objSave).then(function (e) {
+                                var data = {};
+                                $scope.disabledRuangan = true;
+                                if ($scope.item.no != undefined) {
+                                    for (var i = data2.length - 1; i >= 0; i--) {
+                                        if (data2[i].no == $scope.item.no) {
+                                            data.no = $scope.item.no
+
+                                            data.noregistrasifk = norec_apd//$scope.item.noRegistrasi
+                                            //data.tglregistrasi = $scope.item.tglregistrasi
+                                            data.generik = null
+                                            data.hargajual = $scope.item.hargaSatuan
+                                            data.jenisobatfk = jRacikan
+                                            //data.kelasfk = $scope.item.kelas.id
+                                            data.stock = $scope.item.stok
+                                            data.harganetto = $scope.item.hargaSatuan
+                                            data.nostrukterimafk = noTerima
+                                            data.ruanganfk = $scope.item.ruangan.id
+
+                                            data.rke = $scope.item.rke
+                                            data.jeniskemasanfk = $scope.item.jenisKemasan.id
+                                            data.jeniskemasan = $scope.item.jenisKemasan.jeniskemasan
+                                            data.aturanpakaifk = 0//$scope.item.aturanPakai.id
+                                            data.aturanpakai = $scope.item.aturanpakaitxt//aturanPakai.name
+                                            data.ispagi = $scope.item.chkp
+                                            data.issiang = $scope.item.chks
+                                            data.issore = $scope.item.chksr
+                                            data.ismalam = $scope.item.chkm
+                                            data.asalprodukfk = 0//$scope.item.asal.id
+                                            data.asalproduk = ''//$scope.item.asal.asalproduk
+                                            data.produkfk = $scope.item.produk.id
+                                            data.namaproduk = $scope.item.produk.namaproduk
+                                            data.nilaikonversi = $scope.item.nilaiKonversi
+                                            data.satuanstandarfk = $scope.item.satuan.ssid
+                                            data.satuanstandar = $scope.item.satuan.satuanstandar
+                                            data.satuanviewfk = $scope.item.satuan.ssid
+                                            data.satuanview = $scope.item.satuan.satuanstandar
+                                            data.jmlstok = $scope.item.stok
+                                            data.jumlah = $scope.item.jumlah
+                                            data.hargasatuan = $scope.item.hargaSatuan
+                                            data.hargadiscount = 0
+                                            data.total = $scope.item.total
+                                            data.dosis = dosis
+                                            data.jumlahxmakan = $scope.item.jumlahxmakan
+                                            data.jmldosis = String(($scope.item.jumlah) / dosis) + '/' + String(dosis)
+                                            data.keterangan = KetPakai,
+                                            data.satuanresepfk = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null
+                                            data.satuanresep = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null
+                                            data.tglkadaluarsa = $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
+                                            data.isoutofstok = isOutOfStok,
+                                            data2[i] = data;
+                                            $scope.dataGrid = new kendo.data.DataSource({
+                                                data: data2
+                                            });
+
+                                        }
+                                    }
+
+                                } else {
+                                    data = {
+                                        no: nomor,
+                                        generik: null,
+                                        hargajual: $scope.item.hargaSatuan,
+                                        jenisobatfk: jRacikan,
+                                        //kelasfk:$scope.item.kelas.id,
+                                        stock: $scope.item.stok,
+                                        harganetto: $scope.item.hargaSatuan,
+                                        nostrukterimafk: noTerima,
+                                        ruanganfk: $scope.item.ruangan.id,//£££
+                                        rke: $scope.item.rke,
+                                        jeniskemasanfk: $scope.item.jenisKemasan.id,
+                                        jeniskemasan: $scope.item.jenisKemasan.jeniskemasan,
+                                        aturanpakaifk: 0,//$scope.item.aturanPakai.id,
+                                        aturanpakai: $scope.item.aturanpakaitxt,//aturanPakai.name,
+                                        ispagi: $scope.item.chkp,
+                                        issiang: $scope.item.chks,
+                                        issore: $scope.item.chksr,
+                                        ismalam: $scope.item.chkm,
+                                        asalprodukfk: 0,//$scope.item.asal.id,
+                                        asalproduk: '',//$scope.item.asal.asalproduk,
+                                        produkfk: $scope.item.produk.id,
+                                        namaproduk: $scope.item.produk.namaproduk,
+                                        nilaikonversi: $scope.item.nilaiKonversi,
+                                        satuanstandarfk: $scope.item.satuan.ssid,
+                                        satuanstandar: $scope.item.satuan.satuanstandar,
+                                        satuanviewfk: $scope.item.satuan.ssid,
+                                        satuanview: $scope.item.satuan.satuanstandar,
+                                        jmlstok: $scope.item.stok,
+                                        jumlah: $scope.item.jumlah,
+                                        hargasatuan: $scope.item.hargaSatuan,
+                                        hargadiscount: 0,
+                                        total: $scope.item.total,
+                                        dosis: dosis,
+                                        jumlahxmakan: $scope.item.jumlahxmakan,
+                                        jmldosis: String(($scope.item.jumlah) / dosis) + '/' + String(dosis),
+                                        keterangan: KetPakai,
+                                        satuanresepfk : $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null,
+                                        satuanresep : $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null,
+                                        tglkadaluarsa : $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
+                                        isoutofstok : isOutOfStok,
+                                    }
+                                    data2.push(data)
+                                    // $scope.dataGrid.add($scope.dataSelected)
+                                    $scope.dataGrid = new kendo.data.DataSource({
+                                        data: data2
+                                    });
+                                    var subTotal = 0;
+                                    for (var i = data2.length - 1; i >= 0; i--) {
+                                        subTotal = subTotal + parseFloat(data2[i].total)
+                                    }
+                                    $scope.item.totalSubTotal = subTotal
+                                }
+                                if ($scope.item.jenisKemasan.jeniskemasan != 'Racikan') {
+                                    $scope.item.rke = parseFloat($scope.item.rke) + 1
+                                }
+                                Kosongkan();
+                                clear();
                             });
+						});
+                    }
+                });
 
-                        }
-                    }
+                
 
-                } else {
-                    data = {
-                        no: nomor,
-                        generik: null,
-                        hargajual: $scope.item.hargaSatuan,
-                        jenisobatfk: jRacikan,
-                        //kelasfk:$scope.item.kelas.id,
-                        stock: $scope.item.stok,
-                        harganetto: $scope.item.hargaSatuan,
-                        nostrukterimafk: noTerima,
-                        ruanganfk: $scope.item.ruangan.id,//£££
-                        rke: $scope.item.rke,
-                        jeniskemasanfk: $scope.item.jenisKemasan.id,
-                        jeniskemasan: $scope.item.jenisKemasan.jeniskemasan,
-                        aturanpakaifk: 0,//$scope.item.aturanPakai.id,
-                        aturanpakai: $scope.item.aturanpakaitxt,//aturanPakai.name,
-                        ispagi: $scope.item.chkp,
-                        issiang: $scope.item.chks,
-                        issore: $scope.item.chksr,
-                        ismalam: $scope.item.chkm,
-                        asalprodukfk: 0,//$scope.item.asal.id,
-                        asalproduk: '',//$scope.item.asal.asalproduk,
-                        produkfk: $scope.item.produk.id,
-                        namaproduk: $scope.item.produk.namaproduk,
-                        nilaikonversi: $scope.item.nilaiKonversi,
-                        satuanstandarfk: $scope.item.satuan.ssid,
-                        satuanstandar: $scope.item.satuan.satuanstandar,
-                        satuanviewfk: $scope.item.satuan.ssid,
-                        satuanview: $scope.item.satuan.satuanstandar,
-                        jmlstok: $scope.item.stok,
-                        jumlah: $scope.item.jumlah,
-                        hargasatuan: $scope.item.hargaSatuan,
-                        hargadiscount: 0,
-                        total: $scope.item.total,
-                        dosis: dosis,
-                        jumlahxmakan: $scope.item.jumlahxmakan,
-                        jmldosis: String(($scope.item.jumlah) / dosis) + '/' + String(dosis),
-                        keterangan: KetPakai,
-                        satuanresepfk : $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null,
-                        satuanresep : $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null,
-                        tglkadaluarsa : $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
-                        isoutofstok : isOutOfStok,
-                    }
-                    data2.push(data)
-                    // $scope.dataGrid.add($scope.dataSelected)
-                    $scope.dataGrid = new kendo.data.DataSource({
-                        data: data2
-                    });
-                    var subTotal = 0;
-                    for (var i = data2.length - 1; i >= 0; i--) {
-                        subTotal = subTotal + parseFloat(data2[i].total)
-                    }
-                    $scope.item.totalSubTotal = subTotal
-                }
-                if ($scope.item.jenisKemasan.jeniskemasan != 'Racikan') {
-                    $scope.item.rke = parseFloat($scope.item.rke) + 1
-                }
-                Kosongkan();
-                clear();
+                
+                
+                $scope.rke = $scope.item.rke
             }
 
             $scope.klikGrid = function (dataSelected) {
@@ -843,6 +1002,8 @@ define(['initialize'], function (initialize) {
                 $scope.item.total = 0
                 $scope.item.hargaSatuan = 0
                 $scope.item.satuanresep = undefined;
+                $scope.item.kekuatan = ''
+                $scope.item.dosis = ''
                 // $scope.item.chkp = 0
                 // $scope.item.chks = 0
                 // $scope.item.chksr = 0

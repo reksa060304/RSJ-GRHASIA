@@ -13,7 +13,7 @@
             }
 
             .fs-13{
-                font-size: 15px;
+                font-size: 13px;
                 font-family: 'Tahoma';
             }
 
@@ -31,8 +31,8 @@
 
             td.description,
             th.description {
-                width: 160px;
-                max-width: 160px;
+                width: 165px;
+                max-width: 165px;
             }
 
             td.quantity,
@@ -44,8 +44,8 @@
 
             td.price,
             th.price {
-                width: 95px;
-                max-width: 95px;
+                width: 100px;
+                max-width: 100px;
             }
 
             .centered {
@@ -54,8 +54,8 @@
             }
 
             .ticket {
-                width: 350px;
-                max-width: 350px;
+                width: 360px;
+                max-width: 360px;
             }
 
             @media print {
@@ -78,7 +78,7 @@
                 <br>Telp.  {{ $profile[0]->fixedphone }} Fax. {{ $profile[0]->faksimile }}
             </p>
 
-            <table  style="border-top: none">
+            <table  style="border-top: none; margin-top: -10px;">
                 <tbody>
                     <tr>
                         <td class="price fs-9"><strong></strong></td>
@@ -97,7 +97,7 @@
                 </tbody>
             </table>
 
-            <p class="centered fs-13">No. Resep: {{$skrining->noresep}}<br>------Resep-----</p>
+            <p class="centered fs-13" style="margin-top: 0px;">No. Resep: {{$skrining->noresep}}</p>
             <table>
                 <thead>
                     <tr>
@@ -121,8 +121,6 @@
                     <tr style="height: 10px;"><td></td></tr>
                 </tbody>
             </table>
-
-            <p class="centered fs-11">------Identitas Pasien-----</p>
             <table>
                 <tbody>
                     <tr>
@@ -179,7 +177,7 @@
                 </tbody>
             </table>
 
-            <p class="fs-9" style="text-align: left">I. TELAAH RESEP</p>
+            <p class="fs-9" style="text-align: left; margin-top: -10px;">I. TELAAH RESEP</p>
             <table>
                 <thead>
                     <tr>
@@ -432,7 +430,7 @@
             <p class="fs-9" style="text-align: left">Ket: </p>
             @endif
             
-            <p class="centered fs-11">------Petugas Farmasi-----</p>
+            <p class="centered fs-11" style="margin-top: -10px;">------Petugas Farmasi-----</p>
             <table>
                 <thead>
                     <tr>

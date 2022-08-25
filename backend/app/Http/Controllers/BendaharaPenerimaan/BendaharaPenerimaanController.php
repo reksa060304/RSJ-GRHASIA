@@ -2549,7 +2549,7 @@ class BendaharaPenerimaanController extends ApiController {
             $total_penerimaan=round($totalpenerimaan,-3)+500;
         }
 
-        $nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, $this->getDateTime()->format('ymd'),$idProfile);
+        $nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, date('ymd',strtotime($setor[0]['tanggalSTS'])),$idProfile);
 
         $STS = new SuratTandaSetoran();
         $STS->norec  = $STS->generateNewId();

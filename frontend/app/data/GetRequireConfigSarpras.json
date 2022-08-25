@@ -995,6 +995,22 @@
         {
             "nameDep": "LaporanPerJenisAnggaranCtrl",
             "urlDep": "module/Perencanaan/LaporanPerJenisAnggaranCtrl"
+        },
+        {
+            "nameDep": "LPJCtrl",
+            "urlDep": "module/Perencanaan/LPJCtrl"
+        },
+        {
+            "nameDep": "PemungutanPenyetoranPajakCtrl",
+            "urlDep": "module/Perencanaan/PemungutanPenyetoranPajakCtrl"
+        },
+        {
+            "nameDep": "JasaGiroCtrl",
+            "urlDep": "module/Perencanaan/JasaGiroCtrl"
+        },
+        {
+            "nameDep": "BukuKasUmumCtrl",
+            "urlDep": "module/Perencanaan/BukuKasUmumCtrl"
         }
     ]
 }
