@@ -74,8 +74,7 @@
         <div class="ticket">
             <p class="centered fs-11"><b>RESEP</b>
                 <b><br>Rumah Sakit Jiwa Grhasia</b>
-                <br>{{ $profile[0]->alamatlengkap }}
-                <br>Telp.  {{ $profile[0]->fixedphone }} Fax. {{ $profile[0]->faksimile }}
+                <br>Jl. Kaliurang KM.17, Pakembinangun, Kec. Pakem, Kab. Sleman, DIY
             </p>
 
             <table  style="border-top: none; margin-top: -10px;">
