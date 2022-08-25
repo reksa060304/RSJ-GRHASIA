@@ -414,21 +414,49 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 							//buat penjumlahan mkgtotal - cutitotal 
 							if (dataRiwayatPangkatGolongan.length > 0) {
+								//dari tgltmt pertama kurang tglskrg
+								var masakerja = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), $scope.now)
+									console.log(masakerja);
+
+								//masakerjathn tahun diubah ke bulan
+								var masakerjagthn = masakerja.year * 12
+
+								var masakerjagbln = masakerja.month 
+
+								//dari masa kerja keseluruhan diubah ke bulan
+								var mkt = $scope.item.masakerjatambahan * 12
+
+								// console.log(bln);
 								if (dataCuti.length > 0) {
+									$scope.totalcutibln = 0
+									for (let i = 0; i < dataCuti.length; i++) {
+										dataCuti[i].cutitotal = dateHelper.CountAge(new Date(dataCuti[i].tgldari), new Date(dataCuti[i].tglsampai))
+										var cutitotalthn = dataCuti[i].cutitotal.year * 12
+										var cutitotalbln = dataCuti[i].cutitotal.month
+										$scope.totalcutibln += cutitotalbln + cutitotalthn
+										console.log($scope.totalcutibln);
+									}
+									console.log("total"+$scope.totalcutibln);
 									var mkgtotal = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), $scope.now)
 									var cutitotal = dateHelper.CountAge(new Date(dataCuti[0].tgldari), new Date(dataCuti[dataCuti.length - 1].tglsampai))
+									//cuti total diubah thn ke buln 
+									// var cutitotalthn = cutitotal.year *12
+									// var cutitotalbln = cutitotal.month
+									var blntotal = (masakerjagbln + masakerjagthn + mkt) - ($scope.totalcutibln) 
+									var thn = parseInt(blntotal/12) 
+									var bln = blntotal - (thn * 12)
+									console.log(thn);
+									$scope.item.masakerjakeseluruhan = thn + " Thn " + bln + " Bln"
+									console.log(blntotal);
+									// console.log(cutitotal);
 									var mkgbln = mkgtotal.month,
 										mkgthn = mkgtotal.year
 									var cutibln = cutitotal.month,
 										cutithn = cutitotal.year
-									console.log(mkgbln, mkgthn);
-									console.log(mkgtotal, cutitotal);
 									var sumthn = mkgthn - cutithn,
 										sumbln = mkgbln - cutibln
-									console.log(sumthn, sumbln);
 									$scope.sum = sumthn
-									$scope.item.masakerjakeseluruhan = ($scope.item.masakerjatambahan + $scope.sum) + " Thn"
-									console.log($scope.item.masakerjakeseluruhan);
+									// $scope.item.masakerjakeseluruhan = ($scope.item.masakerjatambahan + $scope.sum) + " Thn" 
 								}else{
 									var mkgtotal = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), $scope.now)
 									// var cutitotal = dateHelper.CountAge(new Date(dataCuti[0].tgldari), new Date(dataCuti[dataCuti.length - 1].tglsampai))
@@ -437,10 +465,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 									
 									var sumthn = mkgthn - 0,
 										sumbln = mkgbln - 0
-									console.log(sumthn, sumbln);
 									$scope.sum = sumthn
-									$scope.item.masakerjakeseluruhan = ($scope.item.masakerjatambahan + $scope.sum) + " Thn"
-									console.log($scope.item.masakerjakeseluruhan);
+									// $scope.item.masakerjakeseluruhan = ($scope.item.masakerjatambahan + $scope.sum) + " Thn"
+									var blntotal = (masakerjagbln + masakerjagthn + mkt) - 0
+									var thn = parseInt(blntotal / 12)
+									var bln = blntotal - (thn * 12)
+									console.log(thn);
+									$scope.item.masakerjakeseluruhan = thn + " Thn " + bln + " Bln"
+
+
+
 								}
 								
 							}
@@ -917,7 +951,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						"width": "70px"
 					},
 					{
-						"field": "mkgt",
+						"field": "masakerjagolongan",
 						"title": "Masa Kerja Golongan",
 						"width": "100px",
 					},
@@ -1794,6 +1828,7 @@ $scope.formatRupiah = function (value, currency) {
 					alert("Data Belum Dipilih!")
 					return;
 				};
+				$scope.itemPandG.masakerjagolongan = dataItem.masakerjagolongan
 				$scope.item.nomorId = dataItem.no;
 				$scope.item.norecPG = dataItem.norec;
 				$scope.itemPandG.golongan = {
@@ -2823,6 +2858,7 @@ $scope.formatRupiah = function (value, currency) {
 					"itemPandG.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
 					"itemPandG.tanggaltmt|k-ng-model|Tanggal TMT",
 					"itemPandG.nominal|ng-model|Nominal",
+					"itemPandG.masakerjagolongan|ng-model|Masa Kerja Golongan",
 					// "itemPandG.jabatanTtd|k-ng-model|Penandatangan Jabatan",
 				];
 
@@ -2850,6 +2886,7 @@ $scope.formatRupiah = function (value, currency) {
 								data.nosk = $scope.itemPandG.nosk
 								data.nominal = $scope.itemPandG.nominal
 								data.objectpegawaifk = $scope.item.idPegawai;
+								data.masakerjagolongan= $scope.itemPandG.masakerjagolongan
 
 								dataRiwayatPangkatGolongan[i] = data;
 								console.log(data);
@@ -2872,7 +2909,8 @@ $scope.formatRupiah = function (value, currency) {
 							golongan: $scope.itemPandG.golongan.golongan,
 							nosk: $scope.itemPandG.nosk,
 							nominal: $scope.itemPandG.nominal,
-							objectpegawaifk: $scope.item.idPegawai
+							objectpegawaifk: $scope.item.idPegawai,
+							masakerjagolongan: $scope.itemPandG.masakerjagolongan
 						}
 						console.log(data);
 						dataRiwayatPangkatGolongan.push(data)

@@ -648,7 +648,7 @@ class SumberDayaManusiaController extends ApiController {
         ->where('pg.id','=',$request['idPegawai'])
         ->get();
 
-        $dataPangkatGolongan = \DB::select(DB::raw("SELECT 
+        $dataPangkatGolongan = \DB::select(DB::raw("SELECT rg.masakerjagolongan,
             rg.nominal,rg.objectgolonganfk,rgb.tgltmt as tglawal, rg.norec,rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, rg.nosk, rg.pejabatmenetapkan
             -- rg.nosk, rg.tglsk,gol.reportdisplay, rg.tgltmt,EXTRACT(year from age(rg.tgltmt,rgb.tgltmt)), age(rg.tgltmt,rgb.tgltmt), rgb.tgltmt as tglawal,rg.nominal 
             FROM riwayatgolongan_t rg 
@@ -6818,6 +6818,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 'pejabatmenetapkan'=> $request['pejabatmenetapkan'] ,
                 'nosk'=> $request['nosk'],
                 'nominal'=> $request['nominal'],
+                'masakerjagolongan'=> $request['masakerjagolongan'],
                 ]);
 
                 DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
@@ -6839,6 +6840,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'pejabatmenetapkan'=> $request['pejabatmenetapkan'] ,
                     'nosk'=> $request['nosk'],
                     'nominal'=> $request['nominal'],
+                    'masakerjagolongan'=> $request['masakerjagolongan'],
                 ]);
 
                 DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
