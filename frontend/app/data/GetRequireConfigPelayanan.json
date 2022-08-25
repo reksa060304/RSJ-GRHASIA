@@ -3303,6 +3303,10 @@
         {
             "nameDep": "LaporanSensusHarianRawatJalanCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanSensusHarianRawatJalanCtrl"
+        },
+        {
+            "nameDep": "LaporanPendapatanPerBangsalCtrl",
+            "urlDep": "module/Farmasi/LaporanFarmasi/LaporanPendapatanPerBangsalCtrl"
         }
         
     ]

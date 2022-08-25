@@ -18355,6 +18355,26 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LaporanPendapatanPerBangsal",
+    "url": "/TGFwb3JhblBlbmRhcGF0YW5QZXJCYW5nc2Fs",
+    "templateurl": "module/Farmasi/LaporanFarmasi/LaporanPendapatanPerBangsal.html",
+    "controller": "LaporanPendapatanPerBangsalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

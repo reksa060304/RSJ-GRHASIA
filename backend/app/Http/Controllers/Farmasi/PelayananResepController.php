@@ -5814,6 +5814,112 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
         return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
 
+    public function getLaporanPendapatanPerBangsal(Request $request) {
+        ini_set('max_execution_time', 6000);
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal= $request['tglAwal'];
+        $tglAkhir= $request['tglAkhir'];
+
+        $ruid='';
+        if(isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
+            $ruid = ' AND ru.id = ' . $request['idRuangan'];
+        }
+        $deptid='';
+        if(isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
+            $deptid = ' AND ru.objectdepartemenfk = ' . $request['idDept'];
+        }
+        $paramProduk = '';
+        if(isset($request['ProdukArr']) && $request['ProdukArr'] != "" && $request['ProdukArr'] != "undefined") {
+            $paramProduk = ' AND pr.id = ' . $request['ProdukArr'];
+        }
+    
+        $datasarana = DB::select(DB::raw("select ruangan, komponenharga, sum(total) total
+        from(
+                            select 
+                            ru.namaruangan as ruangan, kh.komponenharga,
+                            (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
+                            0 ELSE ppd.hargadiscount END) * sum(pp.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
+                                
+                            from
+                                pasien_m ps 
+                            inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                            inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            left join pegawai_m pg on pg.id = pd.objectpegawaifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
+                            left  join produk_m pr on pr.id=pp.produkfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+                            where pp.isobat is null
+                            and ppd.komponenhargafk = 93
+                            and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+                            and pp.kdprofile = 30
+                            $ruid
+                            $deptid
+                            $paramProduk
+                            group by ru.namaruangan, kh.komponenharga, ppd.hargajual,ppd.hargadiscount,ppd.jasa
+                    ) as x group by ruangan, komponenharga;
+                    "));
+
+        $datapelayanan = DB::select(DB::raw("select ruangan, komponenharga, sum(total) total
+        from(
+                            select 
+                            ru.namaruangan as ruangan, kh.komponenharga,
+                            (((CASE WHEN ppd.hargajual IS NULL THEN	0 ELSE ppd.hargajual END - CASE WHEN ppd.hargadiscount IS NULL THEN
+                            0 ELSE ppd.hargadiscount END) * sum(pp.jumlah)) + CASE WHEN ppd.jasa IS NULL THEN	0 ELSE	ppd.jasa	END	) AS total
+                                
+                            from
+                                pasien_m ps 
+                            inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                            inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                            left join pegawai_m pg on pg.id = pd.objectpegawaifk
+                            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+                            inner join komponenharga_m kh on kh.id = ppd.komponenhargafk 
+                            left  join produk_m pr on pr.id=pp.produkfk
+                            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                            inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+                            where pp.isobat is null
+                            and ppd.komponenhargafk = 94
+                            and pp.tglpelayanan between '$tglAwal' and '$tglAkhir'
+                            and pp.kdprofile = 30
+                            $ruid
+                            $deptid
+                            $paramProduk
+                            group by ru.namaruangan, kh.komponenharga, ppd.hargajual,ppd.hargadiscount,ppd.jasa
+                    ) as x group by ruangan, komponenharga;
+                    "));
+
+        $jumlahhargapelayanan = 0;
+        $detail = [];
+            
+        foreach($datasarana as $sarana){
+            $jumlahhargasarana = $sarana->total;
+            $instalasi = $sarana->ruangan;
+            $jumlahhargapelayanan = 0;
+
+            foreach($datapelayanan as $pelayanan){
+                if($sarana->ruangan == $pelayanan->ruangan){
+                    $jumlahhargapelayanan = $pelayanan->total;
+                }
+            }
+
+            $detail[] =array(
+                'jumlahhargasarana' => $jumlahhargasarana,
+                'jumlahhargapelayanan' => $jumlahhargapelayanan,
+                'instalasi' => $instalasi,
+            );
+        }
+        
+        $result = array(
+            'detail' => $detail,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
     public function getPenjagaanClosingKasir(Request $request)
     {
         
