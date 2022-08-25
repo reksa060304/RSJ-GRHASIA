@@ -77,6 +77,8 @@ define(['initialize'], function (initialize) {
 					medifirstService.get("tatarekening/verifikasi-tagihan2?noRegister=" + $scope.dataParams.noRegistrasi)
 				]).then(function (data) {
 					DataRespone = data[0]
+					console.log(data[0].statResponse);
+					console.log(data[0].statResponse);
 					if (data[0].statResponse) {
 						// $scope.item = data[0];
 						$scope.item = data[0].data;
@@ -108,6 +110,7 @@ define(['initialize'], function (initialize) {
 					medifirstService.get("tatarekening/detail-tagihan-verifikasi?noRegister=" + $scope.dataParams.noRegistrasi)
 				])
 					.then(function (data2) {
+					console.log(data2[0].statResponse);
 
 						if (data2[0].statResponse) {
 							dataLayanan = [];
@@ -116,6 +119,8 @@ define(['initialize'], function (initialize) {
 							verifTotal = 0
 							var nourutlayanan = 0
 							var nourutresep = 0
+					console.log(data2[0].data.details);
+
 							for (var i = data2[0].data.details.length - 1; i >= 0; i--) {
 								if (data2[0].data.details[i].strukfk != null) {
 									if (data2[0].data.details[i].strukfk == " / ") {
@@ -261,66 +266,170 @@ define(['initialize'], function (initialize) {
 				// 	});
 				// }								
 			}
+			function ResetVerifTagihan() {
+				// 	medifirstService.get("tatarekening/verifikasi-tagihan2?noRegister=" + $scope.dataParams.noRegistrasi)
+				// .then(function (data) {
+				// 	DataRespone = data
+				// 	console.log(data);
+				// 	if (data.statResponse) {
+				// 		// $scope.item = data[0];
+				// 		// $scope.item = data.data;
+				// 		$scope.item.cekMultiPenjamin = false
+				// 		$scope.item.multiPenjamin = []
+				// 		$scope.item.jumlahBayar = 0;
+				// 		$scope.item.billing = 0;
+				// 		if (data.data.deposit != undefined) {
+				// 			$scope.item.deposit = data.data.deposit;
+				// 		} else {
+				// 			$scope.item.deposit = 0;
+				// 		}
 
+				// 		if (data.data.needDokument) {
+				// 			$scope.showKelengkapanDokumen = true;
+				// 			$scope.dataKelengkapanDokumen = new kendo.data.DataSource({
+				// 				data: data.data.dokuments
+				// 			});
+				// 		}
+
+				// 		$scope.showTtlKlaim = true
+				// 		$scope.showTtlKlaim2 = true
+				// 	}
+				// });
+
+				// dataLayanan = [];
+				// dataResep = [];
+						
+			}
+			// $scope.isRouteLoading = true
 			$scope.checkboxClicked = function (dat) {
-				let jml723 = 0
-				if (dat) {
-					$scope.item.datachecklist = []
-					for (var i = 0; i < dataLayanan.length; i++) {
-						$scope.item.datachecklist.push(dataLayanan[i])
-					}
+				// debugger;
+				// ResetVerifTagihan()
+				
+				medifirstService.get("tatarekening/detail-tagihan-verifikasi?noRegister=" + $scope.dataParams.noRegistrasi).then(function (data2) {
+				$scope.isRouteLoading = true;
+					if (data2.statResponse) {
+						dataLayanan = [];
+						dataResep = [];
+						var dibayar = 0
+						verifTotal = 0
+						var nourutlayanan = 0
+						var nourutresep = 0
+						for (var i = data2.data.details.length - 1; i >= 0; i--) {
+							if (data2.data.details[i].strukfk != null) {
+								if (data2.data.details[i].strukfk == " / ") {
+									data2.data.details[i].statCheckbox = false;
+								} else if ($scope.item.jenisPasien == 'BPJS' || $scope.item.jenisPasien == 'BPJS Non PBI ' || $scope.item.jenisPasien == 'BPJS PBI') {
+									data2.data.details[i].statCheckbox = true;
+								} else {
+									data2.data.details[i].statCheckbox = true;
+								}
 
-					for (var i = 0; i < dataResep.length; i++) {
-						$scope.item.datachecklist.push(dataResep[i])
-					}
-					var tol = 0
-					for (var i = 0; i < $scope.item.datachecklist.length; i++) {
-						if ($scope.item.datachecklist[i].iskronis == true) {
-							jml723 = (parseFloat($scope.item.datachecklist[i].total) / 30) * 7 + jml723
+								if (data2.data.details[i].strukfk.length > 20) {
+									dibayar = dibayar + data2.data.details[i].total
+								}
+								if (data2.data.details[i].strukfk.length < 20 && data2.data.details[i].strukfk.length > 5) {
+									verifTotal = verifTotal + data2.data.details[i].total
+								}
+							}
+							if (data2.data.details[i].strukfk == " / ") {
+								if (data2.data.details[i].aturanpakai == null) {
+									nourutlayanan = nourutlayanan + 1
+									data2.data.details[i].no = nourutlayanan
+									// dataLayanan[] = data.details[i]
+									dataLayanan.push(data2.data.details[i])
+								} else {
+									nourutresep = nourutresep + nourutresep
+									data2.data.details[i].no = nourutresep
+									dataResep.push(data2.data.details[i])
+									// dataResep[] = data[0].details[i]
+								}
+							}
 						}
-						tol = parseFloat($scope.item.datachecklist[i].total) + tol
+
+						$scope.dataRincianTagihan = new kendo.data.DataSource({
+							data: dataLayanan, //details,
+							group: [
+								//{field: "ruanganTindakan"}
+							],
+							// pageSize: 20,
+
+							// pageSize: 10,
+						});
+						$scope.dataRincianTagihan1 = new kendo.data.DataSource({
+							data: dataResep, //details,
+							group: [
+								//{field: "ruanganTindakan"}
+							],
+							// pageSize: 20,
+
+							// pageSize: 10,
+						});
+						$scope.item.ruang2 = ruangaan2
+						$scope.isRouteLoading = false;
 
 					}
-					$scope.item.jumlahBayar = tol - parseFloat($scope.item.deposit)
-					$scope.item.billing = tol
-					if ($scope.item.jenisPasien == 'BPJS' || $scope.item.jenisPasien == 'BPJS Non PBI' 
-					|| $scope.item.jenisPasien == 'BPJS PBI' || $scope.item.jenisPasien == 'BPJS KELAS I' || $scope.item.jenisPasien == 'BPJS KELAS II' 
-					|| $scope.item.jenisPasien == 'BPJS KELAS III' || $scope.item.jenisPasien == 'BPJS KELAS III PBI' 
-					|| $scope.item.jenisPasien == 'BPJS KELAS III NON PBI (Mandiri)' || $scope.item.jenisPasien == 'Jamkesos' 
-					|| $scope.item.jenisPasien == 'Jamkesda'
-					|| $scope.item.jenisPasien == 'IPWL') {
-						// if ($scope.item.jenisPasien == 'BPJS' || $scope.item.jenisPasien == 'BPJS Non PBI' || $scope.item.jenisPasien == 'BPJS PBI') {
-						$scope.item.totalKlaim = tol;//- jml723;
+					// $scope.isRouteLoading=false;
+					let jml723 = 0
+					if (dat) {
+						$scope.item.datachecklist = []
+						for (var i = 0; i < dataLayanan.length; i++) {
+							$scope.item.datachecklist.push(dataLayanan[i])
+						}
+
+						for (var i = 0; i < dataResep.length; i++) {
+							$scope.item.datachecklist.push(dataResep[i])
+						}
+						var tol = 0
+						for (var i = 0; i < $scope.item.datachecklist.length; i++) {
+							if ($scope.item.datachecklist[i].iskronis == true) {
+								jml723 = (parseFloat($scope.item.datachecklist[i].total) / 30) * 7 + jml723
+							}
+							tol = parseFloat($scope.item.datachecklist[i].total) + tol
+
+						}
+						$scope.item.jumlahBayar = tol - parseFloat($scope.item.deposit)
+						$scope.item.billing = tol
+						if ($scope.item.jenisPasien == 'BPJS' || $scope.item.jenisPasien == 'BPJS Non PBI' ||
+							$scope.item.jenisPasien == 'BPJS PBI' || $scope.item.jenisPasien == 'BPJS KELAS I' || $scope.item.jenisPasien == 'BPJS KELAS II' ||
+							$scope.item.jenisPasien == 'BPJS KELAS III' || $scope.item.jenisPasien == 'BPJS KELAS III PBI' ||
+							$scope.item.jenisPasien == 'BPJS KELAS III NON PBI (Mandiri)' || $scope.item.jenisPasien == 'Jamkesos' ||
+							$scope.item.jenisPasien == 'Jamkesda' ||
+							$scope.item.jenisPasien == 'IPWL') {
+							// if ($scope.item.jenisPasien == 'BPJS' || $scope.item.jenisPasien == 'BPJS Non PBI' || $scope.item.jenisPasien == 'BPJS PBI') {
+							$scope.item.totalKlaim = tol; //- jml723;
+						} else {
+							$scope.item.totalKlaim = 0;
+						}
 					} else {
-						$scope.item.totalKlaim = 0;
+						$scope.item.datachecklist = []
+						$scope.item.jumlahBayar = 0
+						$scope.item.billing = 0
+						$scope.item.totalKlaim = 0
 					}
-				} else {
-					$scope.item.datachecklist = []
-					$scope.item.jumlahBayar = 0
-					$scope.item.billing = 0
-					$scope.item.totalKlaim = 0
-				}
 
 
-				checklisteuy = true
-				$scope.dataRincianTagihan = new kendo.data.DataSource({
-					data: dataLayanan,//details,
-					group: [
-						//{field: "ruanganTindakan"}
-					],
-					// pageSize: 20,
+					checklisteuy = true
+					$scope.dataRincianTagihan = new kendo.data.DataSource({
+						data: dataLayanan, //details,
+						group: [
+							//{field: "ruanganTindakan"}
+						],
+						// pageSize: 20,
 
-					// pageSize: 10,
+						// pageSize: 10,
+					});
+					$scope.dataRincianTagihan1 = new kendo.data.DataSource({
+						data: dataResep, //details,
+						group: [
+							//{field: "ruanganTindakan"}
+						],
+						// pageSize: 20,
+
+						// pageSize: 10,
+					});
 				});
-				$scope.dataRincianTagihan1 = new kendo.data.DataSource({
-					data: dataResep,//details,
-					group: [
-						//{field: "ruanganTindakan"}
-					],
-					// pageSize: 20,
-
-					// pageSize: 10,
-				});
+				$scope.isRouteLoading = false;
+				// init()
 
 				// $scope.item.datachecklist = $scope.selectedData2
 				// if(dat == true){
