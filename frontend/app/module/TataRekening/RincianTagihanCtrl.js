@@ -1445,7 +1445,20 @@ define(['initialize'], function (initialize) {
 							return;
 						}
 
-						medifirstService.get("tatarekening/tindakan/get-pegawaipenginput?norec_pp=" + items.norec).
+						var cekHapusPP = {
+							norec_pp: items.norec,
+							noregistrasi: $scope.item.noRegistrasi,
+							// test: $scope.items.norec
+						}
+						console.log(cekHapusPP);
+						medifirstService.post('tatarekening/cek-pelayanan-nostruk', cekHapusPP).then(function (data) {
+							var datas = data.data.data
+							console.log(data.data.data);
+							if (datas != "") {
+								alert(datas[0].namaproduk+" Sudah di Verif. Harap hubungi Kasir!");
+								return;
+							}
+							medifirstService.get("tatarekening/tindakan/get-pegawaipenginput?norec_pp=" + items.norec).
 							then(function (data) {
 								// $scope.item.PegawaiLoginfk =13;		                 
 								var datas = data.data.data[0];
@@ -1470,6 +1483,9 @@ define(['initialize'], function (initialize) {
 									})
 								}
 
+
+
+
 								// if ($scope.item.PegawaiLoginfk != $scope.item.PegawaiPenindak){
 								// 		toastr.warning('Maaf Anda Tidak Memiliki Kewenangan Untuk Menghapus, Hubungi ' 
 								//         + datas.namalengkap + ' Sebagai User Penginput Bila Ingin Tetap Menghapus, Peringatan!');
@@ -1489,9 +1505,13 @@ define(['initialize'], function (initialize) {
 								}
 								dataDel.push(objDel)
 								// end
+								// return
 								HapuskanTindkan();
 								// }				 				               
 							})
+						})
+
+						
 					})
 				}
 
@@ -1503,6 +1523,7 @@ define(['initialize'], function (initialize) {
 			}
 
 			function HapuskanTindkan() {
+				
 				$scope.isRouteLoading = true
 				var objLog = {
 					pelayananpasiendelete: logData

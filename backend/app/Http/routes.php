@@ -2797,6 +2797,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/hapus-ppasienpetugas', 'TataRekening\TagihanController@hapusPPP');
           Route::post('tatarekening/update-harga-pelayanan-pasien', 'TataRekening\TagihanController@UpdateHargaPelayananPasien');
           Route::post('tatarekening/delete-pelayanan-pasien', 'TataRekening\TagihanController@deletePelayananPasien');
+          Route::post('tatarekening/cek-pelayanan-nostruk', 'TataRekening\TagihanController@cekPelayananNostruk');
           Route::get('tatarekening/get-komponenharga-pelayanan', 'TataRekening\TagihanController@getKomponenHargaPelayanan');
           Route::get('tatarekening/detail-tindakan-takterklaim', 'TataRekening\TagihanController@getTindakanTakTerklaim');  //done
           Route::post('tatarekening/close-pemeriksaan', 'TataRekening\TagihanController@closePemeriksaan');  //done

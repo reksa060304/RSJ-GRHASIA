@@ -14139,4 +14139,21 @@ $result = array(
         );
         return $this->respond($result);
     }
+    public function cekPelayananNostruk(Request $request)
+    {
+        $noregistrasi = $request['noregistrasi'];
+        $norec_pp=$request['norec_pp'];
+        $detail = [];
+            $data = \DB::select(DB::raw("SELECT sp.nostruk, pr.namaproduk FROM pasiendaftar_t pd
+            inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
+            INNER join pelayananpasien_t pp on pp.noregistrasifk = apd.norec
+            inner join strukpelayanan_t sp on sp.norec = pp.strukfk
+            inner join produk_m pr on pr.id = pp.produkfk
+            where pd.noregistrasi ='$noregistrasi' and pp.strukfk is not null and pp.norec ilike '$norec_pp'"));  
+            
+        $result = array(
+            'data'=>$data,
+        );
+        return $this->respond($result);
+    }
 }
