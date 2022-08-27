@@ -4605,6 +4605,10 @@ class TagihanController  extends ApiController
             $data = $data->where('pd.noregistrasi','ilike', '%'.$filter['noReg'].'%');
         }
 
+        if (isset($filter['bpjs']) && $filter['bpjs'] != "" && $filter['bpjs'] != "undefined" && $filter['bpjs'] == 1 ) {
+            $data = $data->whereIn('kp.id', [2, 21, 22, 24, 25]);
+        }
+
         if (isset($filter['noRm']) && $filter['noRm']!="" && $filter['noRm']!="undefined") {
             $data = $data->where('p.nocm','ilike','%'.$filter['noRm'].'%');
         }
@@ -5435,6 +5439,47 @@ class TagihanController  extends ApiController
             'kelompokpasien' =>$dataKelompokPasien,
         );
         return $this->respond($datadata, 'Data Daftar Pasien');
+    }
+
+    public function daftarPiutangBPJS(Request $request){
+        $filter=$request->all();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $piutang = DB::select(DB::raw("select nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, sum(totalklaim) totalklaim,
+        sum(selisih) selisih
+        from(
+                select pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
+                coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar, coalesce(mk.totalsetujui,0) totalklaim, 
+                coalesce(sp.totalprekanan,0) - coalesce(mk.totalsetujui,0) as selisih
+                FROM pasien_m ps 
+                inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                left join kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+                left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
+                left join strukpelayananpenjamin_t as spp on sp.norec = spp.nostrukfk
+                left join rekanan_m as rek on rek.id = pd.objectrekananfk
+                left join pemakaianasuransi_t as pa on pa.noregistrasifk = pd.norec
+                left join monitoringklaim_t mk on mk.nosep = pa.nosep and mk.statusklaimfk = 3
+                where pd.kdprofile = 30 and pd.statusenabled = true
+                and pd.tglpulang between '$tglAwal 00:00' and '$tglAkhir 23:59'
+                and kp.id in(2, 21, 22, 24, 25)
+                and pd.nostruklastfk is not null
+                and pd.nosbmlastfk is null
+                group by pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
+                sp.totalprekanan, coalesce(mk.totalsetujui,0)
+                order by pd.noregistrasi
+        ) as x group by nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan
+        order by noregistrasi;"));
+
+        $datadata =array(
+            'data' =>   $piutang,
+        );
+        return $this->respond($datadata);
     }
 
     public function verifyPiutangPasien(Request $request){

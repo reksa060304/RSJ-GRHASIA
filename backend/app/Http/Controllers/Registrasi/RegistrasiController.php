@@ -6732,6 +6732,9 @@ class RegistrasiController extends ApiController
         if (isset($filter['nama']) && $filter['nama'] != "" && $filter['nama'] != "undefined") {
             $data = $data->where('ps.namapasien', 'ilike', '%' . $filter['nama'] . '%');
         }
+        if (isset($filter['bpjs']) && $filter['bpjs'] != "" && $filter['bpjs'] != "undefined" && $filter['bpjs'] == 1 ) {
+            $data = $data->whereIn('kp.id', [2, 21, 22, 24, 25]);
+        }
 
         if (isset($filter['jmlRows']) && $filter['jmlRows'] != "" && $filter['jmlRows'] != "undefined") {
             $data = $data->take($filter['jmlRows']);

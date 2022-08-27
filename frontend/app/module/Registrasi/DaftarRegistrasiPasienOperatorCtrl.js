@@ -78,6 +78,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					$scope.item.jenisDiagnosis = { id: data.data.jenisdiagnosa[1].id, jenisdiagnosa: data.data.jenisdiagnosa[1].jenisdiagnosa };
 					$scope.listJenisPel = data.data.jenispelayanan;
 					$scope.listJenislabel = [{ id: 1, jenislabel: "Label Besar" }, { id: 2, jenislabel: "Label Kecil" }];
+					$scope.listBPJS = [{ id: 1, name: true }, { id: 2, name: false }];
 				});
 				medifirstService.getPart("registrasi/daftar-registrasi/get-data-diagnosa", true, true, 10).then(function (data) {
 					//  debugger;
@@ -351,6 +352,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if ($scope.item.jenispel != undefined) {
                     jenisPel =  $scope.item.jenispel.id
                 }
+				var bpjs = ""
+                if ($scope.item.isbpjs != undefined) {
+                    bpjs =  $scope.item.isbpjs.id
+                }
 
 
 				$q.all([
@@ -360,7 +365,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 						reg + rm + nm + ins + rg + kp + dk
 						+ '&jmlRows=' + jmlRows +
 						isBlmInputSep + isSepTdkSesuai+blmInputDiag
-						+'&jenisPel='+jenisPel),
+						+'&jenisPel='+jenisPel
+						+'&bpjs='+bpjs),
 				]).then(function (data) {
 					$scope.isRouteLoading = false;
 					for (var i = 0; i < data[0].data.length; i++) {

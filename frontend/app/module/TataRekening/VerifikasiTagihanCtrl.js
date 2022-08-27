@@ -836,6 +836,18 @@ define(['initialize'], function (initialize) {
 			}
 			function savePIlih() {
 				$scope.isRouteLoading = false;
+				console.log($scope.item.datachecklist)
+
+				if (($scope.item.billing == 0 && $scope.item.totalKlaim == 0) || $scope.item.billing == 0) {
+					toastr.error('Total billing / klaim tidak boleh 0')
+					return
+				}
+
+				if ($scope.item.datachecklist == []) {
+					toastr.error('Belum ada data yang dipilih')
+					return
+				}
+
 				$scope.tombolSaveIlang = false;
 				var listRawRequired = [
 					"item.totalKlaim|ng-model|Total klaim",

@@ -407,6 +407,10 @@
         {
             "nameDep": "RincianPendapatanCtrl",
             "urlDep": "module/Perencanaan/RincianPendapatanCtrl"
+        },
+        {
+            "nameDep": "DaftarPiutangBPJSCtrl",
+            "urlDep": "module/Piutang/DaftarPiutangBPJSCtrl"
         }
     ]
 }

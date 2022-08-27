@@ -9483,8 +9483,9 @@ class LogistikController extends ApiController{
             DB::rollBack();
             $result = array(
                 "status" => 400,
-                "message"  => $transMessage,
                 "regAset" => $dataRegAset,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
                 "as" => 'ea@epic',
             );
         }

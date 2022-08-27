@@ -114,9 +114,11 @@ define(['initialize'], function (initialize) {
           $scope.listHubunganKel = dat.data.hubungankeluarga;
           $scope.item.NomorSurat = dat.data.nosurat;
           $scope.noSuratKeteranganKematian = dat.data.nosurat;
+          
           dataLogin = medifirstService.getUserLogin();
         })
         $scope.listStatus = [{ "id": "1", "namaExternal": "Semua" }, { "id": "2", "namaExternal": "Belum Verifikasi" }, { "id": "3", "namaExternal": "Verifikasi" }, { "id": "4", "namaExternal": "Lunas" }]
+        $scope.listBPJS = [{ id: 1, name: true }, { id: 2, name: false }];
         medifirstService.getPart('sysadmin/general/get-combo-pegawai', true, 10).then(function (e) {
           $scope.listDataPegawai = e;
           $scope.listDataPegawais = e;
@@ -431,6 +433,10 @@ define(['initialize'], function (initialize) {
         if ($scope.item.kelompokpasien != undefined) {
           kelompokPasienId = $scope.item.kelompokpasien.id
         }
+        var bpjs = ""
+                if ($scope.item.isbpjs != undefined) {
+                    bpjs =  $scope.item.isbpjs.id
+                }
 
         // var chacePeriode = tglAwal + ":" + tglAkhir + ":" + tempStatus + ":" + tempNamaOrReg 
         //                    + ":" + tempNoReg + ":" + tempRuanganId  + ":" + tempInstalasiId;
@@ -458,7 +464,8 @@ define(['initialize'], function (initialize) {
           + "&instalasiId=" + tempInstalasiId
           + "&noRm=" + tempNoRm
           + "&jmlRows=" + jmlRow
-          + "&kelompokPasienId=" + kelompokPasienId)
+          + "&kelompokPasienId=" + kelompokPasienId
+          +'&bpjs='+bpjs)
           .then(function (data) {
             $scope.showBtnBayar = false
             $scope.isRouteLoading = false;

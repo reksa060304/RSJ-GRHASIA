@@ -117,7 +117,7 @@ define(['initialize'], function (initialize) {
 			}
 
 			function LoadCache() {
-				debugger;
+				//debugger;
 				var chacePeriode = cacheHelper.get('MasterBarangInvestasiCtrl');
 				if (chacePeriode != undefined) {
 					norecNoAsset = chacePeriode[0]
@@ -277,7 +277,7 @@ define(['initialize'], function (initialize) {
 						})
 					}else if (JenisOrder == 'RegisAset') {
 						medifirstService.get("logistik/get-detail-penerimaan?norec=" + norecNoAsset, true).then(function (data) {
-							debugger
+							//debugger
 							var datas = data.data.detailterima;
 							var dataProduk = data.data.pelayananPasien[0];
 							$scope.item.kdProduk = dataProduk.kpid
@@ -533,18 +533,18 @@ define(['initialize'], function (initialize) {
 				var objectkecamatanfk = null;
 				var kecamatan = '';
 				if ($scope.item.kecamatan != undefined) {
-					objectkecamatanfk = $scope.item.kecamatan.objectkecamatanfk;
+					objectkecamatanfk = $scope.item.kecamatan.id;
 					kecamatan = $scope.item.kecamatan.namakecamatan;
 				}
 				var objectkotakabupatenfk = null;
 				var kotakabupaten = '';
 				if ($scope.item.kotaKabupaten != undefined) {
-					objectkotakabupatenfk = $scope.item.kotaKabupaten.objectkotakabupatenfk;
+					objectkotakabupatenfk = $scope.item.kotaKabupaten.id;
 					kotakabupaten = $scope.item.kotaKabupaten.namakotakabupaten;
 				}
 				var objectpropinsifk = null;
 				if ($scope.item.propinsi != undefined) {
-					objectpropinsifk = $scope.item.propinsi.objectpropinsifk;
+					objectpropinsifk = $scope.item.propinsi.id;
 				}
 				// * END ALAMAT
 
