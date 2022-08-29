@@ -2428,7 +2428,7 @@ class RawatJalanController extends ApiController
             ke.namakelas,
             apd.tglkeluar,
             ps.objectjeniskelaminfk,
-            ps.namapasien, EXTRACT(YEAR from AGE(now(), ps.tgllahir)) as umur
+            ps.namapasien, EXTRACT(YEAR from AGE(apd.tglmasuk, ps.tgllahir)) as umur
         FROM
             antrianpasiendiperiksa_t apd
             INNER JOIN pasiendaftar_t pd ON pd.norec = apd.noregistrasifk

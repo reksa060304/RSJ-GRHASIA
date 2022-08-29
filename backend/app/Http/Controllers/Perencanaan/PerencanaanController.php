@@ -686,6 +686,13 @@ class PerencanaanController extends ApiController {
         left join spp_t spp on spp.norec = spm.objectsppfk
         where spm.statusenabled = true"));
 
+        $dataAsalProduk = \DB::table('asalproduk_m as ap')
+            ->select('ap.id','ap.asalproduk')
+            ->where('ap.statusenabled',true)
+            ->where('ap.isanggaran',true)
+            ->orderBy('ap.asalproduk')
+            ->get();
+
 
         $result = array(
             'kegiatan' => $kegiatan,
@@ -708,6 +715,7 @@ class PerencanaanController extends ApiController {
             'spd' => $spd,
             'carispd' => $carispd,
             'carispm' => $carispm,
+            'asalproduk' => $dataAsalProduk,
             // 'kelompokketiga' => $ketiga,
             // 'kelompokkeempat' => $keempat,
             // 'kelompokkelima' => $kelima,
@@ -2494,26 +2502,31 @@ class PerencanaanController extends ApiController {
                 ")
             );
 
-        try{    
-            
-                    $MA = new LPJ();
-                    $norecKS = $MA->generateNewId();
-                    $MA->norec = $norecKS;
-                    $MA->kdprofile = $idProfile;
-                    $MA->statusenabled = true;
-                    $MA->nolpj = $request['nomor'];
-                    $MA->tgllpj = $request['tgllpj'];
-                    $MA->keterangan = $request['keterangan'];
-                    $MA->periode = $request['periode'];
-                    $MA->jenis_bukti = $request['jenis_bukti'];
-                    $MA->total = $data[0]->total;
-                    $MA->save();
+        try{ 
+            if($request['norec'] == ''){
+                $MA = new LPJ();
+                $norecKS = $MA->generateNewId();
+                $MA->norec = $norecKS;
+                $MA->kdprofile = $idProfile;
+                $MA->statusenabled = true;
+                $MA->nolpj = $request['nomor'];
+                $MA->tgllpj = $request['tgllpj'];
+                $MA->keterangan = $request['keterangan'];
+                $MA->periode = $request['periode'];
+                $MA->jenis_bukti = $request['jenis_bukti'];
+                $MA->total = $data[0]->total;
+                $MA->save();
 
-                    foreach($datas as $ds){
-                        $SP = StrukRealisasi::where('norec', '=', $ds->norec)->first();
-                        $SP->objectlpjfk = $MA->norec;
-                        $SP->save();
-                    }
+                foreach($datas as $ds){
+                    $SP = StrukRealisasi::where('norec', '=', $ds->norec)->first();
+                    $SP->objectlpjfk = $MA->norec;
+                    $SP->save();
+                }
+            } else if($request['norec'] != ''){
+                $MA = LPJ::where('norec', '=', $request['norec'])->first();
+                $MA->keterangan = $request['keterangan'];
+                $MA->save();
+            }
 
            $transStatus = 'true';
        } catch (\Exception $e) {
@@ -2531,6 +2544,43 @@ class PerencanaanController extends ApiController {
             );
         } else {
             $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteLPJ(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+            $MA = LPJ::where('norec', '=', $request['norec'])->first();
+            $MA->statusenabled = false;
+            $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
             DB::rollBack();
             $result = array(
                 'status' => 400,
@@ -3286,7 +3336,11 @@ class PerencanaanController extends ApiController {
             $KB= StrukRealisasi::where('norec',$request['norec'])
                 ->first();
             $KB->status = $request['statusverif'];
-            $KB->tglverif = $request['tglverif'];
+            if($request['statusverif'] == 'Sudah Diverifikasi'){
+                $KB->tglverif = $request['tglverif'];
+            } else{
+                $KB->tglverif = null;
+            }
             $KB->keterangan = $request['keterangan'];
             $KB->jumlahdibayarverif = $request['jumlahdibayarverif'];
             $KB->save();
@@ -4124,7 +4178,7 @@ class PerencanaanController extends ApiController {
         }
         
         $data = DB::select(DB::raw("
-        select * from lpj_t where kdprofile = 30 and statusenabled = true
+        select norec, tgllpj, keterangan, coalesce(total, 0) total, nolpj, periode, jenis_bukti from lpj_t where kdprofile = 30 and statusenabled = true
         and extract(year from tgllpj) = $tahun
         and periode = '$periode'
         ")

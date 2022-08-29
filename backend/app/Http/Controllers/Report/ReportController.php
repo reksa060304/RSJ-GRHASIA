@@ -2438,6 +2438,189 @@ class ReportController extends ApiController{
         return view('report.spj.cetakjenisanggaran',compact('data', 'pageWidth', 'jumlah', 'tahap'));
     }
 
+    public function CetakKeuanganPerRekening(Request $request){
+        $tahun = $request['tahun'];
+
+        $qtahun  = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $qtahun =  " and extract(year from sr.tglrealisasi) =  '" . $request['tahun']."'";
+        }
+
+        $qasalproduk  = '';
+        if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
+            $qasalproduk =  " and kb.objectasalprodukfk =  " . $request['asalproduk'];
+        }
+
+        $data = DB::select(DB::raw("select ma.kodemataanggaran, ma.namamataanggaran, sum(kb.subtotal) jumlahanggaran,
+        x.totalbelanja jumlahspj, y.jumlah jumlahpanjar,
+        x.totalbelanja + y.jumlah as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
+        sum(kb.subtotal) - (x.totalbelanja + y.jumlah) sisaanggaran
+        from mataanggaran_m ma
+        inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+				inner join (
+					select ma.kodemataanggaran, ma.namamataanggaran, coalesce(sum(sr.totalbelanja),0) totalbelanja
+					from mataanggaran_m ma
+					left join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+					and sr.kdprofile = 30 and sr.statusenabled = true
+					and sr.status = 'Sudah Diverifikasi'
+					and sr.objectcarabayarfk != 2
+                    $qtahun
+					group by ma.kodemataanggaran, ma.namamataanggaran
+				) as x on x.kodemataanggaran = ma.kodemataanggaran
+				inner join (
+					select ma.kodemataanggaran, ma.namamataanggaran, coalesce(sum(sr.totalbelanja),0) jumlah
+					from mataanggaran_m ma
+					left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
+					left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
+					and sr.status = 'Sudah Diverifikasi'
+					group by ma.kodemataanggaran, ma.namamataanggaran
+				) as y on y.kodemataanggaran = ma.kodemataanggaran
+        where ma.kdprofile = 30 and ma.statusenabled = true
+        and kb.kdprofile = 30 and kb.statusenabled = true
+		and (x.totalbelanja != 0 or y.jumlah != 0)
+        $qasalproduk
+        group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah"));
+
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.perrekening',compact('data', 'pageWidth', 'tahun'));
+    }
+
+    public function CetakKeuanganPerRekeningPermen(Request $request){
+        $tahun = $request['tahun'];
+
+        $qtahun  = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $qtahun =  " and extract(year from sr.tglrealisasi) =  '" . $request['tahun']."'";
+        }
+
+        $qasalproduk  = '';
+        if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
+            $qasalproduk =  " and kb.objectasalprodukfk =  " . $request['asalproduk'];
+        }
+
+        $data = DB::select(DB::raw("select map5.mataanggaranpermen as namamataanggaran, map2.kode || '.' ||  map3.kode || '.' ||  map4.kode || '.' || map5.kode as kodemataanggaran, sum(kb.subtotal) jumlahanggaran,
+        x.totalbelanja jumlahspj, y.jumlah jumlahpanjar,
+        x.totalbelanja + y.jumlah as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
+        sum(kb.subtotal) - (x.totalbelanja + y.jumlah) sisaanggaran
+        from mataanggaran_m ma
+        inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+        inner join mataanggaranpermen_m map5 on map5.id = ma.mataanggaranpermenfk and map5.div = 5
+        inner join mataanggaranpermen_m map4 on map5.mataanggaranpermenfk = map4.id and map4.div = 4
+        inner join mataanggaranpermen_m map3 on map4.mataanggaranpermenfk = map3.id and map3.div = 3
+        inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+				inner join (
+					select ma.kodemataanggaran, ma.namamataanggaran, coalesce(sum(sr.totalbelanja),0) totalbelanja
+					from mataanggaran_m ma
+					left join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+					and sr.kdprofile = 30 and sr.statusenabled = true
+					and sr.status = 'Sudah Diverifikasi'
+					and sr.objectcarabayarfk != 2
+                    $qtahun
+					group by ma.kodemataanggaran, ma.namamataanggaran
+				) as x on x.kodemataanggaran = ma.kodemataanggaran
+				inner join (
+					select ma.kodemataanggaran, ma.namamataanggaran, coalesce(sum(sr.totalbelanja),0) jumlah
+					from mataanggaran_m ma
+					left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
+					left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
+					and sr.status = 'Sudah Diverifikasi'
+					group by ma.kodemataanggaran, ma.namamataanggaran
+				) as y on y.kodemataanggaran = ma.kodemataanggaran
+        where ma.kdprofile = 30 and ma.statusenabled = true
+        and kb.kdprofile = 30 and kb.statusenabled = true
+	    and (x.totalbelanja != 0 or y.jumlah != 0)
+        $qasalproduk
+        group by map5.mataanggaranpermen, map2.kode || '.' ||  map3.kode || '.' ||  map4.kode || '.' || map5.kode, x.totalbelanja, y.jumlah;"));
+
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.perrekening',compact('data', 'pageWidth', 'tahun'));
+    }
+
+    public function CetakAngkasPenyerapan(Request $request){
+        $tahun = $request['tahunangkas'];
+        $bawal = date('F', mktime(0, 0, 0, $request['bulanawal'], 10));
+        $bakhir = date('F', mktime(0, 0, 0, $request['bulanakhir'], 10));
+
+        $qtahun  = '';
+        if (isset($request['tahunangkas']) && $request['tahunangkas'] != "" && $request['tahunangkas'] != "undefined") {
+            $qtahun =  " and extract(year from sr.tglrealisasi) =  '" . $request['tahunangkas']."'";
+        }
+
+        $qasalproduk  = '';
+        if (isset($request['asalprodukangkas']) && $request['asalprodukangkas'] != "" && $request['asalprodukangkas'] != "undefined") {
+            $qasalproduk =  " and kb.objectasalprodukfk =  " . $request['asalprodukangkas'];
+        }
+
+        $bulanawal  = '';
+        if (isset($request['bulanawal']) && $request['bulanawal'] != "" && $request['bulanawal'] != "undefined") {
+            $bulanawal =  " and extract(month from sr.tglrealisasi) >= '" . $request['bulanawal']."'";
+        }
+
+        $bulanakhir  = '';
+        if (isset($request['bulanakhir']) && $request['bulanakhir'] != "" && $request['bulanakhir'] != "undefined") {
+            $bulanakhir =  " and extract(month from sr.tglrealisasi) <= '" . $request['bulanakhir']."'";
+        }
+
+        $data = DB::select(DB::raw("select 'iya' as bold, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahspj) jumlahspj,
+        round(cast(sum(jumlahspj)/sum(jumlahanggaran)*100 as numeric), 2) as persentase
+        from(
+            select RANK ( ) OVER ( order by ka.kode ) AS nourut, ka.kode, 
+            ka.keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja jumlahspj,
+            round(cast(x.totalbelanja/sum(kb.subtotal)*100 as numeric), 2) as persentase
+            from mataanggaran_m ma
+            inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+            INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+            inner join (
+                select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
+                from mataanggaran_m ma
+                inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                where sr.kdprofile = 30 and sr.statusenabled = true
+                and sr.status = 'Sudah Diverifikasi'
+                $qtahun
+                $bulanawal
+                $bulanakhir
+                group by ma.kodemataanggaran, ma.namamataanggaran
+            ) as x on x.kodemataanggaran = ma.kodemataanggaran
+            where ma.kdprofile = 30 and ma.statusenabled = true
+            and kb.kdprofile = 30 and kb.statusenabled = true
+            and ka.kdprofile = 30 and ka.statusenabled = true
+            $qasalproduk
+            group by ka.kode, ka.keterangan, x.totalbelanja
+        ) as y group by nourut, kode, keterangan
+        
+        union all
+        
+        select 'tidak' as bold, RANK ( ) OVER ( order by ka.kode ) AS nourut, ma.kodemataanggaran kode, 
+        ma.namamataanggaran keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja jumlahspj,
+        round(cast(x.totalbelanja/sum(kb.subtotal)*100 as numeric), 2) as persentase
+        from mataanggaran_m ma
+        inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+        INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+        inner join (
+            select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
+            from mataanggaran_m ma
+            inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+            where sr.kdprofile = 30 and sr.statusenabled = true
+            and sr.status = 'Sudah Diverifikasi'
+            $qtahun
+            $bulanawal
+            $bulanakhir
+            group by ma.kodemataanggaran, ma.namamataanggaran
+        ) as x on x.kodemataanggaran = ma.kodemataanggaran
+        where ma.kdprofile = 30 and ma.statusenabled = true
+        and kb.kdprofile = 30 and kb.statusenabled = true
+        and ka.kdprofile = 30 and ka.statusenabled = true
+        $qasalproduk
+        group by ka.kode, ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja
+        order by nourut;"));
+
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.angkaspenyerapan',compact('data', 'pageWidth', 'tahun', 'bawal', 'bakhir'));
+    }
+
 
     public function CetakPerJenisAnggaranSebelumSesudah(Request $request){
         $tahun = $request['tahun'];

@@ -119,43 +119,49 @@
             <div class="grid_2">
                 <button class="btnTemplate1" ng-click="TambahLPJ()">Tambah</button>
             </div>
+            <div class="grid_2">
+                <button class="btnTemplate1" ng-click="EditLPJ()">Edit</button>
+            </div>
+            <div class="grid_2">
+                <button class="btnTemplate1" ng-click="HapusLPJ()">Hapus</button>
+            </div>
         </div>
 
 
         <div class="grid_12" kendo-window="popupTambahLPJ" k-title="'LPJ'" k-visible="false" width="1000" style="overflow-x: hidden;">
 	
-            <legend id="filterData">
+            <legend id="filterData" ng-hide="hidelpj">
                 <a ng-click="showAndHide()">List SPJ</a>
             </legend>
-            <div class="grid_12 borderBox">
+            <div class="grid_12 borderBox" ng-hide="hidelpj">
                 <kendo-grid id="grid" data-source="dataGridLPJ" options="columnGridLPJ" k-pageable="'true'"
                     k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
                     k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;">
                 </kendo-grid>
             </div>
             <div class="grid_12">
-                    <div class="grid_12" style="text-align: left; margin-top: 10px;" >
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;"  ng-hide="hidelpj">
                         Periode LPJ Bulan
                     </div>
-                    <div class="grid_12" style="margin-top: 10px;">
+                    <div class="grid_12" style="margin-top: 10px;" ng-hide="hidelpj">
                         <input kendo-combo-box k-ng-model="item.itembulan"
                             k-data-text-field="'bulan'" k-data-value-field="'id'"
                             k-filter="'contains'" k-auto-bind="false"
                             k-data-source="listBulan"  />
                     </div>
-                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;" ng-hide="hidelpj">
                         Jenis Bukti
                     </div>
-                    <div class="grid_12" style="margin-top: 10px;">
+                    <div class="grid_12" style="margin-top: 10px;" ng-hide="hidelpj">
                         <input kendo-combo-box k-ng-model="item.itemJenisBukti"
                             k-data-text-field="'jenisbukti'" k-data-value-field="'id'"
                             k-filter="'contains'" k-auto-bind="false"
                             k-data-source="listJenisBukti"  />
                     </div>
-                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;" ng-hide="hidelpj">
                         Tanggal LPJ
                     </div>
-                    <div class="grid_12" style="margin-top: 10px;">
+                    <div class="grid_12" style="margin-top: 10px;" ng-hide="hidelpj">
                         <input style="width: 100%" k-ng-model="item.tglLPJ" kendo-datetimepicker 
                         placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
                     </div>
@@ -169,10 +175,10 @@
                                             margin-top: 5px;
                                             resize: none;" ng-model="item.keteranganLPJ"></textarea>
                     </div>
-                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;" ng-hide="hidelpj">
                         <label c-label item="item" c-label-text="Nomor LPJ"></label>
                     </div>
-                    <div class="grid_12" style="margin-top: 10px;">
+                    <div class="grid_12" style="margin-top: 10px;" ng-hide="hidelpj">
                         <input c-text-box type="input" class="k-textbox" ng-model="item.nolpj" />
                     </div>
                 

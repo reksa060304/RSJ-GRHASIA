@@ -9,6 +9,8 @@ define(['initialize'], function (initialize) {
             $scope.date = new Date();
             $scope.dataSelected = {};
             $scope.item.jmlRows = 50;
+            $scope.hidelpj = false
+            $scope.noreclpj = ''
             FormLoad();
 
             $scope.showAndHide = function () {
@@ -76,6 +78,8 @@ define(['initialize'], function (initialize) {
 
 
             $scope.TambahLPJ = function(){
+                $scope.hidelpj = false
+                $scope.noreclpj = ''
                 $scope.item.itemJenisBukti = { id: 1, jenisbukti: "UP" }
                 $scope.item.tglLPJ = moment($scope.now).format('YYYY-MM-DD HH:mm');
                 $scope.dataGridLPJ = []
@@ -117,15 +121,25 @@ define(['initialize'], function (initialize) {
             });
 
             $scope.SaveLPJ = function () {
-                var objSave = {
-                    "periode": $scope.item.itembulan.bulan,
-                    "jenis_bukti": $scope.item.itemJenisBukti.jenisbukti,
-                    "tgllpj": $scope.item.tglLPJ,
-                    "keterangan": $scope.item.keteranganLPJ,
-                    "nomor": $scope.item.nolpj,
-                    "bulan": $scope.item.itembulan.id,
-                    "tahun": moment($scope.now).format('YYYY'),
+
+                if($scope.noreclpj == ''){
+                    var objSave = {
+                        "norec": $scope.noreclpj,
+                        "periode": $scope.item.itembulan.bulan,
+                        "jenis_bukti": $scope.item.itemJenisBukti.jenisbukti,
+                        "tgllpj": $scope.item.tglLPJ,
+                        "keterangan": $scope.item.keteranganLPJ,
+                        "nomor": $scope.item.nolpj,
+                        "bulan": $scope.item.itembulan.id,
+                        "tahun": moment($scope.now).format('YYYY'),
+                    }
+                } else if($scope.noreclpj != ''){
+                    var objSave = {
+                        "norec": $scope.noreclpj,
+                        "keterangan": $scope.item.keteranganLPJ,
+                    }
                 }
+                
                 console.log(objSave);
                 // return
                 medifirstService.post('perencanaan/save-lpj', objSave).then(function (e) {
@@ -133,6 +147,27 @@ define(['initialize'], function (initialize) {
                     init();
                 })
 
+            }
+
+            $scope.HapusLPJ = function () {
+                var objSave = {
+                    "norec": $scope.dataSelected.norec,
+                }
+                
+                console.log($scope.dataSelected);
+                // return
+                medifirstService.post('perencanaan/delete-lpj', objSave).then(function (e) {
+                    init();
+                })
+
+            }
+
+            $scope.EditLPJ = function(){
+                $scope.hidelpj = true
+                console.log($scope.dataSelected)
+                $scope.noreclpj = $scope.dataSelected.norec
+                $scope.item.keteranganLPJ = $scope.dataSelected.keterangan
+                $scope.popupTambahLPJ.center().open()
             }
 
             $scope.ClearData = function () {

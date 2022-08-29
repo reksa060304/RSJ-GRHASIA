@@ -1011,6 +1011,10 @@
         {
             "nameDep": "BukuKasUmumCtrl",
             "urlDep": "module/Perencanaan/BukuKasUmumCtrl"
+        },
+        {
+            "nameDep": "LaporanKeuanganCtrl",
+            "urlDep": "module/Perencanaan/LaporanKeuanganCtrl"
         }
     ]
 }

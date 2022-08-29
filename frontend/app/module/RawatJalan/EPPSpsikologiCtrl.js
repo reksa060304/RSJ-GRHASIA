@@ -2292,6 +2292,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         console.log(data.data.data)
                         if(data.data.data.length != 0){
                             $scope.norec = data.data.data[0].norec
+                            $scope.item.tglTes = data.data.data[0].tgltes
                         }
                         for(var i = 0; i < data.data.data.length; i++){
                             for(var y = 0; y<5; y++){
