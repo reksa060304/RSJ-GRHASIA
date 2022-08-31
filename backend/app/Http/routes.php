@@ -790,6 +790,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('bsre-esign/delete-ttd','Bridging\BridgingBSREController@deleteTTDE');
           Route::get('bsre-esign/get-ttd', 'Bridging\BridgingBSREController@getTTD');
           Route::get('bsre-esign/verify-ttd', 'Bridging\BridgingBSREController@verifyTTD');
+          Route::post('bsre-esign/registrasi-user', 'Bridging\BridgingBSREController@RegistrasiUser');
 
  
         // });

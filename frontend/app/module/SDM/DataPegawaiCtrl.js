@@ -1,11 +1,13 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
+    var baseTransaksi = config.baseApiBackend;
     initialize.controller('DataPegawaiCtrl', ['CacheHelper', '$scope', 'ModelItem', '$state', 'DateHelper', '$timeout', 'CetakHelper', 'MedifirstService',
         function (cacheHelper, $scope, ModelItem, $state, dateHelper, $timeout, cetakHelper, medifirstService) {
             $scope.title = "Data Pegawai";
             $scope.now = new Date();
             $scope.item = {};
             $scope.itemF = {};
+            $scope.itembsre = {};
             $scope.username = "Show";
             $scope.dialogPopup;
             $scope.popupHistory;
@@ -285,6 +287,17 @@ define(['initialize'], function (initialize) {
                     template: "<span class='style-left'>{{formatTanggal('#: tglmasuk #')}}</span>" },
                     { field: "nosipstr", title: "No SIP/ STR", width: "10%" },
                     { field: "id", title: "ID Pegawai", width: "10%" },
+                    { field: "responsebsre", title: "Response Register", width: "10%" },
+                    {
+                        "command": [
+                            {
+                                text: "Register Bsre",
+                                click: RegBsre
+                            },
+                        ],
+                        title: "",
+                        width: "80px",
+                    }
                 ],
                 // set column width to auto
                 excelExport: function (e) {
@@ -707,6 +720,124 @@ define(['initialize'], function (initialize) {
                     $scope.username = "Show"
                 }
 
+            }
+            
+            function RegBsre(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                $scope.itembsre.id = dataItem.id
+                $scope.itembsre.nik = dataItem.noidentitas
+                $scope.itembsre.nip  = dataItem.nip
+                $scope.itembsre.namalengkap = dataItem.namalengkap
+                $scope.itembsre.email = dataItem.email
+                $scope.itembsre.notelp = dataItem.notlp
+                // $scope.itembsre.kota = "Sleman"//dataItem
+                // $scope.itembsre.provinsi = "Daerah Istimewa Yogyakarta"//dataItem
+                $scope.itembsre.jabatan = dataItem.jenispegawai
+                $scope.itembsre.unitkerja = dataItem.unitkerja
+                $scope.popUpFile.center().open()
+                console.log(dataItem);
+            }
+
+            $scope.SaveRegisterBsre = function() {
+                console.log($scope.itembsre);
+                if($scope.itembsre.nik == undefined || $scope.itembsre.nik == "" || $scope.itembsre.nik == null) { toastr.error("Harap isi nik terlebih dahulu !"); return }
+                if($scope.itembsre.nip == undefined || $scope.itembsre.nip == "" || $scope.itembsre.nip == null) { toastr.error("Harap isi nip terlebih dahulu !"); return }
+                if($scope.itembsre.namalengkap == undefined || $scope.itembsre.namalengkap == "" || $scope.itembsre.namalengkap == null) { toastr.error("Harap isi nama terlebih dahulu !"); return }
+                if($scope.itembsre.email == undefined || $scope.itembsre.email == "" || $scope.itembsre.email == null) { toastr.error("Harap isi email terlebih dahulu !"); return }
+                if($scope.itembsre.notelp == undefined || $scope.itembsre.notelp == "" || $scope.itembsre.notelp == null) { toastr.error("Harap isi notelp terlebih dahulu !"); return }
+                if($scope.itembsre.kota == undefined || $scope.itembsre.kota == "" || $scope.itembsre.kota == null) { toastr.error("Harap isi kota terlebih dahulu !"); return }
+                if($scope.itembsre.provinsi == undefined || $scope.itembsre.provinsi == "" || $scope.itembsre.provinsi == null) { toastr.error("Harap isi provinsi terlebih dahulu !"); return }
+                if($scope.itembsre.jabatan == undefined || $scope.itembsre.jabatan == "" || $scope.itembsre.jabatan == null) { toastr.error("Harap isi jabatan terlebih dahulu !"); return }
+                if($scope.itembsre.unitkerja == undefined || $scope.itembsre.unitkerja == "" || $scope.itembsre.unitkerja == null) { toastr.error("Harap isi unitkerja terlebih dahulu !"); return }
+
+                const fileTTD = document.getElementById("fileTTD").files[0];
+                const fileKTP = document.getElementById("fileKTP").files[0];
+                const fileSR = document.getElementById("fileSR").files[0];
+                if (fileTTD == undefined) {
+                    toastr.error('Silahkan Isi File Tanda tangan')
+                    return;
+                }
+                if (fileKTP == undefined) {
+                    toastr.error('Silahkan Isi File KTP')
+                    return;
+                }
+                if (fileSR == undefined) {
+                    toastr.error('Silahkan Isi FIle Surat Rekomendasi')
+                    return;
+                }
+
+                const url = baseTransaksi + 'bsre-esign/registrasi-user'
+                const formData = new FormData()
+                formData.append('fileTTD', fileTTD)
+                formData.append('fileKTP', fileKTP)
+                formData.append('fileSR', fileSR)
+                formData.append('id', $scope.itembsre.id)
+                formData.append('nik', $scope.itembsre.nik)
+                formData.append('nip', $scope.itembsre.nip)
+                formData.append('namalengkap', $scope.itembsre.namalengkap)
+                formData.append('email', $scope.itembsre.email)
+                formData.append('notelp', $scope.itembsre.notelp)
+                formData.append('kota', $scope.itembsre.kota)
+                formData.append('provinsi', $scope.itembsre.provinsi)
+                formData.append('jabatan', $scope.itembsre.jabatan)
+                formData.append('unitkerja', $scope.itembsre.unitkerja)
+                var arr = document.cookie.split(';')
+                var authorization;
+                for (var i = 0; i < arr.length; i++) {
+                    var element = arr[i].split('=');
+                    if (element[0].indexOf('authorization') > 0) {
+                        authorization = element[1];
+                    }
+                }
+
+                var btnSimpan = angular.element(document.getElementById("btnSimpan"));
+                var btnBatal = angular.element(document.getElementById("btnBatal"));
+                var spinElementSimpan = angular.element('<span class="fa fa-spinner fa-spin"></span>&nbsp;<span> Sedang menyimpan</span>');
+                var textElementSimpan = angular.element('<span class="k-icon k-update"></span><span>Simpan</span>');
+
+                btnSimpan.empty();
+                btnSimpan.append(spinElementSimpan);
+                $scope.disabledSimpan = true;
+                $scope.disabledBatal = true;
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-AUTH-TOKEN': authorization
+                    }
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if(result.status !=400){
+                            toastr.success("Berhasil Registrasi.");
+                            btnSimpan.empty();
+                            btnSimpan.append(textElementSimpan);
+                            $scope.disabledSimpan = false;
+                            $scope.disabledBatal = false;
+                            LoadDataGrid()
+                            $scope.itembsre = {}
+                            $scope.popUpFile.close()
+                          
+                        }else{
+                            toastr.error(result.message);
+                        }
+
+                      
+                    })
+                    .catch((error) => {
+                        toastr.error(error.message);
+
+                        btnSimpan.empty();
+                        btnSimpan.append(textElementSimpan);
+                        $scope.disabledSimpan = false;
+                        $scope.disabledBatal = false;
+                    });
+            }
+
+            $scope.batalRegisterBsre = function () {
+                $scope.itembsre = {}
+                $scope.popUpFile.close()
             }
         // * BATAS SUCI *//
         }

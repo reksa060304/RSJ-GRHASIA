@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade as PDF;
 use Response;
 use App\Transaksi\EMR_BSRE;
+use App\Master\Pegawai;
 use Webpatser\Uuid\Uuid;
 
 class BridgingBSREController  extends ApiController
@@ -531,5 +532,97 @@ class BridgingBSREController  extends ApiController
         // }
     
         return response()->json($response);
+    }
+
+    public function RegistrasiUser(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $dataReq = $request->all();
+        DB::beginTransaction();
+        try {
+
+            $fileTTD = $request->file('fileTTD');
+            $extension1 = $fileTTD->getClientOriginalExtension();
+            $filename1 = 'Register/' . $request['id'] . '/ttd' . '.' . $extension1;
+            Storage::disk('local')->put($filename1, file_get_contents($fileTTD));
+
+            $fileKTP = $request->file('fileKTP');
+            $extension2 = $fileKTP->getClientOriginalExtension();
+            $filename2 = 'Register/' . $request['id'] . '/ktp' . '.' . $extension2;
+            Storage::disk('local')->put($filename2, file_get_contents($fileKTP));
+
+            $fileSR = $request->file('fileSR');
+            $extension3 = $fileSR->getClientOriginalExtension();
+            $filename3 = 'Register/' . $request['id'] . '/sr' . '.' . $extension3;
+            Storage::disk('local')->put($filename3, file_get_contents($fileSR));
+            
+
+            $file1 = curl_file_create(storage_path('app/' . $filename1), 'image/png', 'ttd.'. $extension1);
+            $file2 = curl_file_create(storage_path('app/' . $filename2), 'image/jpeg', 'ktp.'. $extension2);
+            $file3 = curl_file_create(storage_path('app/' . $filename3), 'application/pdf', 'sr.'. $extension3);
+            $dataJsonSend = array(
+                'nik' => $request['nik'],
+                'nip' => $request['nip'],
+                'nama' => $request['namalengkap'],
+                'email' => $request['email'],
+                'nomor_telepon' => $request['notelp'],
+                'kota' => $request['kota'],
+                'provinsi' => $request['provinsi'],
+                'jabatan' => $request['jabatan'],
+                'unit_kerja' => $request['unitkerja'],
+                'image_ttd'=> $file1,
+                'ktp'=> $file2,
+                'surat_rekomendasi'=> $file3
+            );
+
+            $headers = $this->headers();
+            $methods = 'POST';
+            $url = '103.255.15.130/api/user/registrasi';
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => $methods,
+                CURLOPT_POSTFIELDS => $dataJsonSend,
+                CURLOPT_HTTPHEADER => $headers
+            ));
+
+            $response = curl_exec($curl);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+            curl_close($curl);
+
+            Pegawai::where("id", $request['id'])->update(['responsebsre'=>$response]);
+            
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "e" => $e->getMessage() . ' ' . $e->getLine(),
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }
