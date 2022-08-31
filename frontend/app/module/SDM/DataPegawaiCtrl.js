@@ -49,7 +49,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     LoadDataGrid();
                 });                
             }
-
+            $scope.Search =function(){
+                LoadDataGrid()
+            }
             function LoadDataGrid() {
                 $scope.isRouteLoading = true;
                 medifirstService.get("sdm/get-data-pegawai-all-sdm?", true).then(function (dat) {
