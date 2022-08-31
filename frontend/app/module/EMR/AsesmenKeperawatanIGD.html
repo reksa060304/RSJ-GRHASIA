@@ -259,8 +259,54 @@
                         </div>
                 </div>
             </fieldset>
+            
         </div>
+        <!-- <div class="grid_12">
+            <fieldset style="margin-top: 10px;">
+                <div class="grid_12 margin-top-30 text-center margin-bottom">
+                    <div class="grid_12">
+                        <label c-label item="item">SKRINING FUNGSIONAL</label>
+                    </div>
+                    <div class="grid_12" ng-repeat="list in listSkriningFungsional">
+                        <div class="grid_12" style="padding: 5pt">
+                            <div ng-repeat="jawab in list.detail">
+                                <div ng-switch on="jawab.type">
+                                    <div class="grid_12" ng-switch-when="textbox" style="margin-top: 5px;">
+                                        <div class="grid_4">
+                                            <label>{{jawab.nama}}</label>
+                                        </div>
+                                        <div class="grid_8 parentKeteranganFieldTambahan">
+                                            <input c-text-box type="text" filter="" class="k-textbox"
+                                                ng-model="item.obj[jawab.id]" style="width: 90%;" />
+                                            <label class="keteranganFieldTambahan"
+                                                style="margin-top: 5px;margin-right: 30px">{{jawab.satuan}}</label>
+                                        </div>
+                                    </div>
+                                    <div class="grid_12" ng-switch-when="checkbox" style="margin-top: -5px;">
+                                        <div class="grid_4">
+                                            {{jawab.nama}}
+                                        </div>
+                                        <div ng-repeat="jawabb in jawab.details">
+                                            <div ng-switch on="jawabb.type">
+                                                <div class="grid_4" ng-switch-when="checkbox">
+                                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawabb.id}}"
+                                                        ng-model="item.obj[jawabb.id]">
+                                                    <label class="k-checkbox-label" for="item.obj{{jawabb.id}}">
+                                                        &nbsp;{{jawabb.nama}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
 
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </fieldset>
+        </div> -->
       
         <div class="grid_12">
             <fieldset style="margin-top: 10px;">

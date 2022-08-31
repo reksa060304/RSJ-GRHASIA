@@ -215,7 +215,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::put('bridging/bpjs/update-sep-v1.1', 'Bridging\BridgingBPJSV2Controller@updateSepV11');
               Route::get('bridging/bpjs/generateskdp', 'Bridging\BridgingBPJSV2Controller@generateNoSKDP');
               Route::get('bridging/bpjs/generate-sep-dummy', 'Bridging\BridgingBPJSV2Controller@generateSEPDummy');
-
+              Route::post('dukcapil/get-nik-v2', 'Bridging\BridgingDukcapilController@getNIKDukcapilV2');
+              Route::post('registrasi/get-nik-duplicate', 'Bridging\BridgingDukcapilController@getNIKDuplicate');
               Route::post('bridging/bpjs/tools', 'Bridging\BridgingBPJSV2Controller@bpjsTools');
               //End SEP
               //*PESERTA

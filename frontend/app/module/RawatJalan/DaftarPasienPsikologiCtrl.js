@@ -664,6 +664,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.itemKraepelin.lajur = $scope.itemKraepelin.lajur + 1
                 $scope.itemKraepelin.nilai = undefined
             }
+            $scope.batalKraepelin = function(){
+                $scope.itemKraepelin = {}
+                $("#KgridKraepelin").data("kendoGrid").dataSource.data([]);
+                $("#KgridHasilKraeplin").data("kendoGrid").dataSource.data([]);
+            }
             $scope.simpanKraepelin = function(){
                 var objSave = {
                     data: dataKraepelin
