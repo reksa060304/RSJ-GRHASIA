@@ -37,7 +37,7 @@
 </style>
 <body style="background-color: #CCCCCC;">
 <div align="center" >
-    <table class="bayangprint" bgcolor="#FFFFFF" width="{{$pageWidth}}" >
+    <table bgcolor="#FFFFFF" width="{{$pageWidth}}" >
         <tbody >
             <tr>
                 <td align="center" style="width: 200px;">

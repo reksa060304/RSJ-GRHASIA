@@ -330,7 +330,7 @@
 									<div class="grid_12">
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchtahapkeg"
 											k-data-text-field="'tahap'" k-data-value-field="'id'"
-											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahapKegiatan" k-on-change='changeTahap()'/>
 									</div>
 								</div>
 								<div class="grid_1">
@@ -342,7 +342,7 @@
 									<!-- <div class="grid_8" style="margin-top: -12px;"> -->
 										<div class="grid_12">
 											<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
-												placeholer="YYYY" k-format="'yyyy'" />
+												placeholer="YYYY" k-format="'yyyy'" k-on-change='changeTahap()'/>
 										<!-- </div> -->
 									</div>
 								</div>
@@ -439,6 +439,9 @@
 								</div>
 								<div class="grid_2">
 									<button class="btnTemplate1" ng-click="PemindahanKeterangan()">Pemindahan Rincian Belanja</button>
+								</div>
+								<div class="grid_2">
+									<button class="btnTemplate1" ng-click="EntryAngkas()">Entry Angkas</button>
 								</div>
 							</div>
 						</md-content>
@@ -1077,6 +1080,192 @@
 			<div class="grid_2">
 				<div class="grid_11">
 					<button class="btnTemplate1" ng-click="HapusPopUpSubSubKegiatan()">Hapus</button>
+				</div>
+			</div>
+			<div class="grid_2">
+				<div class="grid_11">
+					<button class="btnTemplate1" ng-click="SimpanPopUpSubSubKegiatan()">Simpan</button>
+				</div>
+			</div>
+			<div class="grid_2">
+				<div class="grid_11">
+					<button class="btnTemplate1" ng-click="nextSubSubKegiatan()" ng-hide="inputtahap">Next</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div kendo-window="popupAngkas" k-title="'ENTRY RINCIAN ANGGARAN'" k-visible="false" k-width="1000" k-height="600">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					URUSAN PEMERINTAHAN
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.urusanPemerintahan" disabled="true" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					ORGANISASI
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.organisasi"  disabled="true"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					PROGRAM
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.program" disabled="true" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					KEGIATAN
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.kegiatan" disabled="true" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					TAHUN ANGGARAN
+				</div>
+				<div class="grid_2" style="margin-top: -10px;">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.thnAnggaran"  />
+				</div>
+				
+				
+					<div class="grid_1" style="text-align: center;">
+						TAHAP
+					</div>
+					<div class="grid_5" style="margin-top: -10px;">
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahap"
+							k-data-text-field="'tahap'" k-data-value-field="'id'"
+							k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+					</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					JENIS BELANJA
+				</div>
+				<div class="grid_2" style="margin-top: -10px;">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.jenisbelanja"
+							k-data-text-field="'jenisbelanja'" k-data-value-field="'id'"
+							k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisBelanja" />
+				</div>
+
+
+					<input c-text-box type="input" class="k-textbox" ng-model="item.savepptk" ng-hide="true">
+					<div class="grid_1" style="text-align: center;">
+						PPTK
+					</div>
+					<div class="grid_3" style="margin-top: -10px;">
+						<input c-text-box type="input" class="k-textbox" ng-model="item.pptktext" ng-hide="dispptk"                  " />
+					</div>
+					<div class="grid_1" style="margin-top: -10px;">
+						<button class="btnTemplate1" ng-click="TambahPPTK()" ng-hide="dispptk">Add</button>           
+					</div>
+			</div>
+			
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					SUB KEGIATAN
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.subKegiatan"  disabled="true"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					SUB SUB KEGIATAN
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.subsubkegiatanangkas"
+							k-data-text-field="'keterangan'" k-data-value-field="'norec'"
+							k-filter="'contains'" k-auto-bind="false" k-data-source="listSubSubKegiatanAngkas" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">INDIKATOR</div>
+				<div class="grid_4" style="text-align: center;">TOLOK UKUR</div>
+				<div class="grid_4" style="text-align: center;">TARGET KINERJA</div>
+				<hr style="margin-top: 0px;margin-bottom: 0px;">
+			</div>
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					Masukan
+				</div>
+				<div class="grid_4" style="margin-top: -10px;">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.tolokUkurMasukan"  ng-disabled='true'/>
+				</div>
+				<div class="grid_4" style="margin-top: -10px;">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.targetKinerjaMasukan" ng-disabled='true'/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					Keluaran
+				</div>
+				<div class="grid_4" style="margin-top: -10px;">
+					<!-- <input c-text-box type="input" class="k-textbox" ng-model="item.tolokUkurKeluaran"  /> -->
+					<textarea required class="k-textbox" style="    height: 76px;
+                                        width: 100%;
+                                        margin-top: 5px;
+                                        margin-left: 5px;
+                                        resize: none;" ng-model="item.tolokUkurKeluaran"></textarea>
+				</div>
+				<div class="grid_4" style="margin-top: -10px;">
+					<!-- <input c-text-box type="input" class="k-textbox" ng-model="item.targetKinerjaKeluaran"  /> -->
+					<textarea required class="k-textbox" style="    height: 76px;
+                                        width: 100%;
+                                        margin-top: 5px;
+                                        margin-left: 5px;
+                                        resize: none;" ng-model="item.targetKinerjaKeluaran"></textarea>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					Hasil
+				</div>
+				<div class="grid_4" style="margin-top: -10px;">
+					<!-- <input c-text-box type="input" class="k-textbox" ng-model="item.tolokUkurHasil"  /> -->
+					<textarea required class="k-textbox" style="    height: 76px;
+                                        width: 100%;
+                                        margin-top: 5px;
+                                        margin-left: 5px;
+                                        resize: none;" ng-model="item.tolokUkurHasil"></textarea>
+				</div>
+				<div class="grid_4" style="margin-top: -10px;">
+					<!-- <input c-text-box type="input" class="k-textbox" ng-model="item.targetKinerjaHasil"  /> -->
+					<textarea required class="k-textbox" style="    height: 76px;
+                                        width: 100%;
+                                        margin-top: 5px;
+                                        margin-left: 5px;
+                                        resize: none;" ng-model="item.targetKinerjaHasil"></textarea>
+				</div>
+			</div>
+
+			<div class="grid_12">
+				<div class="grid_4" style="text-align: center;">
+					DIV
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.subsubkegiatandiv"
+					k-data-text-field="'div'" k-data-value-field="'id'"
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" disabled/>
+				</div>
+			</div>
+		</div>
+		
+		<div class="grid_12">
+			<div class="grid_6"></div>
+			<div class="grid_2">
+				<div class="grid_11">
+					<button class="btnTemplate1" ng-click="HapusPopUpSubSubKegiatan()" ng-hide="true">Hapus</button>
 				</div>
 			</div>
 			<div class="grid_2">

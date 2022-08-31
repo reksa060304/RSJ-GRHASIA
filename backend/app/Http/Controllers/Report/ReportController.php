@@ -2458,28 +2458,31 @@ class ReportController extends ApiController{
         from mataanggaran_m ma
         inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
 				inner join (
-					select ma.kodemataanggaran, ma.namamataanggaran, coalesce(sum(sr.totalbelanja),0) totalbelanja
+					select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
 					from mataanggaran_m ma
-					left join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
-					and sr.kdprofile = 30 and sr.statusenabled = true
+					inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+					where sr.kdprofile = 30 and sr.statusenabled = true
 					and sr.status = 'Sudah Diverifikasi'
-					and sr.objectcarabayarfk != 2
                     $qtahun
 					group by ma.kodemataanggaran, ma.namamataanggaran
 				) as x on x.kodemataanggaran = ma.kodemataanggaran
 				inner join (
-					select ma.kodemataanggaran, ma.namamataanggaran, coalesce(sum(sr.totalbelanja),0) jumlah
-					from mataanggaran_m ma
-					left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
-					left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
-					and sr.status = 'Sudah Diverifikasi'
-					group by ma.kodemataanggaran, ma.namamataanggaran
+					select kodemataanggaran, namamataanggaran, sum(jumlah) jumlah
+					from(
+						select ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah panjar, coalesce(sum(sr.totalbelanja),0) totalbelanja,  coalesce(pj.jumlah - coalesce(sum(sr.totalbelanja),0), 0) as jumlah
+						from mataanggaran_m ma
+						left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
+						left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
+						and sr.status = 'Sudah Diverifikasi'
+                        $qtahun
+						group by ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah
+					) as s group by kodemataanggaran, namamataanggaran
 				) as y on y.kodemataanggaran = ma.kodemataanggaran
         where ma.kdprofile = 30 and ma.statusenabled = true
         and kb.kdprofile = 30 and kb.statusenabled = true
-		and (x.totalbelanja != 0 or y.jumlah != 0)
         $qasalproduk
-        group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah"));
+        group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah
+        "));
 
         $pageWidth = 950;
         //return $this->respond($result);
@@ -2510,28 +2513,31 @@ class ReportController extends ApiController{
         inner join mataanggaranpermen_m map3 on map4.mataanggaranpermenfk = map3.id and map3.div = 3
         inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
 				inner join (
-					select ma.kodemataanggaran, ma.namamataanggaran, coalesce(sum(sr.totalbelanja),0) totalbelanja
+					select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
 					from mataanggaran_m ma
-					left join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
-					and sr.kdprofile = 30 and sr.statusenabled = true
+					inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+					where sr.kdprofile = 30 and sr.statusenabled = true
 					and sr.status = 'Sudah Diverifikasi'
-					and sr.objectcarabayarfk != 2
                     $qtahun
 					group by ma.kodemataanggaran, ma.namamataanggaran
 				) as x on x.kodemataanggaran = ma.kodemataanggaran
 				inner join (
-					select ma.kodemataanggaran, ma.namamataanggaran, coalesce(sum(sr.totalbelanja),0) jumlah
-					from mataanggaran_m ma
-					left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
-					left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
-					and sr.status = 'Sudah Diverifikasi'
-					group by ma.kodemataanggaran, ma.namamataanggaran
+					select kodemataanggaran, namamataanggaran, sum(jumlah) jumlah
+					from(
+						select ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah panjar, coalesce(sum(sr.totalbelanja),0) totalbelanja,  coalesce(pj.jumlah - coalesce(sum(sr.totalbelanja),0), 0) as jumlah
+						from mataanggaran_m ma
+						left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
+						left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
+						and sr.status = 'Sudah Diverifikasi'
+                        $qtahun
+						group by ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah
+					) as s group by kodemataanggaran, namamataanggaran
 				) as y on y.kodemataanggaran = ma.kodemataanggaran
         where ma.kdprofile = 30 and ma.statusenabled = true
         and kb.kdprofile = 30 and kb.statusenabled = true
-	    and (x.totalbelanja != 0 or y.jumlah != 0)
         $qasalproduk
-        group by map5.mataanggaranpermen, map2.kode || '.' ||  map3.kode || '.' ||  map4.kode || '.' || map5.kode, x.totalbelanja, y.jumlah;"));
+        group by map5.mataanggaranpermen, map2.kode || '.' ||  map3.kode || '.' ||  map4.kode || '.' || map5.kode, x.totalbelanja, y.jumlah;
+        "));
 
         $pageWidth = 950;
         //return $this->respond($result);
@@ -2619,6 +2625,101 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         //return $this->respond($result);
         return view('report.keuangan.angkaspenyerapan',compact('data', 'pageWidth', 'tahun', 'bawal', 'bakhir'));
+    }
+
+    public function CetakBKU(Request $request){
+        $tahunjudul = $request['tahunbku'];
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+        // $bawal = date('F', mktime(0, 0, 0, $request['bulanawal'], 10));
+        // $bakhir = date('F', mktime(0, 0, 0, $request['bulanakhir'], 10));
+
+        $bulan = $request['bulanbku'];
+
+
+        if($bulan == '01'){
+            $periode = 'JANUARI';
+        }
+        else if($bulan == '02'){
+            $periode = 'FEBRUARI';
+        }
+        else if($bulan == '03'){
+            $periode = 'MARET';
+        }
+        else if($bulan == '04'){
+            $periode = 'APRIL';
+        }
+        else if($bulan == '05'){
+            $periode = 'MEI';
+        }
+        else if($bulan == '06'){
+            $periode = 'JUNI';
+        }
+        else if($bulan == '07'){
+            $periode = 'JULI';
+        }
+        else if($bulan == '08'){
+            $periode = 'AGUSTUS';
+        }
+        else if($bulan == '09'){
+            $periode = 'SEPTEMBER';
+        }
+        else if($bulan == '10'){
+            $periode = 'OKTOBER';
+        }
+        else if($bulan == '11'){
+            $periode = 'NOVEMBER';
+        }
+        else if($bulan == '12'){
+            $periode = 'DDESEMBER';
+        }
+
+        $qtahun  = '';
+        if (isset($request['tahunbku']) && $request['tahunbku'] != "" && $request['tahunbku'] != "undefined") {
+            $qtahun =  " and extract(year from tglbku) =  '" . $request['tahunbku']."'";
+        }
+
+        $qbulan  = '';
+        if (isset($request['bulanbku']) && $request['bulanbku'] != "" && $request['bulanbku'] != "undefined") {
+            $qbulan =  " and extract(month from tglbku) =  '" . $request['bulanbku']."'";
+        }
+
+        // $qasalproduk  = '';
+        // if (isset($request['asalprodukangkas']) && $request['asalprodukangkas'] != "" && $request['asalprodukangkas'] != "undefined") {
+        //     $qasalproduk =  " and kb.objectasalprodukfk =  " . $request['asalprodukangkas'];
+        // }
+
+        // $bulanawal  = '';
+        // if (isset($request['bulanawal']) && $request['bulanawal'] != "" && $request['bulanawal'] != "undefined") {
+        //     $bulanawal =  " and extract(month from sr.tglrealisasi) >= '" . $request['bulanawal']."'";
+        // }
+
+        // $bulanakhir  = '';
+        // if (isset($request['bulanakhir']) && $request['bulanakhir'] != "" && $request['bulanakhir'] != "undefined") {
+        //     $bulanakhir =  " and extract(month from sr.tglrealisasi) <= '" . $request['bulanakhir']."'";
+        // }
+
+        $data = DB::select(DB::raw("select * from(
+            select '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, 0 penerimaan, 0 pengeluaran, (saldo-penerimaan+pengeluaran) saldoawal
+            from bukukasumum_t
+            where kdprofile = 30
+            and statusenabled = true
+            $qbulan
+            $qtahun
+            order by tglbku asc limit 1
+        ) as x
+        
+        union all
+        
+        select nobku, to_char(tglbku::date, 'DD-MM-YYYY') tgl, uraianbku, penerimaan, pengeluaran, saldo saldoawal
+        from bukukasumum_t
+        where kdprofile = 30
+        and statusenabled = true
+        $qbulan
+        $qtahun"));
+
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.cetakbku',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode'));
     }
 
 

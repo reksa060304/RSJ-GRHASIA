@@ -140,9 +140,20 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="REKAP ANGGARAN TIAP SUB KEGIATAN(SUMBER DANA)" ng-if="hide == true">
+                        <md-tab label="LAPORAN BKU">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
+                                    <div class="grid_2" style="margin-top: 0px;">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tanggal Cetak"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-ng-model="item.tglcetak" kendo-datetimepicker placeholer="yyyy-mm-dd"
+									            k-format="'yyyy-MM-dd'" />
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="grid_2">
                                         <div class="grid_12">
                                             <label c-label item="item" c-label-text="Tahun"></label>
@@ -150,34 +161,19 @@
                                         <div class="grid_12">
                                             <div class="grid_12">
                                                 <input style="width: 100%" k-options="yearUngkul"
-                                                    k-ng-model="item.tahunSumberDana" kendo-date-picker placeholer="YYYY"
+                                                    k-ng-model="item.tahunbku" kendo-date-picker placeholer="YYYY"
                                                     k-format="'yyyy'" />
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="grid_2">
+                                    <div class="grid_2" style="margin-top: 0px;">
                                         <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Tahap"></label>
+                                            <label c-label item="item" c-label-text="Bulan"></label>
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.tahapSumberDana"
-                                                    k-data-text-field="'tahap'" k-data-value-field="'id'"
-                                                    k-filter="'contains'" k-auto-bind="false"
-                                                    k-data-source="listTahap" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="grid_2">
-                                        <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Terhadap"></label>
-                                        </div>
-                                        <div class="grid_12">
-                                            <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.terhadapSumberDana"
-                                                    k-data-text-field="'tahap'" k-data-value-field="'id'"
-                                                    k-filter="'contains'" k-auto-bind="false"
-                                                    k-data-source="listTahap" />
+                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulanbku"
+                                                    kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
                                             </div>
                                         </div>
                                     </div>
@@ -187,7 +183,7 @@
                                         </div>
                                         <div class="grid_12">
                                             <button class="primary c-button" style="margin-top: 6px"
-                                                ng-click="CetakSumberDana()">Cetak</button>
+                                                ng-click="CetakBKU()">Cetak</button>
                                         </div>
                                     </div>
                                 </div>

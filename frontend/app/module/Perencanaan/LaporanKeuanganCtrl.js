@@ -10,8 +10,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item = {};
             $scope.isRouteLoading = false;
             $scope.item.tglawal = $scope.now;
-            $scope.item.tglakhir = $scope.now;
+            $scope.item.tglcetak = moment($scope.now).format('YYYY-mm-dd');
             $scope.item.tahun = moment($scope.now).format('YYYY')
+            $scope.item.tahunbku = moment($scope.now).format('YYYY')
             $scope.item.tahunangkas = moment($scope.now).format('YYYY')
             $scope.hide = false
 
@@ -118,23 +119,39 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     window.open(baseTransaksi + "report/get-cetak-rekap-mata-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahunmata).format('YYYY') +"&terhadap="+terhadap, '_blank');
                 // }
             }
-            $scope.CetakSumberDana = function(){
-                var tahap = ""
-                if ($scope.item.tahapSumberDana != undefined) {
-                    tahap = $scope.item.tahapSumberDana.id
+            $scope.CetakBKU = function(){
+
+                if ($scope.item.tahunbku == undefined){
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
                 }
 
-                var terhadap = ""
-                if ($scope.item.terhadapSumberDana != undefined) {
-                    terhadap = $scope.item.terhadapSumberDana.id
+                if ($scope.item.bulanbku == undefined){
+                    toastr.warning('Bulan harus diisi', 'Informasi');
+                    return
                 }
 
-
-                if ($scope.item.terhadapSumberDana == undefined || tahap == terhadap) {
-                    window.open(baseTransaksi + "report/get-cetak-rekap-SumberDana-anggaran-sebelum?tahap=" + tahap + "&tahun=" + moment($scope.item.tahunSumberDana).format('YYYY'), '_blank');
-                } else if ($scope.item.terhadapSumberDana != undefined || tahap != terhadap) {
-                    window.open(baseTransaksi + "report/get-cetak-rekap-SumberDana-anggaran?tahap=" + tahap + "&tahun=" + moment($scope.item.tahunSumberDana).format('YYYY') + "&terhadap=" + terhadap, '_blank');
+                if ($scope.item.tglcetak == undefined){
+                    toastr.warning('Tgl cetak harus diisi', 'Informasi');
+                    return
                 }
+
+                var tahunbku = ""
+                if ($scope.item.tahunbku != undefined){
+                    tahunbku = moment($scope.item.tahunbku).format('YYYY')
+                }
+
+                var bulanbku = ""
+                if ($scope.item.bulanbku != undefined){
+                    bulanbku = moment($scope.item.bulanbku).format('MM')
+                }
+
+                var tglcetak = ""
+                if ($scope.item.tglcetak != undefined){
+                    tglcetak = moment($scope.item.tglcetak).format('YYYY-MM-DD')
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-bku?tahunbku=" + tahunbku + "&bulanbku=" + bulanbku + "&tglcetak=" + tglcetak, '_blank');
             }
             $scope.Perbaharui = function () {
                 $scope.ClearSearch();

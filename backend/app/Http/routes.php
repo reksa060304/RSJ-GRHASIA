@@ -1155,6 +1155,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-keuangan-per-rekening','Report\ReportController@CetakKeuanganPerRekening');
           Route::get('report/get-cetak-keuangan-per-rekening-permen','Report\ReportController@CetakKeuanganPerRekeningPermen');
           Route::get('report/get-cetak-persandingan-angkas-penyerapan','Report\ReportController@CetakAngkasPenyerapan');
+          Route::get('report/get-cetak-bku','Report\ReportController@CetakBKU');
           Route::get('report/get-rekap-order-kirim-barang-cetak','Report\ReportController@CetakLapOrderKirim');
           Route::get('report/get-cetak-suratketerangannapza','Report\ReportController@CetakSKNapza');
           Route::get('report/get-cetak-suratketerangankesehatanjiwa','Report\ReportController@CetakSKJiwa');
@@ -1481,6 +1482,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-penjagaan-verif-spj', 'Perencanaan\PerencanaanController@getPenjagaanVerifSPJ');
             Route::get('perencanaan/get-tahap-kegiatan-belanja', 'Perencanaan\PerencanaanController@getTahapKegiatan');
             Route::get('perencanaan/get-jenis-belanja', 'Perencanaan\PerencanaanController@getJenisBelanja');
+            Route::get('perencanaan/get-total-anggaran-rcn', 'Perencanaan\PerencanaanController@getTotalAnggaranRcn');
+            Route::get('perencanaan/get-rincian-kegiatan', 'Perencanaan\PerencanaanController@getRincianKegiatan');
             Route::get('perencanaan/get-keterangan-belanja', 'Perencanaan\PerencanaanController@getKeteranganBelanja');
             Route::get('perencanaan/get-spj', 'Perencanaan\PerencanaanController@getDataSPJ');
             Route::get('perencanaan/get-spj-to-lpj', 'Perencanaan\PerencanaanController@getSPJtoLPJ');
