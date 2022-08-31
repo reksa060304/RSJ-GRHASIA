@@ -169,4 +169,177 @@ class BridgingDukcapilController extends ApiController
          return $this->respond($result);
 
     }
+
+    //dukcapil V2
+    function getHeaderDukcapilV2($type = null)
+    {
+        // $data = $this->getIdConsumerBPJS();
+
+        // $secretKey = $this->getPasswordConsumerBPJS();
+        date_default_timezone_set('UTC');
+        $tStamp = strval(time() - strtotime('1970-01-01 00:00:00'));
+        // $signature = hash_hmac('sha256', $data . "&" . $tStamp, $secretKey, true);
+
+        // $encodedSignature = base64_encode($signature);
+
+        $header = array(
+            "Content-Type: Application/json",
+            "Accept: Application/json",
+            // "X-cons-id: " . null,
+            // "X-signature: " . null,
+            // "X-timestamp: " . (string)$tStamp,
+            // "user_key: " . $this->userKeyBPJS()
+            // 35f89b7e03c13f1ff62de0be77584945
+        );
+        $header['headers'] = $header;
+        $header['cons'] = array(
+            'data' => null,
+            'secretKey' => null,
+            'signature' => null,
+            'tStamp' => $tStamp,
+            // 'user_key' =>  $this->userKeyBPJS(),
+        );
+        return $header;
+    }
+    protected function curlAPIDukcapil2($headers, $dataJsonSend= null, $url, $method, $tipe = null)
+    {
+        if ($dataJsonSend == null) {
+        $curl = curl_init();
+            curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://172.16.160.43:8080/dukcapil/get_json/34/rsj_grhasia_34/koneksitas_verifby_elemen',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_HTTPHEADER => array(
+                'Accept: application/json',
+                'Content-Type: application/json',
+                'Authorization: Basic OTQ4MjAyMjA4MDU0MzRfcnNqZ3JoYXNpYV9kaXk6cnNqZ3JoNHMxNF9kMXk=',
+                'Cookie: JSESSIONID=FA5097E2249882DA9C719AA80EB1841F; BIGipServer=429920428.36895.0000'
+            ),
+            ));
+        } else {
+            // return $dataJsonSend;
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://172.16.160.43:8080/dukcapil/get_json/34/rsj_grhasia_34/koneksitas_verifby_elemen',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>$dataJsonSend,
+            CURLOPT_HTTPHEADER => array(
+                'Accept: application/json',
+                'Content-Type: application/json',
+                'Authorization: Basic OTQ4MjAyMjA4MDU0MzRfcnNqZ3JoYXNpYV9kaXk6cnNqZ3JoNHMxNF9kMXk=',
+                'Cookie: JSESSIONID=FA5097E2249882DA9C719AA80EB1841F; BIGipServer=429920428.36895.0000'
+            ),
+            ));
+
+        }
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            $result = array(
+                'metaData' => array(
+                    'code' => 400,
+                    'message' => 'Gagal menghubungkan ke Dukcapil (' . $url . ')'
+                ),
+            );
+        } else {
+                // $result = $response;
+        
+            if ($this->isJson($response)) {
+                $result = json_decode($response);
+            } else {
+                $result = $response;
+            }
+        }
+
+        return $result;
+    }
+    function isJson($string)
+    {
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
+    }
+    public function getNIKDukcapilV2(Request $request)
+    {
+        try {
+
+            // $kdProfile = $this->getDataKdProfile($request);
+            $headers = $this->getHeaderDukcapilV2();
+
+            $dataJsonSend = null;
+
+            if ($request['data'] != null) {
+                $dataJsonSend = json_encode($request['data'][0]);
+            }
+                // return $this->respond($dataJsonSend);
+           
+            $methods = $request['method'];
+
+            $url = $request['url'];
+  
+            $response = $this->curlAPIDukcapil2($headers['headers'], $dataJsonSend, $url, $methods, null);
+
+            $cekData = array(
+                'request' => array(
+                    'url' => $url,
+                    'headers' =>  $headers['headers'],
+                    'payload' =>$dataJsonSend,
+                    // 'secretKey' => $headers['cons']['secretKey'],
+                ), 'response' => $response
+                ,'method' => $methods
+            );
+            // return $this->respond($response);
+         
+            if ($response != "") {
+                $data2 = array(
+                    'metaData' => array(
+                        'code'=> 201,
+                        'message' => $response
+                    ) ,
+                    'response' => null,
+                );
+            return $this->respond($data2);
+            } else {
+                $response2 = array(
+                    "metaData" => array(
+                        "code" => "404",
+                        "message" => $response
+                    ),
+                    "response" => null
+                );
+                return $this->respond($response2);
+            }
+        } catch (\Exception $e) {
+            $response = array(
+                "metaData" => array(
+                    "code" => "404",
+                    "message" => "Transaksi tidak dapat di proses, Gagal dicoba kembali (Dukcapil)!"
+                ),
+                "response" => null,
+                "e"=> $e->getMessage(). ' '.$e->getLine()
+            );
+    
+            return $this->respond($response);
+        }
+        // return $this->respond($response);
+    }
+    public function getNIKDuplicate(Request $request)
+    {
+        $data = \DB::select(DB::raw("SELECT * from pasien_m where noidentitas = '$request[nik]'and kdprofile = 30 and statusenabled = true"));
+        return $this->respond($data);
+    }
 }

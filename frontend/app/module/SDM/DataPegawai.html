@@ -49,6 +49,9 @@
             </div>
             <div class="grid_1">
                 <label c-label c-label-text=""></label>
+                 <em style="margin-top:6px;" ng-click='Search()' id="iconButton" data-role="button"
+                    class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
+                        class="k-sprite k-icon k-i-search">Cari</span></em>
                 <em style="margin-top:6px;" ng-click='resetFilters()' id="iconButton" data-role="button"
                     class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
                         class="k-sprite k-icon k-i-cancel">Refresh</span></em>
@@ -182,6 +185,124 @@
                 </div>
             </div>
         </fieldset>
+    </div>
+</div>
+<div kendo-window="popUpFile" k-title="'Register Bsre'" k-width="800" k-visible="false" k-on-open="win2visible = true"
+    k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <fieldset>
+            <legend><label c-label item="item"> User Register</label></legend>
+            <div class="grid_12">
+                <div class="grid_3" style=" margin-top: 10px;">
+                    <label c-label item="item">NIK</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="itembsre.nik" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3" style=" margin-top: 10px;">
+                    <label c-label item="item">NIP</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="itembsre.nip" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Nama Lengkap</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="itembsre.namalengkap" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Email</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="itembsre.email" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">No Telp</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="itembsre.notelp" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Kota</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="itembsre.kota" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Provinsi</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="itembsre.provinsi" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Jabatan</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="itembsre.jabatan" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Unit Kerja</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="itembsre.unitkerja" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">File Tanda Tangan</label>
+                </div>
+                <div class="grid_9">
+                    <form method="post" enctype="multipart/form-data" id="formFile2">
+                        <input type="file" id="fileTTD" accept=".png" />
+                    </form>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Ktp</label>
+                </div>
+                <div class="grid_9">
+                    <form method="post" enctype="multipart/form-data" id="formFile3">
+                        <input type="file" id="fileKTP" accept=".jpg,.jpeg" />
+                    </form>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Surat Rekomendasi</label>
+                </div>
+                <div class="grid_9">
+                    <form method="post" enctype="multipart/form-data" id="formFile4">
+                        <input type="file" id="fileSR" accept=".pdf" />
+                    </form>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+            <button class="k-button k-button-icontext k-primary k-grid-update" ng-disabled="disabledSimpan"
+                ng-click="SaveRegisterBsre()" id="btnSimpan"><span class="k-icon k-update"></span>Simpan</button>
+            <button class="k-button  k-button-icontext" ng-disabled="disabledBatal" ng-click="batalRegisterBsre()"
+                id="btnBatal"><span class="k-icon k-cancel"></span>Batal</button>
+        </div>
+
     </div>
 </div>
 <style>

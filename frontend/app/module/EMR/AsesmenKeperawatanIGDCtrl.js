@@ -161,7 +161,42 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
-            
+            $scope.listSkriningFungsional = [
+                {
+                    "id": 1,
+                    "nama": "Skrining Fungsional",
+                    "detail": [{
+                            "id": 3001032,
+                            "nama": "Alat Bantu",
+                            "satuan": "",
+                            "type": "textbox"
+                        }, {
+                            "id": 3001033,
+                            "nama": "Prothesa",
+                            "satuan": "",
+                            "type": "textbox"
+                        },
+                        {
+                            "nama": "ADL",
+                            "type": "checkbox",
+                            "details":[
+                                {
+                                    "id": 3001034,
+                                    "nama": "Mandiri",
+                                    "satuan": "",
+                                    "type": "checkbox"
+                                }, {
+                                    "id": 3001035,
+                                    "nama": "Dibantu",
+                                    "satuan": "",
+                                    "type": "checkbox"
+                                },
+                            ]
+                        }
+                        
+                    ]
+                }
+            ]
             $scope.listSkriningNyeri = [
                 {
                     "id": 1, "nama": "Skrining Nyeri",
