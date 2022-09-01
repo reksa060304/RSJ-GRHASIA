@@ -55,7 +55,7 @@
                 <b style="font-size: 25px;">
                     RBA
                 </b><br>
-                {{substr($sebelum[0]->tahapsesudah, 0, -3)}}
+                {{substr($tahap[0]->tahap, 0, -3)}}
             </td>
         </tr>
         <tr align="center">

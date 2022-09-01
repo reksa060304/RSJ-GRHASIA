@@ -2371,6 +2371,7 @@ class ReportController extends ApiController{
                     inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                     inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                     where km.kdprofile = 30 and km.statusenabled = true
+                    and kb.kdprofile = 30 and kb.statusenabled = true
                     and km.tahun = '$tahun'
                     $qtahap
                     group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div
@@ -2398,6 +2399,7 @@ class ReportController extends ApiController{
                     inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                     inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                     where km.kdprofile = 30 and km.statusenabled = true
+                    and kb.kdprofile = 30 and kb.statusenabled = true
                     and km.tahun = '$tahun'
                     $qtahap
                     group by kms.keterangan, kmss.keterangan, kms.kode, ja.jenisanggaran, kms.div
@@ -2425,6 +2427,7 @@ class ReportController extends ApiController{
                     inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                     inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                     where km.kdprofile = 30 and km.statusenabled = true
+                    and kb.kdprofile = 30 and kb.statusenabled = true
                     and km.tahun = '$tahun'
                     $qtahap
                     group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div
@@ -2737,6 +2740,8 @@ class ReportController extends ApiController{
             $qterhadap =  ' and kb.objecttahapfk =  ' . $request['terhadap'];
         }
 
+        $tahap = DB::select(DB::raw("select id, tahap from tahapanggaran_m where id = ".$request['tahap']));
+
         $sebelum = DB::select(DB::raw("select j.*, k.jumlahbarangjasa kjumlahbarangjasa, k.jumlahpegawai kjumlahpegawai, k.jumlahmodal kjumlahmodal, k.total ktotal, k.tahap tahapsesudah  from(
         select * from(
             select kegiatan, tahap, kode, div, sum(jumlahbarangjasa) jumlahbarangjasa, sum(jumlahmodal) jumlahmodal, sum(jumlahpegawai) jumlahpegawai,
@@ -2759,6 +2764,7 @@ class ReportController extends ApiController{
                     where km.kdprofile = 30 and km.statusenabled = true
                     $qterhadap
                     and km.tahun = '$request[tahun]'
+                    and kb.kdprofile = 30 and kb.statusenabled = true
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
@@ -2772,6 +2778,7 @@ class ReportController extends ApiController{
                         where km.kdprofile = 30 and km.statusenabled = true
                         $qtahap
                         and km.tahun = '$request[tahun]'
+                        and kb.kdprofile = 30 and kb.statusenabled = true
                         group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div, km.keterangan, ta.tahap, ta.id
                     )
                     group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div, km.keterangan, ta.tahap, ta.id
@@ -2800,6 +2807,7 @@ class ReportController extends ApiController{
                     where km.kdprofile = 30 and km.statusenabled = true
                     $qterhadap
                     and km.tahun = '$request[tahun]'
+                    and kb.kdprofile = 30 and kb.statusenabled = true
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
@@ -2813,6 +2821,7 @@ class ReportController extends ApiController{
                         where km.kdprofile = 30 and km.statusenabled = true
                         $qtahap
                         and km.tahun = '$request[tahun]'
+                        and kb.kdprofile = 30 and kb.statusenabled = true
                         group by kms.keterangan, kmss.keterangan, kms.kode, ja.jenisanggaran, kms.div, km.keterangan, ta.tahap, ta.id
                     )
                     group by kms.keterangan, kmss.keterangan, kms.kode, ja.jenisanggaran, kms.div, km.keterangan, ta.tahap, ta.id
@@ -2840,6 +2849,7 @@ class ReportController extends ApiController{
                     where km.kdprofile = 30 and km.statusenabled = true
                     $qtahap
                     and km.tahun = '$request[tahun]'
+                    and kb.kdprofile = 30 and kb.statusenabled = true
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
@@ -2853,6 +2863,7 @@ class ReportController extends ApiController{
                         where km.kdprofile = 30 and km.statusenabled = true
                         $qterhadap
                         and km.tahun = '$request[tahun]'
+                        and kb.kdprofile = 30 and kb.statusenabled = true
                         group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div, km.keterangan, ta.tahap, ta.id
                     )
                     group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div, km.keterangan, ta.tahap, ta.id
@@ -2881,6 +2892,7 @@ class ReportController extends ApiController{
                     where km.kdprofile = 30 and km.statusenabled = true
                     $qtahap
                     and km.tahun = '$request[tahun]'
+                    and kb.kdprofile = 30 and kb.statusenabled = true
                     and km.keterangan in(
                         select km.keterangan
                         from kegiatananggaran_m km
@@ -2894,6 +2906,7 @@ class ReportController extends ApiController{
                         where km.kdprofile = 30 and km.statusenabled = true
                         $qterhadap
                         and km.tahun = '$request[tahun]'
+                        and kb.kdprofile = 30 and kb.statusenabled = true
                         group by kms.keterangan, kmss.keterangan, kms.kode, ja.jenisanggaran, kms.div, km.keterangan, ta.tahap, ta.id
                     )
                     group by kms.keterangan, kmss.keterangan, kms.kode, ja.jenisanggaran, kms.div, km.keterangan, ta.tahap, ta.id
@@ -2904,7 +2917,7 @@ class ReportController extends ApiController{
 
         $pageWidth = 1200;
         //return $this->respond($result);
-        return view('report.spj.cetakjenisanggaransebelumsesudah',compact('sebelum', 'pageWidth'));
+        return view('report.spj.cetakjenisanggaransebelumsesudah',compact('sebelum', 'pageWidth', 'tahap'));
     }
 
     
@@ -3176,6 +3189,11 @@ class ReportController extends ApiController{
         inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
         inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
         where km.kdprofile = 30 and km.statusenabled = true
+        and kms.kdprofile = 30 and kms.statusenabled = true
+                                        and kmss.kdprofile = 30 and kmss.statusenabled = true
+                                        and ma.kdprofile = 30 and ma.statusenabled = true
+                                        and mat.kdprofile = 30 and mat.statusenabled = true
+                                        and kb.kdprofile = 30 and kb.statusenabled = true
         $qterhadap
         and km.tahun = '$tahun'
         -- group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, ap.id, ap.asalproduk, kb.subtotal
@@ -3207,6 +3225,11 @@ class ReportController extends ApiController{
         inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
         inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk 
         where km.kdprofile = 30 and km.statusenabled = true
+        and kb.kdprofile = 30 and kb.statusenabled = true
+        and ma.kdprofile = 30 and ma.statusenabled = true
+        and kms.kdprofile = 30 and kms.statusenabled = true
+        and kmss.kdprofile = 30 and kmss.statusenabled = true
+        and mat.kdprofile = 30 and mat.statusenabled = true
         $qterhadap
         and km.tahun = '$tahun'
         -- group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, ap.id
@@ -3281,6 +3304,11 @@ class ReportController extends ApiController{
         inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
         inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
         where km.kdprofile = 30 and km.statusenabled = true
+        and kb.kdprofile = 30 and kb.statusenabled = true
+        and ma.kdprofile = 30 and ma.statusenabled = true
+        and kms.kdprofile = 30 and kms.statusenabled = true
+        and kmss.kdprofile = 30 and kmss.statusenabled = true
+        and mat.kdprofile = 30 and mat.statusenabled = true
         $qtahap
         and km.tahun = '$tahun'
         -- group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, ap.id, ap.asalproduk, kb.subtotal
@@ -3312,6 +3340,11 @@ class ReportController extends ApiController{
         inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
         inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk 
         where km.kdprofile = 30 and km.statusenabled = true
+        and kb.kdprofile = 30 and kb.statusenabled = true
+        and ma.kdprofile = 30 and ma.statusenabled = true
+        and kms.kdprofile = 30 and kms.statusenabled = true
+        and kmss.kdprofile = 30 and kmss.statusenabled = true
+        and mat.kdprofile = 30 and mat.statusenabled = true
         $qtahap
         and km.tahun = '$tahun'
         -- group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, ap.id
@@ -3408,6 +3441,11 @@ class ReportController extends ApiController{
         inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk and ap.id in(15,18)
         inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
         where km.kdprofile = 30 and km.statusenabled = true
+        and kb.kdprofile = 30 and kb.statusenabled = true
+        and ma.kdprofile = 30 and ma.statusenabled = true
+        and kms.kdprofile = 30 and kms.statusenabled = true
+        and kmss.kdprofile = 30 and kmss.statusenabled = true
+        and mat.kdprofile = 30 and mat.statusenabled = true
         $qterhadap
         and km.tahun = '$tahun'
         -- group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, ap.id
@@ -3438,6 +3476,11 @@ class ReportController extends ApiController{
         inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
         inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk and ap.id in (15,18)
         where km.kdprofile = 30 and km.statusenabled = true
+        and kb.kdprofile = 30 and kb.statusenabled = true
+        and ma.kdprofile = 30 and ma.statusenabled = true
+        and kms.kdprofile = 30 and kms.statusenabled = true
+        and kmss.kdprofile = 30 and kmss.statusenabled = true
+        and mat.kdprofile = 30 and mat.statusenabled = true
         $qterhadap
         and km.tahun = '$tahun'
         -- group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, ap.id
@@ -3525,6 +3568,11 @@ class ReportController extends ApiController{
         inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk and ap.id in(15,18)
         inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
         where km.kdprofile = 30 and km.statusenabled = true
+        and kb.kdprofile = 30 and kb.statusenabled = true
+        and ma.kdprofile = 30 and ma.statusenabled = true
+        and kms.kdprofile = 30 and kms.statusenabled = true
+        and kmss.kdprofile = 30 and kmss.statusenabled = true
+        and mat.kdprofile = 30 and mat.statusenabled = true
         $qtahap
         and km.tahun = '$tahun'
         -- group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, ap.id
@@ -3555,6 +3603,11 @@ class ReportController extends ApiController{
         inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
         inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk and ap.id in (15,18)
         where km.kdprofile = 30 and km.statusenabled = true
+        and kb.kdprofile = 30 and kb.statusenabled = true
+        and ma.kdprofile = 30 and ma.statusenabled = true
+        and kms.kdprofile = 30 and kms.statusenabled = true
+        and kmss.kdprofile = 30 and kmss.statusenabled = true
+        and mat.kdprofile = 30 and mat.statusenabled = true
         $qtahap
         and km.tahun = '$tahun'
         -- group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, ap.id
@@ -3615,6 +3668,11 @@ class ReportController extends ApiController{
                                     end
                                     inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                                     where km.kdprofile = 30 and km.statusenabled = true
+                                    and kb.kdprofile = 30 and kb.statusenabled = true
+                                    and ma.kdprofile = 30 and ma.statusenabled = true
+                                    and kms.kdprofile = 30 and kms.statusenabled = true
+                                    and kmss.kdprofile = 30 and kmss.statusenabled = true
+                                    and mat.kdprofile = 30 and mat.statusenabled = true
                                     $qterhadap
                                     and km.tahun = '$tahun'
                                     group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
@@ -3638,6 +3696,11 @@ class ReportController extends ApiController{
                     end
                     inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                     where km.kdprofile = 30 and km.statusenabled = true
+                    and kb.kdprofile = 30 and kb.statusenabled = true
+                    and ma.kdprofile = 30 and ma.statusenabled = true
+                    and kms.kdprofile = 30 and kms.statusenabled = true
+                    and kmss.kdprofile = 30 and kmss.statusenabled = true
+                    and mat.kdprofile = 30 and mat.statusenabled = true
                     $qterhadap
                     and km.tahun = '$tahun'
                     group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran
@@ -3693,6 +3756,11 @@ class ReportController extends ApiController{
                                     end
                                     inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                                     where km.kdprofile = 30 and km.statusenabled = true
+                                    and kb.kdprofile = 30 and kb.statusenabled = true
+                                    and ma.kdprofile = 30 and ma.statusenabled = true
+                                    and kms.kdprofile = 30 and kms.statusenabled = true
+                                    and kmss.kdprofile = 30 and kmss.statusenabled = true
+                                    and mat.kdprofile = 30 and mat.statusenabled = true
                                     $qtahap
                                     and km.tahun = '$tahun'
                                     group by ta.id, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
@@ -3716,6 +3784,11 @@ class ReportController extends ApiController{
                     end
                     inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                     where km.kdprofile = 30 and km.statusenabled = true
+                    and kb.kdprofile = 30 and kb.statusenabled = true
+                    and ma.kdprofile = 30 and ma.statusenabled = true
+                    and kms.kdprofile = 30 and kms.statusenabled = true
+                    and kmss.kdprofile = 30 and kmss.statusenabled = true
+                    and mat.kdprofile = 30 and mat.statusenabled = true
                     $qtahap
                     and km.tahun = '$tahun'
                     group by ta.id, mat.kodemataanggaran, mat.namamataanggaran
@@ -3807,6 +3880,11 @@ class ReportController extends ApiController{
 							end
 							inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
 							where km.kdprofile = 30 and km.statusenabled = true
+                            and kms.kdprofile = 30 and kms.statusenabled = true
+                            and kmss.kdprofile = 30 and kmss.statusenabled = true
+                            and ma.kdprofile = 30 and ma.statusenabled = true
+                            and mat.kdprofile = 30 and mat.statusenabled = true
+                            and kb.kdprofile = 30 and kb.statusenabled = true
 							$qtahap
 							and km.tahun = '$tahun'
 							group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
@@ -3832,6 +3910,11 @@ class ReportController extends ApiController{
 			where km.kdprofile = 30 and km.statusenabled = true
 			$qtahap
 			and km.tahun = '$tahun'
+            and kms.kdprofile = 30 and kms.statusenabled = true
+            and kmss.kdprofile = 30 and kmss.statusenabled = true
+            and ma.kdprofile = 30 and ma.statusenabled = true
+            and mat.kdprofile = 30 and mat.statusenabled = true
+            and kb.kdprofile = 30 and kb.statusenabled = true
 			group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran
         ) as p on o.kodemataanggaran = p.kodemataanggaran 
         group by o.kodemataanggaran, o.namamataanggaran, p.subtotal, p.tahap
@@ -3887,6 +3970,11 @@ class ReportController extends ApiController{
                                         end
                                         inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk 
                                         where km.kdprofile = 30 and km.statusenabled = true
+                                        and kms.kdprofile = 30 and kms.statusenabled = true
+                                        and kmss.kdprofile = 30 and kmss.statusenabled = true
+                                        and ma.kdprofile = 30 and ma.statusenabled = true
+                                        and mat.kdprofile = 30 and mat.statusenabled = true
+                                        and kb.kdprofile = 30 and kb.statusenabled = true
                                         $qtahap
                                         and km.tahun = '$tahun'
                                         group by ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
@@ -4574,6 +4662,9 @@ public function suratBuktiPengembalian(Request $request)
                             inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                             inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                             where km.kdprofile = 30 and km.statusenabled = true
+                            and kms.kdprofile = 30 and kms.statusenabled = true
+                            and kmss.kdprofile = 30 and kmss.statusenabled = true
+                            and kb.kdprofile = 30 and kb.statusenabled = true
                             and km.tahun = '$tahun'
                             $qtahap
                             group by kms.keterangan, kmss.keterangan, kmss.kode,  kmss.div, ap.id
@@ -4596,6 +4687,9 @@ public function suratBuktiPengembalian(Request $request)
                             inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                             inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                             where km.kdprofile = 30 and km.statusenabled = true
+                            and kms.kdprofile = 30 and kms.statusenabled = true
+                            and kmss.kdprofile = 30 and kmss.statusenabled = true
+                            and kb.kdprofile = 30 and kb.statusenabled = true
                             and km.tahun = '$tahun'
                             $qtahap
                             group by kms.keterangan, kmss.keterangan, kms.kode, kms.div, ap.id
@@ -4652,6 +4746,9 @@ public function suratBuktiPengembalian(Request $request)
                         WHERE
                             km.kdprofile = 30 
                             AND km.statusenabled = TRUE 
+                            and kms.kdprofile = 30 and kms.statusenabled = true
+                            and kmss.kdprofile = 30 and kmss.statusenabled = true
+                            and kb.kdprofile = 30 and kb.statusenabled = true
                             $qterhadap
                             and km.tahun = '$request[tahun]'
                             AND km.keterangan IN (
@@ -4666,6 +4763,9 @@ public function suratBuktiPengembalian(Request $request)
                             WHERE
                                 km.kdprofile = 30 
                                 AND km.statusenabled = TRUE 
+                                and kms.kdprofile = 30 and kms.statusenabled = true
+                                and kmss.kdprofile = 30 and kmss.statusenabled = true
+                                and kb.kdprofile = 30 and kb.statusenabled = true
                                 $qtahap
                                 and km.tahun = '$request[tahun]'
                             GROUP BY kms.keterangan, kmss.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 
@@ -4700,6 +4800,9 @@ public function suratBuktiPengembalian(Request $request)
                         WHERE
                             km.kdprofile = 30 
                             AND km.statusenabled = TRUE 
+                            and kms.kdprofile = 30 and kms.statusenabled = true
+                            and kmss.kdprofile = 30 and kmss.statusenabled = true
+                            and kb.kdprofile = 30 and kb.statusenabled = true
                             $qterhadap
                                 and km.tahun = '$request[tahun]'
                             AND km.keterangan IN (
@@ -4717,6 +4820,9 @@ public function suratBuktiPengembalian(Request $request)
                             WHERE
                                 km.kdprofile = 30 
                                 AND km.statusenabled = TRUE 
+                                and kms.kdprofile = 30 and kms.statusenabled = true
+                                and kmss.kdprofile = 30 and kmss.statusenabled = true
+                                and kb.kdprofile = 30 and kb.statusenabled = true
                                 $qtahap
                                 and km.tahun = '$request[tahun]' 
                             GROUP BY kms.keterangan, kmss.keterangan, kms.kode, ap.asalproduk, kms.div, km.keterangan, ta.tahap, ta.ID, ap.ID 
@@ -4762,6 +4868,9 @@ public function suratBuktiPengembalian(Request $request)
                         WHERE
                             km.kdprofile = 30 
                             AND km.statusenabled = TRUE 
+                            and kms.kdprofile = 30 and kms.statusenabled = true
+                            and kmss.kdprofile = 30 and kmss.statusenabled = true
+                            and kb.kdprofile = 30 and kb.statusenabled = true
                             $qtahap
                                 and km.tahun = '$request[tahun]' 
                             AND km.keterangan IN (
@@ -4779,6 +4888,9 @@ public function suratBuktiPengembalian(Request $request)
                             WHERE
                                 km.kdprofile = 30 
                                 AND km.statusenabled = TRUE 
+                                and kms.kdprofile = 30 and kms.statusenabled = true
+                            and kmss.kdprofile = 30 and kmss.statusenabled = true
+                            and kb.kdprofile = 30 and kb.statusenabled = true
                                 $qterhadap
                                 and km.tahun = '$request[tahun]'
                             GROUP BY kmss.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 
@@ -4812,6 +4924,9 @@ public function suratBuktiPengembalian(Request $request)
                         WHERE
                             km.kdprofile = 30 
                             AND km.statusenabled = TRUE 
+                            and kms.kdprofile = 30 and kms.statusenabled = true
+                            and kmss.kdprofile = 30 and kmss.statusenabled = true
+                            and kb.kdprofile = 30 and kb.statusenabled = true
                             $qtahap
                                 and km.tahun = '$request[tahun]'
                             AND km.keterangan IN (
@@ -4825,6 +4940,9 @@ public function suratBuktiPengembalian(Request $request)
                                 ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
                                 LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
                             WHERE km.kdprofile = 30  AND km.statusenabled = TRUE  
+                            and kms.kdprofile = 30 and kms.statusenabled = true
+                            and kmss.kdprofile = 30 and kmss.statusenabled = true
+                            and kb.kdprofile = 30 and kb.statusenabled = true
                             $qterhadap 
                             and km.tahun = '$request[tahun]'
                             GROUP BY kms.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 

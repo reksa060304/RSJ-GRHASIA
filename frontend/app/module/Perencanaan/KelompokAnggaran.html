@@ -537,35 +537,72 @@
 			<a ng-click="showAndHide()">List Sub Sub Kegiatan</a>
 		</legend>
 		<div class="grid_12" ng-repeat="item in listSubSubKegiatan track by $index  ">
-			<input type="checkbox" ng-checked="item.isChecked" class="k-checkbox" name="{{item.id}}"
-				id="{{item.id}}" ng-model="bool" value="{{item.id}}" ng-click="ceklisOne(bool,item)">
+			<input type="checkbox" ng-checked="item.isChecked" class="k-checkbox" name="{{item.idsubsubkegiatan}}"
+				id="{{item.idsubsubkegiatan}}" ng-model="bool" value="{{item.idsubsubkegiatan}}" ng-click="ceklisOne(bool,item)">
 
-			<label class="k-checkbox-label {{item.style}}" for="{{item.id}}">{{item.id}} -
-				{{item.kode}} ~ {{item.keterangan}}</label>
+			<label class="k-checkbox-label {{item.style}}" for="{{item.idsubsubkegiatan}}">{{item.idsubsubkegiatan}} -
+				{{item.kodesubsubkegiatan}} ~ {{item.keterangansubsubkegiatan}}</label>
 		</div>
 	</div>
 	<div class="grid_12">
+		<div class="grid_12" >
+			<div class="grid_4" >
+				<div class="grid_4" style="text-align: center;">
+					Tahap Awal
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapawal"
+						k-data-text-field="'tahap'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+				</div>
+			</div>
+			<div class="grid_4" ></div>
+			<div class="grid_4" >
+				<div class="grid_4" style="text-align: center;">
+					Tahap Akhir
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapakhir"
+						k-data-text-field="'tahap'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+				</div>
+			</div>
+		</div>
+		<div class="grid_12" >
+			<div class="grid_4" >
+				<div class="grid_4" style="text-align: center;">
+					Tahun Awal
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunawal" kendo-date-picker
+						placeholer="YYYY" k-format="'yyyy'"/>
+				</div>
+			</div>
+			<div class="grid_4" ></div>
+			<div class="grid_4" >
+				<div class="grid_4" style="text-align: center;">
+					Tahun Akhir
+				</div>
+				<div class="grid_8" style="margin-top: -10px;">
+					<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunakhir" kendo-date-picker
+						placeholer="YYYY" k-format="'yyyy'"/>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="grid_12" >
 		<div class="grid_4" >
 			<div class="grid_4" style="text-align: center;">
-				Tahap Awal
+				Sub Kegiatan
 			</div>
 			<div class="grid_8" style="margin-top: -10px;">
-				<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapawal"
-					k-data-text-field="'tahap'" k-data-value-field="'id'"
-					k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+				<input style="width: 100%;" kendo-combo-box k-ng-model="item.subkegiatantransfer"
+				k-data-text-field="'keterangan'" k-data-value-field="'id'"
+				k-filter="'contains'" k-auto-bind="false" k-data-source="listSubKegiatanTransfer" />
 			</div>
 		</div>
 		<div class="grid_4" ></div>
-		<div class="grid_4" >
-			<div class="grid_4" style="text-align: center;">
-				Tahap Akhir
-			</div>
-			<div class="grid_8" style="margin-top: -10px;">
-				<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapakhir"
-					k-data-text-field="'tahap'" k-data-value-field="'id'"
-					k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
-			</div>
-		</div>
+		<div class="grid_4" ></div>
 	</div>
 	<div class="grid_12" >
 		<div class="grid_4" >
@@ -1491,7 +1528,7 @@
 					<label c-label item="item" c-label-text="Sub Total"></label>
 				</div>
 				<div class="grid_12">
-					<input c-text-box type="input" class="k-textbox" ng-model="item.subTotalKT"  />
+					<input c-text-box type="input" class="k-textbox" ng-model="item.subTotalKT"  disabled/>
 				</div>
 			</div>
 			<div class="grid_4">

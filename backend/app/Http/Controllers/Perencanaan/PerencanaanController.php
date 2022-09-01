@@ -512,23 +512,55 @@ class PerencanaanController extends ApiController {
                         , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
         }
         
+        $ktahun = '';
+        if (isset($request['tahunawal']) && $request['tahunawal'] != "" && $request['tahunawal'] != "undefined") {
+            $ktahun =  "and dp.tahun = '".$request['tahunawal']."'";
+        }
 
-        $kegiatansubsub = \DB::table('kegiatananggaran_m as dp')
-            ->join('keteranganbelanja_t as ktb','ktb.objectkegiatanfk','=','dp.id')
-            ->select('dp.id', 'dp.kode', 'dp.keterangan')
-            ->where('dp.kdprofile', $idProfile)
-            ->where('dp.statusenabled', true)
-            ->where('dp.div', 4)
-            ->where('ktb.objecttahapfk', $tahap)
-            ->orderBy('dp.kode')
-            ->groupBy('dp.id', 'dp.kode', 'dp.keterangan')
-            ->get();
+        $ksubkegiatan = '';
+        if (isset($request['subkegiatan']) && $request['subkegiatan'] != "" && $request['subkegiatan'] != "undefined") {
+            $ksubkegiatan =  "and dp2.id = ".$request['subkegiatan'];
+        }
+
+        $ktahap = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $ktahap =  "and ktb.objecttahapfk = ".$request['tahap'];
+        }
+
+        $kegiatansubsub = DB::select(DB::raw("select dp.tahun tahunsubsubkegiatan, dp.id idsubsubkegiatan, dp.kode kodesubsubkegiatan, dp.keterangan keterangansubsubkegiatan,
+        dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
+        dp.objectjenisbelanjafk, dp.objectpptkfk
+        from kegiatananggaran_m as dp
+        inner join kegiatananggaran_m as dp2 on dp.kode ilike dp2.kode || '%'
+        inner join keteranganbelanja_t as ktb on ktb.objectkegiatanfk = dp.id
+        where dp.kdprofile = $idProfile
+        and dp.statusenabled = true
+        and dp2.kdprofile = $idProfile 
+        and dp2.statusenabled = true 
+        and ktb.kdprofile = $idProfile
+        and ktb.statusenabled = true
+        and dp.div = 4
+        and dp2.div = 3
+        $ktahap
+        $ktahun
+        $ksubkegiatan
+        group by dp.id, dp.kode, dp.keterangan, dp.tahun, dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
+        dp.objectjenisbelanjafk, dp.objectpptkfk
+        order by dp.kode"));
 
         $subsubkegiatanangkas = \DB::table('kegiatananggaran_m as dp')
             ->select('dp.id', 'dp.kode', 'dp.keterangan', 'dp.norec')
             ->where('dp.kdprofile', $idProfile)
             ->where('dp.statusenabled', true)
             ->where('dp.div', 4)
+            ->orderBy('dp.kode')
+            ->get();
+
+        $subkegiatantransfer = \DB::table('kegiatananggaran_m as dp')
+            ->select('dp.id', 'dp.kode', 'dp.keterangan', 'dp.norec')
+            ->where('dp.kdprofile', $idProfile)
+            ->where('dp.statusenabled', true)
+            ->where('dp.div', 3)
             ->orderBy('dp.kode')
             ->get();
         
@@ -776,6 +808,7 @@ class PerencanaanController extends ApiController {
             'carispd' => $carispd,
             'carispm' => $carispm,
             'asalproduk' => $dataAsalProduk,
+            'subkegiatantransfer' => $subkegiatantransfer,
             // 'kelompokketiga' => $ketiga,
             // 'kelompokkeempat' => $keempat,
             // 'kelompokkelima' => $kelima,
@@ -2414,30 +2447,94 @@ class PerencanaanController extends ApiController {
         try{
 
             foreach($details as $dt){
-                $KB= KeteranganBelanja::where('objectkegiatanfk',$dt['id'])
+                $cek = KegiatanAnggaran::where('kode', '=', $dt['kodesubsubkegiatan'])
+                ->where('tahun', '=', $request['tahunakhir'])
+                ->first();
+
+                if(empty($cek)){
+                    $newID = KegiatanAnggaran::max('id');
+
+                    $KA = new KegiatanAnggaran();
+                    $KA->id =  $newID + 1;
+                    $KA->norec = $newID + 1;
+                    $KA->kdprofile = $idProfile;
+                    $KA->statusenabled = true;
+                    $KA->kode = $dt['kodesubsubkegiatan'];
+                    $KA->keterangan = $dt['keterangansubsubkegiatan'];
+                    $KA->kodeexternal = null;
+                    $KA->namaexternal = null;
+                    $KA->reportdisplay = null;
+                    $KA->tahun = $request['tahunakhir'];
+                    $KA->indikatormasuk = $dt['indikatormasuk'];
+                    $KA->indikatorkeluaran = $dt['indikatorkeluaran'];
+                    $KA->indikatorhasil = $dt['indikatorhasil'];
+                    $KA->targetmasuk = $dt['targetmasuk'];
+                    $KA->targetkeluaran = $dt['targetkeluaran'];
+                    $KA->targethasil = $dt['targethasil'];
+                    $KA->div = $dt['div'];
+                    $KA->objectjenisbelanjafk = $dt['objectjenisbelanjafk'];
+                    $KA->objectpptkfk = $dt['objectpptkfk'];
+                    $KA->save();
+
+                    $KB= KeteranganBelanja::where('objectkegiatanfk',$dt['idsubsubkegiatan'])
                     ->where('objecttahapfk', $awal)
+                    ->where('statusenabled', true)
                     ->get();
                 
-                foreach($KB as $k){
+                    foreach($KB as $k){
 
-                    $MA = new KeteranganBelanja();
-                    $norecKS = $MA->generateNewId();
-                    $MA->norec = $norecKS;
-                    $MA->kdprofile = $idProfile;
-                    $MA->statusenabled = true;
-                    $MA->objectkegiatanfk = $dt['id'];
-                    $MA->objectmataanggaranfk = $k->objectmataanggaranfk;
-                    $MA->keteranganbelanja = $k->keteranganbelanja;
-                    $MA->nourut = $k->nourut;
-                    $MA->jml = $k->jml;
-                    $MA->hargasatuan = $k->hargasatuan;
-                    $MA->subtotal = $k->subtotal;
-                    $MA->satuan = $k->satuan;
-                    $MA->objectasalprodukfk = $k->objectasalprodukfk;
-                    $MA->objecttahapfk = $akhir;
+                        $MA = new KeteranganBelanja();
+                        $norecKS = $MA->generateNewId();
+                        $MA->norec = $norecKS;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                        $MA->objectkegiatanfk = $KA->id;
+                        $MA->objectmataanggaranfk = $k->objectmataanggaranfk;
+                        $MA->keteranganbelanja = $k->keteranganbelanja;
+                        $MA->nourut = $k->nourut;
+                        $MA->jml = $k->jml;
+                        $MA->hargasatuan = $k->hargasatuan;
+                        $MA->subtotal = $k->subtotal;
+                        $MA->satuan = $k->satuan;
+                        $MA->objectasalprodukfk = $k->objectasalprodukfk;
+                        $MA->objecttahapfk = $akhir;
 
-                    $MA->save();
+                        $MA->save();
+                    }
+                } else{
+                    $KA = KegiatanAnggaran::where('id', '=', $dt['idsubsubkegiatan'])
+                    ->first();
+                    $KA->targetmasuk = 2*((int)substr($dt['targetmasuk'], 5));
+                    $KA->save();
+
+                    $KB= KeteranganBelanja::where('objectkegiatanfk',$dt['idsubsubkegiatan'])
+                    ->where('objecttahapfk', $awal)
+                    ->where('statusenabled', true)
+                    ->get();
+                
+                    foreach($KB as $k){
+
+                        $MA = new KeteranganBelanja();
+                        $norecKS = $MA->generateNewId();
+                        $MA->norec = $norecKS;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                        $MA->objectkegiatanfk = $dt['idsubsubkegiatan'];
+                        $MA->objectmataanggaranfk = $k->objectmataanggaranfk;
+                        $MA->keteranganbelanja = $k->keteranganbelanja;
+                        $MA->nourut = $k->nourut;
+                        $MA->jml = $k->jml;
+                        $MA->hargasatuan = $k->hargasatuan;
+                        $MA->subtotal = $k->subtotal;
+                        $MA->satuan = $k->satuan;
+                        $MA->objectasalprodukfk = $k->objectasalprodukfk;
+                        $MA->objecttahapfk = $akhir;
+
+                        $MA->save();
+                    }
                 }
+
+                
             }
 
            $transStatus = 'true';
@@ -2451,7 +2548,7 @@ class PerencanaanController extends ApiController {
             $result = array(
                 'status' => 201,
                 'message' => $transMessage,
-                'result' => $KB,
+                'result' => $KA,
                 'as' => '@epic',
             );
         } else {
@@ -3718,7 +3815,20 @@ class PerencanaanController extends ApiController {
             $smataanggaran = "and ma.kodemataanggaran = '".$request['mataanggaran']."'";
         }
 
-        $data = DB::select(DB::raw("
+        $scek = '';
+        if(isset($request['cek']) && $request['cek'] != '' && $request['cek'] != 'undefined'){
+            if($request['cek'] == "false"){
+                $scek = '';
+            }
+            else if($request['cek'] == "true"){
+                $scek = "where total != 0";
+            } 
+            
+        }
+
+        //var_dump($scek);
+
+        $data = DB::select(DB::raw("select * from(
                 select ma.id, ma.kodemataanggaran,ma.namamataanggaran, coalesce(cast(sum(kt.subtotal) as float),0) as total
                 , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
                 , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
@@ -3732,7 +3842,10 @@ class PerencanaanController extends ApiController {
                 and ma.kdprofile=$idProfile
                 and ma.statusenabled = true
                 group by  ma.id,ma.kodemataanggaran,ma.namamataanggaran
-                order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;
+                order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
+                ) as x 
+                $scek
+                order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc;
             ")
         );
 
