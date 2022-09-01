@@ -3311,6 +3311,10 @@
         {
             "nameDep":"AsesmenKeperawatanIGDNonJiwaCtrl",
             "urlDep":"module/EMR/AsesmenKeperawatanIGDNonJiwaCtrl"
+        },
+        {
+            "nameDep": "AsesmenAwalKeperawatanJiwaRawatJalanCtrl",
+            "urlDep": "module/EMR/AsesmenAwalKeperawatanJiwaRawatJalanCtrl"
         }
         
     ]
