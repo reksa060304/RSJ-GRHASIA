@@ -72,25 +72,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.cc.norec_emr = nomorEMR
             }
 
-            // var chacePeriode = cacheHelper.get('cacheHeader');
-            // if (chacePeriode != undefined) {
-
-            //     chacePeriode.umur = dateHelper.CountAge(new Date(chacePeriode.tgllahir), new Date());
-            //     var bln = chacePeriode.umur.month,
-            //         thn = chacePeriode.umur.year,
-            //         day = chacePeriode.umur.day
-
-
-            //     chacePeriode.umur = thn + 'thn ' + bln + 'bln ' + day + 'hr '
-            //     $scope.cc.nocm = chacePeriode.nocm
-            //     $scope.cc.namapasien = chacePeriode.namapasien;
-            //     $scope.cc.jeniskelamin = chacePeriode.jeniskelamin;
-            //     $scope.cc.tgllahir = chacePeriode.tgllahir;
-            //     $scope.cc.umur = chacePeriode.umur;
-            //     $scope.cc.alamatlengkap = chacePeriode.alamatlengkap;
-            //     $scope.cc.notelepon = chacePeriode.notelepon;
-
-            // }
+            
             var chacePeriode = cacheHelper.get('cacheRekamMedis');
             if (chacePeriode != undefined) {
                 $scope.cc.nocm = chacePeriode[0]
@@ -120,7 +102,364 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                if ($scope.cc.jeniskelamin == 'PEREMPUAN'){
+                    $scope.cc.jeniskelamin = 2
+                }else{
+                    $scope.cc.jeniskelamin = 1
 
+                }
+                // 2112000076
+                medifirstService.get('emr/get-epps-hasil?norec=' + $scope.cc.norec + "&jeniskelamin=" + $scope.cc.jeniskelamin).then(function (data) {
+                    var datas = data.data.epps
+                    var kraepelin = data.data.kraepelin
+                    var ist = data.data.ist
+                    if(datas != ""){
+                        //ach
+                        if (datas[0].ach[0].ach >= 0 && datas[0].ach[0].ach <= 19) {
+                            $scope.item.obj[3004207] = true
+                        } else if (datas[0].ach[0].ach >= 20 && datas[0].ach[0].ach <= 39) {
+                            $scope.item.obj[3004208] = true
+                        } else if (datas[0].ach[0].ach >= 40 && datas[0].ach[0].ach <= 59) {
+                            $scope.item.obj[3004209] = true
+                        } else if (datas[0].ach[0].ach >= 60 && datas[0].ach[0].ach <= 79) {
+                            $scope.item.obj[3004210] = true
+                        } else if (datas[0].ach[0].ach >= 80 && datas[0].ach[0].ach <= 99) {
+                            $scope.item.obj[3004211] = true
+                        }
+                        //def
+                        if (datas[0].def[0].def >= 0 && datas[0].def[0].def <= 19) {
+                            $scope.item.obj[3004212] = true
+                        } else if (datas[0].def[0].def >= 20 && datas[0].def[0].def <= 39) {
+                            $scope.item.obj[3004213] = true
+                        } else if (datas[0].def[0].def >= 40 && datas[0].def[0].def <= 59) {
+                            $scope.item.obj[3004214] = true
+                        } else if (datas[0].def[0].def >= 60 && datas[0].def[0].def <= 79) {
+                            $scope.item.obj[3004215] = true
+                        } else if (datas[0].def[0].def >= 80 && datas[0].def[0].def <= 99) {
+                            $scope.item.obj[3004216] = true
+                        }
+                        //ord
+                        if (datas[0].ord[0].ord >= 0 && datas[0].ord[0].ord <= 19) {
+                            $scope.item.obj[3004217] = true
+                        } else if (datas[0].ord[0].ord >= 20 && datas[0].ord[0].ord <= 39) {
+                            $scope.item.obj[3004218] = true
+                        } else if (datas[0].ord[0].ord >= 40 && datas[0].ord[0].ord <= 59) {
+                            $scope.item.obj[3004219] = true
+                        } else if (datas[0].ord[0].ord >= 60 && datas[0].ord[0].ord <= 79) {
+                            $scope.item.obj[3004220] = true
+                        } else if (datas[0].ord[0].ord >= 80 && datas[0].ord[0].ord <= 99) {
+                            $scope.item.obj[3004221] = true
+                        }
+                        //exh
+                        if (datas[0].exh[0].exh >= 0 && datas[0].exh[0].exh <= 19) {
+                            $scope.item.obj[3004222] = true
+                        } else if (datas[0].exh[0].exh >= 20 && datas[0].exh[0].exh <= 39) {
+                            $scope.item.obj[3004223] = true
+                        } else if (datas[0].exh[0].exh >= 40 && datas[0].exh[0].exh <= 59) {
+                            $scope.item.obj[3004224] = true
+                        } else if (datas[0].exh[0].exh >= 60 && datas[0].exh[0].exh <= 79) {
+                            $scope.item.obj[3004225] = true
+                        } else if (datas[0].exh[0].exh >= 80 && datas[0].exh[0].exh <= 99) {
+                            $scope.item.obj[3004226] = true
+                        }
+                        //aut
+                        if (datas[0].aut[0].aut >= 0 && datas[0].aut[0].aut <= 19) {
+                            $scope.item.obj[3004227] = true
+                        } else if (datas[0].aut[0].aut >= 20 && datas[0].aut[0].aut <= 39) {
+                            $scope.item.obj[3004228] = true
+                        } else if (datas[0].aut[0].aut >= 40 && datas[0].aut[0].aut <= 59) {
+                            $scope.item.obj[3004229] = true
+                        } else if (datas[0].aut[0].aut >= 60 && datas[0].aut[0].aut <= 79) {
+                            $scope.item.obj[3004230] = true
+                        } else if (datas[0].aut[0].aut >= 80 && datas[0].aut[0].aut <= 99) {
+                            $scope.item.obj[3004231] = true
+                        }
+                        //aff
+                        if (datas[0].aff[0].aff >= 0 && datas[0].aff[0].aff <= 19) {
+                            $scope.item.obj[3004232] = true
+                        } else if (datas[0].aff[0].aff >= 20 && datas[0].aff[0].aff <= 39) {
+                            $scope.item.obj[3004233] = true
+                        } else if (datas[0].aff[0].aff >= 40 && datas[0].aff[0].aff <= 59) {
+                            $scope.item.obj[3004234] = true
+                        } else if (datas[0].aff[0].aff >= 60 && datas[0].aff[0].aff <= 79) {
+                            $scope.item.obj[3004235] = true
+                        } else if (datas[0].aff[0].aff >= 80 && datas[0].aff[0].aff <= 99) {
+                            $scope.item.obj[3004236] = true
+                        }
+                        //int
+                        if (datas[0].int[0].int >= 0 && datas[0].int[0].int <= 19) {
+                            $scope.item.obj[3004237] = true
+                        } else if (datas[0].int[0].int >= 20 && datas[0].int[0].int <= 39) {
+                            $scope.item.obj[3004238] = true
+                        } else if (datas[0].int[0].int >= 40 && datas[0].int[0].int <= 59) {
+                            $scope.item.obj[3004239] = true
+                        } else if (datas[0].int[0].int >= 60 && datas[0].int[0].int <= 79) {
+                            $scope.item.obj[3004240] = true
+                        } else if (datas[0].int[0].int >= 80 && datas[0].int[0].int <= 99) {
+                            $scope.item.obj[3004241] = true
+                        }
+                        //suc
+                        if (datas[0].suc[0].suc >= 0 && datas[0].suc[0].suc <= 19) {
+                            $scope.item.obj[3004242] = true
+                        } else if (datas[0].suc[0].suc >= 20 && datas[0].suc[0].suc <= 39) {
+                            $scope.item.obj[3004243] = true
+                        } else if (datas[0].suc[0].suc >= 40 && datas[0].suc[0].suc <= 59) {
+                            $scope.item.obj[3004244] = true
+                        } else if (datas[0].suc[0].suc >= 60 && datas[0].suc[0].suc <= 79) {
+                            $scope.item.obj[3004245] = true
+                        } else if (datas[0].suc[0].suc >= 80 && datas[0].suc[0].suc <= 99) {
+                            $scope.item.obj[3004246] = true
+                        }
+                        //dom
+                        if (datas[0].dom[0].dom >= 0 && datas[0].dom[0].dom <= 19) {
+                            $scope.item.obj[3004247] = true
+                        } else if (datas[0].dom[0].dom >= 20 && datas[0].dom[0].dom <= 39) {
+                            $scope.item.obj[3004248] = true
+                        } else if (datas[0].dom[0].dom >= 40 && datas[0].dom[0].dom <= 59) {
+                            $scope.item.obj[3004249] = true
+                        } else if (datas[0].dom[0].dom >= 60 && datas[0].dom[0].dom <= 79) {
+                            $scope.item.obj[3004250] = true
+                        } else if (datas[0].dom[0].dom >= 80 && datas[0].dom[0].dom <= 99) {
+                            $scope.item.obj[3004251] = true
+                        }
+                        //aba
+                        if (datas[0].aba[0].aba >= 0 && datas[0].aba[0].aba <= 19) {
+                            $scope.item.obj[3004252] = true
+                        } else if (datas[0].aba[0].aba >= 20 && datas[0].aba[0].aba <= 39) {
+                            $scope.item.obj[3004253] = true
+                        } else if (datas[0].aba[0].aba >= 40 && datas[0].aba[0].aba <= 59) {
+                            $scope.item.obj[3004254] = true
+                        } else if (datas[0].aba[0].aba >= 60 && datas[0].aba[0].aba <= 79) {
+                            $scope.item.obj[3004255] = true
+                        } else if (datas[0].aba[0].aba >= 80 && datas[0].aba[0].aba <= 99) {
+                            $scope.item.obj[3004256] = true
+                        }
+                        //nur
+                        if (datas[0].nur[0].nur >= 0 && datas[0].nur[0].nur <= 19) {
+                            $scope.item.obj[3004257] = true
+                        } else if (datas[0].nur[0].nur >= 20 && datas[0].nur[0].nur <= 39) {
+                            $scope.item.obj[3004258] = true
+                        } else if (datas[0].nur[0].nur >= 40 && datas[0].nur[0].nur <= 59) {
+                            $scope.item.obj[3004259] = true
+                        } else if (datas[0].nur[0].nur >= 60 && datas[0].nur[0].nur <= 79) {
+                            $scope.item.obj[3004260] = true
+                        } else if (datas[0].nur[0].nur >= 80 && datas[0].nur[0].nur <= 99) {
+                            $scope.item.obj[3004261] = true
+                        }
+                        //chg
+                        if (datas[0].chg[0].chg >= 0 && datas[0].chg[0].chg <= 19) {
+                            $scope.item.obj[3004262] = true
+                        } else if (datas[0].chg[0].chg >= 20 && datas[0].chg[0].chg <= 39) {
+                            $scope.item.obj[3004263] = true
+                        } else if (datas[0].chg[0].chg >= 40 && datas[0].chg[0].chg <= 59) {
+                            $scope.item.obj[3004264] = true
+                        } else if (datas[0].chg[0].chg >= 60 && datas[0].chg[0].chg <= 79) {
+                            $scope.item.obj[3004265] = true
+                        } else if (datas[0].chg[0].chg >= 80 && datas[0].chg[0].chg <= 99) {
+                            $scope.item.obj[3004266] = true
+                        }
+                        //end
+                        if (datas[0].end[0].end >= 0 && datas[0].end[0].end <= 19) {
+                            $scope.item.obj[3004267] = true
+                        } else if (datas[0].end[0].end >= 20 && datas[0].end[0].end <= 39) {
+                            $scope.item.obj[3004268] = true
+                        } else if (datas[0].end[0].end >= 40 && datas[0].end[0].end <= 59) {
+                            $scope.item.obj[3004269] = true
+                        } else if (datas[0].end[0].end >= 60 && datas[0].end[0].end <= 79) {
+                            $scope.item.obj[3004270] = true
+                        } else if (datas[0].end[0].end >= 80 && datas[0].end[0].end <= 99) {
+                            $scope.item.obj[3004271] = true
+                        }
+                        //het
+                        if (datas[0].het[0].het >= 0 && datas[0].het[0].het <= 19) {
+                            $scope.item.obj[3004272] = true
+                        } else if (datas[0].het[0].het >= 20 && datas[0].het[0].het <= 39) {
+                            $scope.item.obj[3004273] = true
+                        } else if (datas[0].het[0].het >= 40 && datas[0].het[0].het <= 59) {
+                            $scope.item.obj[3004274] = true
+                        } else if (datas[0].het[0].het >= 60 && datas[0].het[0].het <= 79) {
+                            $scope.item.obj[3004275] = true
+                        } else if (datas[0].het[0].het >= 80 && datas[0].het[0].het <= 99) {
+                            $scope.item.obj[3004276] = true
+                        }
+                        //agg
+                        if (datas[0].agg[0].agg >= 0 && datas[0].agg[0].agg <= 19) {
+                            $scope.item.obj[3004277] = true
+                        } else if (datas[0].agg[0].agg >= 20 && datas[0].agg[0].agg <= 39) {
+                            $scope.item.obj[3004278] = true
+                        } else if (datas[0].agg[0].agg >= 40 && datas[0].agg[0].agg <= 59) {
+                            $scope.item.obj[3004279] = true
+                        } else if (datas[0].agg[0].agg >= 60 && datas[0].agg[0].agg <= 79) {
+                            $scope.item.obj[3004280] = true
+                        } else if (datas[0].agg[0].agg >= 80 && datas[0].agg[0].agg <= 99) {
+                            $scope.item.obj[3004281] = true
+                        }
+                        
+                    }
+                    if(kraepelin != ""){
+                        if (kraepelin[0].hasil == "KS") {
+                            $scope.item.obj[3004282] = true
+                        } else if (kraepelin[0].hasil == "K") {
+                            $scope.item.obj[3004283] = true
+                        } else if (kraepelin[0].hasil == "S") {
+                            $scope.item.obj[3004284] = true
+                        } else if (kraepelin[0].hasil == "B") {
+                            $scope.item.obj[3004285] = true
+                        } else if (kraepelin[0].hasil == "BS") {
+                            $scope.item.obj[3004286] = true
+                        }
+
+                        if (kraepelin[1].hasil == "KS") {
+                            $scope.item.obj[3004287] = true
+                        } else if (kraepelin[1].hasil == "K") {
+                            $scope.item.obj[3004288] = true
+                        } else if (kraepelin[1].hasil == "S") {
+                            $scope.item.obj[3004289] = true
+                        } else if (kraepelin[1].hasil == "B") {
+                            $scope.item.obj[3004290] = true
+                        } else if (kraepelin[1].hasil == "BS") {
+                            $scope.item.obj[3004291] = true
+                        }
+
+                        if (kraepelin[2].hasil == "KS") {
+                            $scope.item.obj[3004292] = true
+                        } else if (kraepelin[2].hasil == "K") {
+                            $scope.item.obj[3004293] = true
+                        } else if (kraepelin[2].hasil == "S") {
+                            $scope.item.obj[3004294] = true
+                        } else if (kraepelin[2].hasil == "B") {
+                            $scope.item.obj[3004295] = true
+                        } else if (kraepelin[2].hasil == "BS") {
+                            $scope.item.obj[3004296] = true
+                        }
+
+                        if (kraepelin[3].hasil == "KS") {
+                            $scope.item.obj[3004297] = true
+                        } else if (kraepelin[3].hasil == "K") {
+                            $scope.item.obj[3004298] = true
+                        } else if (kraepelin[3].hasil == "S") {
+                            $scope.item.obj[3004299] = true
+                        } else if (kraepelin[3].hasil == "B") {
+                            $scope.item.obj[3004300] = true
+                        } else if (kraepelin[3].hasil == "BS") {
+                            $scope.item.obj[3004301] = true
+                        }
+
+                        // if (kraepelin[4].hasil == "KS") {
+                        //     $scope.item.obj[3004302] = true
+                        // } else if (kraepelin[4].hasil == "K") {
+                        //     $scope.item.obj[3004303] = true
+                        // } else if (kraepelin[4].hasil == "S") {
+                        //     $scope.item.obj[3004304] = true
+                        // } else if (kraepelin[4].hasil == "B") {
+                        //     $scope.item.obj[3004305] = true
+                        // } else if (kraepelin[4].hasil == "BS") {
+                        //     $scope.item.obj[3004306] = true
+                        // }
+                    }
+                    if(ist != ""){
+                        if(ist[0].se_sw <= 80){
+                            $scope.item.obj[3004162] = true
+                        } else if (ist[0].se_sw <= 94) {
+                            $scope.item.obj[3004163] = true
+                        } else if (ist[0].se_sw <= 99) {
+                            $scope.item.obj[3004164] = true
+                        } else if (ist[0].se_sw <= 104) {
+                            $scope.item.obj[3004165] = true
+                        } else if (ist[0].se_sw <= 118) {
+                            $scope.item.obj[3004166] = true
+                        }
+                        if (ist[0].wa_sw <= 80) {
+                            $scope.item.obj[3004167] = true
+                        } else if (ist[0].wa_sw <= 94) {
+                            $scope.item.obj[3004168] = true
+                        } else if (ist[0].wa_sw <= 99) {
+                            $scope.item.obj[3004169] = true
+                        } else if (ist[0].wa_sw <= 104) {
+                            $scope.item.obj[3004170] = true
+                        } else if (ist[0].wa_sw <= 118) {
+                            $scope.item.obj[3004171] = true
+                        }
+                        if (ist[0].an_sw <= 80) {
+                            $scope.item.obj[3004172] = true
+                        } else if (ist[0].an_sw <= 94) {
+                            $scope.item.obj[3004173] = true
+                        } else if (ist[0].an_sw <= 99) {
+                            $scope.item.obj[3004174] = true
+                        } else if (ist[0].an_sw <= 104) {
+                            $scope.item.obj[3004175] = true
+                        } else if (ist[0].an_sw <= 118) {
+                            $scope.item.obj[3004176] = true
+                        }
+                        if (ist[0].ge_sw <= 80) {
+                            $scope.item.obj[3004177] = true
+                        } else if (ist[0].ge_sw <= 94) {
+                            $scope.item.obj[3004178] = true
+                        } else if (ist[0].ge_sw <= 99) {
+                            $scope.item.obj[3004179] = true
+                        } else if (ist[0].ge_sw <= 104) {
+                            $scope.item.obj[3004180] = true
+                        } else if (ist[0].ge_sw <= 118) {
+                            $scope.item.obj[3004181] = true
+                        }
+                        if (ist[0].me_sw <= 80) {
+                            $scope.item.obj[3004182] = true
+                        } else if (ist[0].me_sw <= 94) {
+                            $scope.item.obj[3004183] = true
+                        } else if (ist[0].me_sw <= 99) {
+                            $scope.item.obj[3004184] = true
+                        } else if (ist[0].me_sw <= 104) {
+                            $scope.item.obj[3004185] = true
+                        } else if (ist[0].me_sw <= 118) {
+                            $scope.item.obj[3004186] = true
+                        }
+                        if (ist[0].ra_sw <= 80) {
+                            $scope.item.obj[3004187] = true
+                        } else if (ist[0].ra_sw <= 94) {
+                            $scope.item.obj[3004188] = true
+                        } else if (ist[0].ra_sw <= 99) {
+                            $scope.item.obj[3004189] = true
+                        } else if (ist[0].ra_sw <= 104) {
+                            $scope.item.obj[3004190] = true
+                        } else if (ist[0].ra_sw <= 118) {
+                            $scope.item.obj[3004191] = true
+                        }
+                        if (ist[0].zr_sw <= 80) {
+                            $scope.item.obj[3004192] = true
+                        } else if (ist[0].zr_sw <= 94) {
+                            $scope.item.obj[3004193] = true
+                        } else if (ist[0].zr_sw <= 99) {
+                            $scope.item.obj[3004194] = true
+                        } else if (ist[0].zr_sw <= 104) {
+                            $scope.item.obj[3004195] = true
+                        } else if (ist[0].zr_sw <= 118) {
+                            $scope.item.obj[3004196] = true
+                        }
+                        if (ist[0].fa_sw <= 80) {
+                            $scope.item.obj[3004197] = true
+                        } else if (ist[0].fa_sw <= 94) {
+                            $scope.item.obj[3004198] = true
+                        } else if (ist[0].fa_sw <= 99) {
+                            $scope.item.obj[3004199] = true
+                        } else if (ist[0].fa_sw <= 104) {
+                            $scope.item.obj[3004200] = true
+                        } else if (ist[0].fa_sw <= 118) {
+                            $scope.item.obj[3004201] = true
+                        }
+
+                        if (ist[0].wu_sw <= 80) {
+                            $scope.item.obj[3004202] = true
+                        } else if (ist[0].wu_sw <= 94) {
+                            $scope.item.obj[3004203] = true
+                        } else if (ist[0].wu_sw <= 99) {
+                            $scope.item.obj[3004204] = true
+                        } else if (ist[0].wu_sw <= 104) {
+                            $scope.item.obj[3004205] = true
+                        } else if (ist[0].wu_sw <= 118) {
+                            $scope.item.obj[3004206] = true
+                        }
+                    }
+                })
                 $scope.item.obj[3004150]=$scope.cc.nocm
                 $scope.item.obj[3004151]=$scope.cc.namapasien
                 $scope.item.obj[3004152]=moment($scope.cc.tglLahir).format('DD-MMMM-YYYY ');

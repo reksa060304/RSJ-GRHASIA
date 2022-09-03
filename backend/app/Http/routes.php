@@ -561,7 +561,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-resume-medis-db-lama/{notransaksi}', 'EMR\EMRController@getResumeMedisDbLama');
           Route::get('emr/get-menu-rekam-medis-dynamic-db-lama', 'EMR\EMRController@getMenuRekamMedisAtuhDbLama');
           Route::get('emr/get-emr-transaksi-detail-index', 'EMR\EMRController@getEMRTransaksiDetailIndex');
-
+          Route::get('emr/get-epps-hasil', 'EMR\EMRController@getEPPSHasil');
           //2019-12 penambahan arif akhir
 
           Route::post('emr/save-data-rekam-medis', 'EMR\EMRController@saveRekamMedis');

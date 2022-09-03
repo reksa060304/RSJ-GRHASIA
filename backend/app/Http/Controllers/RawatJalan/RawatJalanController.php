@@ -2416,6 +2416,10 @@ class RawatJalanController extends ApiController
 
     public function getDdaftarRegistrasiPsikologi(Request $request)
     {
+        $noregistrasi = "";
+        if(isset($request['noregistrasi'])){
+            $noregistrasi = "and pd.noregistrasi ='". $request['noregistrasi']."'";
+        }
         //norec dibawah adalah norec apd
         $data = \DB::select(DB::raw("SELECT
             apd.norec,
@@ -2439,6 +2443,7 @@ class RawatJalanController extends ApiController
             apd.objectruanganfk = 767
             and pd.statusenabled = true
             and pd.kdprofile = 30
+            $noregistrasi
             and apd.tglmasuk between '$request[tglawal]' and '$request[tglakhir]' 
         "));
         $result = array(
@@ -2760,8 +2765,12 @@ class RawatJalanController extends ApiController
             $datapsikologi = $request['data'];
 
         try {
+            if(isset($request['delete'])){
+                DB::table('inputhasilist_t')->where('norec', $request['norec'])->delete();
+                $crud = "Hapus Hasil IST";
+            }
           foreach ($datapsikologi as $dp) {
-                if($request['norec'] == ""){
+                if($dp['norec'] == ""){
                     \DB::table('inputhasilist_t')->insert([
                         'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
                         'kdprofile'=> $kdProfile,
@@ -2776,11 +2785,9 @@ class RawatJalanController extends ApiController
                         
                     ]);
                     $crud = "Simpan Hasil IST";
-                }
-                else {
+                } else {
                     \DB::table('inputhasilist_t')->where('norec', $dp['norec'])->update([
-                    'tglinput'=> date('Y-m-d'),
-                    'kompetensi'=>$dp['kompetensi'],
+                    'statusenabled'=> true,
                     'tglinput'=> date('Y-m-d'),
                     'tujuan'=>$dp['tujuan'],
                     'nomor'=>$dp['nomor'],
