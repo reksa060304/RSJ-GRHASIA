@@ -579,6 +579,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         'objectpegawaifk': $scope.dataSelected.id_pegawai,
                         'tgltmt': moment($scope.itemGajiBerkala.tanggaltmt).format('YYYY-MM-DD'),
                         'pejabatmenetapkan': $scope.itemGajiBerkala.pejabatmenetapkan,
+                        'masakerjagolongan': $scope.itemGajiBerkala.masakerjagolongan,
                         noskcetak: $scope.itemGajiBerkala.noskcetak,
                         jenissk: $scope.itemGajiBerkala.jenissk
                     }

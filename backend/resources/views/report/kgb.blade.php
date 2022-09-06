@@ -219,7 +219,8 @@
                             <td>8. </td>
                             <td>Berdasarkan Masa Kerja</td>
                             <td> : </td>
-                            <td>{{$data[0]->thn}} Thn {{$data[0]->bln}} Bln</td>
+                            <td>{{$data[0]->masakerjagolongan}}</td>
+                            {{-- <td>{{$data[0]->thn}} Thn {{$data[0]->bln}} Bln</td> --}}
                         </tr>
                         <tr>
                             <td>9. </td>

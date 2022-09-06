@@ -446,7 +446,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 									var thn = parseInt(blntotal/12) 
 									var bln = blntotal - (thn * 12)
 									console.log(thn);
-									$scope.item.masakerjakeseluruhan = thn + " Thn " + bln + " Bln"
+									$scope.item.masakerjakeseluruhan = thn + " tahun " + bln + " bulan"
 									console.log(blntotal);
 									// console.log(cutitotal);
 									var mkgbln = mkgtotal.month,
@@ -470,9 +470,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 									var blntotal = (masakerjagbln + masakerjagthn + mkt) - 0
 									var thn = parseInt(blntotal / 12)
 									var bln = blntotal - (thn * 12)
-									console.log(thn);
-									$scope.item.masakerjakeseluruhan = thn + " Thn " + bln + " Bln"
+									// console.log(thn);
+									// $scope.item.masakerjakeseluruhan = thn + " Thn " + bln + " Bln"
+									var split = dataRiwayatPangkatGolongan[dataRiwayatPangkatGolongan.length - 1].masakerjagolongan.split(" ")
+									var mkgthn = parseInt(split[0]),
+										mkgbln = parseInt(split[2])
 
+									console.log(mkgthn+mkgbln);
 
 
 								}
@@ -1866,8 +1870,10 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.itemGajiBerkala.tanggalsk = moment(dataItem.tglsk).format('YYYY-MM-DD HH:mm');
 				$scope.itemGajiBerkala.pejabatmenetapkan = dataItem.pejabatmenetapkan;
 				$scope.itemGajiBerkala.nosk = dataItem.nosk;
+				$scope.itemGajiBerkala.nosurat = dataItem.nosurat
 				$scope.itemGajiBerkala.gajiawal = dataItem.gajiawal;
 				$scope.itemGajiBerkala.gajiakhir = dataItem.gajiakhir;
+				$scope.itemGajiBerkala.masakerjagolongan = dataItem.masakerjagolongan;
 				$scope.popUpRiwayatGajiBerkala.center().open();
 			}
 
@@ -2831,23 +2837,29 @@ $scope.formatRupiah = function (value, currency) {
 				}
 			}
 			$scope.panggoltmt = function () {
-				if (dataRiwayatPangkatGolongan.length > 0) {
-					console.log('bisa');
-					var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), new Date($scope.itemPandG.tanggaltmt));
-					var nominal = umur.year
-					medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemPandG.golongan.id+ '&mkg='+nominal).then(function (data) {
-						console.log(data);
-						$scope.itemPandG.nominal = data.data.gajigolongan[0].gajipokok
-					})
-				}else{
-					var umur = dateHelper.CountAge(new Date($scope.itemPandG.tanggaltmt), new Date($scope.now));
-					var nominal = umur.year
-					console.log(nominal);
-					medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemPandG.golongan.id + '&mkg=' + 0).then(function (data) {
-						console.log(data);
-						$scope.itemPandG.nominal = data.data.gajigolongan[0].gajipokok
-					})
-				}
+				var split = $scope.itemPandG.masakerjagolongan.split(" ")
+				var nominal = parseInt(split[0])
+				medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemPandG.golongan.id + '&mkg=' + nominal).then(function (data) {
+					console.log(data);
+					$scope.itemPandG.nominal = data.data.gajigolongan[0].gajipokok
+				})
+				// if (dataRiwayatPangkatGolongan.length > 0) {
+				// 	console.log('bisa');
+				// 	var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tgltmt), new Date($scope.itemPandG.tanggaltmt));
+				// 	var nominal = umur.year
+				// 	medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemPandG.golongan.id+ '&mkg='+nominal).then(function (data) {
+				// 		console.log(data);
+				// 		$scope.itemPandG.nominal = data.data.gajigolongan[0].gajipokok
+				// 	})
+				// }else{
+				// 	var umur = dateHelper.CountAge(new Date($scope.itemPandG.tanggaltmt), new Date($scope.now));
+				// 	var nominal = umur.year
+				// 	console.log(nominal);
+				// 	medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemPandG.golongan.id + '&mkg=' + 0).then(function (data) {
+				// 		console.log(data);
+				// 		$scope.itemPandG.nominal = data.data.gajigolongan[0].gajipokok
+				// 	})
+				// }
 			}
 			console.log('daftar kenaikan gaji berkala');
 			$scope.tambahRiwayatPangkatGolongan = function () {
@@ -2940,7 +2952,7 @@ $scope.formatRupiah = function (value, currency) {
 					"itemGajiBerkala.tanggaltmt|k-ng-model|Tanggal TMT",
 					"itemGajiBerkala.noskcetak|ng-model|No SK Cetak",
 					"itemGajiBerkala.jenissk|ng-model|Jenis SK",
-					// "itemPandG.ttdSK|k-ng-model|Penandatangan SK",
+					"itemGajiBerkala.masakerjagolongan|ng-model|Masa Kerja Golongan",
 					// "itemPandG.jabatanTtd|k-ng-model|Penandatangan Jabatan",
 				];
 
@@ -2972,6 +2984,7 @@ $scope.formatRupiah = function (value, currency) {
 								data.objectpegawaifk = $scope.item.idPegawai
 								data.noskcetak= $scope.itemGajiBerkala.noskcetak,
 								data.jenissk= $scope.itemGajiBerkala.jenissk
+								data.masakerjagolongan= $scope.itemGajiBerkala.masakerjagolongan
 								$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
 									data: dataRiwayatGajiBerkala
 								});
@@ -2995,7 +3008,8 @@ $scope.formatRupiah = function (value, currency) {
 							objectpegawaifk: $scope.item.idPegawai,
 							nosurat: $scope.itemGajiBerkala.nosurat,
 							noskcetak: $scope.itemGajiBerkala.noskcetak,
-							jenissk: $scope.itemGajiBerkala.jenissk
+							jenissk: $scope.itemGajiBerkala.jenissk,
+							masakerjagolongan: $scope.itemGajiBerkala.masakerjagolongan
 						}
 						dataRiwayatGajiBerkala.push(data)
 						$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
@@ -4138,9 +4152,11 @@ $scope.formatRupiah = function (value, currency) {
             });
 			$scope.getDataGolongan = function () {
 				
-				var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tglawal), new Date($scope.itemGajiBerkala.tanggaltmt));
-				var mkgnya = umur.year
-				console.log(umur);
+				// var umur = dateHelper.CountAge(new Date(dataRiwayatPangkatGolongan[0].tglawal), new Date($scope.itemGajiBerkala.tanggaltmt));
+				// var mkgnya = umur.year
+				// var mkgnya = 
+				var split = $scope.itemGajiBerkala.masakerjagolongan.split(" ")
+				var mkgnya = parseInt(split[0])
 				medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemGajiBerkala.golongan.id + '&mkg=' + mkgnya + '&pegawai='+ $scope.item.idPegawai).then(function (data) {
 					$scope.itemGajiBerkala.gajiakhir = data.data.gajigolongan[0].gajipokok
 					$scope.itemGajiBerkala.gajiawal = data.data.gajiawal[0].nominal

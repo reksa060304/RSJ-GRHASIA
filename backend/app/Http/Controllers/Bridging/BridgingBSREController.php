@@ -25,6 +25,9 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Response;
 use App\Transaksi\EMR_BSRE;
 use App\Master\Pegawai;
+use App\Transaksi\EMRPasien;
+use App\Transaksi\LoggingUser;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Webpatser\Uuid\Uuid;
 
 class BridgingBSREController  extends ApiController
@@ -302,6 +305,7 @@ class BridgingBSREController  extends ApiController
                     'imageTTD' => isset($filename_ttd) ? $curl_FILE_TTD : null,
                 );
 
+
                 if ($dataJsonSend['imageTTD'] == null) {
                     unset($dataJsonSend['imageTTD']);
                 }
@@ -328,13 +332,14 @@ class BridgingBSREController  extends ApiController
 
                 curl_close($curl);
                 header('Content-type: application/pdf');
+
                 if ($httpcode != 200) {
 
                     $transMessage = "API BSRE Gagal ";
                     DB::rollBack();
                     $result = array(
                         "status" => 400,
-                        "message" => $transMessage .' : '.json_decode($response)->error,
+                        "message" => $transMessage . ' : ' . json_decode($response)->error,
                         "as" => 'er@epic',
                     );
 
@@ -356,7 +361,7 @@ class BridgingBSREController  extends ApiController
                 $emrDkmn->tglemr = date('Y-m-d H:i:s');
                 $emrDkmn->file = 'app/' . $filename_res;
                 $emrDkmn->namafile = $filenamAsli;
-                $emrDkmn->deskripsi = $dataReq['reason'] == null || $dataReq['reason']=='null'? '':$dataReq['reason'];
+                $emrDkmn->deskripsi = $dataReq['reason'] == null || $dataReq['reason'] == 'null' ? '' : $dataReq['reason'];
                 $emrDkmn->nik_pegawai = $dataReq['nik'];
                 $emrDkmn->namadokumen = $dataReq['namadokumen'];
                 $emrDkmn->pegawaifk = $dataReq['pegawaifk'];
@@ -465,7 +470,7 @@ class BridgingBSREController  extends ApiController
             ->join('pegawai_m as pg', 'pg.id', '=', 'emrdk.pegawaifk')
             ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'emrdk.norec_pd')
             ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
-            ->select('emrdk.*', 'pg.namalengkap','ps.nocm','ps.namapasien')
+            ->select('emrdk.*', 'pg.namalengkap', 'ps.nocm', 'ps.namapasien')
             ->where('emrdk.statusenabled', true)
             ->where('emrdk.kdprofile', $idProfile);
 
@@ -477,13 +482,13 @@ class BridgingBSREController  extends ApiController
             $data = $data->where('emrdk.noregistrasi', $request['noregistrasi']);
         }
         if (isset($request['dari']) && $request['dari'] != '') {
-            $data = $data->where('emrdk.tglemr','>=', $request['dari']);
+            $data = $data->where('emrdk.tglemr', '>=', $request['dari']);
         }
         if (isset($request['sampai']) && $request['sampai'] != '') {
-            $data = $data->where('emrdk.tglemr','<=', $request['sampai']);
+            $data = $data->where('emrdk.tglemr', '<=', $request['sampai']);
         }
         if (isset($request['namapasien']) && $request['namapasien'] != '') {
-            $data = $data->where('ps.namapasien','ilike','%'. $request['namapasien'].'%');
+            $data = $data->where('ps.namapasien', 'ilike', '%' . $request['namapasien'] . '%');
         }
         if (isset($request['dokter']) && $request['dokter'] != '') {
             $data = $data->where('emrdk.pegawaifk', $request['dokter']);
@@ -500,7 +505,7 @@ class BridgingBSREController  extends ApiController
     public function verifyTTD(Request $request)
     {
         $data =  EMR_BSRE::where('id', $request['id'])->first();
-        $file = curl_file_create(storage_path($data->file), 'application/pdf',$data->namafile);
+        $file = curl_file_create(storage_path($data->file), 'application/pdf', $data->namafile);
 
         $dataJsonSend = array(
             'signed_file' => $file,
@@ -525,12 +530,12 @@ class BridgingBSREController  extends ApiController
 
         $response = curl_exec($curl);
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    
+
         curl_close($curl);
         // if($httpcode == 200){
-            $response  = json_decode($response);
+        $response  = json_decode($response);
         // }
-    
+
         return response()->json($response);
     }
 
@@ -555,11 +560,11 @@ class BridgingBSREController  extends ApiController
             $extension3 = $fileSR->getClientOriginalExtension();
             $filename3 = 'Register/' . $request['id'] . '/sr' . '.' . $extension3;
             Storage::disk('local')->put($filename3, file_get_contents($fileSR));
-            
 
-            $file1 = curl_file_create(storage_path('app/' . $filename1), 'image/png', 'ttd.'. $extension1);
-            $file2 = curl_file_create(storage_path('app/' . $filename2), 'image/jpeg', 'ktp.'. $extension2);
-            $file3 = curl_file_create(storage_path('app/' . $filename3), 'application/pdf', 'sr.'. $extension3);
+
+            $file1 = curl_file_create(storage_path('app/' . $filename1), 'image/png', 'ttd.' . $extension1);
+            $file2 = curl_file_create(storage_path('app/' . $filename2), 'image/jpeg', 'ktp.' . $extension2);
+            $file3 = curl_file_create(storage_path('app/' . $filename3), 'application/pdf', 'sr.' . $extension3);
             $dataJsonSend = array(
                 'nik' => $request['nik'],
                 'nip' => $request['nip'],
@@ -570,9 +575,9 @@ class BridgingBSREController  extends ApiController
                 'provinsi' => $request['provinsi'],
                 'jabatan' => $request['jabatan'],
                 'unit_kerja' => $request['unitkerja'],
-                'image_ttd'=> $file1,
-                'ktp'=> $file2,
-                'surat_rekomendasi'=> $file3
+                'image_ttd' => $file1,
+                'ktp' => $file2,
+                'surat_rekomendasi' => $file3
             );
 
             $headers = $this->headers();
@@ -598,8 +603,8 @@ class BridgingBSREController  extends ApiController
 
             curl_close($curl);
 
-            Pegawai::where("id", $request['id'])->update(['responsebsre'=>$response]);
-            
+            Pegawai::where("id", $request['id'])->update(['responsebsre' => $response]);
+
             $transStatus = true;
         } catch (\Exception $e) {
             $transStatus = false;
@@ -624,5 +629,261 @@ class BridgingBSREController  extends ApiController
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function pengajuanTTE(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+
+        DB::beginTransaction();
+
+        try {
+
+
+            $prof =  DB::table('profile_m')->where('statusenabled', true)->first();
+
+            $emr = EMRPasien::where('norec', $request['norec_emr'])->first();
+
+            $emrM =  DB::table('emr_t')->where('id', $request['emrfk'])->first();
+
+            $pegawai = Pegawai::where('id', $request['pegawaittd'])->first();
+            $cek =  EMR_BSRE::where('nomoremr', $emr->noemr)
+                ->where('emrfk', $request['emrfk'])->first();
+
+            if (empty($cek)) {
+                $idOK = EMR_BSRE::max('id') + 1;
+
+                $filename_res = 'TTD_BSRE/' . $idOK . '/file' . '.pdf';
+                $emrDkmn = new EMR_BSRE();
+                $emrDkmn->id =  $idOK;
+                $emrDkmn->kdprofile = $kdProfile;
+                $emrDkmn->statusenabled = true;
+            } else {
+                $emrDkmn = $cek;
+                $filename_res = 'TTD_BSRE/' . $cek->id . '/file' . '.pdf';
+                $idOK =  $cek->id;
+            }
+
+            $emrDkmn->noregistrasi = $request['noregistrasi'];
+            $emrDkmn->nocm = $request['nocm'];
+            $emrDkmn->norec_pd = $request['norec_pd'];
+            $emrDkmn->tglemr = date('Y-m-d H:i:s');
+            $emrDkmn->file = 'app/' . $filename_res;
+            $emrDkmn->namafile =  $emrM->caption;
+            $emrDkmn->deskripsi = '';
+            $emrDkmn->nik_pegawai = $pegawai->noidentitas;
+            $emrDkmn->namadokumen = $emrM->caption;
+            $emrDkmn->pegawaifk = $request['pegawaittd'];
+            $emrDkmn->nomoremr = $emr->noemr;
+            $emrDkmn->linkQR = 'https://simrs-grhasia.jogjaprov.go.id/service/medifirst2000/verify-doc/' . $idOK;
+            $emrDkmn->passphrase = null;
+            $emrDkmn->tampilan = 'visible';
+            $emrDkmn->page = 1;
+            $emrDkmn->xAxis = $emrM->bsre_xaxis ? $emrM->bsre_xaxis : 625;
+            $emrDkmn->yAxis = $emrM->bsre_yaxis ? $emrM->bsre_yaxis : 70;
+            $emrDkmn->width = $emrM->bsre_width ? $emrM->bsre_width : 251.46;
+            $emrDkmn->height = $emrM->bsre_height ? $emrM->bsre_height : 133.13;
+            $emrDkmn->location = $prof->namalengkap;
+            $emrDkmn->emrfk =  $request['emrfk'];
+            $emrDkmn->status = false;
+            $emrDkmn->save();
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "dokumen" => $emrDkmn,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Terjadi kesalahan";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "e" => $e->getMessage() . ' ' . $e->getLine(),
+                "as" => 'inhuman',
+            );
+        }
+        return  $result;
+    }
+    public function saveTTDEPengajuan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $dataReq = $request->all();
+        DB::beginTransaction();
+
+        try {
+
+
+            $emrbsre = EMR_BSRE::where('id', $dataReq['norec'])->first();
+            $emr_t = DB::table('emr_t')->where('id', $emrbsre->emrfk)->first();
+            $filess = explode('/file_ttd.pdf', $emrbsre->file);
+            if(count($filess) == 1){
+                $filena =   $emrbsre->file;
+            }else{
+                $filena = $filess[0] . '/file.pdf';
+            }
+            $prof =  DB::table('profile_m')->where('statusenabled', true)->first();
+            $file = curl_file_create(storage_path($filena), 'application/pdf', 'file.pdf');
+    
+            // $imageTTD = curl_file_create(public_path('img/pemda_logo.png'), 'image/png', 'logopemda.png');
+
+            // foreach (array_values($dataReq) as $z => $d) {
+            //     array_keys($dataReq)[$z] = trim($d);
+            // }
+            $image = QrCode::format('png')
+                ->merge('img/pemda.png', 0.32, true)
+                ->size(400)->errorCorrection('H')
+                ->generate($emrbsre->linkQR);
+            // return response($image)->header('Content-type','image/png');
+            $filename_qr = 'TTD_BSRE/' . $emrbsre->id . '/image_qr.png';
+            Storage::disk('local')->put($filename_qr, $image);
+            $imageTTD = curl_file_create(storage_path('app/' . $filename_qr), 'image/png', 'image_qr.png');
+            //   dd($imageTTD);
+            $dataJsonSend = array(
+                'nik' => trim($dataReq['nik']),
+                'passphrase' => $dataReq['passphrase'],
+                'tampilan' => 'visible',
+                'page' => '1',
+                'image' => true,
+                'linkQR' =>   stripos(\Request::url(), 'localhost') !== false ?  'localhost:3331/service/medifirst2000/verify-doc/' . $emrbsre->id : 'https://simrs-grhasia.jogjaprov.go.id/service/medifirst2000/verify-doc/' . $emrbsre->id,
+                'xAxis' =>  $emr_t->bsre_xaxis ? $emr_t->bsre_xaxis  : 725,
+                'yAxis' => $emr_t->bsre_yaxis ? $emr_t->bsre_yaxis  : 70,
+                'width' => $emr_t->bsre_width ? $emr_t->bsre_width  : 251.46,
+                'height' => $emr_t->bsre_height ? $emr_t->bsre_height  : 133.13,
+                'reason' => $emrbsre->reason ? $emrbsre->reason : '',
+                'location' =>  $prof->namalengkap,
+                'file' => $file,
+                'imageTTD' => $imageTTD
+            );
+
+
+            $headers = $this->headers();
+
+            $methods = 'POST';
+            $url = $this->url . "api/sign/pdf";
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => $methods,
+                CURLOPT_POSTFIELDS => $dataJsonSend,
+                CURLOPT_HTTPHEADER => $headers
+            ));
+
+            $response = curl_exec($curl);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+            curl_close($curl);
+
+            header('Content-type: application/pdf');
+
+            if ($httpcode == 400) {
+                $logUser = new LoggingUser();
+                $logUser->id =  LoggingUser::max('id') + 1;
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile = $kdProfile;
+                $logUser->statusenabled = true;
+                $logUser->jenislog = 'BSRE';
+                $logUser->noreff = $emrbsre->id;
+                $logUser->referensi = 'emr_bsre_t';
+                $logUser->keterangan = 'Error BSRE : ' . json_encode($response);
+                $logUser->objectloginuserfk =  $request['iduser'];
+                $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
+                $logUser->save();
+
+                $transMessage = json_decode($response)->message;
+                DB::rollBack();
+                $result = array(
+                    "status" => 400,
+                    "message" => $transMessage,
+                    "as" => 'er@epic',
+                );
+
+                return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+            }
+
+            $dat =  Response::make($response, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename=data.pdf'
+            ]);
+
+            $filename_res = 'TTD_BSRE/' . $emrbsre->id . '/file_ttd.pdf';
+            Storage::disk('local')->put($filename_res, $dat);
+            $logUser = new LoggingUser();
+            $logUser->id =  LoggingUser::max('id') + 1;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile = $kdProfile;
+            $logUser->statusenabled = true;
+            $logUser->jenislog = 'BSRE';
+            $logUser->noreff = $emrbsre->id;
+            $logUser->referensi = 'emr_bsre_t';
+            $logUser->keterangan = 'TTD BSRE pada No Registrasi '
+                . $emrbsre->noregistrasi . ' - Pasien : ' .  $emrbsre->nocm
+                . ' Dokumen ' .  $emrbsre->namadokumen;
+            $logUser->objectloginuserfk =  $request['iduser'];
+            $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
+            $logUser->save();
+
+
+
+            $emrDkmn = $emrbsre;
+
+            $emrDkmn->tglttd = date('Y-m-d H:i:s');
+            $emrDkmn->file = 'app/' . $filename_res;
+            $emrDkmn->deskripsi = isset($dataReq['reason']) ? $dataReq['reason'] : null;
+            $emrDkmn->nik_pegawai = $dataReq['nik'];
+            $emrDkmn->passphrase = $dataReq['passphrase'];
+            $emrDkmn->status = true;
+            $emrDkmn->save();
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "dokumen" => $emrDkmn,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "e" => $e->getMessage() . ' ' . $e->getLine(),
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function verifyDocBSRE(Request $r, $id)
+    {
+        $data = DB::table('emr_bsre_t as em')
+        ->join('pegawai_m as pg','pg.id','=','em.pegawaifk')
+        ->select('em.*','pg.namalengkap','pg.nosip')
+        ->where('em.id', $id)
+        ->first();
+        $profile = Profile::where('statusenabled', true)->first();
+        return view('report.verify-doc', compact('r', 'data','profile'));
     }
 }

@@ -1834,7 +1834,67 @@ class ReportController extends ApiController{
         $pageWidth = 500;
         $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
         $res['d'] = $data;
+        // return view('report.cppt-ranap-dom',compact('res','pageWidth', 'data'));
+        // dd($res);
+        $item =[];   
+        $item2= [];      
+        foreach( $res['d'] as $items){
+                if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
+                    $item[$items->emrdfk] =  $items->value;
+                }
+                if($items->type  ==  "datetime"){
+                    $item[$items->emrdfk] = date('Y-m-d H:i:s',strtotime( $items->value));
+                }
+                if($items->type  ==  "time"){
+                    $item[$items->emrdfk] = date('H:i',strtotime( $items->value));
+                }
+                if($items->type  ==  "date"){
+                    $item[$items->emrdfk] = date('Y-m-d',strtotime( $items->value));
+                }
+                if($items->type  ==  "checkboxtextbox"){
+                    $item[$items->emrdfk] =  $items->value;
+                    $item2[$items->emrdfk] =  true;
+                }
+                if($items->type == "checkbox") {
+                    $chekedd = false;
+                    if ($items->value == '1') {
+                        $chekedd = true;
+                    }
+                    $item[$items->emrdfk] = $chekedd;
+                }
+                if($items->type == "combobox") {
+                    $arr = explode('~',$items->value );
+                    $item[$items->emrdfk] = $arr[1];
+                }
+        }
 
+        $pdf = PDF::loadView(
+            'report.cppt-ranap-dom',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
         return view('report.cppt-ranap',compact('res','pageWidth', 'data'));
     }
 
@@ -2029,7 +2089,7 @@ class ReportController extends ApiController{
         public function cekCaptcha(Request $r)
     {
          $captchaResponse = $r->input('captchaResponse');
-         $secret = '6LeyqNAZAAAAAKO8uCFObSxNO1YWo2vzpP44ydfS';
+         $secret = '6LeHLNghAAAAAPdEsEtL5jh5CRd8Lh2ln9XuFvcF';
          $response = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".
             $secret."&response=".$captchaResponse.
             "&remoteip=".$_SERVER['REMOTE_ADDR']), true);
@@ -5800,6 +5860,7 @@ public function suratBuktiPengembalian(Request $request)
                 gol.NAME as golongan,
                 rg.gajiawal,
                 rg.gajiakhir,
+                rg.masakerjagolongan,
                 rg.noskcetak, rg.nosurat,rg.tglsk,
                 rg.tgltmt as tglakhir,
 								rg.norec,
@@ -5848,7 +5909,10 @@ public function suratBuktiPengembalian(Request $request)
                 gol.NAME as golongan,
                 rg.gajiawal,
                 rg.gajiakhir,
-                rg.noskcetak, rg.nosurat,rg.tglsk,
+                rg.masakerjagolongan,
+                rg.noskcetak, 
+                rg.nosurat,
+                rg.tglsk,
                 rg.tgltmt as tglakhir,
                 extract(year from age(rg.tgltmt, rgb.tgltmt))as thn,
                 extract(month from age(rg.tgltmt, rgb.tgltmt))as bln
