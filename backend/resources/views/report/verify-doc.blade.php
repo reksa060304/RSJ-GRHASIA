@@ -157,7 +157,7 @@
                                         <span id="captcha" hidden></span>
 
                                         <div class="g-recaptcha" data-callback="onReturnCallback"
-                                            data-sitekey="6LeyqNAZAAAAACZ1VLkQbcuDsERKEy3btTu59GLL"></div>
+                                            data-sitekey="6LeHLNghAAAAABb7XQfD5L26Af7dOCiCacOISP60"></div>
                                     </div>
                                     <button type="button" class="btn btn-outline-danger btn-block" id="btnMasuk"
                                         onclick="lanjut()">
