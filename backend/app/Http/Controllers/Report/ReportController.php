@@ -2089,7 +2089,7 @@ class ReportController extends ApiController{
         public function cekCaptcha(Request $r)
     {
          $captchaResponse = $r->input('captchaResponse');
-         $secret = '6LeyqNAZAAAAAKO8uCFObSxNO1YWo2vzpP44ydfS';
+         $secret = '6LeHLNghAAAAAPdEsEtL5jh5CRd8Lh2ln9XuFvcF';
          $response = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".
             $secret."&response=".$captchaResponse.
             "&remoteip=".$_SERVER['REMOTE_ADDR']), true);
