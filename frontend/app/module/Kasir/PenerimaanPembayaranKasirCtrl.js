@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize, configuration) {
 	'use strict';
 	initialize.controller('PenerimaanPembayaranKasirCtrl', ['$mdDialog', '$state', '$q', '$scope', 'MedifirstService',
 		function ($mdDialog, $state, $q, $scope, medifirstService) {
@@ -17,6 +17,7 @@ define(['initialize'], function (initialize) {
 			$scope.listCetakan = [
 				{ id: 1, nama: "Kwitansi" },
 				{ id: 2, nama: "Kwitansi Layanan" },
+				{ id: 3, nama: "Kwitansi Diklat" },
 			]
 			FormLoad();
 			showButton();
@@ -684,7 +685,13 @@ define(['initialize'], function (initialize) {
 								// do something with response
 							});
 							break;
+						
 					}
+				}
+				if ($scope.item.cetakanKasir.id == 3){
+
+                	window.open(configuration.baseApiBackend + "report/diklat-kwitansi?norec=" + $scope.dataParams.noRegistrasi + '&strIdPegawai=' + user.namaLengkap);
+
 				}
 				
 				$scope.item.cetakanKasir = undefined;

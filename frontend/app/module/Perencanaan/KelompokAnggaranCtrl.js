@@ -1,8 +1,8 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     var baseTransaksi = configuration.baseApiBackend;
-    initialize.controller('KelompokAnggaranCtrl', ['$scope', '$mdDialog','MedifirstService',
-        function ($scope, $mdDialog, medifirstService) {
+    initialize.controller('KelompokAnggaranCtrl', ['$scope', '$state', '$mdDialog','MedifirstService',
+        function ($scope, $state, $mdDialog, medifirstService) {
             $scope.dataVOloaded = true;
             $scope.isRouteLoading = false;
             $scope.now = new Date();
@@ -33,6 +33,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.hidespj = true
             $scope.hidekeuangan = true
             $scope.subsubketerangan = ''
+            $scope.spjaja = false
+            $scope.sppaja = false
+            $scope.spmaja = false
+            $scope.panjaraja = false
+            $scope.semuaanggaran = false
 
             $scope.rcn = {};
             $scope.rcn.mataAnggaranlv1 = ""
@@ -117,12 +122,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.organisasi = '1.02.2.22.0.00.01.0004 - RS Jiwa GRHASIA DINKES DIY'
                 //console.log($scope.pegawaiLogin)
                 if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
-                    $scope.hidespj = false
                     idpegawai = $scope.pegawaiLogin.id
-                } else if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "Kasir"){
-                    $scope.hidekeuangan = false
-                    idpegawai = $scope.pegawaiLogin.id
-                    $scope.item.title = "KEUANGAN"
+                }
+                if($state.params.parameter == '77777'){
+                    $scope.spjaja = true
+                } else if($state.params.parameter == '99999'){
+                    $scope.panjaraja = true
+                } else if($state.params.parameter == '88888'){
+                    $scope.sppaja = true
+                } else if($state.params.parameter == '66666'){
+                    $scope.spmaja = true
+                } else if($state.params.parameter == '55555'){
+                    $scope.semuaanggaran = true
                 }
                 //console.log($scope.hidespj)
                 // medifirstService.get("perencanaan/get-total-mata-anggaran").then(function (e) {
@@ -337,7 +348,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
                 
-                //console.log(dataItem)
+                console.log(dataItem)
                 $scope.norecrcntotalanggaran = dataItem.norec 
                 medifirstService.get("perencanaan/get-total-anggaran-rcn?kegiatan=" + $scope.norecrcntotalanggaran).then(function (e) {
                     var total = 0
@@ -350,7 +361,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.rcn.paguAnggaran = 0
                     }
 
-                    $scope.item.targetKinerjaMasukan = formatRupiah(total, "Rp. ")
+                    $scope.item.targetKinerjaMasukan = formatRupiah(dataItem.targetmasuk, "Rp. ")
                     
 				})
                 
@@ -2182,11 +2193,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
                     //console.log($scope.pegawaiLogin)
                     if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
-                        $scope.hidespj = false
                         idpegawai = $scope.pegawaiLogin.id
-                    } else if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "Kasir"){
-                        $scope.hidekeuangan = false
-                        idpegawai = $scope.pegawaiLogin.id
+                    }
+                    if($state.params.parameter == '77777'){
+                        $scope.spjaja = true
+                    } else if($state.params.parameter == '99999'){
+                        $scope.panjaraja = true
+                    } else if($state.params.parameter == '88888'){
+                        $scope.sppaja = true
+                    } else if($state.params.parameter == '66666'){
+                        $scope.spmaja = true
+                    } else if($state.params.parameter == '55555'){
+                        $scope.semuaanggaran = true
                     }
 
                     medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+tahun+"&tahap="+tahap+"&idpegawai="+idpegawai).then(function (e) {
@@ -3712,26 +3730,42 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     let a1 = kodeArr[0] 
                     let b1 = kodeArr[1]
                     let c1 = kodeArr[2] 
-                    //console.log(a1)
-                    //console.log(b1)
-                    //console.log(c1)
+                    let cek = 'III.'
+                    // console.log(a1)
+                    // console.log(b1)
+                    // console.log(c1)
                     let myRega1 = new RegExp(a1 + ".*")
                     let myRegb1 = new RegExp(a1 + '.' + b1 + ".*")
                     let myRegc1 = new RegExp(a1 + '.' + b1 + '.' + c1 + ".*")
-                    // console.log(myRega1)
-                    // console.log(myRegb1)
-                    // console.log(myRegc1)
+                    console.log(myRega1)
+                    console.log(myRegb1)
+                    console.log(myRegc1)
                     let d1 = dataMataAnggaranSelected.kodemataanggaran
                     $scope.rcn.totallv1 = 0
                     $scope.rcn.totallv2 = 0
                     $scope.rcn.totallv3 = 0
                     for (let index = 0; index < $scope.dataSourceDetailMT._data.length; index++) {
                         let element = $scope.dataSourceDetailMT._data[index];
-                        if(element.kodemataanggaran.match(myRega1)){
-                            $scope.rcn.mataAnggaranlv1 = a1
-                            $scope.rcn.totallv1 += parseInt(element.total)
-                            console.log(element.total)
+                        if(a1 == 'I'){
+                            if(element.kodemataanggaran.match(myRega1) && !element.kodemataanggaran.match(/III.*/) && !element.kodemataanggaran.match(/II.*/)){
+                                $scope.rcn.mataAnggaranlv1 = a1
+                                $scope.rcn.totallv1 += parseInt(element.total)
+                                console.log(element.total)
+                            }
+                        } else if(a1 == 'II'){
+                            if(element.kodemataanggaran.match(myRega1) && !element.kodemataanggaran.match(/III.*/)){
+                                $scope.rcn.mataAnggaranlv1 = a1
+                                $scope.rcn.totallv1 += parseInt(element.total)
+                                console.log(element.total)
+                            }
+                        } else if(a1 == 'III'){
+                            if(element.kodemataanggaran.match(myRega1)){
+                                $scope.rcn.mataAnggaranlv1 = a1
+                                $scope.rcn.totallv1 += parseInt(element.total)
+                                console.log(element.total)
+                            }
                         }
+                        
                         if(element.kodemataanggaran.match(myRegb1)){
                             $scope.rcn.mataAnggaranlv2 = a1 + '.' + b1
                             $scope.rcn.totallv2 += parseInt(element.total)
@@ -4712,7 +4746,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             
             $scope.nextSubSubKegiatan = function () {
                 $scope.dataSourceRincianAnggaran = []
-                $scope.item.isCekAdaAnggaranSaja = true
+                $scope.item.isCekAdaAnggaranSaja = false
                 if($scope.item.subsubkegiatanangkas != undefined){
                     LoadTotalKeterangan()
                     $scope.norecrcntotalanggaran = $scope.item.subsubkegiatanangkas.norec 

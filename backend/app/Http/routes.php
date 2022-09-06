@@ -1158,6 +1158,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-data-hasil-lab','Report\ReportController@cetakHasilLIS');
           Route::get('report/cetak-ekspertise','Report\ReportController@cetakEkspertise');
           Route::get('report/diklat-nametag','Report\ReportController@nametagDiklat');
+          Route::get('report/diklat-invoice', 'Report\ReportController@invoiceDiklat');
           Route::get('report/cetak-hasil-lab-histopatologi','Report\ReportController@cetakHispatologi');
           Route::get('report/cetak-resep-dokter','Report\ReportController@cetakResepDokter');
           Route::get('report/cetak-resep-dokter-rev','Report\ReportController@cetakResepDokterRev');
@@ -1166,6 +1167,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
           Route::get('report/get-cetak-rekap-mata-anggaran','Report\ReportController@CetakRekapMataAnggaran');
           Route::get('report/get-cetak-rekap-mata-anggaran-sebelum','Report\ReportController@CetakRekapMataAnggaranSebelum');
+          Route::get('report/get-cetak-rba-detail','Report\ReportController@CetakRBADetail');
+          Route::get('report/get-cetak-rba-detail-sebelum-sesudah','Report\ReportController@CetakRBADetailSebelumSesudah');
           Route::get('report/get-cetak-rekap-SumberDana-anggaran','Report\ReportController@CetakRekapSumberDanaAnggaran');
           Route::get('report/get-cetak-rekap-SumberDana-anggaran-sebelum','Report\ReportController@CetakRekapSumberDanaAnggaranSebelum');
           Route::get('report/get-cetak-keuangan-per-rekening','Report\ReportController@CetakKeuanganPerRekening');
@@ -1421,6 +1424,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-sisa-panjar', 'Perencanaan\PerencanaanController@getSisaPanjar');
             Route::get('perencanaan/get-lpj', 'Perencanaan\PerencanaanController@getLPJ');
             Route::get('perencanaan/get-bku', 'Perencanaan\PerencanaanController@getBKU');
+            Route::get('perencanaan/get-detail-sub-kegiatan', 'Perencanaan\PerencanaanController@getDetailSubKegiatan');
             Route::get('perencanaan/get-jenis-bukti-bku', 'Perencanaan\PerencanaanController@getJenisBuktiBKU');
             Route::get('perencanaan/get-jasgir', 'Perencanaan\PerencanaanController@getJasgir');
             Route::get('perencanaan/get-panjar-bku', 'Perencanaan\PerencanaanController@getPanjarBKU');
@@ -2947,6 +2951,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/get-cetak-suratkgb', 'Report\ReportController@cetakKGB');
         Route::get('report/cetak-catatan-klinik','Report\ReportController@cetakCatatanKlinik');
         Route::get('report/cetak-resume-medis2','Report\ReportController@cetakResume2');
+        Route::get('report/diklat-kwitansi', 'Report\ReportController@cetakKwitansiDiklat');
 
         Route::get('viewer/get-list-antrian','Antrian\AntrianController@getListAntrian');
         Route::get('viewer/update-antrian','Antrian\AntrianController@updatePanggil');

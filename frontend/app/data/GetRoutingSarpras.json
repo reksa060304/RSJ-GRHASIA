@@ -2080,9 +2080,109 @@
     ]  },
   {
     "name": "KelompokAnggaran",
-    "url": "/S2Vsb21wb2tBbmdnYXJhbg==",
+    "url": "/S2Vsb21wb2tBbmdnYXJhbg==/:parameter",
     "templateurl": "module/Perencanaan/KelompokAnggaran.html",
     "controller": "KelompokAnggaranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "SemuaAnggaran",
+    "url": "/U2VtdWFBbmdnYXJhbg==",
+    "templateurl": "module/Perencanaan/SemuaAnggaran.html",
+    "controller": "SemuaAnggaranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "SPJ",
+    "url": "/U1BKQW5nZ2FyYW4=",
+    "templateurl": "module/Perencanaan/SPJ.html",
+    "controller": "SPJCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "Panjar",
+    "url": "/UGFuamFyQW5nZ2FyYW4=",
+    "templateurl": "module/Perencanaan/Panjar.html",
+    "controller": "PanjarCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "SPP",
+    "url": "/U3VyYXRQZXJtaW50YWFuUGVtYmF5YXJhbihTUFAp",
+    "templateurl": "module/Perencanaan/SPP.html",
+    "controller": "SPPCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "SPM",
+    "url": "/U3VyYXRQZXJpbnRhaE1lbWJheWFyKFNQTSk=",
+    "templateurl": "module/Perencanaan/SPM.html",
+    "controller": "SPMCtrl",
     "deps": [
       {
         "module": "Services",

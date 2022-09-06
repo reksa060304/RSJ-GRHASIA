@@ -101,6 +101,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             aggregates: ['sum'],
                             footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.biayapenelitian.sum #', 'Rp. ')}}</span>",
                         },
+                        {
+                            'command': [{
+                                    text: "Invoice",
+                                    click: cetakInvoice,
+                                },
+
+                            ],
+                            "width": 100
+                        },
                         
                     ]
                 }
@@ -159,7 +168,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "template": "<span class='style-center'>#: nosbmlastfk != null || nosbklastfk != null  ? 'Lunas': 'Belum Bayar' #</span>"
                         },
                         {
-                            'command': [{
+                            'command': [
+                                {
+                                    text: "Invoice",
+                                    click: cetakInvoice,
+                                },
+                                {
                                 text: "nametag",
                                 click: cetaknametag,
                             }, {
@@ -170,6 +184,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         },
                     ],
                 }
+            }
+            function cetakInvoice(e){
+                e.preventDefault()
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                var datasend = {
+                    "norec": dataItem.norec
+                }
+                window.open(baseTransaksi + "report/diklat-invoice?norec=" + dataItem.norec);
             }
             $scope.columnMahasiswaAktif = {
                 toolbar: ["excel"],
@@ -214,6 +236,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "title": "Periode",
                         "width": "80px"
                     },
+                    
                 ]
             }
             $scope.formatRupiah = function (value, currency) {
