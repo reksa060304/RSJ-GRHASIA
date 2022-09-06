@@ -788,9 +788,6 @@ class BridgingBSREController  extends ApiController
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
             curl_close($curl);
-
-            header('Content-type: application/pdf');
-
             if ($httpcode == 400) {
                 $logUser = new LoggingUser();
                 $logUser->id =  LoggingUser::max('id') + 1;
@@ -804,8 +801,8 @@ class BridgingBSREController  extends ApiController
                 $logUser->objectloginuserfk =  $request['iduser'];
                 $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
                 $logUser->save();
-
-                $transMessage = json_decode($response)->message;
+          
+                $transMessage = isset(json_decode($response)->message)?json_decode($response)->message:json_decode($response)->error;
                 DB::rollBack();
                 $result = array(
                     "status" => 400,
@@ -816,6 +813,7 @@ class BridgingBSREController  extends ApiController
                 return $this->setStatusCode($result['status'])->respond($result, $transMessage);
             }
 
+            header('Content-type: application/pdf');
             $dat =  Response::make($response, 200, [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'inline; filename=data.pdf'
@@ -884,6 +882,8 @@ class BridgingBSREController  extends ApiController
         ->where('em.id', $id)
         ->first();
         $profile = Profile::where('statusenabled', true)->first();
-        return view('report.verify-doc', compact('r', 'data','profile'));
+        $password = $this->settingDataFixed('passwordBSRELink',30);
+  
+        return view('report.verify-doc', compact('r', 'data','profile','password'));
     }
 }

@@ -174,7 +174,7 @@
 
 
                 {{-- id="previewPegawai" --}}
-                <section class="invoice-preview-wrapper" style="padding:10px"  id="previewPegawai" >
+                <section class="invoice-preview-wrapper" style="padding:10px" id="previewPegawai"  >
                     <div class="row invoice-preview">
                         <!-- Invoice -->
                         <div class="col-xl-12 col-md-12 col-12">
@@ -416,15 +416,20 @@
                 }
             })
         }
-
+       
         function download() {
-            var file = document
-                .getElementById("file").value
-            var namafile = document
-                .getElementById("namafile").value
-            window.open(APP_URL + "/service/storage_path?path=" + file + "&type=download" + "&filename=" + namafile +
-                "&mimetype=application/pdf");
-
+            let pass = prompt("Please enter password", "");
+            if (pass != null && pass == {{$password}}) {
+                var file = document
+                    .getElementById("file").value
+                var namafile = document
+                    .getElementById("namafile").value
+                window.open(APP_URL + "/service/storage_path?path=" + file + "&type=download" + "&filename=" + namafile +
+                    "&mimetype=application/pdf");
+            }else{
+                alert('Incorrect Password ')
+            }
+          
         }
 
       
