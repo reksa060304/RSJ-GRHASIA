@@ -30,19 +30,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.SistoleChart = false;
             $scope.NonSistoleChart = false;
 
-            medifirstService.get("bsre-esign/get-combo", true).then(function (dat) {
-                $scope.listPegawai = dat.data.pegawai;
-
-                $scope.item.qdokter = {id:pegawai.id,namalengkap:pegawai.namaLengkap}
-
-                LoadCacheHelper();
-            });
+           
             if ($state.params.noRec == undefined) {
                 cacheHelper.get('cacheRekamMedis', undefined);
             }
             $scope.cacheRM = undefined
             $scope.cachePARAM = undefined
-    
+            LoadCacheHelper();
             function LoadCacheHelper() {
                 var chacePeriode = cacheHelper.get('cacheRekamMedis');
                 if (chacePeriode != undefined) {
@@ -61,15 +55,26 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.item.kelas = chacePeriode[10]
                     $scope.item.idRuangan = chacePeriode[11]
                     $scope.item.namaRuangan = chacePeriode[12]
-
                     init()
-
+                  
+                    medifirstService.get("bsre-esign/get-combo", true).then(function (dat) {
+                        $scope.listPegawai = dat.data.pegawai;
+                     
+                 
+                    });
                 }
                 if (!$state.params.noRec) {
                     $scope.cacheRM = undefined
                     $scope.cachePARAM = '-'
-                    init()
+                    medifirstService.get("bsre-esign/get-combo", true).then(function (dat) {
+                        $scope.listPegawai = dat.data.pegawai;
+        
+                        $scope.item.qdokter = {id:pegawai.id,namalengkap:pegawai.namaLengkap}
+                        init()
+                 
+                    });
                 }
+              
                 $scope.columnDaftar = {
                     selectable: 'row',
                     dataBound: onDataBound,
