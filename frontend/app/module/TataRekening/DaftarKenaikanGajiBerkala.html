@@ -173,7 +173,7 @@
             <div class="grid_12">
                 <div class="grid_4">
                     <div class="grid_12">
-                        <label c-label>Tanggal TMT</label>
+                        <label c-label>Tanggal TMT(Baru)</label>
                     </div>
                     <div class="clear"></div>
                     <div class="grid_12">
@@ -184,7 +184,7 @@
 
                 <div class="grid_4">
                     <div class="grid_12">
-                        <label c-label>Tanggal SK</label>
+                        <label c-label>Tanggal SK(Lama)</label>
                     </div>
                     <div class="clear"></div>
                     <div class="grid_12">
@@ -205,7 +205,18 @@
             </div>
 
             <div class="grid_12">
-                <div class="grid_6">
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label>Masa Kerja Golongan</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="'varchar'" class="k-textbox"
+                            placeholder="0 tahun 0 bulan" ng-model="itemGajiBerkala.masakerjagolongan"
+                             />
+                             <!-- ng-keypress="($event.which == 13)? getDataGolongan():itemGajiBerkala.masakerjagolongan" -->
+                    </div>
+                </div>
+                <div class="grid_4">
                     <div class="grid_12">
                         <label c-label>Gaji Awal</label>
                     </div>
@@ -214,7 +225,7 @@
                             ng-model="itemGajiBerkala.gajiawal" />
                     </div>
                 </div>
-                <div class="grid_6">
+                <div class="grid_4">
                     <div class="grid_12">
                         <label c-label>Gaji Akhir</label>
                     </div>
@@ -246,7 +257,7 @@
                 
                 <div class="grid_4">
                     <div class="grid_12">
-                        <label c-label>No SK(*)</label>
+                        <label c-label>No SK(Lama)</label>
                     </div>
                     <div class="grid_12">
                         <input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="itemGajiBerkala.noskcetak" />

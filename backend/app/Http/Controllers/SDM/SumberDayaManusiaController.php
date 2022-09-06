@@ -674,7 +674,7 @@ class SumberDayaManusiaController extends ApiController {
         $dataRiwayatGajiBerkala = \DB::table("riwayatgajiberkala_t as gb")
         // ->leftjoin("riwayatgolongan_t as rg","rg.objectpegawaifk","=","gb.id") 
         ->join("sdm_golongan_m as gol","gol.id","=","gb.objectgolonganfk")
-        ->select(DB::raw("gb.objectgolonganfk,gb.norec,gb.tglsk::date,gb.gajiawal, gb.gajiakhir, gb.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, gb.nosk, gb.pejabatmenetapkan"))
+        ->select(DB::raw("gb.masakerjagolongan,gb.jenissk, gb.nosurat, gb.noskcetak, gb.objectgolonganfk,gb.norec,gb.tglsk::date,gb.gajiawal, gb.gajiakhir, gb.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, gb.nosk, gb.pejabatmenetapkan"))
         ->where("gb.objectpegawaifk",$request['idPegawai'])
         ->orderBy('gb.tgltmt','asc')
         ->get();
@@ -6176,7 +6176,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
         $data = \DB::select(DB::raw("
             SELECT fix.* FROM (
             SELECT pg.id as id_pegawai, row_number()over(partition by rg.objectpegawaifk ORDER BY rg.tgltmt desc)as rn2, pg.namalengkap, pg.nippns, rg.tgltmt, rg.objectgolonganfk, 
-            gol.namaexternal as pangkat, gol.name as golongan, rg.gajiakhir, EXTRACT(year from age(rg.tgltmt, rgb.tgltmt))+2  as mkg FROM riwayatgajiberkala_t rg
+            gol.namaexternal as pangkat, gol.name as golongan, rg.gajiakhir, split_part(rg.masakerjagolongan, ' ', '1')::integer +2  as mkg,rg.masakerjagolongan FROM riwayatgajiberkala_t rg
             inner join sdm_golongan_m as gol on gol.id = rg.objectgolonganfk 
             inner join pegawai_m pg on pg.id = rg.objectpegawaifk
             inner join (
@@ -6200,6 +6200,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
         $mkg = '';
         $objectgolonganfk = '';
         $idpegawai = "";
+        $masakerjagolongan= "";
         $detail = [];
         
         foreach ($data as $dt) {
@@ -6213,6 +6214,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
         $mkg = '';
             $idpegawai = "";
             $objectgolonganfk = '';
+        $masakerjagolongan= "";
 
             $gajigolongan = \DB::table("gajigolongan_m as gg")
             ->where("gg.golonganfk",$dt->objectgolonganfk)
@@ -6229,6 +6231,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
             $golongan = $dt->golongan;
             $gajiakhir = $dt->gajiakhir;
             $objectgolonganfk = $dt->objectgolonganfk;
+            $masakerjagolongan = $dt->masakerjagolongan;
             // $data3 = $dt->mkg;
             $mkg = $dt->mkg;
             $idpegawai = $dt->id_pegawai;
@@ -6246,6 +6249,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
             'gajiakhir' => $gajiakhir,
             'gajibaru' => $gajibaru,
             'objectgolonganfk'=> $objectgolonganfk,
+            'masakerjagolongan'=> $masakerjagolongan,
             // 'data'=> $data,
             'mkg'=> $mkg,
         );
@@ -6898,6 +6902,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 'nosurat'=>$request['nosurat'],
                 'noskcetak'=>$request['noskcetak'],
                 'jenissk'=>$request['jenissk'],
+                'masakerjagolongan'=>$request['masakerjagolongan'],
                 ]);
                 $getgol = \DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->get();
                 foreach ($getgol as $gg) {
@@ -6925,6 +6930,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'nosurat'=>$request['nosurat'],
                     'noskcetak'=>$request['noskcetak'],
                     'jenissk'=>$request['jenissk'],
+                    'masakerjagolongan'=>$request['masakerjagolongan'],
                 ]);
 
                 DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
