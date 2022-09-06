@@ -4,19 +4,19 @@
 <head>
     <meta charset="utf-8">
     <title>Resume Medis</title>
-    @if (stripos(\Request::url(), 'localhost') !== false)
+    {{-- @if (stripos(\Request::url(), 'localhost') !== false) --}}
         <link rel="stylesheet" href="css/report/paper.css">
         <link rel="stylesheet" href="css/report/table.css">
         <link rel="stylesheet" href="css/report/tabel.css">
 
         <link href="css/style.css" rel="stylesheet">
-    @else
+    {{-- @else
         <link rel="stylesheet" href="service/css/report/paper.css">
         <link rel="stylesheet" href="service/css/report/table.css">
         <link rel="stylesheet" href="service/css/report/tabel.css">
 
         <link href="service/css/style.css" rel="stylesheet">
-    @endif
+    @endif --}}
 
     <style>
         @page {

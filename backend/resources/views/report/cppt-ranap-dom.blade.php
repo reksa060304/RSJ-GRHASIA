@@ -7,11 +7,11 @@
                 <tbody>
                     <tr>
                         <td width="10%" style="padding: 5px">
-                            @if (stripos(\Request::url(), 'localhost') !== false)
+                            {{-- @if (stripos(\Request::url(), 'localhost') !== false) --}}
                                 <img src="img/logo_only.png" alt="Logo" style="width: 10px;">
-                            @else
-                                <img src="service/img/logo_only.png" alt="" style="width: 90px;">
-                            @endif
+                            {{-- @else --}}
+                                {{-- <img src="service/img/logo_only.png" alt="" style="width: 90px;"> --}}
+                            {{-- @endif --}}
                         </td>
                         <td style="text-align: left">
                             <b>
