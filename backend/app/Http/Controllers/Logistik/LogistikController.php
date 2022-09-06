@@ -4614,6 +4614,7 @@ class LogistikController extends ApiController{
                 $TambahStok = 0;
                 $qtyJumlahSisa = 0;
                 foreach ($dataKembaliStok as $item5) {
+                    $qtyJumlahSisa = ((float)$item5->qtyproduk ) * (float)$item5->hasilkonversi;
                     foreach ($req['details'] as $item) {
                         if  ($item['produkfk'] == $item5->objectprodukfk){
                             $qtyJumlahSisa = ((float)$item5->qtyproduk - (float)$item['jumlahdipakai']) * (float)$item5->hasilkonversi;
