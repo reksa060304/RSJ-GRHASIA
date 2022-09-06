@@ -8,7 +8,7 @@
                     <tr>
                         <td width="10%" style="padding: 5px">
                             {{-- @if (stripos(\Request::url(), 'localhost') !== false) --}}
-                                <img src="img/logo_only.png" alt="Logo" style="width: 10px;">
+                                <img src="img/logo_only.png" alt="Logo" style="width: 90px;">
                             {{-- @else --}}
                                 {{-- <img src="service/img/logo_only.png" alt="" style="width: 90px;"> --}}
                             {{-- @endif --}}
