@@ -1015,6 +1015,26 @@
         {
             "nameDep": "LaporanKeuanganCtrl",
             "urlDep": "module/Perencanaan/LaporanKeuanganCtrl"
+        },
+        {
+            "nameDep": "SPJCtrl",
+            "urlDep": "module/Perencanaan/SPJCtrl"
+        },
+        {
+            "nameDep": "PanjarCtrl",
+            "urlDep": "module/Perencanaan/PanjarCtrl"
+        },
+        {
+            "nameDep": "SPPCtrl",
+            "urlDep": "module/Perencanaan/SPPCtrl"
+        },
+        {
+            "nameDep": "SPMCtrl",
+            "urlDep": "module/Perencanaan/SPMCtrl"
+        },
+        {
+            "nameDep": "SemuaAnggaranCtrl",
+            "urlDep": "module/Perencanaan/SemuaAnggaranCtrl"
         }
     ]
 }

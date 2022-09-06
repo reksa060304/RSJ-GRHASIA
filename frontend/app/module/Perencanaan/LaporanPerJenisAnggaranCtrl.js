@@ -19,7 +19,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listTahap = e.data.tahap
+                $scope.listKegiatan = e.data.kegiatancombo
             });
+
+            $scope.changeKegiatan = function () {
+                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatandetail.id).then(function (e) {
+                    $scope.listSubKegiatan = e.data.data
+                });
+            }
 
 
             $scope.formatTanggal = function (tanggal) {
@@ -83,6 +90,42 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 } else if ($scope.item.terhadapSumberDana != undefined || tahap != terhadap) {
                     window.open(baseTransaksi + "report/get-cetak-rekap-SumberDana-anggaran?tahap=" + tahap + "&tahun=" + moment($scope.item.tahunSumberDana).format('YYYY') + "&terhadap=" + terhadap, '_blank');
                 }
+            }
+            $scope.CetakRBADetail = function(){
+                var tahap = ""
+                if ($scope.item.tahapdetail != undefined) {
+                    tahap = $scope.item.tahapdetail.id
+                }
+
+                var terhadap = ""
+                if ($scope.item.terhadapdetail != undefined) {
+                    terhadap = $scope.item.terhadapdetail.id
+                }
+
+                var tahun = ""
+                if ($scope.item.tahundetail != undefined) {
+                    tahun = $scope.item.tahundetail
+                }
+
+                var subsubkegiatan = ""
+                if ($scope.item.subkegiatandetail != undefined) {
+                    subsubkegiatan = $scope.item.subkegiatandetail.id
+                }
+
+                if ($scope.item.terhadapdetail != undefined) {
+                    window.open(baseTransaksi + "report/get-cetak-rba-detail-sebelum-sesudah?tahun=" +moment(tahun).format('YYYY')+ "&subsubkegiatan=" + subsubkegiatan + "&tahap="+tahap + "&terhadap="+terhadap, '_blank');
+                } else if($scope.item.terhadapdetail == undefined){
+                    window.open(baseTransaksi + "report/get-cetak-rba-detail?tahun=" +moment(tahun).format('YYYY')+ "&subsubkegiatan=" + subsubkegiatan + "&tahap="+tahap, '_blank');
+                }
+
+
+                // if ($scope.item.terhadapSumberDana == undefined || tahap == terhadap) {
+                //     window.open(baseTransaksi + "report/get-cetak-rekap-SumberDana-anggaran-sebelum?tahap=" + tahap + "&tahun=" + moment($scope.item.tahunSumberDana).format('YYYY'), '_blank');
+                // } else if ($scope.item.terhadapSumberDana != undefined || tahap != terhadap) {
+                //     window.open(baseTransaksi + "report/get-cetak-rekap-SumberDana-anggaran?tahap=" + tahap + "&tahun=" + moment($scope.item.tahunSumberDana).format('YYYY') + "&terhadap=" + terhadap, '_blank');
+                // }
+
+                
             }
             $scope.Perbaharui = function () {
                 $scope.ClearSearch();

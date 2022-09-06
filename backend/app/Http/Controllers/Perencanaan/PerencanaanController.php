@@ -389,22 +389,58 @@ class PerencanaanController extends ApiController {
         $tahapaktif = $request['tahapaktif'];
         $idpeg = $request['idpegawai'];
 
+        $pegawai = '';
+        if (isset($request['idpegawai']) && $request['idpegawai'] != "" && $request['idpegawai'] != "undefined") {
+            $pegawai = 'and dp.objectpptkfk = '.$idpeg;
+        }
+
         $thp = '';
         if (isset($request['tahapaktif']) && $request['tahapaktif'] != "" && $request['tahapaktif'] != "undefined" && $request['tahapaktif'] != 100) {
             $thp = 'and kb.objecttahapfk = '.$request['tahapaktif'];
+            $kegiatan = DB::select(DB::raw("select dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+                dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
+                dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
+                dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
+                dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, 
+                            coalesce(sum(kb.subtotal),0) as targetmasuk,dp.id, dp.tahun, dp.kode, dp.keterangan, dp.div, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4) as subkodeawal
+                            , cast(split_part(dp.kode, '.', 2) as int4) as subkodekedua
+                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end as subkodeketiga
+                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end as subkodekeempat
+                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end as subkodekelima
+                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end as subkodekeenam
+                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end as subkodeakhir 
+                            from kegiatananggaran_m as dp 
+                            left join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id and dp.tahun = '$tahunanggaran'
+                            and kb.kdprofile = 30 and kb.statusenabled = true 
+                            left join kegiatananggaran_m as dp3 on dp.kode ilike dp3.kode || '%' and dp3.div = 2
+                            and dp3.kdprofile = 30 and dp3.statusenabled = true 
+                            left join kegiatananggaran_m as dp2 on dp3.kode ilike dp2.kode || '%' and dp2.div = 1
+                            and dp2.kdprofile = 30 and dp2.statusenabled = true 
+                            left join kegiatananggaran_m as dp1 on dp2.kode ilike dp1.kode || '%' and dp1.div = 0
+                            and dp1.kdprofile = 30 and dp1.statusenabled = true 
+                            left join kegiatananggaran_m as dp0 on dp.kode ilike dp0.kode || '%' and dp0.div = 3
+                            and dp0.kdprofile = 30 and dp0.statusenabled = true 
+                            left join kelompokanggaran_m as kp on kp.id = dp.div 
+                            left join pegawai_m as pg on pg.id = dp.objectpptkfk 
+                            where dp.kdprofile = 30 and dp.statusenabled = true 
+                            and kb.kdprofile = 30 and kb.statusenabled = true 
+                            $pegawai
+                            $thp
+                            group by dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
+                            dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
+                            , cast(split_part(dp.kode, '.', 2) as int4)
+                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end
+                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end
+                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end
+                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
+                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
         } else if (isset($request['tahapaktif']) && $request['tahapaktif'] != "" && $request['tahapaktif'] != "undefined" && $request['tahapaktif'] == 100) {
-            $thp = '';
-        }
-
-        if(isset($request['idpegawai'])){
-            if($request['idpegawai'] != ''){
-
-                $kegiatan = DB::select(DB::raw("select dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+            $kegiatan = DB::select(DB::raw("select dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
                 dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
                 dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
                 dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
                 dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, 
-                            coalesce(sum(kb.subtotal),0) as targetmasuk,dp.id, dp.tahun, dp.kode, dp.keterangan, dp.div, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4) as subkodeawal
+                            0 as targetmasuk,dp.id, dp.tahun, dp.kode, dp.keterangan, dp.div, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4) as subkodeawal
                             , cast(split_part(dp.kode, '.', 2) as int4) as subkodekedua
                             , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end as subkodeketiga
                             , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end as subkodekeempat
@@ -425,9 +461,7 @@ class PerencanaanController extends ApiController {
                             left join kelompokanggaran_m as kp on kp.id = dp.div 
                             left join pegawai_m as pg on pg.id = dp.objectpptkfk 
                             where dp.kdprofile = 30 and dp.statusenabled = true 
-                            and kb.kdprofile = 30 and kb.statusenabled = true 
-                            and dp.objectpptkfk = $idpeg
-                            $thp
+                            $pegawai
                             group by dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
                             dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
                             , cast(split_part(dp.kode, '.', 2) as int4)
@@ -436,80 +470,42 @@ class PerencanaanController extends ApiController {
                             , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end
                             , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
                             , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
-
-            } else{
-                $kegiatan = DB::select(DB::raw("select dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
-                dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
-                dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
-                dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
-                dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, 
-                            coalesce(sum(kb.subtotal),0) as targetmasuk,dp.id, dp.tahun, dp.kode, dp.keterangan, dp.div, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4) as subkodeawal
-                            , cast(split_part(dp.kode, '.', 2) as int4) as subkodekedua
-                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end as subkodeketiga
-                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end as subkodekeempat
-                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end as subkodekelima
-                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end as subkodekeenam
-                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end as subkodeakhir 
-                            from kegiatananggaran_m as dp 
-                            left join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id and dp.tahun = '$tahunanggaran'
-                            and kb.kdprofile = 30 and kb.statusenabled = true 
-                            left join kegiatananggaran_m as dp3 on dp.kode ilike dp3.kode || '%' and dp3.div = 2
-                            and dp3.kdprofile = 30 and dp3.statusenabled = true 
-                            left join kegiatananggaran_m as dp2 on dp3.kode ilike dp2.kode || '%' and dp2.div = 1
-                            and dp2.kdprofile = 30 and dp2.statusenabled = true 
-                            left join kegiatananggaran_m as dp1 on dp2.kode ilike dp1.kode || '%' and dp1.div = 0
-                            and dp1.kdprofile = 30 and dp1.statusenabled = true 
-                            left join kegiatananggaran_m as dp0 on dp.kode ilike dp0.kode || '%' and dp0.div = 3
-                            and dp0.kdprofile = 30 and dp0.statusenabled = true 
-                            left join kelompokanggaran_m as kp on kp.id = dp.div 
-                            left join pegawai_m as pg on pg.id = dp.objectpptkfk 
-                            where dp.kdprofile = 30 and dp.statusenabled = true 
-                            $thp
-                            group by dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
-                            dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
-                            , cast(split_part(dp.kode, '.', 2) as int4)
-                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end
-                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end
-                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end
-                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
-                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
-            }
         } else{
             $kegiatan = DB::select(DB::raw("select dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
-            dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
-            dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
-            dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
-            dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, 
-                        coalesce(sum(kb.subtotal),0) as targetmasuk,dp.id, dp.tahun, dp.kode, dp.keterangan, dp.div, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4) as subkodeawal
-                        , cast(split_part(dp.kode, '.', 2) as int4) as subkodekedua
-                        , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end as subkodeketiga
-                        , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end as subkodekeempat
-                        , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end as subkodekelima
-                        , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end as subkodekeenam
-                        , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end as subkodeakhir 
-                        from kegiatananggaran_m as dp 
-                        left join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id and dp.tahun = '$tahunanggaran'
-                        and kb.kdprofile = 30 and kb.statusenabled = true 
-                        left join kegiatananggaran_m as dp3 on dp.kode ilike dp3.kode || '%' and dp3.div = 2
-                        and dp3.kdprofile = 30 and dp3.statusenabled = true 
-                        left join kegiatananggaran_m as dp2 on dp3.kode ilike dp2.kode || '%' and dp2.div = 1
-                        and dp2.kdprofile = 30 and dp2.statusenabled = true 
-                        left join kegiatananggaran_m as dp1 on dp2.kode ilike dp1.kode || '%' and dp1.div = 0
-                        and dp1.kdprofile = 30 and dp1.statusenabled = true 
-                        left join kegiatananggaran_m as dp0 on dp.kode ilike dp0.kode || '%' and dp0.div = 3
-                        and dp0.kdprofile = 30 and dp0.statusenabled = true 
-                        left join kelompokanggaran_m as kp on kp.id = dp.div 
-                        left join pegawai_m as pg on pg.id = dp.objectpptkfk 
-                        where dp.kdprofile = 30 and dp.statusenabled = true 
-                        $thp
-                        group by dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
-                        dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
-                        , cast(split_part(dp.kode, '.', 2) as int4)
-                        , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end
-                        , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end
-                        , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end
-                        , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
-                        , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
+                dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
+                dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
+                dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
+                dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, 
+                            coalesce(sum(kb.subtotal),0) as targetmasuk,dp.id, dp.tahun, dp.kode, dp.keterangan, dp.div, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4) as subkodeawal
+                            , cast(split_part(dp.kode, '.', 2) as int4) as subkodekedua
+                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end as subkodeketiga
+                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end as subkodekeempat
+                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end as subkodekelima
+                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end as subkodekeenam
+                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end as subkodeakhir 
+                            from kegiatananggaran_m as dp 
+                            left join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id and dp.tahun = '$tahunanggaran'
+                            and kb.kdprofile = 30 and kb.statusenabled = true 
+                            left join kegiatananggaran_m as dp3 on dp.kode ilike dp3.kode || '%' and dp3.div = 2
+                            and dp3.kdprofile = 30 and dp3.statusenabled = true 
+                            left join kegiatananggaran_m as dp2 on dp3.kode ilike dp2.kode || '%' and dp2.div = 1
+                            and dp2.kdprofile = 30 and dp2.statusenabled = true 
+                            left join kegiatananggaran_m as dp1 on dp2.kode ilike dp1.kode || '%' and dp1.div = 0
+                            and dp1.kdprofile = 30 and dp1.statusenabled = true 
+                            left join kegiatananggaran_m as dp0 on dp.kode ilike dp0.kode || '%' and dp0.div = 3
+                            and dp0.kdprofile = 30 and dp0.statusenabled = true 
+                            left join kelompokanggaran_m as kp on kp.id = dp.div 
+                            left join pegawai_m as pg on pg.id = dp.objectpptkfk 
+                            where dp.kdprofile = 30 and dp.statusenabled = true 
+                            and kb.kdprofile = 30 and kb.statusenabled = true 
+                            group by dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
+                            dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
+                            , cast(split_part(dp.kode, '.', 2) as int4)
+                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end
+                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end
+                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end
+                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
+                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
         }
         
         $ktahun = '';
@@ -4416,6 +4412,31 @@ class PerencanaanController extends ApiController {
         select norec, tgllpj, keterangan, coalesce(total, 0) total, nolpj, periode, jenis_bukti from lpj_t where kdprofile = 30 and statusenabled = true
         and extract(year from tgllpj) = $tahun
         and periode = '$periode'
+        ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    
+
+    public function getDetailSubKegiatan(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $id = $request['kegiatan'];
+        
+        $data = DB::select(DB::raw("
+        select kg.id, kg.kode, kg.keterangan
+        from kegiatananggaran_m km 
+        inner join kegiatananggaran_m kg on kg.kode ilike km.kode || '%' and kg.div = 4
+        where km.statusenabled = true and km.kdprofile = 30
+        and kg.statusenabled = true and kg.kdprofile = 30
+        and km.id = $id
         ")
         );
 

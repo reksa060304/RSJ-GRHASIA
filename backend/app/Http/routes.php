@@ -20,6 +20,9 @@
 */
 
 //yang pasti
+
+use  SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
     Route::group(['prefix' => 'medifirst2000'], function () {
@@ -787,11 +790,22 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bsre-esign/bsre-cppt-ranap','Bridging\BridgingBSREController@BSRECPPTRanap');
           Route::get('bsre-esign/get-combo','Bridging\BridgingBSREController@getCombo');
           Route::post('bsre-esign/save-ttd','Bridging\BridgingBSREController@saveTTDE');
+          Route::post('bsre-esign/save-ttd-pengajuan','Bridging\BridgingBSREController@saveTTDEPengajuan');
           Route::post('bsre-esign/delete-ttd','Bridging\BridgingBSREController@deleteTTDE');
           Route::get('bsre-esign/get-ttd', 'Bridging\BridgingBSREController@getTTD');
           Route::get('bsre-esign/verify-ttd', 'Bridging\BridgingBSREController@verifyTTD');
           Route::post('bsre-esign/registrasi-user', 'Bridging\BridgingBSREController@RegistrasiUser');
-
+          Route::get('verify-doc/{id}', 'Bridging\BridgingBSREController@verifyDocBSRE');
+          Route::get('qrcode-image', function () {
+            $image = QrCode::format('png')
+              ->merge('img/pemda.png', 0.2, true)
+              ->size(500)->errorCorrection('H')
+              ->generate('A simple example of QR code!'); 
+              return response($image)->header('Content-type','image/png');
+          });
+          Route::get('phpinfo', function () {
+            return phpinfo();
+          });
  
         // });
 
@@ -1153,6 +1167,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
           Route::get('report/get-cetak-rekap-mata-anggaran','Report\ReportController@CetakRekapMataAnggaran');
           Route::get('report/get-cetak-rekap-mata-anggaran-sebelum','Report\ReportController@CetakRekapMataAnggaranSebelum');
+          Route::get('report/get-cetak-rba-detail','Report\ReportController@CetakRBADetail');
+          Route::get('report/get-cetak-rba-detail-sebelum-sesudah','Report\ReportController@CetakRBADetailSebelumSesudah');
           Route::get('report/get-cetak-rekap-SumberDana-anggaran','Report\ReportController@CetakRekapSumberDanaAnggaran');
           Route::get('report/get-cetak-rekap-SumberDana-anggaran-sebelum','Report\ReportController@CetakRekapSumberDanaAnggaranSebelum');
           Route::get('report/get-cetak-keuangan-per-rekening','Report\ReportController@CetakKeuanganPerRekening');
@@ -1408,6 +1424,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-sisa-panjar', 'Perencanaan\PerencanaanController@getSisaPanjar');
             Route::get('perencanaan/get-lpj', 'Perencanaan\PerencanaanController@getLPJ');
             Route::get('perencanaan/get-bku', 'Perencanaan\PerencanaanController@getBKU');
+            Route::get('perencanaan/get-detail-sub-kegiatan', 'Perencanaan\PerencanaanController@getDetailSubKegiatan');
             Route::get('perencanaan/get-jenis-bukti-bku', 'Perencanaan\PerencanaanController@getJenisBuktiBKU');
             Route::get('perencanaan/get-jasgir', 'Perencanaan\PerencanaanController@getJasgir');
             Route::get('perencanaan/get-panjar-bku', 'Perencanaan\PerencanaanController@getPanjarBKU');
@@ -3034,7 +3051,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         if(isset($request['type']) && $request['type'] == 'download'){
           $type = isset($request['mimetype']) ? $request['mimetype'] : File::mimeType($pathFILE);
           $headers = array( 'Content-Type: '. $type,   );
-          return Response::download($pathFILE,  isset($request['filename']) ? $request['filename']:'file', $headers);
+          $ext = '';
+          if($type == 'application/pdf'){
+            $ext = '.pdf';
+          }
+          return Response::download($pathFILE,  isset($request['filename']) ? $request['filename'].$ext:'file', $headers);
         }
 
         $file = File::get($pathFILE);

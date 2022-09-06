@@ -1,7 +1,7 @@
 define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
-    initialize.controller('CpptNewCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
-        function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
+    initialize.controller('CpptNewCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService', '$mdDialog',
+        function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
 
 
             $scope.noCM = $state.params.noCM;
@@ -13,9 +13,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             var nomorEMR = '-'
             $scope.cc.emrfk = 443
             var dataLoad = []
-             $scope.isCetak = true
+             $scope.isCetak = false
              $scope.isCetakV = true
-             $scope.isTTD_E = false
+             $scope.isTTD_E = true
             var norecEMR = ''
             $scope.show = true
             var pegawaiLogin = medifirstService.getPegawaiLogin()
@@ -1554,19 +1554,53 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     +'&nama='+nama,  '_blank');
             }
             $scope.ttdElek = function(){
-              if (norecEMR == '') return
-             
-              var local =JSON.parse(localStorage.getItem('profile')) 
-              var nama = medifirstService.getPegawaiLogin().namaLengkap
-              medifirstService.get('bsre-esign/bsre-cppt-ranap?nocm='  + $scope.cc.nocm 
-                + '&norec_apd='+ $scope.cc.norec
-                + '&emr=' + norecEMR
-                + '&emrfk='+  $scope.cc.emrfk
-                + '&kdprofile='+local.id 
-                + '&nama='+nama).then(function(e){
-                  
-              })
-             
+              if (norecEMR == '') {
+                toastr.error('Dokumen belum pernah di isi')
+                return 
+              }
+        
+              // var confirm = $mdDialog.confirm()
+              //   .title('Info')
+              //   .textContent('Yakin mau tanda tangani dokumen ini ? ')
+              //   .ariaLabel('Lucky day')
+              //   .cancel('Tidak')
+              //   .ok('Ya')
+              // $mdDialog.show(confirm).then(function () {
+
+              if($scope.item.obj[111469] != undefined){
+                $scope.listPegawai.add($scope.item.obj[111469])
+                $scope.item.pegawai = $scope.item.obj[111469]
+              }
+              $scope.winDialog.center().open()
+              // })
+            }
+            $scope.savePengajuanTTE = function(pegawai){
+               if(pegawai == undefined){
+                  return 
+               }
+               var local = JSON.parse(localStorage.getItem('profile')) 
+               var nama = medifirstService.getPegawaiLogin().namaLengkap
+               $scope.isRouteLoading = true
+               medifirstService.get('report/cetak-cppt-ranap?nocm=' + $scope.cc.nocm 
+               + '&norec_apd='+  $scope.cc.norec 
+               + '&emr=' + norecEMR
+               + '&emrfk='+  $scope.cc.emrfk
+               + '&kdprofile='+local.id 
+               + '&nama='+nama
+               + '&isttd=true'
+               + '&pegawaittd='+pegawai.value
+               + '&noregistrasi='+ $scope.cc.noregistrasi 
+               + '&norec_pd='+$scope.cc.norec_pd 
+               ).then(function(e){
+                if(e.data.status == 201){
+                  toastr.success(e.data.message)
+                  $scope.winDialog.close()
+                }else{
+                  toastr.error(e.data.message)
+                }
+                 $scope.isRouteLoading = false
+
+               })
             }
 
         }
