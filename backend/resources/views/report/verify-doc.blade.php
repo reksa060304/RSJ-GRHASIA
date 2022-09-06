@@ -15,32 +15,60 @@
         rel="stylesheet">
 
 
+    @if (stripos(\Request::url(), 'localhost') !== false) 
     <link rel="shortcut icon" type="image/x-icon" href="{!! asset('favicon.ico') !!}">
-
-    <!-- BEGIN: Vendor CSS-->
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/vendors/css/vendors.min.css') !!}">
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css') !!}">
-    <!-- END: Vendor CSS-->
-
-    <!-- BEGIN: Theme CSS-->
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/bootstrap.css') !!}">
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/bootstrap-extended.css') !!}">
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/colors.css') !!}">
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/components.css') !!}">
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/themes/dark-layout.css') !!}">
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/themes/bordered-layout.css') !!}">
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/themes/semi-dark-layout.css') !!}">
-
-    <!-- BEGIN: Page CSS-->
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/core/menu/menu-types/horizontal-menu.css') !!}">
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/plugins/forms/pickers/form-flat-pickr.css') !!}">
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/pages/app-invoice.css') !!}">
-    <!-- END: Page CSS-->
-
-    <!-- BEGIN: Custom CSS-->
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/pages/page-auth.min.css') !!}">
-    <link rel="stylesheet" type="text/css" href="{!! asset('vuex/assets/css/style.css') !!}">
-    <!-- END: Custom CSS-->
+      <!-- BEGIN: Vendor CSS-->
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/vendors/css/vendors.min.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css') !!}">
+      <!-- END: Vendor CSS-->
+  
+      <!-- BEGIN: Theme CSS-->
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/bootstrap.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/bootstrap-extended.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/colors.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/components.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/themes/dark-layout.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/themes/bordered-layout.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/themes/semi-dark-layout.css') !!}">
+  
+      <!-- BEGIN: Page CSS-->
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/core/menu/menu-types/horizontal-menu.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/plugins/forms/pickers/form-flat-pickr.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/pages/app-invoice.css') !!}">
+      <!-- END: Page CSS-->
+  
+      <!-- BEGIN: Custom CSS-->
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/app-assets/css/pages/page-auth.min.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('vuex/assets/css/style.css') !!}">
+      <!-- END: Custom CSS-->
+    @else
+    <link rel="shortcut icon" type="image/x-icon" href="{!! asset('service/favicon.ico') !!}">
+      <!-- BEGIN: Vendor CSS-->
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/vendors/css/vendors.min.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css') !!}">
+      <!-- END: Vendor CSS-->
+  
+      <!-- BEGIN: Theme CSS-->
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/css/bootstrap.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/css/bootstrap-extended.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/css/colors.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/css/components.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/css/themes/dark-layout.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/css/themes/bordered-layout.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/css/themes/semi-dark-layout.css') !!}">
+  
+      <!-- BEGIN: Page CSS-->
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/css/core/menu/menu-types/horizontal-menu.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/css/plugins/forms/pickers/form-flat-pickr.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/css/pages/app-invoice.css') !!}">
+      <!-- END: Page CSS-->
+  
+      <!-- BEGIN: Custom CSS-->
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/app-assets/css/pages/page-auth.min.css') !!}">
+      <link rel="stylesheet" type="text/css" href="{!! asset('service/vuex/assets/css/style.css') !!}">
+      <!-- END: Custom CSS-->
+    @endif
+  
 </head>
 <!-- END: Head-->
 
@@ -114,7 +142,11 @@
                         <div class="card mb-0">
                             <div class="card-body">
                                 <a href="javascript:void(0);" class="brand-logo">
+                                    @if (stripos(\Request::url(), 'localhost') !== false) 
                                     <img style="width:90px" src="{!! asset('img/logo_only.png') !!}">
+                                    @else
+                                    <img style="width:90px" src="{!! asset('service/img/logo_only.png') !!}">
+                                    @endif
                                     <h2 class="brand-text ml-1 mt-1">{{ $profile->namaexternal }}</h2>
                                 </a>
 
@@ -153,7 +185,12 @@
                                         class="d-flex justify-content-between flex-md-row flex-column invoice-spacing mt-0">
                                         <div>
                                             <div class="logo-wrapper">
+                                                @if (stripos(\Request::url(), 'localhost') !== false) 
                                                 <img style="width:100px" src="{!! asset('img/logo_only.png') !!}">
+                                                @else
+                                                <img style="width:100px" src="{!! asset('service/img/logo_only.png') !!}">
+                                                @endif
+                                            
                                                 <h3 class=" invoice-logo">{{ $profile->namaexternal }}</h3>
                                             </div>
                                             <p class="card-text mb-25">{{ $profile->alamatlengkap }}</p>
@@ -290,7 +327,7 @@
 
 
     <input type="hidden" id="address" value="{!! $_SERVER['REMOTE_ADDR'] !!}">
-
+    @if (stripos(\Request::url(), 'localhost') !== false) 
     <!-- BEGIN: Vendor JS-->
     <script src="{!! asset('vuex/app-assets/vendors/js/vendors.min.js') !!}"></script>
     <!-- BEGIN Vendor JS-->
@@ -310,6 +347,28 @@
     <script src="{!! asset('vuex/app-assets/js/scripts/pages/app-invoice.js') !!}"></script>
     <!-- END: Page JS-->
 
+    @else
+   <!-- BEGIN: Vendor JS-->
+   <script src="{!! asset('service/vuex/app-assets/vendors/js/vendors.min.js') !!}"></script>
+   <!-- BEGIN Vendor JS-->
+
+   <!-- BEGIN: Page Vendor JS-->
+   <script src="{!! asset('service/vuex/app-assets/vendors/js/ui/jquery.sticky.js') !!}"></script>
+   <script src="{!! asset('service/vuex/app-assets/vendors/js/forms/repeater/jquery.repeater.min.js') !!}"></script>
+   <script src="{!! asset('service/vuex/app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js') !!}"></script>
+   <!-- END: Page Vendor JS-->
+
+   <!-- BEGIN: Theme JS-->
+   <script src="{!! asset('service/vuex/app-assets/js/core/app-menu.js') !!}"></script>
+   <script src="{!! asset('service/vuex/app-assets/js/core/app.js') !!}"></script>
+   <!-- END: Theme JS-->
+
+   <!-- BEGIN: Page JS-->
+   <script src="{!! asset('service/vuex/app-assets/js/scripts/pages/app-invoice.js') !!}"></script>
+   <!-- END: Page JS-->
+
+    @endif
+  
     <script src="https://www.google.com/recaptcha/api.js" async="" defer=""></script>
     <script>
         $(window).on('load', function() {
@@ -368,11 +427,7 @@
 
         }
 
-        // $captchaResponse =$data["recaptcha"];
-        //  $secret = '6LdwosIZAAAAAPM9FsjT7ruqweBjFNhXbAtN3d-S';
-        //  // $secret = '6LeyqNAZAAAAAKO8uCFObSxNO1YWo2vzpP44ydfS';
-        //  $response = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret="
-        //        .$secret."&response=".$captchaResponse."&remoteip=".$_SERVER['REMOTE_ADDR']), true);
+      
     </script>
 </body>
 <!-- END: Body-->
