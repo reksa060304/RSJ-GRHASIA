@@ -4182,6 +4182,66 @@ class ReportController extends ApiController{
         return view('report.spj.cetakrbadetail',compact('sebelum','pageWidth', 'data'));
     }
 
+    public function CetakPendapatanPerubahan(Request $request){
+        $tahun = $request['tahun'];
+        
+
+        $qperubahan  = '';
+        if (isset($request['perubahan']) && $request['perubahan'] != "" && $request['perubahan'] != "undefined" && $request['perubahan'] == 1) {
+            $qperubahan =  ' and rp.isperubahan = true ';
+        }
+        if (isset($request['perubahan']) && $request['perubahan'] != "" && $request['perubahan'] != "undefined" && $request['perubahan'] == 2) {
+            $qperubahan =  ' and rp.isperubahan = false ';
+        }
+
+        $data = DB::select(DB::raw("select 0 AS nourut, 'juga' bold, ap.namaexternal, 0 as jumlah, '' keterangan
+        from asalproduk_m as ap 
+        left join rincianpendapatan_t as rp on ap.id = rp.objectasalprodukfk
+        and rp.kdprofile = 30
+        and rp.statusenabled = true
+        left join uraianpendapatan_m as up on up.id = rp.objecturaianpendapatanfk
+        and up.kdprofile = 30
+        and up.statusenabled = true
+        where ap.kdprofile = 30
+        and ap.statusenabled = true
+        and rp.norec is null
+    
+        union all
+    
+        select RANK ( ) OVER ( order by ap.namaexternal ) AS nourut, 'iya' bold, ap.namaexternal, sum(rp.jumlahpendapatan) as jumlah, '' keterangan
+        from rincianpendapatan_t as rp
+        inner join asalproduk_m as ap on ap.id = rp.objectasalprodukfk
+        inner join uraianpendapatan_m as up on up.id = rp.objecturaianpendapatanfk
+        where rp.kdprofile = 30
+        and rp.statusenabled = true
+        and ap.kdprofile = 30
+        and ap.statusenabled = true
+        and up.kdprofile = 30
+        and up.statusenabled = true
+        and rp.tahun = '$tahun'
+        $qperubahan
+        group by ap.namaexternal
+    
+        union all
+    
+        select RANK ( ) OVER ( order by ap.namaexternal ) AS nourut, 'tidak' bold, rp.uraianpendapatan namaexternal, rp.jumlahpendapatan jumlah, rp.keterangan
+        from rincianpendapatan_t as rp
+        inner join asalproduk_m as ap on ap.id = rp.objectasalprodukfk
+        inner join uraianpendapatan_m as up on up.id = rp.objecturaianpendapatanfk
+        where rp.kdprofile = 30
+        and rp.statusenabled = true
+        and ap.kdprofile = 30
+        and ap.statusenabled = true
+        and up.kdprofile = 30
+        and up.statusenabled = true
+        and rp.tahun = '$tahun'
+        $qperubahan
+        order by nourut, bold"));     
+    
+        $pageWidth = 1200;
+        return view('report.spj.cetakpendapatanperubahan',compact('pageWidth', 'data'));
+    }
+
     public function CetakRBADetailSebelumSesudah(Request $request){
         $tahun = $request['tahun'];
         

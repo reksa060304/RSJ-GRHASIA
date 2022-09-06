@@ -136,9 +136,19 @@
                     <tr>
                         <td align="left" width="50"  style="padding: 10px;">Masukan</td>
                         <td align="left" width="50"  style="padding: 10px;">Dana</td>
-                        <td align="left" width="50"  style="padding: 10px;">{{ $data[0]->targetmasuk }}</td>
+                        @php
+                            $jumlahtotal = 0
+                        @endphp
+                        @foreach($sebelum as $sb)
+                            @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
+                            @php
+                            $jumlahtotal+=$sb->subtotal
+                            @endphp
+                            @endif
+                        @endforeach
+                        <td align="left" width="50"  style="padding: 10px;">{{ "Rp " . number_format($jumlahtotal,2,',','.') }}</td>
                         <td align="left" width="50"  style="padding: 10px;">Dana</td>
-                        <td align="left" width="50"  style="padding: 10px;">{{ $data[0]->targetmasuk }}</td>
+                        <td align="left" width="50"  style="padding: 10px;">{{ "Rp " . number_format($jumlahtotal,2,',','.') }}</td>
                     </tr>
                     <tr>
                         <td align="left" width="100"  style="padding: 10px;">Keluaran</td>

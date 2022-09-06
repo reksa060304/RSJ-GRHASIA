@@ -14,6 +14,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             LoadCombo()
             // LoadData()
             function LoadCombo(){
+                console.log($scope.dataSelected)
                 medifirstService.get('anggaran/load-combo-rincian-pendapatan').then(function(data){
                     var datas = data.data
                     $scope.listSumberPendapatan = datas.sumberpendapatan
@@ -121,6 +122,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.TambahRincian = function (){
                 var tahun = moment($scope.now).format('YYYY');
                 $scope.itemRincian.tglinput = moment($scope.now).format('YYYY-MM-DD')
+                $scope.dataSelected = undefined
+                console.log($scope.dataSelected)
                 $scope.popupTambahRincianPendapatan.center().open()
             }
             $scope.perubahan = function(data){
@@ -146,6 +149,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
             }
             $scope.simpanRincian = function(){
+                console.log($scope.dataSelected)
                 var tahun = moment($scope.itemRincian.tahun).format('YYYY');
                 var perubahan = "";
                 if ($scope.itemRincian.perubahan == true) {
@@ -154,6 +158,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.itemRincian.nonPerubahan == true){
                     perubahan = false
                 }
+                norec = ''
                 if($scope.dataSelected != undefined){
                     norec = $scope.dataSelected.norec
                 }
@@ -303,6 +308,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     alert("Data Belum Dipilih!")
                     return;
                 };
+                console.log($scope.dataSelected)
                 $scope.itemRincian.tglinput = moment($scope.dataSelected.tglinput).format('YYYY-MM-DD')
                 $scope.itemRincian.tahun = $scope.dataSelected.tahun
                 $scope.itemRincian.sumberPendapatan = {id:$scope.dataSelected.objectasalprodukfk,namaexternal:$scope.dataSelected.namaexternal}

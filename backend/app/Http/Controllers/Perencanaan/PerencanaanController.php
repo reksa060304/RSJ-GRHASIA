@@ -2393,6 +2393,56 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function deleteRincianKegiatanAnggaran(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        try{
+            
+            $data = \DB::table('keteranganbelanja_t')->where('objectkegiatanfk',$request['id'])->where('objecttahapfk',$request['tahap'])->update([
+                'statusenabled'=> false
+            ]);
+
+            $cek = KeteranganBelanja::where('objectkegiatanfk',$request['id'])->where('objecttahapfk', '!=', $request['tahap'])->where('statusenabled', true)->first();
+            
+            if(empty($cek)){
+                $KA = \DB::table('kegiatananggaran_m')->where('id',$request['id'])->update([
+                    'indikatorkeluaran'=> null,
+                    'indikatorhasil'=> null,
+                    'targetkeluaran'=> null,
+                    'targethasil'=> null,
+                ]);
+            }
+
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $cek,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'result' => $cek,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function deleteMataAnggaran(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
