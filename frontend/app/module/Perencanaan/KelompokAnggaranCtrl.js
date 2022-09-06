@@ -348,7 +348,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
                 
-                //console.log(dataItem)
+                console.log(dataItem)
                 $scope.norecrcntotalanggaran = dataItem.norec 
                 medifirstService.get("perencanaan/get-total-anggaran-rcn?kegiatan=" + $scope.norecrcntotalanggaran).then(function (e) {
                     var total = 0
@@ -361,7 +361,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.rcn.paguAnggaran = 0
                     }
 
-                    $scope.item.targetKinerjaMasukan = formatRupiah(total, "Rp. ")
+                    $scope.item.targetKinerjaMasukan = formatRupiah(dataItem.targetmasuk, "Rp. ")
                     
 				})
                 
