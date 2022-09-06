@@ -122,9 +122,9 @@
 </style>
 
 <div ng-show="dataVOloaded">
-	<c-panel item="item" header="'ANGGARAN'" disabled ng-if="hidekeuangan === true">
+	<c-panel item="item" header="'ANGGARAN'" disabled ng-if="semuaanggaran === true">
 	</c-panel>
-	<c-panel item="item" header="'KEUANGAN'" disabled ng-if="hidekeuangan === false">
+	<c-panel item="item" header="'KEUANGAN'" disabled ng-if="semuaanggaran === false">
 	</c-panel>
 	<!-- -->
 	<div class="grid_12">
@@ -132,7 +132,7 @@
 			<md-content>
 				<md-tabs md-dynamic-height md-border-bottom>
 					
-					<md-tab label="Setting" ng-if="hidespj === true && hidekeuangan === true">
+					<md-tab label="Setting" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding" ng-hide="false">
 
@@ -309,7 +309,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Kegiatan" ng-if="hidekeuangan === true">
+					<md-tab label="Kegiatan" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true">
 						<md-content class="md-padding">
 							
 							<!-- <br /> -->
@@ -362,7 +362,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Mata Anggaran" ng-if="hidespj === true && hidekeuangan === true">
+					<md-tab label="Mata Anggaran" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true">
 						<md-content class="md-padding">
 							
 								
@@ -388,7 +388,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Anggaran Kas" ng-if="hidekeuangan === true">
+					<md-tab label="Anggaran Kas" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 
@@ -446,7 +446,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="SPJ" ng-if="hidespj === true">
+					<md-tab label="SPJ" ng-if="spjaja === true && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === false">
 						<md-content class="md-padding">
 
 							<br />
@@ -481,7 +481,7 @@
 							</div> -->
 						</md-content>
 					</md-tab>
-					<md-tab label="Panjar" ng-if="hidespj === true">
+					<md-tab label="Panjar" ng-if="spjaja === false && panjaraja === true && sppaja === false && spmaja === false && semuaanggaran === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 							<div class="grid_12">
@@ -493,7 +493,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Surat Permintaan Pembayaran (SPP)" ng-if="hidespj === true">
+					<md-tab label="Surat Permintaan Pembayaran (SPP)" ng-if="spjaja === false && panjaraja === false && sppaja === true && spmaja === false && semuaanggaran === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 							<div class="grid_12">
@@ -509,7 +509,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Surat Perintah Membayar (SPM)" ng-if="hidespj === true">
+					<md-tab label="Surat Perintah Membayar (SPM)" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === true && semuaanggaran === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 							<div class="grid_12">

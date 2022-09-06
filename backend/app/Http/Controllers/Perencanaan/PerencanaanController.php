@@ -4427,6 +4427,31 @@ class PerencanaanController extends ApiController {
         return $this->respond($result);
     }
 
+    
+
+    public function getDetailSubKegiatan(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $id = $request['kegiatan'];
+        
+        $data = DB::select(DB::raw("
+        select kg.id, kg.kode, kg.keterangan
+        from kegiatananggaran_m km 
+        inner join kegiatananggaran_m kg on kg.kode ilike km.kode || '%' and kg.div = 4
+        where km.statusenabled = true and km.kdprofile = 30
+        and kg.statusenabled = true and kg.kdprofile = 30
+        and km.id = $id
+        ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
     public function getBKU(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
