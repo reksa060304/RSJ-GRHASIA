@@ -17,6 +17,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 depth: "decade"
             }
 
+            $scope.listJenisPerubahan = [
+                { id: 1, jenisperubahan: "Perubahan" },
+                { id: 2, jenisperubahan: "Non Perubahan" },
+            ];
+
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listTahap = e.data.tahap
                 $scope.listKegiatan = e.data.kegiatancombo
@@ -126,6 +131,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // }
 
                 
+            }
+            $scope.CetakPendapatan = function(){
+                // var tahap = ""
+                // if ($scope.item.tahapdetail != undefined) {
+                //     tahap = $scope.item.tahapdetail.id
+                // }
+
+                // var terhadap = ""
+                // if ($scope.item.terhadapdetail != undefined) {
+                //     terhadap = $scope.item.terhadapdetail.id
+                // }
+
+                var tahun = ""
+                if ($scope.item.tahunpendapatan != undefined) {
+                    tahun = $scope.item.tahunpendapatan
+                }
+
+                var perubahan = ""
+                if ($scope.item.jenisperubahan != undefined) {
+                    perubahan = $scope.item.jenisperubahan.id
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-pendapatan-perubahan?tahun="+moment(tahun).format('YYYY')+"&perubahan="+perubahan, '_blank');
             }
             $scope.Perbaharui = function () {
                 $scope.ClearSearch();

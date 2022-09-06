@@ -341,6 +341,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.TambahPengembalian = function(){
                 $scope.popupPengembalian.center().open()
             }
+            function deleteKegiatanT(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                console.log(dataItem)
+                var objSave =
+                    {
+                        id: dataItem.id,
+                    }
+                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
+                    loadDataGrid();
+                }, function (error) {
+
+                })
+            }
             function editKegiatanT(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
@@ -1030,12 +1044,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "namalengkap",
                     "title": "PPTK",
-                    "width": "250px"
+                    "width": "150px"
                 },
                 {
                     "field": "tahun",
                     "title": "Tahun Angaran",
-                    "width": "80px"
+                    "width": "50px"
                 },
                 {
                     "field": "targetmasuk",
@@ -1047,6 +1061,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "field": "namakelompok",
                     "title": "div",
                     "width": "80px"
+                },
+                {
+                    "command": [
+                          {
+                             text: "Delete",
+                             click: deleteKegiatanT,
+                             imageClass: "clinic fa"
+                          },
+                      ],
+                         title: "",
+                         width: "30px",
                 }
             ]};
             $scope.columnSetting = {
@@ -2574,14 +2599,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.HapusPopUpSubSubKegiatan = function(){
                 var objSave =
                     {
+                        tahap: $scope.item.tahap.id,
+                        pengurangan: $scope.item.targetKinerjaMasukan,
                         id: $scope.item.id,
                     }
-                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
+                medifirstService.post('perencanaan/delete-rincian-kegiatan-anggaran', objSave).then(function (e) {
                     loadDataGrid();
                     $scope.popupSubSubKegiatan.center().close()
                 }, function (error) {
 
                 })
+                
             }
             $scope.HapusPopUpTambahMT = function(){
                 var objSave =

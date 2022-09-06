@@ -1168,6 +1168,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-rekap-mata-anggaran','Report\ReportController@CetakRekapMataAnggaran');
           Route::get('report/get-cetak-rekap-mata-anggaran-sebelum','Report\ReportController@CetakRekapMataAnggaranSebelum');
           Route::get('report/get-cetak-rba-detail','Report\ReportController@CetakRBADetail');
+          Route::get('report/get-cetak-pendapatan-perubahan','Report\ReportController@CetakPendapatanPerubahan');
           Route::get('report/get-cetak-rba-detail-sebelum-sesudah','Report\ReportController@CetakRBADetailSebelumSesudah');
           Route::get('report/get-cetak-rekap-SumberDana-anggaran','Report\ReportController@CetakRekapSumberDanaAnggaran');
           Route::get('report/get-cetak-rekap-SumberDana-anggaran-sebelum','Report\ReportController@CetakRekapSumberDanaAnggaranSebelum');
@@ -1481,6 +1482,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-kel-anggaran','Perencanaan\PerencanaanController@saveKelompokAnggaran');
             Route::post('perencanaan/save-kegiatan-anggaran','Perencanaan\PerencanaanController@saveKegiatanAnggaran');
             Route::post('perencanaan/delete-kegiatan-anggaran','Perencanaan\PerencanaanController@deleteKegiatanAnggaran');
+            Route::post('perencanaan/delete-rincian-kegiatan-anggaran','Perencanaan\PerencanaanController@deleteRincianKegiatanAnggaran');
             Route::post('perencanaan/delete-mata-anggaran','Perencanaan\PerencanaanController@deleteMataAnggaran');
             Route::post('perencanaan/save-setting-anggaran','Perencanaan\PerencanaanController@saveSettingAnggaran');
             Route::post('perencanaan/save-mata-anggaran','Perencanaan\PerencanaanController@saveMataAnggaran');
