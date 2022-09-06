@@ -26,19 +26,23 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.item.periodeAwal = new Date(moment(new Date()).format('YYYY-MM-DD 00:00'));
             $scope.item.periodeAkhir = new Date(moment(new Date()).format('YYYY-MM-DD 23:59'));
             var paramSearch = ''
-
+            var pegawai = medifirstService.getPegawaiLogin()
             $scope.SistoleChart = false;
             $scope.NonSistoleChart = false;
 
             medifirstService.get("bsre-esign/get-combo", true).then(function (dat) {
                 $scope.listPegawai = dat.data.pegawai;
+
+                $scope.item.qdokter = {id:pegawai.id,namalengkap:pegawai.namaLengkap}
+
+                LoadCacheHelper();
             });
-            if($state.params.noRec == undefined){
-                cacheHelper.get('cacheRekamMedis',undefined);
+            if ($state.params.noRec == undefined) {
+                cacheHelper.get('cacheRekamMedis', undefined);
             }
             $scope.cacheRM = undefined
             $scope.cachePARAM = undefined
-            LoadCacheHelper();
+    
             function LoadCacheHelper() {
                 var chacePeriode = cacheHelper.get('cacheRekamMedis');
                 if (chacePeriode != undefined) {
@@ -57,23 +61,120 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.item.kelas = chacePeriode[10]
                     $scope.item.idRuangan = chacePeriode[11]
                     $scope.item.namaRuangan = chacePeriode[12]
-                    $scope.header.DataNoregis = chacePeriode[13]
-                    if ($scope.header.DataNoregis == undefined) {
-                        $scope.header.DataNoregis = false;
-                    }
-                    if ($scope.header.DataNoregis == true) {
-                        paramSearch = 'noregistrasi=' + $scope.item.noregistrasi
 
-                    } else {
-                        paramSearch = 'nocm=' + $scope.item.noMr
-                    }
                     init()
 
-                } else {
-                    if (!$state.params.noRec) {
-                        $scope.cacheRM = undefined
-                        $scope.cachePARAM = '-'
-                    }
+                }
+                if (!$state.params.noRec) {
+                    $scope.cacheRM = undefined
+                    $scope.cachePARAM = '-'
+                    init()
+                }
+                $scope.columnDaftar = {
+                    selectable: 'row',
+                    dataBound: onDataBound,
+                    pageable: true,
+                    groupable: true,
+                    toolbar: [
+                        {
+                            name: "add", text: "Tambah",
+                            template: '<button ng-click="inputBaru()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button>',
+    
+                        },
+    
+                    ],
+                    columns:
+                        [
+                            {
+                                "command": [
+                                    { text: "Download", click: DownloadBerkas, imageClass: "k-icon k-i-download" },
+                                    { text: "View", click: LihatBerkas, imageClass: " fa fa-eye" },
+                                    { text: "Delete", click: hapus, imageClass: "k-icon k-i-close", },
+                                    { text: "Edit", click: editBerkas, imageClass: "k-icon k-i-pencil" },
+                                    { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
+                                ],
+                                title: "",
+                                width: "180px",
+                                hidden: $scope.cachePARAM != undefined
+                            },
+                            {
+                                "command": [
+                                    // { text: "Download", click: DownloadBerkas, imageClass: "k-icon k-i-download" },
+                                    { text: "View", click: LihatBerkas, imageClass: " fa fa-eye" },
+                                    { text: "Sign Doc", click: tandaTangan, imageClass: "fa fa-key" },
+                                    { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
+                                ],
+                                title: "",
+                                width: "180px",
+                                hidden: $scope.cachePARAM == undefined
+                            },
+                            {
+                                "field": "noregistrasi",
+                                "title": "No Registrasi",
+                                "width": "120px",
+                            },
+                            {
+                                "field": "nocm",
+                                "title": "No RM",
+                                "width": "120px",
+                                hidden: $scope.cachePARAM == undefined
+                            },
+                            {
+                                "field": "namapasien",
+                                "title": "Nama Pasien",
+                                "width": "200px",
+                                hidden: $scope.cachePARAM == undefined
+                            },
+    
+                            {
+                                "field": "tglemr",
+                                "title": "Tgl Pengajuan",
+                                "width": "120px",
+                                "template": "<span class='style-left'>{{formatTanggal('#: tglemr #')}}</span>"
+                            },
+                            {
+                                "field": "tglttd",
+                                "title": "Tgl TTD",
+                                "width": "120px",
+                                "template": "<span class='style-left'>{{formatTanggal('#: tglttd #')}}</span>"
+                            },
+                            {
+                                "field": "namadokumen",
+                                "title": "Nama Dokumen",
+                                "width": "200px",
+                            },
+                            {
+                                "field": "nomoremr",
+                                "title": "No EMR",
+                                "width": "120px",
+                            },
+                            {
+                                "field": "deskripsi",
+                                "title": "Deskripsi",
+                                "width": "200px",
+                            },
+                            {
+                                "field": "namalengkap",
+                                "title": "Pegawai",
+                                "width": "230px",
+                            },
+                            {
+                                "field": "nik_pegawai",
+                                "title": "NIK",
+                                "width": "150px",
+                            },
+                            {
+                                "field": "namafile",
+                                "title": "File",
+                                "width": "200px",
+                            },
+                            {
+                                "field": "status",
+                                "title": "Status TTD",
+                                "width": "200px",
+                            },
+    
+                        ]
                 }
             }
             $scope.SearchData = function () {
@@ -119,123 +220,59 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 $scope.isRouteLoading = true
                 medifirstService.get("bsre-esign/get-ttd?" + paramSearch
-                    + noregistrasi    
-                    + qdokter    
-                    + qnocm    
-                    + qnama    
-                    + dari    
-                    + sampai    
-                , true).then(function (dat) {
-                    $scope.isRouteLoading = false
-                    $scope.dataDaftar = new kendo.data.DataSource({
-                        data: dat.data.data,
-                        pageSize: 10,
-                        group: {
-                            field: "noregistrasi",
-                        },
-                        serverPaging: false,
-                        schema: {
-                            model: {
-                                fields: {
+                    + noregistrasi
+                    + qdokter
+                    + qnocm
+                    + qnama
+                    + dari
+                    + sampai
+                    , true).then(function (dat) {
+                        $scope.isRouteLoading = false
+                        for (let x = 0; x < dat.data.data.length; x++) {
+                            const element = dat.data.data[x];
+                            element.status = element.status == true ? '✔' : '✘'
+                        }
+                        $scope.dataDaftar = new kendo.data.DataSource({
+                            data: dat.data.data,
+                            pageSize: 10,
+                            group: {
+                                field: "noregistrasi",
+                            },
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
                                 }
                             }
-                        }
+                        });
                     });
-                });
             }
 
             $scope.formatTanggal = function (tanggal) {
+                if (tanggal == 'null') return ''
                 return moment(tanggal).format('DD-MMM-YYYY HH:mm');
             }
-
-            $scope.columnDaftar = {
-                selectable: 'row',
-                pageable: true,
-                groupable: true,
-                toolbar: [
-                    {
-                        name: "add", text: "Tambah",
-                        template: '<button ng-click="inputBaru()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button>',
-                     
-                    },
-
-                ],
-                columns:
-                    [
-                        {
-                            "command": [
-                                { text: "Download", click: DownloadBerkas, imageClass: "k-icon k-i-download" },
-                                { text: "Lihat", click: LihatBerkas, imageClass: "k-icon fa fa-eye" },
-                                { text: "Hapus", click: hapus, imageClass: "k-icon k-i-close" ,hidden:  $scope.cachePARAM != undefined},
-                                { text: "Edit", click: editBerkas, imageClass: "k-icon k-i-pencil" ,  hidden:  $scope.cachePARAM != undefined},
-                                { text: "Verify", click: verifyData, imageClass: "k-icon fa fa-check" },
-                            ],
-                            title: "",
-                            width: "180px",
-                        },
-                        {
-                            "field": "noregistrasi",
-                            "title": "No Registrasi",
-                            "width": "120px",
-                        },
-                        {
-                            "field": "nocm",
-                            "title": "No RM",
-                            "width": "120px",
-                            hidden:  $scope.cachePARAM == undefined
-                        },
-                        {
-                            "field": "namapasien",
-                            "title": "Nama Pasien",
-                            "width": "200px",
-                            hidden:  $scope.cachePARAM == undefined
-                        },
-                       
-                        {
-                            "field": "tglemr",
-                            "title": "Tgl Upload",
-                            "width": "120px",
-                            "template": "<span class='style-left'>{{formatTanggal('#: tglemr #')}}</span>"
-                        },
-
-                        {
-                            "field": "namadokumen",
-                            "title": "Nama Dokumen",
-                            "width": "200px",
-                        },
-                        {
-                            "field": "nomoremr",
-                            "title": "No EMR",
-                            "width": "120px",
-                        },
-                        {
-                            "field": "deskripsi",
-                            "title": "Deskripsi",
-                            "width": "200px",
-                        },
-                        {
-                            "field": "namalengkap",
-                            "title": "Pegawai",
-                            "width": "230px",
-                        },
-                        {
-                            "field": "nik_pegawai",
-                            "title": "NIK",
-                            "width": "150px",
-                        },
-                        {
-                            "field": "namafile",
-                            "title": "File",
-                            "width": "200px",
-                        },
-
-                    ]
+            var onDataBound = function (e) {
+                var kendoGrid = $("#Grid").data("kendoGrid"); // get the grid widget
+                var rows = e.sender.element.find("tbody tr"); // get all rows
+                // iterate over the rows and if the undelying dataitem's Status field is PPT add class to the cell
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    if (kendoGrid.dataItem(row).status == '✔') {
+                        $(row.cells[14]).addClass("green");
+                    } else {
+                        $(row.cells[14]).addClass("red");
+                    }
+                }
             }
-            if($scope.cachePARAM !=undefined){
+      
+
+            if ($scope.cachePARAM != undefined) {
                 $(".k-grid-toolbar#Grid").hide();
             }
             $scope.inputBaru = function () {
-                if($scope.cacheRM == undefined){
+                if ($scope.cacheRM == undefined) {
                     toastr.error('Tidak bisa menambah data')
                     return
                 }
@@ -267,10 +304,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.dataSelected = dataSelected
             }
             function editBerkas(e) {
-               
+
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-                if($scope.cacheRM == undefined){
+                if ($scope.cacheRM == undefined) {
                     toastr.error('Tidak bisa memproses data')
                     return
                 }
@@ -288,6 +325,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function verifyData(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.status != '✔') {
+                    toastr.error('Dokumen ini belum di tanda tangani')
+                    return
+                }
                 $scope.verify = {}
                 medifirstService.get("bsre-esign/verify-ttd?id=" + dataItem.id).then(function (dat) {
                     if (dat.data == false || dat.data.status != undefined) {
@@ -301,7 +342,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function hapus(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-                if($scope.cacheRM == undefined){
+                if ($scope.cacheRM == undefined) {
                     toastr.error('Tidak bisa memproses data')
                     return
                 }
@@ -400,30 +441,30 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 })
                     .then(response => response.json())
                     .then(result => {
-                        if(result.status !=400){
+                        if (result.status != 400) {
                             var pesan = $scope.dataSelected == undefined ? "Simpan" : "Edit";
                             medifirstService.postLogging(pesan + ' TTD BSRE', 'Norec emr_bsre_t', result.dokumen.id,
                                 pesan + ' TTD BSRE pada No Registrasi '
                                 + $scope.item.noregistrasi + ' - Pasien : ' + $scope.item.namaPasien
                                 + ' Dokumen ' + $scope.item.namadokumen).then(function (res) {
                                 })
-    
+
                             toastr.success(pesan + " Berkas berhasil.");
-    
+
                             btnSimpan.empty();
                             btnSimpan.append(textElementSimpan);
                             $scope.disabledSimpan = false;
                             $scope.disabledBatal = false;
                             clear();
                             init();
-                        
+
                             $scope.popUpFile.close()
-                          
-                        }else{
+
+                        } else {
                             toastr.error(result.message);
                         }
 
-                      
+
                     })
                     .catch((error) => {
                         toastr.error(error.message);
@@ -511,7 +552,88 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
 
             }
+            function tandaTangan(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.status == '✔') {
+                    toastr.error('Dokumen ini sudah di tanda tangani')
+                    return
+                }
+                var pegawai = medifirstService.getPegawaiLogin()
+                if(pegawai.id != dataItem.pegawaifk){
+                    toastr.error('Dokumen ini hanya boleh di tanda tangan oleh '+dataItem.namalengkap+ '. Silahkan login menggunakan akun tsb')
+                    return
+                }
+                clear()
+                $scope.item.norecDOK = dataItem.id
+                $scope.item.pegawai = { id: dataItem.pegawaifk, namalengkap: dataItem.namalengkap }
+                $scope.item.nik = dataItem.nik_pegawai
+                $scope.item.file = dataItem.file
+                $scope.item.namadokumen = dataItem.namadokumen
+                $scope.item.nomoremr = dataItem.nomoremr
+                $scope.item.linkQR = dataItem.linkQR
+                $scope.item.reason = dataItem.reason
+                $scope.popUpTTD.center().open()
+            }
+            $scope.lihatDok = function () {
 
+                var strBACKEND = baseTransaksi.replace('service/medifirst2000/', '')
+                window.open(strBACKEND + "service/storage_path?path=" + $scope.item.file
+                    + "&mimetype=application/pdf");
+            }
+            $scope.SaveUpdate = function () {
+                if ($scope.item.pegawai == undefined) {
+                    toastr.error("Pegawai harus di isi!")
+                    return
+                }
+                if ($scope.item.nik == undefined) {
+                    toastr.error("NIK harus di isi!")
+                    return
+                }
+                if ($scope.item.namadokumen == undefined) {
+                    toastr.error("Nama Dokumen harus di isi!")
+                    return
+                }
+                if ($scope.item.passphrase == undefined) {
+                    toastr.error("Pass Phrase harus di isi!")
+                    return
+                }
+                var json = {
+                    'norec': $scope.item.norecDOK,
+                    'passphrase': $scope.item.passphrase,
+                    'nik': $scope.item.nik,
+                    'reason': $scope.item.reason ? $scope.item.reason : null,
+                    'iduser': medifirstService.getUserLogin().id
+                }
+
+                var btnSimpan = angular.element(document.getElementById("btnSimpan2"));
+                var btnBatal = angular.element(document.getElementById("btnBatal2"));
+                var spinElementSimpan = angular.element('<span class="fa fa-spinner fa-spin"></span>&nbsp;<span> Sedang menyimpan</span>');
+                var textElementSimpan = angular.element('<span class="k-icon k-update"></span><span>Simpan</span>');
+
+                btnSimpan.empty();
+                btnSimpan.append(spinElementSimpan);
+
+
+                medifirstService.post('bsre-esign/save-ttd-pengajuan', json).then(function (e) {
+
+                    btnSimpan.empty();
+                    btnSimpan.append(textElementSimpan);
+
+                    clear();
+                    init();
+
+                    $scope.popUpFile.close()
+
+                }, function (error) {
+
+                    btnSimpan.empty();
+                    btnSimpan.append(textElementSimpan);
+                    $scope.disabledSimpan = false;
+                    $scope.disabledBatal = false;
+                })
+
+            }
         }
     ]);
 });
