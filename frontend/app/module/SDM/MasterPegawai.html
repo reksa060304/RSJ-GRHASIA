@@ -152,8 +152,8 @@
 										<label><b>Masa Kerja Tambahan</b></label>
 									</div>
 									<div class="grid_12">
-										<input c-text-box type="number" placeholder="Masa Kerja Tambahan"
-											filter="'varchar'" class="k-textbox" ng-model="item.masakerjatambahan" />
+										<input c-text-box type="number" placeholder="0 tahun 0 bulan"
+											filter="'varchar'" class="k-textbox" ng-model="item.masakerjatambahan"  />
 									</div>
 								</div>
 								<div class="grid_4">
@@ -1091,6 +1091,17 @@
 											<div class="grid_12">
 												<input style="width: 100%" kendo-date-picker
 													k-ng-model="itemPandG.tanggaltmt" k-format="'yyyy-MM-dd'" k-on-change="panggoltmt()" />
+													<!-- k-on-change="panggoltmt()" -->
+											</div>
+										</div>
+										<div class="grid_4">
+											<div class="grid_12">
+												<label c-label>Masa Kerja Golongan</label>
+											</div>
+											<div class="grid_12">
+												<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="itemPandG.masakerjagolongan"
+													placeholder="0 tahun 0 bulan"
+													ng-keypress="($event.which == 13)? panggoltmt():itemPandG.masakerjagolongan" />
 											</div>
 										</div>
 										<div class="grid_4">
@@ -1099,14 +1110,6 @@
 											</div>
 											<div class="grid_12">
 												<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="itemPandG.nominal" />
-											</div>
-										</div>
-										<div class="grid_4">
-											<div class="grid_12">
-												<label c-label>Masa Kerja Golongan</label>
-											</div>
-											<div class="grid_12">
-												<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="itemPandG.masakerjagolongan" placeholder="0 Thn 0 Bln" />
 											</div>
 										</div>
 										<div class="grid_4">
@@ -1178,13 +1181,26 @@
 											<div class="grid_12">
 												<input style="width: 100%;" kendo-combo-box k-ng-model="itemGajiBerkala.golongan"
 													k-data-text-field="'golongan'" k-data-value-field="'id'" k-auto-bind="true"
-													k-data-source="ListGolonganGajiBerkala" k-on-change="getDataGolongan()"/>
+													k-data-source="ListGolonganGajiBerkala" />
+													<!-- k-on-change="getDataGolongan()" -->
 											</div>
 										</div>
 									</div>
-									
+									<div class="grid">
+										
+									</div>
 									<div class="grid_12">
-										<div class="grid_6">
+										<div class="grid_4">
+											<div class="grid_12">
+												<label c-label>Masa Kerja Golongan</label>
+											</div>
+											<div class="grid_12">
+												<input c-text-box type="input" filter="'varchar'" class="k-textbox" placeholder="0 tahun 0 bulan"
+													ng-model="itemGajiBerkala.masakerjagolongan" 
+													ng-keypress="($event.which == 13)? getDataGolongan():itemGajiBerkala.masakerjagolongan"/>
+											</div>
+										</div>
+										<div class="grid_4">
 											<div class="grid_12">
 												<label c-label>Gaji Awal</label>
 											</div>
@@ -1193,7 +1209,7 @@
 													ng-model="itemGajiBerkala.gajiawal" />
 											</div>
 										</div>
-										<div class="grid_6">
+										<div class="grid_4">
 											<div class="grid_12">
 												<label c-label>Gaji Akhir</label>
 											</div>
