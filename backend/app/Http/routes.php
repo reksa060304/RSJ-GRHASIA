@@ -561,7 +561,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-resume-medis-db-lama/{notransaksi}', 'EMR\EMRController@getResumeMedisDbLama');
           Route::get('emr/get-menu-rekam-medis-dynamic-db-lama', 'EMR\EMRController@getMenuRekamMedisAtuhDbLama');
           Route::get('emr/get-emr-transaksi-detail-index', 'EMR\EMRController@getEMRTransaksiDetailIndex');
-
+          Route::get('emr/get-epps-hasil', 'EMR\EMRController@getEPPSHasil');
           //2019-12 penambahan arif akhir
 
           Route::post('emr/save-data-rekam-medis', 'EMR\EMRController@saveRekamMedis');
@@ -1144,6 +1144,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-data-hasil-lab','Report\ReportController@cetakHasilLIS');
           Route::get('report/cetak-ekspertise','Report\ReportController@cetakEkspertise');
           Route::get('report/diklat-nametag','Report\ReportController@nametagDiklat');
+          Route::get('report/diklat-invoice', 'Report\ReportController@invoiceDiklat');
           Route::get('report/cetak-hasil-lab-histopatologi','Report\ReportController@cetakHispatologi');
           Route::get('report/cetak-resep-dokter','Report\ReportController@cetakResepDokter');
           Route::get('report/cetak-resep-dokter-rev','Report\ReportController@cetakResepDokterRev');
@@ -2936,6 +2937,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/get-cetak-suratkgb', 'Report\ReportController@cetakKGB');
         Route::get('report/cetak-catatan-klinik','Report\ReportController@cetakCatatanKlinik');
         Route::get('report/cetak-resume-medis2','Report\ReportController@cetakResume2');
+        Route::get('report/diklat-kwitansi', 'Report\ReportController@cetakKwitansiDiklat');
 
         Route::get('viewer/get-list-antrian','Antrian\AntrianController@getListAntrian');
         Route::get('viewer/update-antrian','Antrian\AntrianController@updatePanggil');

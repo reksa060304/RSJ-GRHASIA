@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize,configuration) {
 	'use strict';
 	initialize.controller('DaftarPenerimaanKasirCtrl', ['$state', '$mdDialog', '$q', '$scope', 'CacheHelper', 'MedifirstService',
 		function ($state, $mdDialog, $q, $scope, cacheHelper, medifirstService) {
@@ -477,6 +477,13 @@ define(['initialize'], function (initialize) {
 						});
 						break;
 				}
+			}
+			$scope.CetakKwD = function () {
+				if ($scope.dataSbnSelected == undefined) {
+					toastr.warning('Data Belum Dipilih, Peringatan!');
+					return;
+				}
+                window.open(configuration.baseApiBackend + "report/diklat-kwitansi?norec=" + $scope.dataSbnSelected.norec_sp + '&strIdPegawai=' + $scope.dataSbnSelected.namaPenerima);
 			}
 
 			var HttpClient = function () {

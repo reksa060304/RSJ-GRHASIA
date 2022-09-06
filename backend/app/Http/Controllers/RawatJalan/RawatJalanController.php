@@ -2416,6 +2416,10 @@ class RawatJalanController extends ApiController
 
     public function getDdaftarRegistrasiPsikologi(Request $request)
     {
+        $noregistrasi = "";
+        if(isset($request['noregistrasi'])){
+            $noregistrasi = "and pd.noregistrasi ='". $request['noregistrasi']."'";
+        }
         //norec dibawah adalah norec apd
         $data = \DB::select(DB::raw("SELECT
             apd.norec,
@@ -2439,6 +2443,7 @@ class RawatJalanController extends ApiController
             apd.objectruanganfk = 767
             and pd.statusenabled = true
             and pd.kdprofile = 30
+            $noregistrasi
             and apd.tglmasuk between '$request[tglawal]' and '$request[tglakhir]' 
         "));
         $result = array(
@@ -2456,7 +2461,14 @@ class RawatJalanController extends ApiController
             $datapsikologi = $request['datapsikologi'];
 
         try {
+            if(isset($request['delete'])){
+                    \DB::table('inputhasilpsikologi_t')->where('norec', $request['norecs'])->delete();
+                $crud = "Hapus CFIT";
+
+            }
+
             foreach ($datapsikologi as $dp) {
+                
                 if($dp['norec'] == ""){
                 \DB::table('inputhasilpsikologi_t')->insert([
                     'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
@@ -2472,7 +2484,7 @@ class RawatJalanController extends ApiController
                 ]);
                 $crud = "Simpan CFIT";
                 } else {
-                    \DB::table('inputhasilpsikologi_t')->where('norec', $request['norec'])->update([
+                    \DB::table('inputhasilpsikologi_t')->where('norec', $dp['norec'])->update([
                     'tglinput'=> date('Y-m-d'),
                     'nomor'=>$dp['nomor'],
                     'norec_apd'=>$dp['norec_apd'],
@@ -2481,7 +2493,7 @@ class RawatJalanController extends ApiController
                     'cfit'=>$dp['cfit'],
                     'nilai'=>$dp['nilai'],
                 ]);
-                $crud = "Simpan CFIT";
+                $crud = "Ubah CFIT";
                 }
             }
             
@@ -2561,7 +2573,7 @@ class RawatJalanController extends ApiController
             $datapsikologi = $request['datapsikologi'];
 
         try {
-           
+            
             \DB::table('antrianpasiendiperiksa_t')->where('norec', $request['norec'])->update([
                 'skoriq'=> $request['skoriq']
             ]);
@@ -2601,6 +2613,11 @@ class RawatJalanController extends ApiController
             $datapsikologi = $request['data'];
 
         try {
+            if(isset($request['delete'])){
+                    \DB::table('inputhasilkraepelin_t')->where('norec', $request['norec'])->delete();
+                $crud = "Hapus Kraepelin";
+
+            }
           foreach ($datapsikologi as $dp) {
                 if($dp['norec'] == ""){
                 \DB::table('inputhasilkraepelin_t')->insert([
@@ -2614,13 +2631,13 @@ class RawatJalanController extends ApiController
                 ]);
                 $crud = "Simpan Kraepelin";
                 } else {
-                    \DB::table('inputhasilkraepelin_t')->where('norec', $request['norec'])->update([
+                    \DB::table('inputhasilkraepelin_t')->where('norec', $dp['norec'])->update([
                     'tglinput'=> date('Y-m-d'),
                     'lajur'=>$dp['lajur'],
                     'norec_apd'=>$dp['norec_apd'],
                     'nilai'=>$dp['nilai'],
                 ]);
-                $crud = "Simpan Kraepelin";
+                $crud = "Ubah Kraepelin";
                 }
             }
             
@@ -2654,10 +2671,10 @@ class RawatJalanController extends ApiController
     public function getDataKraepelin(Request $request)
     {
         $data = \DB::select(DB::raw("
-        select * from inputhasilkraepelin_t where norec_apd ilike '$request[norec_apd]' order by lajur asc, nilai asc
+        select * from inputhasilkraepelin_t where norec_apd ilike '$request[norec_apd]' and statusenabled = true and kdprofile = 30 order by lajur asc, nilai asc
         "));
         $data2 = \DB::select(DB::raw("
-        select * from inputhasilkraepelind_t where norec_apd ilike '$request[norec_apd]' 
+        select * from inputhasilkraepelind_t where norec_apd ilike '$request[norec_apd]'  and statusenabled = true and kdprofile = 30
         "));
         $result = array(
             'data'=> $data,
@@ -2697,6 +2714,14 @@ class RawatJalanController extends ApiController
             $datapsikologi = $request['data'];
 
         try {
+            $ceknorec_apd = \DB::table('inputhasilkraepelind_t')->where('norec_apd', $request['norec_apd'])->get();
+            if(count($ceknorec_apd) > 0){
+                \DB::table('inputhasilkraepelind_t')->where('norec_apd', $request['norec_apd'])->update([
+                    'statusenabled'=> false
+                ]);
+            }else{
+
+            }
           foreach ($datapsikologi as $dp) {
                 if($request['norec'] == ""){
                 \DB::table('inputhasilkraepelind_t')->insert([
@@ -2760,8 +2785,12 @@ class RawatJalanController extends ApiController
             $datapsikologi = $request['data'];
 
         try {
+            if(isset($request['delete'])){
+                DB::table('inputhasilist_t')->where('norec', $request['norec'])->delete();
+                $crud = "Hapus Hasil IST";
+            }
           foreach ($datapsikologi as $dp) {
-                if($request['norec'] == ""){
+                if($dp['norec'] == ""){
                     \DB::table('inputhasilist_t')->insert([
                         'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
                         'kdprofile'=> $kdProfile,
@@ -2776,11 +2805,9 @@ class RawatJalanController extends ApiController
                         
                     ]);
                     $crud = "Simpan Hasil IST";
-                }
-                else {
+                } else {
                     \DB::table('inputhasilist_t')->where('norec', $dp['norec'])->update([
-                    'tglinput'=> date('Y-m-d'),
-                    'kompetensi'=>$dp['kompetensi'],
+                    'statusenabled'=> true,
                     'tglinput'=> date('Y-m-d'),
                     'tujuan'=>$dp['tujuan'],
                     'nomor'=>$dp['nomor'],

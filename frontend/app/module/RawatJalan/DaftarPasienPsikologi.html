@@ -93,6 +93,16 @@
                         k-selectable="'row'" options="opsiGridDaftarPsikologi" ng-click="klikGrid(dataDaftarPsikologi)"
                         style="font-size: small;"></kendo-grid>
                 </div>
+                <div class="grid_12">
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item">noregistrasi</label>
+                        </div>
+                        <div class="grid_12">
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.noregistrasi" />
+                        </div>
+                    </div>
+                </div>
                 <div class="grid_2">
                     <div class="grid_12" style="margin-top: 16px">
                         <button class="btnTemplate1" style="margin-left: 0;" ng-click="inputHasilPsikologi()"> <i
@@ -285,18 +295,30 @@
                     style="font-size: small;"></kendo-grid>
             </div>
             <div class="grid_12">
+                <div class="grid_12"></div>
+                <div class="grid_12">
+                    <div class="k-edit-buttons  k-state-default pull-right"
+                        style="margin-top:10px; margin-bottom: 10px;">
+                        <button class="k-button k-button-icontext k-primary k-grid-update"
+                            ng-click="simpanKraepelin()"><span class="k-icon k-update"></span>Simpan</button>
+                        <button class="k-button  k-button-icontext" ng-click="batalKraepelin()"><span
+                                class="k-icon k-cancel"></span>Batal</button>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12">
                 <div class="grid_6">
                     <div class="grid_6" style="margin-top: 10px;">
                         <label c-label item="item">SALAH</label>
                     </div>
                     <div class="grid_6">
-                        <input c-text-box type="input" class="k-textbox" ng-model="salah" placeholder="SALAH" />
+                        <input c-text-box type="number" class="k-textbox" ng-model="salah" placeholder="SALAH" />
                     </div>
                     <div class="grid_6" style="margin-top: 10px;">
                         <label c-label item="item">SKIP</label>
                     </div>
                     <div class="grid_6">
-                        <input c-text-box type="input" class="k-textbox" ng-model="skip" placeholder="SKIP" />
+                        <input c-text-box type="number" class="k-textbox" ng-model="skip" placeholder="SKIP" />
                     </div>
                 </div>
                 <div class="grid_6">
@@ -314,6 +336,7 @@
                     </div>
                 </div>
             </div>
+            
         </div>
         <div class="grid_8" style="margin-top: 57px;">
             <div class="grid_12">
@@ -328,48 +351,37 @@
                 <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px; margin-bottom: 10px;">
                     <button class="k-button k-button-icontext k-primary k-grid-update"
                         ng-click="simpanHasilKraepelin()"><span class="k-icon k-update"></span>Simpan Hasil</button>
+                </div>
             </div>
-        </div>
         
-        <div class="grid_12">
-            <div class="grd`_3">
-                <div class="grid_3">
-                    <label c-label item="item">PANKER</label>
-                    <input c-text-box type="input" class="k-textbox" ng-model="mean" placeholder="mean" />
-                </div>
-            </div>
-            <div class="grd_3">
-                <div class="grid_3">
-                    <label c-label item="item">JANKER</label>
-                    <input c-text-box type="input" class="k-textbox" ng-model="avdev" placeholder="avdev" />
-                </div>
-            </div>
-            <div class="grd_3">
-                <div class="grid_3">
-                    <label c-label item="item">HANKER</label>
-                    <input c-text-box type="input" class="k-textbox" ng-model="hanker" placeholder="hangker" />
-                </div>
-            </div>
-            <div class="grd_3">
-                <div class="grid_3">
-                    <label c-label item="item">TIANKER</label>
-                    <input c-text-box type="input" class="k-textbox" ng-model="salkos" placeholder="salkos" />
-                </div>
-            </div>
-               
-        </div>
             <div class="grid_12">
-                <div class="grid_12"></div>
-                <div class="grid_12">
-                    <div class="k-edit-buttons  k-state-default pull-right"
-                        style="margin-top:10px; margin-bottom: 10px;">
-                        <button class="k-button k-button-icontext k-primary k-grid-update"
-                            ng-click="simpanKraepelin()"><span class="k-icon k-update"></span>Simpan</button>
-                        <button class="k-button  k-button-icontext" ng-click="batalKraepelin()"><span
-                                class="k-icon k-cancel"></span>Batal</button>
+                <div class="grd`_3">
+                    <div class="grid_3">
+                        <label c-label item="item">PANKER</label>
+                        <input c-text-box type="input" class="k-textbox" ng-model="mean" placeholder="mean" />
                     </div>
                 </div>
+                <div class="grd_3">
+                    <div class="grid_3">
+                        <label c-label item="item">JANKER</label>
+                        <input c-text-box type="input" class="k-textbox" ng-model="avdev" placeholder="avdev" />
+                    </div>
+                </div>
+                <div class="grd_3">
+                    <div class="grid_3">
+                        <label c-label item="item">HANKER</label>
+                        <input c-text-box type="input" class="k-textbox" ng-model="hanker" placeholder="hangker" />
+                    </div>
+                </div>
+                <div class="grd_3">
+                    <div class="grid_3">
+                        <label c-label item="item">TIANKER</label>
+                        <input c-text-box type="input" class="k-textbox" ng-model="salkos" placeholder="salkos" />
+                    </div>
+                </div>
+                
             </div>
+            
         </div>
     </div>
 </div>
@@ -444,6 +456,17 @@
                     k-selectable="'row'" options="gridIST" ng-click="klikGridIST(dataIST)"
                     style="font-size: small;"></kendo-grid>
             </div>
+            <!-- <div class="grid_12">
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label item="item">Nilai</label>
+                    </div>
+                    <div class="grid_6">
+                        <input c-text-box type="number" class="k-textbox" ng-model="getNorma" />
+                    </div>
+                    
+                </div>
+            </div> -->
             <div class="grid_12">
                 <!-- <div class="grid_6">
                     <div class="grid_12">

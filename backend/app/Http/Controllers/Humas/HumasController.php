@@ -692,6 +692,7 @@ class HumasController extends ApiController
         DB::beginTransaction();
         $tglAyeuna = date('Y-m-d H:i:s');
         $dataLogin = $request->all();
+        $norecKeluhan = "";
         $dataPegawai = \DB::table('loginuser_s as lu')
             ->select('lu.objectpegawaifk')
             ->where('lu.id',$dataLogin['userData']['id'])
@@ -725,6 +726,7 @@ class HumasController extends ApiController
           $dataKeluhan->objectpegawaifk = (int)$dataPegawai->objectpegawaifk;//$request['data']['objectpegawaifk'];
           $dataKeluhan->notlpkntr = $request['data']['notlpkntr'];
           $dataKeluhan->save();
+
           $norecKeluhan = $dataKeluhan->norec;
 
         //## Logging User
@@ -763,6 +765,7 @@ class HumasController extends ApiController
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
+                'e'=> $e->getLine() . " meesage " .$e->getMessage(),
                 "norec" => $norecKeluhan,
                 "as" => 'Cepot',
             );

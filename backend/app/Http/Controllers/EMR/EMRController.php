@@ -10461,5 +10461,75 @@ class EMRController  extends ApiController
         );
         return $this->respond($result);
     }
+    public function getEPPSHasil(Request $request)
+    {
+        $norec = $request['norec'];
+        $epps = \DB::table('epps_t')->where("objectapdfk",$norec)->get();
+        $kraepelin = \DB::table('inputhasilkraepelind_t')->where("norec_apd",$norec)->get();
+        $ist = \DB::table('inputhasilistd_t')->where("norec_apd",$norec)->get();
+        $eppsdetail = [];
+        // $normaepps = ;
+        $ach=0;
+        $def = 0;
+        $ord = 0;
+        $exh = 0;
+        $aut = 0;
+        $aff = 0;
+        $int = 0;
+        $suc = 0;
+        $dom = 0;
+        $aba = 0;
+        $nur = 0;
+        $chg = 0;
+        $end = 0;
+        $het = 0;
+        $agg = 0;
+        $con = 0;
+        
+
+        foreach($epps as $e){
+            $ach = \DB::table('normaepps_m')->where('score', $e->ach)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('ach')->get();
+            $def = \DB::table('normaepps_m')->where('score', $e->def)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('def')->get();
+            $ord = \DB::table('normaepps_m')->where('score', $e->ord)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('ord')->get();
+            $exh = \DB::table('normaepps_m')->where('score', $e->exh)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('exh')->get();
+            $aut = \DB::table('normaepps_m')->where('score', $e->aut)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('aut')->get();
+            $aff = \DB::table('normaepps_m')->where('score', $e->aff)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('aff')->get();
+            $int = \DB::table('normaepps_m')->where('score', $e->int)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('int')->get();
+            $suc = \DB::table('normaepps_m')->where('score', $e->suc)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('suc')->get();
+            $dom = \DB::table('normaepps_m')->where('score', $e->dom)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('dom')->get();
+            $aba = \DB::table('normaepps_m')->where('score', $e->aba)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('aba')->get();
+            $nur = \DB::table('normaepps_m')->where('score', $e->nur)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('nur')->get();
+            $chg = \DB::table('normaepps_m')->where('score', $e->chg)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('chg')->get();
+            $end = \DB::table('normaepps_m')->where('score', $e->end)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('end')->get();
+            $het = \DB::table('normaepps_m')->where('score', $e->het)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('het')->get();
+            $agg = \DB::table('normaepps_m')->where('score', $e->agg)->where('objectjeniskelaminfk', $request['jeniskelamin'])->select('agg')->get();
+
+            $eppsdetail[] = array(
+                'ach'=> $ach,
+                'def'=> $def,
+                'ord'=> $ord,
+                'exh'=> $exh,
+                'aut'=> $aut,
+                'aff'=> $aff,
+                'int'=> $int,
+                'suc'=> $suc,
+                'dom'=> $dom,
+                'aba'=> $aba,
+                'nur'=> $nur,
+                'chg'=> $chg,
+                'end'=> $end,
+                'het'=> $het,
+                'agg'=> $agg,
+            );
+        }
+        
+        $result = array(
+            "epps"=> $eppsdetail,
+            "kraepelin"=> $kraepelin,
+            "ist"=> $ist,
+            "as"=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
 
 }
