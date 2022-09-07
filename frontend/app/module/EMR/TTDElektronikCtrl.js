@@ -267,9 +267,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 for (var i = 0; i < rows.length; i++) {
                     var row = rows[i];
                     if (kendoGrid.dataItem(row).status == '✔') {
-                        $(row.cells[13]).addClass("green");
+                        $(row.cells[10]).addClass("green");
                     } else {
-                        $(row.cells[13]).addClass("red");
+                        $(row.cells[10]).addClass("red");
                     }
                 }
             }
