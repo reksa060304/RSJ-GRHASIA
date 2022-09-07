@@ -493,6 +493,7 @@ class BridgingBSREController  extends ApiController
         if (isset($request['dokter']) && $request['dokter'] != '') {
             $data = $data->where('emrdk.pegawaifk', $request['dokter']);
         }
+        $data = $data->orderby('emrdk.tglemr','desc');
         $data = $data->get();
 
         $result = array(
