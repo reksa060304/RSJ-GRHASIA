@@ -55,6 +55,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.item.kelas = chacePeriode[10]
                     $scope.item.idRuangan = chacePeriode[11]
                     $scope.item.namaRuangan = chacePeriode[12]
+                    delete  $scope.item.periodeAwal
+                    delete  $scope.item.periodeAkhir
                     init()
                   
                     medifirstService.get("bsre-esign/get-combo", true).then(function (dat) {
