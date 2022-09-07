@@ -42,6 +42,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if (chacePeriode != undefined) {
                     $scope.cacheRM = chacePeriode
                     $scope.item.noMr = chacePeriode[0]
+                    $scope.item.qnocm =   $scope.item.noMr
                     nocm_str = chacePeriode[0]
                     $scope.item.namaPasien = chacePeriode[1]
                     $scope.item.jenisKelamin = chacePeriode[2]
