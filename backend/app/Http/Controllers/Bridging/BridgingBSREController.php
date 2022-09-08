@@ -760,7 +760,7 @@ class BridgingBSREController  extends ApiController
                 'yAxis' => $emr_t->bsre_yaxis ? $emr_t->bsre_yaxis  : 70,
                 'width' => $emr_t->bsre_width ? $emr_t->bsre_width  : 251.46,
                 'height' => $emr_t->bsre_height ? $emr_t->bsre_height  : 133.13,
-                'reason' => $emrbsre->reason ? $emrbsre->reason : '',
+                'reason' => isset($dataReq['reason']) ? $dataReq['reason'] : '',
                 'location' =>  $prof->namalengkap,
                 'file' => $file,
                 'imageTTD' => $imageTTD
