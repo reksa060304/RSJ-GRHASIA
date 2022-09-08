@@ -42,6 +42,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if (chacePeriode != undefined) {
                     $scope.cacheRM = chacePeriode
                     $scope.item.noMr = chacePeriode[0]
+                    $scope.item.qnocm =   $scope.item.noMr
                     nocm_str = chacePeriode[0]
                     $scope.item.namaPasien = chacePeriode[1]
                     $scope.item.jenisKelamin = chacePeriode[2]
@@ -55,6 +56,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.item.kelas = chacePeriode[10]
                     $scope.item.idRuangan = chacePeriode[11]
                     $scope.item.namaRuangan = chacePeriode[12]
+                    delete  $scope.item.periodeAwal
+                    delete  $scope.item.periodeAkhir
                     init()
                   
                     medifirstService.get("bsre-esign/get-combo", true).then(function (dat) {
@@ -74,7 +77,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                  
                     });
                 }
-              
+                var onDataBound = function (e) {
+                    var kendoGrid = $("#Grid").data("kendoGrid"); // get the grid widget
+                    var rows = e.sender.element.find("tbody tr"); // get all rows
+                    // iterate over the rows and if the undelying dataitem's Status field is PPT add class to the cell
+                    for (var i = 0; i < rows.length; i++) {
+                        var row = rows[i];
+                        if (kendoGrid.dataItem(row).status == '✔') {
+                            $(row.cells[14]).addClass("green");
+                        } else {
+                            $(row.cells[14]).addClass("red");
+                        }
+                    }
+                }
                 $scope.columnDaftar = {
                     selectable: 'row',
                     dataBound: onDataBound,
@@ -104,7 +119,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             },
                             {
                                 "command": [
-                                    // { text: "Download", click: DownloadBerkas, imageClass: "k-icon k-i-download" },
+                                    { text: "Download", click: DownloadBerkas2, imageClass: "k-icon k-i-download" },
                                     { text: "View", click: LihatBerkas, imageClass: " fa fa-eye" },
                                     { text: "Sign Doc", click: tandaTangan, imageClass: "fa fa-key" },
                                     { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
@@ -258,19 +273,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if (tanggal == 'null') return ''
                 return moment(tanggal).format('DD-MMM-YYYY HH:mm');
             }
-            var onDataBound = function (e) {
-                var kendoGrid = $("#Grid").data("kendoGrid"); // get the grid widget
-                var rows = e.sender.element.find("tbody tr"); // get all rows
-                // iterate over the rows and if the undelying dataitem's Status field is PPT add class to the cell
-                for (var i = 0; i < rows.length; i++) {
-                    var row = rows[i];
-                    if (kendoGrid.dataItem(row).status == '✔') {
-                        $(row.cells[14]).addClass("green");
-                    } else {
-                        $(row.cells[14]).addClass("red");
-                    }
-                }
-            }
+          
       
 
             if ($scope.cachePARAM != undefined) {
@@ -304,6 +307,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 delete $scope.item.linkQR
                 delete $scope.item.reason
                 delete $scope.norecDOK
+                delete $scope.item.passphrase
             }
             $scope.klikGrid = function (dataSelected) {
                 $scope.dataSelected = dataSelected
@@ -366,11 +370,23 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function DownloadBerkas(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-
+              
                 var strBACKEND = baseTransaksi.replace('service/medifirst2000/', '')
                 window.open(strBACKEND + "service/storage_path?path=" + dataItem.file + "&type=download" + "&filename=" + dataItem.namafile
                     + "&mimetype=application/pdf");
             }
+            function DownloadBerkas2(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.status != '✔') {
+                    toastr.error('Dokumen ini belum di tanda tangani')
+                    return
+                }
+                var strBACKEND = baseTransaksi.replace('service/medifirst2000/', '')
+                window.open(strBACKEND + "service/storage_path?path=" + dataItem.file + "&type=download" + "&filename=" + dataItem.namafile
+                    + "&mimetype=application/pdf");
+            }
+            
 
             $scope.Save = function (data) {
                 if ($scope.item.pegawai == undefined) {
@@ -624,11 +640,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                     btnSimpan.empty();
                     btnSimpan.append(textElementSimpan);
-
+                    $scope.popUpFile.close()
                     clear();
                     init();
-
-                    $scope.popUpFile.close()
 
                 }, function (error) {
 
@@ -638,6 +652,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.disabledBatal = false;
                 })
 
+            }
+            $scope.batal = function(){
+                $scope.popUpTTD.close()
             }
         }
     ]);

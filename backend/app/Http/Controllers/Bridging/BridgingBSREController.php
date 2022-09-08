@@ -493,6 +493,7 @@ class BridgingBSREController  extends ApiController
         if (isset($request['dokter']) && $request['dokter'] != '') {
             $data = $data->where('emrdk.pegawaifk', $request['dokter']);
         }
+        $data = $data->orderby('emrdk.tglemr','desc');
         $data = $data->get();
 
         $result = array(
@@ -759,7 +760,7 @@ class BridgingBSREController  extends ApiController
                 'yAxis' => $emr_t->bsre_yaxis ? $emr_t->bsre_yaxis  : 70,
                 'width' => $emr_t->bsre_width ? $emr_t->bsre_width  : 251.46,
                 'height' => $emr_t->bsre_height ? $emr_t->bsre_height  : 133.13,
-                'reason' => $emrbsre->reason ? $emrbsre->reason : '',
+                'reason' => isset($dataReq['reason']) ? $dataReq['reason'] : '',
                 'location' =>  $prof->namalengkap,
                 'file' => $file,
                 'imageTTD' => $imageTTD
@@ -788,9 +789,6 @@ class BridgingBSREController  extends ApiController
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
             curl_close($curl);
-
-            header('Content-type: application/pdf');
-
             if ($httpcode == 400) {
                 $logUser = new LoggingUser();
                 $logUser->id =  LoggingUser::max('id') + 1;
@@ -800,22 +798,25 @@ class BridgingBSREController  extends ApiController
                 $logUser->jenislog = 'BSRE';
                 $logUser->noreff = $emrbsre->id;
                 $logUser->referensi = 'emr_bsre_t';
-                $logUser->keterangan = 'Error BSRE : ' . json_encode($response);
+                $logUser->keterangan = 'TTD BSRE Error pada No Registrasi '
+                . $emrbsre->noregistrasi . ' - Pasien : ' .  $emrbsre->nocm. ' response :'.$response;
                 $logUser->objectloginuserfk =  $request['iduser'];
                 $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
                 $logUser->save();
-
-                $transMessage = json_decode($response)->message;
-                DB::rollBack();
+          
+                $transMessage = isset(json_decode($response)->message)?json_decode($response)->message:json_decode($response)->error;
+                DB::commit();
                 $result = array(
                     "status" => 400,
                     "message" => $transMessage,
+                    "s" => $logUser,
                     "as" => 'er@epic',
                 );
 
                 return $this->setStatusCode($result['status'])->respond($result, $transMessage);
             }
 
+            header('Content-type: application/pdf');
             $dat =  Response::make($response, 200, [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'inline; filename=data.pdf'
@@ -884,6 +885,8 @@ class BridgingBSREController  extends ApiController
         ->where('em.id', $id)
         ->first();
         $profile = Profile::where('statusenabled', true)->first();
-        return view('report.verify-doc', compact('r', 'data','profile'));
+        $password = $this->settingDataFixed('passwordBSRELink',30);
+  
+        return view('report.verify-doc', compact('r', 'data','profile','password'));
     }
 }
