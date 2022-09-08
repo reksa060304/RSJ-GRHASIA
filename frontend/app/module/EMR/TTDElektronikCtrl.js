@@ -642,6 +642,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 })
 
             }
+            $scope.batal = function(){
+                $scope.popUpTTD.close()
+            }
         }
     ]);
 });
