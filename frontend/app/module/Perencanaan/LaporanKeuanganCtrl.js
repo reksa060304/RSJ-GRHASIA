@@ -119,6 +119,32 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     window.open(baseTransaksi + "report/get-cetak-rekap-mata-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahunmata).format('YYYY') +"&terhadap="+terhadap, '_blank');
                 // }
             }
+
+            $scope.CetakPertanggungjawaban = function(){
+
+                if ($scope.item.tahunpertanggungjawaban == undefined){
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.bulanpertanggungjawaban == undefined){
+                    toastr.warning('Bulan awal harus diisi', 'Informasi');
+                    return
+                }
+
+                var tahunpertanggungjawaban = ""
+                if ($scope.item.tahunpertanggungjawaban != undefined){
+                    tahunpertanggungjawaban = moment($scope.item.tahunpertanggungjawaban).format('YYYY')
+                }
+
+                var bulanpertanggungjawaban = ""
+                if ($scope.item.bulanpertanggungjawaban != undefined){
+                    bulanpertanggungjawaban = moment($scope.item.bulanpertanggungjawaban).format('MM')
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-pertanggungjawaban-bendahara?tahun="+tahunpertanggungjawaban+"&bulan="+bulanpertanggungjawaban, '_blank');
+            }
+
             $scope.CetakBKU = function(){
 
                 if ($scope.item.tahunbku == undefined){

@@ -2999,6 +2999,10 @@
             "urlDep": "module/EMR/AsesmenAwalMedisRJJiwaCtrl"
         },
         {
+            "nameDep": "HasilPemeriksaanPenunjangMedisCtrl",
+            "urlDep": "module/EMR/HasilPemeriksaanPenunjangMedisCtrl"
+        },
+        {
             "nameDep": "FormulirTransferPasienAntarRuanganCtrl",
             "urlDep": "module/EMR/FormulirTransferPasienAntarRuanganCtrl"
         },

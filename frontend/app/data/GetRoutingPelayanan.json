@@ -16734,6 +16734,29 @@
     ]
   },
   {
+    "name": "RekamMedis.AsesmenMedis.HasilPemeriksaanPenunjangMedis",
+    "url": "/HasilPemeriksaanPenunjangMedis",
+    "templateurl": "module/EMR/HasilPemeriksaanPenunjangMedis.html",
+    "controller": "HasilPemeriksaanPenunjangMedisCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
     "name": "RekamMedis.AsesmenMedis.FormulirTransferPasienAntarRuangan",
     "url": "/FormulirTransferPasienAntarRuangan",
     "templateurl": "module/EMR/FormulirTransferPasienAntarRuangan.html",

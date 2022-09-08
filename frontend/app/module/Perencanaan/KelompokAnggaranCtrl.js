@@ -625,7 +625,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
 
-                
+                console.log(dataItem)
                 
                 let totalAnggaran = 0;
                 // let dataGridAlokasi = DataTabKeteranganBelanja
@@ -635,7 +635,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 for (let x = 0; x < $scope.dataSourceKeteranganBelanja._data.length; x++) {
                     var el = $scope.dataSourceKeteranganBelanja._data[x]
                    
-                    if (el.mataanggaran.match(dataItem.mataanggaran)) {
+                    if (el.norec.match(dataItem.norec)) {
                         el.subtotalRP = formatRupiah(el.subtotal, "Rp. ")
                      
                         totalAnggaran = totalAnggaran + parseFloat(el.subtotal)
@@ -700,9 +700,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                 }
                 $scope.item.thnAnggaran = dataItem.tahun
-                // $scope.item.tahap = dataItem.tahap
-                $scope.item.subKegiatan = subKegiatanStr
-                $scope.item.subSubKegiatan = kodeArr[1] + dataItem.kegiatan
+                $scope.item.tahap = dataItem.tahap
+                $scope.item.subKegiatan = dataItem.kodesubkegiatan+' - '+dataItem.keterangansubkegiatan
+                $scope.item.subSubKegiatan = dataItem.kode+' - '+dataItem.keterangan
                 $scope.item.mataanggaran = dataItem.mataanggaran
                 $scope.item.totalanggaran = formatRupiah(totalAnggaran, "Rp. ")
                 $scope.item.totalbulanan = 0
@@ -1767,18 +1767,69 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             function watchBulan(newValue){
                 let totalAlokasi = $scope.item.alokasiSubtotal
-                $scope.item.totalBulanAlokasiDetail = parseFloat($scope.item.bln1) + 
-                parseFloat($scope.item.bln2) +
-                    parseFloat($scope.item.bln3) +
-                        parseFloat($scope.item.bln4) +
-                            parseFloat($scope.item.bln5) +
-                                parseFloat($scope.item.bln6) +
-                                    parseFloat($scope.item.bln7) +
-                                        parseFloat($scope.item.bln8) +
-                                            parseFloat($scope.item.bln9) +
-                                                parseFloat($scope.item.bln10) +
-                                                    parseFloat($scope.item.bln11) +
-                                                        parseFloat($scope.item.bln12)
+                console.log(totalAlokasi)
+                console.log(parseFloat($scope.item.bln1))
+                console.log(parseFloat($scope.item.bln2))
+                let bln1 = 0
+                if($scope.item.bln1 != undefined){
+                    bln1 = $scope.item.bln1
+                }
+                let bln2 = 0
+                if($scope.item.bln2 != undefined){
+                    bln2 = $scope.item.bln2
+                }
+                let bln3 = 0
+                if($scope.item.bln3 != undefined){
+                    bln3 = $scope.item.bln3
+                }
+                let bln4 = 0
+                if($scope.item.bln4 != undefined){
+                    bln4 = $scope.item.bln4
+                }
+                let bln5 = 0
+                if($scope.item.bln5 != undefined){
+                    bln5 = $scope.item.bln5
+                }
+                let bln6 = 0
+                if($scope.item.bln6 != undefined){
+                    bln6 = $scope.item.bln6
+                }
+                let bln7 = 0
+                if($scope.item.bln7 != undefined){
+                    bln7 = $scope.item.bln7
+                }
+                let bln8 = 0
+                if($scope.item.bln8 != undefined){
+                    bln8 = $scope.item.bln8
+                }
+                let bln9 = 0
+                if($scope.item.bln9 != undefined){
+                    bln9 = $scope.item.bln9
+                }
+                let bln10 = 0
+                if($scope.item.bln10 != undefined){
+                    bln10 = $scope.item.bln10
+                }
+                let bln11 = 0
+                if($scope.item.bln11 != undefined){
+                    bln11 = $scope.item.bln11
+                }
+                let bln12 = 0
+                if($scope.item.bln12 != undefined){
+                    bln12 = $scope.item.bln12
+                }
+                $scope.item.totalBulanAlokasiDetail = parseFloat(bln1) + 
+                parseFloat(bln2) +
+                    parseFloat(bln3) +
+                        parseFloat(bln4) +
+                            parseFloat(bln5) +
+                                parseFloat(bln6) +
+                                    parseFloat(bln7) +
+                                        parseFloat(bln8) +
+                                            parseFloat(bln9) +
+                                                parseFloat(bln10) +
+                                                    parseFloat(bln11) +
+                                                        parseFloat(bln12)
                 $scope.item.totalBulanAlokasiDetail = $scope.item.totalBulanAlokasiDetail.toFixed(2)
                 $scope.item.kurangAlokasiDetail = totalAlokasi - parseFloat($scope.item.totalBulanAlokasiDetail)
                 $scope.item.kurangAlokasiDetail = $scope.item.kurangAlokasiDetail.toFixed(2)
@@ -4109,6 +4160,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             
             $scope.TambahSPJ = function(){
+                console.log(DataKegiatan)
                 
                 $scope.item.tglSPJ =  new Date(moment($scope.now).format('YYYY-MM-DD HH:mm'));
                 
@@ -4120,8 +4172,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         ListSubKegiatan.push({'id':element.id,'keterangan' :element.kode + ' ' + element.keterangan,'kode' :element.kode})
                     }
                 }
+
+                medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                    $scope.listSubKegiatanSPJ = e.data.kegiatancombo
+                })
                 
-                $scope.listSubKegiatanSPJ = ListSubKegiatan
+                // $scope.listSubKegiatanSPJ = ListSubKegiatan
                 $scope.item.subKegiatanSPJ = ""
                 $scope.item.subSubKegiatanSPJ = ""
                 $scope.item.mataAnggaranSPJ = ""
@@ -4556,8 +4612,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         SPJSubKegiatan= {'id':element.id,'keterangan' :element.kode + ' ' + element.keterangan,'kode' :element.kode}
                     }
                 }
-                $scope.listSubKegiatanSPJ = ListSubKegiatan
-                $scope.item.subKegiatanSPJ = SPJSubKegiatan
+                $scope.listSubKegiatanSPJ = [{id: dataItem.kodesubkegiatan,keterangan: dataItem.keterangansubkegiatan}] 
+                $scope.item.subKegiatanSPJ = {id: dataItem.kodesubkegiatan,keterangan: dataItem.keterangansubkegiatan}
                 
 
                 $scope.item.tglSPJ =  new Date(moment($scope.now).format('YYYY-MM-DD HH:mm'));
@@ -4569,6 +4625,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.listMataAnggaranSPJ = [{kodemataanggaran: e.data.data[0].kodemataanggaran, namamataanggaran: dataItem.mataanggaran}]
                     $scope.item.mataAnggaranSPJ = {kodemataanggaran: e.data.data[0].kodemataanggaran, namamataanggaran: dataItem.mataanggaran}
                     //console.log($scope.item.mataAnggaranSPJ)
+
+                    var tahap = $scope.item.searchtahap.id
+                    medifirstService.get("perencanaan/get-total-mata-anggaran?tahap="+tahap+"&kegiatan="+$scope.item.subSubKegiatanSPJ.id+"&mataanggaran="+e.data.data[0].kodemataanggaran).then(function (e) {
+                        $scope.listAsalProduk = e.data.asalproduk
+                        if(e.data.asal.length != 0){
+                            $scope.item.sumberDanaSPJ = {id: e.data.asal[0].id, asalproduk: e.data.asal[0].asalproduk}
+                        } else{
+                            $scope.item.sumberDanaSPJ = undefined
+                        }
+                        
+                    });
 				})
                 
                 // $scope.item.sumberDanaSPJ
@@ -4610,6 +4677,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     data: DataDetailSPJ
                 });
                 $scope.totalspjawal = $scope.item.jumlahSPJ
+
+                
                 
                 $scope.popupTambahSPJ.center().open()
             }
