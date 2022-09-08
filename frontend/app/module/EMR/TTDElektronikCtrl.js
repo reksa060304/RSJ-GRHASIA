@@ -77,7 +77,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                  
                     });
                 }
-              
+                var onDataBound = function (e) {
+                    var kendoGrid = $("#Grid").data("kendoGrid"); // get the grid widget
+                    var rows = e.sender.element.find("tbody tr"); // get all rows
+                    // iterate over the rows and if the undelying dataitem's Status field is PPT add class to the cell
+                    for (var i = 0; i < rows.length; i++) {
+                        var row = rows[i];
+                        if (kendoGrid.dataItem(row).status == '✔') {
+                            $(row.cells[14]).addClass("green");
+                        } else {
+                            $(row.cells[14]).addClass("red");
+                        }
+                    }
+                }
                 $scope.columnDaftar = {
                     selectable: 'row',
                     dataBound: onDataBound,
@@ -261,19 +273,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if (tanggal == 'null') return ''
                 return moment(tanggal).format('DD-MMM-YYYY HH:mm');
             }
-            var onDataBound = function (e) {
-                var kendoGrid = $("#Grid").data("kendoGrid"); // get the grid widget
-                var rows = e.sender.element.find("tbody tr"); // get all rows
-                // iterate over the rows and if the undelying dataitem's Status field is PPT add class to the cell
-                for (var i = 0; i < rows.length; i++) {
-                    var row = rows[i];
-                    if (kendoGrid.dataItem(row).status == '✔') {
-                        $(row.cells[10]).addClass("green");
-                    } else {
-                        $(row.cells[10]).addClass("red");
-                    }
-                }
-            }
+          
       
 
             if ($scope.cachePARAM != undefined) {
