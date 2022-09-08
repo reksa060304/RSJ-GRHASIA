@@ -798,7 +798,8 @@ class BridgingBSREController  extends ApiController
                 $logUser->jenislog = 'BSRE';
                 $logUser->noreff = $emrbsre->id;
                 $logUser->referensi = 'emr_bsre_t';
-                $logUser->keterangan = 'TTD BSRE Error: '.$response;
+                $logUser->keterangan = 'TTD BSRE Error pada No Registrasi '
+                . $emrbsre->noregistrasi . ' - Pasien : ' .  $emrbsre->nocm. ' response :'.$response;
                 $logUser->objectloginuserfk =  $request['iduser'];
                 $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
                 $logUser->save();
