@@ -119,7 +119,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             },
                             {
                                 "command": [
-                                    { text: "Download", click: DownloadBerkas, imageClass: "k-icon k-i-download" },
+                                    { text: "Download", click: DownloadBerkas2, imageClass: "k-icon k-i-download" },
                                     { text: "View", click: LihatBerkas, imageClass: " fa fa-eye" },
                                     { text: "Sign Doc", click: tandaTangan, imageClass: "fa fa-key" },
                                     { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
@@ -369,6 +369,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function DownloadBerkas(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+              
+                var strBACKEND = baseTransaksi.replace('service/medifirst2000/', '')
+                window.open(strBACKEND + "service/storage_path?path=" + dataItem.file + "&type=download" + "&filename=" + dataItem.namafile
+                    + "&mimetype=application/pdf");
+            }
+            function DownloadBerkas2(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 if (dataItem.status != '✔') {
                     toastr.error('Dokumen ini belum di tanda tangani')
                     return
@@ -377,6 +385,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 window.open(strBACKEND + "service/storage_path?path=" + dataItem.file + "&type=download" + "&filename=" + dataItem.namafile
                     + "&mimetype=application/pdf");
             }
+            
 
             $scope.Save = function (data) {
                 if ($scope.item.pegawai == undefined) {
