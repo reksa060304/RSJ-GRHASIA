@@ -307,6 +307,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 delete $scope.item.linkQR
                 delete $scope.item.reason
                 delete $scope.norecDOK
+                delete $scope.item.passphrase
             }
             $scope.klikGrid = function (dataSelected) {
                 $scope.dataSelected = dataSelected
@@ -639,11 +640,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                     btnSimpan.empty();
                     btnSimpan.append(textElementSimpan);
-
+                    $scope.popUpFile.close()
                     clear();
                     init();
-
-                    $scope.popUpFile.close()
 
                 }, function (error) {
 
