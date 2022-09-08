@@ -29,10 +29,22 @@ use App\Transaksi\EMRPasien;
 use App\Transaksi\LoggingUser;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Webpatser\Uuid\Uuid;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
+use Endroid\QrCode\QrCode as QrCodeEn;
+use Endroid\QrCode\Label\Label;
+use Endroid\QrCode\Logo\Logo;
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\Writer\PngWriter;
 
 class BridgingBSREController  extends ApiController
 {
-
+    
     use Valet, PelayananPasienTrait;
 
     public function __construct()
@@ -735,15 +747,34 @@ class BridgingBSREController  extends ApiController
             $prof =  DB::table('profile_m')->where('statusenabled', true)->first();
             $file = curl_file_create(storage_path($filena), 'application/pdf', 'file.pdf');
     
-            // $imageTTD = curl_file_create(public_path('img/pemda_logo.png'), 'image/png', 'logopemda.png');
+            // $image = QrCode::format('png')
+            //     ->merge('img/diy.png',.3, true)
+            //     ->size(400)->errorCorrection('H')
+            //     ->generate($emrbsre->linkQR);
 
-            // foreach (array_values($dataReq) as $z => $d) {
-            //     array_keys($dataReq)[$z] = trim($d);
-            // }
-            $image = QrCode::format('png')
-                ->merge('img/pemda.png', 0.32, true)
-                ->size(400)->errorCorrection('H')
-                ->generate($emrbsre->linkQR);
+
+     
+            $writer = new PngWriter();
+
+            // Create QR code
+            $qrCode = QrCodeEn::create($emrbsre->linkQR)
+                ->setEncoding(new Encoding('UTF-8'))
+                ->setErrorCorrectionLevel(new ErrorCorrectionLevelLow())
+                ->setSize(400)
+                ->setMargin(10)
+                ->setRoundBlockSizeMode(new RoundBlockSizeModeMargin())
+                ->setForegroundColor(new Color(0, 0, 0))
+                ->setBackgroundColor(new Color(255, 255, 255));
+
+            // Create generic logo
+            $logo = Logo::create(public_path().'/img/diy.png')
+                ->setResizeToWidth(100);
+
+            $result = $writer->write($qrCode, $logo);
+// Send output of the QRCode directly
+            // header('Content-Type: '.$result->getMimeType());
+            $image = $result->getString();
+         
             // return response($image)->header('Content-type','image/png');
             $filename_qr = 'TTD_BSRE/' . $emrbsre->id . '/image_qr.png';
             Storage::disk('local')->put($filename_qr, $image);
