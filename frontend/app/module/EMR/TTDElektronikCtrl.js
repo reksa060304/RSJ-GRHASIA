@@ -369,7 +369,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function DownloadBerkas(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-
+                if (dataItem.status != '✔') {
+                    toastr.error('Dokumen ini belum di tanda tangani')
+                    return
+                }
                 var strBACKEND = baseTransaksi.replace('service/medifirst2000/', '')
                 window.open(strBACKEND + "service/storage_path?path=" + dataItem.file + "&type=download" + "&filename=" + dataItem.namafile
                     + "&mimetype=application/pdf");
