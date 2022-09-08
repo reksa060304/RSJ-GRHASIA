@@ -3980,6 +3980,93 @@ class PerencanaanController extends ApiController {
             ->get();    
             $arrALokasi[] = $dataAlokasi;
         }
+        $dataAlokasiMataanggaran = DB::select(DB::raw("select kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, sum(subtotal) subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
+        sum(apr::float8) apr, sum(mei::float8) mei, sum(jun::float8) jun, sum(jul::float8) jul, sum(agt::float8) agt, sum(sep::float8) sep,
+        sum(okt::float8) okt, sum(nov::float8) nov, sum(des::float8) des
+from(
+				select norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
+        sum(apr::float8) apr, sum(mei::float8) mei, sum(jun::float8) jun, sum(jul::float8) jul, sum(agt::float8) agt, sum(sep::float8) sep,
+        sum(okt::float8) okt, sum(nov::float8) nov, sum(des::float8) des
+        from(
+            select kb.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan as kegiatan, ma.kodemataanggaran, ma.namamataanggaran,
+            ma.kodemataanggaran || ' - ' || ma.namamataanggaran mataanggaran, 
+            case when ap.bulanint = 1 then coalesce(ap.nilai, '0') end as jan,
+            case when ap.bulanint = 2 then coalesce(ap.nilai, '0') end as feb,
+            case when ap.bulanint = 3 then coalesce(ap.nilai, '0') end as mar,
+            case when ap.bulanint = 4 then coalesce(ap.nilai, '0') end as apr,
+            case when ap.bulanint = 5 then coalesce(ap.nilai, '0') end as mei,
+            case when ap.bulanint = 6 then coalesce(ap.nilai, '0') end as jun,
+            case when ap.bulanint = 7 then coalesce(ap.nilai, '0') end as jul,
+            case when ap.bulanint = 8 then coalesce(ap.nilai, '0') end as agt,
+            case when ap.bulanint = 9 then coalesce(ap.nilai, '0') end as sep,
+            case when ap.bulanint = 10 then coalesce(ap.nilai, '0') end as okt,
+            case when ap.bulanint = 11 then coalesce(ap.nilai, '0') end as nov,
+            case when ap.bulanint = 12 then coalesce(ap.nilai, '0') end as des
+            from keteranganbelanja_t as kb 
+            left join alokasiketeranganbelanja_t as ap on ap.keteranganbelanjafk = kb.norec
+            and ap.statusenabled = true
+            and ap.kdprofile = 30
+            inner join mataanggaran_m as ma on ma.id = kb.objectmataanggaranfk
+            inner join kegiatananggaran_m ka on ka.id = kb.objectkegiatanfk 
+            inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+            inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
+            where ka.statusenabled = true
+            and ka.kdprofile = 30
+            and kb.statusenabled = true
+            and kb.kdprofile = 30
+            and dp0.statusenabled = true
+            and dp0.kdprofile = 30
+            and ma.statusenabled = true
+            and ma.kdprofile = 30
+            $stahun
+            $stahap
+            group by kb.norec, dp0.kode, dp0.keterangan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan, ap.nilai, ap.bulanint, ma.kodemataanggaran, ma.namamataanggaran,
+            ma.kodemataanggaran || ' - ' || ma.namamataanggaran
+        ) as x group by norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, subtotal, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran
+) as y group by kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran
+order by kodemataanggaran"));
+
+        $detailalokasimataanggaran = DB::select(DB::raw("select norec, keteranganbelanja, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
+        sum(apr::float8) apr, sum(mei::float8) mei, sum(jun::float8) jun, sum(jul::float8) jul, sum(agt::float8) agt, sum(sep::float8) sep,
+        sum(okt::float8) okt, sum(nov::float8) nov, sum(des::float8) des
+        from(
+            select kb.norec, kb.keteranganbelanja, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan as kegiatan, ma.kodemataanggaran, ma.namamataanggaran,
+            ma.kodemataanggaran || ' - ' || ma.namamataanggaran mataanggaran, 
+            case when ap.bulanint = 1 then coalesce(ap.nilai, '0') end as jan,
+            case when ap.bulanint = 2 then coalesce(ap.nilai, '0') end as feb,
+            case when ap.bulanint = 3 then coalesce(ap.nilai, '0') end as mar,
+            case when ap.bulanint = 4 then coalesce(ap.nilai, '0') end as apr,
+            case when ap.bulanint = 5 then coalesce(ap.nilai, '0') end as mei,
+            case when ap.bulanint = 6 then coalesce(ap.nilai, '0') end as jun,
+            case when ap.bulanint = 7 then coalesce(ap.nilai, '0') end as jul,
+            case when ap.bulanint = 8 then coalesce(ap.nilai, '0') end as agt,
+            case when ap.bulanint = 9 then coalesce(ap.nilai, '0') end as sep,
+            case when ap.bulanint = 10 then coalesce(ap.nilai, '0') end as okt,
+            case when ap.bulanint = 11 then coalesce(ap.nilai, '0') end as nov,
+            case when ap.bulanint = 12 then coalesce(ap.nilai, '0') end as des
+            from keteranganbelanja_t as kb 
+            left join alokasiketeranganbelanja_t as ap on ap.keteranganbelanjafk = kb.norec
+            and ap.statusenabled = true
+            and ap.kdprofile = 30
+            inner join mataanggaran_m as ma on ma.id = kb.objectmataanggaranfk
+            inner join kegiatananggaran_m ka on ka.id = kb.objectkegiatanfk 
+            inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+            inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
+            where ka.statusenabled = true
+            and ka.kdprofile = 30
+            and kb.statusenabled = true
+            and kb.kdprofile = 30
+            and dp0.statusenabled = true
+            and dp0.kdprofile = 30
+            and ma.statusenabled = true
+            and ma.kdprofile = 30
+            $stahun
+            $stahap
+            group by kb.norec, kb.keteranganbelanja, dp0.kode, dp0.keterangan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan, ap.nilai, ap.bulanint, ma.kodemataanggaran, ma.namamataanggaran,
+            ma.kodemataanggaran || ' - ' || ma.namamataanggaran
+        ) as x group by norec, keteranganbelanja, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, subtotal, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran
+        order by kodemataanggaran"));
+
         $dataAsalProduk = \DB::table('asalproduk_m as ap')
             ->select('ap.id','ap.asalproduk')
             ->where('ap.statusenabled',true)
@@ -4004,6 +4091,8 @@ class PerencanaanController extends ApiController {
             'data' => $data,
             'keteranganbelanja' => $dataKeteranganBelanja,
             'asalproduk' => $dataAsalProduk,
+            'alokasimataanggaran' => $dataAlokasiMataanggaran,
+            'detailalokasimataanggaran' => $detailalokasimataanggaran,
             'asal' => $asalproduk,
             'alokasi' => $arrALokasi,
             'message' => '@epic',

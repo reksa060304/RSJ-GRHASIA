@@ -63,6 +63,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.subtotalgakilang = [];
             $scope.idkegiatanangkas = 0
             $scope.kodesubsubkegiatanangkas = ''
+            $scope.dataSourceDetailKeteranganBelanja = []
+            $scope.dataSearchSourceKeteranganBelanja= []
             
 
             $scope.listDiv = [
@@ -622,17 +624,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
 
-                console.log(dataItem)
+                console.log($scope.dataSourceDetailKeteranganBelanja)
                 
                 let totalAnggaran = 0;
                 // let dataGridAlokasi = DataTabKeteranganBelanja
                 // DataTabKeteranganBelanja = $scope.dataSourceKeteranganBelanja._data
                 DataTabKeteranganBelanja =[]
                 dataAlokasi2222 =[]
-                for (let x = 0; x < $scope.dataSourceKeteranganBelanja._data.length; x++) {
-                    var el = $scope.dataSourceKeteranganBelanja._data[x]
-                   
-                    if (el.norec.match(dataItem.norec)) {
+                for (let x = 0; x < $scope.dataSourceDetailKeteranganBelanja.options.data.length; x++) {
+                    var el = $scope.dataSourceDetailKeteranganBelanja.options.data[x]
+                    console.log(el)
+                    if (el.kodemataanggaran.match(dataItem.kodemataanggaran)) {
                         el.subtotalRP = formatRupiah(el.subtotal, "Rp. ")
                      
                         totalAnggaran = totalAnggaran + parseFloat(el.subtotal)
@@ -688,14 +690,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     data:  dataAlokasi2222
                 });
 
-                let subKegiatanStr = ''
-                let kodeArr = dataItem.kode.split(" ");
-                for (let index = 0; index < $scope.dataSourceKegiatan.length; index++) {
-                    let element = $scope.dataSourceKegiatan[index];
-                    if (element.kode.match(kodeArr[0]) && element.div == 3) {
-                        subKegiatanStr = element.kode + ' ' + element.keterangan
-                    }
-                }
+                
                 $scope.item.thnAnggaran = dataItem.tahun
                 $scope.item.tahap = dataItem.tahap
                 $scope.item.subKegiatan = dataItem.kodesubkegiatan+' - '+dataItem.keterangansubkegiatan
@@ -1905,15 +1900,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.$watch('item.searchKeteranganBelanja', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    
+                    console.log($scope.dataSearchSourceKeteranganBelanja)
                     var data = []
-                    for (let index = 0; index < DataTabKeteranganBelanja.length; index++) {
-                        let element = DataTabKeteranganBelanja[index];
-                        if (element.mataanggaran.match(newValue)) {
-                            data.push(element)
-                        }else if (element.kegiatan.match(newValue)) {
-                            data.push(element)
-                        }else if (element.keteranganbelanja.match(newValue)) {
+                    for (let index = 0; index < $scope.dataSearchSourceKeteranganBelanja.options.data.length; index++) {
+                        let element = $scope.dataSearchSourceKeteranganBelanja.options.data[index];
+                        console.log(element)
+                        if (element.mataanggaran.toLowerCase().match(newValue.toLowerCase())) {
                             data.push(element)
                         }
                     }
@@ -2346,8 +2338,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         // DataTabKeteranganBelanja = DataInsertAlokasi
                         // $scope.item.dataKeteranganBelanja = DataInsertAlokasi
                         $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({
-                            data: DataTabKeteranganBelanja,
+                            data: e.data.alokasimataanggaran,
                             group: $scope.groupmataanggaran,
+                        });
+
+                        $scope.dataSearchSourceKeteranganBelanja = $scope.dataSourceKeteranganBelanja
+
+                        $scope.dataSourceDetailKeteranganBelanja = new kendo.data.DataSource({
+                            data: e.data.detailalokasimataanggaran,
                         });
                         
                     })
@@ -2936,14 +2934,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                              width: "30px",
                     },
                     {
-                        "field": "kodemataanggaran",
-                        "title": "Kode Rekening",
+                        "field": "mataanggaran",
+                        "title": "Rekening",
                         "width": "100px",
-                    },
-                    {
-                        "field": "keteranganbelanja",
-                        "title": "Keterangan",
-                        "width": "80px"
                     },
                     {
                         "field": "subtotal",
@@ -3011,15 +3004,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "title": "Des",
                         "width": "40px",
                     },
-                    {
-                        "command": [{
-                            text: "Hapus",
-                            click: HapusAnggaranKas,
+                    // {
+                    //     "command": [{
+                    //         text: "Hapus",
+                    //         click: HapusAnggaranKas,
                             
-                        }, ],
-                        title: "",
-                        width: "40px",
-                    },
+                    //     }, ],
+                    //     title: "",
+                    //     width: "40px",
+                    // },
                 ]
             };
             $scope.klikSPJ = function (dataSPJSelected) {
