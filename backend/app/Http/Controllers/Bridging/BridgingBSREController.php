@@ -768,7 +768,7 @@ class BridgingBSREController  extends ApiController
 
             // Create generic logo
             $logo = Logo::create(public_path().'/img/diy.png')
-                ->setResizeToWidth(100);
+                ->setResizeToWidth(150);
 
             $result = $writer->write($qrCode, $logo);
 // Send output of the QRCode directly
