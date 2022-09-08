@@ -109,9 +109,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     field: "kegiatan"
                 },
-                // {
-                //     field: "mataanggaran"
-                // }
             ];
             loadDataGrid();
             function loadDataGrid() {
@@ -2291,6 +2288,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         });
                         DataTabKeteranganBelanja  = [];//e.data.keteranganbelanja
                         // let DataInsertAlokasi = [];
+                        console.log(e.data.keteranganbelanja)
                         let dataAlokasi =  e.data.alokasi;
                         for (let index = 0; index < e.data.keteranganbelanja.length; index++) {
                             let element = e.data.keteranganbelanja[index];
@@ -2298,55 +2296,58 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 let alokasielement = dataAlokasi[aa];
                                 for (let bb = 0; bb < alokasielement.length; bb++) {
                                     let elementbb = alokasielement[bb];
-                                    if(elementbb.keteranganbelanjafk == element.norec){
+                                    if(elementbb.kodemataanggaran == element.kodemataanggaran){
                                         if(elementbb.bulanint == 1){
-                                            element.jan = elementbb.nilai
+                                            elementbb.jan = elementbb.nilai
                                         }
                                         if(elementbb.bulanint == 2){
-                                            element.feb = elementbb.nilai
+                                            elementbb.feb = elementbb.nilai
                                         }
                                         if(elementbb.bulanint == 3){
-                                            element.mar = elementbb.nilai
+                                            elementbb.mar = elementbb.nilai
                                         }
                                         if(elementbb.bulanint == 4){
-                                            element.apr = elementbb.nilai
+                                            elementbb.apr = elementbb.nilai
                                         }
                                         if(elementbb.bulanint == 5){
-                                            element.mei = elementbb.nilai
+                                            elementbb.mei = elementbb.nilai
                                         }
                                         if(elementbb.bulanint == 6){
-                                            element.jun = elementbb.nilai
+                                            elementbb.jun = elementbb.nilai
                                         }
                                         if(elementbb.bulanint == 7){
-                                            element.jul = elementbb.nilai
+                                            elementbb.jul = elementbb.nilai
                                         }
                                         if(elementbb.bulanint == 8){
-                                            element.agt = elementbb.nilai
+                                            elementbb.agt = elementbb.nilai
                                         }
                                         if(elementbb.bulanint == 9){
-                                            element.sep = elementbb.nilai
+                                            elementbb.sep = elementbb.nilai
                                         }
                                         if(elementbb.bulanint == 10){
-                                            element.okt = elementbb.nilai
+                                            elementbb.okt = elementbb.nilai
                                         }
                                         if(elementbb.bulanint == 11){
-                                            element.nov = elementbb.nilai
+                                            elementbb.nov = elementbb.nilai
                                         }
                                         if(elementbb.bulanint == 12){
-                                            element.des = elementbb.nilai
+                                            elementbb.des = elementbb.nilai
                                         }
+
+                                        elementbb.subtotal=element.subtotal
                                     }
+                                    DataTabKeteranganBelanja .push(elementbb)
                                 }
                                 
                             }
                             // DataInsertAlokasi.push(element)
-                            DataTabKeteranganBelanja .push(element)
+                            
                         }
                         // DataTabKeteranganBelanja = DataInsertAlokasi
                         // $scope.item.dataKeteranganBelanja = DataInsertAlokasi
                         $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({
                             data: DataTabKeteranganBelanja,
-                            group: $scope.groupmataanggaran
+                            group: $scope.groupmataanggaran,
                         });
                         
                     })
@@ -2935,41 +2936,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                              width: "30px",
                     },
                     {
-                        "field": "mataanggaran",
+                        "field": "kodemataanggaran",
                         "title": "Kode Rekening",
                         "width": "100px",
-                        hidden: true
-                    },
-                    {
-                        "field": "kegiatan",
-                        "title": "Kegiatan",
-                        "width": "100px",
-                        hidden: true
                     },
                     {
                         "field": "keteranganbelanja",
                         "title": "Keterangan",
                         "width": "80px"
-                    },
-                    {
-                        "field": "jml",
-                        "title": "Jumlah",
-                        "width": "30px",
-						"template": "<span class='style-right'>{{('#: jml #')}}</span>",
-                        hidden: true,
-                    },
-                    {
-                        "field": "satuan",
-                        "title": "Satuan",
-                        "width": "50px",
-                        hidden: true
-                    },
-                    {
-                        "field": "hargasatuan",
-                        "title": "Harga Satuan",
-                        "width": "50px",
-						"template": "<span class='style-right'>{{formatRupiah2('#: hargasatuan #', '')}}</span>",
-                        hidden: true,
                     },
                     {
                         "field": "subtotal",
@@ -2980,62 +2954,62 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         "field": "jan",
                         "title": "Jan",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "field": "feb",
                         "title": "Feb",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "field": "mar",
                         "title": "Mar",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "field": "apr",
                         "title": "Apr",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "field": "mei",
                         "title": "Mei",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "field": "jun",
                         "title": "Juni",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "field": "jul",
                         "title": "Juli",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "field": "agt",
                         "title": "Agst",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "field": "sep",
                         "title": "Sep",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "field": "okt",
                         "title": "Okt",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "field": "nov",
                         "title": "Nov",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "field": "des",
                         "title": "Des",
-                        "width": "40px"
+                        "width": "40px",
                     },
                     {
                         "command": [{

@@ -5301,7 +5301,7 @@ CASE WHEN ru1.objectdepartemenfk = 16 AND kmr.namakamar IS NULL AND tt.nomorbed 
                 }
                 if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
                     $jumlahtotalrekonseptember = $layanan->jumlah;
-                    $totarekon+=$jumlahtotalrekonseptember;
+                    $totalrekon+=$jumlahtotalrekonseptember;
                 }
                 if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Rekonstitusi Injeksi'){
                     $jumlahtotalrekonoctober = $layanan->jumlah;

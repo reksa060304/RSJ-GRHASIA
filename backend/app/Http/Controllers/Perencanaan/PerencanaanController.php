@@ -3971,9 +3971,12 @@ class PerencanaanController extends ApiController {
         $arrALokasi = [];
         foreach($dataKeteranganBelanja as $item){
             $dataAlokasi = \DB::table('alokasiketeranganbelanja_t as ap')
-            ->select('ap.*')
+            ->join('keteranganbelanja_t as kb', 'ap.keteranganbelanjafk', '=', 'kb.norec')
+            ->join('mataanggaran_m as ma', 'ma.id', '=', 'kb.objectmataanggaranfk')
+            ->select('ap.norec', 'ap.keteranganbelanjafk', 'ap.bulanint', 'ap.nilai', 'ma.kodemataanggaran')
             ->where('ap.statusenabled',true)
             ->where('ap.keteranganbelanjafk',$item->norec)
+            ->groupBy('ap.norec', 'ap.keteranganbelanjafk', 'ap.bulanint', 'ap.nilai', 'ma.kodemataanggaran')
             ->get();    
             $arrALokasi[] = $dataAlokasi;
         }
