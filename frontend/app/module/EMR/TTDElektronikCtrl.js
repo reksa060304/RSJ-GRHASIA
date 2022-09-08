@@ -119,7 +119,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             },
                             {
                                 "command": [
-                                    // { text: "Download", click: DownloadBerkas, imageClass: "k-icon k-i-download" },
+                                    { text: "Download", click: DownloadBerkas, imageClass: "k-icon k-i-download" },
                                     { text: "View", click: LihatBerkas, imageClass: " fa fa-eye" },
                                     { text: "Sign Doc", click: tandaTangan, imageClass: "fa fa-key" },
                                     { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
