@@ -798,16 +798,17 @@ class BridgingBSREController  extends ApiController
                 $logUser->jenislog = 'BSRE';
                 $logUser->noreff = $emrbsre->id;
                 $logUser->referensi = 'emr_bsre_t';
-                $logUser->keterangan = 'Error BSRE : ' . json_encode($response);
+                $logUser->keterangan = 'TTD BSRE Error: '.$response;
                 $logUser->objectloginuserfk =  $request['iduser'];
                 $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
                 $logUser->save();
           
                 $transMessage = isset(json_decode($response)->message)?json_decode($response)->message:json_decode($response)->error;
-                DB::rollBack();
+                DB::commit();
                 $result = array(
                     "status" => 400,
                     "message" => $transMessage,
+                    "s" => $logUser,
                     "as" => 'er@epic',
                 );
 
