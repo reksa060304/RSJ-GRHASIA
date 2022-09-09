@@ -342,4 +342,13 @@ class BridgingDukcapilController extends ApiController
         $data = \DB::select(DB::raw("SELECT * from pasien_m where noidentitas = '$request[nik]'and kdprofile = 30 and statusenabled = true"));
         return $this->respond($data);
     }
+    public function getSettingDataFixedDukcapil(Request $request)
+    {
+        $data = \DB::select(DB::raw("SELECT * from settingdatafixed_m where namafield ilike 'Bridging DUKCAPIL' and kdprofile = 30"));
+        $result= array(
+            'data'=>$data,
+            'as'=>'Fizi'
+        );
+        return $this->respond($result);
+    }
 }

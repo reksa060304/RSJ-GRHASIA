@@ -18593,6 +18593,63 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenAwalKeperawatanRawatInapNonJiwa",
+    "url": "/AsesmenAwalKeperawatanRawatInapNonJiwaCtrl",
+    "templateurl": "module/EMR/AsesmenAwalKeperawatanRawatInapNonJiwa.html",
+    "controller": "AsesmenAwalKeperawatanRawatInapNonJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  }, 
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.PenilaianRisikoJatuhPasienAnak",
+    "url": "/PenilaianRisikoJatuhPasienAnakCtrl/:index/:idEMR",
+    "templateurl": "module/EMR/PenilaianRisikoJatuhPasienAnak.html",
+    "controller": "PenilaianRisikoJatuhPasienAnakCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  }, 
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.MonitoringVitalSignRawatIntensif",
+    "url": "/MonitoringVitalSignRawatIntensifCtrl/:index/:idEMR",
+    "templateurl": "module/EMR/MonitoringVitalSignRawatIntensif.html",
+    "controller": "MonitoringVitalSignRawatIntensifCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 
