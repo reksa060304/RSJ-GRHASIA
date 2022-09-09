@@ -16757,6 +16757,144 @@
     ]
   },
   {
+    "name": "RekamMedis.AsesmenMedis.SuratKesediaanPemeriksaanJiwa",
+    "url": "/SuratKesediaanPemeriksaanJiwa",
+    "templateurl": "module/EMR/SuratKesediaanPemeriksaanJiwa.html",
+    "controller": "SuratKesediaanPemeriksaanJiwaCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.SuratKesediaanPemeriksaanNAPZA",
+    "url": "/SuratKesediaanPemeriksaanNAPZA",
+    "templateurl": "module/EMR/SuratKesediaanPemeriksaanNAPZA.html",
+    "controller": "SuratKesediaanPemeriksaanNAPZACtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.SuratRehabNAPZA",
+    "url": "/SuratRehabNAPZA",
+    "templateurl": "module/EMR/SuratRehabNAPZA.html",
+    "controller": "SuratRehabNAPZACtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FakturPemondokan",
+    "url": "/FakturPemondokan",
+    "templateurl": "module/EMR/FakturPemondokan.html",
+    "controller": "FakturPemondokanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.CatatanKonselingNAPZA",
+    "url": "/CatatanKonselingNAPZA",
+    "templateurl": "module/EMR/CatatanKonselingNAPZA.html",
+    "controller": "CatatanKonselingNAPZACtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.SerahTerimaKritis",
+    "url": "/SerahTerimaKritis",
+    "templateurl": "module/EMR/SerahTerimaKritis.html",
+    "controller": "SerahTerimaKritisCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
     "name": "RekamMedis.AsesmenMedis.FormulirTransferPasienAntarRuangan",
     "url": "/FormulirTransferPasienAntarRuangan",
     "templateurl": "module/EMR/FormulirTransferPasienAntarRuangan.html",

@@ -1,0 +1,115 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12"  disable-contents="allDisabled" >
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Monitoring Fiksasi</div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+        <div>
+            <fieldset>     
+                <div class="grid_12">
+                    <table style="border: 0px">
+
+                        <tr>
+                            <th style="width: 25%">Tanggal</th>
+                            <th style="width: 18%">Jam</th>
+                            <th style="width: 18%">Tanda Vital</th>
+                            <th style="width: 18%">Tanda Cedera/Luka</th>
+                            <th style="width: 18%">Lingkup Gerak Sendiri/Range of Motion</th>
+                            <th style="width: 18%">Keluhan Pasien</th>
+                            <th style="width: 18%">Lepas Fiksasi</th>
+                            <th style="width: 18%">Keterangan</th>
+                            
+                        </tr>
+                        <tr style="border: 0px" ng-repeat="list in listData1 | orderBy:'nourut'" ng-init="jawabIndex = $index">
+                            <td ng-repeat="jawab in list.details">
+                                <div class="grid_12">
+                                    <div ng-switch on="jawabIndex">
+
+                                        
+                                    </div>
+
+                                <div ng-switch on="jawab.type">
+                                        <div ng-switch-when="textarea">
+                                            <textarea style="width: 100px;height: 55px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[jawab.id]" />
+                                        </div>
+                                        <div ng-switch-when="date">
+                                            <div class="grid_12 padDatePicker"
+                                                style="margin-top: 0px;margin-bottom: 5px;margin-left: 0px">
+                                                <input k-ng-model="item.obj[jawab.id]" kendo-date-picker k-max="now"
+                                                    placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" style="width:100%"
+                                                    />
+                                            </div>
+                                        </div>
+                                        <div ng-switch-when="time">
+                                            <div class="grid_12 padDatePicker"  style="margin-top: 0px;margin-bottom: 5px;margin-left: 0px"> 
+                                                <input  k-ng-model="item.obj[jawab.id]"  kendo-timepicker k-max="now" placeholer="HH:mm" k-format="'HH:mm'" style="width:75%" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+                           </tr> 
+                    </table>
+                        
+                </div>
+                
+            </fieldset>
+        </div>
+        
+        
+        
+  </div>
+
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

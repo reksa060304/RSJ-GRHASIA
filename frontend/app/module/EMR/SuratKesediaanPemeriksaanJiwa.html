@@ -1,0 +1,334 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #777777;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+    .dot1 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot2 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: yellow;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot3 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot4 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: black;
+        border-radius: 50%;
+        display: inline-block;
+    }
+  
+       .activeDot:before {
+        content: '\f00c';
+    font-family: 'FontAwesome';
+    display: inline-block;
+    vertical-align: top;
+    line-height: 1em;
+    /* width: 1em; */
+    /* height: 1em; */
+    font-size: 25px;
+    /* margin-right: 0.3em; */
+    text-align: center;
+    color: #ffffff;
+    margin-top: 12px;
+    }
+    .my-disable{
+        pointer-events:none;
+
+    }
+
+    .margin-top{
+        margin-top: 20px;
+    }
+
+    .margin-top-10{
+        margin-top: 10px;
+    }
+
+    .margin-top-30{
+        margin-top: 30px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .margin-bottom{
+        margin-bottom: 10px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .border-left{
+        border-left: 1px solid black;
+    }
+
+    .border-right{
+        border-right: 1px solid rgba(54, 53, 53, 0.438);
+    }
+</style>
+
+ <!-- ng-class="{'my-disable':true}" -->
+<!-- <div class="grid_12"  disable-contents="allDisabled" id="form"> -->
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Surat Pernyataan Kesediaan Pemeriksaan Kesehatan Jiwa</div>
+        </div>
+        
+        <div class="grid_12">
+            <fieldset style="margin-top: 50px;">
+                <div class="grid_12 margin-top-30 text-center">
+                    <label c-label item="item" font size=""> <u><h1>SURAT PERNYATAAN KESEDIAAN PEMERIKSAAN KESEHATAN JIWA</h1></u></label>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_12 margin-top-10 text-center margin-bottom" hide="true">
+                        <label c-label item="item" class="margin-bottom">Nomor :</label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3003952]"
+                            style="height: 30px; width: 30%; "/>
+                    </div>
+                    <div class="grid_12" style="margin-top: 50px;">
+                        <label c-label item="item" class="margin-bottom">Yang bertandatangan dibawah ini : 
+                    </div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Nama (lengkap) :</label></div>
+                    <div class="grid_8">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301100]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Tempat, Tanggal Lahir :</label></div>
+                    <div class="grid_8">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301110]"
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Alamat (sesuai KTP) :</label></div>
+                    <div class="grid_8">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301120]"
+                            style="height: 55px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Pekerjaan :</label></div>
+                    <div class="grid_8">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301130]"
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_3">
+                        <label c-label item="item" class="margin-bottom">Tujuan Pemeriksaan: </label>
+                    </div>
+                    <div class="grid_3">
+                        <label c-label item="item" class="margin-bottom">Atas permohonan pribadi/rujukan* dari </label>
+                    </div>
+                    <div class="grid_5">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301140]"
+                            style="height: 55px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_3">
+                        <label c-label item="item" class="margin-bottom"></label>
+                    </div>
+                    <div class="grid_3">
+                        <label c-label item="item" class="margin-bottom">Untuk Keperluan </label>
+                    </div>
+                    <div class="grid_5">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301150]"
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+        
+                <div class="grid_12" style="margin-top: 50px;">
+                    <label c-label item="item" class="margin-bottom">Menyatakan bahwa sehubungan dengan pemeriksaan kesehatan jiwa yang akan saya jalani di
+                        RSJ Grhasia, <b><u>SAYA BERSEDIA</u></b> </label>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_11"><label c-label item="item" class="margin-bottom">1. Mengikuti segala peraturan yang diberlakukan di RSJ Grhasia.</label></div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_11"><label c-label item="item" class="margin-bottom">2. Melaksanakan tes psikometri dengan sebaik-baiknya dan menjawab setiap pernyataan
+                        sesuai dengan kondisi diri saya yang sebenarnya tanpa dipengaruhi oleh pihak lain.</label></div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_11"><label c-label item="item" class="margin-bottom"></label>3. Bertanggung jawab atas hasil tes psikometri yang telah saya kerjakan sehingga jika hasil
+                        tes psikometri saya dinyatakan tidak akurat dan tidak valid (sahih), keadaan ini menjadi
+                        tanggung jawab saya pribadi dan tidak akan menggugat siapapun.</div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_11"><label c-label item="item" class="margin-bottom"></label>4. Tidak mendiskusikan dengan orang lain terkait isi / pernyataan dalam tes selama proses
+                        tes berlangsung.</div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_11"><label c-label item="item" class="margin-bottom"></label>5. Mengerjakan tes psikometri kembali jika direkomendasikan oleh Dokter Spesialis
+                        Kedokteran Jiwa.</div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_11"><label c-label item="item" class="margin-bottom"></label>6. Menjalani pemeriksaan dengan psikolog di RSJ Grhasia atas rekomendasi Dokter
+                        Spesialis Kedokteran Jiwa.</div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_11"><label c-label item="item" class="margin-bottom"></label>7. Tidak meminta hasil tes psikometri dan atau hasil akhir pemeriksaan kesehatan jiwa
+                        bilamana bukan atas permohonan pribadi.</div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_11"><label c-label item="item" class="margin-bottom"></label>8. Tidak menggunakan hasil tes psikometri dan hasil akhir pemeriksaan kesehatan jiwa
+                        untuk kepentingan lain, selain yang saya tuliskan di surat pernyataan ini.</div>
+                </div>
+                <div class="grid_12" style="margin-top: 20px;">
+                    <label c-label item="item" class="margin-bottom">Demikian surat pernyataan ini saya buat dengan penuh kesadaran serta rasa tanggung jawab
+                        dan saya telah memahami serta menyetujui segala yang tertulis dalam informasi di atas.</label>
+                </div>
+
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_9"></div>
+                    <div class="grid_3">
+                        <label c-label item="item">Yogyakarta, </label>
+                        <input style="width: 100%" k-ng-model="item.obj[1901301160]" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                    </div>
+                </div>
+
+                <div class="grid_12">
+                    <div class="grid_9"></div>
+                    <div class="grid_3">
+                        <label c-label item="item">Yang Membuat Pernyataan</label>
+                    </div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_9"></div>
+                    <div class="grid_3">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301100]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; " disabled/>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>

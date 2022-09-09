@@ -1,0 +1,139 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12"  disable-contents="allDisabled" >
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Catatan Konseling NAPZA</div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+        <div>
+            <fieldset>    
+                <div class="grid_12 margin-top-30 text-center">
+                    <label c-label item="item" font size=""> <u><h1>CATATAN KONSELING</h1></u></label>
+                </div> 
+                <div class="grid_12 margin-bottom" style="margin-top: 50px;">
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Nomor Rekam Medis :</label></div>
+                    <div class="grid_9">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901305600]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-bottom margin-top-20">
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Nama Lengkap :</label></div>
+                    <div class="grid_9">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901305610]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-bottom margin-top-20">
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Tempat, Tanggal Lahir :</label></div>
+                    <div class="grid_9">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901305620]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12" style="margin-top: 50px;">
+                    <table style="border: 0px">
+
+                        <tr>
+                            <th style="width: 25%">TANGGAL</th>
+                            <th style="width: 18%">PELAKSANAAN</th>
+                            <th style="width: 18%">TTD DAN NAMA</th>
+                        </tr>
+                        <tr style="border: 0px" ng-repeat="list in listData1 | orderBy:'nourut'" ng-init="jawabIndex = $index">
+                            <td ng-repeat="jawab in list.details">
+                                <div class="grid_12">
+                                    <div ng-switch on="jawabIndex">
+
+                                        
+                                    </div>
+
+                                <div ng-switch on="jawab.type">
+                                        <div ng-switch-when="textarea">
+                                            <textarea style="width: 300px;height: 555px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[jawab.id]" />
+                                        </div>
+                                        <div ng-switch-when="combobox">
+                                            <div class="grid_12">
+                                                <div class="grid_12"  style="margin-top: 0px;margin-bottom: 5px;margin-left: 0px"> 
+                                                    <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
+                                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div ng-switch-when="datetime">
+                                            <div class="grid_12">
+                                                <div class="grid_12 padDatePicker"  style="margin-top: 0px;margin-bottom: 5px;margin-left: 0px"> 
+                                                    <input  k-ng-model="item.obj[jawab.id]"  kendo-datetimepicker k-max="now" placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+                           </tr> 
+                    </table>
+                        
+                </div>
+                
+            </fieldset>
+        </div>
+        
+        
+        
+  </div>
+
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>

@@ -3003,6 +3003,34 @@
             "urlDep": "module/EMR/HasilPemeriksaanPenunjangMedisCtrl"
         },
         {
+            "nameDep": "SuratKesediaanPemeriksaanJiwaCtrl",
+            "urlDep": "module/EMR/SuratKesediaanPemeriksaanJiwaCtrl"
+        },
+        {
+            "nameDep": "SuratKesediaanPemeriksaanNAPZACtrl",
+            "urlDep": "module/EMR/SuratKesediaanPemeriksaanNAPZACtrl"
+        },
+        {
+            "nameDep": "SuratRehabNAPZACtrl",
+            "urlDep": "module/EMR/SuratRehabNAPZACtrl"
+        },
+        {
+            "nameDep": "MonitoringFiksasiCtrl",
+            "urlDep": "module/EMR/MonitoringFiksasiCtrl"
+        },
+        {
+            "nameDep": "CatatanKonselingNAPZACtrl",
+            "urlDep": "module/EMR/CatatanKonselingNAPZACtrl"
+        },
+        {
+            "nameDep": "SerahTerimaKritisCtrl",
+            "urlDep": "module/EMR/SerahTerimaKritisCtrl"
+        },
+        {
+            "nameDep": "FakturPemondokanCtrl",
+            "urlDep": "module/EMR/FakturPemondokanCtrl"
+        },
+        {
             "nameDep": "FormulirTransferPasienAntarRuanganCtrl",
             "urlDep": "module/EMR/FormulirTransferPasienAntarRuanganCtrl"
         },

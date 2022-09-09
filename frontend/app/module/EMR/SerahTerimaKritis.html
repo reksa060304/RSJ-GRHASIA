@@ -1,0 +1,162 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12"  disable-contents="allDisabled" >
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Formulir Serah Terima Kondisi Kritis</div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+        <div>
+            <fieldset>    
+                <div class="grid_12 margin-top-30 text-center">
+                    <label c-label item="item" font size=""> <u><h1>FORMULIR SERAH TERIMA KONDISI KRITIS</h1></u></label>
+                </div> 
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div>
+                        <div class="grid_12">
+                            <div class="grid_3">Hari, Tanggal</div>
+                            <div class="grid_3 padDatePicker"  style="margin-top: 0px;margin-bottom: 5px;margin-left: 0px"> 
+                                <input  k-ng-model="item.obj[1901305700]"  kendo-datetimepicker k-max="now" placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm"/>
+                            </div>
+                        </div>
+                    </div>
+                    <table style="border: 0px">
+
+                        <tr>
+                            <th style="width: 100%; text-align: center;">PAGI</th>
+                            <th style="width: 100%; text-align: center;">SIANG</th>
+                            <th style="width: 100%; text-align: center;">MALAM</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="grid_12">
+                                    <div>
+                                        <div class="grid_12">
+                                            <textarea style="width: 300px;height: 555px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[1901305710]" />
+                                        </div>
+                                        <div class="grid_6" style="margin-top: 30px;">
+                                            <div class="grid_12">Pemberi Operan</div>
+                                            <div class="grid_12"> 
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[1901305720]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                                            </div>
+                                        </div>
+                                        <div class="grid_6" style="margin-top: 30px;">
+                                            <div class="grid_12">Penerima Operan</div>
+                                            <div class="grid_12"> 
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[1901305730]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="grid_12">
+                                    <div>
+                                        <div class="grid_12">
+                                            <textarea style="width: 300px;height: 555px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[1901305740]" />
+                                        </div>
+                                        <div class="grid_6" style="margin-top: 30px;">
+                                            <div class="grid_12">Pemberi Operan</div>
+                                            <div class="grid_12"> 
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[1901305750]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                                            </div>
+                                        </div>
+                                        <div class="grid_6" style="margin-top: 30px;">
+                                            <div class="grid_12">Penerima Operan</div>
+                                            <div class="grid_12"> 
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[1901305760]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="grid_12">
+                                    <div>
+                                        <div class="grid_12">
+                                            <textarea style="width: 300px;height: 555px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[1901305770]" />
+                                        </div>
+                                        <div class="grid_6" style="margin-top: 30px;">
+                                            <div class="grid_12">Pemberi Operan</div>
+                                            <div class="grid_12"> 
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[1901305780]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                                            </div>
+                                        </div>
+                                        <div class="grid_6" style="margin-top: 30px;">
+                                            <div class="grid_12">Penerima Operan</div>
+                                            <div class="grid_12"> 
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[1901305790]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+                           </tr> 
+                    </table>
+                        
+                </div>
+                
+            </fieldset>
+        </div>
+        
+        
+        
+  </div>
+
+        <div class="grid_12">
+            <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+        </div>
+    </div>
+</div>
