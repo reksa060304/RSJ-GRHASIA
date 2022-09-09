@@ -1,0 +1,1180 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #777777;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+    .dot1 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot2 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: yellow;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot3 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot4 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: black;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .activeDot:before {
+        content: '\f00c';
+        font-family: 'FontAwesome';
+        display: inline-block;
+        vertical-align: top;
+        line-height: 1em;
+        /* width: 1em; */
+        /* height: 1em; */
+        font-size: 25px;
+        /* margin-right: 0.3em; */
+        text-align: center;
+        color: #ffffff;
+        margin-top: 12px;
+    }
+
+    .my-disable {
+        pointer-events: none;
+
+    }
+
+    .margin-top {
+        margin-top: 20px;
+    }
+
+    .margin-top-10 {
+        margin-top: 10px;
+    }
+
+    .margin-top-30 {
+        margin-top: 30px;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .margin-bottom {
+        margin-bottom: 10px;
+    }
+
+    .margin-bottom-20 {
+        margin-bottom: 20px;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .border-left {
+        border-left: 1px solid black;
+    }
+
+    .border-right {
+        border-right: 1px solid rgba(54, 53, 53, 0.438);
+    }
+
+    .border-bottom {
+        border-bottom: 1px solid rgba(54, 53, 53, 0.438);
+    }
+    .clicks{
+    cursor: pointer;
+    }
+</style>
+
+<!-- ng-class="{'my-disable':true}" -->
+<!-- <div class="grid_12"  disable-contents="allDisabled" id="form"> -->
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Monitoring Vital Sign Rawat Intensif</div>
+        </div>
+        <div class="grid_12">
+            
+            <div class="grid_12">
+                <table>
+                    <tr>
+                        <td colspan="13">
+                            <div class="grid_6">
+                                <div class="grid_12">
+                                    <label c-label item="item">Tanggal</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901305900]" kendo-datepicker
+                                        placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"
+                                        parsedate="yyyy-MM-dd" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th rowspan="2">JAM</th>
+                        <th rowspan="2">GCS <br>
+                            E/V/M
+                        </th>
+                        <th rowspan="2">TENSI <br>
+                            mmHg
+                        </th>
+                        <th rowspan="2">NADI <br>
+                            x/mnt
+                        </th>
+                        <th rowspan="2">RESP <br>
+                            x/mnt
+                        </th>
+                        <th rowspan="2">SUHU <br>
+                            oC
+                        </th>
+                        <th rowspan="2">MAP <br>
+                            mmHg
+                        </th>
+                        <th rowspan="2">SPO <br>
+                            %
+                        </th>
+                        <th rowspan="2">O2 <br>
+                            L/mnt
+                        </th>
+                        <th colspan="3">INTRA VENA LINE</th>
+                        <th rowspan="2">KET</th>
+                        
+                    </tr>
+                    <tr>
+                        <th>LINE 1</th>
+                        <th>LINE 2</th>
+                        <th>LINE 3</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901305901]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'"
+                                        parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox"
+                                    ng-model="item.obj[1901305902]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305903]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305904]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305905]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305906]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305907]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305908]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305909]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305910]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305911]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305912]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305913]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    <tr ng-show="item.obj[1901305921]!=undefined">
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901305921]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305922]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305923]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305924]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305925]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305926]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305927]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305928]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305929]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305930]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305931]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305932]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305933]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr ng-show="item.obj[1901305941]!=undefined">
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901305941]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305942]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305943]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305944]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305945]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305946]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305947]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305948]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305949]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305950]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305951]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305952]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305953]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr ng-show="item.obj[1901305961]!=undefined">
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901305961]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305962]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305963]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305964]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305965]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305966]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305967]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305968]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305969]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305970]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305971]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305972]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305973]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr ng-show="item.obj[1901305981]!=undefined">
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901305981]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305982]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305983]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305984]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305985]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305986]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305987]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305988]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305989]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305990]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305991]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305992]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901305993]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr ng-show="item.obj[1901306001]!=undefined">
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901306001]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306002]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306003]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306004]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306005]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306006]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306007]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306008]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306009]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306010]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306011]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306012]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306013]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr ng-show="item.obj[1901306021]!=undefined">
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901306021]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306022]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306023]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306024]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306025]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306026]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306027]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306028]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306029]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306030]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306031]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306032]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306033]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr ng-show="item.obj[1901306041]!=undefined">
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901306041]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306042]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306043]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306044]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306045]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306046]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306047]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306048]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306049]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306050]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306051]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306052]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306053]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr ng-show="item.obj[1901306061]!=undefined">
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901306061]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306062]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306063]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306064]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306065]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306066]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306067]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306068]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306069]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306070]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306071]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306072]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306073]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr ng-show="item.obj[1901306081]!=undefined">
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901306081]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306082]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306083]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306084]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306085]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306086]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306087]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306088]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306089]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306090]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306091]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306092]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306093]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr ng-show="item.obj[1901306101]!=undefined">
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901306101]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306102]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306103]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306104]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306105]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306106]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306107]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306108]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306109]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306010]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306011]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306012]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306013]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr ng-show="item.obj[1901306121]!=undefined">
+                        <td>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[1901306121]" kendo-timepicker
+                                        placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306122]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306123]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306124]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306125]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306126]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306127]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306128]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306129]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306130]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306131]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306132]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_12">
+                                <input type="text" class="k-textbox" ng-model="item.obj[1901306133]">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="grid_1" style="margin-top:20px">
+                                <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="grid_12">
+    <div ui-view></div>
+</div>
+</div>
+<br />
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>

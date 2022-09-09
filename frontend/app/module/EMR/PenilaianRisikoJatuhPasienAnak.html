@@ -1,0 +1,404 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #777777;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+    .dot1 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot2 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: yellow;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot3 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot4 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: black;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .activeDot:before {
+        content: '\f00c';
+        font-family: 'FontAwesome';
+        display: inline-block;
+        vertical-align: top;
+        line-height: 1em;
+        /* width: 1em; */
+        /* height: 1em; */
+        font-size: 25px;
+        /* margin-right: 0.3em; */
+        text-align: center;
+        color: #ffffff;
+        margin-top: 12px;
+    }
+
+    .my-disable {
+        pointer-events: none;
+
+    }
+
+    .margin-top {
+        margin-top: 20px;
+    }
+
+    .margin-top-10 {
+        margin-top: 10px;
+    }
+
+    .margin-top-30 {
+        margin-top: 30px;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .margin-bottom {
+        margin-bottom: 10px;
+    }
+
+    .margin-bottom-20 {
+        margin-bottom: 20px;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .border-left {
+        border-left: 1px solid black;
+    }
+
+    .border-right {
+        border-right: 1px solid rgba(54, 53, 53, 0.438);
+    }
+
+    .border-bottom {
+        border-bottom: 1px solid rgba(54, 53, 53, 0.438);
+    }
+</style>
+
+<!-- ng-class="{'my-disable':true}" -->
+<!-- <div class="grid_12"  disable-contents="allDisabled" id="form"> -->
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Penilaian Risiko Jatuh Pada Pasien Anak (Skala Humpty Dumpty)</div>
+        </div>
+        <div class="grid_12">
+            <div class="grid_6">
+                <div class="grid_12">
+                    <label c-label item="item">Tanggal</label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%" k-ng-model="item.obj[1901304000]" kendo-datetimepicker
+                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+
+                </div>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Umur</b></legend>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304001]" >
+                            <md-radio-button value="4" class="md-primary" >Kurang
+                                dari 3 tahun
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304001]">
+                            <md-radio-button value="3" class="md-primary" >3 tahun - 7 tahun
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304001]">
+                            <md-radio-button value="2" class="md-primary" >7 tahun - 13 tahun
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304001]">
+                            <md-radio-button value="1" class="md-primary" >Lebih dari 13 tahun
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Jenis Kelamin</b></legend>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304002]">
+                            <md-radio-button value="2" class="md-primary" >Laki - Laki
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304002]">
+                            <md-radio-button value="1" class="md-primary" >Perempuan
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Diagnosa</b></legend>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304003]">
+                            <md-radio-button value="4" class="md-primary" >Neurologi
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304003]">
+                            <md-radio-button value="3" class="md-primary" >Respiratori, dehidrasi, anemia, anorexia,
+                                syncope
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304003]">
+                            <md-radio-button value="2" class="md-primary" >Perilaku
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304003]">
+                            <md-radio-button value="1" class="md-primary" >lain - lain
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Gangguan Kognitif</b></legend>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304004]">
+                            <md-radio-button value="3" class="md-primary" >Keterbatasan daya pikir
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304004]">
+                            <md-radio-button value="2" class="md-primary" >Pelupa, berkurangnya orientasi sekitar
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304004]">
+                            <md-radio-button value="1" class="md-primary" >Dapat menggunakan daya pikir tanpa hambatan
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Faktor Lingkungan</b></legend>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304005]">
+                            <md-radio-button value="4" class="md-primary" >Riwayat jatuh atau bayi/balita yang
+                                ditempatkan
+                                di tempat tidur
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304005]">
+                            <md-radio-button value="3" class="md-primary" >Pasien yang menggunakan alat bantu atau bayi/
+                                balita dalam ayunan
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304005]">
+                            <md-radio-button value="2" class="md-primary" >Pasien di tempat tidur standar
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304005]">
+                            <md-radio-button value="1" class="md-primary" >Area pasien rawat jalan
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Respon terhadap
+                            pembedahan,
+                            sedasi dan anestesi</b></legend>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304006]">
+                            <md-radio-button value="3" class="md-primary" >Dalam 24 jam
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304006]">
+                            <md-radio-button value="2" class="md-primary" >Dalam 48 jam
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304006]">
+                            <md-radio-button value="1" class="md-primary" >Lebih dari 48 jam / tidak ada respon
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <legend><b>Penggunaan
+                            obat - obatan</b></legend>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304007]">
+                            <md-radio-button value="3" class="md-primary" >Penggunaan bersamaan sedative, berbiturate,
+                                anti depresan, diuretik, narkotik
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304007]">
+                            <md-radio-button value="2" class="md-primary" >Salah satu dari obat di atas
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="grid_3">
+                        <md-radio-group ng-model="item.obj[1901304007]">
+                            <md-radio-button value="1" class="md-primary" >Obat-obatan lainnya / tanpa obat
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_6">
+                <div class="grid_12">
+                    <label style="margin-top: 5px;margin-right: 30px">TOTAL</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[1901304008]" />
+                </div>
+                
+            </div>
+            <div class="grid_6">
+                <div class="grid_4" style="margin-top: px">
+                    <button class="btnTemplate1" ng-click="getSkala()"><i class="fa fa-sort-amount-asc"></i>Hitung Poin</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="grid_12">
+        <div ui-view></div>
+    </div>
+</div>
+<br />
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>
