@@ -65,6 +65,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.kodesubsubkegiatanangkas = ''
             $scope.dataSourceDetailKeteranganBelanja = []
             $scope.dataSearchSourceKeteranganBelanja= []
+            $scope.totalanggaranperalokasi = 0;
+            $scope.kodemataanggaranalokasi = ''
             
 
             $scope.listDiv = [
@@ -347,6 +349,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var objSave =
                     {
                         id: dataItem.id,
+                        div: dataItem.div,
                     }
                 medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
                     loadDataGrid();
@@ -624,7 +627,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
 
-                console.log($scope.dataSourceDetailKeteranganBelanja)
+                console.log(dataItem)
                 
                 let totalAnggaran = 0;
                 // let dataGridAlokasi = DataTabKeteranganBelanja
@@ -696,9 +699,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.subKegiatan = dataItem.kodesubkegiatan+' - '+dataItem.keterangansubkegiatan
                 $scope.item.subSubKegiatan = dataItem.kode+' - '+dataItem.keterangan
                 $scope.item.mataanggaran = dataItem.mataanggaran
+                $scope.totalanggaranperalokasi = totalAnggaran
                 $scope.item.totalanggaran = formatRupiah(totalAnggaran, "Rp. ")
-                $scope.item.totalbulanan = 0
-                $scope.item.selisihanggaran = 0
+                $scope.item.totalbulanan = formatRupiah(dataItem.totalbulanan, "Rp. ")
+                $scope.kodemataanggaranalokasi = dataItem.kodemataanggaran
+                let selisih = 0
+                selisih = totalAnggaran - dataItem.totalbulanan
+                $scope.item.selisihanggaran = formatRupiah(selisih, "Rp. ")
                 $scope.popupAlokasiKeteranganBelanja.center().open();
             }
             function editDetailMT(e) {
@@ -1877,8 +1884,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             }
                             var tahap =""
                             var stahap = e.data.setting[0].idtahap
-                            if($scope.item.searchtahap != undefined && $scope.item.searchtahap != '' && $scope.item.searchtahap != null){
-                                tahap = $scope.item.searchtahap.id
+                            if($scope.item.searchtahapkeg != undefined && $scope.item.searchtahap != '' && $scope.item.searchtahapkeg != null){
+                                tahap = $scope.item.searchtahapkeg.id
                             } else{
                                 tahap = stahap
                             }
@@ -2223,7 +2230,39 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                 medifirstService.post('perencanaan/save-alokasi-keterangan-belanja',datasave).then(function (e) {
                     LoadTotalKeterangan();
-                    $scope.popupAlokasiKeteranganBelanja.center().close()
+                    medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')).then(function (e) {
+                        var tahun = ""
+                        if($scope.item.tahun != undefined){
+                            tahun = moment($scope.item.tahun).format('YYYY')
+                        } else{
+                            tahun = moment($scope.now).format('YYYY')
+                        }
+
+                        var stahap = e.data.setting[0].idtahap
+                        var tahap =""
+                        //console.log(stahap)
+                        if($scope.item.searchtahapkeg != undefined && $scope.item.searchtahapkeg != '' && $scope.item.searchtahapkeg != null){
+                            tahap = $scope.item.searchtahapkeg.id
+                        } else{
+                            tahap = stahap
+                        }
+    
+                        var idpegawai = ''
+                        $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                        //console.log($scope.pegawaiLogin)
+                        if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
+                            idpegawai = $scope.pegawaiLogin.id
+                        }
+    
+                        medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+tahun+"&tahap="+tahap+"&idpegawai="+idpegawai+"&mataanggaran="+$scope.kodemataanggaranalokasi).then(function (e) {
+                            
+                            $scope.item.totalbulanan = formatRupiah(e.data.alokasimataanggaran[0].totalbulanan, "Rp. ")
+                            let selisih = 0
+                            selisih = $scope.totalanggaranperalokasi - e.data.alokasimataanggaran[0].totalbulanan
+                            $scope.item.selisihanggaran = formatRupiah(selisih, "Rp. ")
+                        })
+                    })
+                    //$scope.popupAlokasiKeteranganBelanja.center().close()
                 }, function (error) {
 
                 })
@@ -2248,8 +2287,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     var stahap = e.data.setting[0].idtahap
                     var tahap =""
                     //console.log(stahap)
-                    if($scope.item.searchtahap != undefined && $scope.item.searchtahap != '' && $scope.item.searchtahap != null){
-                        tahap = $scope.item.searchtahap.id
+                    if($scope.item.searchtahapkeg != undefined && $scope.item.searchtahapkeg != '' && $scope.item.searchtahapkeg != null){
+                        tahap = $scope.item.searchtahapkeg.id
                     } else{
                         tahap = stahap
                     }
@@ -3004,6 +3043,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "title": "Des",
                         "width": "40px",
                     },
+                    {
+                        "field": "totalbulanan",
+                        "title": "Total Bulanan",
+                        "width": "40px",
+                        "template": "<span class='style-right'>{{formatRupiah2('#: totalbulanan #', '')}}</span>",
+                    },
                     // {
                     //     "command": [{
                     //         text: "Hapus",
@@ -3334,8 +3379,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             }
                             var tahap =""
                             var stahap = e.data.setting[0].idtahap
-                            if($scope.item.searchtahap != undefined && $scope.item.searchtahap != '' && $scope.item.searchtahap != null){
-                                tahap = $scope.item.searchtahap.id
+                            if($scope.item.searchtahapkeg != undefined && $scope.item.searchtahapkeg != '' && $scope.item.searchtahapkeg != null){
+                                tahap = $scope.item.searchtahapkeg.id
                             } else{
                                 tahap = stahap
                             }
@@ -3427,6 +3472,33 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             // $scope.rcn.mataAnggaranDipilih= $scope.subtotalgakilang.kodemataanggaran + " " + $scope.subtotalgakilang.namamataanggaran
                             // $scope.rcn.idmataanggaran = $scope.subtotalgakilang.id
                         });
+                                medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')).then(function (e) {
+                                        var tahun = ""
+                                        if($scope.item.tahun != undefined){
+                                            tahun = moment($scope.item.tahun).format('YYYY')
+                                        } else{
+                                            tahun = moment($scope.now).format('YYYY')
+                                        }
+                                        var tahap =""
+                                        var stahap = e.data.setting[0].idtahap
+                                        if($scope.item.searchtahapkeg != undefined && $scope.item.searchtahap != '' && $scope.item.searchtahapkeg != null){
+                                            tahap = $scope.item.searchtahapkeg.id
+                                        } else{
+                                            tahap = stahap
+                                        }
+            
+                                        var idpegawai = ''
+                                        $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                                        idpegawai = $scope.pegawaiLogin.id
+            
+                                        medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+tahun+"&tahap="+tahap+"&idpegawai="+idpegawai+"&cek=" + $scope.item.isCekAdaAnggaranSaja).then(function (e) {
+                                            DataTotalMataAnggaran = e.data.data
+                                            $scope.listAsalProduk = e.data.asalproduk
+                                            $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                                                data: DataTotalMataAnggaran
+                                            });
+                                        });
+                                    });
                         
                     })
                 })
@@ -3894,6 +3966,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.id = $scope.item.id
                     }
 
+
+
+
+
+
+
+                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     let TotalAnggaran = 0;
                     medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
                         DataKeteranganBelanja = e.data.data
@@ -3938,6 +4033,34 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         
                     // })
                     LoadTotalKeterangan()
+
+                    medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')).then(function (e) {
+                        var tahun = ""
+                        if($scope.item.tahun != undefined){
+                            tahun = moment($scope.item.tahun).format('YYYY')
+                        } else{
+                            tahun = moment($scope.now).format('YYYY')
+                        }
+                        var tahap =""
+                        var stahap = e.data.setting[0].idtahap
+                        if($scope.item.searchtahapkeg != undefined && $scope.item.searchtahap != '' && $scope.item.searchtahapkeg != null){
+                            tahap = $scope.item.searchtahapkeg.id
+                        } else{
+                            tahap = stahap
+                        }
+
+                        var idpegawai = ''
+                        $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                        idpegawai = $scope.pegawaiLogin.id
+
+                        medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+tahun+"&tahap="+tahap+"&idpegawai="+idpegawai+"&cek=" + $scope.item.isCekAdaAnggaranSaja).then(function (e) {
+                            DataTotalMataAnggaran = e.data.data
+                            $scope.listAsalProduk = e.data.asalproduk
+                            $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                                data: DataTotalMataAnggaran
+                            });
+                        });
+                    });
 
                     // let kodeArr = $scope.subtotalgakilang.kodemataanggaran.split(".");
                     //         let a1 = kodeArr[0] 
@@ -4236,7 +4359,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 //console.log($scope.item.mataAnggaranSPJ)
                 //$scope.item.sisaAnggaranSPJ = formatRupiah($scope.item.mataAnggaranSPJ.subtotal, "Rp. ")
-                var tahap = $scope.item.searchtahap.id
+                var tahap = $scope.item.searchtahapkeg.id
                 $scope.item.sisaAnggaranSPJ2 = $scope.item.mataAnggaranSPJ.subtotal
                 medifirstService.get("perencanaan/get-total-mata-anggaran?tahap="+tahap+"&kegiatan="+$scope.item.subSubKegiatanSPJ.id+"&mataanggaran="+$scope.item.mataAnggaranSPJ.kodemataanggaran).then(function (e) {
                     $scope.listAsalProduk = e.data.asalproduk
@@ -4593,7 +4716,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.mataAnggaranSPJ = {kodemataanggaran: e.data.data[0].kodemataanggaran, namamataanggaran: dataItem.mataanggaran}
                     //console.log($scope.item.mataAnggaranSPJ)
 
-                    var tahap = $scope.item.searchtahap.id
+                    var tahap = $scope.item.searchtahapkeg.id
                     medifirstService.get("perencanaan/get-total-mata-anggaran?tahap="+tahap+"&kegiatan="+$scope.item.subSubKegiatanSPJ.id+"&mataanggaran="+e.data.data[0].kodemataanggaran).then(function (e) {
                         $scope.listAsalProduk = e.data.asalproduk
                         if(e.data.asal.length != 0){
