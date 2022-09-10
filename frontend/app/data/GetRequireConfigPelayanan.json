@@ -3355,12 +3355,18 @@
         {
             "nameDep": "AsesmenAwalKeperawatanRawatInapNonJiwaCtrl",
             "urlDep": "module/EMR/AsesmenAwalKeperawatanRawatInapNonJiwaCtrl"
-        }, {
+        }, 
+        {
             "nameDep": "PenilaianRisikoJatuhPasienAnakCtrl",
             "urlDep": "module/EMR/PenilaianRisikoJatuhPasienAnakCtrl"
-        }, {
+        }, 
+        {
             "nameDep": "MonitoringVitalSignRawatIntensifCtrl",
             "urlDep": "module/EMR/MonitoringVitalSignRawatIntensifCtrl"
+        },
+        {
+            "nameDep": "PenilaianRisikoJatuhPasienDewasaCtrl",
+            "urlDep": "module/EMR/PenilaianRisikoJatuhPasienDewasaCtrl"
         }
         
     ]
