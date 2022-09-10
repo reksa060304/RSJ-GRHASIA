@@ -18673,6 +18673,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.PenilaianRisikoJatuhPasienDewasa",
+    "url": "/PenilaianRisikoJatuhPasienDewasaCtrl/:index/:idEMR",
+    "templateurl": "module/EMR/PenilaianRisikoJatuhPasienDewasa.html",
+    "controller": "PenilaianRisikoJatuhPasienDewasaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 
