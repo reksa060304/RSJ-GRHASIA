@@ -2365,6 +2365,15 @@ class PerencanaanController extends ApiController {
             $MA->statusenabled = false;
             $MA->save();
 
+            
+
+            if($request['div'] == 4){
+
+                $data = \DB::table('keteranganbelanja_t')->where('objectkegiatanfk',$request['id'])->update([
+                    'statusenabled'=> false
+                ]);
+            }
+
            $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';
@@ -3812,8 +3821,10 @@ class PerencanaanController extends ApiController {
         }
 
         $stahap = '';
+        $qtahap = '';
         if(isset($request['tahap']) && $request['tahap'] != '' && $request['tahap'] != 'undefined'){
             $stahap = "and kb.objecttahapfk = ".$request['tahap'];
+            $qtahap = "and kt.objecttahapfk = ".$request['tahap'];
         }
 
         $skegiatan = '';
@@ -3848,6 +3859,7 @@ class PerencanaanController extends ApiController {
                 , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima 
                 from mataanggaran_m ma
                 left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id and kt.statusenabled = true
+                $qtahap
                 where 
                 length(ma.kodemataanggaran) in(9,10) 
                 and ma.kdprofile=$idProfile
@@ -3982,7 +3994,10 @@ class PerencanaanController extends ApiController {
         }
         $dataAlokasiMataanggaran = DB::select(DB::raw("select kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, sum(subtotal) subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
         sum(apr::float8) apr, sum(mei::float8) mei, sum(jun::float8) jun, sum(jul::float8) jul, sum(agt::float8) agt, sum(sep::float8) sep,
-        sum(okt::float8) okt, sum(nov::float8) nov, sum(des::float8) des
+        sum(okt::float8) okt, sum(nov::float8) nov, sum(des::float8) des,
+        coalesce(sum(jan::float8) + sum(feb::float8) + sum(mar::float8) +
+        sum(apr::float8) + sum(mei::float8) + sum(jun::float8) + sum(jul::float8) + sum(agt::float8) +
+        sum(sep::float8) + sum(okt::float8) + sum(nov::float8) + sum(des::float8), 0) totalbulanan
 from(
 				select norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
         sum(apr::float8) apr, sum(mei::float8) mei, sum(jun::float8) jun, sum(jul::float8) jul, sum(agt::float8) agt, sum(sep::float8) sep,
@@ -4020,6 +4035,7 @@ from(
             and ma.kdprofile = 30
             $stahun
             $stahap
+            $smataanggaran
             group by kb.norec, dp0.kode, dp0.keterangan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan, ap.nilai, ap.bulanint, ma.kodemataanggaran, ma.namamataanggaran,
             ma.kodemataanggaran || ' - ' || ma.namamataanggaran
         ) as x group by norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, subtotal, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran

@@ -3023,6 +3023,10 @@
             "urlDep": "module/EMR/CatatanKonselingNAPZACtrl"
         },
         {
+            "nameDep": "FormulirPelayananKerohanianCtrl",
+            "urlDep": "module/EMR/FormulirPelayananKerohanianCtrl"
+        },
+        {
             "nameDep": "SerahTerimaKritisCtrl",
             "urlDep": "module/EMR/SerahTerimaKritisCtrl"
         },

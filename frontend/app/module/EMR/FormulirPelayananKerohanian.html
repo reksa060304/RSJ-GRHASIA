@@ -1,0 +1,299 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #777777;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+    .dot1 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot2 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: yellow;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot3 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot4 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: black;
+        border-radius: 50%;
+        display: inline-block;
+    }
+  
+       .activeDot:before {
+        content: '\f00c';
+    font-family: 'FontAwesome';
+    display: inline-block;
+    vertical-align: top;
+    line-height: 1em;
+    /* width: 1em; */
+    /* height: 1em; */
+    font-size: 25px;
+    /* margin-right: 0.3em; */
+    text-align: center;
+    color: #ffffff;
+    margin-top: 12px;
+    }
+    .my-disable{
+        pointer-events:none;
+
+    }
+
+    .margin-top{
+        margin-top: 20px;
+    }
+
+    .margin-top-10{
+        margin-top: 10px;
+    }
+
+    .margin-top-30{
+        margin-top: 30px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .margin-bottom{
+        margin-bottom: 10px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .border-left{
+        border-left: 1px solid black;
+    }
+
+    .border-right{
+        border-right: 1px solid rgba(54, 53, 53, 0.438);
+    }
+</style>
+
+ <!-- ng-class="{'my-disable':true}" -->
+<!-- <div class="grid_12"  disable-contents="allDisabled" id="form"> -->
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Formulir Permintaan Pelayanan Kerohanian</div>
+        </div>
+        
+        <div class="grid_12">
+            <fieldset style="margin-top: 50px;">
+                <div class="grid_12 margin-top-30 text-center">
+                    <label c-label item="item" font size=""> <u><h1>FORMULIR PERMINTAAN PELAYANAN KEROHANIAN</h1></u></label>
+                </div>
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_12" style="margin-top: 50px;">
+                        <div class="grid_1"></div>
+                        <div class="grid_11">
+                            <label c-label item="item" class="margin-bottom">Yang bertanda tangan di bawah ini : </label>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 text-center margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Nama :</label>
+                        </div>
+                        <div class="grid_4">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301700]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                        <div class="grid_2">
+                            <label c-label item="item" class="margin-bottom">Umur :</label>
+                        </div>
+                        <div class="grid_1">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301700]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 text-center margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_5">
+                            <div class="grid_3">
+                                <label c-label item="item" class="margin-bottom">Tanggal :</label>
+                            </div>
+                            <div class="grid_9">
+                                <input style="width: 100%" k-ng-model="item.obj[1901301710]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" /></label>
+                            </div>
+                        </div>
+                        <div class="grid_1"></div>
+                        <div class="grid_5">
+                            <div class="grid_12">
+                                <div class="grid_3">
+                                    <label c-label item="item" class="margin-bottom">Yth. Bagian</label>
+                                </div>
+                                <div class="grid_9">
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301720]"
+                                    style="height: 30px; width: 100%; "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_11"><label c-label item="item" class="margin-bottom">D.H. <br> Harap diterima untuk dirawat / mondok</label></div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_2"></div>
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Nama Pasien:</label></div>
+                    <div class="grid_7">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301730]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_2"></div>
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Alamat Pasien:</label></div>
+                    <div class="grid_7">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301740]"
+                            style="height: 55px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_2"></div>
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Nama Penanggungjawab:</label></div>
+                    <div class="grid_7">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301750]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_2"></div>
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">No Telepon/Handphone:</label></div>
+                    <div class="grid_7">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301760]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_1"></div>
+                    <div class="grid_1"><label c-label item="item" class="margin-bottom">Ket:</label></div>
+                    <div class="grid_5"><label c-label item="item" class="margin-bottom">Putih untuk pertinggal</label></div>
+                    <div class="grid_5"><label c-label item="item" class="margin-bottom"><i>Tanda tangan</i></label></div>
+                </div>
+                <div class="grid_12 margin-top-20">
+                    <div class="grid_1"></div>
+                    <div class="grid_1"></div>
+                    <div class="grid_5"><label c-label item="item" class="margin-bottom">Biru untuk klaim</label></div>
+                    <div class="grid_5"></div>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_1"></div>
+                    <div class="grid_1"></div>
+                    <div class="grid_5"><label c-label item="item" class="margin-bottom">Kuning untuk kassa</label></div>
+                    <div class="grid_5"></div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>
