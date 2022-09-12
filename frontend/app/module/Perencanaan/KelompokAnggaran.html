@@ -132,7 +132,7 @@
 			<md-content>
 				<md-tabs md-dynamic-height md-border-bottom>
 					
-					<md-tab label="Setting" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true">
+					<md-tab label="Setting" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding" ng-hide="false">
 
@@ -330,7 +330,7 @@
 									<div class="grid_12">
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchtahapkeg"
 											k-data-text-field="'tahap'" k-data-value-field="'id'"
-											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahapKegiatan" k-on-change='changeTahap()'/>
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahapKegiatan" k-on-change='changeTahap()' ng-disabled="disidpegawai"/>
 									</div>
 								</div>
 								<div class="grid_1">
@@ -342,7 +342,7 @@
 									<!-- <div class="grid_8" style="margin-top: -12px;"> -->
 										<div class="grid_12">
 											<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
-												placeholer="YYYY" k-format="'yyyy'" k-on-change='changeTahap()'/>
+												placeholer="YYYY" k-format="'yyyy'" k-on-change='changeTahap()' ng-disabled="disidpegawai"/>
 										<!-- </div> -->
 									</div>
 								</div>
@@ -362,7 +362,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Mata Anggaran" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true">
+					<md-tab label="Mata Anggaran" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
 						<md-content class="md-padding">
 							
 								
@@ -410,7 +410,7 @@
 									<div class="grid_8" style="margin-top: -10px;">
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchtahap"
 											k-data-text-field="'tahap'" k-data-value-field="'id'"
-											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" ng-disabled="disidpegawai"/>
 									</div>
 								</div>
 								<div class="grid_1">
@@ -419,7 +419,7 @@
 									</div>
 										<div class="grid_12">
 											<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
-												placeholer="YYYY" k-format="'yyyy'" />
+												placeholer="YYYY" k-format="'yyyy'" ng-disabled="disidpegawai"/>
 									</div>
 								</div>
 								<div class="grid_1" style="margin-top: 10px;">
@@ -435,10 +435,10 @@
 							<div class="clear"></div>
 							<div class="grid_12">
 								<div class="grid_2">
-									<button class="btnTemplate1" ng-click="SettingTahap()">Transfer / Copy Anggaran Belanja</button>
+									<button class="btnTemplate1" ng-click="SettingTahap()" ng-hide="disidpegawai">Transfer / Copy Anggaran Belanja</button>
 								</div>
 								<div class="grid_2">
-									<button class="btnTemplate1" ng-click="PemindahanKeterangan()">Pemindahan Rincian Belanja</button>
+									<button class="btnTemplate1" ng-click="PemindahanKeterangan()" ng-hide="disidpegawai">Pemindahan Rincian Belanja</button>
 								</div>
 								<div class="grid_2" ng-hide="true">
 									<button class="btnTemplate1" ng-click="EntryAngkas()">Entry Angkas</button>
@@ -1116,7 +1116,7 @@
 			<div class="grid_6"></div>
 			<div class="grid_2">
 				<div class="grid_11">
-					<button class="btnTemplate1" ng-click="HapusPopUpSubSubKegiatan()">Hapus</button>
+					<button class="btnTemplate1" ng-click="HapusPopUpSubSubKegiatan()" ng-hide="disidpegawai">Hapus</button>
 				</div>
 			</div>
 			<div class="grid_2">

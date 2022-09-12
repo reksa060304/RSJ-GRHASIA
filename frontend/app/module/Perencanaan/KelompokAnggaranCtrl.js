@@ -38,6 +38,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.spmaja = false
             $scope.panjaraja = false
             $scope.semuaanggaran = false
+            $scope.disidpegawai = false
 
             $scope.rcn = {};
             $scope.rcn.mataAnggaranlv1 = ""
@@ -124,6 +125,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //console.log($scope.pegawaiLogin)
                 if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
                     idpegawai = $scope.pegawaiLogin.id
+                    $scope.disidpegawai = true
                 }
                 if($state.params.parameter == '77777'){
                     $scope.spjaja = true
@@ -1000,7 +1002,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         name: "add", 
                         text: "Tambah",
-                        template: '<div class="grid_2"><button ng-click="Tambah()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                        template: '<div class="grid_2"><button ng-hide="disidpegawai" ng-click="Tambah()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
                     },
                     {
                         name: "ads", 
@@ -1071,6 +1073,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                       ],
                          title: "",
                          width: "30px",
+                         hidden: "disidpegawai"
                 }
             ]};
             $scope.columnSetting = {
@@ -3345,6 +3348,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }],
                         title: "",
                         width: "40px",
+                        hidden: "disidpegawai"
                     }
                 ]
             };
