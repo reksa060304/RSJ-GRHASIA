@@ -72,7 +72,9 @@
                 <b style="font-size: 25px;">
                     RBA
                 </b><br>
+                @if($sebelum != [])
                 {{substr($sebelum[0]->tahap, 0, -3)}}
+                @endif
             </td>
         </tr>
         <tr align="center">
@@ -142,7 +144,8 @@
                         @foreach($sebelum as $sb)
                             @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
                             @php
-                            $jumlahtotal+=$sb->subtotal
+                            $jumlahtotal+=$sb->subtotaljasalayanan;
+                            $jumlahtotal+=$sb->subtotalapbd;
                             @endphp
                             @endif
                         @endforeach
@@ -180,8 +183,8 @@
         <table class="tabel" width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 3px solid black;">
                 <tr>
                     <td align="center" width="50"  colspan="5" style="padding: 10px; font-weight: bold ">ANGGRAN BELANJA</td>
-                    <td align="center" width="50"  colspan="4" style="padding: 10px; font-weight: bold ">SEBELUM PERUBAHAN</td>
-                    <td align="center" width="50"  colspan="4" style="padding: 10px; font-weight: bold ">SESUDAH PERUBAHAN</td>
+                    <td align="center" width="50"  colspan="5" style="padding: 10px; font-weight: bold ">SEBELUM PERUBAHAN</td>
+                    <td align="center" width="50"  colspan="5" style="padding: 10px; font-weight: bold ">SESUDAH PERUBAHAN</td>
                     <td align="center" width="50"  rowspan="3" style="padding: 10px; font-weight: bold ">BERTAMBAH/<br>BERKURANG</td>
                     <td align="center" width="50"  rowspan="3" style="padding: 10px; font-weight: bold ">%</td>
                 </tr>
@@ -189,23 +192,28 @@
                     <td align="center" width="50"  rowspan="2" colspan="4" style="padding: 10px; font-weight: bold ">NO. REKENING</td>
                     <td align="center" width="50"  rowspan="2" style="padding: 10px; font-weight: bold ">KOMPONEN BIAYA</td>
                     <td align="center" width="50"  colspan="3" style="padding: 10px; font-weight: bold ">RINCIAN BIAYA</td>
-                    <td align="center" width="50"  colspan="1" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN</td>
+                    <td align="center" width="50"  colspan="2" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN</td>
                     <td align="center" width="50"  colspan="3" style="padding: 10px; font-weight: bold ">RINCIAN BIAYA</td>
-                    <td align="center" width="50"  colspan="1" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN</td>
+                    <td align="center" width="50"  colspan="2" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN</td>
                 </tr>
                 <tr>
                     <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Jumlah</td>
                     <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Satuan</td>
                     <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Harga Satuan</td>
                     <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Jasa Layanan</td>
+                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">APBD</td>
                     <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Jumlah</td>
                     <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Satuan</td>
                     <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Harga Satuan</td>
                     <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Jasa Layanan</td>
+                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">APBD</td>
                 </tr>
+                @if($sebelum!= [])
                 @php
-                    $jumlahtotalsebelum = 0;
-                    $jumlahtotalsesudah = 0;
+                    $jumlahtotaljasalayanansebelum = 0;
+                    $jumlahtotaljasalayanansesudah = 0;
+                    $jumlahtotalapbdsebelum = 0;
+                    $jumlahtotalapbdsesudah = 0;
                     $jumlahtotalselisih = 0;
                 @endphp
                 @foreach($sebelum as $sb)
@@ -215,8 +223,10 @@
                     @endphp
                     @if($sb->kodemataanggaran == 'I')
                     @php
-                        $jumlahtotalsebelum += $sb->subtotal;
-                        $jumlahtotalsesudah += $sb->subtotalsetelah;
+                        $jumlahtotaljasalayanansebelum += $sb->subtotaljasalayanan;
+                        $jumlahtotaljasalayanansesudah += $sb->subtotaljasalayanansetelah;
+                        $jumlahtotalapbdsebelum += $sb->subtotalapbd;
+                        $jumlahtotalapbdsesudah += $sb->subtotalapbdsetelah;
                     @endphp
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
@@ -225,8 +235,10 @@
                     <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
                     @elseif($sb->kodemataanggaran == 'III')
                     @php
-                        $jumlahtotalsebelum += $sb->subtotal;
-                        $jumlahtotalsesudah += $sb->subtotalsetelah;
+                    $jumlahtotaljasalayanansebelum += $sb->subtotaljasalayanan;
+                        $jumlahtotaljasalayanansesudah += $sb->subtotaljasalayanansetelah;
+                        $jumlahtotalapbdsebelum += $sb->subtotalapbd;
+                        $jumlahtotalapbdsesudah += $sb->subtotalapbdsetelah;
                     @endphp
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
@@ -235,8 +247,10 @@
                     <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
                     @elseif($sb->kodemataanggaran == 'II')
                     @php
-                        $jumlahtotalsebelum += $sb->subtotal;
-                        $jumlahtotalsesudah += $sb->subtotalsetelah;
+                    $jumlahtotaljasalayanansebelum += $sb->subtotaljasalayanan;
+                        $jumlahtotaljasalayanansesudah += $sb->subtotaljasalayanansetelah;
+                        $jumlahtotalapbdsebelum += $sb->subtotalapbd;
+                        $jumlahtotalapbdsesudah += $sb->subtotalapbdsetelah;
                     @endphp
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
@@ -255,11 +269,17 @@
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[1] }}</td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
-                    @elseif(strpos($sb->kodemataanggaran,'III.') !== false && strlen($sb->kodemataanggaran) == 9)
+                    @elseif($sb->jml == 0 && strpos($sb->kodemataanggaran,'III.') !== false && strlen($sb->kodemataanggaran) == 9)
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[2].'.'.$char[3] }}</td>
+                    <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
+                    @elseif($sb->jml != 0 && strpos($sb->kodemataanggaran,'III.') !== false && strlen($sb->kodemataanggaran) == 9)
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
                     @elseif(strpos($sb->kodemataanggaran,'II.') !== false && strlen($sb->kodemataanggaran) == 4)
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
@@ -267,11 +287,17 @@
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[1] }}</td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
-                    @elseif(strpos($sb->kodemataanggaran,'II.') !== false && strlen($sb->kodemataanggaran) == 8)
+                    @elseif($sb->jml == 0 && strpos($sb->kodemataanggaran,'II.') !== false && strlen($sb->kodemataanggaran) == 8)
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[2].'.'.$char[3] }}</td>
+                    <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
+                    @elseif($sb->jml != 0 && strpos($sb->kodemataanggaran,'II.') !== false && strlen($sb->kodemataanggaran) == 8)
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
                     @elseif((strpos($sb->kodemataanggaran,'I.A.') !== false || strpos($sb->kodemataanggaran,'I.B.') !== false) && strlen($sb->kodemataanggaran) == 5)
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
@@ -279,11 +305,17 @@
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[2] }}</td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
-                    @elseif((strpos($sb->kodemataanggaran,'I.A.') !== false || strpos($sb->kodemataanggaran,'I.B.') !== false) && (strlen($sb->kodemataanggaran) == 9 || strlen($sb->kodemataanggaran) == 10))
+                    @elseif($sb->jml == 0 && (strpos($sb->kodemataanggaran,'I.A.') !== false || strpos($sb->kodemataanggaran,'I.B.') !== false) && (strlen($sb->kodemataanggaran) == 9 || strlen($sb->kodemataanggaran) == 10))
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[3].'.'.$char[4] }}</td>
+                    <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
+                    @elseif($sb->jml != 0 && (strpos($sb->kodemataanggaran,'I.A.') !== false || strpos($sb->kodemataanggaran,'I.B.') !== false) && (strlen($sb->kodemataanggaran) == 9 || strlen($sb->kodemataanggaran) == 10))
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
                     <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
                     @else
                     <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
@@ -304,9 +336,11 @@
                     <td align="right" width="50"  style="padding: 10px; "></td>
                     @endif
                     @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotal,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
                     @else
-                    <td align="right" width="50"  style="padding: 10px;">{{ number_format($sb->subtotal,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px;">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px;">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
                     @endif
                     @if($sb->jml != 0)
                     <td align="right" width="50"  style="padding: 10px; ">{{ $sb->jmlsetelah }}</td>
@@ -320,34 +354,36 @@
                     <td align="right" width="50"  style="padding: 10px; "></td>
                     @endif
                     @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotalsetelah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotaljasalayanansetelah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotalapbdsetelah,0,',','.') }}</td>
                     @else
-                    <td align="right" width="50"  style="padding: 10px;">{{ number_format($sb->subtotalsetelah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px;">{{ number_format($sb->subtotaljasalayanansetelah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px;">{{ number_format($sb->subtotalapbdsetelah,0,',','.') }}</td>
                     @endif
                     @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                        @if($sb->subtotalsetelah > $sb->subtotal)
+                        @if(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) > ($sb->subtotaljasalayanan + $sb->subtotalapbd))
                         @php
-                            $jumlahtotalselisih += ($sb->subtotalsetelah - $sb->subtotal) 
+                            $jumlahtotalselisih += ($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah)
                         @endphp
-                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotalsetelah - $sb->subtotal,0,',','.') }}</td>
-                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format(($sb->subtotalsetelah - $sb->subtotal)/$sb->subtotal*100,0,',','.') }}</td>
-                        @elseif($sb->subtotalsetelah < $sb->subtotal)
+                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format(($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah),0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format((($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah))/$sb->subtotal*100,0,',','.') }}</td>
+                        @elseif(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) < ($sb->subtotaljasalayanan + $sb->subtotalapbd))
                         @php
-                            $jumlahtotalselisih += ($sb->subtotal - $sb->subtotalsetelah)
+                            $jumlahtotalselisih += ($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah)
                         @endphp
-                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotal - $sb->subtotalsetelah,0,',','.') }}</td>
-                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format(($sb->subtotal - $sb->subtotalsetelah)/$sb->subtotal*100,0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format(($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah),0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format((($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah))/$sb->subtotal*100,0,',','.') }}</td>
                         @else
                         <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format(0,0,',','.') }}</td>
                         <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format(0,0,',','.') }}</td>
                         @endif
                     @else
-                        @if($sb->subtotalsetelah > $sb->subtotal)
-                        <td align="right" width="25"  style="padding: 10px;">{{ number_format($sb->subtotalsetelah - $sb->subtotal,0,',','.') }}</td>
-                        <td align="right" width="25"  style="padding: 10px;">{{ number_format(($sb->subtotalsetelah - $sb->subtotal)/$sb->subtotal*100,0,',','.') }}</td>
-                        @elseif($sb->subtotalsetelah < $sb->subtotal)
-                        <td align="right" width="25"  style="padding: 10px;">{{ number_format($sb->subtotal - $sb->subtotalsetelah,0,',','.') }}</td>
-                        <td align="right" width="25"  style="padding: 10px;">{{ number_format(($sb->subtotal - $sb->subtotalsetelah)/$sb->subtotal*100,0,',','.') }}</td>
+                        @if(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) > ($sb->subtotaljasalayanan + $sb->subtotalapbd))
+                        <td align="right" width="25"  style="padding: 10px;">{{ number_format(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) - ($sb->subtotaljasalayanan + $sb->subtotalapbd),0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 10px;">{{ number_format((($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) - ($sb->subtotaljasalayanan + $sb->subtotalapbd))/$sb->subtotal*100,0,',','.') }}</td>
+                        @elseif(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) < ($sb->subtotaljasalayanan + $sb->subtotalapbd))
+                        <td align="right" width="25"  style="padding: 10px;">{{ number_format(($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah),0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 10px;">{{ number_format((($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah))/$sb->subtotal*100,0,',','.') }}</td>
                         @else
                         <td align="right" width="25"  style="padding: 10px;">{{ number_format(0,0,',','.') }}</td>
                         <td align="right" width="25"  style="padding: 10px;">{{ number_format(0,0,',','.') }}</td>
@@ -357,12 +393,15 @@
                 @endforeach
                 <tr>
                     <td align="center" width="50" colspan="8"  style="padding: 10px; font-weight: bold ">JUMLAH TOTAL</td>
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalsebelum,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotaljasalayanansebelum,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalapbdsebelum,0,',','.') }}</td>
                     <td align="center" width="50" colspan="3"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalsesudah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotaljasalayanansesudah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalapbdsesudah,0,',','.') }}</td>
                     <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalselisih,0,',','.') }}</td>
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalselisih/$jumlahtotalsebelum*100,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalselisih/($jumlahtotaljasalayanansebelum + $jumlahtotalapbdsebelum)*100,0,',','.') }}</td>
                 </tr>
+                @endif
         </table>
         <table width="{{$pageWidth}}" bgcolor="#FFFFFF">
             <thead>

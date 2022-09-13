@@ -176,115 +176,288 @@
         
         <div class="grid_12">
             <fieldset style="margin-top: 50px;">
-                <div class="grid_12 margin-top-30 text-center">
-                    <label c-label item="item" font size=""> <u><h1>FORMULIR PERMINTAAN PELAYANAN KEROHANIAN</h1></u></label>
+                <div class="grid_12 margin-top-30">
+                    <label c-label item="item" style="text-align: center; font-size: 20px;"> <u>FORMULIR PERMINTAAN PELAYANAN KEROHANIAN</u></label>
                 </div>
                 <div class="grid_12" style="margin-top: 50px;">
-                    <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_12">
                         <div class="grid_1"></div>
                         <div class="grid_11">
                             <label c-label item="item" class="margin-bottom">Yang bertanda tangan di bawah ini : </label>
                         </div>
                     </div>
-                    <div class="grid_12 margin-top-10 text-center margin-bottom">
+                    <div class="grid_12 margin-top-10 margin-bottom">
                         <div class="grid_1"></div>
                         <div class="grid_3">
                             <label c-label item="item" class="margin-bottom">Nama :</label>
                         </div>
+                        <div class="grid_2">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307000]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                        <div class="grid_1">
+                            <label c-label item="item" class="margin-bottom">Umur :</label>
+                        </div>
+                        <div class="grid_2">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307010]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                        <div class="grid_3">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307020]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Alamat :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307030]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Agama :</label>
+                        </div>
                         <div class="grid_4">
-                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301700]"
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307040]"
                             style="height: 30px; width: 100%; "/>
                         </div>
                         <div class="grid_2">
-                            <label c-label item="item" class="margin-bottom">Umur :</label>
+                            <label c-label item="item" class="margin-bottom">No. Telp. / HP :</label>
+                        </div>
+                        <div class="grid_2">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307050]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Hubungan dengan pasien :</label>
+                        </div>
+                        <div class="grid_2">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[1901307060]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listHubunganPasien" />
+                        </div>
+                        <div class="grid_2" ng-hide="lainnya1">
+                            <label c-label item="item" class="margin-bottom">sebutkan</label>
+                        </div>
+                        <div class="grid_4" ng-hide="lainnya1">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307070]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Dengan ini meminta diberikan pelayanan kerohanian :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307080]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Terhadap </label>
+                        </div>
+                        <div class="grid_2">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[1901307090]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listTerhadapPasien" />
+                        </div>
+                        <div class="grid_2" ng-hide="lainnya2">
+                            <label c-label item="item" class="margin-bottom">sebutkan</label>
+                        </div>
+                        <div class="grid_4" ng-hide="lainnya2">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307100]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Nama Pasien :</label>
+                        </div>
+                        <div class="grid_2">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307110]"
+                            style="height: 30px; width: 100%; "/>
                         </div>
                         <div class="grid_1">
-                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301700]"
+                            <label c-label item="item" class="margin-bottom">Umur :</label>
+                        </div>
+                        <div class="grid_2">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307120]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                        <div class="grid_3">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307130]"
                             style="height: 30px; width: 100%; "/>
                         </div>
                     </div>
-                    <div class="grid_12 text-center margin-bottom">
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Nomor Rekam Medis :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307140]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Agama :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307150]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-bottom" style="margin-top: 50px;">
+                        <div class="grid_1"></div>
+                        <div class="grid_5"></div>
                         <div class="grid_1"></div>
                         <div class="grid_5">
-                            <div class="grid_3">
-                                <label c-label item="item" class="margin-bottom">Tanggal :</label>
-                            </div>
-                            <div class="grid_9">
-                                <input style="width: 100%" k-ng-model="item.obj[1901301710]" kendo-datetimepicker
-                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" /></label>
-                            </div>
+                            <label c-label item="item">Yogyakarta, </label>
+                            <input style="width: 100%" k-ng-model="item.obj[1901307160]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-bottom" >
+                        <div class="grid_1"></div>
+                        <div class="grid_5">
+                            <label c-label item="item" style="text-align: center;">Perawat Ruangan</label>
+                            <input style="width: 100%; text-align: center;" kendo-combo-box k-ng-model="item.obj[1901307170]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listPegawai" />
                         </div>
                         <div class="grid_1"></div>
                         <div class="grid_5">
-                            <div class="grid_12">
-                                <div class="grid_3">
-                                    <label c-label item="item" class="margin-bottom">Yth. Bagian</label>
-                                </div>
-                                <div class="grid_9">
-                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301720]"
-                                    style="height: 30px; width: 100%; "/>
-                                </div>
+                            <label c-label item="item" style="text-align: center;">Pemohon</label>
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307180]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                        
+                    </div>
+                    <hr></hr>
+                    <div class="grid_12 margin-top-30">
+                        <label c-label item="item" style="text-align: center; font-size: 20px;">LAPORAN PELAKSANAAN PELAYANAN KEROHANIAN</label>
+                    </div>
+                    <div class="grid_12" style="margin-top: 50px;">
+                        <div class="grid_1"></div>
+                        <div class="grid_11">
+                            <label c-label item="item" class="margin-bottom">Telah diberikan Pelayanan Kerohanian </label>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_1">
+                            <label c-label item="item" class="margin-bottom">berupa</label>
+                        </div>
+                        <div class="grid_10">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307190]"
+                            style="height: 60px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Kepada Pasien :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307200]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Nama :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307210]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Nomor Rekam Medis :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307220]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Agama :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307230]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3"><label c-label item="item">Pada Hari, Tanggal</label></div>
+                        <div class="grid_3">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307240]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                        <div class="grid_5">
+                            <div class="grid_4"><label c-label item="item">Yogyakarta, </label></div>
+                            <div class="grid_8">
+                                <input style="width: 100%; margin-top: -0px;" k-ng-model="item.obj[1901307250]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="grid_12 margin-top-20 margin-bottom">
-                    <div class="grid_1"></div>
-                    <div class="grid_11"><label c-label item="item" class="margin-bottom">D.H. <br> Harap diterima untuk dirawat / mondok</label></div>
-                </div>
-                <div class="grid_12 margin-top-20 margin-bottom">
-                    <div class="grid_2"></div>
-                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Nama Pasien:</label></div>
-                    <div class="grid_7">
-                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301730]"
-                            k-data-source=""
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Jam :</label>
+                        </div>
+                        <div class="grid_8">
+                            <input  k-ng-model="item.obj[1901307260]"  kendo-timepicker k-max="now" placeholer="HH:mm" k-format="'HH:mm'" style="width:100%" />
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Wisma :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307270]"
                             style="height: 30px; width: 100%; "/>
+                        </div>
                     </div>
-                </div>
-                <div class="grid_12 margin-top-20 margin-bottom">
-                    <div class="grid_2"></div>
-                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Alamat Pasien:</label></div>
-                    <div class="grid_7">
-                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301740]"
-                            style="height: 55px; width: 100%; "/>
+                    <div class="grid_12 margin-bottom" style="margin-top: 50px;">
+                        <div class="grid_1"></div>
+                        <div class="grid_5">
+                            <label c-label item="item" style="text-align: center;">Perawat Ruangan</label>
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[1901307280]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                        <div class="grid_1"></div>
+                        <div class="grid_5">
+                            <label c-label item="item" style="text-align: center;">Petugas</label>
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[1901307290]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                        
                     </div>
-                </div>
-                <div class="grid_12 margin-top-20 margin-bottom">
-                    <div class="grid_2"></div>
-                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Nama Penanggungjawab:</label></div>
-                    <div class="grid_7">
-                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301750]"
-                            k-data-source=""
-                            style="height: 30px; width: 100%; "/>
-                    </div>
-                </div>
-                <div class="grid_12 margin-top-20 margin-bottom">
-                    <div class="grid_2"></div>
-                    <div class="grid_3"><label c-label item="item" class="margin-bottom">No Telepon/Handphone:</label></div>
-                    <div class="grid_7">
-                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901301760]"
-                            k-data-source=""
-                            style="height: 30px; width: 100%; "/>
-                    </div>
-                </div>
-
-                <div class="grid_12" style="margin-top: 50px;">
-                    <div class="grid_1"></div>
-                    <div class="grid_1"><label c-label item="item" class="margin-bottom">Ket:</label></div>
-                    <div class="grid_5"><label c-label item="item" class="margin-bottom">Putih untuk pertinggal</label></div>
-                    <div class="grid_5"><label c-label item="item" class="margin-bottom"><i>Tanda tangan</i></label></div>
-                </div>
-                <div class="grid_12 margin-top-20">
-                    <div class="grid_1"></div>
-                    <div class="grid_1"></div>
-                    <div class="grid_5"><label c-label item="item" class="margin-bottom">Biru untuk klaim</label></div>
-                    <div class="grid_5"></div>
-                </div>
-                <div class="grid_12 margin-top-20 margin-bottom">
-                    <div class="grid_1"></div>
-                    <div class="grid_1"></div>
-                    <div class="grid_5"><label c-label item="item" class="margin-bottom">Kuning untuk kassa</label></div>
-                    <div class="grid_5"></div>
                 </div>
             </fieldset>
         </div>

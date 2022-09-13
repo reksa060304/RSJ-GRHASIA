@@ -3027,6 +3027,10 @@
             "urlDep": "module/EMR/FormulirPelayananKerohanianCtrl"
         },
         {
+            "nameDep": "MonitoringTransfusiDarahCtrl",
+            "urlDep": "module/EMR/MonitoringTransfusiDarahCtrl"
+        },
+        {
             "nameDep": "SerahTerimaKritisCtrl",
             "urlDep": "module/EMR/SerahTerimaKritisCtrl"
         },

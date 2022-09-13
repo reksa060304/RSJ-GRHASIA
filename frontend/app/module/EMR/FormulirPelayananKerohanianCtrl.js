@@ -23,6 +23,71 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
+            $scope.lainnya2 = true
+            $scope.lainnya1 = true
+
+            $scope.listHubunganPasien = [
+                {value: 1, text: 'Diri Sendiri'},
+                {value: 2, text: 'Suami'},
+                {value: 3, text: 'Istri'},
+                {value: 4, text: 'Ayah'},
+                {value: 5, text: 'Ibu'},
+                {value: 6, text: 'Anak'},
+                {value: 7, text: 'Pengampu'},
+                {value: 8, text: 'Lainnya'},
+            ]
+
+            $scope.listTerhadapPasien = [
+                {value: 1, text: 'Saya'},
+                {value: 2, text: 'Suami'},
+                {value: 3, text: 'Istri'},
+                {value: 4, text: 'Ayah'},
+                {value: 5, text: 'Ibu'},
+                {value: 6, text: 'Anak'},
+                {value: 7, text: 'Lain-Lain'},
+            ]
+
+            medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                $scope.listPegawai = data
+            })
+
+            $scope.listJenisKelamin = [
+                {value: 1, text: 'Laki-Laki'},
+                {value: 2, text: 'Perempuan'},
+            ]
+
+            $scope.$watch('item.obj[1901307060]', function(newValue,oldValue){
+                if(newValue!=oldValue){
+            
+                  if($scope.item.obj[1901307060].value == 8){
+                    $scope.lainnya1 = false
+                  }else {
+                    $scope.lainnya1 = true
+                  }
+                   
+                }
+
+            })
+
+            $scope.$watch('item.obj[1901307090]', function(newValue,oldValue){
+                if(newValue!=oldValue){
+            
+                  if($scope.item.obj[1901307090].value == 7){
+                    $scope.lainnya2 = false
+                  }else {
+                    $scope.lainnya2 = true
+                  }
+                   
+                }
+
+            })
+
+            $scope.$watch('item.obj[1901307000]', function(newValue,oldValue){
+                if(newValue!=oldValue){
+                    $scope.item.obj[1901307180] = $scope.item.obj[1901307000]
+                }
+
+            })
 
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
             if (cacheNomorEMR != undefined) {
@@ -32,6 +97,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }   
             
             var chacePeriode = cacheHelper.get('cacheRekamMedis');
+            console.log(chacePeriode)
             if (chacePeriode != undefined) {
                 $scope.cc.nocm = chacePeriode[0]
                 $scope.cc.namapasien = chacePeriode[1]
@@ -68,8 +134,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.obj[116062]=$scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
 
-                $scope.item.obj[1901301730]=$scope.cc.namapasien
-                $scope.item.obj[1901301740]=$scope.cc.alamat
+                $scope.item.obj[1901307110]=$scope.cc.namapasien
+                $scope.item.obj[1901307120]=$scope.cc.umur
+                $scope.item.obj[1901307140]=$scope.cc.nocm
+                $scope.item.obj[1901307130]=$scope.cc.jeniskelamin
+
+                $scope.item.obj[1901307210]=$scope.cc.namapasien
+                $scope.item.obj[1901307220]=$scope.cc.nocm
+                
 
                 dataLoad = dat.data.data
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
@@ -689,7 +761,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     //     nomorEMR : e.data.data.noemr 
                     // });
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
-                    'FakturPemondokanCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
+                    'FormulirPelayananKerohanianCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
                     + $scope.cc.noregistrasi).then(function (res) {
                     })
 
