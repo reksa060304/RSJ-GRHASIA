@@ -26,6 +26,16 @@
         font-family: Arial;
     }
 
+    .tabel tr td{
+        border: 1px solid black;
+    }
+
+    .tabel {
+        width: 100%;
+        border-collapse: collapse;
+
+    }
+
     /* table, tr, td{
         border: 1px solid black;
     } */
@@ -60,7 +70,7 @@
         </tr>
         <tr align="center">
             <td style="border-top: 3px solid black;">
-                <b>RS Jiwa GRHASIA DINKES DIY<br>TAHUN 2022</b>
+                <b>RS Jiwa GRHASIA<br>TAHUN 2022</b>
             </td>
         </tr>
         <tr >
@@ -75,24 +85,24 @@
         </tr>
         </tbody>
     </table>
-        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 3px solid black;">
+        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 3px solid black;" class="tabel">
                 <tr>
                     <td width="15"  rowspan="2" style="padding: 10px; font-weight: bold ">NO</td>
-                    <td width="50" rowspan="2" style="padding: 10px; font-weight: bold;border-left: 3px solid black; ">KETERANGAN</td>
-                    <td colspan="3"style="padding: 10px; text-align: center; font-weight: bold;border-left: 3px solid black;border-bottom: 3px solid black;  ">ANGGARAN SEBELUM PERUBAHAN</td>
-                    <td colspan="3" style="padding: 10px; text-align: center; font-weight: bold;border-left: 3px solid black;border-bottom: 3px solid black;  ">ANGGARAN SESUDAH PERUBAHAN</td>
-                    <td width="20"colspan="3" style="padding: 10px; text-align: center; font-weight: bold;border-left: 3px solid black;border-bottom: 3px solid black;  ">BERTAMBAH / BERKURANG</td>
+                    <td width="50" rowspan="2" style="padding: 10px; font-weight: bold; ">KETERANGAN</td>
+                    <td colspan="3"style="padding: 10px; text-align: center; font-weight: bold;">ANGGARAN SEBELUM PERUBAHAN</td>
+                    <td colspan="3" style="padding: 10px; text-align: center; font-weight: bold;">ANGGARAN SESUDAH PERUBAHAN</td>
+                    <td width="20"colspan="3" style="padding: 10px; text-align: center; font-weight: bold;">BERTAMBAH / BERKURANG</td>
                 </tr>
                 <tr>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">JASA LAYANAN</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">APBD</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">SUB TOTAL</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">JASA LAYANAN</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">APBD</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">SUB TOTAL</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">JASA LAYANAN</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">APBD</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">SUB TOTAL</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">JASA LAYANAN</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">APBD</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">JASA LAYANAN</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">APBD</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">JASA LAYANAN</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">APBD</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
                 </tr>
                 @php
                 $sebelumjasalayanan = 0;
@@ -120,68 +130,65 @@
                     
                     @endphp
                     @if($sb->div == 2)
-                    <td width="15" style="padding: 10px; border-top: 3px solid black; "><b>{{ substr($sb->kode, -4) }}</b></td>
+                    <td width="15" style="padding: 10px; "><b>{{ substr($sb->kode, -4) }}</b></td>
                     @elseif($sb->div == 3)
-                    <td width="15" style="padding: 10px; border-top: 3px solid black; ">{{ substr($sb->kode, -2) }}</td>
+                    <td width="15" style="padding: 10px; ">{{ substr($sb->kode, -2) }}</td>
                     @endif
                     @if($sb->div == 2)
-                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;"><b>{{$sb->kegiatan}}</b></td>
+                    <td width="50" style="padding: 10px;"><b>{{$sb->kegiatan}}</b></td>
                     @elseif($sb->div == 3)
-                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->kegiatan}}</td>
+                    <td width="50" style="padding: 10px;">{{$sb->kegiatan}}</td>
                     @endif
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->jasalayanan}}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->apbd}}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->total}}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->kjasalayanan}}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->kapbd}}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->ktotal}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->jasalayanan,0,',','.')}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->apbd,0,',','.')}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->total,0,',','.')}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->kjasalayanan,0,',','.')}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->kapbd,0,',','.')}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->ktotal,0,',','.')}}</td>
                     @if($sb->kjasalayanan > $sb->jasalayanan)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->kjasalayanan-$sb->jasalayanan}}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->kjasalayanan-$sb->jasalayanan,0,',','.') }}</td>
                     @elseif($sb->kjasalayanan < $sb->jasalayanan)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->jasalayanan-$sb->kjasalayanan}}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->jasalayanan-$sb->kjasalayanan,0,',','.') }}</td>
                     @else
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->jasalayanan+$sb->kjasalayanan}}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->jasalayanan+$sb->kjasalayanan,0,',','.') }}</td>
                     @endif
 
                     @if($sb->kapbd > $sb->apbd)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->kapbd - $sb->apbd}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->kapbd - $sb->apbd,0,',','.')}}</td>
                     @elseif($sb->kapbd < $sb->apbd)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->apbd - $sb->kapbd}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->apbd - $sb->kapbd,0,',','.')}}</td>
                     @else
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->apbd+$sb->kapbd}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->apbd+$sb->kapbd,0,',','.')}}</td>
                     @endif
 
                     @if($sb->ktotal > $sb->total)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->ktotal - $sb->total}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->ktotal - $sb->total,0,',','.')}}</td>
                     @elseif($sb->ktotal < $sb->total)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->total - $sb->ktotal}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->total - $sb->ktotal,0,',','.')}}</td>
                     @else
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->total+$sb->ktotal}}</td>
+                    <td width="20" style="padding: 10px;">{{number_format($sb->total+$sb->ktotal,0,',','.')}}</td>
                     @endif
                 </tr>
                 @endforeach
                 <tr>
-                    <td colspan="2" width="20" style="padding: 10px; font-weight: bold; text-align: center; border-top: 3px solid black;">JUMLAH TOTAL</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$sebelumjasalayanan}}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$sebelumapbd}}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$sebelumtotal}}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$sesudahjasalayanan}}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$sesudahapbd}}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$sesudahtotal}}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$jasalayananberkurang}}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$apbdberkurang}}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$berkurang}}</td>
+                    <td colspan="2" width="20" style="padding: 10px; font-weight: bold; text-align: center; ">JUMLAH TOTAL</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($sebelumjasalayanan,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($sebelumapbd,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($sebelumtotal,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($sesudahjasalayanan,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($sesudahapbd,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($sesudahtotal,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($jasalayananberkurang,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($apbdberkurang,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($berkurang,0,',','.') }}</td>
                 </tr>
         </table>
         <table width="{{$pageWidth}}" bgcolor="#FFFFFF">
             <thead>
                 <tr>
-                    <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    Mengetahui,
-                            </font>
-                        </p>
+                    <td width="300">
+                    </td>
+                    <td width="300">
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; margin-top: 50px;">
@@ -192,17 +199,14 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <p align="center" style="margin-right: 30px; margin-bottom:50px">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    Kepala Dinas Kesehatan DIY
-                            </font>
-                        </p>
+                    <td width="300">
+                    </td>
+                    <td width="300">
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; margin-bottom:50px">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    Kepala BLUD RS Jiwa GRHASIA DINKES DIY
+                                    Kepala BLUD RS Jiwa GRHASIA
                             </font>
                         </p>
                     </td>
@@ -212,12 +216,9 @@
                 <tr></tr>
                 <tr></tr>
                 <tr>
-                    <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    drg. Pembajun Setyaningastutie, M.Kes
-                            </font>
-                        </p>
+                    <td width="300">
+                    </td>
+                    <td width="300">
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; margin-top: 50px;">
@@ -228,12 +229,9 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <p align="center" style="margin-right: 30px; ">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            NIP. 19650912 199303 2 006
-                            </font>
-                        </p>
+                    <td width="300">
+                    </td>
+                    <td width="300">
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; ">

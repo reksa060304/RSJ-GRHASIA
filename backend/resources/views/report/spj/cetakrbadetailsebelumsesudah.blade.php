@@ -79,7 +79,7 @@
         </tr>
         <tr align="center">
             <td style="border-top: 3px solid black;">
-                <b>RS Jiwa GRHASIA DINKES DIY<br>TAHUN 2022</b>
+                <b>RS Jiwa GRHASIA<br>TAHUN 2022</b>
             </td>
         </tr>
         <tr >
@@ -406,15 +406,12 @@
         <table width="{{$pageWidth}}" bgcolor="#FFFFFF">
             <thead>
                 <tr>
-                    <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 180px;">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    Mengetahui,
-                            </font>
-                        </p>
+                    <td width="300">
+                    </td>
+                    <td width="300">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 180px;">
+                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     Yogyakarta, {{ date('d M Y') }}
                             </font>
@@ -422,17 +419,14 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <p align="center" style="margin-right: 30px; margin-bottom:50px">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    Kepala Dinas Kesehatan DIY
-                            </font>
-                        </p>
+                    <td width="300">
+                    </td>
+                    <td width="300">
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; margin-bottom:50px">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    Kepala BLUD RS Jiwa GRHASIA DINKES DIY
+                                    Kepala BLUD RS Jiwa GRHASIA
                             </font>
                         </p>
                     </td>
@@ -442,12 +436,9 @@
                 <tr></tr>
                 <tr></tr>
                 <tr>
-                    <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    drg. Pembajun Setyaningastutie, M.Kes
-                            </font>
-                        </p>
+                    <td width="300">
+                    </td>
+                    <td width="300">
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; margin-top: 50px;">
@@ -458,12 +449,9 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <p align="center" style="margin-right: 30px; ">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            NIP. 19650912 199303 2 006
-                            </font>
-                        </p>
+                    <td width="300">
+                    </td>
+                    <td width="300">
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; ">

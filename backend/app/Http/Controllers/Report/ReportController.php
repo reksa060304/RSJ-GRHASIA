@@ -5678,7 +5678,7 @@ public function suratBuktiPengembalian(Request $request)
                         ) as x group by x.kegiatan, x.subkegiatan, x.subtotal, x.kode, x.div, x.id_asalproduk
                     ) as y group by subkegiatan, kode, div
                 ) as a order by kode"));
-        $pageWidth = 950;
+        $pageWidth = 1110;
         return view('report.spj.cetakrekapanggaransumberdana', compact('data', 'pageWidth','tahap'));
     }
     public function CetakRekapSumberDanaAnggaran(Request $request)
@@ -5933,7 +5933,7 @@ public function suratBuktiPengembalian(Request $request)
                     ) AS y GROUP BY y.subkegiatan, y.tahap, y.kode, y.div 
                 ) AS A ORDER BY A.kode ) AS K ON j.kegiatan = K.kegiatan
         "));
-        $pageWidth = 1200;
+        $pageWidth = 1300;
         //return $this->respond($result);
         return view('report.spj.cetakrekapanggaransumberdanasebelumsesudah',compact('sebelum', 'pageWidth'));
     }   

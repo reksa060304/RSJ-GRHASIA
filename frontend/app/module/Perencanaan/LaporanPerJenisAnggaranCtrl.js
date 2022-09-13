@@ -11,6 +11,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isRouteLoading = false;
             $scope.item.tglawal = $scope.now;
             $scope.item.tglakhir = $scope.now;
+            $scope.disterhadapdetail = FontFaceSetLoadEvent
 
             $scope.yearUngkul = {
                 start: "decade",
@@ -164,6 +165,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.tglakhir = $scope.now;
 
             }
+
+            $scope.$watch('item.tahapdetail', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    
+                    if($scope.item.tahapdetail.id == 1 || $scope.item.tahapdetail.id == 2){
+                        $scope.disterhadapdetail = true
+                    } else{
+                        $scope.disterhadapdetail = false
+                    }
+                }
+            });
 
         }
     ]);
