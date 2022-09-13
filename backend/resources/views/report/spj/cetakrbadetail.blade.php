@@ -72,7 +72,9 @@
                 <b style="font-size: 25px;">
                     RBA
                 </b><br>
+                @if($sebelum != [])
                 {{substr($sebelum[0]->tahap, 0, -3)}}
+                @endif
             </td>
         </tr>
         <tr align="center">
@@ -134,12 +136,14 @@
                             $jumlahtotal = 0
                         @endphp
                         @foreach($sebelum as $sb)
+                        @if($sebelum != [])
                             @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
                             @php
                             $jumlahtotal+=$sb->subtotaljasalayanan;
                             $jumlahtotal+=$sb->subtotalapbd;
                             @endphp
                             @endif
+                        @endif
                         @endforeach
                         <td align="left" width="50"  style="padding: 10px;">{{ "Rp " . number_format($jumlahtotal,2,',','.') }}</td>
                     </tr>

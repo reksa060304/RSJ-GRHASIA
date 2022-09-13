@@ -26,6 +26,16 @@
         font-family: Arial;
     }
 
+    .tabel tr td{
+        border: 1px solid black;
+    }
+
+    .tabel {
+        width: 100%;
+        border-collapse: collapse;
+
+    }
+
     /* table, tr, td{
         border: 1px solid black;
     } */
@@ -75,132 +85,190 @@
         </tr>
         </tbody>
     </table>
-        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 3px solid black;">
+        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 3px solid black;" class="tabel">
                 <tr>
                     <td align="center"width="20" rowspan="2" colspan="2" style="padding: 10px; font-weight: bold ">NO</td>
-                    <td width="200" rowspan="2" style="padding: 10px; font-weight: bold;border-left: 3px solid black; ">ALOKASI BIAYA/PENGELUARAN</td>
-                    <td width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;border-left: 3px solid black;  ">ANGGARAN SEBELUM PERUBAHAN</td>
-                    <td width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;border-left: 3px solid black; border-right: 3px solid black;   ">SETELAH PERUBAHAN</td>
-                    <td width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;border-left: 3px solid black; border-right: 3px solid black;   ">JUMLAH BERTAMBAH / BERKURANG</td>
+                    <td width="200" rowspan="2" style="padding: 10px; font-weight: bold; ">ALOKASI BIAYA/PENGELUARAN</td>
+                    <td width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;  ">ANGGARAN SEBELUM PERUBAHAN</td>
+                    <td width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;">SETELAH PERUBAHAN</td>
+                    <td width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;">JUMLAH BERTAMBAH / BERKURANG</td>
                     {{-- <td width="20" style="padding: 10px; font-weight: bold ; ">BERTAMBAH / (BERKURANG)</td> --}}
                 </tr>
                 <tr>
-                    <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; ">Jasa Layanan</td>
-                    <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; ">APBD</td>
-                    <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; ">Jasa Layanan</td>
-                    <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; ">APBD</td>
-                    <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; ">Jasa Layanan</td>
-                    <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; ">APBD</td>
+                    <td width="200" style="padding: 10px; font-weight: bold; ">APBD</td>
+                    <td width="200" style="padding: 10px; font-weight: bold; ">Jasa Layanan</td>
+                    <td width="200" style="padding: 10px; font-weight: bold; ">APBD</td>
+                    <td width="200" style="padding: 10px; font-weight: bold; ">Jasa Layanan</td>
+                    <td width="200" style="padding: 10px; font-weight: bold; ">APBD</td>
+                    <td width="200" style="padding: 10px; font-weight: bold; ">Jasa Layanan</td>
                 </tr>
                 @php
-                $totalsebelum = 0;
-                $totalsesudah = 0;
-                $totalberkurang = 0;
+                $totaljasalayanansebelum = 0;
+                $totaljasalayanansesudah = 0;
+                $totaljasalayananberkurang = 0;
+                $totalapbdsebelum = 0;
+                $totalapbdsesudah = 0;
+                $totalapbdberkurang = 0;
                 @endphp
                 <tr>
-                    @php
-                    // $totalsebelum += $sb->totalawalsebelum;
-                    // $totalsesudah += $jumlah[0]->totalawalsesudah;
-                    // $jumlah[0]->totalawalsebelum > $jumlah[0]->totalawalsesudah ? $totalberkurang += ($jumlah[0]->totalawalsebelum - $jumlah[0]->totalawalsesudah) : $totalberkurang += ($jumlah[0]->totalawalsesudah - $jumlah[0]->totalawalsebelum);
-                    @endphp
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; border-right: 3px solid black;">I</td>
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; "></td>
-                    <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;">BIAYA OPERASIONAL</td>
-                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold;border-left: 3px solid black;border-top: 3px solid black;  text-align: right;">{{$jumlah[0]->subtotalapbd}}</td>
-                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold;border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; text-align: right;">{{$jumlah[0]->subtotaljasalayanan}}</td>
-                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold;border-left: 3px solid black;border-top: 3px solid black;  text-align: right;">{{$jumlah[0]->subtotalapbdsetelah}}</td>
-                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold;border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; text-align: right;">{{$jumlah[0]->subtotaljasalayanansetelah}}</td>
+                    <td width="10" style="padding: 10px; font-weight: bold;  ">I</td>
+                    <td width="10" style="padding: 10px; font-weight: bold;  "></td>
+                    <td width="200" style="padding: 10px; font-weight: bold;">BIAYA OPERASIONAL</td>
+                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold; text-align: right;">{{ number_format($jumlah[0]->subtotalapbd,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold; text-align: right;">{{ number_format($jumlah[0]->subtotaljasalayanan,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold; text-align: right;">{{ number_format($jumlah[0]->subtotalapbdsetelah,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold; text-align: right;">{{ number_format($jumlah[0]->subtotaljasalayanansetelah,0,',','.') }}</td>
+                    
                     @if($jumlah[0]->subtotalapbd > $jumlah[0]->subtotalapbdsetelah)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$jumlah[0]->subtotalapbd-$jumlah[0]->subtotalapbdsetelah}}</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($jumlah[0]->subtotalapbd-$jumlah[0]->subtotalapbdsetelah,0,',','.') }}</td>
+                    @php
+                    $totalapbdberkurang += $jumlah[0]->subtotalapbd - $jumlah[0]->subtotalapbdsetelah;
+                    @endphp
                     @elseif($jumlah[0]->subtotalapbd < $jumlah[0]->subtotalapbdsetelah)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$jumlah[0]->subtotalapbdsetelah-$jumlah[0]->subtotalapbd}}</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($jumlah[0]->subtotalapbdsetelah-$jumlah[0]->subtotalapbd,0,',','.') }}</td>
+                    @php
+                    $totalapbdberkurang += $jumlah[0]->subtotalapbdsetelah - $jumlah[0]->subtotalapbd;
+                    @endphp
                     @else
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;"></td>
+                    @php
+                    $totalapbdberkurang += 0;
+                    @endphp
+                    <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">0</td>
                     @endif
                     @if($jumlah[0]->subtotaljasalayanan > $jumlah[0]->subtotaljasalayanansetelah)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$jumlah[0]->subtotaljasalayanan-$jumlah[0]->subtotaljasalayanansetelah}}</td>
+                    @php
+                    $totaljasalayananberkurang += $jumlah[0]->subtotaljasalayanan - $jumlah[0]->subtotaljasalayanansetelah;
+                    @endphp
+                    <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($jumlah[0]->subtotaljasalayanan-$jumlah[0]->subtotaljasalayanansetelah,0,',','.') }}</td>
                     @elseif($jumlah[0]->subtotaljasalayanan < $jumlah[0]->subtotaljasalayanansetelah)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$jumlah[0]->subtotaljasalayanansetelah-$jumlah[0]->subtotaljasalayanan}}</td>
+                    @php
+                    $totaljasalayananberkurang += $jumlah[0]->subtotaljasalayanansetelah - $jumlah[0]->subtotaljasalayanan;
+                    @endphp
+                    <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($jumlah[0]->subtotaljasalayanansetelah-$jumlah[0]->subtotaljasalayanan,0,',','.') }}</td>
                     @else
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;"></td>
+                    @php
+                    $totaljasalayananberkurang += 0;
+                    @endphp
+                    <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">0</td>
                     @endif
+                    
                 </tr>
                 @foreach($sebelum as $sb)
                 <tr>
                 
                     @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
                     @php
-                        // $totalsebelum += $sb->subtotalsebelum;
-                        // $totalsesudah += $sb->subtotalsetelah;
-                        // $sb->subtotalsebelum > $sb->subtotalsetelah ? $totalberkurang += ($sb->subtotalsebelum - $sb->subtotalsetelah) : $totalberkurang += ($sb->subtotalsetelah - $sb->subtotalsebelum);
+                        $totaljasalayanansebelum += $sb->subtotaljasalayanansebelum + $jumlah[0]->subtotaljasalayanan;
+                        $totaljasalayanansesudah += $sb->subtotaljasalayanansetelah + $jumlah[0]->subtotaljasalayanansetelah;
+                        $totalapbdsebelum += $sb->subtotalapbdsebelum + $jumlah[0]->subtotalapbd;
+                        $totalapbdsesudah += $sb->subtotalapbdsetelah + $jumlah[0]->subtotalapbdsetelah;
                     @endphp
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; border-right: 3px solid black;">{{$sb->kodemataanggaran}}</td>
-                    <td width="10" style="padding: 10px; font-weight: bold; border-top: 3px solid black; "></td>
+                    <td width="10" style="padding: 10px; font-weight: bold;">{{$sb->kodemataanggaran}}</td>
+                    <td width="10" style="padding: 10px; font-weight: bold;  "></td>
                     @elseif(strpos($sb->kodemataanggaran,'I.') !== false && strlen($sb->kodemataanggaran) == 3)
-                    <td width="10" style="padding: 10px; border-top: 3px solid black; border-right: 3px solid black;"></td>
-                    <td width="10" style="padding: 10px; border-top: 3px solid black; ">{{substr($sb->kodemataanggaran, -1)}}</td>
+                    <td width="10" style="padding: 10px;"></td>
+                    <td width="10" style="padding: 10px;  ">{{substr($sb->kodemataanggaran, -1)}}</td>
                     @else
-                    <td width="10" style="padding: 10px; border-top: 3px solid black; border-right: 3px solid black;"></td>
-                    <td width="10" style="padding: 10px; border-top: 3px solid black; "></td>
+                    <td width="10" style="padding: 10px;"></td>
+                    <td width="10" style="padding: 10px;  "></td>
                     @endif                    
                     @if(strlen($sb->kodemataanggaran) > 3)
-                    <td width="200" style="padding: 10px; border-left: 3px solid black; border-top: 3px solid black;">{{substr($sb->kodemataanggaran, -1)}}. {{$sb->namamataanggaran}}</td>
+                    <td width="200" style="padding: 10px;">{{substr($sb->kodemataanggaran, -1)}}. {{$sb->namamataanggaran}}</td>
                     @else
                         @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                            <td width="200" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;">{{$sb->namamataanggaran}}</td>
+                            <td width="200" style="padding: 10px; font-weight: bold">{{$sb->namamataanggaran}}</td>
                         @else 
-                            <td width="200" style="padding: 10px; border-left: 3px solid black; border-top: 3px solid black;">{{$sb->namamataanggaran}}</td>
+                            <td width="200" style="padding: 10px;">{{$sb->namamataanggaran}}</td>
                         @endif
                     @endif
                     @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;  ">{{$sb->subtotalapbdsebelum}}</td>
-                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; ">{{$sb->subtotaljasalayanansebelum}}</td>
-                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black;  ">{{$sb->subtotalapbdsetelah}}</td>
-                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; ">{{$sb->subtotaljasalayanansetelah}}</td>
+                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;  ">{{ number_format($sb->subtotalapbdsebelum,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;">{{ number_format($sb->subtotaljasalayanansebelum,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;  ">{{ number_format($sb->subtotalapbdsetelah,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold;">{{ number_format($sb->subtotaljasalayanansetelah,0,',','.') }}</td>
                     @else
-                    <td width="50" style="padding: 10px; text-align: right; border-left: 3px solid black; border-top: 3px solid black;  ">{{$sb->subtotalapbdsebelum}}</td>
-                    <td width="50" style="padding: 10px; text-align: right; border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; ">{{$sb->subtotaljasalayanansebelum}}</td>
-                    <td width="50" style="padding: 10px; text-align: right; border-left: 3px solid black; border-top: 3px solid black;  ">{{$sb->subtotalapbdsetelah}}</td>
-                    <td width="50" style="padding: 10px; text-align: right; border-left: 3px solid black;border-right: 3px solid black; border-top: 3px solid black; ">{{$sb->subtotaljasalayanansetelah}}</td>
+                    <td width="50" style="padding: 10px; text-align: right;   ">{{ number_format($sb->subtotalapbdsebelum,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; text-align: right; ">{{ number_format($sb->subtotaljasalayanansebelum,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; text-align: right;   ">{{ number_format($sb->subtotalapbdsetelah,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; text-align: right; ">{{ number_format($sb->subtotaljasalayanansetelah,0,',','.') }}</td>
                     @endif
                     @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
                         @if($sb->subtotalapbdsebelum > $sb->subtotalapbdsetelah)
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$sb->subtotalapbdsebelum-$sb->subtotalapbdsetelah}}</td>
+                        @php
+                        $totalapbdberkurang += $sb->subtotalapbdsebelum - $sb->subtotalapbdsetelah;
+                        @endphp
+                        <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($sb->subtotalapbdsebelum-$sb->subtotalapbdsetelah,0,',','.') }}</td>
                         @elseif($sb->subtotalapbdsebelum < $sb->subtotalapbdsetelah)
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$sb->subtotalapbdsetelah-$sb->subtotalapbdsebelum}}</td>
+                        @php
+                        $totalapbdberkurang += $sb->subtotalapbdsetelah - $sb->subtotalapbdsebelum;
+                        @endphp
+                        <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($sb->subtotalapbdsetelah-$sb->subtotalapbdsebelum,0,',','.') }}</td>
                         @else
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;"></td>
+                        @php
+                        $totalapbdberkurang += 0 
+                        @endphp
+                        <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">0</td>
                         @endif
                         @if($sb->subtotaljasalayanansebelum > $sb->subtotaljasalayanansetelah)
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$sb->subtotaljasalayanansebelum-$sb->subtotaljasalayanansetelah}}</td>
+                        @php
+                        $totalapbdberkurang += $sb->subtotalapbdsebelum - $sb->subtotalapbdsetelah;
+                        @endphp
+                        <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($sb->subtotaljasalayanansebelum-$sb->subtotaljasalayanansetelah,0,',','.') }}</td>
                         @elseif($sb->subtotaljasalayanansebelum < $sb->subtotaljasalayanansetelah)
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$sb->subtotaljasalayanansetelah-$sb->subtotaljasalayanansebelum}}</td>
+                        @php
+                        $totalapbdberkurang += $sb->subtotalapbdsetelah - $sb->subtotalapbdsebelum;
+                        @endphp
+                        <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($sb->subtotaljasalayanansetelah-$sb->subtotaljasalayanansebelum,0,',','.') }}</td>
                         @else
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;"></td>
+                        @php
+                        $totalapbdberkurang += 0 
+                        @endphp
+                        <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">0</td>
                         @endif
                     @else
                         @if($sb->subtotalapbdsebelum > $sb->subtotalapbdsetelah)
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$sb->subtotalapbdsebelum-$sb->subtotalapbdsetelah}}</td>
+                        @php
+                        $totaljasalayananberkurang += $sb->subtotalapbdsebelum - $sb->subtotalapbdsetelah;
+                        @endphp
+                        <td width="20" style="padding: 10px; text-align: right;">{{ number_format($sb->subtotalapbdsebelum-$sb->subtotalapbdsetelah,0,',','.') }}</td>
                         @elseif($sb->subtotalapbdsebelum < $sb->subtotalapbdsetelah)
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$sb->subtotalapbdsetelah-$sb->subtotalapbdsebelum}}</td>
+                        @php
+                        $totaljasalayananberkurang += $sb->subtotalapbdsetelah - $sb->subtotalapbdsebelum;
+                        @endphp
+                        <td width="20" style="padding: 10px; text-align: right;">{{ number_format($sb->subtotalapbdsetelah-$sb->subtotalapbdsebelum,0,',','.') }}</td>
                         @else
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;"></td>
+                        @php
+                        $totaljasalayananberkurang += 0;
+                        @endphp
+                        <td width="20" style="padding: 10px; text-align: right;">0</td>
                         @endif
                         @if($sb->subtotaljasalayanansebelum > $sb->subtotaljasalayanansetelah)
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$sb->subtotaljasalayanansebelum-$sb->subtotaljasalayanansetelah}}</td>
+                        @php
+                        $totaljasalayananberkurang += $sb->subtotalapbdsebelum - $sb->subtotalapbdsetelah;
+                        @endphp
+                        <td width="20" style="padding: 10px; text-align: right;">{{ number_format($sb->subtotaljasalayanansebelum-$sb->subtotaljasalayanansetelah,0,',','.') }}</td>
                         @elseif($sb->subtotaljasalayanansebelum < $sb->subtotaljasalayanansetelah)
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;">{{$sb->subtotaljasalayanansetelah-$sb->subtotaljasalayanansebelum}}</td>
+                        @php
+                        $totaljasalayananberkurang += $sb->subtotalapbdsetelah - $sb->subtotalapbdsebelum;
+                        @endphp
+                        <td width="20" style="padding: 10px; text-align: right;">{{ number_format($sb->subtotaljasalayanansetelah-$sb->subtotaljasalayanansebelum,0,',','.') }}</td>
                         @else
-                        <td width="20" style="padding: 10px; border-top: 3px solid black; font-weight: bold;text-align: right;"></td>
+                        @php
+                        $totaljasalayananberkurang += 0;
+                        @endphp
+                        <td width="20" style="padding: 10px; text-align: right;">0</td>
                         @endif
                     @endif
                 </tr>
                 @endforeach
                 <tr>
-                    <td  colspan="3"  style="padding: 10px; text-align: left; font-weight: bold; border-top: 3px solid black; text-align:center;">JUMLAH TOTAL</td>
-                    <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black;border-left: 3px solid black;text-align: right;">{{$totalsesudah}}</td>
-                    <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black; border-left: 3px solid black;text-align: right;border-right: 3px solid black;">{{$totalsebelum}}</td>
-                    <td style="padding: 10px; border-top: 3px solid black; font-weight: bold;border-top: 3px solid black; text-align: right;">{{$totalberkurang}}</td>
+                    <td  colspan="3"  style="padding: 10px; text-align: left; font-weight: bold; text-align:center;">JUMLAH TOTAL</td>
+                    <td style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($totalapbdsebelum,0,',','.') }}</td>
+                    <td style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($totaljasalayanansebelum,0,',','.') }}</td>
+                    <td style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($totalapbdsesudah,0,',','.') }}</td>
+                    <td style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($totaljasalayanansesudah,0,',','.') }}</td>
+                    <td style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($totalapbdberkurang,0,',','.') }}</td>
+                    <td style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($totaljasalayananberkurang,0,',','.') }}</td>
                 </tr>
                 
         </table>

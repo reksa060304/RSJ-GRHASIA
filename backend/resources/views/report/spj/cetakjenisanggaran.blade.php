@@ -96,18 +96,18 @@
                     @elseif($dt->div == 3)
                     <td width="150" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$dt->kegiatan}}</td>
                     @endif
-                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$dt->jumlahpegawai}}</td>
-                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$dt->jumlahbarangjasa}}</td>
-                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$dt->jumlahmodal}}</td>
-                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$dt->total}}</td>
+                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($dt->jumlahpegawai,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($dt->jumlahbarangjasa,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($dt->jumlahmodal,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($dt->total,0,',','.') }}</td>
                 </tr>
                 @endforeach
                 <tr>
                     <td colspan="2" width="20" style="padding: 10px; font-weight: bold; text-align: center; border-top: 3px solid black;">JUMLAH TOTAL</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$jumlah[0]->jumlahpegawai}}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$jumlah[0]->jumlahbarangjasa}}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold ;border-left: 3px solid black;border-top: 3px solid black; ">{{$jumlah[0]->jumlahmodal}}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{$jumlah[0]->total}}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{ number_format($jumlah[0]->jumlahpegawai,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{ number_format($jumlah[0]->jumlahbarangjasa,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold ;border-left: 3px solid black;border-top: 3px solid black; ">{{ number_format($jumlah[0]->jumlahmodal,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{ number_format($jumlah[0]->total,0,',','.') }}</td>
                 </tr>
         </table>
         <table width="{{$pageWidth}}" bgcolor="#FFFFFF">

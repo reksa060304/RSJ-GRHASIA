@@ -4589,7 +4589,7 @@ order by kodemataanggaran"));
         $id = $request['kegiatan'];
         
         $data = DB::select(DB::raw("
-        select kg.id, kg.kode, kg.keterangan
+        select kg.id, kg.kode, kg.keterangan, kg.id || '-' || kg.keterangan as text
         from kegiatananggaran_m km 
         inner join kegiatananggaran_m kg on kg.kode ilike km.kode || '%' and kg.div = 4
         where km.statusenabled = true and km.kdprofile = 30
