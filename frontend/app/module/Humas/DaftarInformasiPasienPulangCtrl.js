@@ -83,60 +83,62 @@ define(['initialize'], function (initialize) {
         return moment(tanggal).format('DD-MMM-YYYY HH:mm');
       }      
 
-      $scope.columnPasienPulang = [
-        {
-          "field": "tanggalMasuk",
-          "title": "Tanggal Masuk",
-          "width": "80px",
-          "template": "<span class='style-left'>{{formatTanggalJam('#: tanggalMasuk #')}}</span>"
-        },
-        {
-          "field": "noCm",
-          "title": "No.RM",
-          "width": "50px",
-          "template": "<span class='style-center'>#: noCm #</span>"
-        },
-        {
-          "field": "noRegistrasi",
-          "title": "No. Registrasi",
-          "width": "60px",
-          "template": "<span class='style-center'>#: noRegistrasi #</span>"
-        },
-        {
-          "field": "namaPasien",
-          "title": "Nama",
-          "width": "120px"
-        },
-        {
-          "field": "jenisAsuransi",
-          "title": "Jenis Pasien",
-          "width": "100px",
-          "template": "<span class='style-center'>#: jenisAsuransi #</span>"
-        },
-        {
-          "field": "namaRuangan",
-          "title": "Ruangan",
-          "width": "120px"
-        },
-        {
-          "field": "tanggalPulang",
-          "title": "Tanggal Pulang",
-          "width": "80px",
-          "template": "<span class='style-left'>{{formatTanggalJam('#: tanggalPulang #')}}</span>"
-        },
-        {
-          "field": "lamahari",
-          "title": "LOS",
-          "width": "30px",
-          "template": "<span class='style-center'>#: lamahari == 0 ? '' : lamahari #</span>"
-        },
-        {
-          "field": "status",
-          "title": "Status",
-          "width": "70px",
-          "template": "<span class='style-center'>#: status #</span>"
-        },        
-      ];
+      $scope.columnPasienPulang = {
+        toolbar: ['excel'],
+        columns: [{
+            "field": "tanggalMasuk",
+            "title": "Tanggal Masuk",
+            "width": "80px",
+            "template": "<span class='style-left'>{{formatTanggalJam('#: tanggalMasuk #')}}</span>"
+          },
+          {
+            "field": "noCm",
+            "title": "No.RM",
+            "width": "50px",
+            "template": "<span class='style-center'>#: noCm #</span>"
+          },
+          {
+            "field": "noRegistrasi",
+            "title": "No. Registrasi",
+            "width": "60px",
+            "template": "<span class='style-center'>#: noRegistrasi #</span>"
+          },
+          {
+            "field": "namaPasien",
+            "title": "Nama",
+            "width": "120px"
+          },
+          {
+            "field": "jenisAsuransi",
+            "title": "Jenis Pasien",
+            "width": "100px",
+            "template": "<span class='style-center'>#: jenisAsuransi #</span>"
+          },
+          {
+            "field": "namaRuangan",
+            "title": "Ruangan",
+            "width": "120px"
+          },
+          {
+            "field": "tanggalPulang",
+            "title": "Tanggal Pulang",
+            "width": "80px",
+            "template": "<span class='style-left'>{{formatTanggalJam('#: tanggalPulang #')}}</span>"
+          },
+          {
+            "field": "lamahari",
+            "title": "LOS",
+            "width": "30px",
+            "template": "<span class='style-center'>#: lamahari == 0 ? '' : lamahari #</span>"
+          },
+          {
+            "field": "status",
+            "title": "Status",
+            "width": "70px",
+            "template": "<span class='style-center'>#: status #</span>"
+          },
+        ]
+      }
       
       $scope.Perbaharui = function () {
         $scope.ClearSearch();
@@ -232,7 +234,7 @@ define(['initialize'], function (initialize) {
             $scope.isRouteLoading = false;
             $scope.dataPasienPulang = new kendo.data.DataSource({
               data: data,
-              pageSize: 200,
+              pageSize: 1000,
               total: data.length,
               serverPaging: false,
               schema: {

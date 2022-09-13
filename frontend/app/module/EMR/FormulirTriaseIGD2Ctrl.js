@@ -202,28 +202,391 @@ define(['initialize'], function (initialize) {
 
 
 
-
-            $scope.getSkor = function (stat) {
-
-                var arrobj = Object.keys($scope.item.obj)
-                var arrSave = []
-                for (var i = arrobj.length - 1; i >= 0; i--) {
-                    if (arrobj[i] == stat.id) {
-                        if ($scope.item.obj[parseFloat(arrobj[i])] == true) {
-                            $scope.totalSkor = $scope.totalSkor + parseFloat(stat.skor)
-                            break
-                        } else {
-                            $scope.totalSkor = $scope.totalSkor - parseFloat(stat.skor)
-                            break
-                        }
-
-
-                    } else {
-
-                    }
+            var a1 = 0, a2=0, a3=0, 
+            a4makan=0,a4mandi=0, a4berpakaian=0, 
+            a5=0,a6=0, a7makan=0,a7mandi=0, a7berpakaian=0
+            $scope.getSkor = function () {
+                //Menciderai diri / orang lain
+                if ($scope.item.obj[30006318] == true){
+                    a1 = 0
+                } 
+                 else if ($scope.item.obj[30006318] == false) {
+                    a1 = 0
+                    $scope.item.obj[30006318] = undefined
                 }
-                $scope.item.obj[9084] = $scope.totalSkor //+ $scope.totalSkor2
+                
+                if ($scope.item.obj[30006319] == true) {
+                    a1 = 16
+                } 
+                 else if ($scope.item.obj[30006319] == false) {
+                    a1 = 0
+                    $scope.item.obj[30006319] = undefined
+                }
+
+                if ($scope.item.obj[30006320] == true){
+                    a1 = 34
+                } 
+                 else if ($scope.item.obj[30006320] == false) {
+                    a1 = 0
+                    $scope.item.obj[30006320] = undefined
+                }
+
+                if ($scope.item.obj[30006321] == true) {
+                    a1 = 50
+                } 
+                 else if ($scope.item.obj[30006321] == false) {
+                    a1 = 0
+                    $scope.item.obj[30006321] = undefined
+                }
+                //Komunikasi
+                if ($scope.item.obj[30006322] == true) {
+                    a2 = 0
+                    
+                } 
+                 else if ($scope.item.obj[30006322] == false) {
+                    a2 = 0
+                    $scope.item.obj[30006322] = undefined
+                }
+                if ($scope.item.obj[30006323] == true) {
+                    a2 = 14
+                } 
+                 else if ($scope.item.obj[30006323] == false) {
+                    a2 = 0
+                    $scope.item.obj[30006323] = undefined
+                }
+                if ($scope.item.obj[30006324] == true) {
+                    a2 = 26
+                } 
+                 else if ($scope.item.obj[30006324] == false) {
+                    a2 = 0
+                    $scope.item.obj[30006324] = undefined
+                }
+                if ($scope.item.obj[30006325] == true) {
+                    a2 = 40
+                } 
+                 else if ($scope.item.obj[30006325] == false) {
+                    a2 = 0
+                    $scope.item.obj[30006325] = undefined
+                }
+
+                //Interaksi Sosial
+                if ($scope.item.obj[30006326] == true) {
+                    a3 = 0
+                } 
+                 else if ($scope.item.obj[30006326] == false) {
+                    a3 = 0
+                    $scope.item.obj[30006326] = undefined
+                }
+                if ($scope.item.obj[30006327] == true) {
+                    a3 = 5
+                } 
+                 else if ($scope.item.obj[30006327] == false) {
+                    a3 = 0
+                    $scope.item.obj[30006327] = undefined
+                }
+                if ($scope.item.obj[30006328] == true) {
+                    a3 = 10
+                } 
+                 else if ($scope.item.obj[30006328] == false) {
+                    a3 = 0
+                    $scope.item.obj[30006328] = undefined
+                }
+                if ($scope.item.obj[30006329] == true) {
+                    a3 = 15
+                } 
+                 else if ($scope.item.obj[30006329] == false) {
+                    a3 = 0
+                    $scope.item.obj[30006329] = undefined
+                }
+                //Pemenuhan ADL makan
+                if ($scope.item.obj[30006330] == true) {
+                    a4makan = 0
+                } 
+                 else if ($scope.item.obj[30006330] == false) {
+                    a4makan = 0
+                    $scope.item.obj[30006330] = undefined
+                }
+                if ($scope.item.obj[30006333] == true) {
+                    a4makan = 3
+                } 
+                 else if ($scope.item.obj[30006333] == false) {
+                    a4makan = 0
+                    $scope.item.obj[30006333] = undefined
+                }
+                if ($scope.item.obj[30006336] == true) {
+                    a4makan = 7
+                } 
+                 else if ($scope.item.obj[30006336] == false) {
+                    a4makan = 0
+                    $scope.item.obj[30006336] = undefined
+                }
+                if ($scope.item.obj[30006339] == true) {
+                    a4makan = 10
+                } 
+                 else if ($scope.item.obj[30006339] == false) {
+                    a4makan = 0
+                    $scope.item.obj[30006339] = undefined
+                }
+
+                //Pemenuhan ADL mandi
+                if ($scope.item.obj[30006331] == true) {
+                    a4mandi = 0
+                } 
+                 else if ($scope.item.obj[30006331] == false) {
+                    a4mandi = 0
+                    $scope.item.obj[30006331] = undefined
+                }
+                if ($scope.item.obj[30006334] == true) {
+                    a4mandi = 3
+                } 
+                 else if ($scope.item.obj[30006334] == false) {
+                    a4mandi = 0
+                    $scope.item.obj[30006334] = undefined
+                }
+                if ($scope.item.obj[30006337] == true) {
+                    a4mandi = 7
+                } 
+                 else if ($scope.item.obj[30006337] == false) {
+                    a4mandi = 0
+                    $scope.item.obj[30006337] = undefined
+                }
+                if ($scope.item.obj[30006340] == true) {
+                    a4mandi = 10
+                } 
+                 else if ($scope.item.obj[30006340] == false) {
+                    a4mandi = 0
+                    $scope.item.obj[30006340] = undefined
+                }
+                //Pemenuhan ADL Berpakaian
+                if ($scope.item.obj[30006332] == true) {
+                    a4berpakaian = 0
+                } 
+                 else if ($scope.item.obj[30006332] == false) {
+                    a4berpakaian = 0
+                    $scope.item.obj[30006332] = undefined
+                }
+                if ($scope.item.obj[30006335] == true) {
+                    a4berpakaian = 3
+                } 
+                 else if ($scope.item.obj[30006335] == false) {
+                    a4berpakaian = 0
+                    $scope.item.obj[30006335] = undefined
+                }
+                if ($scope.item.obj[30006338] == true) {
+                    a4berpakaian = 7
+                } 
+                 else if ($scope.item.obj[30006338] == false) {
+                    a4berpakaian = 0
+                    $scope.item.obj[30006338] = undefined
+                }
+                if ($scope.item.obj[30006341] == true) {
+                    a4berpakaian = 10
+                } 
+                 else if ($scope.item.obj[30006341] == false) {
+                    a4berpakaian = 0
+                    $scope.item.obj[30006341] = undefined
+                }
+
+                //Tidur / istirahat
+                if ($scope.item.obj[30006342] == true) {
+                    a5 = 0
+                } 
+                 else if ($scope.item.obj[30006342] == false) {
+                    a5 = 0
+                    $scope.item.obj[30006342] = undefined
+                }
+                if ($scope.item.obj[30006343] == true) {
+                    a5 = 3
+                } 
+                 else if ($scope.item.obj[30006343] == false) {
+                    a5 = 0
+                    $scope.item.obj[30006343] = undefined
+                }
+                if ($scope.item.obj[30006344] == true) {
+                    a5 = 7
+                } 
+                 else if ($scope.item.obj[30006344] == false) {
+                    a5 = 0
+                    $scope.item.obj[30006344] = undefined
+                }
+                if ($scope.item.obj[30006345] == true) {
+                    a5 = 10
+                } 
+                 else if ($scope.item.obj[30006345] == false) {
+                    a5 = 0
+                    $scope.item.obj[30006345] = undefined
+                }
+
+                //Pengobatan Oral / injeksi
+                if ($scope.item.obj[30006346] == true) {
+                    a6 = 0
+                } 
+                 else if ($scope.item.obj[30006346] == false) {
+                    a6 = 0
+                    $scope.item.obj[30006346] = undefined
+                }
+                if ($scope.item.obj[30006347] == true) {
+                    a6 = 3
+                } 
+                 else if ($scope.item.obj[30006347] == false) {
+                    a6 = 0
+                    $scope.item.obj[30006347] = undefined
+                }
+                if ($scope.item.obj[30006348] == true) {
+                    a6 = 7
+                } 
+                 else if ($scope.item.obj[30006348] == false) {
+                    a6 = 0
+                    $scope.item.obj[30006348] = undefined
+                }
+                if ($scope.item.obj[30006349] == true) {
+                    a6 = 10
+                } 
+                 else if ($scope.item.obj[30006349] == false) {
+                    a6 = 0
+                    $scope.item.obj[30006349] = undefined
+                }
+
+                //Aktivitas Terjadwal makan
+                if ($scope.item.obj[30006350] == true) {
+                    a7makan = 0
+                }
+                
+                if($scope.item.obj[30006350] == false) {
+                    a7makan = 0
+                    $scope.item.obj[30006350] = undefined
+                }
+                if ($scope.item.obj[30006353] == true) {
+                    a7makan = 3
+                } 
+                 else if ($scope.item.obj[30006353] == false) {
+                    a7makan = 0
+                    $scope.item.obj[30006353] = undefined
+                }
+                if ($scope.item.obj[30006356] == true) {
+                    a7makan = 7
+                } 
+                 else if ($scope.item.obj[30006356] == false) {
+                    a7makan = 0
+                    $scope.item.obj[30006356] = undefined
+                }
+                if ($scope.item.obj[30006359] == true) {
+                    a7makan = 10
+                }
+                
+                if ($scope.item.obj[30006359] == false) {
+                    a7makan = 0
+                    $scope.item.obj[30006359] = undefined
+                }
+
+                //Aktivitas Terjadwal mandi
+                if ($scope.item.obj[30006351] == true) {
+                    a7mandi = 0
+                } 
+                 else if ($scope.item.obj[30006351] == false) {
+                    a7mandi = 0
+                    $scope.item.obj[30006351] = undefined
+                }
+                if ($scope.item.obj[30006354] == true) {
+                    a7mandi = 3
+                } 
+                 else if ($scope.item.obj[30006354] == false) {
+                    a7mandi = 0
+                    $scope.item.obj[30006354] = undefined
+                }
+                if ($scope.item.obj[30006357] == true) {
+                    a7mandi = 7
+                } 
+                 else if ($scope.item.obj[30006357] == false) {
+                    a7mandi = 0
+                    $scope.item.obj[30006357] = undefined
+                }
+                if ($scope.item.obj[30006360] == true) {
+                    a7mandi = 10
+                } 
+                 else if ($scope.item.obj[30006360] == false) {
+                    a7mandi = 0
+                    $scope.item.obj[30006360] = undefined
+                }
+                //Aktivitas Terjadwal berpakaian
+                if ($scope.item.obj[30006352] == true) {
+                    a7berpakaian = 0
+                } 
+                 else if ($scope.item.obj[30006352] == false) {
+                    a7berpakaian = 0
+                    $scope.item.obj[30006352] = undefined
+                }
+                if ($scope.item.obj[30006355] == true) {
+                    a7berpakaian = 3
+                } 
+                 else if ($scope.item.obj[30006355] == false) {
+                    a7berpakaian = 0
+                    $scope.item.obj[30006355] = undefined
+                }
+                if ($scope.item.obj[30006358] == true) {
+                    a7berpakaian = 7
+                } 
+                 else if ($scope.item.obj[30006358] == false) {
+                    a7berpakaian = 0
+                    $scope.item.obj[30006358] = undefined
+                }
+                if ($scope.item.obj[30006361] == true) {
+                    a7berpakaian = 10
+                } 
+                 else if ($scope.item.obj[30006361] == false) {
+                    a7berpakaian = 10
+                    $scope.item.obj[30006361] = undefined
+                }
+                // var arrobj = Object.keys($scope.item.obj)
+                // var arrSave = []
+                // for (var i = arrobj.length - 1; i >= 0; i--) {
+                //     if (arrobj[i] == stat.id) {
+                //         if ($scope.item.obj[parseFloat(arrobj[i])] == true) {
+                //             $scope.totalSkor = $scope.totalSkor + parseFloat(stat.skor)
+                //             break
+                //         } else {
+                //             $scope.totalSkor = $scope.totalSkor - parseFloat(stat.skor)
+                //             break
+                //         }
+
+
+                //     } else {
+
+                //     }
+                // }
+                $scope.item.obj[30006362] = parseInt(a1) + parseInt(a2) + parseInt(a3) + parseInt(a4makan) + 
+                parseInt(a4mandi) + parseInt(a4berpakaian) + 
+                parseInt(a5) + parseInt(a6) + parseInt(a7makan) + parseInt(a7mandi) + parseInt(a7berpakaian)
+                if ($scope.item.obj[30006362] >= 120) {
+                    $scope.item.obj[30006363] = true
+                    $scope.item.obj[30006364] = false
+                    $scope.item.obj[30006365] = false
+                    $scope.item.obj[30006366] = false
+                } else if ($scope.item.obj[30006362] >= 60 && $scope.item.obj[30006362] <= 119) {
+                    $scope.item.obj[30006363] = false
+                    $scope.item.obj[30006364] = true
+                    $scope.item.obj[30006365] = false
+                    $scope.item.obj[30006366] = false
+                } else if ($scope.item.obj[30006362] >= 31 && $scope.item.obj[30006362] <= 59) {
+                    $scope.item.obj[30006363] = false
+                    $scope.item.obj[30006364] = false
+                    $scope.item.obj[30006365] = true
+                    $scope.item.obj[30006366] = false
+                } else if ($scope.item.obj[30006362] >= 0 && $scope.item.obj[30006362] <= 30) {
+                    $scope.item.obj[30006363] = false
+                    $scope.item.obj[30006364] = false
+                    $scope.item.obj[30006365] = false
+                    $scope.item.obj[30006366] = true
+                }
+                $scope.totalSkor //+ $scope.totalSkor2
                 // setSkorAkhir($scope.item.obj[3152])
+            }
+            $scope.getKeinginan = function(){
+                if ($scope.item.obj[30006316] == true){
+                    $scope.item.obj[30006363] = true
+                } else{
+                    $scope.item.obj[30006363] = false
+                }
             }
             $scope.getSkor2 = function (stat) {
 
@@ -244,8 +607,8 @@ define(['initialize'], function (initialize) {
 
                     }
                 }
-                $scope.item.obj[3152] = $scope.totalSkor + $scope.totalSkor2
-                setSkorAkhir($scope.item.obj[3152])
+                $scope.item.obj[30006362] = $scope.totalSkor2
+                // setSkorAkhir($scope.item.obj[3152])
             }
 
             function setSkorAkhir(total) {
