@@ -4587,14 +4587,21 @@ order by kodemataanggaran"));
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $id = $request['kegiatan'];
+        $tahun = $request['tahun'];
+        $tahap = $request['tahap'];
         
         $data = DB::select(DB::raw("
         select kg.id, kg.kode, kg.keterangan, kg.id || '-' || kg.keterangan as text
         from kegiatananggaran_m km 
         inner join kegiatananggaran_m kg on kg.kode ilike km.kode || '%' and kg.div = 4
+        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = kg.id
         where km.statusenabled = true and km.kdprofile = 30
         and kg.statusenabled = true and kg.kdprofile = 30
+        and kb.statusenabled = true and kb.kdprofile = 30
         and km.id = $id
+        and kg.tahun = '$tahun'
+        and kb.objecttahapfk = $tahap
+        group by kg.id, kg.kode, kg.keterangan, kg.id || '-' || kg.keterangan
         ")
         );
 

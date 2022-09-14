@@ -29,7 +29,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             });
 
             $scope.changeKegiatan = function () {
-                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatandetail.id).then(function (e) {
+                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatandetail.id+"&tahap="+$scope.item.tahapdetail.id+"&tahun="+moment($scope.item.tahundetail).format('YYYY')).then(function (e) {
                     $scope.listSubKegiatan = e.data.data
                 });
             }

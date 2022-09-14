@@ -19,6 +19,10 @@ define(['initialize'], function (initialize) {
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
 
+            medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                $scope.listPegawai = data
+            })
+
              medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + $scope.cc.emrfk).then(function (e) {
 
                 var datas = e.data.kolom4
