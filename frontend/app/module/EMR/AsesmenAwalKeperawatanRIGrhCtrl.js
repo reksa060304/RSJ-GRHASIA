@@ -37,6 +37,7 @@ define(['initialize'], function (initialize) {
                 var arrayShiftJaga= []
                 var arrayShiftJaga2 = []
                 var arrayShiftJaga3= []
+                var listKeperawatanJiwa = []
                 var sama = false
                 for (let i = 0; i < datas.length; i++) {
                     const element = datas[i];
@@ -76,6 +77,40 @@ define(['initialize'], function (initialize) {
                         }
                     }
                     //END ARRAY GEJALA
+                    //ARRAY LISTKEPERAWATANJIWA
+                    if (element.kodeexternal == 'listkeperawatanjiwa') {
+                        for (let z = 0; z < listKeperawatanJiwa.length; z++) {
+                            const element2 = listKeperawatanJiwa[z];
+                            if (element2.namaexternal == element.namaexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            listKeperawatanJiwa.push(datax)
+                        }
+                    }
+                    //END ARRAY LIST KEPERAWATAN JIWA
                     // ARRAY GEJALA
                     if (element.kodeexternal == 'nyeri2') {
                         for (let z = 0; z < arrayShiftJaga2.length; z++) {
@@ -140,6 +175,22 @@ define(['initialize'], function (initialize) {
                     }
                 }
                 $scope.listData2 = arrayShiftJaga2
+                //LIST KEPERAWATAN JIWA
+                var gejalaKosongKeun = []
+                for (let k = 0; k < listKeperawatanJiwa.length; k++) {
+                    const element = listKeperawatanJiwa[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal) {
+                            gejalaKosongKeun.push(element2)
+                            element.details = gejalaKosongKeun
+                        } else {
+                            gejalaKosongKeun = []
+                        }
+                    }
+                }
+                $scope.listKeperawatanJiwa = gejalaKosongKeun
+                console.log($scope.listKeperawatanJiwa);
             })
 
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
@@ -863,29 +914,29 @@ define(['initialize'], function (initialize) {
             ] 
 
 
-            $scope.listKeperawatanJiwa = [
-                {
-                    "id": 1, "nama": "Masalah Keperawatan Jiwa",
-                    "detail": [
-                        { "id": 3005120, "nama": "Perilaku kekerasan", "satuan": "", "type": "checkbox" },
-                        { "id": 3005121, "nama": "Risiko bunuh diri", "satuan": "", "type": "checkbox" },
-                        { "id": 3005122, "nama": "Risiko perilaku kekerasan", "satuan": "", "type": "checkbox" },
-                        { "id": 3005123, "nama": "Gangguan persepsi sensori", "satuan": "", "type": "checkbox" },
-                        { "id": 3005124, "nama": "Gangguan proses Pikir", "satuan": "", "type": "checkbox" },
-                        { "id": 3005125, "nama": "Defisit perawatan diri", "satuan": "", "type": "checkbox" },
-                        { "id": 3005126, "nama": "Isolasi sosial", "satuan": "", "type": "checkbox" },
-                        { "id": 3005127, "nama": "Harga diri rendah", "satuan": "", "type": "checkbox" },
-                        { "id": 3005128, "nama": "Ansietas", "satuan": "", "type": "checkbox" },
-                        { "id": 3005129, "nama": "Berduka", "satuan": "", "type": "checkbox" },
-                        { "id": 3005130, "nama": "Gangguan memori", "satuan": "", "type": "checkbox" },
-                        { "id": 3005131, "nama": "Deprivasi tidur", "satuan": "", "type": "checkbox" },
-                        { "id": 3005132, "nama": "Manajemen kesehatan keluarga tidak efektif", "satuan": "", "type": "checkbox" },
-                        { "id": 3005133, "nama": "Ketidakmampuan koping keluarga", "satuan": "", "type": "checkbox" },
-                        { "id": 3005134, "nama": "Lainnya", "satuan": "", "type": "textbox2", "idd":  "3005135"},
-                        { "id": 3005136, "nama": "Lainnya", "satuan": "", "type": "textbox2", "idd":  "3005137"},
-                    ]
-                }
-            ] 
+            // $scope.listKeperawatanJiwa = [
+            //     {
+            //         "id": 1, "nama": "Masalah Keperawatan Jiwa",
+            //         "detail": [
+            //             { "id": 3005120, "nama": "Perilaku kekerasan", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005121, "nama": "Risiko bunuh diri", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005122, "nama": "Risiko perilaku kekerasan", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005123, "nama": "Gangguan persepsi sensori", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005124, "nama": "Gangguan proses Pikir", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005125, "nama": "Defisit perawatan diri", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005126, "nama": "Isolasi sosial", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005127, "nama": "Harga diri rendah", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005128, "nama": "Ansietas", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005129, "nama": "Berduka", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005130, "nama": "Gangguan memori", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005131, "nama": "Deprivasi tidur", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005132, "nama": "Manajemen kesehatan keluarga tidak efektif", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005133, "nama": "Ketidakmampuan koping keluarga", "satuan": "", "type": "checkbox" },
+            //             { "id": 3005134, "nama": "Lainnya", "satuan": "", "type": "textbox2", "idd":  "3005135"},
+            //             { "id": 3005136, "nama": "Lainnya", "satuan": "", "type": "textbox2", "idd":  "3005137"},
+            //         ]
+            //     }
+            // ] 
            
            
             var chacePeriode = cacheHelper.get('cacheRekamMedis');
