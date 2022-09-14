@@ -12650,6 +12650,8 @@ $result = array(
         ) as l on l.namaruangan = r.namaruangan 
         where r.kdprofile = 30
         and r.statusenabled = true
+        and r.objectdepartemenfk in(3,14,16,18,24,27)
+        and r.id not in(804)
         $departemenjoin
         $ruanganjoin
         order by a.jumlahjanuari

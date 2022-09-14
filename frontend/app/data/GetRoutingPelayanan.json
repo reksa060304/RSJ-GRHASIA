@@ -18760,6 +18760,25 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "Rekapan10MasalahKeperawatanCtrl",
+    "url": "/RekapMasalahPerawat",
+    "templateurl": "module/Registrasi/Laporan/Rekapan10MasalahKeperawatan.html",
+    "controller": "Rekapan10MasalahKeperawatanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 
