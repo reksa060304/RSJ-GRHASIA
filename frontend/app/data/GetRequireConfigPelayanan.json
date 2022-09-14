@@ -3375,6 +3375,10 @@
         {
             "nameDep": "PenilaianRisikoJatuhPasienDewasaCtrl",
             "urlDep": "module/EMR/PenilaianRisikoJatuhPasienDewasaCtrl"
+        },
+        {
+            "nameDep": "LembarTransferkeRumahSakitLainCtrl",
+            "urlDep": "module/EMR/LembarTransferkeRumahSakitLainCtrl"
         }
         
     ]

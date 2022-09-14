@@ -18715,6 +18715,28 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.LembarTransferkeRumahSakitLain",
+    "url": "/LembarTransferkeRumahSakitLain",
+    "templateurl": "module/EMR/LembarTransferkeRumahSakitLain.html",
+    "controller": "LembarTransferkeRumahSakitLainCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 

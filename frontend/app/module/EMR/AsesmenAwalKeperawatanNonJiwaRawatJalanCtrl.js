@@ -25,7 +25,7 @@ define(['initialize'], function (initialize) {
             medifirstService.getPart('emr/get-datacombo-part-ruangan-pelayanan', true, true, 20).then(function (data) {
                 $scope.listRuangan = data
             })
-            medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000455).then(function (e) {
+            medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000456).then(function (e) {
 
                 var datas = e.data.kolom4
 
