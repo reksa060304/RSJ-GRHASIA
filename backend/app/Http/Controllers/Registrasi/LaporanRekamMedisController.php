@@ -475,15 +475,15 @@ class LaporanRekamMedisController extends   ApiController
                     and pdt.statusenabled = TRUE
                     and pdt.kdprofile = 30
                     and pdt.tglpulang::date between '$tglAwal' and '$tglAkhir'
-                    group by pdt.norec, apdt.objectruanganfk
+                    group by pdt.norec
                 )
                 
                 select pd.tglpulang::date as tgl, cte.tglmasuk as tanggalmasuk,
-                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  (pd.tglpulang::date-cte.tglmasuk) + 1 end as lamadirawat
+                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  (pd.tglpulang::date-cte.tglmasuk) end as lamadirawat
                     FROM pasiendaftar_t as pd
                     INNER JOIN cte on cte.norec = pd.norec
                     WHERE pd.kdprofile = 30 and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
-                    group by pd.tglpulang::date, cte.tglmasuk
+                    group by pd.tglpulang::date, pd.noregistrasi, cte.tglmasuk
                     order by pd.tglpulang::date
                 ) as x group by x.tgl
             ) as y group by extract(year from y.tgl);"));
@@ -969,15 +969,15 @@ class LaporanRekamMedisController extends   ApiController
                     and pdt.statusenabled = TRUE
                     and pdt.kdprofile = 30
                     and pdt.tglpulang::date between '$tglAwal' and '$tglAkhir'
-                    group by rum.namaruangan, pdt.norec, apdt.objectruanganfk
+                    group by rum.namaruangan, pdt.norec
                 )
                 
                 select cte.namaruangan, pd.tglpulang::date as tgl, cte.tglmasuk as tanggalmasuk,
-                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  (pd.tglpulang::date-cte.tglmasuk) + 1 end as lamadirawat
+                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  (pd.tglpulang::date-cte.tglmasuk) end as lamadirawat
                     FROM pasiendaftar_t as pd
                     INNER JOIN cte on cte.norec = pd.norec
                     WHERE pd.kdprofile = 30 and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
-                    group by pd.tglpulang::date, cte.tglmasuk, cte.namaruangan
+                    group by pd.tglpulang::date, pd.noregistrasi, cte.tglmasuk, cte.namaruangan
                     order by pd.tglpulang::date
                 ) as x group by x.namaruangan, x.tgl
             ) as y group by extract(year from y.tgl), y.namaruangan;"));
@@ -1473,15 +1473,15 @@ class LaporanRekamMedisController extends   ApiController
                     and pdt.statusenabled = TRUE
                     and pdt.kdprofile = 30
                     and pdt.tglpulang::date between '$tglAwal' and '$tglAkhir'
-                    group by pdt.norec, apdt.objectruanganfk
+                    group by pdt.norec
                 )
                 
                 select pd.tglpulang::date as tgl, cte.tglmasuk as tanggalmasuk,
-                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  (pd.tglpulang::date-cte.tglmasuk) + 1 end as lamadirawat
+                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  (pd.tglpulang::date-cte.tglmasuk) end as lamadirawat
                     FROM pasiendaftar_t as pd
                     INNER JOIN cte on cte.norec = pd.norec
                     WHERE pd.kdprofile = 30 and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
-                    group by pd.tglpulang::date, cte.tglmasuk
+                    group by pd.tglpulang::date, pd.noregistrasi, cte.tglmasuk
                     order by pd.tglpulang::date
                 ) as x group by x.tgl
             ) as y group by to_char(y.tgl, 'Month'), to_char(y.tgl, 'mm')
@@ -6700,15 +6700,15 @@ class LaporanRekamMedisController extends   ApiController
                     and pdt.statusenabled = TRUE
                     and pdt.kdprofile = 30
                     and pdt.tglpulang::date between '$tglAwal' and '$tglAkhir'
-                    group by pdt.norec, apdt.objectruanganfk
+                    group by pdt.norec
                 )
                 
                 select pd.tglpulang::date as tanggalpulang, cte.tglmasuk as tanggalmasuk,
-                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  (pd.tglpulang::date-cte.tglmasuk) + 1 end as lamadirawat
+                case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  (pd.tglpulang::date-cte.tglmasuk) end as lamadirawat
                     FROM pasiendaftar_t as pd
                     INNER JOIN cte on cte.norec = pd.norec
                     WHERE pd.kdprofile = 30 and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
-                    group by pd.tglpulang::date, cte.tglmasuk 
+                    group by pd.tglpulang::date, pd.noregistrasi, cte.tglmasuk 
                     order by pd.tglpulang::date
                 ) as x group by x.tanggalpulang
             ) as y"));

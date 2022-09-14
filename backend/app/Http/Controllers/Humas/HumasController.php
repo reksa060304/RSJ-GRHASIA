@@ -1492,11 +1492,11 @@ class HumasController extends ApiController
             ->leftjoin('registrasipelayananpasien_t as rpp', 'rpp.noregistrasifk', '=', 'pd.norec')
             ->select('pd.norec','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
                      'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk','dept.id as deptid','pd.tglclosing',DB::raw("CASE
-				WHEN max(pd.tglpulang::date)- min(rpp.tglmasuk::date)>= '0' and dept.id= '16' THEN
+				WHEN max(pd.tglpulang::date)- min(rpp.tglmasuk::date)> '0' and dept.id= '16' THEN
 				max(pd.tglpulang::date)- min(rpp.tglmasuk::date)
 				when max(pd.tglpulang::date)- min(rpp.tglmasuk::date) = '0' and dept.id='16' THEN
 				'1'
-				ELSE 
+				when dept.id != 16 then
 				'0'
 			END  as lamahari"))
             ->where('pd.kdprofile', $idProfile)

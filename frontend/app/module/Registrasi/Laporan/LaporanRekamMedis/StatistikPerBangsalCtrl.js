@@ -110,7 +110,7 @@ define(['initialize'], function (initialize) {
                 columns: [
                     {
                         field: "tahun",
-                        title: "Bulan",
+                        title: "Bangsal",
                         width: "120px",
                         headerAttributes: {
                             style: "text-align : center"

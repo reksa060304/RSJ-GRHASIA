@@ -1100,6 +1100,8 @@ define(['initialize'], function (initialize) {
                         var tglperiodeawal = '';
                         var tglperiodeakhir = '';
                         var jumlahttruangan = '';
+
+                        $scope.item.losaja = datas[0].jumlahharidirawat;
                         //console.log(jumlahlamadirawat);
                         
                         for (var i = 0; i < datas.length; i++) {
