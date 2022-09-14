@@ -221,6 +221,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('dukcapil/get-nik-v2', 'Bridging\BridgingDukcapilController@getNIKDukcapilV2');
               Route::post('registrasi/get-nik-duplicate', 'Bridging\BridgingDukcapilController@getNIKDuplicate');
               Route::get('registrasi/setting-data-fixed-dukcapil','Bridging\BridgingDukcapilController@getSettingDataFixedDukcapil');
+              Route::get('registrasi/laporan/get-data-masalah-Perawat','Bridging\BridgingDukcapilController@getDataMasalahKeperawatan');
               Route::post('bridging/bpjs/tools', 'Bridging\BridgingBPJSV2Controller@bpjsTools');
               //End SEP
               //*PESERTA

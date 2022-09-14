@@ -33,6 +33,29 @@ class BridgingDukcapilController extends ApiController
     {
         parent::__construct($skip_authentication = false);
     }
+    public function getDataMasalahKeperawatan(Request $request)
+    {
+        $data = \DB::select(DB::raw(
+            "SELECT epd.emrdfk, emrd.caption, count(epd.emrdfk) FROM emrpasiend_t epd 
+            INNER JOIN emrd_t emrd on emrd.id = epd.emrdfk
+            INNER JOIN emrpasien_t ep on ep.noemr = epd.emrpasienfk
+            inner JOIN antrianpasiendiperiksa_t apd on apd.norec = ep.norec_apd
+            inner JOIN pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            where epd.emrdfk BETWEEN 301100 and 301157 
+            and epd.statusenabled = true and epd.kdprofile=30 
+            and ep.statusenabled = true and ep.kdprofile=30
+            and apd.statusenabled = true and apd.kdprofile=30
+            and pd.statusenabled = true and pd.kdprofile=30
+            and epd.tgl between '$request[tglAwal]' and '$request[tglAkhir]'
+            GROUP BY epd.emrdfk, emrd.caption
+            ORDER BY count desc"
+        ));
+        $result = array(
+            "data"=> $data,
+            'as'=> 'Fizy'
+        );
+        return $this->respond($result);
+    }
     public function getIdentitasByNIK($nik) {
         $url = $this->settingDataFixed('urlApiDukcapil',$kdProfile);
         $user_id = $this->settingDataFixed('userDukcapil',$kdProfile);
