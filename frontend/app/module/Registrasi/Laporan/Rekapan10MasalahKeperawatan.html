@@ -115,11 +115,11 @@
     </div>
 
     <div class="grid_12" >
-        <div class="grid_12 headerBox">
+        <!-- <div class="grid_12 headerBox">
             <p>Daftar Pengunjung</p>
-        </div>
+        </div> -->
         <div class="clear"></div>
-        <div class="grid_10 borderBox" style="width:70%;  margin-left:15%; margin-right:15%;">
+        <div class="grid_10" style="width:70%;  margin-left:15%; margin-right:15%;">
             <kendo-grid id="kGrid"  data-source="dataSourceGrid" options="columnGrid" k-pageable="'true'"
                 k-sortable="'true'" k-resizable="'true'" k-selectable="'row'" k-ng-model="dataPasienSelected"
                 ng-click="klikGrid(dataPasienSelected)" class="max-height"></kendo-grid>
