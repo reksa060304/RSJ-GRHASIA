@@ -1429,6 +1429,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-lpj', 'Perencanaan\PerencanaanController@getLPJ');
             Route::get('perencanaan/get-bku', 'Perencanaan\PerencanaanController@getBKU');
             Route::get('perencanaan/get-detail-sub-kegiatan', 'Perencanaan\PerencanaanController@getDetailSubKegiatan');
+            Route::get('perencanaan/get-detail-kegiatan', 'Perencanaan\PerencanaanController@getDetailKegiatan');
             Route::get('perencanaan/get-jenis-bukti-bku', 'Perencanaan\PerencanaanController@getJenisBuktiBKU');
             Route::get('perencanaan/get-jasgir', 'Perencanaan\PerencanaanController@getJasgir');
             Route::get('perencanaan/get-panjar-bku', 'Perencanaan\PerencanaanController@getPanjarBKU');

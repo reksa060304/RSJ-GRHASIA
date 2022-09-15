@@ -985,7 +985,7 @@
 					TAHUN ANGGARAN
 				</div>
 				<div class="grid_2" style="margin-top: -10px;">
-					<input c-text-box type="input" class="k-textbox" ng-model="item.thnAnggaran"  />
+					<input c-text-box type="input" class="k-textbox" ng-model="item.thnAnggaran"  ng-disabled="disidpegawai"/>
 				</div>
 				
 				
@@ -995,7 +995,7 @@
 					<div class="grid_5" style="margin-top: -10px;">
 						<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahap"
 							k-data-text-field="'tahap'" k-data-value-field="'id'"
-							k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+							k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" ng-disabled="disidpegawai"/>
 					</div>
 			</div>
 			<div class="grid_12">
@@ -1005,7 +1005,7 @@
 				<div class="grid_2" style="margin-top: -10px;">
 					<input style="width: 100%;" kendo-combo-box k-ng-model="item.jenisbelanja"
 							k-data-text-field="'jenisbelanja'" k-data-value-field="'id'"
-							k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisBelanja" />
+							k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisBelanja" ng-disabled="disidpegawai"/>
 				</div>
 
 
@@ -1014,10 +1014,10 @@
 						PPTK
 					</div>
 					<div class="grid_3" style="margin-top: -10px;">
-						<input c-text-box type="input" class="k-textbox" ng-model="item.pptktext" ng-hide="dispptk"                  " />
+						<input c-text-box type="input" class="k-textbox" ng-model="item.pptktext" ng-hide="dispptk" ng-disabled="disidpegawai"                 " />
 					</div>
 					<div class="grid_1" style="margin-top: -10px;">
-						<button class="btnTemplate1" ng-click="TambahPPTK()" ng-hide="dispptk">Add</button>           
+						<button class="btnTemplate1" ng-click="TambahPPTK()" ng-hide="dispptk" ng-disabled="disidpegawai">Add</button>           
 					</div>
 			</div>
 			
@@ -1034,10 +1034,10 @@
 					SUB SUB KEGIATAN
 				</div>
 				<div class="grid_3" style="margin-top: -10px;">
-					<input c-text-box type="input" class="k-textbox" ng-model="item.subSubKegiatankode"  />
+					<input c-text-box type="input" class="k-textbox" ng-model="item.subSubKegiatankode"  ng-disabled="disidpegawai"/>
 				</div>
 				<div class="grid_5" style="margin-top: -10px;">
-					<input c-text-box type="input" class="k-textbox" ng-model="item.subSubKegiatan"  />
+					<input c-text-box type="input" class="k-textbox" ng-model="item.subSubKegiatan"  ng-disabled="disidpegawai"/>
 				</div>
 			</div>
 			<div class="grid_12">
