@@ -4123,6 +4123,7 @@ order by kodemataanggaran"));
         $idProfile = (int) $kdProfile;
 
         $tahap = $request['tahap'];
+        $rekening = $request['rekening'];
         $subsubkegiatan = '';
 
         if(isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "undefined" && $request['subsubkegiatan'] != ""){
@@ -4133,9 +4134,12 @@ order by kodemataanggaran"));
         select coalesce(sum(kb.subtotal),0) totalketerangan
         from kegiatananggaran_m ka 
         inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
+        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
         where kb.objecttahapfk = $tahap
-        $subsubkegiatan;
-            ")
+        and ma.kodemataanggaran = '$rekening'
+        $subsubkegiatan
+        and kb.statusenabled = TRUE
+        and kb.kdprofile = 30    ")
         );
 
         $detail = DB::select(DB::raw("
@@ -4143,7 +4147,9 @@ order by kodemataanggaran"));
         from kegiatananggaran_m ka 
         inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
         inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
+        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
         where kb.objecttahapfk = $tahap
+        and ma.kodemataanggaran = '$rekening'
         $subsubkegiatan
         and rd.statusenabled = true
         and rd.kdprofile = 30;
@@ -4156,7 +4162,9 @@ order by kodemataanggaran"));
         inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
         inner join strukrealisasi_t sr on sr.norec = rd.strukrealisasifk
         inner join panjar_t pj on pj.norec =  sr.objectpanjarfk
+        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
         where kb.objecttahapfk = $tahap
+        and ma.kodemataanggaran = '$rekening'
         $subsubkegiatan
         group by pj.norec, pj.jumlah, pj.jumlahpengembalian"));
 

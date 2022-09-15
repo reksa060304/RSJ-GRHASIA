@@ -68,7 +68,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.dataSearchSourceKeteranganBelanja= []
             $scope.totalanggaranperalokasi = 0;
             $scope.kodemataanggaranalokasi = ''
-            
+            $scope.idpegawailogin = 0
+            $scope.namapegawailogin = ''
 
             $scope.listDiv = [
                 { id: 0, div: "Urusan Pemerintahan" },
@@ -126,6 +127,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
                     idpegawai = $scope.pegawaiLogin.id
                     $scope.disidpegawai = true
+                    $scope.idpegawailogin = $scope.pegawaiLogin.id
+                    $scope.namapegawailogin = $scope.pegawaiLogin.namaLengkap
                 }
                 if($state.params.parameter == '77777'){
                     $scope.spjaja = true
@@ -1541,10 +1544,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             
 
 
-            $scope.$watch('item.subSubKegiatanSPJ', function (newValue, oldValue) {
+            $scope.$watch('item.mataAnggaranSPJ', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')).then(function (e) {
-                        medifirstService.get("perencanaan/get-total-keterangan?tahap=" +e.data.setting[0].objecttahapaktivfk + "&subsubkegiatan=" + $scope.item.subSubKegiatanSPJ.id).then(function (e) {
+                        medifirstService.get("perencanaan/get-total-keterangan?tahap=" +e.data.setting[0].objecttahapaktivfk + "&subsubkegiatan=" + $scope.item.subSubKegiatanSPJ.id + "&rekening=" + $scope.item.mataAnggaranSPJ.kodemataanggaran).then(function (e) {
                             $scope.totalketerangan = e.data.data[0].totalketerangan
                             $scope.totalrealisasidetail = e.data.detail[0].totalrealisasidetail
                             if(e.data.panjar.length > 0){
@@ -1559,10 +1562,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         })
                     })
 
+                    
+                }
+            });
+
+            $scope.$watch('item.subSubKegiatanSPJ', function (newValue, oldValue) {
+                if (newValue != oldValue) {
                     medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')+"&idsubsub="+$scope.item.subSubKegiatanSPJ.id).then(function (e) {
                         $scope.listMataAnggaranSPJ = e.data.mataanggarancombo
                         //console.log($scope.listMataAnggaranSPJ)
                     })
+                }
+            });
+
+            $scope.$watch('item.jmlSPJ', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.subTotalSPJ = $scope.item.jmlSPJ*$scope.item.hargaSatuanSPJ
+                }
+            });
+
+            $scope.$watch('item.hargaSatuanSPJ', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.subTotalSPJ = $scope.item.jmlSPJ*$scope.item.hargaSatuanSPJ
                 }
             });
 
@@ -4306,13 +4327,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if( $scope.item.subKegiatanSPJ == undefined){
                     return
                 }
+                console.log(DataKegiatan)
                 let newArr = []
                 for (let index = 0; index < DataKegiatan.length; index++) {
                     const element = DataKegiatan[index];
                     if(element.div == 4){
-                        if( element.kode.match($scope.item.subKegiatanSPJ.kode)){
-                            newArr.push(element)
+                        if($scope.namapegawailogin == ''){
+                            if( element.kode.match($scope.item.subKegiatanSPJ.kode)){
+                                newArr.push(element)
+                            }
+                        } else if($scope.namapegawailogin != ''){
+                            if( element.kode.match($scope.item.subKegiatanSPJ.kode) && element.namalengkap.match($scope.namapegawailogin)){
+                                newArr.push(element)
+                            }
                         }
+                        
                     }
                    
                 }
