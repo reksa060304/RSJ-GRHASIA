@@ -895,7 +895,7 @@ export class ReservasiOnlineComponent implements OnInit {
         this.formGroup.get('isBaru').setValue(false)
       }
 
-      if (noCM != null && noCM.length > 6)
+      if (noCM != null && noCM.length > 7)
         this.formGroup.get('resumeNIK').setValue(noCM)
       else
         this.formGroup.get('resumeNoRM').setValue(noCM)
@@ -910,7 +910,7 @@ export class ReservasiOnlineComponent implements OnInit {
       this.formGroup.get('resumeTglReservasi').setValue(moment(tglReservasi).format('DD/MM/YYYY') + ' ' + jamReservasi.jam)
       this.formGroup.get('resumePoli').setValue(poliKlinik.namaruangan)
       this.formGroup.get('resumeDokter').setValue(dokter.namalengkap)
-      this.formGroup.get('resumeDokter').setValue('-')
+      // this.formGroup.get('resumeDokter').setValue('-')
       this.formGroup.get('resumeTipe').setValue(tipePembayaran.kelompokpasien)
       this.formGroup.get('resumNoka').setValue(this.formGroup.get('noKartuPeserta').value != null ? this.formGroup.get('noKartuPeserta').value : '')
       this.formGroup.get('resumNoRujukan').setValue(this.formGroup.get('noRujukan').value != null ? this.formGroup.get('noRujukan').value : '-')
@@ -1059,7 +1059,7 @@ export class ReservasiOnlineComponent implements OnInit {
     this.formGroup.get('tglReservasiFix').setValue(tanggal)
 
     this.formGroup.get('dokter').setValue({ id: this.formGroup.get('dokter').value.id, namalengkap: this.formGroup.get('dokter').value.namalengkap })
-    this.formGroup.get('dokter').setValue(null)
+    // this.formGroup.get('dokter').setValue(null)
     this.confirmationService.confirm({
       message: 'Yakin mau menyimpan data?',
       accept: () => {
