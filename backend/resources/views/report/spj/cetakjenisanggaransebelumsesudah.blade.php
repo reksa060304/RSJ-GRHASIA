@@ -11,10 +11,10 @@
  
 </head>
 <style type="text/css" media="print">
-        @page {
-            size: auto;   /* auto is the initial value */
-            margin: 5;  /* this affects the margin in the printer settings */
-        }
+    @page {
+        size: auto;   /* auto is the initial value */
+        margin: 30;  /* this affects the margin in the printer settings */
+    }
 </style>
 <style>
 
@@ -26,16 +26,26 @@
         font-family: Arial;
     }
 
+    .tabel tr td{
+        border: 1px solid black;
+    }
+
+    .tabel {
+        width: 100%;
+        border-collapse: collapse;
+
+    }
+
     /* table, tr, td{
         border: 1px solid black;
     } */
 </style>
 <body style="background-color: #CCCCCC;">
 <div align="center" >
-    <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border-left: 3px solid black; border-right: 3px solid black; border-top: 3px solid black;">
+    <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid black;">
         <tbody >
         <tr>
-            <td rowspan="2"  style="padding: 5px; width: 50px; border-right: 3px solid black;" align="center">
+            <td rowspan="2"  style="padding: 5px; width: 50px; border-right: 1px solid black;" align="center">
                     <p align="left">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
                             <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 120px" >
@@ -51,7 +61,7 @@
                     BADAN LAYANAN UMUM DAERAH
                 </b>
             </td>
-            <td rowspan="2"  align="center" style="width: 150px; border-left: 3px solid black;">
+            <td rowspan="2"  align="center" style="width: 150px; border-left: 1px solid black;">
                 <b style="font-size: 25px;">
                     RBA
                 </b><br>
@@ -59,12 +69,12 @@
             </td>
         </tr>
         <tr align="center">
-            <td style="border-top: 3px solid black;">
+            <td style="border-top: 1px solid black;">
                 <b>RS Jiwa GRHASIA<br>TAHUN 2022</b>
             </td>
         </tr>
         <tr >
-            <td colspan="3" style="border-top: 3px solid black;">
+            <td colspan="3" style="border-top: 1px solid black;">
                 <p align="center" style="margin-top: 10px; margin-bottom:10px">
                     <font style="font-size: 12pt; " color="#000000" face="Arial">
                             <b>REKAP ANGGARAN TIAP SUB KEGIATAN (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ date('Y') }}</b>
@@ -75,23 +85,23 @@
         </tr>
         </tbody>
     </table>
-        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 3px solid black;">
+        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" class="tabel">
                 <tr>
                     <td width="15"  rowspan="2" style="padding: 10px; font-weight: bold ">NO</td>
-                    <td width="50" rowspan="2" style="padding: 10px; font-weight: bold;border-left: 3px solid black; ">KETERANGAN</td>
-                    <td colspan="4"style="padding: 10px; text-align: center; font-weight: bold;border-left: 3px solid black;border-bottom: 3px solid black;  ">ANGGARAN SEBELUM PERUBAHAN</td>
-                    <td colspan="4" style="padding: 10px; text-align: center; font-weight: bold;border-left: 3px solid black;border-bottom: 3px solid black;  ">ANGGARAN SESUDAH PERUBAHAN</td>
-                    <td width="20" rowspan="2" style="padding: 10px; font-weight: bold ;border-left: 3px solid black; ">BERTAMBAH / BERKURANG</td>
+                    <td width="50" rowspan="2" style="padding: 10px; font-weight: bold; ">KETERANGAN</td>
+                    <td colspan="4"style="padding: 10px; text-align: center; font-weight: bold;">ANGGARAN SEBELUM PERUBAHAN</td>
+                    <td colspan="4" style="padding: 10px; text-align: center; font-weight: bold;">ANGGARAN SESUDAH PERUBAHAN</td>
+                    <td width="20" rowspan="2" style="padding: 10px; font-weight: bold ; ">BERTAMBAH / BERKURANG</td>
                 </tr>
                 <tr>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">PEGAWAI</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">BARANG JASA</td>
-                    <td width="20" style="padding: 10px; font-weight: bold ;border-left: 3px solid black; ">MODAL</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">SUB TOTAL</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">PEGAWAI</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">BARANG JASA</td>
-                    <td width="20" style="padding: 10px; font-weight: bold ;border-left: 3px solid black; ">MODAL</td>
-                    <td width="20" style="padding: 10px; font-weight: bold;border-left: 3px solid black;  ">SUB TOTAL</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">PEGAWAI</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">BARANG JASA</td>
+                    <td width="20" style="padding: 10px; font-weight: bold ; ">MODAL</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">PEGAWAI</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">BARANG JASA</td>
+                    <td width="20" style="padding: 10px; font-weight: bold ; ">MODAL</td>
+                    <td width="20" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
                 </tr>
                 @php
                 $sebelumjumlahbarangjasa = 0;
@@ -121,43 +131,43 @@
                         @endphp
                     @endif
                     @if($sb->div == 2)
-                    <td width="15" style="padding: 10px; border-top: 3px solid black; "><b>{{ substr($sb->kode, -4) }}</b></td>
+                    <td width="15" style="padding: 10px; "><b>{{ substr($sb->kode, -4) }}</b></td>
                     @elseif($sb->div == 3)
-                    <td width="15" style="padding: 10px; border-top: 3px solid black; ">{{ substr($sb->kode, -2) }}</td>
+                    <td width="15" style="padding: 10px; ">{{ substr($sb->kode, -2) }}</td>
                     @endif
                     @if($sb->div == 2)
-                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;"><b>{{$sb->kegiatan}}</b></td>
+                    <td width="50" style="padding: 10px;"><b>{{$sb->kegiatan}}</b></td>
                     @elseif($sb->div == 3)
-                    <td width="50" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{$sb->kegiatan}}</td>
+                    <td width="50" style="padding: 10px;">{{$sb->kegiatan}}</td>
                     @endif
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($sb->jumlahpegawai,0,',','.') }}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($sb->jumlahbarangjasa,0,',','.') }}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($sb->jumlahmodal,0,',','.') }}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($sb->total,0,',','.') }}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($sb->kjumlahpegawai,0,',','.') }}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($sb->kjumlahbarangjasa,0,',','.') }}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($sb->kjumlahmodal,0,',','.') }}</td>
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($sb->ktotal,0,',','.') }}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->jumlahpegawai,0,',','.') }}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->jumlahbarangjasa,0,',','.') }}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->jumlahmodal,0,',','.') }}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->total,0,',','.') }}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->kjumlahpegawai,0,',','.') }}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->kjumlahbarangjasa,0,',','.') }}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->kjumlahmodal,0,',','.') }}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->ktotal,0,',','.') }}</td>
                     @if($sb->ktotal > $sb->total)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($sb->ktotal-$sb->total,0,',','.') }}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->ktotal-$sb->total,0,',','.') }}</td>
                     @elseif($sb->ktotal < $sb->total)
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">{{ number_format($sb->total-$sb->ktotal,0,',','.') }}</td>
+                    <td width="20" style="padding: 10px;">{{ number_format($sb->total-$sb->ktotal,0,',','.') }}</td>
                     @else
-                    <td width="20" style="padding: 10px; border-top: 3px solid black; border-left: 3px solid black;">0</td>
+                    <td width="20" style="padding: 10px;  ">0</td>
                     @endif
                 </tr>
                 @endforeach
                 <tr>
-                    <td colspan="2" width="20" style="padding: 10px; font-weight: bold; text-align: center; border-top: 3px solid black;">JUMLAH TOTAL</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{ number_format($sebelumjumlahpegawai,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{ number_format($sebelumjumlahbarangjasa,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold ;border-left: 3px solid black;border-top: 3px solid black; ">{{ number_format($sebelumjumlahmodal,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{ number_format($sebelumtotal,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{ number_format($sesudahjumlahpegawai,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{ number_format($sesudahjumlahbarangjasa,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold ;border-left: 3px solid black;border-top: 3px solid black; ">{{ number_format($sesudahjumlahmodal,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{ number_format($sesudahtotal,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;border-left: 3px solid black; border-top: 3px solid black; ">{{ number_format($berkurang,0,',','.') }}</td>
+                    <td colspan="2" width="20" style="padding: 10px; font-weight: bold; text-align: center; "> JUMLAH TOTAL</td>
+                    <td width="50" style="padding: 10px; font-weight: bold;  ">{{ number_format($sebelumjumlahpegawai,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold;  ">{{ number_format($sebelumjumlahbarangjasa,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold ; ">{{ number_format($sebelumjumlahmodal,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold;  ">{{ number_format($sebelumtotal,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold;  ">{{ number_format($sesudahjumlahpegawai,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold;  ">{{ number_format($sesudahjumlahbarangjasa,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold ; ">{{ number_format($sesudahjumlahmodal,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold;  ">{{ number_format($sesudahtotal,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold;  ">{{ number_format($berkurang,0,',','.') }}</td>
                 </tr>
         </table>
         <table width="{{$pageWidth}}" bgcolor="#FFFFFF">

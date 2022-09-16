@@ -92,19 +92,19 @@
                 {{$dt->uraian}}
             </td>
             <td style="padding: 5px; width: 10%;" align="left">
-                @ {{$dt->harga}} x {{$dt->jml}} {{$dt->satuan}}
+                @ {{ number_format($dt->harga,0,',','.') }} x {{$dt->jml}} {{$dt->satuan}}
             </td>
             <td style="padding: 5px; width: 10%;" align="center">
                 =
             </td>
             <td style="padding: 5px; width: 10%;" align="left">
-                {{$dt->subtotal}}
+                {{ number_format($dt->subtotal,0,',','.') }}
             </td>
             @endforeach
         </tr>
         <tr>
             <td colspan="2" style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 15px;">
-                <font style="font-size: 12pt" color="#000000">Terbilang: {{$jumlah[0]->totalfix}}</font>
+                <font style="font-size: 12pt" color="#000000">Terbilang: {{ number_format($jumlah[0]->totalfix,0,',','.') }}</font>
             </td>
         </tr>
         @if($kegiatan[0]->namalengkap != null)

@@ -73,7 +73,7 @@
                 <font style="font-size: 12pt" color="#000000">Uang Sebesar</font>
             </td>
             <td colspan="4" style="padding: 10px; padding-bottom: 5px; padding-top: 5px;" align="left">
-                <font style="font-size: 12pt" color="#000000">: {{$terbilang}}</font>
+                <font style="font-size: 12pt" color="#000000">: {{ $terbilang }}</font>
             </td>
         </tr>
         <tr>
@@ -90,7 +90,7 @@
         <tbody>
         <tr>
             <td colspan="2" style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 10px;">
-                <font style="font-size: 12pt" color="#000000">Terbilang: {{$jumlah[0]->totalfix}}</font>
+                <font style="font-size: 12pt" color="#000000">Terbilang: {{ number_format($jumlah[0]->totalfix,0,',','.') }}</font>
             </td>
         </tr>
         @if($kegiatan[0]->namalengkap != null)
@@ -363,13 +363,13 @@
                 {{$dt->uraian}}
             </td>
             <td style="padding: 10px; border: 1px solid black; width: 50px; height: 20px; " align="center">
-                {{$dt->harga}}
+                {{ number_format($dt->harga,0,',','.') }}
             </td>
             <td style="padding: 10px; border: 1px solid black; width: 50px; height: 20px; " align="center">
-                {{$dt->jml}}
+                {{ $dt->jml }}
             </td>
             <td style="padding: 10px; border: 1px solid black; width: 50px; height: 20px; " align="center">
-                {{$dt->subtotal}}
+                {{ number_format($dt->subtotal,0,',','.') }}
             </td>
             @endforeach
         </tr>
@@ -378,7 +378,7 @@
                 JUMLAH TOTAL
             </td>
             <td style="padding: 10px; width: 50px; border: 1px solid black " align="center">
-                {{ $jumlah[0]->totalfix }}
+                {{ number_format($jumlah[0]->totalfix,0,',','.') }}
             </td>
         </tr>
         <tr style="border: 1px solid black;" >
@@ -386,7 +386,7 @@
                 JUMLAH TOTAL (PEMBULATAN)
             </td>
             <td style="padding: 10px; width: 50px; border: 1px solid black " align="center">
-            {{ $jumlah[0]->totalpembulatan }}
+            {{ number_format($jumlah[0]->totalpembulatan,0,',','.') }}
             </td>
         </tr>
         <tr>

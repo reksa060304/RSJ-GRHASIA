@@ -3137,6 +3137,9 @@ class ReportController extends ApiController{
 
     public function CetakRekapMataAnggaran(Request $request){
         $tahun = $request['tahun'];
+        $tahap = $request['tahap'];
+
+        $itahap = DB::select(DB::raw("select id, tahap from tahapanggaran_m where id = $tahap"));
         
 
         $qtahap  = '';
@@ -4017,11 +4020,12 @@ class ReportController extends ApiController{
         // );
 
         $pageWidth = 1200;
-        return view('report.spj.cetakrekapmataanggaran',compact('sebelum','pageWidth', 'jumlah'));
+        return view('report.spj.cetakrekapmataanggaran',compact('sebelum','pageWidth', 'jumlah', 'itahap'));
     }
 
     public function CetakRekapMataAnggaranSebelum(Request $request){
         $tahun = $request['tahun'];
+        $tahap = $request['tahap'];
         
 
         $qtahap  = '';
@@ -4029,7 +4033,7 @@ class ReportController extends ApiController{
             $qtahap =  ' and kb.objecttahapfk =  ' . $request['tahap'];
         }
 
-        
+        $itahap = DB::select(DB::raw("select id, tahap from tahapanggaran_m where id = $tahap"));
 
         $sebelum = DB::select(DB::raw("
         SELECT o.*, p.subtotal, p.tahap
@@ -4195,25 +4199,25 @@ class ReportController extends ApiController{
                         ) as y where y.kodemataanggaran not in('II', 'III') group by id, tahap, kodemataanggaran
             )  as i"));
 
-
-
         $result = array(
             'data' => $sebelum,
             'message' => '@epic',
         );
 
         $pageWidth = 1200;
-        return view('report.spj.cetakrekapmataanggaransebelum',compact('sebelum','pageWidth', 'jumlah'));
+        return view('report.spj.cetakrekapmataanggaransebelum',compact('sebelum','pageWidth', 'jumlah', 'itahap'));
     }
 
     public function CetakRBADetail(Request $request){
         $tahun = $request['tahun'];
-        
+        $tahap = $request['tahap'];
 
         $qtahap  = '';
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
             $qtahap =  ' and kb.objecttahapfk =  ' . $request['tahap'];
         }
+
+        $itahap = DB::select(DB::raw("select id, tahap from tahapanggaran_m where id = $tahap"));
 
         $qsubsubkegiatan  = '';
         $subsubkegiatan  = '';
@@ -4446,7 +4450,7 @@ class ReportController extends ApiController{
         "));
 
         $pageWidth = 1200;
-        return view('report.spj.cetakrbadetail',compact('sebelum','pageWidth', 'data'));
+        return view('report.spj.cetakrbadetail',compact('sebelum','pageWidth', 'data', 'itahap'));
     }
 
     public function CetakPendapatanPerubahan(Request $request){

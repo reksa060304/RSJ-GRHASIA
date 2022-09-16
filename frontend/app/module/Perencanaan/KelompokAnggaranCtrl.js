@@ -39,6 +39,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.panjaraja = false
             $scope.semuaanggaran = false
             $scope.disidpegawai = false
+            $scope.dispptkspj = false
 
             $scope.rcn = {};
             $scope.rcn.mataAnggaranlv1 = ""
@@ -123,8 +124,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var idpegawai = '';
                 $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
                 $scope.item.organisasi = '1.02.2.22.0.00.01.0004 - RS Jiwa GRHASIA DINKES DIY'
-                //console.log($scope.pegawaiLogin)
-                if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
+                console.log($scope.pegawaiLogin)
+                if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab" || ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && $scope.pegawaiLogin.id != 320263)){
                     idpegawai = $scope.pegawaiLogin.id
                     $scope.disidpegawai = true
                     $scope.idpegawailogin = $scope.pegawaiLogin.id
@@ -2274,7 +2275,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         var idpegawai = ''
                         $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
                         //console.log($scope.pegawaiLogin)
-                        if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
+                        if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab" || ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && $scope.pegawaiLogin.id != 320263)){
                             idpegawai = $scope.pegawaiLogin.id
                         }
     
@@ -2320,7 +2321,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     var idpegawai = ''
                     $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
                     //console.log($scope.pegawaiLogin)
-                    if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab"){
+                    if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab" || ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && $scope.pegawaiLogin.id != 320263)){
                         idpegawai = $scope.pegawaiLogin.id
                     }
                     if($state.params.parameter == '77777'){
@@ -3089,6 +3090,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             var onDataBound = function (e) {
                 var kendoGrid = $("#kGridsSPJ").data("kendoGrid"); // get the grid widget
+                if($scope.idpegawailogin != 0){
+                    kendoGrid.hideColumn(1);
+                }
                 var rows = e.sender.element.find("tbody tr"); // get all rows
                 for (let i = 0; i < rows.length; i++) {
                     // const element = rows[i];
@@ -3108,6 +3112,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $(row.cells[10]).addClass("koneng");
                         $(row.cells[11]).addClass("koneng");
                         $(row.cells[12]).addClass("koneng");
+                        $(row.cells[13]).addClass("koneng");
+                        $(row.cells[14]).addClass("koneng");
                     } else if (status == "Sudah Diverifikasi") {
                         $(row.cells[1]).addClass("green");
                         $(row.cells[2]).addClass("green");
@@ -3121,6 +3127,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $(row.cells[10]).addClass("green");
                         $(row.cells[11]).addClass("green");
                         $(row.cells[12]).addClass("green");
+                        $(row.cells[13]).addClass("green");
+                        $(row.cells[14]).addClass("green");
                     }
 
                 }
@@ -3153,6 +3161,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 columns:[
                     {
                         "command": [
+                                {
+                                    text: "Detail",
+                                    click: editDetailSPJ,
+                                    imageClass: "clinic fa"
+                                },
+                            ],
+                                title: "",
+                                width: "100px",
+                    },
+                    {
+                        "command": [
                               {
                                  text: "Detail",
                                  click: editDetailSPJ,
@@ -3161,33 +3180,33 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                               {
                                 text: "Verifikasi",
                                 click: verifSPJ,
-                                imageClass: "clinic fa"
+                                imageClass: "clinic fa",
                               },
                               {
                                 text: "Batal",
                                 click: batalVerifSPJ,
-                                imageClass: "clinic fa"
+                                imageClass: "clinic fa",
                               },
                           ],
                              title: "",
-                             width: "60px",
+                             width: "100px",
                     },
                     {
                         "field": "mataanggaran",
                         "title": "Kode Rekening",
-                        "width": "100px",
+                        "width": "200px",
                         // hidden: true
                     },
                     {
                         "field": "kegiatan",
                         "title": "Kegiatan",
-                        "width": "100px",
+                        "width": "200px",
                         hidden: true
                     },
                     {
                         "field": "norealisasi",
                         "title": "No SPJ",
-                        "width": "60px",
+                        "width": "100px",
                         // hidden: true
                     },
                     {
@@ -3199,38 +3218,38 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         "field": "totalbelanja",
                         "title": "Total Belanja",
-                        "width": "60px",
+                        "width": "130px",
 						"template": "<span class='style-right'>{{formatRupiah2('#: totalbelanja #', '')}}</span>",
                         // hidden: true,
                     },
                     {
                         "field": "uraian",
                         "title": "Uraian",
-                        "width": "70px",
+                        "width": "200px",
                         // hidden: true
                     },
                     {
                         "field": "carabayar",
                         "title": "Cara Bayar",
-                        "width": "100px",
+                        "width": "70px",
                         // hidden: true
                     },
                     {
                         "field": "bendahara",
                         "title": "Bendahara",
-                        "width": "70px",
+                        "width": "200px",
                         // hidden: true
                     },
                     {
                         "field": "penerima",
                         "title": "Penerima",
-                        "width": "70px",
+                        "width": "200px",
                         // hidden: true
                     },
                     {
                         "field": "pihakketiga",
                         "title": "Nama Pihak Ketiga",
-                        "width": "100px",
+                        "width": "150px",
                         // hidden: true
                     },
                     {
@@ -3238,6 +3257,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "title": "Tgl Verif",
                         "width": "100px",
                         // hidden: true
+                    },
+                    {
+                        "command": [
+                              {
+                                 text: "Delete",
+                                 click: deleteDetailSPJ,
+                                 imageClass: "clinic fa"
+                              },
+                          ],
+                             title: "",
+                             width: "100px",
                     },
                 ]
             };
@@ -3533,7 +3563,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         name: "add", 
                         text: "Tambah",
-                        template: '<div class="grid_2"><button ng-click="TambahRincianBelanjaSPJ()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                        template: '<div class="grid_2"><button ng-hide="dispptkspj" ng-click="TambahRincianBelanjaSPJ()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
                     }
                 ],
                 columns:[
@@ -3542,54 +3572,54 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                               {
                                  text: "Detail",
                                  click: editDetailRincianBelanjaSPJ,
-                                 imageClass: "clinic fa"
+                                 imageClass: "clinic fa",
                               },
                               {
                                 text: " ",
                                 click: deleteDetailRincianBelanjaSPJ,
-                                imageClass: "clinic fa fa-trash"
+                                imageClass: "clinic fa fa-trash",
                              },
                           ],
                              title: "",
-                             width: "44px",
+                             width: "100px",
                     },
                     {
                         "field": "nourut",
                         "title": "No. Urut",
-                        "width": "30px"
+                        "width": "100px"
                     },
                     {
                         "field": "uraian",
                         "title": "Keterangan",
-                        "width": "100px"
+                        "width": "200px"
                     },
                     {
                         "field": "jml",
                         "title": "Jml",
-                        "width": "40px",
+                        "width": "150px",
 						"template": "<span class='style-right'>{{formatRupiah2('#: jml #', '')}}</span>",
                     },
                     {
                         "field": "satuan",
                         "title": "Satuan",
-                        "width": "50px"
+                        "width": "100px"
                     },
                     {
                         "field": "harga",
                         "title": "Harga Satuan",
-                        "width": "50px",
+                        "width": "200px",
 						"template": "<span class='style-right'>{{formatRupiah2('#: harga #', '')}}</span>",
                     },
                     {
                         "field": "subtotal",
                         "title": "Sub Total",
-                        "width": "50px",
+                        "width": "200px",
 						"template": "<span class='style-right'>{{formatRupiah2('#: subtotal #', '')}}</span>",
                     },
                     {
                         "field": "keteranganbelanja",
                         "title": "Item Rincian",
-                        "width": "100px"
+                        "width": "200px"
                     }
                 ]
             };
@@ -4275,7 +4305,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             
             $scope.TambahSPJ = function(){
-                console.log(DataKegiatan)
+                console.log($scope.dispptkspj)
                 
                 $scope.item.tglSPJ =  new Date(moment($scope.now).format('YYYY-MM-DD HH:mm'));
                 
@@ -4706,7 +4736,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				})
 
                 $scope.norecspj = dataItem.norec
-                //console.log(dataItem)
+                console.log(dataItem)
 
                 medifirstService.get("perencanaan/get-one-panjar?norec=" +dataItem.norec).then(function (e) {
                     $scope.item.panjar = e.data.data[0].jumlah
@@ -4717,6 +4747,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     dispanjar = false
                 // }
                 
+                if(dataItem.tglverif != null && $scope.idpegawailogin != 0){
+                    $scope.dispptkspj = true
+                    var kenGrid = $("#kGridDetail").data("kendoGrid");
+                    kenGrid.hideColumn(0);
+                } else{
+                    $scope.dispptkspj = false
+                    var kenGrid = $("#kGridDetail").data("kendoGrid");
+                    kenGrid.showColumn(0);
+                }
+
                 let kegiatanArr = dataItem.kegiatan.split("~");
                 let mataAnggaranArr = dataItem.mataanggaran.split("~");
                 let kodeArr =kegiatanArr[0].split(" ");
@@ -4852,6 +4892,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.nospd = dataItem.nospd
                 
                 $scope.popupCariSPD.center().close()
+            }
+
+            function deleteDetailSPJ(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                console.log(dataItem)
+                var objSave =
+                    {
+                        norec: dataItem.norec,
+                    }
+                medifirstService.post('perencanaan/delete-spj', objSave).then(function (e) {
+                    loadDataGrid();
+                }, function (error) {
+            
+                })
             }
 
             function inputSPM(e) {

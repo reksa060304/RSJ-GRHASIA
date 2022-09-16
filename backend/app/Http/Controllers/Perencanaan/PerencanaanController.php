@@ -3612,6 +3612,56 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function deleteSPJ(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+            $cek= StrukRealisasi::where('norec',$request['norec'])
+                ->whereNotNull('tglverif')
+                ->first();
+
+            if(empty($cek)){
+                $KB= StrukRealisasi::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $data = \DB::table('realisasidetail_t')->where('strukrealisasifk', $request['norec'])->where('kdprofile', $idProfile)->update([
+                    'statusenabled'=> false
+                ]);
+
+                $transStatus = 'true';
+            } else{
+                $transStatus = 'false';
+            }
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $cek,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Data Yang Sudah Diverif Tidak Bisa Dihapus";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function saveSettingAnggaran(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);

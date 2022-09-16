@@ -73,7 +73,7 @@
                     RBA
                 </b><br>
                 @if($sebelum != [])
-                {{substr($sebelum[0]->tahap, 0, -3)}}
+                {{substr($itahap[0]->tahap, 0, -3)}}
                 @endif
             </td>
         </tr>
