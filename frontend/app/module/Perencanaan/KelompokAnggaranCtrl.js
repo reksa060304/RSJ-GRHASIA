@@ -3173,11 +3173,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         "command": [
                               {
-                                 text: "Detail",
-                                 click: editDetailSPJ,
-                                 imageClass: "clinic fa"
-                              },
-                              {
                                 text: "Verifikasi",
                                 click: verifSPJ,
                                 imageClass: "clinic fa",
