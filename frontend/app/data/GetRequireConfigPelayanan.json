@@ -3383,6 +3383,18 @@
         {
             "nameDep": "Rekapan10MasalahKeperawatanCtrl",
             "urlDep": "module/Registrasi/Laporan/Rekapan10MasalahKeperawatanCtrl"
+        },
+        {
+            "nameDep": "SuratRujukanBalikCtrl",
+            "urlDep": "module/EMR/SuratRujukanBalikCtrl"
+        }, 
+        {
+            "nameDep": "LembarKomunikasiPasienHomecareCtrl",
+            "urlDep": "module/EMR/LembarKomunikasiPasienHomecareCtrl"
+        }, 
+        {
+            "nameDep": "PengkajianKeperawatanGeriatriCtrl",
+            "urlDep": "module/EMR/PengkajianKeperawatanGeriatriCtrl"
         }
         
     ]

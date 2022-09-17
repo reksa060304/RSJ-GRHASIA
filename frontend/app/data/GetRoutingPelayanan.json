@@ -18756,6 +18756,72 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.SuratRujukanBalik",
+    "url": "/SuratRujukanBalik",
+    "templateurl": "module/EMR/SuratRujukanBalik.html",
+    "controller": "SuratRujukanBalikCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  }, 
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.LembarKomunikasiPasienHomecare",
+    "url": "/LembarKomunikasiPasienHomecare/:index/:idEMR",
+    "templateurl": "module/EMR/LembarKomunikasiPasienHomecare.html",
+    "controller": "LembarKomunikasiPasienHomecareCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  }, 
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianKeperawatanGeriatri",
+    "url": "/PengkajianKeperawatanGeriatri",
+    "templateurl": "module/EMR/PengkajianKeperawatanGeriatri.html",
+    "controller": "PengkajianKeperawatanGeriatriCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 
