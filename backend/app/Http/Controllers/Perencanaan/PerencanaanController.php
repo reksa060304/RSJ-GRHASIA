@@ -3612,6 +3612,56 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function deleteSPJ(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+            $cek= StrukRealisasi::where('norec',$request['norec'])
+                ->whereNotNull('tglverif')
+                ->first();
+
+            if(empty($cek)){
+                $KB= StrukRealisasi::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $data = \DB::table('realisasidetail_t')->where('strukrealisasifk', $request['norec'])->where('kdprofile', $idProfile)->update([
+                    'statusenabled'=> false
+                ]);
+
+                $transStatus = 'true';
+            } else{
+                $transStatus = 'false';
+            }
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $cek,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Data Yang Sudah Diverif Tidak Bisa Dihapus";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function saveSettingAnggaran(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
@@ -4123,6 +4173,7 @@ order by kodemataanggaran"));
         $idProfile = (int) $kdProfile;
 
         $tahap = $request['tahap'];
+        $rekening = $request['rekening'];
         $subsubkegiatan = '';
 
         if(isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "undefined" && $request['subsubkegiatan'] != ""){
@@ -4133,9 +4184,12 @@ order by kodemataanggaran"));
         select coalesce(sum(kb.subtotal),0) totalketerangan
         from kegiatananggaran_m ka 
         inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
+        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
         where kb.objecttahapfk = $tahap
-        $subsubkegiatan;
-            ")
+        and ma.kodemataanggaran = '$rekening'
+        $subsubkegiatan
+        and kb.statusenabled = TRUE
+        and kb.kdprofile = 30    ")
         );
 
         $detail = DB::select(DB::raw("
@@ -4143,7 +4197,9 @@ order by kodemataanggaran"));
         from kegiatananggaran_m ka 
         inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
         inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
+        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
         where kb.objecttahapfk = $tahap
+        and ma.kodemataanggaran = '$rekening'
         $subsubkegiatan
         and rd.statusenabled = true
         and rd.kdprofile = 30;
@@ -4156,7 +4212,9 @@ order by kodemataanggaran"));
         inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
         inner join strukrealisasi_t sr on sr.norec = rd.strukrealisasifk
         inner join panjar_t pj on pj.norec =  sr.objectpanjarfk
+        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
         where kb.objecttahapfk = $tahap
+        and ma.kodemataanggaran = '$rekening'
         $subsubkegiatan
         group by pj.norec, pj.jumlah, pj.jumlahpengembalian"));
 
@@ -4587,14 +4645,21 @@ order by kodemataanggaran"));
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $id = $request['kegiatan'];
+        $tahun = $request['tahun'];
+        $tahap = $request['tahap'];
         
         $data = DB::select(DB::raw("
         select kg.id, kg.kode, kg.keterangan, kg.id || '-' || kg.keterangan as text
         from kegiatananggaran_m km 
         inner join kegiatananggaran_m kg on kg.kode ilike km.kode || '%' and kg.div = 4
+        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = kg.id
         where km.statusenabled = true and km.kdprofile = 30
         and kg.statusenabled = true and kg.kdprofile = 30
+        and kb.statusenabled = true and kb.kdprofile = 30
         and km.id = $id
+        and kg.tahun = '$tahun'
+        and kb.objecttahapfk = $tahap
+        group by kg.id, kg.kode, kg.keterangan, kg.id || '-' || kg.keterangan
         ")
         );
 

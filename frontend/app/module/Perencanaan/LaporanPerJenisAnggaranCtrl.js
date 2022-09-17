@@ -29,7 +29,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             });
 
             $scope.changeKegiatan = function () {
-                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatandetail.id).then(function (e) {
+                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatandetail.id+"&tahap="+$scope.item.tahapdetail.id+"&tahun="+moment($scope.item.tahundetail).format('YYYY')).then(function (e) {
                     $scope.listSubKegiatan = e.data.data
                 });
             }
@@ -79,6 +79,27 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     window.open(baseTransaksi + "report/get-cetak-rekap-mata-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahunmata).format('YYYY') +"&terhadap="+terhadap, '_blank');
                 }
             }
+
+            $scope.CetakDataRekap = function(){
+                var tahap = ""
+                if ($scope.item.tahaprekap != undefined){
+                    tahap = $scope.item.tahaprekap.id
+                }
+                
+                var terhadap = ""
+                if ($scope.item.terhadaprekap != undefined){
+                    terhadap = $scope.item.terhadaprekap.id
+                }
+
+                
+
+                if($scope.item.terhadaprekap == undefined || tahap == terhadap){
+                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY'), '_blank');
+                } else if($scope.item.terhadaprekap != undefined || tahap != terhadap){
+                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaran-sebelum-sesudah?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY') +"&terhadap="+terhadap, '_blank');
+                }
+            }
+
             $scope.CetakSumberDana = function(){
                 var tahap = ""
                 if ($scope.item.tahapSumberDana != undefined) {

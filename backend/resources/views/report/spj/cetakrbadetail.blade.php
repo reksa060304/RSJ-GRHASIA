@@ -73,7 +73,7 @@
                     RBA
                 </b><br>
                 @if($sebelum != [])
-                {{substr($sebelum[0]->tahap, 0, -3)}}
+                {{substr($itahap[0]->tahap, 0, -3)}}
                 @endif
             </td>
         </tr>
@@ -94,31 +94,102 @@
         </tr>
         <tr >
             <td colspan="3" style="border-top: 3px solid black;">
-                <p align="left" style="margin-top: 10px; margin-bottom:10px; margin-left:10px">
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Program &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; : {{ $data[0]->kodeprogram.' - '.$data[0]->keteranganprogram }}
-                    </font>
-                    <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Kegiatan &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; : {{ $data[0]->kodekegiatan.' - '.$data[0]->keterangankegiatan }}
-                    </font>
-                    <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Sub Kegiatan &emsp;&emsp;&emsp;&emsp; : {{ $data[0]->kodesubkegiatan.' - '.$data[0]->keterangansubkegiatan }}
-                    </font>
-                    <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Sub Sub Kegiatan &emsp;&emsp; : {{ $data[0]->kodesubsubkegiatan.' - '.$data[0]->keterangansubsubkegiatan }}
-                    </font>
-                    <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Waktu Pelaksanaan &emsp;&nbsp; : {{ $data[0]->tahun }}
-                    </font>
-                    <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Lokasi Kegiatan &emsp;&emsp;&emsp; : RS Jiwa GRHASIA DINKES DIY
-                    </font>
-                </p>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        Program 
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        : {{ $data[0]->kodeprogram.' - '.$data[0]->keteranganprogram }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        Kegiatan 
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        : {{ $data[0]->kodekegiatan.' - '.$data[0]->keterangankegiatan }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                       Sub Kegiatan 
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        : {{ $data[0]->kodesubkegiatan.' - '.$data[0]->keterangansubkegiatan }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                       Sub Sub Kegiatan 
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        : {{ $data[0]->kodesubsubkegiatan.' - '.$data[0]->keterangansubsubkegiatan }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                       Waktu Pelaksanaan
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        : {{ $data[0]->tahun }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                Lokasi Kegiatan
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                : RS Jiwa GRHASIA DINKES DIY
+                                </font>
+                        </p>
+                    </td>
+                </tr>
             </td>
         </tr>
         <tr >

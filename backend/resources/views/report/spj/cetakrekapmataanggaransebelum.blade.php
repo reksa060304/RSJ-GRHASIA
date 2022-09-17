@@ -65,7 +65,7 @@
                 <b style="font-size: 25px;">
                     RBA
                 </b><br>
-                {{substr($sebelum[0]->tahap, 0, -3)}}
+                {{substr($itahap[0]->tahap, 0, -3)}}
             </td>
         </tr>
         <tr align="center">
@@ -87,72 +87,71 @@
     </table>
         <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 3px solid black;" class="tabel">
                 <tr>
-                    <td align="center"width="20"  colspan="2" style="padding: 10px; font-weight: bold ">NO</td>
-                    <td width="200" style="padding: 10px; font-weight: bold; ">ALOKASI BIAYA/PENGELUARAN</td>
-                    <td width="50" style="padding: 10px; text-align: center; font-weight: bold;  ">SEBELUM PERUBAHAN</td>
-                    <td width="50" style="padding: 10px; text-align: center; font-weight: bold; ">SETELAH PERUBAHAN</td>
-                    <td width="20" style="padding: 10px; font-weight: bold ; ">BERTAMBAH / (BERKURANG)</td>
+                    <td align="center" colspan="2" style="padding: 10px; font-weight: bold ">NO</td>
+                    <td align="center" rowspan="2" style="padding: 10px; font-weight: bold; ">ALOKASI BIAYA/PENGELUARAN</td>
+                    <td align="center" rowspan="2" colspan="2" style="padding: 10px; font-weight: bold ; ">JUMLAH ANGGARAN</td>
+                </tr>
+                <tr>
+                    <td  style="padding: 10px; font-weight: bold; ">Pelayanan</td>
+                    <td  style="padding: 10px; font-weight: bold; ">APBD</td>
                 </tr>
                 @php
-                $totalsebelum = 0;
-                $totalberkurang = 0;
+                $totalpelayanan = 0;
+                $totalapbd = 0;
                 @endphp
                 <tr>
                     @php
-                    $totalsebelum += $jumlah[0]->totalawalsebelum;
-                    $totalberkurang += $jumlah[0]->totalawalsebelum;
+                    $totalpelayanan += $jumlah[0]->totaljasalayanan;
+                    $totalapbd += $jumlah[0]->totalapbd;
                     @endphp
-                    <td width="10" style="padding: 10px; font-weight: bold; ">I</td>
-                    <td width="10" style="padding: 10px; font-weight: bold; "></td>
-                    <td width="200" style="padding: 10px; font-weight: bold;"> BIAYA OPERASIONAL</td>
-                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold; text-align: right;">{{ number_format($jumlah[0]->totalawalsebelum,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; text-align: left; font-weight: bold; text-align: right;"></td>
-                    <td width="20" style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($jumlah[0]->totalawalsebelum,0,',','.') }}</td>
+                    <td style="padding: 10px; font-weight: bold; ">I</td>
+                    <td style="padding: 10px; font-weight: bold; "></td>
+                    <td style="padding: 10px; font-weight: bold;"> BIAYA OPERASIONAL</td>
+                    <td style="padding: 10px; text-align: left; font-weight: bold; text-align: right;">{{ number_format($jumlah[0]->totaljasalayanan,0,',','.') }}</td>
+                    <td style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($jumlah[0]->totalapbd,0,',','.') }}</td>
                 </tr>
                 @foreach($sebelum as $sb)
                 <tr>
                 
                     @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
                     @php
-                    $totalsebelum += $sb->subtotal;
-                    $totalberkurang += $sb->subtotal
+                    $totalpelayanan += $sb->subtotaljasalayanan;
+                    $totalapbd += $sb->subtotalapbd
                     @endphp
-                    <td width="10" style="padding: 10px; font-weight: bold;">{{$sb->kodemataanggaran}}</td>
-                    <td width="10" style="padding: 10px; font-weight: bold; "></td>
+                    <td style="padding: 10px; font-weight: bold;">{{$sb->kodemataanggaran}}</td>
+                    <td style="padding: 10px; font-weight: bold; "></td>
                     @elseif(strpos($sb->kodemataanggaran,'I.') !== false && strlen($sb->kodemataanggaran) == 3)
-                    <td width="10" style="padding: 10px;"></td>
-                    <td width="10" style="padding: 10px;">{{substr($sb->kodemataanggaran, -1)}}</td>
+                    <td style="padding: 10px;"></td>
+                    <td style="padding: 10px;">{{substr($sb->kodemataanggaran, -1)}}</td>
                     @else
-                    <td width="10" style="padding: 10px;"></td>
-                    <td width="10" style="padding: 10px; "></td>
+                    <td style="padding: 10px;"></td>
+                    <td style="padding: 10px; "></td>
                     @endif                    
                     @if(strlen($sb->kodemataanggaran) > 3)
-                    <td width="200" style="padding: 10px; ">{{substr($sb->kodemataanggaran, -1)}}. {{$sb->namamataanggaran}}</td>
+                    <td style="padding: 10px; ">{{substr($sb->kodemataanggaran, -1)}}. {{$sb->namamataanggaran}}</td>
                     @else
                         @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                            <td width="200" style="padding: 10px; font-weight: bold;">{{$sb->namamataanggaran}}</td>
+                            <td style="padding: 10px; font-weight: bold;">{{$sb->namamataanggaran}}</td>
                         @else
-                            <td width="200" style="padding: 10px; ">{{$sb->namamataanggaran}}</td>
+                            <td style="padding: 10px; ">{{$sb->namamataanggaran}}</td>
                         @endif
                     @endif
                     @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                        <td width="50" style="padding: 10px; text-align: right; font-weight: bold;   ">{{ number_format($sb->subtotal,0,',','.') }}</td>
+                        <td style="padding: 10px; text-align: right; font-weight: bold;   ">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
                     @else
-                        <td width="50" style="padding: 10px; text-align: right;    ">{{ number_format($sb->subtotal,0,',','.') }}</td>
+                        <td style="padding: 10px; text-align: right;    ">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
                     @endif
-                    <td width="50" style="padding: 10px; text-align: right; font-weight: bold; "></td>
                     @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                        <td width="20" style="padding: 10px;  text-align: right; font-weight: bold;">{{ number_format($sb->subtotal,0,',','.') }}</td>
+                        <td style="padding: 10px;  text-align: right; font-weight: bold;">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
                     @else 
-                        <td width="20" style="padding: 10px;  text-align: right; ">{{ number_format($sb->subtotal,0,',','.') }}</td>
+                        <td style="padding: 10px;  text-align: right; ">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
                     @endif
                 </tr>
                 @endforeach
                 <tr>
                     <td  colspan="3"  style="padding: 10px; text-align: left; font-weight: bold;  text-align:center;">JUMLAH TOTAL</td>
-                    <td style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($totalsebelum,0,',','.') }}</td>
-                    <td style="padding: 10px; font-weight: bold; text-align: right; "></td>
-                    <td style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($totalberkurang,0,',','.') }}</td>
+                    <td style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($totalpelayanan,0,',','.') }}</td>
+                    <td style="padding: 10px; font-weight: bold;text-align: right;">{{ number_format($totalapbd,0,',','.') }}</td>
                 </tr>
                 
         </table>

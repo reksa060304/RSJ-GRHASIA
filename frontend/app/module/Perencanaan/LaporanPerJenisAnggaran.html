@@ -74,7 +74,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="Rekap Per-Sub Kegiatan(Sumber Dana)">
+                        <md-tab label="Rekap Per-Rekening Sumber Dana">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -124,7 +124,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="Rekap Per-Rekening Sumber Dana">
+                        <md-tab label="Rekap Per-Sub Kegiatan(Sumber Dana)">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -190,7 +190,33 @@
                                             </div>
                                             <div class="grid_12">
                                                 <div class="grid_12">
-                                                    <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahundetail"  kendo-date-picker  placeholer="YYYY" k-format="'yyyy'" />
+                                                    <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahundetail"  kendo-date-picker  placeholer="YYYY" k-format="'yyyy'" k-on-change='changeKegiatan()'/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="grid_2">
+                                            <div class="grid_12">
+                                                <label c-label item="item" c-label-text="Tahap"></label>
+                                            </div>
+                                            <div class="grid_12">
+                                                <div class="grid_12">
+                                                    <input kendo-combo-box k-ng-model="item.tahapdetail"
+                                                    k-data-text-field="'tahap'" k-data-value-field="'id'"
+                                                    k-filter="'contains'" k-auto-bind="false"
+                                                    k-data-source="listTahap" k-on-change='changeKegiatan()' />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="grid_2">
+                                            <div class="grid_12">
+                                                <label c-label item="item" c-label-text="Terhadap"></label>
+                                            </div>
+                                            <div class="grid_12">
+                                                <div class="grid_12">
+                                                    <input kendo-combo-box k-ng-model="item.terhadapdetail"
+                                                    k-data-text-field="'tahap'" k-data-value-field="'id'"
+                                                    k-filter="'contains'" k-auto-bind="false"
+                                                    k-data-source="listTahap" ng-disabled="disterhadapdetail" />
                                                 </div>
                                             </div>
                                         </div>
@@ -217,32 +243,6 @@
                                                     k-data-text-field="'text'" k-data-value-field="'id'"
                                                     k-filter="'contains'" k-auto-bind="false" 
                                                     k-data-source="listSubKegiatan"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_2">
-                                            <div class="grid_12">
-                                                <label c-label item="item" c-label-text="Tahap"></label>
-                                            </div>
-                                            <div class="grid_12">
-                                                <div class="grid_12">
-                                                    <input kendo-combo-box k-ng-model="item.tahapdetail"
-                                                    k-data-text-field="'tahap'" k-data-value-field="'id'"
-                                                    k-filter="'contains'" k-auto-bind="false"
-                                                    k-data-source="listTahap"  />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_2">
-                                            <div class="grid_12">
-                                                <label c-label item="item" c-label-text="Terhadap"></label>
-                                            </div>
-                                            <div class="grid_12">
-                                                <div class="grid_12">
-                                                    <input kendo-combo-box k-ng-model="item.terhadapdetail"
-                                                    k-data-text-field="'tahap'" k-data-value-field="'id'"
-                                                    k-filter="'contains'" k-auto-bind="false"
-                                                    k-data-source="listTahap" ng-disabled="disterhadapdetail" />
                                                 </div>
                                             </div>
                                         </div>
@@ -287,6 +287,56 @@
                                         <div class="grid_1">
                                             <button class="primary c-button" style="margin-top: 20px"
                                                 ng-click="CetakPendapatan()">Cetak</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab>
+                        <md-tab label="Rekap Total Anggaran">
+                            <md-content class="md-padding" ng-hide="false">
+                                <div class="grid_12" style="margin-top: 25px;">
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tahun"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahunrekap"  kendo-date-picker  placeholer="YYYY" k-format="'yyyy'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tahap"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input kendo-combo-box k-ng-model="item.tahaprekap"
+                                                k-data-text-field="'tahap'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false"
+                                                k-data-source="listTahap"  />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Terhadap"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input kendo-combo-box k-ng-model="item.terhadaprekap"
+                                                k-data-text-field="'tahap'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false"
+                                                k-data-source="listTahap"  />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_1">
+                                        <div class="grid_12">
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <button class="primary c-button" style="margin-top: 6px" ng-click="CetakDataRekap()">Cetak</button>
                                         </div>
                                     </div>
                                 </div>
