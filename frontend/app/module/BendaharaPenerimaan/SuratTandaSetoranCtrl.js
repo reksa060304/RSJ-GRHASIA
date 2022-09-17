@@ -412,7 +412,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.batal = function () {
-                medifirstService.postNonMessage('sysadmin/logging/save-log-batal-sts', objSave).then(function (data) {
+                medifirstService.post('sysadmin/logging/save-log-batal-sts', objSave).then(function (data) {
                 })
             }
 
