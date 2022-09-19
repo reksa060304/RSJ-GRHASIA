@@ -130,6 +130,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.disidpegawai = true
                     $scope.idpegawailogin = $scope.pegawaiLogin.id
                     $scope.namapegawailogin = $scope.pegawaiLogin.namaLengkap
+                    
                 }
                 if($state.params.parameter == '77777'){
                     $scope.spjaja = true
@@ -209,6 +210,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.dataSourceKegiatan = e.data.kegiatan
                         })
                     }
+
+                    var kegiatanGrid = $("#kegGrid").data("kendoGrid"); // get the grid widget
+                    if($scope.idpegawailogin != ''){
+                        kegiatanGrid.hideColumn(7);
+                    }
                     
                     // for (let index = 0; index < e.data.keterangan.length; index++) {
                     //     let element = e.data.keterangan[index];
@@ -275,6 +281,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.getPart('perencanaan/get-datacombo-part-rekanan', true, true, 20).then(function (data) {
                     $scope.listPihakKetiga = data
                 })
+
+                
             }    
 
             function loadDataSPM() {
@@ -1019,6 +1027,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         template:  '<div class="grid_4" style="margin-top: -8px;"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Search"></label></div><div class="grid_11"><input c-text-box type="input" class="k-textbox" ng-model="item.search" /></div></div>'
                     }
                 ],
+                selectable: 'row',
+                scrollable: true,
+
+                pageable: true,
+                groupable: true,
                 columns:[
                 {
                   "command": [
@@ -1029,7 +1042,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         },
                     ],
                        title: "",
-                       width: "30px",
+                       width: "130px",
                 },
                 // {
                 //     "field": "id",
@@ -1039,33 +1052,33 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "kode",
                     "title": "Kode",
-                    "width": "80px"
+                    "width": "200px"
                 },
                 {
                     "field": "keterangan",
                     "title": "Keterangan",
-                    "width": "250px"
+                    "width": "400px"
                 },
                 {
                     "field": "namalengkap",
                     "title": "PPTK",
-                    "width": "150px"
+                    "width": "250px"
                 },
                 {
                     "field": "tahun",
                     "title": "Tahun Angaran",
-                    "width": "50px"
+                    "width": "100px"
                 },
                 {
                     "field": "targetmasuk",
                     "title": "Target Kinerja",
-                    "width": "100px",
+                    "width": "250px",
                     "template": "<span class='style-right'>{{formatRupiah2('#: targetmasuk #', 'Rp. ')}}</span>",
                 },
                 {
                     "field": "namakelompok",
                     "title": "div",
-                    "width": "80px"
+                    "width": "200px"
                 },
                 {
                     "command": [
@@ -1076,8 +1089,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                           },
                       ],
                          title: "",
-                         width: "30px",
-                         hidden: "disidpegawai"
+                         width: "100px",
                 }
             ]};
             $scope.columnSetting = {
@@ -3347,45 +3359,45 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                               },
                           ],
                              title: "",
-                             width: "30px",
+                             width: "100px",
                     },
                     {
                         "field": "nourut",
                         "title": "No. Urut",
-                        "width": "30px"
+                        "width": "130px"
                     },
                     {
                         "field": "keteranganbelanja",
                         "title": "Keterangan",
-                        "width": "100px"
+                        "width": "200px"
                     },
                     {
                         "field": "jml",
                         "title": "Jml",
-                        "width": "40px",
+                        "width": "140px",
 						"template": "<span class='style-right'>{{formatRupiah2('#: jml #', '')}}</span>",
                     },
                     {
                         "field": "satuan",
                         "title": "Satuan",
-                        "width": "50px"
+                        "width": "150px"
                     },
                     {
                         "field": "hargasatuan",
                         "title": "Harga Satuan",
-                        "width": "50px",
+                        "width": "150px",
 						"template": "<span class='style-right'>{{formatRupiah2('#: hargasatuan #', '')}}</span>",
                     },
                     {
                         "field": "subtotal",
                         "title": "Sub Total",
-                        "width": "50px",
+                        "width": "150px",
 						"template": "<span class='style-right'>{{formatRupiah2('#: subtotal #', '')}}</span>",
                     },
                     {
                         "field": "asalproduk",
                         "title": "Sumber Dana",
-                        "width": "100px"
+                        "width": "200px"
                     },
                     {
                         command: [{
@@ -3393,8 +3405,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             click: HapusRincianKas
                         }],
                         title: "",
-                        width: "40px",
-                        hidden: "disidpegawai"
+                        width: "100px",
                     }
                 ]
             };
@@ -3981,6 +3992,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
                     // $scope.rcn.totalAnggaran = formatRupiah(dataMataAnggaranSelected.total, "Rp. ")
                     // $scope.rcn.sisaAnggaran = formatRupiah(dataMataAnggaranSelected.total - 0, "Rp. ")
+
+                    var rincianGrid = $("#rincianGrids").data("kendoGrid"); // get the grid widget
+                    if($scope.idpegawailogin != ''){
+                        rincianGrid.hideColumn(8);
+                    }
                 }
             }
             //perencanaan/save-keterangan-belanja

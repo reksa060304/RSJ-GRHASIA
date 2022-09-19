@@ -353,7 +353,7 @@
 
 								<div class="grid_12 borderBox">
 									
-									<kendo-grid id="kGrids" k-data-source="dataSourceKegiatan" k-selectable="'row'" class="max-height"
+									<kendo-grid id="kegGrid" k-data-source="dataSourceKegiatan" k-selectable="'row'" class="max-height"
 										k-options="columnKegiatan" k-ng-model="dataKegiatanSelected" ng-click="klikKegiatan(dataKegiatanSelected)">
 									</kendo-grid>
 								</div>
@@ -1446,7 +1446,7 @@
 		</div>
 		<div class="grid_12">
 			<div class="grid_12 borderBox">
-				<kendo-grid id="kGrids" k-data-source="dataSourceRincianAnggaran" k-selectable="'row'"  class="max-height"
+				<kendo-grid id="rincianGrids" k-data-source="dataSourceRincianAnggaran" k-selectable="'row'"  class="max-height"
 					k-options="columnRincianAnggaran" k-ng-model="dataRincianAnggaranSelected" ng-click="klikRincianAnggaran(dataRincianAnggaranSelected)">
 				</kendo-grid>
 			</div>
