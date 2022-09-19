@@ -365,11 +365,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         id: dataItem.id,
                         div: dataItem.div,
                     }
-                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
-                    loadDataGrid();
-                }, function (error) {
-
+                
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
+                        loadDataGrid();
+                    }, function (error) {
+    
+                    })
                 })
+
+                
             }
             function editKegiatanT(e) {
                 e.preventDefault();
@@ -2703,24 +2714,46 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         id: $scope.item.id,
                     }
-                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
-                    loadDataGrid();
-                    $scope.popupProgram.center().close()
-                }, function (error) {
 
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
+                        loadDataGrid();
+                        $scope.popupProgram.center().close()
+                    }, function (error) {
+    
+                    })
                 })
+
+                
             }
             $scope.HapusPopUpUrusan = function(){
                 var objSave =
                     {
                         id: $scope.item.id,
                     }
-                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
-                    loadDataGrid();
-                    $scope.popupUrusan.center().close()
-                }, function (error) {
 
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
+                        loadDataGrid();
+                        $scope.popupUrusan.center().close()
+                    }, function (error) {
+    
+                    })
                 })
+
+                
             }
             $scope.HapusPopUpSubSubKegiatan = function(){
                 var objSave =
@@ -2729,12 +2762,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         pengurangan: $scope.item.targetKinerjaMasukan,
                         id: $scope.item.id,
                     }
-                medifirstService.post('perencanaan/delete-rincian-kegiatan-anggaran', objSave).then(function (e) {
-                    loadDataGrid();
-                    $scope.popupSubSubKegiatan.center().close()
-                }, function (error) {
 
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-rincian-kegiatan-anggaran', objSave).then(function (e) {
+                        loadDataGrid();
+                        $scope.popupSubSubKegiatan.center().close()
+                    }, function (error) {
+    
+                    })
                 })
+
+                
                 
             }
             $scope.HapusPopUpTambahMT = function(){
@@ -2742,12 +2786,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         id: $scope.item.id,
                     }
-                medifirstService.post('perencanaan/delete-mata-anggaran', objSave).then(function (e) {
-                    loadDataGrid();
-                    $scope.popupTambahMT.center().close()
-                }, function (error) {
-
+                
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-mata-anggaran', objSave).then(function (e) {
+                        loadDataGrid();
+                        $scope.popupTambahMT.center().close()
+                    }, function (error) {
+    
+                    })
                 })
+                    
+                
             }
             $scope.SimpanPopUpKegiatan = function(){
                 var jmlkode = $scope.item.kodeHead + '.' + $scope.item.kode
@@ -2793,12 +2848,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         id: $scope.item.id,
                     }
-                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
-                    loadDataGrid();
-                    $scope.popupKegiatan.center().close()
-                }, function (error) {
 
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
+                        loadDataGrid();
+                        $scope.popupKegiatan.center().close()
+                    }, function (error) {
+    
+                    })
                 })
+
+                
             }
             $scope.SimpanPopUpSubKegiatan = function(){
                 var jmlkode = $scope.item.kodeHead + '.' + $scope.item.kode
@@ -2844,12 +2910,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         id: $scope.item.id,
                     }
-                medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
-                    loadDataGrid();
-                    $scope.popupSubKegiatan.center().close()
-                }, function (error) {
 
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
+                        loadDataGrid();
+                        $scope.popupSubKegiatan.center().close()
+                    }, function (error) {
+    
+                    })
                 })
+
+                
             }
             $scope.SimpanPopUpSubSubKegiatan = function(){
                 var jmlkode = $scope.item.kodeHead + '.' + $scope.item.kode
@@ -4598,11 +4675,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         norec :  dataItem.norec,
                     }
-                medifirstService.post('perencanaan/delete-rincian-belanja',datasave).then(function (e) {
-                    $scope.item.sisaAnggaranSPJ += dataItem.subtotal
-                }, function (error) {
 
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-rincian-belanja',datasave).then(function (e) {
+                        $scope.item.sisaAnggaranSPJ += dataItem.subtotal
+                    }, function (error) {
+    
+                    })
                 })
+
+                
                 // DataDetailSPJ.push(dataAddSPJ)
                 // let newARr = []
                 // let a  = 0
@@ -4917,11 +5005,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         norec: dataItem.norec,
                     }
-                medifirstService.post('perencanaan/delete-spj', objSave).then(function (e) {
-                    loadDataGrid();
-                }, function (error) {
-            
+
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-spj', objSave).then(function (e) {
+                        loadDataGrid();
+                    }, function (error) {
+                
+                    })
                 })
+
+                
             }
 
             function inputSPM(e) {
@@ -4979,11 +5078,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         norec: $scope.norecverif,
                     }
-                medifirstService.post('perencanaan/batal-verif-spj', objSave).then(function (e) {
-                    loadDataGrid();
-                }, function (error) {
-            
+
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin batal verif ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/batal-verif-spj', objSave).then(function (e) {
+                        loadDataGrid();
+                    }, function (error) {
+                
+                    })
                 })
+
+                
             }
 
             $scope.klik = function (dataHeadSelected) {
