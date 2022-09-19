@@ -4973,6 +4973,11 @@ order by kodemataanggaran"));
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
 
+        $pegawai = '';
+        if(isset($request['idpegawai']) && $request['idpegawai'] != "undefined" && $request['idpegawai'] != ''){
+            $pegawai = "and ka.objectpptkfk = ".$request['idpegawai'];
+        }
+
         $data = DB::select(DB::raw("
         select string_agg(DISTINCT rd.uraian, ',') uraian, sr.*, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
                 pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
@@ -4991,6 +4996,7 @@ order by kodemataanggaran"));
                 left JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
                 where sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
                 and sr.statusenabled = true
+                $pegawai
 				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
                 ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun
             ")

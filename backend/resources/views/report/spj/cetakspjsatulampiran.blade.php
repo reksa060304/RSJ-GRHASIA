@@ -78,7 +78,7 @@
         </tr>
         <tr>
             <td colspan="5" style="text-align:left; padding-left: 50px; padding-bottom: 10px; padding-top: 10px; ">
-                <font style="font-size: 12pt" color="#000000">{{$keterangan[0]->keteranganbelanja}} ({{$kegiatan[0]->kodesub}}) pada sub kegiatan {{ $kegiatan[0]->ktsub }} sub sub kegiatan {{ $kegiatan[0]->ktsubsub }} dengan rincian biaya terlampir.</font>
+                <font style="font-size: 12pt" color="#000000">{{$keterangan[0]->keteranganbelanja}} ({{$mataanggaran[0]->kodemataanggaran}}) pada sub kegiatan {{ $kegiatan[0]->ktsub }} sub sub kegiatan {{ $kegiatan[0]->ktsubsub }} dengan rincian biaya terlampir.</font>
             </td>
         </tr>
         </tbody>
@@ -247,7 +247,7 @@
                 <font style="font-size: 12pt" color="#000000"><u>PPh&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: {{ $spj[0]->pph }}</u></font>
             </td>
             <td colspan="2" style="width: 100px; padding-left: 30px; border-left: 2px solid black" align="left">
-                <font style="font-size: 12pt" csolor="#000000">No. Rek: {{$mataanggaran[0]->kodemataanggaran}}</font>
+                <font style="font-size: 12pt" csolor="#000000">No. Rek: {{$mataanggaran[0]->kodepermendagri}}</font>
             </td>
         </tr>
         <tr>
@@ -259,7 +259,7 @@
                 <font style="font-size: 12pt;" color="#000000">PPh&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: {{ $spj[0]->totalpp }}</font>
             </td>
             <td colspan="2" style="width: 100px; padding-left: 30px; border-left: 2px solid black" align="left">
-                <font style="font-size: 12pt" csolor="#000000">Kode Kegiatan: {{$kegiatan[0]->kodesub}}</font>
+                <font style="font-size: 12pt" csolor="#000000">Kode Kegiatan: {{$kegiatan[0]->kodesubsub}}</font>
             </td>
         </tr>
         <tr>

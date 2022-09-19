@@ -69,7 +69,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.dataSearchSourceKeteranganBelanja= []
             $scope.totalanggaranperalokasi = 0;
             $scope.kodemataanggaranalokasi = ''
-            $scope.idpegawailogin = 0
+            $scope.idpegawailogin = ''
             $scope.namapegawailogin = ''
 
             $scope.listDiv = [
@@ -2422,7 +2422,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var tglawal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
                 var tglakhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
                 
-                medifirstService.get("perencanaan/get-spj?tglAwal="+tglawal+"&tglAkhir="+tglakhir).then(function (e) {
+                medifirstService.get("perencanaan/get-spj?tglAwal="+tglawal+"&tglAkhir="+tglakhir+"&idpegawai="+$scope.idpegawailogin).then(function (e) {
                     DataSPJ = e.data.data
                     DataDetailSPJALL = e.data.detail
                     $scope.dataSourceSPJ = new kendo.data.DataSource({
@@ -3090,7 +3090,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             var onDataBound = function (e) {
                 var kendoGrid = $("#kGridsSPJ").data("kendoGrid"); // get the grid widget
-                if($scope.idpegawailogin != 0){
+                if($scope.idpegawailogin != ''){
                     kendoGrid.hideColumn(1);
                 }
                 var rows = e.sender.element.find("tbody tr"); // get all rows
@@ -4742,7 +4742,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     dispanjar = false
                 // }
                 
-                if(dataItem.tglverif != null && $scope.idpegawailogin != 0){
+                if(dataItem.tglverif != null && $scope.idpegawailogin != ''){
                     $scope.dispptkspj = true
                     var kenGrid = $("#kGridDetail").data("kendoGrid");
                     kenGrid.hideColumn(0);

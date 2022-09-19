@@ -2256,15 +2256,20 @@ class ReportController extends ApiController{
         where sr.norec = '$norec'
         group by kb.keteranganbelanja;"));
 
-        $mataanggaran = DB::select(DB::raw("select ma.namamataanggaran, ma.kodemataanggaran
+        $mataanggaran = DB::select(DB::raw("select ma.namamataanggaran, ma.kodemataanggaran,
+        map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode as kodepermendagri
         from strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
         left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        left join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+        left join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+        left join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+        left join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
         where sr.norec = '$norec'
-        group by ma.namamataanggaran, ma.kodemataanggaran;"));
+        group by ma.namamataanggaran, ma.kodemataanggaran, map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode;"));
 
         $spj = DB::select(DB::raw("select 
         sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nip_pns as nipbendahara, pgp.namalengkap as namapenerima
