@@ -23,6 +23,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 2, jenisperubahan: "Non Perubahan" },
             ];
 
+            $scope.listJenisRekening = [
+                { id: 1, jenisrekening: "Tampilkan Rek RBA" },
+                { id: 2, jenisrekening: "Tampilkan Rek Permen"}
+            ];
+
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listTahap = e.data.tahap
                 $scope.listKegiatan = e.data.kegiatancombo
@@ -32,6 +37,48 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatandetail.id+"&tahap="+$scope.item.tahapdetail.id+"&tahun="+moment($scope.item.tahundetail).format('YYYY')).then(function (e) {
                     $scope.listSubKegiatan = e.data.data
                 });
+            }
+
+            $scope.changeKegiatanMonev = function () {
+                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatanmonev.id+"&tahun="+moment($scope.item.tahunmonev).format('YYYY')).then(function (e) {
+                    $scope.listSubKegiatan = e.data.data
+                });
+            }
+
+            $scope.CetakMonev = function(){
+
+                if ($scope.item.tahunmonev == undefined){
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.jenisrekeningmonev == undefined){
+                    toastr.warning('Jenis Rekening harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.kegiatanmonev == undefined){
+                    toastr.warning('Sub Kegiatan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.subkegiatanmonev == undefined){
+                    toastr.warning('Sub Sub Kegiatan harus diisi', 'Informasi');
+                    return
+                }
+
+                var tahun = ""
+                if ($scope.item.tahunmonev != undefined){
+                    tahun = moment($scope.item.tahunmonev).format('YYYY')
+                }
+                
+                if($scope.item.jenisrekeningmonev.id == 2){
+                    window.open(baseTransaksi + "report/get-cetak-spj-dan-monev?tahun="+tahun+"&jenisrekening="+$scope.item.jenisrekeningmonev+"&subkegiatan="+$scope.item.kegiatanmonev.id+"&subsubkegiatan="+$scope.item.subkegiatanmonev.id, '_blank');
+                } else if($scope.item.jenisrekeningmonev.id == 1){
+                    window.open(baseTransaksi + "report/get-cetak-spj-dan-monev-rba?tahun="+tahun+"&jenisrekening="+$scope.item.jenisrekeningmonev+"&subkegiatan="+$scope.item.kegiatanmonev.id+"&subsubkegiatan="+$scope.item.subkegiatanmonev.id, '_blank');
+                }
+                
+                
             }
 
 

@@ -4646,20 +4646,26 @@ order by kodemataanggaran"));
         $idProfile = (int) $kdProfile;
         $id = $request['kegiatan'];
         $tahun = $request['tahun'];
-        $tahap = $request['tahap'];
+
+        $thp = '';
+        if(isset($request['tahap']) && $request['tahap'] != "undefined" && $request['tahap'] != ""){
+            $thp = "and kb.objecttahapfk = ".$request['tahap'];
+        }
         
         $data = DB::select(DB::raw("
-        select kg.id, kg.kode, kg.keterangan, kg.id || '-' || kg.keterangan as text
+        select kg.id, kg.kode, kg.keterangan, kg.id || '-' || kg.keterangan as text,
+        ta.tahap || '-' || kg.keterangan as texttahap
         from kegiatananggaran_m km 
         inner join kegiatananggaran_m kg on kg.kode ilike km.kode || '%' and kg.div = 4
         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = kg.id
+        inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
         where km.statusenabled = true and km.kdprofile = 30
         and kg.statusenabled = true and kg.kdprofile = 30
         and kb.statusenabled = true and kb.kdprofile = 30
         and km.id = $id
         and kg.tahun = '$tahun'
-        and kb.objecttahapfk = $tahap
-        group by kg.id, kg.kode, kg.keterangan, kg.id || '-' || kg.keterangan
+        $thp
+        group by kg.id, kg.kode, kg.keterangan, kg.id || '-' || kg.keterangan, ta.tahap || '-' || kg.keterangan
         ")
         );
 

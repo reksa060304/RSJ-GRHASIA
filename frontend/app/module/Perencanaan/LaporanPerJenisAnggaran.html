@@ -342,6 +342,69 @@
                                 </div>
                             </md-content>
                         </md-tab>
+                        <md-tab label="SPJ dan Monev">
+                            <md-content class="md-padding" ng-hide="false">
+                                <div class="grid_12" style="margin-top: 25px;">
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tahun"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahunmonev"  kendo-date-picker  placeholer="YYYY" k-format="'yyyy'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Sub Kegiatan"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input kendo-combo-box k-ng-model="item.kegiatanmonev"
+                                                k-data-text-field="'keterangan'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false" 
+                                                k-data-source="listKegiatan" k-on-change='changeKegiatanMonev()'/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Sub Sub Kegiatan"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input kendo-combo-box k-ng-model="item.subkegiatanmonev"
+                                                k-data-text-field="'texttahap'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false" 
+                                                k-data-source="listSubKegiatan"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Jenis Rekening"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input kendo-combo-box k-ng-model="item.jenisrekeningmonev"
+                                                k-data-text-field="'jenisrekening'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false"
+                                                k-data-source="listJenisRekening"  />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_1">
+                                        <div class="grid_12">
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <button class="primary c-button" style="margin-top: 6px" ng-click="CetakMonev()">Cetak</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab>
                     </md-tabs>
                 </md-content>
             </div>
