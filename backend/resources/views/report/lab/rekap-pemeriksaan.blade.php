@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="angularApp">
+
+<head>
+    <meta charset="utf-8">
+    <title>Report Rekap Pemeriksaan</title>
+    @if(stripos(\Request::url(), 'localhost') !== FALSE)
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/report/paper.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/report/table.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/report/tabel.css') }}">
+    <!-- angular -->
+    <script src="{{ asset('js/angular/angular.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/angular/angular-route.min.js') }}" type="text/javascript"></script>
+    <script type="text/javascript" src="{{ asset('js/angular/angular-animate.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/angular/angular-aria.min.js') }}"></script>
+    <script src="{{ asset('js/angular/angular-material.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.qr-code.js') }}"></script>
+    @else
+
+    <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('service/css/report/paper.css') }}">
+    <link rel="stylesheet" href="{{ asset('service/css/report/table.css') }}">
+    <link rel="stylesheet" href="{{ asset('service/css/report/tabel.css') }}">
+    <!-- angular -->
+    <script src="{{ asset('service/js/angular/angular.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('service/js/angular/angular-route.min.js') }}" type="text/javascript"></script>
+    <script type="text/javascript" src="{{ asset('service/js/angular/angular-animate.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('service/js/angular/angular-aria.min.js') }}"></script>
+    <script src="{{ asset('service/js/angular/angular-material.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('service/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('service/js/jquery.qr-code.js') }}"></script>
+    @endif
+    <style>
+        @page {
+            size: A4;
+        }
+
+        /*@media print {*/
+        /*    body {margin:0}*/
+        /*}*/
+        .double-border {
+
+            border: 4px solid #000;
+
+        }
+
+        .double-border:before {
+
+            border: 4px solid #fff;
+
+        }
+
+        .box {
+            border: 2px solid black;
+            /*border-radius: 6px;*/
+        }
+
+        .garis6 td {
+            padding: 3px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .f-s-15 {
+            font-size: 12px;
+        }
+
+        .top-height {
+            height: 50px;
+            vertical-align: text-top;
+            width: 15%;
+        }
+
+        .text-top {
+            vertical-align: text-top;
+        }
+
+        table {
+            /* width: 100%;
+            height: 100%; */
+        }
+        #dt td{
+            font-family: Tahoma;
+            font-size: 10pt;
+        }
+        body{
+            font-family: Tahoma;
+        }
+    </style>
+</head>
+
+<body class="A4" style="font-family:Arial;height: auto">
+    <section class="sheet padding-20mm" style="font-family:Arial">
+        <table cellspacing="0" cellpadding="0" border="0" width="100%" >
+            <tbody>
+                <tr>
+                    <td style="text-align: center; font-family: Arial">
+                        <span style="font-size: 11pt;"><b>REKAPITULASI DATA PEMERIKSAAN LABORATORIUM</b></span><br>
+                        <span style="font-size: 11pt;"><b>{{strtoupper($res['profile']['original']['namalengkap'])}}</b></span><br>
+                        <span style="font-size: 11pt;"><b>{{$tglawal}} - {{$tglakhir}}</b></span><br>
+                    </td>
+                </tr>
+                
+            </tbody>
+        </table>
+        <hr style="border:1px solid #000;margin-bottom:10px">
+        <table cellspacing="0" cellpadding="0" border="1" width="100%" >
+            <tr>
+                <th style="font-family: Arial">No</th>
+                <th style="font-family: Arial">Keterangan</th>
+                <th style="font-family: Arial">Jasa Sarana</th>
+            </tr>
+            @php
+                $no = 1;
+            @endphp
+            @foreach ($data as $d)
+            <tr>
+                <td style="text-align: center;font-family: Arial">{{$no++}}</td>
+                <td style="text-align: center;font-family: Arial">{{$d->kelompokpasien}}</td>
+                <td style="text-align: right;font-family: Arial">Rp.{{number_format($d->sum,2)}}</td>
+            </tr>
+            @endforeach
+        </table>
+    </section>
+</body>
+<style>
+    .footer {
+        position: absolute;
+        bottom: 5%;
+        right: 5%;
+    }
+</style>
+</body>
+
+</html>

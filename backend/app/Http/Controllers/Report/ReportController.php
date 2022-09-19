@@ -6901,4 +6901,32 @@ public function suratBuktiPengembalian(Request $request)
         // dd($data);
         return view("report.kwitansi-diklat", compact("data",'pegawai'));
     }
+    public function pemeriksaanLab(Request $request)
+    {
+        $data= \DB::select(DB::raw(
+            "SELECT kp.kelompokpasien, sum(ppd.hargajual::integer) FROM pelayananpasien_t pp 
+            inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
+            inner join pelayananpasiendetail_t ppd on pp.norec = ppd.pelayananpasien
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            where pd.kdprofile = 30 and pd.statusenabled = true and apd.kdprofile = 30 and apd.statusenabled = true and pp.kdprofile = 30 and pp.statusenabled = true and 
+            apd.tglmasuk between '$request[tglAwal]' and '$request[tglAkhir]' and ru.objectdepartemenfk = 3 and pd.tglpulang is not null and pp.strukfk is not null and ppd.komponenhargafk = 93
+            GROUP BY kp.id
+            union all 
+            SELECT 'TOTAL', sum(ppd.hargajual::integer) FROM pelayananpasien_t pp 
+            inner join pelayananpasiendetail_t ppd on pp.norec = ppd.pelayananpasien
+            inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            where pd.kdprofile = 30 and pd.statusenabled = true and apd.kdprofile = 30 and apd.statusenabled = true and pp.kdprofile = 30 and pp.statusenabled = true and 
+            apd.tglmasuk between '$request[tglAwal]' and '$request[tglAkhir]' and ru.objectdepartemenfk = 3 and pd.tglpulang is not null and pp.strukfk is not null and ppd.komponenhargafk = 93"
+        ));
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        // dd($res);
+        $tglawal = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglAwal'])));
+        $tglakhir = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglAkhir'])));
+        return view("report.lab.rekap-pemeriksaan", compact("data", 'res','tglawal','tglakhir'));
+    }
 }

@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize, configuration) {
     'use strict';
     initialize.controller('DaftarPasienPenunjangCtrl', ['$scope', 'MedifirstService', '$state', 'CacheHelper', 'DateHelper',
         function ($scope, medifirstService, $state, cacheHelper, dateHelper) {
@@ -422,6 +422,9 @@ define(['initialize'], function (initialize) {
                     norecAPD: $scope.dataSelected.norec_apd,
                     noRec: $scope.dataSelected.norec_apd
                 })
+            }
+            $scope.rekapPemeriksaan = function(){
+                window.open(configuration.baseApiBackend + 'report/get-cetak-pemeriksaanlab?tglAwal=' + moment($scope.item.tglAwal).format('YYYY-MM-DD') + '&tglAkhir=' + moment($scope.item.tglAkhir).format('YYYY-MM-DD')+'&kdprofile=30', '_blank');
             }
             //***********************************
 

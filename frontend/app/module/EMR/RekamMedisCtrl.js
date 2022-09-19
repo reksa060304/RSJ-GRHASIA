@@ -95,7 +95,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     31: $scope.header.pekerjaan,
                     32: $scope.header.tempatlahir,
                     33: $scope.header.statuspasien,
-                    34: $scope.header.skoriq
+                    34: $scope.header.skoriq,
+                    35: $scope.header.nik,
+                    36: $scope.header.suku,
+                    37: $scope.header.pendidikan,
+                    38: $scope.header.agama,
                 }
                 cacheHelper.set('CacheInputDiagnosaDokter', arrStr);
                 cacheHelper.set('InputResepApotikOrderRevCtrl', arrStr);
