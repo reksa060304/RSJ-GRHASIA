@@ -18218,8 +18218,8 @@
     ]
     },
     {
-      "name": "RekamMedis.AsesmenMedis.MonitoringTindakanRawatIntensif",
-      "url": "/MonitoringTindakanRawatIntensif",
+      "name": "RekamMedis.AsesmenMedis.MenuIndex.MonitoringTindakanRawatIntensif",
+      "url": "/MonitoringTindakanRawatIntensif/:index/:idEMR",
       "templateurl": "module/EMR/MonitoringTindakanRawatIntensif.html",
       "controller": "MonitoringTindakanRawatIntensifCtrl",
       "deps": [{
