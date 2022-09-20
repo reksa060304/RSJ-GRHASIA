@@ -98,7 +98,7 @@
                 @endforeach
                 <tr style="border: 1px solid black;">
                     <td align="center" width="50" colspan="2" style="padding: 10px; font-weight: bold;  font-size: 15px;">JUMLAH TOTAL</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ $jumlahanggaran }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($jumlahanggaran,0,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($jumlahpanjar,0,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;">{{ number_format($jumlahspj,0,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;">{{ number_format($subtotal,0,',','.') }}</td>

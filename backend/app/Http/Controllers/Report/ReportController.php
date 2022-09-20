@@ -2510,8 +2510,10 @@ class ReportController extends ApiController{
         $tahun = $request['tahun'];
 
         $qtahun  = '';
+        $qtahunka  = '';
         if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
             $qtahun =  " and extract(year from sr.tglrealisasi) =  '" . $request['tahun']."'";
+            $qtahunka =  " and ka.tahun =  '" . $request['tahun']."'";
         }
 
         $qasalproduk  = '';
@@ -2525,6 +2527,7 @@ class ReportController extends ApiController{
         sum(kb.subtotal) - (x.totalbelanja + y.jumlah) sisaanggaran
         from mataanggaran_m ma
         inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+        INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
 				inner join (
 					select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
 					from mataanggaran_m ma
@@ -2549,6 +2552,7 @@ class ReportController extends ApiController{
         where ma.kdprofile = 30 and ma.statusenabled = true
         and kb.kdprofile = 30 and kb.statusenabled = true
         $qasalproduk
+        $qtahunka
         group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah
         "));
 
@@ -2561,13 +2565,17 @@ class ReportController extends ApiController{
         $tahun = $request['tahun'];
 
         $qtahun  = '';
+        $qtahunka  = '';
         if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
             $qtahun =  " and extract(year from sr.tglrealisasi) =  '" . $request['tahun']."'";
+            $qtahunka =  " and ka.tahun =  '" . $request['tahun']."'";
         }
 
         $qsubsubkegiatan  = '';
+        $qsubsubkegiatansr  = '';
         if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
             $qsubsubkegiatan =  " and ka.id =  '" . $request['subsubkegiatan']."'";
+            $qsubsubkegiatansr =  " and sr.objectkegiatanfk =  '" . $request['subsubkegiatan']."'";
         }
 
         $subk = $request['subkegiatan'];
@@ -2592,6 +2600,7 @@ class ReportController extends ApiController{
                             where sr.kdprofile = 30 and sr.statusenabled = true
                             and sr.status = 'Sudah Diverifikasi'
                             $qtahun
+                            $qsubsubkegiatansr
                             group by ma.kodemataanggaran, ma.namamataanggaran
                         ) as x on x.kodemataanggaran = ma.kodemataanggaran
                         inner join (
@@ -2603,6 +2612,7 @@ class ReportController extends ApiController{
                                 left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
                                 and sr.status = 'Sudah Diverifikasi'
                                 $qtahun
+                                $qsubsubkegiatansr
                                 group by ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah
                             ) as s group by kodemataanggaran, namamataanggaran
                         ) as y on y.kodemataanggaran = ma.kodemataanggaran
@@ -2614,6 +2624,7 @@ class ReportController extends ApiController{
                         and kb.kdprofile = 30 and kb.statusenabled = true
                         and map.kdprofile = 30 and map.statusenabled = true
                         $qsubsubkegiatan
+                        $qtahunka
                 group by map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode, map.mataanggaranpermen, x.totalbelanja, y.jumlah        
         "));
 
@@ -2626,13 +2637,17 @@ class ReportController extends ApiController{
         $tahun = $request['tahun'];
 
         $qtahun  = '';
+        $qtahunka  = '';
         if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
             $qtahun =  " and extract(year from sr.tglrealisasi) =  '" . $request['tahun']."'";
+            $qtahunka =  " and ka.tahun =  '" . $request['tahun']."'";
         }
 
         $qsubsubkegiatan  = '';
+        $qsubsubkegiatansr  = '';
         if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
             $qsubsubkegiatan =  " and ka.id =  '" . $request['subsubkegiatan']."'";
+            $qsubsubkegiatansr =  " and sr.objectkegiatanfk =  '" . $request['subsubkegiatan']."'";
         }
 
         $subk = $request['subkegiatan'];
@@ -2656,6 +2671,7 @@ class ReportController extends ApiController{
                             where sr.kdprofile = 30 and sr.statusenabled = true
                             and sr.status = 'Sudah Diverifikasi'
                             $qtahun
+                            $qsubsubkegiatansr
                             group by ma.kodemataanggaran, ma.namamataanggaran
                         ) as x on x.kodemataanggaran = ma.kodemataanggaran
                         inner join (
@@ -2667,6 +2683,7 @@ class ReportController extends ApiController{
                                 left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
                                 and sr.status = 'Sudah Diverifikasi'
                                 $qtahun
+                                $qsubsubkegiatansr
                                 group by ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah
                             ) as s group by kodemataanggaran, namamataanggaran
                         ) as y on y.kodemataanggaran = ma.kodemataanggaran
@@ -2678,6 +2695,7 @@ class ReportController extends ApiController{
                         and kb.kdprofile = 30 and kb.statusenabled = true
                         and map.kdprofile = 30 and map.statusenabled = true
                         $qsubsubkegiatan
+                        $qtahunka
                 group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah        
         "));
 
@@ -2690,8 +2708,10 @@ class ReportController extends ApiController{
         $tahun = $request['tahun'];
 
         $qtahun  = '';
+        $qtahunka  = '';
         if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
             $qtahun =  " and extract(year from sr.tglrealisasi) =  '" . $request['tahun']."'";
+            $qtahunka =  " and ka.tahun =  '" . $request['tahun']."'";
         }
 
         $qasalproduk  = '';
@@ -2709,6 +2729,7 @@ class ReportController extends ApiController{
         inner join mataanggaranpermen_m map4 on map5.mataanggaranpermenfk = map4.id and map4.div = 4
         inner join mataanggaranpermen_m map3 on map4.mataanggaranpermenfk = map3.id and map3.div = 3
         inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+        INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
 				inner join (
 					select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
 					from mataanggaran_m ma
@@ -2733,6 +2754,7 @@ class ReportController extends ApiController{
         where ma.kdprofile = 30 and ma.statusenabled = true
         and kb.kdprofile = 30 and kb.statusenabled = true
         $qasalproduk
+        $qtahunka
         group by map5.mataanggaranpermen, map2.kode || '.' ||  map3.kode || '.' ||  map4.kode || '.' || map5.kode, x.totalbelanja, y.jumlah;
         "));
 
