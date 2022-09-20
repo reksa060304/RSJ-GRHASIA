@@ -3395,7 +3395,12 @@
         {
             "nameDep": "PengkajianKeperawatanGeriatriCtrl",
             "urlDep": "module/EMR/PengkajianKeperawatanGeriatriCtrl"
+        },
+        {
+            "nameDep": "AsesmenAwalKeperawatanRINAPZACtrl",
+            "urlDep": "module/EMR/AsesmenAwalKeperawatanRINAPZACtrl"
         }
+
         
     ]
 }
