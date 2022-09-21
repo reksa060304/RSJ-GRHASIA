@@ -81,6 +81,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
 
+            $scope.CetakPermen = function(){
+                var tahap = ""
+                if ($scope.item.tahappermen != undefined) {
+                    tahap = $scope.item.tahappermen.id
+                }
+
+                var tahun = ""
+                if ($scope.item.tahunpermen != undefined) {
+                    tahun = $scope.item.tahunpermen
+                }
+
+                var subkegiatan = ""
+                if ($scope.item.kegiatanpermen != undefined) {
+                    subkegiatan = $scope.item.kegiatanpermen.id
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-konsolidasi-per-permen?tahap="+tahap+"&subkegiatan="+subkegiatan+"&tahun="+moment(tahun).format('YYYY'), '_blank');
+                
+            }
+
 
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY HH:mm');

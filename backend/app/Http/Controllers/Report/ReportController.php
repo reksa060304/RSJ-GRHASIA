@@ -2551,6 +2551,7 @@ class ReportController extends ApiController{
 				) as y on y.kodemataanggaran = ma.kodemataanggaran
         where ma.kdprofile = 30 and ma.statusenabled = true
         and kb.kdprofile = 30 and kb.statusenabled = true
+        and ka.kdprofile = 30 and ka.statusenabled = true
         $qasalproduk
         $qtahunka
         group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah
@@ -2623,6 +2624,7 @@ class ReportController extends ApiController{
                         where ma.kdprofile = 30 and ma.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
                         and map.kdprofile = 30 and map.statusenabled = true
+                        and ka.kdprofile = 30 and ka.statusenabled = true
                         $qsubsubkegiatan
                         $qtahunka
                 group by map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode, map.mataanggaranpermen, x.totalbelanja, y.jumlah        
@@ -2631,6 +2633,78 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         //return $this->respond($result);
         return view('report.spj.cetakspjmonev',compact('data', 'pageWidth', 'tahun', 'subkegiatan', 'subsubkegiatan'));
+    }
+
+    public function CetakKonsolidasiPermen(Request $request){
+        $tahun = $request['tahun'];
+
+        $qtahunka  = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $qtahunka =  " and ka.tahun =  '" . $request['tahun']."'";
+        }
+
+        $qsubkegiatan  = '';
+        if (isset($request['subkegiatan']) && $request['subkegiatan'] != "" && $request['subkegiatan'] != "undefined") {
+            $qsubkegiatan =  " and dp0.id =  '" . $request['subkegiatan']."'";
+        }
+
+        $qtahap  = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $qtahap =  " and kb.objecttahapfk =  '" . $request['tahap']."'";
+        }
+
+        $subk = $request['subkegiatan'];
+        $thp = $request['tahap'];
+
+        $tahap = DB::select(DB::raw("select * from tahapanggaran_m where id = ".$thp));
+
+        $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subk));
+
+        $data = DB::select(DB::raw("select kodemataanggaran, namamataanggaran, jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
+        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
+        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes
+        from(
+            select map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode kodemataanggaran,
+            map.mataanggaranpermen namamataanggaran, sum(kb.subtotal) jumlahanggaran,
+            case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
+            case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
+            case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
+            case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
+            case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
+            case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
+            case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
+            case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
+            case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
+            case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
+            case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
+            case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes
+            from mataanggaran_m ma
+            inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+            INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+            inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+            inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+            inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+            inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+            inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+            left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+            and akb.kdprofile = 30 and akb.statusenabled = true
+            where ma.kdprofile = 30 and ma.statusenabled = true
+            and kb.kdprofile = 30 and kb.statusenabled = true
+            and ka.kdprofile = 30 and ka.statusenabled = true
+            and map.kdprofile = 30 and map.statusenabled = true
+            and dp0.kdprofile = 30 and dp0.statusenabled = true 
+            $qtahunka
+            $qsubkegiatan
+            $qtahap
+            group by map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode, map.mataanggaranpermen,
+            akb.bulanint
+        ) as x group by kodemataanggaran, namamataanggaran, jumlahanggaran        
+        "));
+
+        $pageWidth = 1200;
+        //return $this->respond($result);
+        return view('report.spj.cetakkonsolidasipermen',compact('data', 'pageWidth', 'tahun', 'subkegiatan', 'tahap'));
     }
 
     public function CetakSPJMonevRBA(Request $request){
@@ -2694,6 +2768,7 @@ class ReportController extends ApiController{
                         where ma.kdprofile = 30 and ma.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
                         and map.kdprofile = 30 and map.statusenabled = true
+                        and ka.kdprofile = 30 and ka.statusenabled = true
                         $qsubsubkegiatan
                         $qtahunka
                 group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah        
@@ -2753,6 +2828,7 @@ class ReportController extends ApiController{
 				) as y on y.kodemataanggaran = ma.kodemataanggaran
         where ma.kdprofile = 30 and ma.statusenabled = true
         and kb.kdprofile = 30 and kb.statusenabled = true
+        and ka.kdprofile = 30 and ka.statusenabled = true
         $qasalproduk
         $qtahunka
         group by map5.mataanggaranpermen, map2.kode || '.' ||  map3.kode || '.' ||  map4.kode || '.' || map5.kode, x.totalbelanja, y.jumlah;
