@@ -18218,8 +18218,8 @@
     ]
     },
     {
-      "name": "RekamMedis.AsesmenMedis.MonitoringTindakanRawatIntensif",
-      "url": "/MonitoringTindakanRawatIntensif",
+      "name": "RekamMedis.AsesmenMedis.MenuIndex.MonitoringTindakanRawatIntensif",
+      "url": "/MonitoringTindakanRawatIntensif/:index/:idEMR",
       "templateurl": "module/EMR/MonitoringTindakanRawatIntensif.html",
       "controller": "MonitoringTindakanRawatIntensifCtrl",
       "deps": [{
@@ -18845,7 +18845,27 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenAwalKeperawatanRINAPZA",
+    "url": "/AsesmenAwalKeperawatanRINAPZA",
+    "templateurl": "module/EMR/AsesmenAwalKeperawatanRINAPZA.html",
+    "controller": "AsesmenAwalKeperawatanRINAPZACtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
+
 ]
 
 
