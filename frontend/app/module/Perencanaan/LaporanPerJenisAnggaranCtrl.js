@@ -39,6 +39,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 });
             }
 
+            $scope.changeTahap = function () {
+                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatanjadwal.id+"&tahap="+$scope.item.tahapjadwal.id+"&tahun="+moment($scope.item.tahunjadwal).format('YYYY')).then(function (e) {
+                    $scope.listSubKegiatan = e.data.data
+                });
+            }
+
             $scope.changeKegiatanMonev = function () {
                 medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatanmonev.id+"&tahun="+moment($scope.item.tahunmonev).format('YYYY')).then(function (e) {
                     $scope.listSubKegiatan = e.data.data
@@ -101,6 +107,31 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
 
+            $scope.CetakJadwal = function(){
+
+                var tahap = ""
+                if ($scope.item.tahapjadwal != undefined) {
+                    tahap = $scope.item.tahapjadwal.id
+                }
+
+                var tahun = ""
+                if ($scope.item.tahunjadwal != undefined) {
+                    tahun = $scope.item.tahunjadwal
+                }
+
+                var subkegiatan = ""
+                if ($scope.item.kegiatanjadwal != undefined) {
+                    subkegiatan = $scope.item.kegiatanjadwal.id
+                }
+
+                var subsubkegiatan = ""
+                if ($scope.item.subkegiatanjadwal != undefined) {
+                    subsubkegiatan = $scope.item.subkegiatanjadwal.id
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-angkas-jadwal?tahap="+tahap+"&subkegiatan="+subkegiatan+"&subsubkegiatan="+subsubkegiatan+"&tahun="+moment(tahun).format('YYYY'), '_blank');
+                
+            }
 
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY HH:mm');

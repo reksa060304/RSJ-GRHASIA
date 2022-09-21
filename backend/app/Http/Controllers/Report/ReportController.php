@@ -2707,6 +2707,127 @@ class ReportController extends ApiController{
         return view('report.spj.cetakkonsolidasipermen',compact('data', 'pageWidth', 'tahun', 'subkegiatan', 'tahap'));
     }
 
+    public function CetakAngkasJadwal(Request $request){
+        $tahun = $request['tahun'];
+
+        $qtahun  = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $qtahun =  " and ka.tahun =  '" . $request['tahun']."'";
+        }
+
+        $qsubsubkegiatan  = '';
+        if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
+            $qsubsubkegiatan =  " and ka.id =  '" . $request['subsubkegiatan']."'";
+        }
+
+        $qtahap  = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $qtahap =  " and kb.objecttahapfk =  '" . $request['tahap']."'";
+        }
+
+        $subk = $request['subkegiatan'];
+        $subsubk = $request['subsubkegiatan'];
+        $thp = $request['tahap'];
+
+        $tahap = DB::select(DB::raw("select * from tahapanggaran_m where id = ".$thp));
+
+        $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subk));
+
+        $subsubkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subsubk));
+
+        $data = DB::select(DB::raw("select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, kodefix, kodemataanggaran, namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
+        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
+        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
+        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
+        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal,
+          '' asalproduk
+        from(
+            select 
+            case 
+                when CHAR_LENGTH(right(ma.kodemataanggaran, 4)) - CHAR_LENGTH( REPLACE ( right(ma.kodemataanggaran, 4), '.', '1234') ) = -6 then right(ma.kodemataanggaran, 3)
+                when CHAR_LENGTH(right(ma.kodemataanggaran, 4)) - CHAR_LENGTH( REPLACE ( right(ma.kodemataanggaran, 4), '.', '1234') ) = -3 then right(ma.kodemataanggaran, 4)
+            end as kodefix,
+            ma.kodemataanggaran, ma.namamataanggaran,
+            case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
+            case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
+            case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
+            case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
+            case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
+            case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
+            case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
+            case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
+            case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
+            case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
+            case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
+            case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes
+            from mataanggaran_m ma
+            inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+            INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+            inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+            inner join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+            where ma.kdprofile = 30 and ma.statusenabled = true
+            and kb.kdprofile = 30 and kb.statusenabled = true
+            and ka.kdprofile = 30 and ka.statusenabled = true
+            and dp0.kdprofile = 30 and dp0.statusenabled = true
+            and akb.kdprofile = 30 and akb.statusenabled = true
+            $qtahun
+            $qsubsubkegiatan
+            $qtahap
+            group by 
+            ma.kodemataanggaran, ma.namamataanggaran, akb.bulanint
+        ) as x group by kodefix, kodemataanggaran, namamataanggaran
+        
+        union all
+        
+        select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, '' kodefix, kodemataanggaran,  keteranganbelanja namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
+        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
+        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
+        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
+        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal,
+        asalproduk
+        from(
+            select
+            ma.kodemataanggaran, ma.namamataanggaran, kb.norec, kb.keteranganbelanja,
+            case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
+            case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
+            case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
+            case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
+            case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
+            case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
+            case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
+            case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
+            case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
+            case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
+            case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
+            case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes,
+            ap.asalproduk
+            from mataanggaran_m ma
+            inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+            INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+            inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+            inner join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+            where ma.kdprofile = 30 and ma.statusenabled = true
+            and kb.kdprofile = 30 and kb.statusenabled = true
+            and ka.kdprofile = 30 and ka.statusenabled = true
+            and dp0.kdprofile = 30 and dp0.statusenabled = true
+            and akb.kdprofile = 30 and akb.statusenabled = true
+            $qtahun
+            $qsubsubkegiatan
+            $qtahap
+            group by 
+            ma.kodemataanggaran, ma.namamataanggaran, kb.norec, kb.keteranganbelanja, akb.bulanint, ap.asalproduk
+        ) as x group by kodemataanggaran, namamataanggaran, norec, keteranganbelanja, asalproduk
+        order by nourut, kodefix desc;        
+        "));
+
+        $pageWidth = 1200;
+        //return $this->respond($result);
+        return view('report.spj.cetakangkasjadwal',compact('data', 'pageWidth', 'tahun', 'tahap', 'subkegiatan', 'subsubkegiatan'));
+    }
+
     public function CetakSPJMonevRBA(Request $request){
         $tahun = $request['tahun'];
 
