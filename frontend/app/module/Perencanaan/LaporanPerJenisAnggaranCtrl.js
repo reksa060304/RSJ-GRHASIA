@@ -133,6 +133,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
 
+            $scope.CetakKas = function(){
+
+                var tahap = ""
+                if ($scope.item.tahapkas != undefined) {
+                    tahap = $scope.item.tahapkas.id
+                }
+
+                var tahun = ""
+                if ($scope.item.tahunkas != undefined) {
+                    tahun = $scope.item.tahunkas
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-kas?tahap="+tahap+"&tahun="+moment(tahun).format('YYYY'), '_blank');
+                
+            }
+
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY HH:mm');
             }

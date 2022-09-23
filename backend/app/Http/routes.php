@@ -1182,6 +1182,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-spj-dan-monev-rba','Report\ReportController@CetakSPJMonevRBA');
           Route::get('report/get-cetak-konsolidasi-per-permen','Report\ReportController@CetakKonsolidasiPermen');
           Route::get('report/get-cetak-angkas-jadwal','Report\ReportController@CetakAngkasJadwal');
+          Route::get('report/get-cetak-kas','Report\ReportController@CetakKas');
           Route::get('report/get-cetak-persandingan-angkas-penyerapan','Report\ReportController@CetakAngkasPenyerapan');
           Route::get('report/get-cetak-pertanggungjawaban-bendahara','Report\ReportController@CetakPertanggungjawaban');
           Route::get('report/get-cetak-bku','Report\ReportController@CetakBKU');
