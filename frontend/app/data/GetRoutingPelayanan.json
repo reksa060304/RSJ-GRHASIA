@@ -18864,6 +18864,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FormPelaporanEfekSampingObat",
+    "url": "/FormPelaporanEfekSampingObat",
+    "templateurl": "module/EMR/FormPelaporanEfekSampingObat.html",
+    "controller": "FormPelaporanEfekSampingObatCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 
 ]
