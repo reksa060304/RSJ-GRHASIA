@@ -314,7 +314,7 @@ export class ReservasiOnlineComponent implements OnInit {
       { label: 'E-Billing', icon: 'fa fa-fw fa-heartbeat' },
       // { label: 'Bank Account', icon: 'fa fa-fw fa fa-bank' },
       { label: 'Panduan', icon: 'fa fa-fw fa-question-circle' },
-      { label: 'Jadwal Dokter', icon: 'fa fa-fw fa-stethoscope' },
+      { label: 'Jadwal Dokter dan Psikolog', icon: 'fa fa-fw fa-stethoscope' },
       { label: 'Info Tempat Tidur', icon: 'fa fa-fw fa-bed' },
 
       // { label: 'Denah', icon: 'fa fa-fw fa-map-marker' },

@@ -4266,43 +4266,115 @@ class ReservasiOnlineController extends ApiController
         {
             $kdProfile = $this->getDataKdProfile($request);
             $data= \DB::select(DB::raw("SELECT 
-                x.namaruangan, 
-                case 
-                when sum(x.kosong)is null then sum(x.isi+0)
-                when sum(x.isi)is null then sum(x.kosong+0)
-                else sum(x.kosong)+ sum(x.isi)end as qty,
-                case 
-                when sum(x.kosong)is null then 0
-                else sum(x.kosong)end as kosong, 
-                case when sum(x.isi)is null then 0
-                else sum(x.isi)end as isi FROM (
-                SELECT
-                    ru.id AS idruangan,
-                    ru.namaruangan,
-                    CASE 
-                    WHEN sb.id = 1 THEN
-                        count(sb.id)
-                END as isi,
-                CASE 
-                    WHEN sb.id = 2 THEN
-                        count(sb.id)
-                END as kosong
+            DENSE_RANK ( ) OVER ( order by x.namaruangan ) AS nourut, 'tidak' as tab, x.namaruangan, 
+            case 
+            when sum(x.kosong)is null then x.isi
+            when x.isi is null then sum(x.kosong+0)
+            else sum(x.kosong)+ x.isi end as qty,
+            case 
+            when sum(x.kosong)is null then 0
+            else sum(x.kosong)end as kosong, 
+            case when  x.isi is null then 0
+            else  x.isi end as isi FROM (
+            SELECT
+                ru.id AS idruangan,
+                ru.namaruangan,
+                                    kl.id,
+                a.isi,
+            CASE 
+                WHEN sb.id = 2 THEN
+                    count(sb.id)
+            END as kosong
 
-                FROM
-                    tempattidur_m AS tt
-                    LEFT JOIN kamar_m AS km ON km.id = tt.objectkamarfk
-                    LEFT JOIN ruangan_m AS ru ON ru.id = km.objectruanganfk
-                    LEFT JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
-                    LEFT JOIN kelas_m AS kl ON kl.id = km.objectkelasfk 
-                WHERE
-                    tt.kdprofile = 30 
-                    AND ru.objectdepartemenfk IN ( 16 ) 
-                    AND ru.statusenabled = true
-                    AND km.statusenabled = true 
-                    AND tt.statusenabled = TRUE
-                    GROUP BY ru.id,sb.id
-                    )as x
-                    group by x.namaruangan
+            FROM
+                tempattidur_m AS tt
+                LEFT JOIN kamar_m AS km ON km.id = tt.objectkamarfk
+                LEFT JOIN ruangan_m AS ru ON ru.id = km.objectruanganfk
+                LEFT JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
+                LEFT JOIN kelas_m AS kl ON kl.id = km.objectkelasfk 
+                                    inner join(
+                                            select count(pd.noregistrasi) isi, ru.namaruangan, ru.id
+                                            FROM
+                                                            pasiendaftar_t AS pd
+                                                        INNER JOIN antrianpasiendiperiksa_t AS apd ON pd.norec = apd.noregistrasifk and apd.tglkeluar is null
+                                                        INNER JOIN pasien_m AS p ON p.id = pd.nocmfk
+                                                        INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
+                                                        INNER JOIN kelas_m AS kls ON kls.id = pd.objectkelasfk
+                                                        left JOIN kamar_m as kmr on kmr.id =apd.objectkamarfk
+                                                        left JOIN tempattidur_m as tt on tt.id =apd.nobed
+                                                        where pd.kdprofile = 30 and pd.statusenabled = true
+                                                        and pd.tglpulang is null
+                                                        and pd.kdprofile = 30	
+                                                        and pd.statusenabled=true
+                                            group by ru.namaruangan, ru.id
+                                    ) as a on a.id = ru.id
+            WHERE
+                tt.kdprofile = 30 
+                AND ru.objectdepartemenfk IN ( 16 ) 
+                AND ru.statusenabled = true
+                AND km.statusenabled = true 
+                AND tt.statusenabled = TRUE
+                GROUP BY ru.id,sb.id, kl.id, a.isi
+                )as x
+                group by x.namaruangan, x.isi
+
+union all
+
+SELECT 
+            DENSE_RANK ( ) OVER ( order by x.namaruangan ) AS nourut, 'iya' as tab, '       ' || x.namakamar namaruangan, 
+            case 
+            when sum(x.kosong)is null then x.isi
+            when x.isi is null then sum(x.kosong+0)
+            else sum(x.kosong)+ x.isi end as qty,
+            case 
+            when sum(x.kosong)is null then 0
+            else sum(x.kosong)end as kosong, 
+            case when x.isi is null then 0
+            else x.isi end as isi FROM (
+            SELECT
+                km.id AS idruangan,
+                km.namakamar,
+                                    ru.namaruangan,
+                a.isi,
+            CASE 
+                WHEN sb.id = 2 THEN
+                    count(sb.id)
+            END as kosong
+
+            FROM
+                tempattidur_m AS tt
+                LEFT JOIN kamar_m AS km ON km.id = tt.objectkamarfk
+                LEFT JOIN ruangan_m AS ru ON ru.id = km.objectruanganfk
+                LEFT JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
+                LEFT JOIN kelas_m AS kl ON kl.id = km.objectkelasfk 
+                                    inner join(
+                                            select count(pd.noregistrasi) isi, kmr.namakamar, kmr.id
+                                            FROM
+                                                            pasiendaftar_t AS pd
+                                                        INNER JOIN antrianpasiendiperiksa_t AS apd ON pd.norec = apd.noregistrasifk and apd.tglkeluar is null
+                                                        INNER JOIN pasien_m AS p ON p.id = pd.nocmfk
+                                                        INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
+                                                        INNER JOIN kelas_m AS kls ON kls.id = pd.objectkelasfk
+                                                        left JOIN kamar_m as kmr on kmr.id =apd.objectkamarfk
+                                                        left JOIN tempattidur_m as tt on tt.id =apd.nobed
+                                                        where pd.kdprofile = 30 and pd.statusenabled = true
+                                                        and pd.tglpulang is null
+                                                        and pd.kdprofile = 30	
+                                                        and pd.statusenabled=true
+                                            group by kmr.namakamar, kmr.id
+                                    ) as a on a.id = km.id
+            WHERE
+                tt.kdprofile = 30 
+                AND ru.objectdepartemenfk IN ( 16 ) 
+                AND ru.statusenabled = true
+                AND km.statusenabled = true 
+                AND tt.statusenabled = TRUE
+                GROUP BY km.id,sb.id, ru.namaruangan, km.namakamar, a.isi
+                                    order by km.namakamar
+                )as x
+                group by x.namakamar, x.namaruangan, x.isi
+            order by nourut, tab desc;
+
             "));
                 $result = array(
                 'data'=> $data,

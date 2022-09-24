@@ -2836,7 +2836,7 @@ class ReportController extends ApiController{
             $qtahap =  " and kb.objecttahapfk =  '" . $request['tahap']."'";
         }
 
-        $data = DB::select(DB::raw("select 'tidak' bold, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        $data = DB::select(DB::raw("select 'tidak' bold, 'iya' tkode, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
         sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -2884,7 +2884,7 @@ class ReportController extends ApiController{
 
         union ALL
 
-        select 'iya' bold, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        select 'iya' bold, 'iya' tkode, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
         sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -2932,7 +2932,7 @@ class ReportController extends ApiController{
 
         union ALL
 
-        select 'iya' bold, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        select 'iya' bold, 'iya' tkode, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
         sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -2980,7 +2980,7 @@ class ReportController extends ApiController{
 
         union ALL
 
-        select 'iya' bold, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        select 'iya' bold, 'iya' tkode, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
         sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -3024,6 +3024,54 @@ class ReportController extends ApiController{
                 group by
                 dp1.kode, dp1.keterangan, akb.bulanint, kb.subtotal
             ) as x group by kode, keterangan, jumlahanggaran
+        ) as y group by kode, keterangan, nourut
+
+        union ALL
+
+        select 'tidak' bold, 'tidak' tkode, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
+        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
+        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
+        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
+        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
+        from(
+        select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
+        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
+        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
+        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
+        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
+        from(
+        select
+        ap.id, ap.asalproduk keterangan, kb.subtotal jumlahanggaran, ka.kode,
+        case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
+        case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
+        case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
+        case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
+        case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
+        case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
+        case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
+        case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
+        case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
+        case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
+        case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
+        case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes
+        from mataanggaran_m ma
+        inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+        INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+        inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+        inner join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+        where ma.kdprofile = 30 and ma.statusenabled = true
+        and kb.kdprofile = 30 and kb.statusenabled = true
+        and ka.kdprofile = 30 and ka.statusenabled = true
+        and dp0.kdprofile = 30 and dp0.statusenabled = true
+        and akb.kdprofile = 30 and akb.statusenabled = true
+        and ka.tahun = '$tahun'
+        $qtahap
+        group by
+        ap.id, ap.asalproduk, akb.bulanint, kb.subtotal, ka.kode
+        ) as x group by kode, keterangan, jumlahanggaran
         ) as y group by kode, keterangan, nourut
 
         order by nourut, kode;        

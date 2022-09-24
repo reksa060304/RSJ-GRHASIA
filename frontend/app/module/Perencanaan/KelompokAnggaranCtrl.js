@@ -1889,9 +1889,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     var data = []
                     for (let index = 0; index < DataMataAnggaran.length; index++) {
                         let element = DataMataAnggaran[index];
-                        if (element.namamataanggaran.match(newValue)) {
+                        if (element.namamataanggaran.toLowerCase().match(newValue.toLowerCase())) {
                             data.push(element)
-                        }else if (element.kodemataanggaran.match(newValue)) {
+                        }else if (element.kodemataanggaran.toLowerCase().match(newValue.toLowerCase())) {
                             data.push(element)
                         }
                     }
@@ -2335,8 +2335,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     var stahap = e.data.setting[0].idtahap
                     var tahap =""
                     //console.log(stahap)
-                    if($scope.item.searchtahapkeg != undefined && $scope.item.searchtahapkeg != '' && $scope.item.searchtahapkeg != null){
-                        tahap = $scope.item.searchtahapkeg.id
+                    if($scope.item.searchtahap != undefined && $scope.item.searchtahapkeg != '' && $scope.item.searchtahap != null){
+                        tahap = $scope.item.searchtahap.id
                     } else{
                         tahap = stahap
                     }

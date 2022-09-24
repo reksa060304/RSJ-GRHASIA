@@ -111,8 +111,13 @@
                     <td style="padding: 10px;font-weight:bold;">{{ $dt->kode }}</td>
                     <td style="padding: 10px;font-weight:bold;">{{ $dt->keterangan }}</td>
                     @else
-                    <td style="padding: 10px;">{{ $dt->kode }}</td>
-                    <td style="padding: 10px;">{{ $dt->keterangan }}</td>
+                        @if($dt->tkode == 'iya')
+                            <td style="padding: 10px;">{{ $dt->kode }}</td>
+                            <td style="padding: 10px;">{{ $dt->keterangan }}</td>
+                        @else
+                            <td style="padding: 10px;"></td>
+                            <td style="padding: 10px;">{{ $dt->keterangan }}</td>
+                        @endif
                     @endif
                     <td style="padding: 10px;">{{ number_format($dt->jumlahanggaran,0,',','.') }}</td>
                     <td style="padding: 10px;">{{ number_format($dt->jumlahjan,0,',','.') }}</td>
