@@ -3399,8 +3399,11 @@
         {
             "nameDep": "AsesmenAwalKeperawatanRINAPZACtrl",
             "urlDep": "module/EMR/AsesmenAwalKeperawatanRINAPZACtrl"
+        },
+        {
+            "nameDep": "FormPelaporanEfekSampingObatCtrl",
+            "urlDep": "module/EMR/FormPelaporanEfekSampingObatCtrl"
         }
-
         
     ]
 }
