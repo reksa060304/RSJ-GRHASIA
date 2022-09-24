@@ -1420,7 +1420,7 @@ class InaCbgController   extends ApiController
             ->select('pd.norec', 'pd.tglregistrasi', 'ps.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien', 'kp.kelompokpasien',
                 'pd.tglpulang', 'pd.statuspasien', 
                 // 'sp.nostruk', 'sbm.nosbm', 
-                'pg.id as pgid', 'pg.namalengkap as namadokter','kp.id as kpid',
+                'pg.id as pgid', 'pg.namalengkap as namadokter','kp.id as kpid','pas.objectasuransipasienfk',
                 // 'pgs.namalengkap as kasir',
                 'pd.objectruanganlastfk as ruanganid','pas.nosep','pas.norec as norec_pa',
                 // 'br.norec as norec_br',

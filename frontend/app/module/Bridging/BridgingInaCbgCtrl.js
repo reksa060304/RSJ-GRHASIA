@@ -4508,6 +4508,70 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 
 			}
 
+			$scope.UbahDokter2=function(){
+				console.log($scope.dataPasienSelected.norec);
+				if($scope.dataPasienSelected.norec == undefined){
+					toastr.error("Pilih data dahulu!")
+					return
+				}
+				$scope.item.UbahDokter={
+					id:$scope.dataPasienSelected.pgid,
+					namaexternal:$scope.dataPasienSelected.namadokter
+				}
+				
+				$scope.popUpUbahDokter.center().open()
+
+			}
+			$scope.simpanUbahDokter2 = function () {
+				var objSave =
+				{
+					norec: $scope.dataPasienSelected.norec,
+					objectpegawaifk: $scope.item.UbahDokter.id,
+					objectruanganlastfk: $scope.dataPasienSelected.ruanganid
+				}
+				medifirstService.post('registrasi/daftar-registrasi/update-dokter', objSave).then(function (e) {
+					$scope.popUpUbahDokter.close();
+					loadData();
+
+					$scope.cboDokter = false
+					$scope.cboSep = false
+					$scope.cboUbahDokter = true
+					$scope.cboUbahSEP = true
+				})
+			}
+			$scope.EditPemakaianAsuransi = function () {
+				if ($scope.dataPasienSelected.norec == undefined) {
+					messageContainer.error("Pilih data dulu")
+					return
+				}
+				else {
+
+					medifirstService.get("registrasi/get-apd?noregistrasi="
+						+ $scope.dataPasienSelected.noregistrasi
+						+ "&objectruanganlastfk=" + $scope.dataPasienSelected.ruanganid
+					).then(function (data) {
+						var dataAntrian = data.data.data[0];
+						if (dataAntrian != undefined) {
+							$state.go('UGVtYWthaWFuQXN1cmFuc2k=', {
+								// $state.go('PemakaianAsuransi',{
+								norecPD: $scope.dataPasienSelected.norec,
+								norecAPD: dataAntrian.norec_apd,
+								br: null,
+								noregistrasi: $scope.dataPasienSelected.noregistrasi,
+							});
+
+							console.log($scope.dataPasienSelected.noregistrasi)
+
+							var cacheSet = $scope.dataPasienSelected.objectasuransipasienfk
+								+ "~" + $scope.dataPasienSelected.norec_pa
+								+ "~" + $scope.dataPasienSelected.noregistrasi
+								+ "~" + null;
+
+							cacheHelper.set('CachePemakaianAsuransi', cacheSet);
+						}
+					})
+				}
+			}
 			// END ################
 
 		}
