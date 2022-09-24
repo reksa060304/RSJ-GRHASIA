@@ -235,7 +235,7 @@ End If
                      " LEFT JOIN hasillaboratorium_t  as hh on hh.norecpelayanan = pp.norec " & _
                      " and pp.noregistrasifk=hh.noregistrasifk " & _
                      " and maps.detailpemeriksaan = hh.detailpemeriksaan " & _
-                     " where pp.noregistrasifk = '" & strNorec & "' and hh.hasil is not NULL and pp.norec in (" & norecpp & ") " & _
+                     " where pp.noregistrasifk = '" & strNorec & "' and hh.hasil is not NULL and hh.hasil != '' and pp.norec in (" & norecpp & ") " & _
                      " ) as data order by  data.nourutjenispemeriksaan asc"
             
             ReadRs strSQL

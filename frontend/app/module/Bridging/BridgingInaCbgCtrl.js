@@ -4572,6 +4572,16 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					})
 				}
 			}
+			$scope.Koding = function(){
+				if ($scope.dataPasienSelected.norec == undefined) {
+					toastr.error("Pilih data dahulu!")
+					return
+				}
+				$state.go('RiwayatRegistrasiKoding', {
+					nocm: $scope.dataPasienSelected.nocm,
+					noregistrasi: $scope.dataPasienSelected.noregistrasi
+				});
+			}
 			// END ################
 
 		}

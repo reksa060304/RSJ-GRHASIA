@@ -18883,6 +18883,50 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenPasienTahapTerminal",
+    "url": "/AsesmenPasienTahapTerminal",
+    "templateurl": "module/EMR/AsesmenPasienTahapTerminal.html",
+    "controller": "AsesmenPasienTahapTerminalCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  }, 
+  {
+    "name": "RekamMedis.AsesmenMedis.SuratPerjanjianPasienPulangAtasPermintaanSendiri",
+    "url": "/SuratPerjanjianPasienPulangAPS",
+    "templateurl": "module/EMR/SuratPerjanjianPasienPulangAPS.html",
+    "controller": "SuratPerjanjianPasienPulangAPSCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 
 ]
