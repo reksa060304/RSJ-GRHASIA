@@ -684,7 +684,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					ModelItem.showMessages(isValid.messages);
 				}
 			};
-
             $scope.Save = function () {
                 var pekerjaanPj = null
                 if ($scope.item.pekerjaanP != undefined) {
@@ -706,150 +705,444 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 ];
                 var isValid = ModelItem.setValidation($scope, listRawRequired);
                 if (isValid.status) {
+                    medifirstService.get('registrasi/setting-data-fixed-dukcapil').then(function (data) {
+                        $scope.settingdatafixed = data.data.data
+                        
+                        if ($scope.settingdatafixed[0].statusenabled == true) {
+                            $scope.isRouteLoading = true
+                            var statusperkawinan = ""
+                            var pekerjaan = ""
+                            var goldar = ""
+                            var jeniskelamin = ""
+                            var propinsi = ""
+                            var kotakabupaten = ""
+                            var kecamatan = ""
+                            var kelurahan = ""
+                            if ($scope.item.statusPerkawinan != undefined) {
+                                statusperkawinan = $scope.item.statusPerkawinan.statusperkawinan
+                            }
+                            if ($scope.item.pekerjaan != undefined) {
+                                pekerjaan = $scope.item.pekerjaan.pekerjaan
+                            }
+                            if ($scope.item.golonganDarah != undefined) {
+                                goldar = $scope.item.golonganDarah.golongandarah
+                            }
+                            if ($scope.item.propinsi != undefined) {
+                                propinsi = $scope.item.propinsi.namapropinsi
+                            }
+                            if ($scope.item.jenisKelamin.id == 1) {
+                                jeniskelamin = 'Laki-Laki'
+                            } else {
+                                jeniskelamin = 'Perempuan'
+                            }
+                            if ($scope.item.kotaKabupaten != undefined) {
+                                kotakabupaten = $scope.item.kotaKabupaten.namakotakabupaten.replace("KAB. ", "")
+                            }
+                            if ($scope.item.kecamatan != undefined) {
+                                kecamatan = $scope.item.kecamatan.namakecamatan
+                            }
+                            if ($scope.item.desaKelurahan != undefined) {
+                                var data = $scope.item.desaKelurahan.desa.split(", ")
+                                kelurahan = data[0]
+                            }
+                            var postDukcapil = []
+                            var data = {
+                                "NIK": parseInt($scope.item.noIdentitas),
+                                // "NO_KK": "3214171806130002",
+                                "NAMA_LGKP": $scope.item.namaPasien,
+                                "JENIS_KLMIN": jeniskelamin,
+                                "TMPT_LHR": $scope.item.tempatLahir,
+                                "TGL_LHR": moment($scope.item.tglLahir).format("DD/MM/YYYY"),
+                                "STATUS_KAWIN": statusperkawinan,
+                                "JENIS_PKRJN": pekerjaan,
+                                "GOL_DARAH": goldar,
+                                // "ALAMAT": "KP. SUMBERSARI",
+                                "PROP_NAME": propinsi,
+                                // "KAB_NAME": kotakabupaten,
+                                "KEC_NAME": kecamatan,
+                                "KEL_NAME": kelurahan,
+                                // "NO_RW": "3",
+                                // "NO_RT": "5",
+                                "TRESHOLD": "90",
+                                "user_id": "94820220805434_rsjgrhasia_diy",
+                                "password": "rsjgrh4s14_d1y",
+                                "ip_user": "RSJ. Grhasia",
+                            }
+                            postDukcapil.push(data)
+                            var objPost = {
+                                data: postDukcapil,
+                                jenis: "Dukcapil",
+                                "method": 'POST',
+                                "url": 'http://172.16.160.43:8080/dukcapil/get_json/34/rsj_grhasia_34/koneksitas_verifby_elemen'
+                            }
+                            medifirstService.postNonMessage('dukcapil/get-nik-v2', objPost).then(function (data) {
+                                var datas = data.data.metaData.message
+                                $scope.isRouteLoading = false
+                                if (datas != "") {
+                                    if ($scope.item.noIdentitas == datas.content[0].NIK) {
+                                        if (datas.content[0].NAMA_LGKP.match("Tidak Sesuai") == "Tidak Sesuai") {
+                                            toastr.error('Nama Pasien ' + datas.content[0].NAMA_LGKP)
+                                            return
+                                        }
+                                        if (datas.content[0].TMPT_LHR.match("Tidak Sesuai") == "Tidak Sesuai") {
+                                            toastr.error('Tempat Lahir ' + datas.content[0].TMPT_LHR)
+                                            return
+                                        }
+                                        if (datas.content[0].TGL_LHR.match("Tidak Sesuai") == "Tidak Sesuai") {
+                                            toastr.error('Tanggal Lahir ' + datas.content[0].TGL_LHR)
+                                            return
+                                        }
+                                        if (datas.content[0].JENIS_KLMIN.match("Tidak Sesuai") == "Tidak Sesuai") {
+                                            toastr.error('Jenis Kelamin ' + datas.content[0].JENIS_KLMIN)
+                                            return
+                                        }
+                                        if (datas.content[0].STATUS_KAWIN.match("Tidak Sesuai") == "Tidak Sesuai") {
+                                            toastr.error('Status Kawin ' + datas.content[0].STATUS_KAWIN)
+                                            return
+                                        }
+                                        if (datas.content[0].GOL_DARAH.match("Tidak Sesuai") == "Tidak Sesuai") {
+                                            toastr.error('Golongan Darah ' + datas.content[0].GOL_DARAH)
+                                            return
+                                        }
+                                        if (datas.content[0].JENIS_PKRJN.match("Tidak Sesuai") == "Tidak Sesuai") {
+                                            toastr.error('Pekerjaan ' + datas.content[0].JENIS_PKRJN)
+                                            return
+                                        }
+                                        if (datas.content[0].PROP_NAME.match("Tidak Sesuai") == "Tidak Sesuai") {
+                                            toastr.error('Propinsi ' + datas.content[0].PROP_NAME)
+                                            return
+                                        }
+                                        if (datas.content[0].KEC_NAME.match("Tidak Sesuai") == "Tidak Sesuai") {
+                                            toastr.error('Kecamatan ' + datas.content[0].KEC_NAME)
+                                            return
+                                        }
+                                        if (datas.content[0].KEL_NAME.match("Tidak Sesuai") == "Tidak Sesuai") {
+                                            toastr.error('Desa Kelurahan ' + datas.content[0].KEL_NAME)
+                                            return
+                                        }
+                                        var postJson = {
+                                            'isbayi': $scope.isBayi,
+                                            'isEditPasien': $scope.isEditPasien,
+                                            'istriageigd': $scope.isTriage,
+                                            'isPenunjang': $scope.isPenunjang,
+                                            'idpasien': $scope.idPasien != undefined ? $scope.idPasien : '',
+                                            'pasien': {
+                                                'namaPasien': $scope.item.namaPasien,
+                                                'noIdentitas': $scope.item.noIdentitas != undefined ? $scope.item.noIdentitas : null,
+                                                'namaSuamiIstri': $scope.item.namaSuamiIstri != undefined ? $scope.item.namaSuamiIstri : null,
+                                                'noAsuransiLain': $scope.item.noAsuransiLain != undefined ? $scope.item.noAsuransiLain : null,
+                                                'noBpjs': $scope.item.noBpjs != undefined ? $scope.item.noBpjs : null,
+                                                'noHp': $scope.item.noHp != undefined ? $scope.item.noHp : null,
+                                                'tempatLahir': $scope.item.tempatLahir,
+                                                'namaKeluarga': $scope.item.namaKeluarga != undefined ? $scope.item.namaKeluarga : null,
+                                                'tglLahir': moment($scope.item.tglLahir).format('YYYY-MM-DD HH:mm'),
+                                                'image': $scope.item.image != undefined && $scope.item.image != "../app/images/avatar.jpg" ? $scope.item.image : null
+                                            },
+                                            'agama': {
+                                                'id': $scope.item.agama != undefined ? $scope.item.agama.id : null,
+                                            },
+                                            'jenisKelamin': {
+                                                'id': $scope.item.jenisKelamin != undefined ? $scope.item.jenisKelamin.id : null,
+                                            },
+                                            'pekerjaan': {
+                                                'id': $scope.item.pekerjaan != undefined ? $scope.item.pekerjaan.id : null,
+                                            },
+                                            'pendidikan': {
+                                                'id': $scope.item.pendidikan != undefined ? $scope.item.pendidikan.id : null,
+                                            },
+                                            'statusPerkawinan': {
+                                                'id': $scope.item.statusPerkawinan != undefined ? $scope.item.statusPerkawinan.id : 0,
+                                            },
+                                            'golonganDarah': {
+                                                'id': $scope.item.golonganDarah != undefined ? $scope.item.golonganDarah.id : null,
+                                            },
+                                            'suku': {
+                                                'id': $scope.item.suku != undefined ? $scope.item.suku.id : null,
+                                            },
 
-                    var postJson = {
-                        'isbayi': $scope.isBayi,
-                        'isEditPasien': $scope.isEditPasien,
-                        'istriageigd': $scope.isTriage,
-                        'isPenunjang': $scope.isPenunjang,
-                        'idpasien': $scope.idPasien != undefined ? $scope.idPasien : '',
-                        'pasien': {
-                            'namaPasien': $scope.item.namaPasien,
-                            'noIdentitas': $scope.item.noIdentitas != undefined ? $scope.item.noIdentitas : null,
-                            'namaSuamiIstri': $scope.item.namaSuamiIstri != undefined ? $scope.item.namaSuamiIstri : null,
-                            'noAsuransiLain': $scope.item.noAsuransiLain != undefined ? $scope.item.noAsuransiLain : null,
-                            'noBpjs': $scope.item.noBpjs != undefined ? $scope.item.noBpjs : null,
-                            'noHp': $scope.item.noHp != undefined ? $scope.item.noHp : null,
-                            'tempatLahir': $scope.item.tempatLahir,
-                            'namaKeluarga': $scope.item.namaKeluarga != undefined ? $scope.item.namaKeluarga : null,
-                            'tglLahir': moment($scope.item.tglLahir).format('YYYY-MM-DD HH:mm'),
-                            'image': $scope.item.image != undefined && $scope.item.image != "../app/images/avatar.jpg" ? $scope.item.image : null
-                        },
-                        'agama': {
-                            'id': $scope.item.agama != undefined ? $scope.item.agama.id : null,
-                        },
-                        'jenisKelamin': {
-                            'id': $scope.item.jenisKelamin != undefined ? $scope.item.jenisKelamin.id : null,
-                        },
-                        'pekerjaan': {
-                            'id': $scope.item.pekerjaan != undefined ? $scope.item.pekerjaan.id : null,
-                        },
-                        'pendidikan': {
-                            'id': $scope.item.pendidikan != undefined ? $scope.item.pendidikan.id : null,
-                        },
-                        'statusPerkawinan': {
-                            'id': $scope.item.statusPerkawinan != undefined ? $scope.item.statusPerkawinan.id : 0,
-                        },
-                        'golonganDarah': {
-                            'id': $scope.item.golonganDarah != undefined ? $scope.item.golonganDarah.id : null,
-                        },
-                        'suku': {
-                            'id': $scope.item.suku != undefined ? $scope.item.suku.id : null,
-                        },
+                                            'namaIbu': $scope.item.namaIbu != undefined ? $scope.item.namaIbu : null,
+                                            'noTelepon': $scope.item.noTelepon != undefined ? $scope.item.noTelepon : null,
+                                            'noAditional': $scope.item.noAditional != undefined ? $scope.item.noAditional : null,
+                                            'kebangsaan': {
+                                                'id': $scope.item.kebangsaan != undefined ? $scope.item.kebangsaan.id : null,
+                                            },
+                                            'negara': {
+                                                'id': $scope.item.negara != undefined ? $scope.item.negara.id : null,
+                                            },
+                                            'namaAyah': $scope.item.namaAyah != undefined ? $scope.item.namaAyah : null,
+                                            'alamatLengkap': $scope.item.alamatLengkap,
+                                            'desaKelurahan': {
+                                                'id': $scope.item.desaKelurahan != undefined ? $scope.item.desaKelurahan.id : null,
+                                                'namaDesaKelurahan': $scope.item.desaKelurahan != undefined ? $scope.item.desaKelurahan.namadesakelurahan : null,
+                                            },
+                                            'kecamatan': {
+                                                'id': $scope.item.kecamatan != undefined ? $scope.item.kecamatan.id : null,
+                                                'namaKecamatan': $scope.item.kecamatan != undefined ? $scope.item.kecamatan.namakecamatan : null,
+                                            },
+                                            'kotaKabupaten': {
+                                                'id': $scope.item.kotaKabupaten != undefined ? $scope.item.kotaKabupaten.id : null,
+                                                'namaKotaKabupaten': $scope.item.kotaKabupaten != undefined ? $scope.item.kotaKabupaten.namakotakabupaten : null,
+                                            },
+                                            'propinsi': {
+                                                'id': $scope.item.propinsi != undefined ? $scope.item.propinsi.id : null,
+                                            },
+                                            'kodePos': $scope.item.kodePos != undefined ? $scope.item.kodePos : null,
+                                            'penanggungjawab': $scope.item.PenanggungJawab != undefined ? $scope.item.PenanggungJawab : null,
+                                            'hubungankeluargapj': $scope.item.Hubungan != undefined ? $scope.item.Hubungan : null,
+                                            'pekerjaanpenangggungjawab': pekerjaanPj,
+                                            'ktppenanggungjawab': $scope.item.Ktp != undefined ? $scope.item.Ktp : null,
+                                            'alamatrmh': $scope.item.alamatRumah != undefined ? $scope.item.alamatRumah : null,
+                                            'alamatktr': $scope.item.alamatKantor != undefined ? $scope.item.alamatKantor : null,
+                                            'teleponpenanggungjawab': $scope.item.TeleponP != undefined ? $scope.item.TeleponP : null,
+                                            'bahasa': $scope.item.Bahasa != undefined ? $scope.item.Bahasa : null,
+                                            'jeniskelaminpenanggungjawab': $scope.item.jenisKelaminP != undefined ? $scope.item.jenisKelaminP.jeniskelamin : null,
+                                            'umurpenanggungjawab': $scope.item.UmurP != undefined ? $scope.item.UmurP : null,
+                                            'dokterpengirim': $scope.item.DokterPengirim != undefined ? $scope.item.DokterPengirim : null,
+                                            'alamatdokter': $scope.item.alamatDokterPengirim != undefined ? $scope.item.alamatDokterPengirim : null,
+                                            'hambatan': $scope.item.hambatan != undefined ? $scope.item.hambatan.id : null,
+                                            'bahasaP': $scope.item.bahasaP != undefined ? $scope.item.bahasaP.id : null,
+                                            'nik1': $scope.item.Nik1 != undefined ? $scope.item.Nik1 : null,
 
-                        'namaIbu': $scope.item.namaIbu != undefined ? $scope.item.namaIbu : null,
-                        'noTelepon': $scope.item.noTelepon != undefined ? $scope.item.noTelepon : null,
-                        'noAditional': $scope.item.noAditional != undefined ? $scope.item.noAditional : null,
-                        'kebangsaan': {
-                            'id': $scope.item.kebangsaan != undefined ? $scope.item.kebangsaan.id : null,
-                        },
-                        'negara': {
-                            'id': $scope.item.negara != undefined ? $scope.item.negara.id : null,
-                        },
-                        'namaAyah': $scope.item.namaAyah != undefined ? $scope.item.namaAyah : null,
-                        'alamatLengkap': $scope.item.alamatLengkap,
-                        'desaKelurahan': {
-                            'id': $scope.item.desaKelurahan != undefined ? $scope.item.desaKelurahan.id : null,
-                            'namaDesaKelurahan': $scope.item.desaKelurahan != undefined ? $scope.item.desaKelurahan.namadesakelurahan : null,
-                        },
-                        'kecamatan': {
-                            'id': $scope.item.kecamatan != undefined ? $scope.item.kecamatan.id : null,
-                            'namaKecamatan': $scope.item.kecamatan != undefined ? $scope.item.kecamatan.namakecamatan : null,
-                        },
-                        'kotaKabupaten': {
-                            'id': $scope.item.kotaKabupaten != undefined ? $scope.item.kotaKabupaten.id : null,
-                            'namaKotaKabupaten': $scope.item.kotaKabupaten != undefined ? $scope.item.kotaKabupaten.namakotakabupaten : null,
-                        },
-                        'propinsi': {
-                            'id': $scope.item.propinsi != undefined ? $scope.item.propinsi.id : null,
-                        },
-                        'kodePos': $scope.item.kodePos != undefined ? $scope.item.kodePos : null,
-                        'penanggungjawab': $scope.item.PenanggungJawab != undefined ? $scope.item.PenanggungJawab : null,
-                        'hubungankeluargapj': $scope.item.Hubungan != undefined ? $scope.item.Hubungan : null,
-                        'pekerjaanpenangggungjawab': pekerjaanPj,
-                        'ktppenanggungjawab': $scope.item.Ktp != undefined ? $scope.item.Ktp : null,
-                        'alamatrmh': $scope.item.alamatRumah != undefined ? $scope.item.alamatRumah : null,
-                        'alamatktr': $scope.item.alamatKantor != undefined ? $scope.item.alamatKantor : null,
-                        'teleponpenanggungjawab': $scope.item.TeleponP != undefined ? $scope.item.TeleponP : null,
-                        'bahasa': $scope.item.Bahasa != undefined ? $scope.item.Bahasa : null,
-                        'jeniskelaminpenanggungjawab': $scope.item.jenisKelaminP != undefined ? $scope.item.jenisKelaminP.jeniskelamin : null,
-                        'umurpenanggungjawab': $scope.item.UmurP != undefined ? $scope.item.UmurP : null,
-                        'dokterpengirim': $scope.item.DokterPengirim != undefined ? $scope.item.DokterPengirim : null,
-                        'alamatdokter': $scope.item.alamatDokterPengirim != undefined ? $scope.item.alamatDokterPengirim : null,
-                        'hambatan': $scope.item.hambatan != undefined ? $scope.item.hambatan.id : null,
-                        'bahasaP': $scope.item.bahasaP != undefined ? $scope.item.bahasaP.id : null,
-                        'nik1': $scope.item.Nik1 != undefined ? $scope.item.Nik1 : null,
+                                            'penanggungjawab2': $scope.item.PenanggungJawab2 != undefined ? $scope.item.PenanggungJawab2 : null,
+                                            'hubungankeluargapj2': $scope.item.Hubungan2 != undefined ? $scope.item.Hubungan2 : null,
+                                            'pekerjaanpenangggungjawab2': $scope.item.pekerjaanP2 != undefined ? $scope.item.pekerjaanP2.pekerjaan : null,
+                                            'alamatrmh2': $scope.item.alamatRumah2 != undefined ? $scope.item.alamatRumah2 : null,
+                                            'teleponpenanggungjawab2': $scope.item.TeleponP2 != undefined ? $scope.item.TeleponP2 : null,
+                                            'bahasa2': $scope.item.Bahasa2 != undefined ? $scope.item.Bahasa2 : null,
+                                            'jeniskelaminpenanggungjawab2': $scope.item.jenisKelaminP2 != undefined ? $scope.item.jenisKelaminP2.jeniskelamin : null,
+                                            'umurpenanggungjawab2': $scope.item.UmurP2 != undefined ? $scope.item.UmurP2 : null,
+                                            'detailalamat': data2,
+                                            'nik2': $scope.item.Nik2 != undefined ? $scope.item.Nik2 : null,
+                                        }
+                                        medifirstService.post('registrasi/save-pasien-fix', postJson)
+                                            .then(function (res) {
+                                                    // if ($scope.item.image != undefined && $scope.item.image != "../app/images/avatar.jpg") {
+                                                    //     saveImageToDir($scope.item.image,res.data.data.nocm )
+                                                    // }
+                                                    tempId = res.data.data.id;
+                                                    if ($scope.item.noRecReservasi != undefined) {
+                                                        var jsonss = {
+                                                            "norec": $scope.item.noRecReservasi,
+                                                            "nocmfk": res.data.data.kodeexternal
+                                                        }
 
-                        'penanggungjawab2': $scope.item.PenanggungJawab2 != undefined ? $scope.item.PenanggungJawab2 : null,
-                        'hubungankeluargapj2': $scope.item.Hubungan2 != undefined ? $scope.item.Hubungan2 : null,
-                        'pekerjaanpenangggungjawab2':  $scope.item.pekerjaanP2 != undefined ? $scope.item.pekerjaanP2.pekerjaan : null,
-                        'alamatrmh2': $scope.item.alamatRumah2 != undefined ? $scope.item.alamatRumah2 : null,
-                        'teleponpenanggungjawab2': $scope.item.TeleponP2 != undefined ? $scope.item.TeleponP2 : null,
-                        'bahasa2': $scope.item.Bahasa2 != undefined ? $scope.item.Bahasa2 : null,
-                        'jeniskelaminpenanggungjawab2': $scope.item.jenisKelaminP2 != undefined ? $scope.item.jenisKelaminP2.jeniskelamin : null,
-                        'umurpenanggungjawab2': $scope.item.UmurP2 != undefined ? $scope.item.UmurP2 : null,
-                        'detailalamat': data2,
-                        'nik2': $scope.item.Nik2 != undefined ? $scope.item.Nik2 : null,
-                    }
-                    medifirstService.post('registrasi/save-pasien-fix', postJson)
-                        .then(
-                            function (res) {
-                                // if ($scope.item.image != undefined && $scope.item.image != "../app/images/avatar.jpg") {
-                                //     saveImageToDir($scope.item.image,res.data.data.nocm )
-                                // }
-                                tempId = res.data.data.id;
-                                if ($scope.item.noRecReservasi != undefined) {
-                                    var jsonss = {
-                                        "norec": $scope.item.noRecReservasi,
-                                        "nocmfk": res.data.data.kodeexternal
+                                                        medifirstService.post('reservasi/update-nocmfk-antrian-registrasi', jsonss).then(function (e) {})
+                                                    }
+
+                                                    $scope.isNext = true;
+                                                    $scope.idPasienNa = res.data.data.id;
+                                                    $scope.noCm = res.data.data.nocm;
+                                                    $scope.noRec = res.data.data.id;
+                                                    $scope.namaPasien = res.data.data.namapasien;
+                                                    $scope.ALamat = res.data.alamat;
+                                                    $scope.Jk = $scope.item.jenisKelamin.jeniskelamin
+                                                    $scope.tglLahirs = res.data.data.tgllahir;
+                                                    $scope.NoTelepon = res.data.data.notelepon;
+                                                    var umur = dateHelper.CountAge(new Date($scope.tglLahirs), $scope.now);
+                                                    var bln = umur.month,
+                                                        thn = umur.year,
+                                                        day = umur.day
+                                                    var usia = (umur.year * 12) + umur.month
+                                                    var umur = thn + ' thn ' + bln + ' bln ' + day + ' hr '
+                                                    $scope.UmurTea = umur;
+
+
+                                                    if ($scope.Triage != "" && $scope.Triage != undefined) {
+                                                        InputTriage();
+                                                    }
+                                                    // toastr.info($scope.noCm, 'No RM Pasien')
+                                                    cacheHelper.set('CacheRegisBayi', undefined);
+                                                    // if ($scope.idPasien == undefined) {
+                                                    //     $scope.Next()
+                                                    // }
+                                                    if ($scope.title == 'Pendaftaran Pasien') {
+                                                        $scope.Next()
+                                                    }
+
+                                                },
+                                                function (err) {})
+                                                $scope.isRouteLoading = false
+                                    } else {
+                                        toastr.error(datas.content[0].RESPONSE_DESC)
+                                        return
                                     }
+                                } 
+                            })
+                            $scope.isRouteLoading = false
+                            return
+                        }else{
+                            var postJson = {
+                                'isbayi': $scope.isBayi,
+                                'isEditPasien': $scope.isEditPasien,
+                                'istriageigd': $scope.isTriage,
+                                'isPenunjang': $scope.isPenunjang,
+                                'idpasien': $scope.idPasien != undefined ? $scope.idPasien : '',
+                                'pasien': {
+                                    'namaPasien': $scope.item.namaPasien,
+                                    'noIdentitas': $scope.item.noIdentitas != undefined ? $scope.item.noIdentitas : null,
+                                    'namaSuamiIstri': $scope.item.namaSuamiIstri != undefined ? $scope.item.namaSuamiIstri : null,
+                                    'noAsuransiLain': $scope.item.noAsuransiLain != undefined ? $scope.item.noAsuransiLain : null,
+                                    'noBpjs': $scope.item.noBpjs != undefined ? $scope.item.noBpjs : null,
+                                    'noHp': $scope.item.noHp != undefined ? $scope.item.noHp : null,
+                                    'tempatLahir': $scope.item.tempatLahir,
+                                    'namaKeluarga': $scope.item.namaKeluarga != undefined ? $scope.item.namaKeluarga : null,
+                                    'tglLahir': moment($scope.item.tglLahir).format('YYYY-MM-DD HH:mm'),
+                                    'image': $scope.item.image != undefined && $scope.item.image != "../app/images/avatar.jpg" ? $scope.item.image : null
+                                },
+                                'agama': {
+                                    'id': $scope.item.agama != undefined ? $scope.item.agama.id : null,
+                                },
+                                'jenisKelamin': {
+                                    'id': $scope.item.jenisKelamin != undefined ? $scope.item.jenisKelamin.id : null,
+                                },
+                                'pekerjaan': {
+                                    'id': $scope.item.pekerjaan != undefined ? $scope.item.pekerjaan.id : null,
+                                },
+                                'pendidikan': {
+                                    'id': $scope.item.pendidikan != undefined ? $scope.item.pendidikan.id : null,
+                                },
+                                'statusPerkawinan': {
+                                    'id': $scope.item.statusPerkawinan != undefined ? $scope.item.statusPerkawinan.id : 0,
+                                },
+                                'golonganDarah': {
+                                    'id': $scope.item.golonganDarah != undefined ? $scope.item.golonganDarah.id : null,
+                                },
+                                'suku': {
+                                    'id': $scope.item.suku != undefined ? $scope.item.suku.id : null,
+                                },
 
-                                    medifirstService.post('reservasi/update-nocmfk-antrian-registrasi', jsonss).then(function (e) {
-                                    })
-                                }
+                                'namaIbu': $scope.item.namaIbu != undefined ? $scope.item.namaIbu : null,
+                                'noTelepon': $scope.item.noTelepon != undefined ? $scope.item.noTelepon : null,
+                                'noAditional': $scope.item.noAditional != undefined ? $scope.item.noAditional : null,
+                                'kebangsaan': {
+                                    'id': $scope.item.kebangsaan != undefined ? $scope.item.kebangsaan.id : null,
+                                },
+                                'negara': {
+                                    'id': $scope.item.negara != undefined ? $scope.item.negara.id : null,
+                                },
+                                'namaAyah': $scope.item.namaAyah != undefined ? $scope.item.namaAyah : null,
+                                'alamatLengkap': $scope.item.alamatLengkap,
+                                'desaKelurahan': {
+                                    'id': $scope.item.desaKelurahan != undefined ? $scope.item.desaKelurahan.id : null,
+                                    'namaDesaKelurahan': $scope.item.desaKelurahan != undefined ? $scope.item.desaKelurahan.namadesakelurahan : null,
+                                },
+                                'kecamatan': {
+                                    'id': $scope.item.kecamatan != undefined ? $scope.item.kecamatan.id : null,
+                                    'namaKecamatan': $scope.item.kecamatan != undefined ? $scope.item.kecamatan.namakecamatan : null,
+                                },
+                                'kotaKabupaten': {
+                                    'id': $scope.item.kotaKabupaten != undefined ? $scope.item.kotaKabupaten.id : null,
+                                    'namaKotaKabupaten': $scope.item.kotaKabupaten != undefined ? $scope.item.kotaKabupaten.namakotakabupaten : null,
+                                },
+                                'propinsi': {
+                                    'id': $scope.item.propinsi != undefined ? $scope.item.propinsi.id : null,
+                                },
+                                'kodePos': $scope.item.kodePos != undefined ? $scope.item.kodePos : null,
+                                'penanggungjawab': $scope.item.PenanggungJawab != undefined ? $scope.item.PenanggungJawab : null,
+                                'hubungankeluargapj': $scope.item.Hubungan != undefined ? $scope.item.Hubungan : null,
+                                'pekerjaanpenangggungjawab': pekerjaanPj,
+                                'ktppenanggungjawab': $scope.item.Ktp != undefined ? $scope.item.Ktp : null,
+                                'alamatrmh': $scope.item.alamatRumah != undefined ? $scope.item.alamatRumah : null,
+                                'alamatktr': $scope.item.alamatKantor != undefined ? $scope.item.alamatKantor : null,
+                                'teleponpenanggungjawab': $scope.item.TeleponP != undefined ? $scope.item.TeleponP : null,
+                                'bahasa': $scope.item.Bahasa != undefined ? $scope.item.Bahasa : null,
+                                'jeniskelaminpenanggungjawab': $scope.item.jenisKelaminP != undefined ? $scope.item.jenisKelaminP.jeniskelamin : null,
+                                'umurpenanggungjawab': $scope.item.UmurP != undefined ? $scope.item.UmurP : null,
+                                'dokterpengirim': $scope.item.DokterPengirim != undefined ? $scope.item.DokterPengirim : null,
+                                'alamatdokter': $scope.item.alamatDokterPengirim != undefined ? $scope.item.alamatDokterPengirim : null,
+                                'hambatan': $scope.item.hambatan != undefined ? $scope.item.hambatan.id : null,
+                                'bahasaP': $scope.item.bahasaP != undefined ? $scope.item.bahasaP.id : null,
+                                'nik1': $scope.item.Nik1 != undefined ? $scope.item.Nik1 : null,
 
-                                $scope.isNext = true;
-                                $scope.idPasienNa = res.data.data.id;
-                                $scope.noCm = res.data.data.nocm;
-                                $scope.noRec = res.data.data.id;
-                                $scope.namaPasien = res.data.data.namapasien;
-                                $scope.ALamat = res.data.alamat;
-                                $scope.Jk = $scope.item.jenisKelamin.jeniskelamin
-                                $scope.tglLahirs = res.data.data.tgllahir;
-                                $scope.NoTelepon = res.data.data.notelepon;
-                                var umur = dateHelper.CountAge(new Date($scope.tglLahirs), $scope.now);
-                                var bln = umur.month,
-                                    thn = umur.year,
-                                    day = umur.day
-                                var usia = (umur.year * 12) + umur.month
-                                var umur = thn + ' thn ' + bln + ' bln ' + day + ' hr '
-                                $scope.UmurTea = umur;
+                                'penanggungjawab2': $scope.item.PenanggungJawab2 != undefined ? $scope.item.PenanggungJawab2 : null,
+                                'hubungankeluargapj2': $scope.item.Hubungan2 != undefined ? $scope.item.Hubungan2 : null,
+                                'pekerjaanpenangggungjawab2': $scope.item.pekerjaanP2 != undefined ? $scope.item.pekerjaanP2.pekerjaan : null,
+                                'alamatrmh2': $scope.item.alamatRumah2 != undefined ? $scope.item.alamatRumah2 : null,
+                                'teleponpenanggungjawab2': $scope.item.TeleponP2 != undefined ? $scope.item.TeleponP2 : null,
+                                'bahasa2': $scope.item.Bahasa2 != undefined ? $scope.item.Bahasa2 : null,
+                                'jeniskelaminpenanggungjawab2': $scope.item.jenisKelaminP2 != undefined ? $scope.item.jenisKelaminP2.jeniskelamin : null,
+                                'umurpenanggungjawab2': $scope.item.UmurP2 != undefined ? $scope.item.UmurP2 : null,
+                                'detailalamat': data2,
+                                'nik2': $scope.item.Nik2 != undefined ? $scope.item.Nik2 : null,
+                            }
+                            medifirstService.post('registrasi/save-pasien-fix', postJson)
+                                .then(function (res) {
+                                        // if ($scope.item.image != undefined && $scope.item.image != "../app/images/avatar.jpg") {
+                                        //     saveImageToDir($scope.item.image,res.data.data.nocm )
+                                        // }
+                                        tempId = res.data.data.id;
+                                        if ($scope.item.noRecReservasi != undefined) {
+                                            var jsonss = {
+                                                "norec": $scope.item.noRecReservasi,
+                                                "nocmfk": res.data.data.kodeexternal
+                                            }
+
+                                            medifirstService.post('reservasi/update-nocmfk-antrian-registrasi', jsonss).then(function (e) {})
+                                        }
+
+                                        $scope.isNext = true;
+                                        $scope.idPasienNa = res.data.data.id;
+                                        $scope.noCm = res.data.data.nocm;
+                                        $scope.noRec = res.data.data.id;
+                                        $scope.namaPasien = res.data.data.namapasien;
+                                        $scope.ALamat = res.data.alamat;
+                                        $scope.Jk = $scope.item.jenisKelamin.jeniskelamin
+                                        $scope.tglLahirs = res.data.data.tgllahir;
+                                        $scope.NoTelepon = res.data.data.notelepon;
+                                        var umur = dateHelper.CountAge(new Date($scope.tglLahirs), $scope.now);
+                                        var bln = umur.month,
+                                            thn = umur.year,
+                                            day = umur.day
+                                        var usia = (umur.year * 12) + umur.month
+                                        var umur = thn + ' thn ' + bln + ' bln ' + day + ' hr '
+                                        $scope.UmurTea = umur;
 
 
-                                if ($scope.Triage != "" && $scope.Triage != undefined) {
-                                    InputTriage();
-                                }
-                                // toastr.info($scope.noCm, 'No RM Pasien')
-                                cacheHelper.set('CacheRegisBayi', undefined);
-                                // if ($scope.idPasien == undefined) {
-                                //     $scope.Next()
-                                // }
-                                if ($scope.title == 'Pendaftaran Pasien') {
-                                    $scope.Next()
-                                }
+                                        if ($scope.Triage != "" && $scope.Triage != undefined) {
+                                            InputTriage();
+                                        }
+                                        // toastr.info($scope.noCm, 'No RM Pasien')
+                                        cacheHelper.set('CacheRegisBayi', undefined);
+                                        // if ($scope.idPasien == undefined) {
+                                        //     $scope.Next()
+                                        // }
+                                        if ($scope.title == 'Pendaftaran Pasien') {
+                                            $scope.Next()
+                                        }
 
-                            },
-                            function (err) { })
+                                    },
+                                    function (err) {})
+                            $scope.isRouteLoading = false
+                        }
+                    })
+
+                        
+                    
+                    
+                    // var data = {
+                    //     nik: $scope.item.noIdentitas
+                    // }
+                    // medifirstService.postNonMessage('registrasi/get-nik-duplicate', data).then(function (data) {
+                    //     console.log(data.data.length);
+                    //     if (data.data.length > 0 && $scope.item.noCmPasien == undefined) {
+                    //         var confirm = $mdDialog.confirm()
+                    //             .title('Informasi')
+                    //             .htmlContent("NIK Sudah Pernah Terdaftar Sebanyak " + data.data.length + ". Apakah Ingin Menambahkan Pasien?", "Peringatan")
+                    //             .ariaLabel('Lucky day')
+                    //             .cancel('Batal')
+                    //             .ok('Ok');
+                    //         $mdDialog.show(confirm).then(function () {
+                    //             getNIKDukcapilV2()
+                    //         });
+
+                    //     }else{
+                            
+                    //     }
+                        
+                    // })
+                    // getNIKDukcapilV2()
+                    
+                    
 
                 } else {
                     showMessages(isValid.messages);

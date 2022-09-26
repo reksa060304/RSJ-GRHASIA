@@ -3,7 +3,11 @@ define(['initialize'], function (initialize) {
     initialize.controller('PengkajianKeperawatanGeriatriCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
             // var paramsIndex = $state.params.index ? parseInt($state.params.index) : null;
-
+            //scope.disable
+            $scope.item301822 = true
+            $scope.item301824 = true
+            $scope.item301826 = true
+            //end
             $scope.myVar = true
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true
@@ -12,6 +16,7 @@ define(['initialize'], function (initialize) {
             $scope.totalSkor = 0
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
+            $scope.skor1 = 0
             $scope.cc = {}
             var nomorEMR = '-'
             $scope.cc.emrfk = 3000934
@@ -316,7 +321,11 @@ define(['initialize'], function (initialize) {
                     }
                 }
                 $scope.listDua = Dua
-
+                console.log($scope.listDua);
+                // for (let i = $scope.listDua.length+1; i > 0; i--) {
+                //     // $scope.no = i
+                // }
+                $scope.no = 1
                 // scope Tiga
                 var gejalaKosongKeun = []
                 for (let k = 0; k < Tiga.length; k++) {
@@ -379,7 +388,6 @@ define(['initialize'], function (initialize) {
                     }
                 }
                 $scope.listEnam = Enam
-                console.log($scope.listSatu);
                 // $scope.listAda = [{name: "Ada",id: 1,value: "Ada"},{name: "Tidak",id: 2,value: "Tidak"}]
                 // $scope.listYa = [{
                 //         name: "Ya",
@@ -567,6 +575,7 @@ define(['initialize'], function (initialize) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                $scope.aaa = true
                 //chace periode
                 $scope.item.obj[301501] = $scope.cc.namapasien
                 $scope.item.obj[301502] = $scope.cc.nik
@@ -616,8 +625,9 @@ define(['initialize'], function (initialize) {
                 //     }
                 // })
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
-                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk && paramsIndex == dataLoad[i].index) {
-
+                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk 
+                    // && paramsIndex == dataLoad[i].index
+                    ) {
                         if (dataLoad[i].type == "textbox") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                             if (dataLoad[i].emrdfk == 21020553)
@@ -644,6 +654,9 @@ define(['initialize'], function (initialize) {
                         if (dataLoad[i].type == 'textbox4') {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                         }
+                        if (dataLoad[i].type == 'radio') {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                        }
                         if (dataLoad[i].type == 'textbox6') {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                         }
@@ -665,8 +678,29 @@ define(['initialize'], function (initialize) {
                             //     $scope.getSkorGizi(datass)
                             // }
 
-
                         }
+                        if (dataLoad[i].type == "checkbox4") {
+                            chekedd = false
+                            if (dataLoad[i].value == '1') {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                        }
+                        if (dataLoad[i].type == "checkbox3p") {
+                            chekedd = false
+                            if (dataLoad[i].value == '1') {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                        }
+                        if (dataLoad[i].type == "checkboxgetadl") {
+                            chekedd = false
+                            if (dataLoad[i].value == '1') {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                        }
+                        
                         if (dataLoad[i].type == "checkbox") {
                             chekedd = false
                             if (dataLoad[i].value == '1') {
@@ -684,8 +718,6 @@ define(['initialize'], function (initialize) {
                             //     var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
                             //     $scope.getSkorGizi(datass)
                             // }
-
-
                         }
 
                         if (dataLoad[i].type == "datetime") {
@@ -729,6 +761,36 @@ define(['initialize'], function (initialize) {
                 //     }
                 // }
 
+            })
+            $scope.$watch('item.obj[301821]', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    console.log('y');
+                    if ($scope.item.obj[301821] == "Ya") {
+                        $scope.item301822 = false
+                    }else{
+                        $scope.item301822 = true
+                    }
+                }
+            })
+            $scope.$watch('item.obj[301823]', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    console.log('y');
+                    if ($scope.item.obj[301823] == "Ya") {
+                        $scope.item301824 = false
+                    } else {
+                        $scope.item301824 = true
+                    }
+                }
+            })
+            $scope.$watch('item.obj[301825]', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    console.log('y');
+                    if ($scope.item.obj[301825] == "Ya") {
+                        $scope.item301826 = false
+                    } else {
+                        $scope.item301826 = true
+                    }
+                }
             })
             $scope.$watch('item.obj[116131]', function (nilai) {
 
@@ -1042,29 +1104,62 @@ define(['initialize'], function (initialize) {
 
             }
             $scope.getSkor = function (stat) {
-
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
-                    if (arrobj[i] == stat.id) {
-                        if ($scope.item.obj[parseFloat(arrobj[i])] == true) {
-                            $scope.totalSkor = $scope.totalSkor + parseFloat(stat.descNilai)
-                            break
-                        } else {
-                            $scope.totalSkor = $scope.totalSkor - parseFloat(stat.descNilai)
-                            break
+                    // if (arrobj[i] == stat.id) {
+                    //     if ($scope.item.obj[parseFloat(arrobj[i])] == true) {
+                    //         $scope.totalSkor = $scope.totalSkor + parseFloat(stat.descNilai)
+                    //         break
+                    //     } else {
+                    //         $scope.totalSkor = $scope.totalSkor - parseFloat(stat.descNilai)
+                    //         break
+                    //     }
+                    // } else {
+                    // }
+                    // if (arrobj[i] == 3019476) {
+                        
+                    // }
+                    // console.log(stat.cbotable.value);
+                    if (stat.type == 'checkbox' ||
+                        stat.type == 'checkbox3') {
+                            console.log('a');
+                        if (arrobj[i] == 301973 || arrobj[i] == 301974 || arrobj[i] == 301976 || arrobj[i] == 301977 || arrobj[i] == 301978 || arrobj[i] == 301979 || arrobj[i] == 301980 || arrobj[i] == 301981) {
+                            console.log('b');
+                            if (arrobj[i] == stat.id) {
+                            console.log('c');
+                                if ($scope.item.obj[parseFloat(arrobj[i])] == true) {
+                                    console.log('d');
+                                    $scope.skor1 = $scope.skor1 + parseFloat(stat.reportdisplay)
+                                    break
+                                } else {
+                                    console.log('e');
+
+                                    $scope.skor1 = $scope.skor1 - parseFloat(stat.reportdisplay)
+                                    break
+                                }
+                            }
                         }
-
-
-                    } else {
-
                     }
+                    
                 }
+                $scope.item.obj[301939] = $scope.skor1
+                
                 $scope.item.obj[3152] = $scope.totalSkor + $scope.totalSkor2
                 setSkorAkhir($scope.item.obj[3152])
             }
+            $scope.list =[{"name": "( 0 ) Tidak ada penurunan berat badan","id": 1,"value": "0"},{"name": "( 2 )Tidak yakin / tidak tahu / baju terasa lebih longgar","id": 2,"value": "2"},{"name": "Jika Ya, berapa penurunan BB tersebut","id": 3},]
             $scope.getSkoralegi = function (stat) {
-
+                console.log(stat);
+                var arrobj = Object.keys($scope.item.obj)
+                var arrSave = []
+                for (var i = arrobj.length - 1; i >= 0; i--) {
+                    
+                }
+                $scope.item.obj[21020553] = $scope.totalSkor
+            }
+            
+            $scope.getSkorAdl = function (stat) {
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
@@ -1080,7 +1175,7 @@ define(['initialize'], function (initialize) {
 
                     }
                 }
-                $scope.item.obj[21020553] = $scope.totalSkor
+                $scope.item.obj[301909] = $scope.totalSkor
             }
             $scope.$watch('item.obj[21020553]', function (newValue, oldValue) {
                 if (newValue != oldValue) {
@@ -1293,7 +1388,7 @@ define(['initialize'], function (initialize) {
                     })
                 }
                 $scope.cc.jenisemr = 'asesmen'
-                $scope.cc.index = $state.params.index
+                // $scope.cc.index = $state.params.index
                 var jsonSave = {
                     head: $scope.cc,
                     data: arrSave

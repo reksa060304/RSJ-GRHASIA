@@ -2920,7 +2920,7 @@ boolGelangPasienBayi = False
                        " (case when tp.hargadiscount is null then 0 else tp.hargadiscount end) as diskon, " & _
                        " hargasatuan*tp.jumlah as total,ks.namakelas,ar.asalrujukan,tp.tglpelayanan, " & _
                        " CASE WHEN rek.namarekanan is null then '-' else rek.namarekanan END as namapenjamin,kmr.namakamar, " & _
-                       " pg1.namalengkap as dktrdpjp,ks1.namakelas as namakelas_pd,alm.alamatlengkap FROM pasiendaftar_t AS pd INNER JOIN pasien_m AS ps ON pd.nocmfk = ps.id " & _
+                       " pg1.namalengkap as dktrdpjp,ks1.namakelas as namakelas_pd,alm.alamatlengkap || ' - Kel. ' || coalesce(alm.namadesakelurahan ,'') || ' - Kec.  ' || coalesce(alm.namakecamatan,'') || ' -  Kota/Kab.  ' || coalesce(alm.namakotakabupaten,'') as alamatlengkap FROM pasiendaftar_t AS pd INNER JOIN pasien_m AS ps ON pd.nocmfk = ps.id " & _
                        " INNER JOIN jeniskelamin_m AS jk ON ps.objectjeniskelaminfk = jk.id " & _
                        " INNER JOIN kelompokpasien_m AS kp ON pd.objectkelompokpasienlastfk = kp.id " & _
                        " INNER JOIN antrianpasiendiperiksa_t AS apdp ON apdp.noregistrasifk = pd.norec " & _

@@ -3407,6 +3407,13 @@
         {
             "nameDep": "FormPelaporanEfekSampingObatCtrl",
             "urlDep": "module/EMR/FormPelaporanEfekSampingObatCtrl"
+        },
+        {
+            "nameDep": "AsesmenPasienTahapTerminalCtrl",
+            "urlDep": "module/EMR/AsesmenPasienTahapTerminalCtrl"
+        }, {
+            "nameDep": "SuratPerjanjianPasienPulangAPSCtrl",
+            "urlDep": "module/EMR/SuratPerjanjianPasienPulangAPSCtrl"
         }
         
     ]

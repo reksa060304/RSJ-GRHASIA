@@ -465,6 +465,16 @@
 			<div class="grid_2" style="margin-top: 10px; margin-left: 5px;">
 				<button class="c-button" ng-click="Riwayat()">Riwayat Resep</button>
 			</div>
+			<div class="grid_2" style="margin-top: 10px; margin-left: 5px;">
+				<button class="c-button" ng-click="UbahDokter2()">Ubah Dokter</button>
+			</div>
+			<div class="grid_2" style="margin-top: 10px; margin-left: 5px;">
+				<button class="c-button" ng-click="EditPemakaianAsuransi()">Ubah Pemakaian
+					Asuransi</button>
+			</div>
+			<div class="grid_2" style="margin-top: 10px; margin-left: 5px;">
+				<button class="c-button" ng-click="Koding()">Koding</button>
+			</div>
 			<!-- <div class="grid_2" >
 				<button class="btnTemplate1"  ng-click="editKlaimm()">Edit Klaim Masal</button>
 			</div>
@@ -682,7 +692,19 @@
 
 		<button class="k-button" ng-click="mergePendafataran()" style="float:right;margin-top:4%">Simpan Mereg No Pendaftaran</button>
 	</div>
-
+	<div kendo-window="popUpUbahDokter" k-title="'UbahDokter'" k-width="500" k-visible="false" k-on-open="win2visible = true"
+    k-on-close="win2visible = false">
+	<div class="grid_12">
+		<label c-label item="item">Ubah Dokter</label>
+	</div>
+	<div class="grid_12">
+		<input style="width: 100%;" kendo-combo-box k-ng-model="item.UbahDokter" k-data-text-field="'namaexternal'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDokter" />
+	</div>
+	<div class="grid_12">
+		<button class="k-button" ng-click="simpanUbahDokter2()" style="float:right;margin-top:4%">Ubah Dokter</button>
+	</div>
+        
+    </div>
 	<div kendo-window="popupPengajuanKlaim" k-title="'Masukan Jumlah LOS'" k-width="400" k-height="500" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
 		<!-- <div class="grid_12">
 			<div class="grid_12">
