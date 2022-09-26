@@ -16987,6 +16987,29 @@
     ]
   },
   {
+    "name": "RekamMedis.AsesmenMedis.LaporanSPOT",
+    "url": "/LaporanSPOT",
+    "templateurl": "module/EMR/LaporanSPOT.html",
+    "controller": "LaporanSPOTCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
     "name": "SensusHarianRawatJalan",
     "url": "/U2Vuc3VzSGFyaWFuUmF3YXRKYWxhbg==",
     "templateurl": "module/Registrasi/Laporan/SensusHarianRawatJalan.html",

@@ -3043,6 +3043,10 @@
             "urlDep": "module/EMR/FormulirTransferPasienAntarRuanganCtrl"
         },
         {
+            "nameDep": "LaporanSPOTCtrl",
+            "urlDep": "module/EMR/LaporanSPOTCtrl"
+        },
+        {
             "nameDep": "SensusHarianRawatJalanCtrl",
             "urlDep": "module/Registrasi/Laporan/SensusHarianRawatJalanCtrl"
         },
