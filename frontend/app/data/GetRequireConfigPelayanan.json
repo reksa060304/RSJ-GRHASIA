@@ -3414,6 +3414,10 @@
         }, {
             "nameDep": "SuratPerjanjianPasienPulangAPSCtrl",
             "urlDep": "module/EMR/SuratPerjanjianPasienPulangAPSCtrl"
+        },
+        {
+            "nameDep": "SuratKeteranganPasienMelarikanDiriCtrl",
+            "urlDep": "module/EMR/SuratKeteranganPasienMelarikanDiriCtrl"
         }
         
     ]
