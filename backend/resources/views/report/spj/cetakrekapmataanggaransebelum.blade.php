@@ -87,9 +87,9 @@
     </table>
         <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 3px solid black;" class="tabel">
                 <tr>
-                    <td align="center" colspan="2" style="padding: 10px; font-weight: bold ">NO</td>
+                    <td align="center" colspan="2" rowspan="2" style="padding: 10px; font-weight: bold ">NO</td>
                     <td align="center" rowspan="2" style="padding: 10px; font-weight: bold; ">ALOKASI BIAYA/PENGELUARAN</td>
-                    <td align="center" rowspan="2" colspan="2" style="padding: 10px; font-weight: bold ; ">JUMLAH ANGGARAN</td>
+                    <td align="center" colspan="2" style="padding: 10px; font-weight: bold ; ">JUMLAH ANGGARAN</td>
                 </tr>
                 <tr>
                     <td  style="padding: 10px; font-weight: bold; ">Pelayanan</td>
