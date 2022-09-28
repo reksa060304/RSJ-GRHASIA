@@ -45,11 +45,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         text: "Tambah",
                         template: '<div class="grid_1"><button ng-click="TambahRincian()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'
                     },
-                    {
-                        name: "edit",
-                        text: "Edit",
-                        template: '<div class="grid_1"><button ng-click="Edit()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-edit"></span>Edit</button></div>'
-                    },
+                    // {
+                    //     name: "edit",
+                    //     text: "Edit",
+                    //     template: '<div class="grid_1"><button ng-click="Edit()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-edit"></span>Edit</button></div>'
+                    // },
                 ],
                 selectable: 'row',
                 scrollable: true,
@@ -110,7 +110,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     },
                     {
 						"command": [
-							
+							{ text: "Edit", click: EditRincian, imageClass: "k-icon k-i-delete" },
 							{ text: "Hapus", click: Hapus, imageClass: "k-icon k-i-delete" },
 						],
 						title: "",
@@ -324,6 +324,35 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.itemRincian.nonPerubahan = true
                 }
                 $scope.popupTambahRincianPendapatan.center().open()
+                
+            }
+            function EditRincian(e){
+                e.preventDefault();
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+                $scope.itemRincian.tglinput = moment(dataItem.tglinput).format('YYYY-MM-DD')
+                $scope.itemRincian.tahun = dataItem.tahun
+                $scope.itemRincian.sumberPendapatan = {id:dataItem.objectasalprodukfk,namaexternal:dataItem.namaexternal}
+                $scope.itemRincian.uraianpendapatans = {id:dataItem.objecturaianpendapatanfk,uraianpendapatan:dataItem.uraianpendapatan}
+                $scope.itemRincian.uraianPendapatan = dataItem.uraian
+                $scope.itemRincian.jumlahPendapatan = dataItem.jumlahpendapatan
+                $scope.itemRincian.keterangan = dataItem.keterangan
+                if(dataItem.isperubahan == true){
+                    $scope.itemRincian.perubahan = true
+                    $scope.itemRincian.nonPerubahan = false
+                }else{
+                    $scope.itemRincian.perubahan = false
+                    $scope.itemRincian.nonPerubahan = true
+                }
+
+                console.log(dataItem)
+
+                $scope.popupTambahRincianPendapatan.center().open()
+                
             }
             function Hapus(e){
                 e.preventDefault();

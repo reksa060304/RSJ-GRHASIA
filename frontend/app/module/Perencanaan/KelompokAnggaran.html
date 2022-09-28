@@ -388,6 +388,30 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
+					<md-tab label="Mata Anggaran Permen" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
+						<md-content class="md-padding">
+							<br />
+							<div class="grid_12">
+								<div class="grid_12 headerBox">
+									<p>Daftar Mata Anggaran Permen</p>
+								</div>
+								<div class="clear"></div>
+
+								<div class="grid_12 borderBox">
+									<kendo-grid id="kGrids" k-data-source="dataSourceMataAnggaranPermen" k-selectable="'row'"  class="max-height"
+										k-options="columnMataAnggaranPermen" k-ng-model="dataMataAnggaranPermenSelected" ng-click="klikMataAnggaranPermen(dataMataAnggaranPermenSelected)">
+									</kendo-grid>
+								</div>
+							</div>
+
+							<div class="clear"></div>
+							<div class="grid_12">
+								<div class="grid_3">
+									<button class="btnTemplate1" ng-click="MappingRek()" ng-hide="disidpegawai">Mapping Rek RBA ke Rek Permendagri</button>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
 					<md-tab label="Anggaran Kas" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
@@ -528,6 +552,37 @@
 
 		<br />
 
+	</div>
+</div>
+<div class="grid_12" style="margin-top: 50px;" ng-hide="hidemap">
+	<div class="grid_12">
+		<div class="grid_2" style="margin-left: 10px;">
+			<input style="width: 100%;" kendo-combo-box k-ng-model="item.mappingrek"
+			k-data-text-field="'text'" k-data-value-field="'id'"
+			k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi5"/>
+		</div>
+	</div>
+	<div class="grid_6" style="margin-top: 20px;">
+		<legend id="filterData" style="margin-left: 10px;">
+			<a ng-click="showAndHide()">REKENING RBA YANG BELUM MASUK KE REK. PERMENDAGRI</a>
+		</legend>
+		<br>
+		<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
+			<kendo-grid id="kGrids" k-data-source="dataSourceRBABelum" k-selectable="'row'"  style="height: 1000px"
+				k-options="columnRBABelum" k-ng-model="dataRBABelumSelected" ng-click="klikRBABelum(dataRBABelumSelected)">
+			</kendo-grid>
+		</div>
+	</div>
+	<div class="grid_6" style="margin-top: 20px;">
+		<legend id="filterData" style="margin-left: 10px;">
+			<a ng-click="showAndHide()">REKENING RBA YANG SUDAH MASUK KE REK. PERMENDAGRI</a>
+		</legend>
+		<br>
+		<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
+			<kendo-grid id="kGrids" k-data-source="dataSourceRBASudah" k-selectable="'row'"  style="height: 1000px"
+				k-options="columnRBASudah" k-ng-model="dataRBASudahSelected" ng-click="klikRBASudah(dataRBASudahSelected)">
+			</kendo-grid>
+		</div>
 	</div>
 </div>
 <div class="grid_12" kendo-window="popupTambahTahap" k-title="'Setting Tahap'" k-visible="false">
@@ -1349,47 +1404,18 @@
 				</div>
 			</div>
 			<div class="grid_12" ng-hide="konsolidasi">
+				<br>
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Konsolidasi"></label>
 				</div>
-				<br><br>
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Jenis Permendagri"></label>
-				</div>
-				<br>
-				<div class="grid_12">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi2"
-						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
-						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi2" />
-				</div>
-				<br><br>
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Permendagri 3"></label>
-				</div>
-				<br>
-				<div class="grid_12">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi3"
-						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
-						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi3" />
-				</div>
-				<br><br>
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Permendagri 4"></label>
-				</div>
-				<br>
-				<div class="grid_12">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi4"
-						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
-						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi4" />
-				</div>
-				<br><br>
+				
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Permendagri 5"></label>
 				</div>
 				<br>
 				<div class="grid_12">
 					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi5"
-						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
+						k-data-text-field="'text'" k-data-value-field="'id'"
 						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi5"/>
 				</div>
 			</div>

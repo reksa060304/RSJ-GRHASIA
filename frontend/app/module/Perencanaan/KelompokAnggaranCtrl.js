@@ -40,6 +40,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.semuaanggaran = false
             $scope.disidpegawai = false
             $scope.dispptkspj = false
+            $scope.hidemap=true
 
             $scope.rcn = {};
             $scope.rcn.mataAnggaranlv1 = ""
@@ -173,6 +174,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     DataMataAnggaran = e.data.mataanggaran
                     DataMataAnggaranCombo = e.data.mataanggarancombo
                     $scope.dataSourceMataAnggaran = e.data.mataanggaran
+                    $scope.dataSourceMataAnggaranPermen = new kendo.data.DataSource({
+                        data: e.data.mataanggaranpermen,
+                        pageSize: 15,
+                        total: e.data.mataanggaranpermen.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {}
+                            }
+                        },
+                    });
                     $scope.item.namapemda = e.data.setting[0].namapemda
                     $scope.item.kepaladaerah = e.data.setting[0].kepaladaerah
                     $scope.item.namakepaladaerah = e.data.setting[0].namakepaladaerah
@@ -292,6 +304,40 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             };
             
             // $scope.popupEntry.center().open();
+            $scope.MappingRek = function(){
+                medifirstService.get("perencanaan/get-data-rba-belum").then(function (e) {
+                    $scope.dataSourceRBABelum = e.data.data
+                })
+                $scope.hidemap=false
+            }
+            $scope.$watch('item.mappingrek', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    medifirstService.get("perencanaan/get-data-rba-belum?permen="+$scope.item.mappingrek.id).then(function (e) {
+                        $scope.dataSourceRBASudah = e.data.detail
+                    })
+                }
+            });
+            function copy(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                var objSave =
+                    {
+                        idanggaran: dataItem.id,
+                        idpermen: $scope.item.mappingrek.id,
+                    }
+
+                    medifirstService.post('perencanaan/copy-permen', objSave).then(function (e) {
+                        medifirstService.get("perencanaan/get-data-rba-belum?permen="+$scope.item.mappingrek.id).then(function (e) {
+                            $scope.dataSourceRBABelum = e.data.data
+                            $scope.dataSourceRBASudah = e.data.detail
+                        })
+                        
+                    }, function (error) {
+                
+                    })
+
+            }
             $scope.addKegiatan = function(){
                 $scope.popupKegiatan.center().open();
             }
@@ -1540,15 +1586,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
             });
 
-            $scope.$watch('item.konsolidasi4', function (newValue, oldValue) {
-                if (newValue != oldValue) {
-                    medifirstService.get("perencanaan/get-data-combo?konsolidasi4="+$scope.item.konsolidasi4.id).then(function (e) {
-                        $scope.diskonsolidasi5 = false
-                        $scope.listKonsolidasi5 = e.data.konsolidasi5
-                    });
-                    
-                }
-            });
+            
 
             $scope.$watch('item.subsubkegiatanangkas', function (newValue, oldValue) {
                 if (newValue != oldValue) {
@@ -3038,6 +3076,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "title": "Mata Anggaran",
                         "width": "200px"
                     },
+                    {
+                        "field": "mataanggaranpermen",
+                        "title": "Mata Anggaran Permen",
+                        "width": "200px"
+                    },
                     // {
                     //     "field": "kodeexternal",
                     //     "title": "Kode External",
@@ -3048,6 +3091,120 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     //     "title": "Nama External",
                     //     "width": "200px"
                     // }
+                ]
+            };
+
+            $scope.columnRBABelum = {
+                selectable: 'row',
+                scrollable: true,
+
+                pageable: true,
+                groupable: true, 
+                columns:[
+                    {
+                        "command": [
+                              {
+                                 text: "Copy",
+                                 click: copy,
+                                 imageClass: "clinic fa"
+                              },
+                          ],
+                             title: "",
+                             width: "30px",
+                      },
+                    {
+                        "field": "id",
+                        "title": "Id",
+                        "width": "50px"
+                    },
+                    {
+                        "field": "kodemataanggaran",
+                        "title": "Kode",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "namamataanggaran",
+                        "title": "Mata Anggaran",
+                        "width": "200px"
+                    },
+                ]
+            };
+
+            $scope.columnRBASudah = {
+                selectable: 'row',
+                scrollable: true,
+
+                pageable: true,
+                groupable: true, 
+                columns:[
+                    {
+                        "field": "id",
+                        "title": "Id",
+                        "width": "50px"
+                    },
+                    {
+                        "field": "kodemataanggaran",
+                        "title": "Kode",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "namamataanggaran",
+                        "title": "Mata Anggaran",
+                        "width": "200px"
+                    },
+                ]
+            };
+
+            $scope.columnMataAnggaranPermen = {
+                toolbar:[
+                    {
+                        name: "add", 
+                        text: "Tambah",
+                        template: '<div class="grid_2"><button ng-click="TambahMT()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                    },
+                    {
+                        name: "ads", 
+                        text: "asd",
+                        template: '<div class="grid_6"></div>'
+                    },
+                    {
+                        name: "src", 
+                        text: "src",
+                        template:  '<div class="grid_4" style="margin-top: -8px;"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Search"></label></div><div class="grid_11"><input c-text-box type="input" class="k-textbox" ng-model="item.searchMata" /></div></div>'
+                    }
+                ],
+                selectable: 'row',
+                scrollable: true,
+
+                pageable: true,
+                groupable: true, 
+                columns:[
+                    {
+                        "command": [
+                              {
+                                 text: "Detail",
+                                 click: editMataT,
+                                 imageClass: "clinic fa"
+                              },
+                          ],
+                             title: "",
+                             width: "30px",
+                      },
+                    {
+                        "field": "id",
+                        "title": "Id",
+                        "width": "50px"
+                    },
+                    {
+                        "field": "kode",
+                        "title": "Kode",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "mataanggaranpermen",
+                        "title": "Mata Anggaran Permen",
+                        "width": "200px"
+                    },
                 ]
             };
             

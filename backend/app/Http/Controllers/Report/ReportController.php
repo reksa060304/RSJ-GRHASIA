@@ -2590,37 +2590,35 @@ class ReportController extends ApiController{
         map.mataanggaranpermen namamataanggaran, sum(kb.subtotal) jumlahanggaran,
                 x.totalbelanja jumlahspj, y.jumlah jumlahpanjar,
                 x.totalbelanja + y.jumlah as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
-                sum(kb.subtotal) - (x.totalbelanja + y.jumlah) sisaanggaran
+                sum(kb.subtotal) - (coalesce(x.totalbelanja,0) + coalesce(y.jumlah,0)) sisaanggaran
                 from mataanggaran_m ma
                 inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-                        inner join (
+                        left join (
                             select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
                             from mataanggaran_m ma
                             inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                             where sr.kdprofile = 30 and sr.statusenabled = true
-                            and sr.status = 'Sudah Diverifikasi'
                             $qtahun
                             $qsubsubkegiatansr
                             group by ma.kodemataanggaran, ma.namamataanggaran
                         ) as x on x.kodemataanggaran = ma.kodemataanggaran
-                        inner join (
+                        left join (
                             select kodemataanggaran, namamataanggaran, sum(jumlah) jumlah
                             from(
                                 select ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah panjar, coalesce(sum(sr.totalbelanja),0) totalbelanja,  coalesce(pj.jumlah - coalesce(sum(sr.totalbelanja),0), 0) as jumlah
                                 from mataanggaran_m ma
                                 left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
                                 left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
-                                and sr.status = 'Sudah Diverifikasi'
                                 $qtahun
                                 $qsubsubkegiatansr
                                 group by ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah
                             ) as s group by kodemataanggaran, namamataanggaran
                         ) as y on y.kodemataanggaran = ma.kodemataanggaran
-                        left join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
-                        left join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
-                        left join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
-                        left join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                        inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                        inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                        inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                        inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
                         where ma.kdprofile = 30 and ma.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
                         and map.kdprofile = 30 and map.statusenabled = true
@@ -2765,12 +2763,12 @@ class ReportController extends ApiController{
             inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
             INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
             inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
-            inner join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+            left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+            and akb.kdprofile = 30 and akb.statusenabled = true
             where ma.kdprofile = 30 and ma.statusenabled = true
             and kb.kdprofile = 30 and kb.statusenabled = true
             and ka.kdprofile = 30 and ka.statusenabled = true
             and dp0.kdprofile = 30 and dp0.statusenabled = true
-            and akb.kdprofile = 30 and akb.statusenabled = true
             $qtahun
             $qsubsubkegiatan
             $qtahap
@@ -2808,12 +2806,12 @@ class ReportController extends ApiController{
             INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
             inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
             inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-            inner join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+            left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+            and akb.kdprofile = 30 and akb.statusenabled = true
             where ma.kdprofile = 30 and ma.statusenabled = true
             and kb.kdprofile = 30 and kb.statusenabled = true
             and ka.kdprofile = 30 and ka.statusenabled = true
             and dp0.kdprofile = 30 and dp0.statusenabled = true
-            and akb.kdprofile = 30 and akb.statusenabled = true
             $qtahun
             $qsubsubkegiatan
             $qtahap
@@ -2836,6 +2834,8 @@ class ReportController extends ApiController{
             $qtahap =  " and kb.objecttahapfk =  '" . $request['tahap']."'";
         }
 
+        $tahap = DB::select(DB::raw("select * from tahapanggaran_m where id = ". $request['tahap']));
+
         $data = DB::select(DB::raw("select 'tidak' bold, 'iya' tkode, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
@@ -2843,7 +2843,7 @@ class ReportController extends ApiController{
         sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
         sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
         from(
-            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, idap, norec, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
             sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
             sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
             sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -2851,7 +2851,7 @@ class ReportController extends ApiController{
             sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
             from(
                 select
-                ka.kode, ka.keterangan, kb.subtotal jumlahanggaran,
+                ka.kode, ka.keterangan, kb.subtotal jumlahanggaran, ap.id idap, kb.norec,
                 case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
                 case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
                 case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
@@ -2869,17 +2869,17 @@ class ReportController extends ApiController{
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
                 inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
                 inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                inner join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+                left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+                and akb.kdprofile = 30 and akb.statusenabled = true
                 where ma.kdprofile = 30 and ma.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 and dp0.kdprofile = 30 and dp0.statusenabled = true
-                and akb.kdprofile = 30 and akb.statusenabled = true
                 and ka.tahun = '$tahun'
                 $qtahap
                 group by
-                ka.kode, ka.keterangan, akb.bulanint, kb.subtotal
-            ) as x group by kode, keterangan, jumlahanggaran
+                ka.kode, ka.keterangan, akb.bulanint, kb.subtotal, ap.id, kb.norec
+            ) as x group by kode, keterangan, jumlahanggaran, idap, norec
         ) as y group by kode, keterangan, nourut
 
         union ALL
@@ -2891,7 +2891,7 @@ class ReportController extends ApiController{
         sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
         sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
         from(
-            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, idap, norec, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
             sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
             sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
             sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -2899,7 +2899,7 @@ class ReportController extends ApiController{
             sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
             from(
                 select
-                dp0.kode, dp0.keterangan, kb.subtotal jumlahanggaran,
+                dp0.kode, dp0.keterangan, kb.subtotal jumlahanggaran, ap.id idap, kb.norec,
                 case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
                 case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
                 case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
@@ -2917,17 +2917,17 @@ class ReportController extends ApiController{
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
                 inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
                 inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                inner join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+                left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+                and akb.kdprofile = 30 and akb.statusenabled = true
                 where ma.kdprofile = 30 and ma.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 and dp0.kdprofile = 30 and dp0.statusenabled = true
-                and akb.kdprofile = 30 and akb.statusenabled = true
                 and ka.tahun = '$tahun'
                 $qtahap
                 group by
-                dp0.kode, dp0.keterangan, akb.bulanint, kb.subtotal
-            ) as x group by kode, keterangan, jumlahanggaran
+                dp0.kode, dp0.keterangan, akb.bulanint, kb.subtotal, ap.id, kb.norec
+            ) as x group by kode, keterangan, jumlahanggaran, idap, norec
         ) as y group by kode, keterangan, nourut
 
         union ALL
@@ -2939,7 +2939,7 @@ class ReportController extends ApiController{
         sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
         sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
         from(
-            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, idap, norec, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
             sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
             sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
             sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -2947,7 +2947,7 @@ class ReportController extends ApiController{
             sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
             from(
                 select
-                dp2.kode, dp2.keterangan, kb.subtotal jumlahanggaran,
+                dp2.kode, dp2.keterangan, kb.subtotal jumlahanggaran, ap.id idap, kb.norec,
                 case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
                 case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
                 case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
@@ -2965,17 +2965,17 @@ class ReportController extends ApiController{
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
                 inner join kegiatananggaran_m as dp2 on ka.kode ilike dp2.kode || '%' and dp2.div = 2
                 inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                inner join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+                left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+                and akb.kdprofile = 30 and akb.statusenabled = true
                 where ma.kdprofile = 30 and ma.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 and dp2.kdprofile = 30 and dp2.statusenabled = true
-                and akb.kdprofile = 30 and akb.statusenabled = true
                 and ka.tahun = '$tahun'
                 $qtahap
                 group by
-                dp2.kode, dp2.keterangan, akb.bulanint, kb.subtotal
-            ) as x group by kode, keterangan, jumlahanggaran
+                dp2.kode, dp2.keterangan, akb.bulanint, kb.subtotal, ap.id, kb.norec
+            ) as x group by kode, keterangan, jumlahanggaran, idap, norec
         ) as y group by kode, keterangan, nourut
 
         union ALL
@@ -2987,7 +2987,7 @@ class ReportController extends ApiController{
         sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
         sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
         from(
-            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, idap, norec, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
             sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
             sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
             sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -2995,7 +2995,7 @@ class ReportController extends ApiController{
             sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
             from(
                 select
-                dp1.kode, dp1.keterangan, kb.subtotal jumlahanggaran,
+                dp1.kode, dp1.keterangan, kb.subtotal jumlahanggaran, ap.id idap, kb.norec,
                 case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
                 case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
                 case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
@@ -3013,17 +3013,17 @@ class ReportController extends ApiController{
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
                 inner join kegiatananggaran_m as dp1 on ka.kode ilike dp1.kode || '%' and dp1.div = 1
                 inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                inner join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+                left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+                and akb.kdprofile = 30 and akb.statusenabled = true
                 where ma.kdprofile = 30 and ma.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 and dp1.kdprofile = 30 and dp1.statusenabled = true
-                and akb.kdprofile = 30 and akb.statusenabled = true
                 and ka.tahun = '$tahun'
                 $qtahap
                 group by
-                dp1.kode, dp1.keterangan, akb.bulanint, kb.subtotal
-            ) as x group by kode, keterangan, jumlahanggaran
+                dp1.kode, dp1.keterangan, akb.bulanint, kb.subtotal, ap.id, kb.norec
+            ) as x group by kode, keterangan, jumlahanggaran, idap, norec
         ) as y group by kode, keterangan, nourut
 
         union ALL
@@ -3035,7 +3035,7 @@ class ReportController extends ApiController{
         sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
         sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
         from(
-        select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, idap, norec, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
         sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -3043,7 +3043,7 @@ class ReportController extends ApiController{
         sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
         from(
         select
-        ap.id, ap.asalproduk keterangan, kb.subtotal jumlahanggaran, ka.kode,
+        ap.id, ap.asalproduk keterangan, kb.subtotal jumlahanggaran, ka.kode, ap.id idap, kb.norec,
         case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
         case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
         case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
@@ -3061,17 +3061,17 @@ class ReportController extends ApiController{
         INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
         inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
         inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-        inner join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+        left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+        and akb.kdprofile = 30 and akb.statusenabled = true
         where ma.kdprofile = 30 and ma.statusenabled = true
         and kb.kdprofile = 30 and kb.statusenabled = true
         and ka.kdprofile = 30 and ka.statusenabled = true
         and dp0.kdprofile = 30 and dp0.statusenabled = true
-        and akb.kdprofile = 30 and akb.statusenabled = true
         and ka.tahun = '$tahun'
         $qtahap
         group by
-        ap.id, ap.asalproduk, akb.bulanint, kb.subtotal, ka.kode
-        ) as x group by kode, keterangan, jumlahanggaran
+        ap.id, ap.asalproduk, akb.bulanint, kb.subtotal, ka.kode, ap.id, kb.norec
+        ) as x group by kode, keterangan, jumlahanggaran, idap, norec
         ) as y group by kode, keterangan, nourut
 
         order by nourut, kode;        
@@ -3079,7 +3079,7 @@ class ReportController extends ApiController{
 
         $pageWidth = 1200;
         //return $this->respond($result);
-        return view('report.spj.cetakkas',compact('data', 'pageWidth', 'tahun'));
+        return view('report.spj.cetakkas',compact('data', 'pageWidth', 'tahun', 'tahap'));
     }
 
     public function CetakSPJMonevRBA(Request $request){
@@ -3109,40 +3109,38 @@ class ReportController extends ApiController{
         $data = DB::select(DB::raw("select ma.kodemataanggaran, ma.namamataanggaran, sum(kb.subtotal) jumlahanggaran,
                 x.totalbelanja jumlahspj, y.jumlah jumlahpanjar,
                 x.totalbelanja + y.jumlah as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
-                sum(kb.subtotal) - (x.totalbelanja + y.jumlah) sisaanggaran
+                sum(kb.subtotal) - (coalesce(x.totalbelanja,0) + coalesce(y.jumlah,0)) sisaanggaran
                 from mataanggaran_m ma
                 inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-                        inner join (
+                        left join (
                             select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
                             from mataanggaran_m ma
                             inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                             where sr.kdprofile = 30 and sr.statusenabled = true
-                            and sr.status = 'Sudah Diverifikasi'
                             $qtahun
                             $qsubsubkegiatansr
                             group by ma.kodemataanggaran, ma.namamataanggaran
                         ) as x on x.kodemataanggaran = ma.kodemataanggaran
-                        inner join (
+                        left join (
                             select kodemataanggaran, namamataanggaran, sum(jumlah) jumlah
                             from(
                                 select ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah panjar, coalesce(sum(sr.totalbelanja),0) totalbelanja,  coalesce(pj.jumlah - coalesce(sum(sr.totalbelanja),0), 0) as jumlah
                                 from mataanggaran_m ma
                                 left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
                                 left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
-                                and sr.status = 'Sudah Diverifikasi'
                                 $qtahun
                                 $qsubsubkegiatansr
                                 group by ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah
                             ) as s group by kodemataanggaran, namamataanggaran
                         ) as y on y.kodemataanggaran = ma.kodemataanggaran
                         left join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                        and map.kdprofile = 30 and map.statusenabled = true
                         left join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
                         left join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
                         left join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
                         where ma.kdprofile = 30 and ma.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
-                        and map.kdprofile = 30 and map.statusenabled = true
                         and ka.kdprofile = 30 and ka.statusenabled = true
                         $qsubsubkegiatan
                         $qtahunka

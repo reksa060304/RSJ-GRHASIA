@@ -665,6 +665,61 @@ class PerencanaanController extends ApiController {
             ")
         );
 
+        $mataanggaranpermen = DB::select(DB::raw("select map.id, map2.kode || '.' || map3.kode || '.' || map4.kode || '.' || map.kode as kode,
+        map.mataanggaranpermen
+        from mataanggaranpermen_m map
+        inner join mataanggaranpermen_m map4 on map.mataanggaranpermenfk = map4.id and map4.div = 4
+        inner join mataanggaranpermen_m map3 on map4.mataanggaranpermenfk = map3.id and map3.div = 3
+        inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+        where map.kdprofile = 30
+        and map.statusenabled = true
+        and map2.kdprofile = 30
+        and map2.statusenabled = true
+        and map3.kdprofile = 30
+        and map3.statusenabled = true
+        and map4.kdprofile = 30
+        and map4.statusenabled = true
+        and map.div = 5
+        
+        union ALL
+        
+        select map4.id, map2.kode || '.' || map3.kode || '.' || map4.kode as kode,
+        map4.mataanggaranpermen
+        from mataanggaranpermen_m map4 
+        inner join mataanggaranpermen_m map3 on map4.mataanggaranpermenfk = map3.id and map3.div = 3
+        inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+        where map2.kdprofile = 30
+        and map2.statusenabled = true
+        and map3.kdprofile = 30
+        and map3.statusenabled = true
+        and map4.kdprofile = 30
+        and map4.statusenabled = true
+        and map4.div = 4
+        
+        union ALL
+        
+        select map3.id, map2.kode || '.' || map3.kode as kode,
+        map3.mataanggaranpermen
+        from mataanggaranpermen_m map3 
+        inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+        where map2.kdprofile = 30
+        and map2.statusenabled = true
+        and map3.kdprofile = 30
+        and map3.statusenabled = true
+        and map3.div = 3
+        
+        union all 
+        
+        select map2.id, map2.kode as kode,
+        map2.mataanggaranpermen
+        from mataanggaranpermen_m map2
+        where map2.kdprofile = 30
+        and map2.statusenabled = true
+        and map2.div = 2
+        
+        order by kode;
+            ")
+        );
         
         $kelompok='keteranganAnggaran';
         $keterangan = \DB::table('settingdatafixed_m')
@@ -719,25 +774,24 @@ class PerencanaanController extends ApiController {
         }else{
             $konsolidasi4 = [];
         }
-
-        if(!empty($request['konsolidasi4'])){
-            $konsolidasi5 = \DB::table('mataanggaranpermen_m')
-            ->select('id','mataanggaranpermen', 'kode', 'mataanggaranpermenfk')
-            ->where('kdprofile', $idProfile)
-            ->where('statusenabled', true)
-            ->where('div', 5)
-            ->where('mataanggaranpermenfk', $request['konsolidasi4'])
-            ->orderBy('id')
-            ->get();
-        }else{
-            $konsolidasi5 = \DB::table('mataanggaranpermen_m')
-            ->select('id','mataanggaranpermen', 'kode', 'mataanggaranpermenfk')
-            ->where('kdprofile', $idProfile)
-            ->where('statusenabled', true)
-            ->where('div', 5)
-            ->orderBy('id')
-            ->get();
-        }
+        
+        $konsolidasi5 =  DB::select(DB::raw("select map.id, map.mataanggaranpermen, map.kode, map.mataanggaranpermenfk,
+            map2.kode || '.' || map3.kode || '.' || map4.kode || '.' || map.kode || ' - ' || map.mataanggaranpermen as text 
+            from mataanggaranpermen_m map
+            inner join mataanggaranpermen_m map4 on map.mataanggaranpermenfk = map4.id and map4.div = 4
+            inner join mataanggaranpermen_m map3 on map4.mataanggaranpermenfk = map3.id and map3.div = 3
+            inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+            where map.kdprofile = 30
+            and map.statusenabled = true
+            and map2.kdprofile = 30
+            and map2.statusenabled = true
+            and map3.kdprofile = 30
+            and map3.statusenabled = true
+            and map4.kdprofile = 30
+            and map4.statusenabled = true
+            and map.div = 5
+            order by id
+        ")); 
         
         $panjar = DB::select(DB::raw("
         select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, sr.norealisasi,
@@ -789,6 +843,7 @@ class PerencanaanController extends ApiController {
             'kegiatancombo' => $kegiatancombo,
             'mataanggarancombo' => $mataanggarancombo,
             'mataanggaran' => $mata,
+            'mataanggaranpermen' => $mataanggaranpermen,
             'keteranganperubahan' => $keteranganperubahan,
             'mataanggarancombo' => $mataanggarancombo,
             'jenisanggaran' => $jenisanggaran,
@@ -3380,6 +3435,44 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function copyPermen(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                    $MA = MataAnggaran::where('id', '=', $request['idanggaran'])->first();
+                    $MA->mataanggaranpermenfk = $request['idpermen'];
+
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function savePerubahanKeterangan(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
@@ -5212,6 +5305,68 @@ order by kodemataanggaran"));
 
         $result = array(
             'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getRBABelum(Request $request){
+
+        $permen = '';
+        if (isset($request['permen']) && $request['permen'] != "" && $request['permen'] != "undefined") {
+            $permen =  "and ma.mataanggaranpermenfk = '".$request['permen']."'";
+        }
+
+        $data = DB::select(DB::raw("
+        select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen, coalesce(sum(kt.subtotal),0) as total
+        , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+        , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+        , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+        from mataanggaran_m ma 
+        left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
+		left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+        where ma.statusenabled = true and ma.kdprofile = 30
+        and ma.mataanggaranpermenfk is null
+        and length(ma.kodemataanggaran) in(9, 10)
+        group by ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id, map.mataanggaranpermen
+                , split_part(ma.kodemataanggaran, '.', 1)
+                , split_part(ma.kodemataanggaran, '.', 2)
+                , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end
+                , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end 
+                , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end
+        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;
+            ")
+        );
+
+        $detail = DB::select(DB::raw("
+        select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen, coalesce(sum(kt.subtotal),0) as total
+        , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+        , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+        , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+        from mataanggaran_m ma 
+        left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
+		left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+        where ma.statusenabled = true and ma.kdprofile = 30
+        and length(ma.kodemataanggaran) in(9, 10)
+        $permen
+        group by ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id, map.mataanggaranpermen
+                , split_part(ma.kodemataanggaran, '.', 1)
+                , split_part(ma.kodemataanggaran, '.', 2)
+                , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end
+                , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end 
+                , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end
+        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'detail' => $detail,
             'message' => '@epic',
         );
 
