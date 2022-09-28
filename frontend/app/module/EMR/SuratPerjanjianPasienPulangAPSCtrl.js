@@ -19,7 +19,7 @@ define(['initialize'], function (initialize) {
             $scope.skor1 = 0
             $scope.cc = {}
             var nomorEMR = '-'
-            $scope.cc.emrfk = 3000935
+            $scope.cc.emrfk = 3000936
             var dataLoad = []
             var pegawaiInputDetail = ''
             $scope.item.kasusbaru = true
@@ -49,7 +49,7 @@ define(['initialize'], function (initialize) {
             medifirstService.getPart('emr/get-datacombo-part-ruangan-pelayanan', true, true, 20).then(function (data) {
                 $scope.listRuangan = data
             })
-            medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000935).then(function (e) {
+            medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000936).then(function (e) {
 
                 var datas = e.data.kolom4
 
@@ -1413,7 +1413,7 @@ define(['initialize'], function (initialize) {
                     //     nomorEMR : e.data.data.noemr 
                     // });
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
-                        'Asesmen Pasien Tahap Terminal ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
+                        'Surat Perjanjian Pasien Pulang Atas Permintaan Sendiri (APS) ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
                         $scope.cc.noregistrasi).then(function (res) {})
 
                     var arrStr = {
