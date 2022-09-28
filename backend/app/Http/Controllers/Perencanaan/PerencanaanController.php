@@ -50,6 +50,8 @@ use App\Transaksi\LPJ;
 use App\Transaksi\PemungutanPajak;
 use App\Transaksi\PenyetoranPajak;
 use App\Transaksi\JasaGiro;
+use App\Master\AsalProduk;
+use App\Transaksi\UraianPendapatan;
 use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Parent_;
 use Webpatser\Uuid\Uuid;
@@ -2967,6 +2969,119 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function saveSumberPendapatan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    if($request['id'] == ''){
+                        $newID = AsalProduk::max('id');
+
+                        $MA = new AsalProduk();
+                        $MA->id = $newID + 1;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                        $MA->kodeexternal = $newID + 1;
+                        $MA->norec = $newID + 1;
+                        
+
+                    } else{
+                        $MA = AsalProduk::where('id', '=', $request['id'])->first();
+                    }
+                    
+                    $MA->namaexternal = $request['asalproduk'];
+                    $MA->reportdisplay = $request['asalproduk'];
+                    $MA->objectdepartemenfk = null;
+                    $MA->objectkelompokprodukfk = null;
+                    $MA->asalproduk = $request['asalproduk'];
+                    $MA->kdasalproduk = null;
+                    $MA->qasalproduk = null;
+                    $MA->isanggaran = null;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveUraianPendapatan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    if($request['id'] == ''){
+                        $newID = UraianPendapatan::max('id');
+
+                        $MA = \DB::table('uraianpendapatan_m')->insert([
+                            'id'=>$newID + 1,
+                            'kdprofile'=>$idProfile,
+                            'statusenabled'=>true,
+                            'namaexternal'=>null,
+                            'reportdisplay'=>null,
+                            'uraianpendapatan'=>$request['uraianpendapatan'],
+                        ]);
+
+                    } else{
+                        $MA = UraianPendapatan::where('id', '=', $request['id'])->first();
+                        $MA->namaexternal = null;
+                        $MA->reportdisplay = null;
+                        $MA->uraianpendapatan = $request['uraianpendapatan'];
+                        $MA->save();
+                    }
+                    
+                    
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function saveBKU(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
@@ -3270,6 +3385,80 @@ class PerencanaanController extends ApiController {
 
         try{ 
                     $MA = JasaGiro::where('norec', '=', $request['norec'])->first();
+                    $MA->statusenabled = false;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteSumberPendapatan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    $MA = AsalProduk::where('id', '=', $request['id'])->first();
+                    $MA->statusenabled = false;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteUraianPendapatan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    $MA = UraianPendapatan::where('id', '=', $request['id'])->first();
                     $MA->statusenabled = false;
                     $MA->save();
 
@@ -5616,7 +5805,7 @@ order by kodemataanggaran"));
     
 public function loadComboRincian(Request $request)
     {
-        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
+        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->where('isanggaran', null)->get();
         $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
         $rincianpendapatan = \DB::table('rincianpendapatan_t as rp')
         ->join('asalproduk_m as ap','ap.id','=','rp.objectasalprodukfk')

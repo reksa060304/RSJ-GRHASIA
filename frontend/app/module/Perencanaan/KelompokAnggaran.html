@@ -410,6 +410,38 @@
 									<button class="btnTemplate1" ng-click="MappingRek()" ng-hide="disidpegawai">Mapping Rek RBA ke Rek Permendagri</button>
 								</div>
 							</div>
+
+							<div class="grid_12" style="margin-top: 50px;" ng-hide="hidemap">
+								<div class="grid_12">
+									<div class="grid_2" style="margin-left: 10px;">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.mappingrek"
+										k-data-text-field="'text'" k-data-value-field="'id'"
+										k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi5"/>
+									</div>
+								</div>
+								<div class="grid_6" style="margin-top: 20px;">
+									<legend id="filterData" style="margin-left: 10px;">
+										<a ng-click="showAndHide()">REKENING RBA YANG BELUM MASUK KE REK. PERMENDAGRI</a>
+									</legend>
+									<br>
+									<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
+										<kendo-grid id="kGrids" k-data-source="dataSourceRBABelum" k-selectable="'row'"  style="height: 1000px"
+											k-options="columnRBABelum" k-ng-model="dataRBABelumSelected" ng-click="klikRBABelum(dataRBABelumSelected)">
+										</kendo-grid>
+									</div>
+								</div>
+								<div class="grid_6" style="margin-top: 20px;">
+									<legend id="filterData" style="margin-left: 10px;">
+										<a ng-click="showAndHide()">REKENING RBA YANG SUDAH MASUK KE REK. PERMENDAGRI</a>
+									</legend>
+									<br>
+									<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
+										<kendo-grid id="kGrids" k-data-source="dataSourceRBASudah" k-selectable="'row'"  style="height: 1000px"
+											k-options="columnRBASudah" k-ng-model="dataRBASudahSelected" ng-click="klikRBASudah(dataRBASudahSelected)">
+										</kendo-grid>
+									</div>
+								</div>
+							</div>
 						</md-content>
 					</md-tab>
 					<md-tab label="Anggaran Kas" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true">
@@ -554,37 +586,7 @@
 
 	</div>
 </div>
-<div class="grid_12" style="margin-top: 50px;" ng-hide="hidemap">
-	<div class="grid_12">
-		<div class="grid_2" style="margin-left: 10px;">
-			<input style="width: 100%;" kendo-combo-box k-ng-model="item.mappingrek"
-			k-data-text-field="'text'" k-data-value-field="'id'"
-			k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi5"/>
-		</div>
-	</div>
-	<div class="grid_6" style="margin-top: 20px;">
-		<legend id="filterData" style="margin-left: 10px;">
-			<a ng-click="showAndHide()">REKENING RBA YANG BELUM MASUK KE REK. PERMENDAGRI</a>
-		</legend>
-		<br>
-		<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
-			<kendo-grid id="kGrids" k-data-source="dataSourceRBABelum" k-selectable="'row'"  style="height: 1000px"
-				k-options="columnRBABelum" k-ng-model="dataRBABelumSelected" ng-click="klikRBABelum(dataRBABelumSelected)">
-			</kendo-grid>
-		</div>
-	</div>
-	<div class="grid_6" style="margin-top: 20px;">
-		<legend id="filterData" style="margin-left: 10px;">
-			<a ng-click="showAndHide()">REKENING RBA YANG SUDAH MASUK KE REK. PERMENDAGRI</a>
-		</legend>
-		<br>
-		<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
-			<kendo-grid id="kGrids" k-data-source="dataSourceRBASudah" k-selectable="'row'"  style="height: 1000px"
-				k-options="columnRBASudah" k-ng-model="dataRBASudahSelected" ng-click="klikRBASudah(dataRBASudahSelected)">
-			</kendo-grid>
-		</div>
-	</div>
-</div>
+
 <div class="grid_12" kendo-window="popupTambahTahap" k-title="'Setting Tahap'" k-visible="false">
 	
 	<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:280px;">

@@ -1468,7 +1468,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/delete-lpj','Perencanaan\PerencanaanController@saveLPJ');
             Route::post('perencanaan/save-pajak','Perencanaan\PerencanaanController@savePajak');
             Route::post('perencanaan/save-jasgir','Perencanaan\PerencanaanController@saveJasgir');
-            Route::post('perencanaan/save-jasgir','Perencanaan\PerencanaanController@saveJasgir');
+            Route::post('perencanaan/save-sumber-pendapatan','Perencanaan\PerencanaanController@saveSumberPendapatan');
+            Route::post('perencanaan/delete-sumber-pendapatan','Perencanaan\PerencanaanController@deleteSumberPendapatan');
+            Route::post('perencanaan/save-uraian-pendapatan','Perencanaan\PerencanaanController@saveUraianPendapatan');
+            Route::post('perencanaan/delete-uraian-pendapatan','Perencanaan\PerencanaanController@deleteUraianPendapatan');
             Route::post('perencanaan/save-bku','Perencanaan\PerencanaanController@saveBKU');
             Route::post('perencanaan/delete-pajak','Perencanaan\PerencanaanController@deletePajak');
             Route::post('perencanaan/save-perubahan-keterangan','Perencanaan\PerencanaanController@savePerubahanKeterangan');
