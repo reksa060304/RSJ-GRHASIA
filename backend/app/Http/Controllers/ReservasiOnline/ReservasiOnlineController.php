@@ -3125,6 +3125,21 @@ class ReservasiOnlineController extends ApiController
             ->where('apr.statusenabled', true)
             ->where('apr.noreservasi', $request['kodebooking'])
             ->first();
+
+        if(empty($data)) {
+            $result = array("metadata" => array("message" => "Maaf data Anda tidak ditemukan", "code" => 201));
+            return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        }else {
+            if($data->isconfirm){
+                $result = array("metadata" => array("message" => "Anda sudah melakukan checkin", "code" => 201));
+                return $this->setStatusCode($result['metadata']['code'])->respond($result);
+            }
+
+            if(date('Y-m-d') != date("Y-m-d", strtotime($data->tanggalreservasi))){
+                $result = array("metadata" => array("message" => "Bukan waktunya untuk melakukan checkin", "code" => 201));
+                return $this->setStatusCode($result['metadata']['code'])->respond($result);
+            }
+        }
         DB::beginTransaction();
         try {
             $pasiendaftar = array(

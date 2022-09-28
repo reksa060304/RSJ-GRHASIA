@@ -1868,13 +1868,19 @@ class ReportController extends ApiController{
                 }
         }
 
+         $peg = null;    
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+        }
+
         $pdf = PDF::loadView(
             'report.cppt-ranap-dom',
             array(
                 'res' => $res,
                 'pageWidth' => $pageWidth,
                 'data' => $data,
-                'item'=> $item
+                'item'=> $item,
+                'peg'=> $peg
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){

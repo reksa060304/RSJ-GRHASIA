@@ -381,7 +381,7 @@
                 @endif
             </table>
 
-            <div class="footer">
+            <div class="footer ">
                 <table>
                     <tbody>
                         <tr>
@@ -394,15 +394,17 @@
                         <tr>
                             <td></td>
                             <td></td>
-                            <td height="90px"> </td>
+                            <td height="100px"> </td>
                         </tr>
                         <tr>
                             <td style="text-align: center"></td>
                             <td style="text-align: center">&nbsp;</td>
                             <td style="text-align: center">
-                                <br>{!! $res['d'][0]->namadokter !!}
+                                {{-- <br>{!! $res['d'][0]->namadokter == null ? ($peg!=null?$peg->namalengkap:'-'): $res['d'][0]->namadokter !!} --}}
+                                <br>{!! $peg != null ? $peg->namalengkap : '-' !!}
                             </td>
                         </tr>
+                      
                     </tbody>
                 </table>
             </div>
