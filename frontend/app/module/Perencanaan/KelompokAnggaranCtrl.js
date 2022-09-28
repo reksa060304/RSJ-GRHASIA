@@ -81,6 +81,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 4, div: "Sub Sub Kegiatan" },
             ];
 
+            $scope.listDivKonsolidasi = [
+                { id: 1, div: "Div: 1" },
+                { id: 2, div: "Div: 2" },
+                { id: 3, div: "Div: 3" },
+                { id: 4, div: "Div: 4" },
+            ];
+
             $scope.listTahapKegiatan = [
                 { id: 100, tahap: "Semua Kegiatan" },
                 { id: 1, tahap: "Indikatif Murni ~ 4" },
@@ -317,6 +324,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     })
                 }
             });
+            $scope.$watch('item.divkonsolidasi', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    var idpegawai = ''
+                    $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                    idpegawai = $scope.pegawaiLogin.id
+                    medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')+"&idpegawai=" + idpegawai + "&div=" + $scope.item.divkonsolidasi.id).then(function (e) {
+                        console.log(e.data.mataanggaran)
+                        $scope.dataSourceMataAnggaran = e.data.mataanggaran
+                    });
+                }
+            });
+
+            
             function copy(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
@@ -3156,40 +3176,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             };
 
             $scope.columnMataAnggaranPermen = {
-                toolbar:[
-                    {
-                        name: "add", 
-                        text: "Tambah",
-                        template: '<div class="grid_2"><button ng-click="TambahMT()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
-                    },
-                    {
-                        name: "ads", 
-                        text: "asd",
-                        template: '<div class="grid_6"></div>'
-                    },
-                    {
-                        name: "src", 
-                        text: "src",
-                        template:  '<div class="grid_4" style="margin-top: -8px;"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Search"></label></div><div class="grid_11"><input c-text-box type="input" class="k-textbox" ng-model="item.searchMata" /></div></div>'
-                    }
-                ],
                 selectable: 'row',
                 scrollable: true,
 
                 pageable: true,
                 groupable: true, 
                 columns:[
-                    {
-                        "command": [
-                              {
-                                 text: "Detail",
-                                 click: editMataT,
-                                 imageClass: "clinic fa"
-                              },
-                          ],
-                             title: "",
-                             width: "30px",
-                      },
                     {
                         "field": "id",
                         "title": "Id",

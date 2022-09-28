@@ -122,6 +122,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             };
             $scope.TambahRincian = function (){
                 var tahun = moment($scope.now).format('YYYY');
+                $scope.itemRincian ={}
                 $scope.itemRincian.tglinput = moment($scope.now).format('YYYY-MM-DD')
                 $scope.dataSelected = undefined
                 console.log($scope.dataSelected)

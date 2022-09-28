@@ -364,11 +364,15 @@
 					</md-tab>
 					<md-tab label="Mata Anggaran" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
 						<md-content class="md-padding">
-							
-								
-
-							<br />
 							<div class="grid_12">
+								<div class="grid_2">
+									<input style="width: 100%;" kendo-combo-box k-ng-model="item.divkonsolidasi"
+									k-data-text-field="'div'" k-data-value-field="'id'"
+									k-filter="'contains'" k-auto-bind="false" k-data-source="listDivKonsolidasi"/>
+								</div>
+							</div>
+							<br />
+							<div class="grid_12" style="margin-top: 20px;">
 								<div class="grid_12 headerBox">
 									<p>Daftar Mata Anggaran</p>
 								</div>

@@ -645,7 +645,29 @@ class PerencanaanController extends ApiController {
             $keteranganperubahan = [];
         }
 
-        
+        $kdiv = '';
+        if (isset($request['div']) && $request['div'] != "" && $request['div'] != "undefined" && $request['div'] == "1") {
+            $kdiv =  "and ma.kodemataanggaran in('I', 'III')";
+        } else if (isset($request['div']) && $request['div'] != "" && $request['div'] != "undefined" && $request['div'] == "4") {
+            $kdiv =  "and 
+            case 
+                when ma.kodemataanggaran ilike 'I.%' then length(ma.kodemataanggaran) in (9,10)
+                when ma.kodemataanggaran ilike 'III.%' then length(ma.kodemataanggaran) in (9,10)
+            end";
+        } else if (isset($request['div']) && $request['div'] != "" && $request['div'] != "undefined" && $request['div'] == "2") {
+            $kdiv =  "and 
+            case 
+                when ma.kodemataanggaran ilike 'I.%' then length(ma.kodemataanggaran) in (3)
+                when ma.kodemataanggaran ilike 'III.%' then length(ma.kodemataanggaran) in (5)
+            end";
+        } else if (isset($request['div']) && $request['div'] != "" && $request['div'] != "undefined" && $request['div'] == "3") {
+            $kdiv =  "and 
+            case 
+                when ma.kodemataanggaran ilike 'I.%' then length(ma.kodemataanggaran) in (5)
+                when ma.kodemataanggaran ilike 'III.%' then length(ma.kodemataanggaran) in (7)
+            end";
+        }
+
         $mata = DB::select(DB::raw("select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen, coalesce(sum(kt.subtotal),0) as total
         , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
         , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
@@ -656,6 +678,7 @@ class PerencanaanController extends ApiController {
         left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
 		left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
         where ma.statusenabled = true and ma.kdprofile = 30
+        $kdiv
         group by ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id, map.mataanggaranpermen
                 , split_part(ma.kodemataanggaran, '.', 1)
                 , split_part(ma.kodemataanggaran, '.', 2)
