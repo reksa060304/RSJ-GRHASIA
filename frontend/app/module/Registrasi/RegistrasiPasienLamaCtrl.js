@@ -601,11 +601,8 @@ define(['initialize'], function (initialize) {
                             if (dRiwayatReg[i].statusinap == 1) {
                                 jumlahRawat = jumlahRawat + 1;
                                 if (dRiwayatReg[i].tglpulang != undefined) {
-                                    var umur = DateHelper.CountAge(new Date(dRiwayatReg[i].tglregistrasi), new Date(dRiwayatReg[i].tglpulang));
-                                    var bln = umur.month,
-                                        thn = umur.year,
-                                        day = umur.day
-                                    dRiwayatReg[i].lamarawat = day + " Hari";
+                                    dRiwayatReg[i].lamarawat = dRiwayatReg[i].lamarawat + " Hari";
+                                    console.log(dRiwayatReg[i].lamarawat);
                                 } else {
                                     var umur = DateHelper.CountAge(new Date(dRiwayatReg[i].tglregistrasi), new Date($scope.now));
                                     var bln = umur.month,
@@ -613,6 +610,8 @@ define(['initialize'], function (initialize) {
                                         day = umur.day
                                     dRiwayatReg[i].lamarawat = day + " Hari";
                                 }
+                            } else{
+                                dRiwayatReg[i].lamarawat = ''
                             }
                         }
                         $scope.itemD.JumlahRawat = jumlahRawat;
