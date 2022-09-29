@@ -471,7 +471,7 @@ class LogistikController extends ApiController{
             ->JOIN('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
             ->JOIN('jenisproduk_m as jp', 'jp.id', '=', 'djp.objectjenisprodukfk')
             ->leftJOIN('satuanstandar_m as ss', 'ss.id', '=', 'pr.objectsatuanstandarfk')
-            ->select('pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar','pr.kdproduk')
+            ->select('pr.id', 'pr.namaproduk', 'pr.reportdisplay', 'ss.id as ssid', 'ss.satuanstandar','pr.kdproduk')
             ->where('pr.statusenabled', true)
             ->where('pr.kdprofile',$idProfile)
             ->orderBy('pr.namaproduk');
@@ -517,6 +517,7 @@ class LogistikController extends ApiController{
             $dataProdukResult[]=array(
                 'id' =>   $item->id,
                 'namaproduk' =>   $item->namaproduk,
+                'reportdisplay' =>   $item->reportdisplay,
                 'ssid' =>   $item->ssid,
                 'satuanstandar' =>   $item->satuanstandar,
                 'konversisatuan' => $satuanKonversi,
