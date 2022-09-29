@@ -815,7 +815,7 @@ class PerencanaanController extends ApiController {
             and map4.kdprofile = 30
             and map4.statusenabled = true
             and map.div = 5
-            order by id
+            order by replace(map2.kode, '.', '' )::int4, replace(map3.kode, '.', '' )::int4, replace(map4.kode, '.', '' )::int4, replace(map.kode, '.', '' )::int4
         ")); 
         
         $panjar = DB::select(DB::raw("
@@ -841,15 +841,16 @@ class PerencanaanController extends ApiController {
         "));
 
         $spp = DB::select(DB::raw("select spp.*, spd.nospd from spp_t spp inner join spd_t spd on spd.norec = spp.objectspdfk where spp.statusenabled = true and spd.statusenabled = true"));
-        $spd = DB::select(DB::raw("select spd.*, spp.nospp from spd_t spd left join spp_t spp on spp.objectspdfk = spd.norec where spp.statusenabled = true and spd.statusenabled = true"));
+        $spd = DB::select(DB::raw("select spd.*, spp.nospp from spd_t spd left join spp_t spp on spp.objectspdfk = spd.norec and spp.statusenabled = true where spd.statusenabled = true"));
         $carispd = DB::select(DB::raw("select spd.nospd, spd.tglspd, spd.nilaispd, spp.norec
         from spd_t spd
         left join spp_t spp on spd.norec = spp.objectspdfk 
         where spp.norec is null"));
 
-        $carispm = DB::select(DB::raw("select spm.*, spp.nospp
+        $carispm = DB::select(DB::raw("select spm.*, spp.nospp, spp.tglspp
         from spm_t spm
         left join spp_t spp on spp.norec = spm.objectsppfk
+        and spp.statusenabled = true
         where spm.statusenabled = true"));
 
         $dataAsalProduk = \DB::table('asalproduk_m as ap')
@@ -2670,6 +2671,7 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
 
         try{
+                if($request['norec'] == ''){
                     $SP = SPD::where('nospd', '=', $request['nospd'])->first();        
             
                     $MA = new SPP();
@@ -2677,6 +2679,13 @@ class PerencanaanController extends ApiController {
                     $MA->norec = $norecKS;
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
+                    
+                } else{
+                    $SP = SPD::where('nospd', '=', $request['nospd'])->first(); 
+
+                    $MA = SPP::where('norec', '=', $request['norec'])->first();
+                }
+
                     $MA->nospp = $request['nospp'];
                     $MA->jenisbukti = $request['jenisbukti'];
                     $MA->dasarpengeluaran = $request['dasarpengeluaran'];
@@ -3557,6 +3566,7 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
 
         try{
+                if($request['norec'] == ''){
                     $SP = SPP::where('nospp', '=', $request['nospp'])->first();        
             
                     $MA = new SPM();
@@ -3564,11 +3574,16 @@ class PerencanaanController extends ApiController {
                     $MA->norec = $norecKS;
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
+                    $MA->objectsppfk = $SP->norec;
+                    
+                } else{
+                    $MA = SPM::where('norec', '=', $request['norec'])->first();
+                }
+
                     $MA->nospm = $request['nospm'];
                     $MA->jenisbukti = $request['jenisbukti'];
                     $MA->untukpengeluaran = $request['untukpengeluaran'];
                     $MA->status = $request['status'];
-                    $MA->objectsppfk = $SP->norec;
                     $MA->tglspm = $request['tglspm'];
                     $MA->tglsah = $request['tglsah'];
                     $MA->nilaispm = $request['nilaispm'];
@@ -3609,11 +3624,15 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
 
         try{
+                if($request['norec'] == ''){
                     $MA = new SPD();
                     $norecKS = $MA->generateNewId();
                     $MA->norec = $norecKS;
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
+                } else{
+                    $MA = SPD::where('norec', '=', $request['norec'])->first();
+                }
                     $MA->nospd = $request['nospd'];
                     $MA->tglspd = $request['tglspd'];
                     $MA->nilaispd = $request['nilaispd'];
@@ -3773,10 +3792,16 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
 
         try{
+            if($request['norec'] == ''){
                 $MA = new Pengembalian();
                 $MA->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
+                
+            } else{
+                $MA = Pengembalian::where('norec', '=', $request['norec'])->first();
+            }
+
                 $MA->tglpengembalian = $request['tglpengembalian'];
                 $MA->objectpanjarfk = $request['norecpanjar'];
                 $MA->jumlahpengembalian = $request['jumlahpengembalian'];
@@ -3785,6 +3810,7 @@ class PerencanaanController extends ApiController {
                 $MA->objectsubsubkegiatanfk = $request['idsubsubkegiatan'];
                 $MA->objectmataanggaranfk = $request['idmataanggaran'];
                 $MA->save();
+                
            $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';
@@ -3957,6 +3983,191 @@ class PerencanaanController extends ApiController {
             );
         } else {
             $transMessage = "Data Yang Sudah Diverif Tidak Bisa Dihapus";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteSPD(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                $KB= SPD::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $transStatus = 'true';
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteSPM(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                $KB= SPM::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $transStatus = 'true';
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteSPP(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                $KB= SPP::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $transStatus = 'true';
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deletePanjar(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                $KB= Panjar::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $transStatus = 'true';
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deletePengembalian(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                $KB= Pengembalian::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $transStatus = 'true';
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
             DB::rollBack();
             $result = array(
                 'status' => 400,
@@ -4538,10 +4749,13 @@ order by kodemataanggaran"));
         $idProfile = (int) $kdProfile;
 
         $data = DB::select(DB::raw("
-                select nopanjar, uraian, tglpanjar, jumlah, jenispanjar, jumlahpengembalian, sumberpanjar
-                from panjar_t 
-                where kdprofile = 30
-                and statusenabled = true;
+                select pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.jumlahpengembalian, pj.sumberpanjar
+                from panjar_t pj
+                inner join kegiatananggaran_m kasub on kasub.id = pj.objectsubkegiatanfk
+                inner join kegiatananggaran_m kasubsub on kasubsub.id = pj.objectsubsubkegiatanfk
+                inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
+                where pj.kdprofile = 30
+                and pj.statusenabled = true;
             ")
         );
 
@@ -5512,6 +5726,7 @@ order by kodemataanggaran"));
             spp_t spp
             inner join spm_t spm on spm.objectsppfk = spp.norec
             where spp.nospp = '$nospp'
+            and spm.statusenabled = true
             ")
         );
 
@@ -5781,23 +5996,30 @@ order by kodemataanggaran"));
         $kode = $request['mataanggaran'];
         $ma = DB::select(DB::raw("select id from mataanggaran_m where kodemataanggaran = '$kode'"));
         try{
+
+            if($request['norec'] == ''){
+                $MA = new Panjar();
+                $norecKS = $MA->generateNewId();
+                $MA->norec = $norecKS;
+                $MA->kdprofile = $idProfile;
+                $MA->statusenabled = true;
+                $noPanjar = $this->generateCodeBySeqTable(new Panjar, 'nopanjar', 12, 'P' . $this->getDateTime()->format('ym') . '/', $idProfile);
+                $MA->nopanjar = $noPanjar;
+                
+                $MA->objectsubkegiatanfk = $request['subkegiatan'];
+                $MA->objectsubsubkegiatanfk = $request['subsusbkegiatan'];
+                $MA->objectmataanggaranfk = $ma[0]->id;
+                
+            } else{
+                $MA = Panjar::where('norec', '=', $request['norec'])->first();
+            }
             
-            $MA = new Panjar();
-            $norecKS = $MA->generateNewId();
-            $MA->norec = $norecKS;
-            $MA->kdprofile = $idProfile;
-            $MA->statusenabled = true;
-            $noPanjar = $this->generateCodeBySeqTable(new Panjar, 'nopanjar', 12, 'P' . $this->getDateTime()->format('ym') . '/', $idProfile);
-            $MA->nopanjar = $noPanjar;
-            $MA->tglpanjar = $request['tglPanjar'];
-            $MA->uraian = $request['uraianPanjar'];
-            $MA->jumlah = $request['jumlahpanjar'];
-            $MA->jenispanjar = 'Pengeluaran';
-            $MA->sumberpanjar = $request['sumberPanjar'];
-            $MA->objectsubkegiatanfk = $request['subkegiatan'];
-            $MA->objectsubsubkegiatanfk = $request['subsusbkegiatan'];
-            $MA->objectmataanggaranfk = $ma[0]->id;
-            $MA->save();
+                $MA->tglpanjar = $request['tglPanjar'];
+                $MA->uraian = $request['uraianPanjar'];
+                $MA->jumlah = $request['jumlahpanjar'];
+                $MA->sumberpanjar = $request['sumberPanjar'];
+                $MA->save();
+
            $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';

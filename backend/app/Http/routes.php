@@ -1481,6 +1481,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/save-panjar-spj','Perencanaan\PerencanaanController@savePanjarSPJ');
             Route::post('perencanaan/batal-verif-spj','Perencanaan\PerencanaanController@batalVerifSPJ');
             Route::post('perencanaan/delete-spj','Perencanaan\PerencanaanController@deleteSPJ');
+            Route::post('perencanaan/delete-spd','Perencanaan\PerencanaanController@deleteSPD');
+            Route::post('perencanaan/delete-spm','Perencanaan\PerencanaanController@deleteSPM');
+            Route::post('perencanaan/delete-spp','Perencanaan\PerencanaanController@deleteSPP');
+            Route::post('perencanaan/delete-panjar','Perencanaan\PerencanaanController@deletePanjar');
+            Route::post('perencanaan/delete-pengembalian','Perencanaan\PerencanaanController@deletePengembalian');
             Route::post('perencanaan/delete-child','Perencanaan\PerencanaanController@deleteChildAnggaran');
             Route::post('perencanaan/save-kel-head-anggaran','Perencanaan\PerencanaanController@saveKelHead');
             Route::post('perencanaan/save-kel-pertama-anggaran','Perencanaan\PerencanaanController@saveKelPertama');

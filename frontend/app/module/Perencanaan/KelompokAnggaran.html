@@ -575,7 +575,7 @@
 							<div class="grid_12">
 								<div class="grid_12 borderBox">
 									<kendo-grid id="kGrids" k-data-source="dataSourceCariSPM" k-selectable="'row'"  class="max-height"
-										k-options="columnCariSPM" k-ng-model="dataSPMSelected" ng-click="klikPanjar(dataSPMSelected)">
+										k-options="columnCariSPM" k-ng-model="dataSPMSelected" ng-click="klikSPMFix(dataSPMSelected)">
 									</kendo-grid>
 								</div>
 							</div>
@@ -2113,9 +2113,9 @@
 			<div class="grid_5"></div>
 		</div><br>
 		<div class="grid_12 borderBox">
-			<div id="kGrid" kendo-grid k-data-source="dataSourcePanjar" k-selectable="'row'" options="columnPanjar"
-                        k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected">
-                    </div>
+			<kendo-grid id="kGrids" k-data-source="dataSourcePanjar" k-selectable="'row'"  class="max-height"
+				k-options="columnPanjar" k-ng-model="dataPanjarSelected" ng-click="klikPanjar(dataPanjarSelected)">
+			</kendo-grid>
 		</div>
 	</div>
 </div>
@@ -2424,9 +2424,9 @@
 			</div>
 			<div class="grid_5"></div>
 		</div><br><br>
-		<div class="grid_12">
+		<div class="grid_12" ng-hide="hidetabspm">
 			<kendo-grid id="kGrids" k-data-source="dataSourceSPM" k-selectable="'row'"  class="max-height"
-				k-options="columnSPM" k-ng-model="dataSPMSelected" ng-click="klikPanjar(dataSPPSelected)">
+				k-options="columnSPM" k-ng-model="dataSPMSelected" ng-click="klikSPM(dataSPMSelected)">
 			</kendo-grid>
 		</div>
 	</div>
@@ -2514,7 +2514,7 @@
 		</div><br><br>
 		<div class="grid_12">
 			<kendo-grid id="kGrids" k-data-source="dataSourcePengembalian" k-selectable="'row'"  class="max-height"
-				k-options="columnPengembalian" k-ng-model="dataPengembalianSelected" ng-click="klikPanjar(dataSPPSelected)">
+				k-options="columnPengembalian" k-ng-model="dataPengembalianSelected" ng-click="klikPengembalian(dataPengembalianSelected)">
 			</kendo-grid>
 		</div>
 	</div>
@@ -2556,7 +2556,7 @@
 		</div><br>
 		<div class="grid_12 borderBox">
 			<kendo-grid id="kGrids" k-data-source="dataSourceSPD" k-selectable="'row'"  class="max-height"
-				k-options="columnSPD" k-ng-model="dataSPPSelected" ng-click="klikPanjar(dataSPPSelected)">
+				k-options="columnSPD" k-ng-model="dataSPDSelected" ng-click="klikSPD(dataSPDSelected)">
 			</kendo-grid>
 		</div>
 	</div>
