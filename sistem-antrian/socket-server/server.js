@@ -48,7 +48,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.set('port', 2226);
+app.set('port', 8881);
 
 var server = null
 
