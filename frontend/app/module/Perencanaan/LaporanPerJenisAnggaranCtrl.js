@@ -46,7 +46,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.changeKegiatanMonev = function () {
-                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatanmonev.id+"&tahun="+moment($scope.item.tahunmonev).format('YYYY')).then(function (e) {
+                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatanmonev.id+"&tahap="+$scope.item.tahapmonev.id+"&tahun="+moment($scope.item.tahunmonev).format('YYYY')).then(function (e) {
                     $scope.listSubKegiatan = e.data.data
                 });
             }

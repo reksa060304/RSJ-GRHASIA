@@ -400,7 +400,8 @@
                             <td style="text-align: center"></td>
                             <td style="text-align: center">&nbsp;</td>
                             <td style="text-align: center">
-                                <br>{!! $res['d'][0]->namadokter == null ? ($peg!=null?$peg->namalengkap:'-'): $res['d'][0]->namadokter !!}
+                                {{-- <br>{!! $res['d'][0]->namadokter == null ? ($peg!=null?$peg->namalengkap:'-'): $res['d'][0]->namadokter !!} --}}
+                                <br>{!! $peg != null ? $peg->namalengkap : '-' !!}
                             </td>
                         </tr>
                       

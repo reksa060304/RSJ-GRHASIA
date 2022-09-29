@@ -23,8 +23,10 @@ define(['initialize'], function (initialize) {
                 $scope.item.until = moment($scope.now).format('YYYY-MM-DD 23:59:59');
                 $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
                 $scope.item.ruangan = $scope.listRuangan[0];
-                medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
-                    $scope.listNamaBarang = data;
+
+                medifirstService.get("logistik/get-combo-logistik", true).then(function (dat) {
+                    var dataCombo = dat.data;
+                    $scope.listNamaBarang = dataCombo.produk;
                 });
 
                 medifirstService.get('logistik/get-combo-logistik-mini').then(function (data) {
@@ -206,7 +208,7 @@ define(['initialize'], function (initialize) {
                     sheet.name = "Orders";
 
                     var myHeaders = [{
-                        value: "Kartu Stok Produk " + $scope.item.namaBarang.namaproduk,
+                        value: "Kartu Stok Produk " + $scope.item.namaBarang.namaexternal,
                         fontSize: 20,
                         textAlign: "center",
                         background: "#ffffff",

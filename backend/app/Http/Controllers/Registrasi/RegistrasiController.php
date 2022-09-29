@@ -5194,8 +5194,13 @@ class RegistrasiController extends ApiController
             // ->leftJoin('batalregistrasi_t as br','br.pasiendaftarfk','=','pd.norec')
             // ->leftjoin('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
             ->select(DB::raw("pd.norec,pd.tglregistrasi,ps.nocm,pd.noregistrasi,ps.namapasien,pd.objectruanganlastfk,kp.kelompokpasien,ru.namaruangan,
-                              pd.objectpegawaifk,pg.namalengkap as namadokter,pd.tglpulang,ru.objectdepartemenfk,
-			                  CASE when ru.objectdepartemenfk in (16,25,26) then 1 else 0 end as statusinap"))
+                pd.objectpegawaifk,pg.namalengkap as namadokter,pd.tglpulang,ru.objectdepartemenfk,
+                CASE when ru.objectdepartemenfk in (16,25,26) then 1 else 0 end as statusinap, CASE
+                WHEN pd.tglpulang::date - pd.tglregistrasi::date > '0' and ru.objectdepartemenfk = '16' THEN
+                pd.tglpulang::date - pd.tglregistrasi::date
+                when pd.tglpulang::date - pd.tglregistrasi::date = '0' and ru.objectdepartemenfk = '16' THEN
+                '1' when pd.tglpulang::date - pd.tglregistrasi::date = '0' and ru.objectdepartemenfk != '16' then '0'
+                end as lamarawat"))
             ->where('pd.statusenabled',true)
             ->where('ps.kdprofile', (int)$kdProfile);
 

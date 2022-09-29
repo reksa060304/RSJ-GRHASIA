@@ -1463,11 +1463,15 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-spp','Perencanaan\PerencanaanController@saveSPP');
             Route::post('perencanaan/save-spm','Perencanaan\PerencanaanController@saveSPM');
             Route::post('perencanaan/save-spd','Perencanaan\PerencanaanController@saveSPD');
+            Route::post('perencanaan/copy-permen','Perencanaan\PerencanaanController@copyPermen');
             Route::post('perencanaan/save-lpj','Perencanaan\PerencanaanController@saveLPJ');
             Route::post('perencanaan/delete-lpj','Perencanaan\PerencanaanController@saveLPJ');
             Route::post('perencanaan/save-pajak','Perencanaan\PerencanaanController@savePajak');
             Route::post('perencanaan/save-jasgir','Perencanaan\PerencanaanController@saveJasgir');
-            Route::post('perencanaan/save-jasgir','Perencanaan\PerencanaanController@saveJasgir');
+            Route::post('perencanaan/save-sumber-pendapatan','Perencanaan\PerencanaanController@saveSumberPendapatan');
+            Route::post('perencanaan/delete-sumber-pendapatan','Perencanaan\PerencanaanController@deleteSumberPendapatan');
+            Route::post('perencanaan/save-uraian-pendapatan','Perencanaan\PerencanaanController@saveUraianPendapatan');
+            Route::post('perencanaan/delete-uraian-pendapatan','Perencanaan\PerencanaanController@deleteUraianPendapatan');
             Route::post('perencanaan/save-bku','Perencanaan\PerencanaanController@saveBKU');
             Route::post('perencanaan/delete-pajak','Perencanaan\PerencanaanController@deletePajak');
             Route::post('perencanaan/save-perubahan-keterangan','Perencanaan\PerencanaanController@savePerubahanKeterangan');
@@ -1477,6 +1481,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/save-panjar-spj','Perencanaan\PerencanaanController@savePanjarSPJ');
             Route::post('perencanaan/batal-verif-spj','Perencanaan\PerencanaanController@batalVerifSPJ');
             Route::post('perencanaan/delete-spj','Perencanaan\PerencanaanController@deleteSPJ');
+            Route::post('perencanaan/delete-spd','Perencanaan\PerencanaanController@deleteSPD');
+            Route::post('perencanaan/delete-spm','Perencanaan\PerencanaanController@deleteSPM');
+            Route::post('perencanaan/delete-spp','Perencanaan\PerencanaanController@deleteSPP');
+            Route::post('perencanaan/delete-panjar','Perencanaan\PerencanaanController@deletePanjar');
+            Route::post('perencanaan/delete-pengembalian','Perencanaan\PerencanaanController@deletePengembalian');
             Route::post('perencanaan/delete-child','Perencanaan\PerencanaanController@deleteChildAnggaran');
             Route::post('perencanaan/save-kel-head-anggaran','Perencanaan\PerencanaanController@saveKelHead');
             Route::post('perencanaan/save-kel-pertama-anggaran','Perencanaan\PerencanaanController@saveKelPertama');
@@ -1526,6 +1535,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-pajak-pph-ppn', 'Perencanaan\PerencanaanController@getPajak');
             Route::get('perencanaan/get-pajak-udah-save', 'Perencanaan\PerencanaanController@getPajakUdahSave');
             Route::get('perencanaan/get-data-spm', 'Perencanaan\PerencanaanController@getDataSPM');
+            Route::get('perencanaan/get-data-rba-belum', 'Perencanaan\PerencanaanController@getRBABelum');
 
         // });
         // Route::group(['prefix' => 'piutang'], function () {

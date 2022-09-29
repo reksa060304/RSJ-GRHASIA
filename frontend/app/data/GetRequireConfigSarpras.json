@@ -1009,6 +1009,14 @@
             "urlDep": "module/Perencanaan/JasaGiroCtrl"
         },
         {
+            "nameDep": "SumberPendapatanCtrl",
+            "urlDep": "module/Perencanaan/SumberPendapatanCtrl"
+        },
+        {
+            "nameDep": "UraianPendapatanCtrl",
+            "urlDep": "module/Perencanaan/UraianPendapatanCtrl"
+        },
+        {
             "nameDep": "BukuKasUmumCtrl",
             "urlDep": "module/Perencanaan/BukuKasUmumCtrl"
         },

@@ -364,11 +364,15 @@
 					</md-tab>
 					<md-tab label="Mata Anggaran" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
 						<md-content class="md-padding">
-							
-								
-
-							<br />
 							<div class="grid_12">
+								<div class="grid_2">
+									<input style="width: 100%;" kendo-combo-box k-ng-model="item.divkonsolidasi"
+									k-data-text-field="'div'" k-data-value-field="'id'"
+									k-filter="'contains'" k-auto-bind="false" k-data-source="listDivKonsolidasi"/>
+								</div>
+							</div>
+							<br />
+							<div class="grid_12" style="margin-top: 20px;">
 								<div class="grid_12 headerBox">
 									<p>Daftar Mata Anggaran</p>
 								</div>
@@ -386,6 +390,62 @@
 							</div>
 
 							<div class="clear"></div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Mata Anggaran Permen" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
+						<md-content class="md-padding">
+							<br />
+							<div class="grid_12">
+								<div class="grid_12 headerBox">
+									<p>Daftar Mata Anggaran Permen</p>
+								</div>
+								<div class="clear"></div>
+
+								<div class="grid_12 borderBox">
+									<kendo-grid id="kGrids" k-data-source="dataSourceMataAnggaranPermen" k-selectable="'row'"  class="max-height"
+										k-options="columnMataAnggaranPermen" k-ng-model="dataMataAnggaranPermenSelected" ng-click="klikMataAnggaranPermen(dataMataAnggaranPermenSelected)">
+									</kendo-grid>
+								</div>
+							</div>
+
+							<div class="clear"></div>
+							<div class="grid_12">
+								<div class="grid_3">
+									<button class="btnTemplate1" ng-click="MappingRek()" ng-hide="disidpegawai">Mapping Rek RBA ke Rek Permendagri</button>
+								</div>
+							</div>
+
+							<div class="grid_12" style="margin-top: 50px;" ng-hide="hidemap">
+								<div class="grid_12">
+									<div class="grid_2" style="margin-left: 10px;">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.mappingrek"
+										k-data-text-field="'text'" k-data-value-field="'id'"
+										k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi5"/>
+									</div>
+								</div>
+								<div class="grid_6" style="margin-top: 20px;">
+									<legend id="filterData" style="margin-left: 10px;">
+										<a ng-click="showAndHide()">REKENING RBA YANG BELUM MASUK KE REK. PERMENDAGRI</a>
+									</legend>
+									<br>
+									<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
+										<kendo-grid id="kGrids" k-data-source="dataSourceRBABelum" k-selectable="'row'"  style="height: 1000px"
+											k-options="columnRBABelum" k-ng-model="dataRBABelumSelected" ng-click="klikRBABelum(dataRBABelumSelected)">
+										</kendo-grid>
+									</div>
+								</div>
+								<div class="grid_6" style="margin-top: 20px;">
+									<legend id="filterData" style="margin-left: 10px;">
+										<a ng-click="showAndHide()">REKENING RBA YANG SUDAH MASUK KE REK. PERMENDAGRI</a>
+									</legend>
+									<br>
+									<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
+										<kendo-grid id="kGrids" k-data-source="dataSourceRBASudah" k-selectable="'row'"  style="height: 1000px"
+											k-options="columnRBASudah" k-ng-model="dataRBASudahSelected" ng-click="klikRBASudah(dataRBASudahSelected)">
+										</kendo-grid>
+									</div>
+								</div>
+							</div>
 						</md-content>
 					</md-tab>
 					<md-tab label="Anggaran Kas" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true">
@@ -515,7 +575,7 @@
 							<div class="grid_12">
 								<div class="grid_12 borderBox">
 									<kendo-grid id="kGrids" k-data-source="dataSourceCariSPM" k-selectable="'row'"  class="max-height"
-										k-options="columnCariSPM" k-ng-model="dataSPMSelected" ng-click="klikPanjar(dataSPMSelected)">
+										k-options="columnCariSPM" k-ng-model="dataSPMSelected" ng-click="klikSPMFix(dataSPMSelected)">
 									</kendo-grid>
 								</div>
 							</div>
@@ -530,6 +590,7 @@
 
 	</div>
 </div>
+
 <div class="grid_12" kendo-window="popupTambahTahap" k-title="'Setting Tahap'" k-visible="false">
 	
 	<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:280px;">
@@ -1349,47 +1410,18 @@
 				</div>
 			</div>
 			<div class="grid_12" ng-hide="konsolidasi">
+				<br>
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Konsolidasi"></label>
 				</div>
-				<br><br>
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Jenis Permendagri"></label>
-				</div>
-				<br>
-				<div class="grid_12">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi2"
-						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
-						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi2" />
-				</div>
-				<br><br>
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Permendagri 3"></label>
-				</div>
-				<br>
-				<div class="grid_12">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi3"
-						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
-						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi3" />
-				</div>
-				<br><br>
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Permendagri 4"></label>
-				</div>
-				<br>
-				<div class="grid_12">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi4"
-						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
-						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi4" />
-				</div>
-				<br><br>
+				
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Permendagri 5"></label>
 				</div>
 				<br>
 				<div class="grid_12">
 					<input style="width: 100%;" kendo-combo-box k-ng-model="item.konsolidasi5"
-						k-data-text-field="'mataanggaranpermen'" k-data-value-field="'id'"
+						k-data-text-field="'text'" k-data-value-field="'id'"
 						k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi5"/>
 				</div>
 			</div>
@@ -2081,9 +2113,9 @@
 			<div class="grid_5"></div>
 		</div><br>
 		<div class="grid_12 borderBox">
-			<div id="kGrid" kendo-grid k-data-source="dataSourcePanjar" k-selectable="'row'" options="columnPanjar"
-                        k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected">
-                    </div>
+			<kendo-grid id="kGrids" k-data-source="dataSourcePanjar" k-selectable="'row'"  class="max-height"
+				k-options="columnPanjar" k-ng-model="dataPanjarSelected" ng-click="klikPanjar(dataPanjarSelected)">
+			</kendo-grid>
 		</div>
 	</div>
 </div>
@@ -2392,9 +2424,9 @@
 			</div>
 			<div class="grid_5"></div>
 		</div><br><br>
-		<div class="grid_12">
+		<div class="grid_12" ng-hide="hidetabspm">
 			<kendo-grid id="kGrids" k-data-source="dataSourceSPM" k-selectable="'row'"  class="max-height"
-				k-options="columnSPM" k-ng-model="dataSPMSelected" ng-click="klikPanjar(dataSPPSelected)">
+				k-options="columnSPM" k-ng-model="dataSPMSelected" ng-click="klikSPM(dataSPMSelected)">
 			</kendo-grid>
 		</div>
 	</div>
@@ -2482,7 +2514,7 @@
 		</div><br><br>
 		<div class="grid_12">
 			<kendo-grid id="kGrids" k-data-source="dataSourcePengembalian" k-selectable="'row'"  class="max-height"
-				k-options="columnPengembalian" k-ng-model="dataPengembalianSelected" ng-click="klikPanjar(dataSPPSelected)">
+				k-options="columnPengembalian" k-ng-model="dataPengembalianSelected" ng-click="klikPengembalian(dataPengembalianSelected)">
 			</kendo-grid>
 		</div>
 	</div>
@@ -2524,7 +2556,7 @@
 		</div><br>
 		<div class="grid_12 borderBox">
 			<kendo-grid id="kGrids" k-data-source="dataSourceSPD" k-selectable="'row'"  class="max-height"
-				k-options="columnSPD" k-ng-model="dataSPPSelected" ng-click="klikPanjar(dataSPPSelected)">
+				k-options="columnSPD" k-ng-model="dataSPDSelected" ng-click="klikSPD(dataSPDSelected)">
 			</kendo-grid>
 		</div>
 	</div>
