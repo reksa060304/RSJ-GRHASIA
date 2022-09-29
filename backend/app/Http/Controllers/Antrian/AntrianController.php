@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Egie Ramdan
@@ -17,6 +18,7 @@ use App\Traits\PelayananPasienTrait;
 use App\Traits\Valet;
 use DB;
 use App\Transaksi\AntrianPasienRegistrasi;
+use App\Web\Profile;
 use Webpatser\Uuid\Uuid;
 
 class AntrianController extends ApiController
@@ -30,16 +32,20 @@ class AntrianController extends ApiController
 
     public function getListAntrian(Request $r)
     {
+        
+        $kdProfile = $this->getDataKdProfile($r);
         $now = date('Y-m-d');
         $data = DB::select(DB::raw("select jenis, count(noantrian) as last from antrianpasienregistrasi_t  
              where  statuspanggil ='0'  
              and tanggalreservasi between '$now 00:00' and '$now 23:59'
+             and kdprofile = $kdProfile
              group by jenis order by jenis"));
         $data2 = DB::select(DB::raw("select jenis, max(noantrian) as last from antrianpasienregistrasi_t  
              where  statuspanggil !='0'  
              and tanggalreservasi between '$now 00:00' and '$now 23:59'
+             and kdprofile = $kdProfile
              group by jenis order by jenis"));
-       // dd($data2);
+        // dd($data2);
         $respond = [
             array('jenis' => 'A', 'sekarang' => 0, 'sisa' => 0),
             array('jenis' => 'B', 'sekarang' => 0, 'sisa' => 0),
@@ -112,5 +118,114 @@ class AntrianController extends ApiController
             ->get();
         return $this->respond($data);
     }
+    public function getSettingViewer(Request $r)
+    {
+        $idProfile = Profile::where('statusenabled', true)->first()->id;
 
+        // $deptJalan = explode(',', $this->settingDataFixed('listRuanganViewer', $idProfile));
+        // $kdDepartemenRawatJalan = [];
+        // foreach ($deptJalan as $item) {
+        //     $kdDepartemenRawatJalan[] = array(
+        //             'id' => $item,
+        //             'namaruangan' => $item,
+        //             'nocounter' =>null
+        //         ); 
+        // }
+
+        $ruangan = DB::table('ruangan_m')
+            ->select('id', 'namaruangan','nocounter')
+            ->where('statusenabled', true)
+            ->wherein('objectdepartemenfk', [18])
+            ->orderBy('namaruangan')
+            ->get();
+        $farmasi = DB::table('ruangan_m')
+            ->select('id', 'namaruangan','nocounter')
+            ->where('statusenabled', true)
+            ->wherein('objectdepartemenfk', [14])            
+            ->orderBy('namaruangan')
+            ->get();
+        // $res['ruangan'] = $ruangan;
+        $res['farmasi'] = $farmasi;
+        $res['ruangan'] = $ruangan;
+
+        return $this->respond($res);
+    }
+    public function getDipanggil(Request $r){
+        $arruangn = [];
+        foreach (explode(',', $r['ruangan']) as $z){
+            $arruangn[] =$z;
+        }
+        $apd = DB::table('antrianpasiendiperiksa_t as apd')
+        ->join('pasiendaftar_t as pd','pd.norec','=','apd.noregistrasifk')
+        ->join('pasien_m as ps','ps.id','=','pd.nocmfk')
+        ->select('ps.nocm','ps.namapasien','apd.noantrian','apd.objectruanganfk')
+        // ->whereBetween('apd.tglregistrasi',[date('Y-m-d 00:00'),date('Y-m-d 23:59')])
+        ->where('apd.statusenabled', true)
+        ->whereIn('apd.objectruanganfk',$arruangn)
+        ->where('apd.statusantrian',1)
+        ->whereNotNull('apd.tgldipanggilsuster')
+        ->orderByRaw("apd.noantrian asc,apd.tgldipanggilsuster asc")
+        ->first();
+        return $this->respond($apd);
+    }
+    public function getListAntrianFarm(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $kdJenisTrasnsaksiResep = (int) $this->settingDataFixed('kdKelompokTransaksiOrderResep', $kdProfile);
+        $tglAwal =date('Y-m-d 00:00');
+        $tglAkhir =date('Y-m-d 23:59');
+           // $data = \DB::select(DB::raw("
+        //     SELECT noantri,keterangan,jenis,tglresep,noresep,st.status
+        //     FROM  antrianapotiktr AS aa
+        //     WHERE aa.koders = 1 AND aa.tglresep  >= '$tglAwal'AND aa.tglresep <=  '$tglAkhir'
+        //     AND aa.aktif = 't'
+        //     order by noantri asc
+        // "));
+        $data = \DB::select(DB::raw("
+        SELECT sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,aa.keterangan,sr.tglresep,ru2.namaruangan,ru.namaruangan as ruanganasal,
+        CASE when aa.status ='0'  then 'Verifikasi'
+        when aa.status ='6'  then 'Verifikasi'
+        when aa.status ='1'  then 'Produksi'
+        when aa.status ='2'  then 'Packaging'
+        when aa.status ='3'  then 'Selesai'
+        when aa.status ='4'  then 'Penyerahan Obat'
+        when sr.tglambilresep !=null  then 'Sudah Di Ambil'
+        else ''  end as statusorder,pd.noregistrasi,ps.nocm,ps.namapasien,
+        EXTRACT (YEAR FROM AGE(pd.tglregistrasi,ps.tgllahir )) || ' Thn ' as umur,
+        CASE WHEN ps.objectjeniskelaminfk = 1 THEN 'L' ELSE 'P' END as jk
+        FROM strukresep_t AS sr
+        INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = sr.pasienfk
+        INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+        INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+        INNER JOIN ruangan_m AS ru2 ON ru2.id = sr.ruanganfk
+        LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+        INNER JOIN antrianapotik_t AS aa ON aa.noresep = sr.noresep
+        WHERE sr.kdprofile = $kdProfile AND sr.tglresep between '$tglAwal' and '$tglAkhir'
+        AND sr.statusenabled= 't' 
+         and sr.tglambilresep is null
+         and aa.status in ('1','2','3')
+        order by sr.tglresep asc
+        "));
+        return $data;
+    }
+    public function getViewerFar(Request $r)
+    {
+        $awal = date('Y-m-d 00:00');
+        $akhir = date('Y-m-d 23:59');
+        // $awal = date('2022-06-01 00:00');
+        // $akhir = date('2022-08-03 23:59');
+        $data = DB::table('antrianapotik_t')->where('status', '5')
+            ->whereBetween('tglresep', [$awal, $akhir])
+            ->orderBy('tglresep', 'desc')
+            ->get();
+
+       $farmasi = DB::table('ruangan_m')
+            ->select('id', 'namaruangan','nocounter')
+            ->where('statusenabled', true)
+            ->wherein('objectdepartemenfk', [14])
+            ->orderBy('namaruangan')
+            ->get();
+        $res['farmasi'] = $farmasi;
+        $res['data'] = $data;   
+        return $this->respond($res);
+    }
 }

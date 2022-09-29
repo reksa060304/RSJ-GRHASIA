@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('DaftarAntrianDokterRajalCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'DateHelper', 'socket', '$mdDialog', '$window', 'CetakHelper', 'MedifirstService', 'CacheHelper', '$q',
-        function (saveToWindow, $rootScope, $scope, ModelItem, $state, dateHelper, socket, $mdDialog, window, cetakHelper, medifirstService, cacheHelper, $q) {
+    initialize.controller('DaftarAntrianDokterRajalCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'DateHelper', 'socket', '$mdDialog', '$window', 'CetakHelper', 'MedifirstService', 'CacheHelper', '$q', 'socket',
+        function (saveToWindow, $rootScope, $scope, ModelItem, $state, dateHelper, socket, $mdDialog, window, cetakHelper, medifirstService, cacheHelper, $q, socket) {
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.item = {};
@@ -1518,6 +1518,13 @@ define(['initialize'], function (initialize) {
                     "norec_apd" : $scope.dataPasienSelected.norec_apd,
                     "kelompokUser" : cookie[1]
                 }
+                socket.emit('call-antrian-poli', {
+                    namapasien:$scope.dataPasienSelected.namapasien,
+                    namaruangan:$scope.dataPasienSelected.namaruangan,
+                    noantri:$scope.dataPasienSelected.noantrian,
+                    nocm:$scope.dataPasienSelected.nocm,
+                });
+                toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
                 medifirstService.postNonMessage('rawatjalan/save-panggil',data)
                 .then(function (res) {
 

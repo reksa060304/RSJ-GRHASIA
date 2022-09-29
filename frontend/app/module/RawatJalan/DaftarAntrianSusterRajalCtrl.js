@@ -1,8 +1,8 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('DaftarAntrianSusterRajalCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', '$mdDialog', 'CetakHelper', 'MedifirstService', '$q',
+    initialize.controller('DaftarAntrianSusterRajalCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', '$mdDialog', 'CetakHelper', 'MedifirstService', '$q','socket',
         // function(saveToWindow, $rootScope, $scope, ModelItem, $state, findPasien, dateHelper, socket, managePasien, $mdDialog, window, cetakHelper, manageSarprasPhp, cacheHelper, $q) {            
-        function (saveToWindow, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, $mdDialog, cetakHelper, medifirstService, $q) {
+        function (saveToWindow, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, $mdDialog, cetakHelper, medifirstService, $q,socket) {
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.item = {};
@@ -1761,6 +1761,13 @@ define(['initialize'], function (initialize) {
                 }
                 let param = $scope.dataPasienSelected.isonline =='Online'? $scope.dataPasienSelected.noreservasi : $scope.dataPasienSelected.noregistrasi
                 saveAntrol(param)
+                socket.emit('call-antrian-poli', {
+                    namapasien:$scope.dataPasienSelected.namapasien,
+                    namaruangan:$scope.dataPasienSelected.namaruangan,
+                    noantri:$scope.dataPasienSelected.noantrian,
+                    nocm:$scope.dataPasienSelected.nocm,
+                });
+                toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
                 // var cookie = document.cookie.split(';');
                 // cookie = cookie[0].split('=');
                 // var data ={
@@ -1799,18 +1806,18 @@ define(['initialize'], function (initialize) {
 
 
                 //     $scope.dataPasienSelected.stts = 'Di Panggil Perawat'
-                var ipAddress = '127.0.0.1'
-                // if($scope.dataPasienSelected.ipaddress != undefined &&$scope.dataPasienSelected.ipaddress!=null )
-                //     ipAddress = $scope.dataPasienSelected.ipaddress 
-                var ruangan = 'RUANG PERAWAT'
-                var client = new HttpClient();
-                client.get('http://' + ipAddress + ':2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.dataPasienSelected.noantrian
-                    + '&namapasien=' + $scope.dataPasienSelected.nocm + ', ' + $scope.dataPasienSelected.namapasien +
-                    '&ruangan=' + ruangan + '&view=true', function (response) {
-                        // $scope.dataPasienSelected.namaruangan 
-                        // do something with response
-                    });
-                toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
+                // var ipAddress = '127.0.0.1'
+                // // if($scope.dataPasienSelected.ipaddress != undefined &&$scope.dataPasienSelected.ipaddress!=null )
+                // //     ipAddress = $scope.dataPasienSelected.ipaddress 
+                // var ruangan = 'RUANG PERAWAT'
+                // var client = new HttpClient();
+                // client.get('http://' + ipAddress + ':2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.dataPasienSelected.noantrian
+                //     + '&namapasien=' + $scope.dataPasienSelected.nocm + ', ' + $scope.dataPasienSelected.namapasien +
+                //     '&ruangan=' + ruangan + '&view=true', function (response) {
+                //         // $scope.dataPasienSelected.namaruangan 
+                //         // do something with response
+                //     });
+                // toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
                 // })
             }
 

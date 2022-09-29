@@ -21,31 +21,79 @@
         </div>
     </div>
 </div> -->
-<div class="container">
+<div class="container" style="text-align: center;">
     <div class="p-grid">
         <div class="p-col-12 p-md-12 p-sm-12">
             <div class="topbars">
                 <img class="img-responsive img-logo-index" src="assets/img/logo_only.png">
-                <p class="f-s-5">RSJ Grhasia</p>
+                 <p class="f-s-5">{{namaProfile}}</p>
             </div>
         </div>
-
     </div>
     <div class="p-grid">
         <div class="p-col-12 p-md-12 p-sm-12">
-            <img class="img-responsive img-illustration-index" src="assets/img/bg.png">
+            <img class="img-responsive img-illustration-index" style="height: 100%" src="assets/img/bg.png">
         </div>
     </div>
-    <div class="p-grid">
-        <div class="p-col-12 p-md-3 p-sm-3 p-md-offset-3">
-            <div class="button-caller" [routerLink]="['/caller']">
-                <a class="f-s-5">Caller</a>
+    <div class="p-grid" style="text-align: center;">
+        <div class="p-col-12 p-md-6  p-sm-6">
+            <div class="button-caller" [routerLink]="['/caller']" pTooltip="Pemanggil Antrian">
+                <a class="f-s-5">Pemanggil</a>
             </div>
         </div>
-        <div class="p-col-12 p-md-3 p-sm-3">
-            <div class="button-viewer" [routerLink]="['/viewer']">
-                <a class="f-s-5">Viewer</a>
+        <div class="p-col-12 p-md-6  p-sm-6">
+            <div class="button-viewer" [routerLink]="['/viewer']" pTooltip="Viewer Pendaftaran">
+                <a class="f-s-5">Pendaftaran</a>
+            </div>
+        </div>
+        <div class="p-col-12 p-md-6  p-sm-6">
+            <!-- <div class="button-viewer2" [routerLink]="['/viewer-poli/698,662,688,693,694,676']"  pTooltip="Viewer Poli">
+                <a class="f-s-5">Poli</a>
+            </div> -->
+            <div class="button-viewer2" (click)="showPoli = true" pTooltip="Viewer Poli">
+                <a class="f-s-5">Poli</a>
+            </div>
+        </div>
+        <div class="p-col-12 p-md-6  p-sm-6">
+            <!-- <div class="button-viewer2" [routerLink]="['/viewer-poli/698,662,688,693,694,676']"  pTooltip="Viewer Poli">
+                <a class="f-s-5">Poli</a>
+            </div> -->
+            <div class="button-viewer3" (click)="showFarmasi = true" pTooltip="Viewer Farmasi">
+                <a class="f-s-5">Farmasi</a>
             </div>
         </div>
     </div>
 </div>
+
+<p-dialog header="Pilih Poli" [(visible)]="showPoli" [modal]="true" [maximizable]="true"
+    [draggable]="true" [resizable]="true" [style]="{width: '70vw'}">
+    <div class="p-fluid p-formgrid ">
+        <div class="p-grid">
+            <div class="p-col-12">
+                <p-multiSelect [options]="listPoli" [(ngModel)]="poli" defaultLabel="Nama Poli"
+                    optionLabel="namaruangan" appendTo="body" display="chip">
+                </p-multiSelect>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-save" (click)="save(poli)" label="Lanjut" class="ui-button-success">
+        </p-button>
+    </ng-template>
+</p-dialog>
+<p-dialog header="Pilih Depo" [(visible)]="showFarmasi" [modal]="true" [maximizable]="true"
+    [draggable]="true" [resizable]="true" [style]="{width: '70vw'}">
+    <div class="p-fluid p-formgrid ">
+        <div class="p-grid">
+            <div class="p-col-12">
+                <p-multiSelect [options]="listFarmasi" [(ngModel)]="farmasi" defaultLabel="Nama Depo"
+                    optionLabel="namaruangan" appendTo="body" display="chip">
+                </p-multiSelect>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-save" (click)="saveFarma(farmasi)" label="Lanjut" class="ui-button-success">
+        </p-button>
+    </ng-template>
+</p-dialog>
