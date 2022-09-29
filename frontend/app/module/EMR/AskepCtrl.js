@@ -3,6 +3,7 @@ define(['initialize'], function (initialize) {
     initialize.controller('AskepCtrl', ['$q', '$rootScope', '$scope', '$state', 'CacheHelper', 'MedifirstService', '$mdDialog',
         function ($q, $rootScope, $scope, $state, cacheHelper, medifirstService, $mdDialog) {
             $scope.item = {};
+            $scope.dataSelected = {}
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.item.tglOperasi = new Date();
@@ -197,6 +198,7 @@ define(['initialize'], function (initialize) {
                 $scope.myVar = 2
                 $scope.showRiwayatEMR = true
                 var noemr2 = '-'
+                console.log($scope.dataSelected);
                 if ($scope.dataSelected != undefined) {
                     noemr2 = $scope.dataSelected.noemr
                 }
@@ -649,6 +651,7 @@ define(['initialize'], function (initialize) {
             $scope.klikGrid = function (dataSelected) {
                 var dataProduk = [];
                 //no:no,
+                $scope.dataSelected = dataSelected
                 $scope.item.no = dataSelected.no
                 for (var i = $scope.listLayanan.length - 1; i >= 0; i--) {
                     if ($scope.listLayanan[i].id == dataSelected.produkfk) {
