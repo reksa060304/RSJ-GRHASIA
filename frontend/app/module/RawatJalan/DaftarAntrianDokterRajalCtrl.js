@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('DaftarAntrianDokterRajalCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'DateHelper', 'socket', '$mdDialog', '$window', 'CetakHelper', 'MedifirstService', 'CacheHelper', '$q', 'socket',
-        function (saveToWindow, $rootScope, $scope, ModelItem, $state, dateHelper, socket, $mdDialog, window, cetakHelper, medifirstService, cacheHelper, $q, socket) {
+    initialize.controller('DaftarAntrianDokterRajalCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'DateHelper', 'socket', '$mdDialog', '$window', 'CetakHelper', 'MedifirstService', 'CacheHelper', '$q',
+        function (saveToWindow, $rootScope, $scope, ModelItem, $state, dateHelper, socket, $mdDialog, window, cetakHelper, medifirstService, cacheHelper, $q) {
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.item = {};
