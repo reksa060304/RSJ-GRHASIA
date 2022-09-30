@@ -11,6 +11,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.dataSourceSPP = [];
             $scope.jeniskode = true;
             $scope.inputtahap = true
+            $scope.norecpermenkelima = ''
             $scope.norecpanjar = ''
             $scope.norecspd = ''
             $scope.norecspm = ''
@@ -119,6 +120,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.dataSourceCariSPM = e.data.carispm
                 $scope.dataSourceSPD = e.data.spd
                 $scope.listKonsolidasi5 = e.data.konsolidasi5
+                $scope.listKonsolidasi4 = e.data.konsolidasi4
+                $scope.dataSourcePermenKelima = e.data.konsolidasikelima
             });
 
             
@@ -322,13 +325,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("perencanaan/get-data-rba-belum").then(function (e) {
                     $scope.dataSourceRBABelum = e.data.data
                 })
-                $scope.hidemap=false
+                $scope.popupMappingPermen.center().open()
             }
             $scope.$watch('item.mappingrek', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     medifirstService.get("perencanaan/get-data-rba-belum?permen="+$scope.item.mappingrek.id).then(function (e) {
                         $scope.dataSourceRBASudah = e.data.detail
                     })
+                }
+            });
+            $scope.$watch('item.digit4', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    let kodeArr = $scope.item.digit4.text.split(" - ");
+                    console.log(kodeArr)
+                    $scope.item.kodedigit4 = kodeArr[0]+"."
                 }
             });
             $scope.$watch('item.divkonsolidasi', function (newValue, oldValue) {
@@ -1687,14 +1697,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
             });
 
-            $scope.$watch('item.konsolidasi3', function (newValue, oldValue) {
-                if (newValue != oldValue) {
-                    medifirstService.get("perencanaan/get-data-combo?konsolidasi3="+$scope.item.konsolidasi3.id).then(function (e) {
-                        $scope.listKonsolidasi4 = e.data.konsolidasi4
-                    });
-                    
-                }
-            });
+            
 
             
 
@@ -2698,6 +2701,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.popupTambahTahap.center().open()
             }
 
+            $scope.DataPermenDigitKelima = function(){
+                $scope.popupPermenKelima.center().open()
+            }
+
             $scope.PemindahanKeterangan = function(){
                 
                 $scope.popupPerubahan.center().open()
@@ -2817,6 +2824,35 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 })
 
+            }
+
+            $scope.SavePermenKelima = function () {
+                var id = 0
+                if($scope.item.digit4 != undefined){
+                    id = $scope.item.digit4.id
+                }
+
+                var objSave = {
+                    "norec": $scope.norecpermenkelima,
+                    "kode": $scope.item.kodedigit5,
+                    "nama": $scope.item.namadigit5,
+                    "keempatfk": id,
+                }
+                // return
+                medifirstService.post('perencanaan/save-permen-kelima', objSave).then(function (e) {
+                    medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                        $scope.dataSourcePermenKelima = e.data.konsolidasikelima
+                    });
+                })
+
+            }
+
+            $scope.BaruPermenKelima = function () {
+
+                $scope.item.digit4 = undefined
+                $scope.item.kodedigit5= ''
+                $scope.item.namadigit5= ''
+                $scope.item.kodedigit4= ''
             }
 
 
@@ -3300,6 +3336,45 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "field": "namamataanggaran",
                         "title": "Mata Anggaran",
                         "width": "200px"
+                    },
+                ]
+            };
+
+            $scope.columnPermenKelima = {
+                selectable: 'row',
+                scrollable: true,
+
+                pageable: true,
+                groupable: true, 
+                columns:[
+                    {
+                        "field": "kode",
+                        "title": "Kode Rek",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "mataanggaranpermen",
+                        "title": "Nama Rekening",
+                        "width": "200px"
+                    },
+                    {
+                        "field": "kodeup",
+                        "title": "Kode Up",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "namaup",
+                        "title": "Nama Up",
+                        "width": "200px"
+                    },
+                    {
+                        "command": [{
+                            text: "Delete",
+                            click: DeletePermenKelima,
+                            
+                        }, ],
+                        title: "",
+                        width: "40px",
                     },
                 ]
             };
@@ -5418,6 +5493,36 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
 
+            function DeletePermenKelima(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                //console.log(dataItem)
+
+                var objSave =
+                    {
+                        norec: dataItem.id,
+                    }
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-permen-kelima', objSave).then(function (e) {
+                        medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                            $scope.dataSourcePermenKelima = e.data.konsolidasikelima
+                        });
+                    }, function (error) {
+                
+                    })
+                })
+            }
+
             function DeletePanjar(e) {
                 e.preventDefault();
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
@@ -5620,6 +5725,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.nospd = dataSPDSelected.nospd
                     $scope.item.nilaispd = dataSPDSelected.nilaispd
                     $scope.item.tglSPD = dataSPDSelected.tglspd
+                }
+            }
+
+            $scope.klikPermenKelima = function (dataPermenKelimaSelected) {
+                if (dataPermenKelimaSelected != undefined) {
+                    console.log(dataPermenKelimaSelected)
+                    $scope.norecpermenkelima = dataPermenKelimaSelected.id
+                    $scope.item.kodedigit4 = dataPermenKelimaSelected.kodeup+'.'
+                    $scope.item.kodedigit5 = dataPermenKelimaSelected.kode
+                    $scope.item.namadigit5 = dataPermenKelimaSelected.mataanggaranpermen
                 }
             }
 

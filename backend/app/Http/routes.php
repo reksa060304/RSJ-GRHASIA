@@ -1460,6 +1460,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
             Route::post('perencanaan/save-child','Perencanaan\PerencanaanController@saveChild');
             Route::post('perencanaan/save-setting-tahap','Perencanaan\PerencanaanController@saveSettingTahap');
+            Route::post('perencanaan/save-permen-kelima','Perencanaan\PerencanaanController@savePermenKelima');
             Route::post('perencanaan/save-spp','Perencanaan\PerencanaanController@saveSPP');
             Route::post('perencanaan/save-spm','Perencanaan\PerencanaanController@saveSPM');
             Route::post('perencanaan/save-spd','Perencanaan\PerencanaanController@saveSPD');
@@ -1484,6 +1485,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/delete-spd','Perencanaan\PerencanaanController@deleteSPD');
             Route::post('perencanaan/delete-spm','Perencanaan\PerencanaanController@deleteSPM');
             Route::post('perencanaan/delete-spp','Perencanaan\PerencanaanController@deleteSPP');
+            Route::post('perencanaan/delete-permen-kelima','Perencanaan\PerencanaanController@deletePermenKelima');
             Route::post('perencanaan/delete-panjar','Perencanaan\PerencanaanController@deletePanjar');
             Route::post('perencanaan/delete-pengembalian','Perencanaan\PerencanaanController@deletePengembalian');
             Route::post('perencanaan/delete-child','Perencanaan\PerencanaanController@deleteChildAnggaran');

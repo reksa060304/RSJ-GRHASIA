@@ -411,39 +411,10 @@
 							<div class="clear"></div>
 							<div class="grid_12">
 								<div class="grid_3">
-									<button class="btnTemplate1" ng-click="MappingRek()" ng-hide="disidpegawai">Mapping Rek RBA ke Rek Permendagri</button>
+									<button class="btnTemplate1" ng-click="DataPermenDigitKelima()">Data Master Rek Permendagri</button>
 								</div>
-							</div>
-
-							<div class="grid_12" style="margin-top: 50px;" ng-hide="hidemap">
-								<div class="grid_12">
-									<div class="grid_2" style="margin-left: 10px;">
-										<input style="width: 100%;" kendo-combo-box k-ng-model="item.mappingrek"
-										k-data-text-field="'text'" k-data-value-field="'id'"
-										k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi5"/>
-									</div>
-								</div>
-								<div class="grid_6" style="margin-top: 20px;">
-									<legend id="filterData" style="margin-left: 10px;">
-										<a ng-click="showAndHide()">REKENING RBA YANG BELUM MASUK KE REK. PERMENDAGRI</a>
-									</legend>
-									<br>
-									<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
-										<kendo-grid id="kGrids" k-data-source="dataSourceRBABelum" k-selectable="'row'"  style="height: 1000px"
-											k-options="columnRBABelum" k-ng-model="dataRBABelumSelected" ng-click="klikRBABelum(dataRBABelumSelected)">
-										</kendo-grid>
-									</div>
-								</div>
-								<div class="grid_6" style="margin-top: 20px;">
-									<legend id="filterData" style="margin-left: 10px;">
-										<a ng-click="showAndHide()">REKENING RBA YANG SUDAH MASUK KE REK. PERMENDAGRI</a>
-									</legend>
-									<br>
-									<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
-										<kendo-grid id="kGrids" k-data-source="dataSourceRBASudah" k-selectable="'row'"  style="height: 1000px"
-											k-options="columnRBASudah" k-ng-model="dataRBASudahSelected" ng-click="klikRBASudah(dataRBASudahSelected)">
-										</kendo-grid>
-									</div>
+								<div class="grid_3">
+									<button class="btnTemplate1" ng-click="MappingRek()">Mapping Rek RBA ke Rek Permendagri</button>
 								</div>
 							</div>
 						</md-content>
@@ -591,6 +562,92 @@
 	</div>
 </div>
 
+<div kendo-window="popupMappingPermen" k-title="'Mapping Rek RBA Ke Rek Permendagri'" k-visible="false" k-width="1500" k-height="600" style="overflow-y: hidden; overflow-x: hidden;">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_12">
+				<div class="grid_2" style="margin-left: 10px;">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.mappingrek"
+					k-data-text-field="'text'" k-data-value-field="'id'"
+					k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi5"/>
+				</div>
+			</div>
+			<div class="grid_6" style="margin-top: 20px;">
+				<legend id="filterData" style="margin-left: 10px;">
+					<a ng-click="showAndHide()">REKENING RBA YANG BELUM MASUK KE REK. PERMENDAGRI</a>
+				</legend>
+				<br>
+				<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
+					<kendo-grid id="kGrids" k-data-source="dataSourceRBABelum" k-selectable="'row'"  style="height: 1000px"
+						k-options="columnRBABelum" k-ng-model="dataRBABelumSelected" ng-click="klikRBABelum(dataRBABelumSelected)">
+					</kendo-grid>
+				</div>
+			</div>
+			<div class="grid_6" style="margin-top: 20px;">
+				<legend id="filterData" style="margin-left: 10px;">
+					<a ng-click="showAndHide()">REKENING RBA YANG SUDAH MASUK KE REK. PERMENDAGRI</a>
+				</legend>
+				<br>
+				<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
+					<kendo-grid id="kGrids" k-data-source="dataSourceRBASudah" k-selectable="'row'"  style="height: 1000px"
+						k-options="columnRBASudah" k-ng-model="dataRBASudahSelected" ng-click="klikRBASudah(dataRBASudahSelected)">
+					</kendo-grid>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div kendo-window="popupPermenKelima" k-title="'Data Kode dan Nama Rekening APBD Digit Ke 5'" k-visible="false" k-width="1000" k-height="600" style="overflow-y: hidden; overflow-x: hidden;">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_10" >
+				<div class="grid_12" >
+					<div class="grid_4" style="text-align: center;">
+						Nama Rekening APBD Digit 4
+					</div>
+					<div class="grid_8" style="margin-top: -10px;">
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.digit4"
+							k-data-text-field="'text'" k-data-value-field="'id'"
+							k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi4"/>
+					</div>
+				</div>
+				<div class="grid_12" >
+					<div class="grid_4" style="text-align: center;">
+						Kode Rekening APBD Digit 5
+					</div>
+					<div class="grid_4" style="margin-top: -10px;">
+						<input c-text-box type="input" class="k-textbox" ng-model="item.kodedigit4" disabled />
+					</div>
+					<div class="grid_4" style="margin-top: -10px;">
+						<input c-text-box type="input" class="k-textbox" ng-model="item.kodedigit5"  />
+					</div>
+				</div>
+				<div class="grid_12" >
+					<div class="grid_4" style="text-align: center;">
+						Nama Rekening APBD Digit 5
+					</div>
+					<div class="grid_8" style="margin-top: -10px;">
+						<input c-text-box type="input" class="k-textbox" ng-model="item.namadigit5"  />
+					</div>
+				</div>
+			</div>
+			<div class="grid_2" >
+				<div class="grid_8">
+					<button class="btnTemplate1" ng-click="SavePermenKelima()">Simpan</button>
+				</div>
+				<div class="grid_8">
+					<button class="btnTemplate1" ng-click="BaruPermenKelima()">Clear</button>
+				</div>
+			</div>
+			<div class="grid_12" >
+				<kendo-grid id="kGrids" k-data-source="dataSourcePermenKelima" k-selectable="'row'" 
+					k-options="columnPermenKelima" k-ng-model="dataPermenKelimaSelected" ng-click="klikPermenKelima(dataPermenKelimaSelected)">
+				</kendo-grid>
+			</div>
+		</div>
+	</div>
+</div>
 <div class="grid_12" kendo-window="popupTambahTahap" k-title="'Setting Tahap'" k-visible="false">
 	
 	<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:280px;">
