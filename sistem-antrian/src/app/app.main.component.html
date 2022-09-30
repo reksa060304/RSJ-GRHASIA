@@ -35,34 +35,14 @@
     <!-- [style]="{marginTop: '55px'}" -->
     <p-toast key="t-notif"></p-toast>
     <!-- <app-alert></app-alert> -->
-    <!-- <app-topbar *ngIf="!isLogin"></app-topbar> -->
+    <!-- <app-topbar *ngIf="isLogin" ></app-topbar> -->
 
     <app-sidebar *ngIf="isLogin"></app-sidebar>
 
     <div *ngIf="!isLogin" class="layout-content">
         <app-loader></app-loader>
         <div class="layout-main ">
-            <!-- <div class="p-col-12 dashboard">
-                <div class="p-grid p-nogutter card overview-box control-panel">
-                    <div class="p-col-12 p-md-8 left-controls">
-                        <span>Selamat datang di App Kios-K</span>
-                    </div>
-                    <div class="p-col-12 p-md-4 right-controls">
-                        <div class="p-grid p-nogutter p-d-flex p-jc-end">
-                            <div class="p-col-4 p-md-2">
-                                <a href="#"><i class="pi pi-bookmark" aria-hidden="true"></i></a>
-                            </div>
-                            <div class="p-col-4 p-md-2">
-                                <a href="#"><i class="pi pi-heart" aria-hidden="true"></i></a>
-                            </div>
-                            <div class="p-col-4 p-md-2">
-                                <a href="#"><i class="pi pi-inbox" aria-hidden="true"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-            <router-outlet></router-outlet>
+                  <router-outlet></router-outlet>
         </div>
 
         <app-footer *ngIf="isLogin"></app-footer>

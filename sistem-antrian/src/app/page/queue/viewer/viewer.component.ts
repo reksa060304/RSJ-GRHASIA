@@ -1,3 +1,5 @@
+
+
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { DPlayerService } from 'angular-dplayer';
@@ -7,6 +9,7 @@ import { NotificationService } from 'src/app/service/notification.service';
 import { SocketService } from 'src/app/service/socket.service';
 import Terbilang from 'terbilang-ts'
 import { Howl, Howler } from 'howler';
+import { Config } from 'src/app/guard';
 @Component({
   selector: 'app-viewer',
   templateUrl: './viewer.component.html',
@@ -15,6 +18,7 @@ import { Howl, Howler } from 'howler';
 export class ViewerComponent implements OnInit {
   dateNow: any = new Date()
   jamSekarang: any;
+  isLogin:boolean =true
   tgl: any;
   apiTimer: any;
   listAntri: any[] = []
@@ -22,19 +26,26 @@ export class ViewerComponent implements OnInit {
   dipanggil: boolean = false;
   sound: any = null
   listLoket: any[] = []
+  namaProfile = Config.getProfile().namaProfile
   color: any[] = ['badge-light-primary', 'badge-light-info', 'badge-light-warning', 'badge-light-success', 'badge-light-danger', 'badge-light-primary', 'badge-light-info', 'badge-light-warning', 'badge-light-success', 'badge-light-danger']
-   videoSource: any[] = [
-    {
-      name: 'LOKAL', url: "http://wpc.d1627.nucdn.net:80/80D1627/o-tvri/Content/HLS/Live/Channel(TVRINASIONAL)/Stream(03)/index.m3u8",
-      type: 'dpHls'
-    },
+  videoSource: any[] = [
+    // {
+    //   name: 'LOKAL', url: "assets/tv/jasmed.mp4",
+    //   // 'https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u', 
+    //   type: 'dpHls'
+    // },
+    // {
+    //   name: 'TRANS 7', url: "assets/tv/playlist.m3u8",
+    //   // 'https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u', 
+    //   type: 'dpHls'
+    // },
     { name: 'CNN', url: 'https://live.cnnindonesia.com/livecnn/smil:cnntv.smil/playlist.m3u', type: 'dpHls' },
-    { name: 'TVRI', url: 'http://wpc.d1627.nucdn.net:80/80D1627/o-tvri/Content/HLS/Live/Channel(TVRINASIONAL)/Stream(03)/index.m3u8', type: 'dpHls' },
-    { name: 'SCTV', url: 'http://210.210.155.35/qwr9ew/s/s03/02.m3u8', type: 'dpFlv' },
-    { name: 'Kompas', url: 'http://103.130.186.138:8800/oxygenplay/kompastv/index.m3u8', type: 'dpFlv' },
-    { name: 'ANTV', url: 'http://210.210.155.35/qwr9ew/s/s07/02.m3u8', type: 'dpFlv' },
-    { name: 'Net TV', url: 'http://210.210.155.35/qwr9ew/s/s08/01.m3u8', type: 'dpFlv' },
-    { name: 'Indosiar', url: 'http://210.210.155.35/qwr9ew/s/s04/02.m3u8', type: 'dpFlv' },
+    { name: 'TVRI', url: 'https://cors-anywhere.herokuapp.com/http://wpc.d1627.nucdn.net:80/80D1627/o-tvri/Content/HLS/Live/Channel(TVRINASIONAL)/Stream(03)/index.m3u8', type: 'dpHls' },
+    { name: 'SCTV', url: 'https://cors-anywhere.herokuapp.com/http://210.210.155.35/qwr9ew/s/s03/02.m3u8', type: 'dpFlv' },
+    { name: 'Kompas', url: 'https://cors-anywhere.herokuapp.com/http://103.130.186.138:8800/oxygenplay/kompastv/index.m3u8', type: 'dpFlv' },
+    { name: 'ANTV', url: 'https://cors-anywhere.herokuapp.com/http://210.210.155.35/qwr9ew/s/s07/02.m3u8', type: 'dpFlv' },
+    { name: 'Net TV', url: 'https://cors-anywhere.herokuapp.com/http://210.210.155.35/qwr9ew/s/s08/01.m3u8', type: 'dpFlv' },
+    { name: 'Indosiar', url: 'https://cors-anywhere.herokuapp.com/http://210.210.155.35/qwr9ew/s/s04/02.m3u8', type: 'dpFlv' },
 
   ]
   isVoiceBrowser: boolean = false
@@ -66,6 +77,8 @@ export class ViewerComponent implements OnInit {
   files: Array<any> = [];
   jmlLoket = 4
   currentFile: any = { index: -1 };
+  safeURL: any
+
   constructor(private socket: SocketService,
     private notif: NotificationService,
     private apiService: ApiService,
@@ -73,6 +86,11 @@ export class ViewerComponent implements OnInit {
 
     public audioService: ApiService,
   ) {
+
+    this.safeURL = 'http://'+window.location.hostname+'/service/rsjp-materi.mp4';
+    // this.apiService.getJSON('sep').subscribe(e => {
+
+    // })
 
     this.apiService.get('sysadmin/settingdatafixed/get/jumlahLoket').subscribe(e => {
       this.jmlLoket = parseInt(e)

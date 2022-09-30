@@ -1518,6 +1518,13 @@ define(['initialize'], function (initialize) {
                     "norec_apd" : $scope.dataPasienSelected.norec_apd,
                     "kelompokUser" : cookie[1]
                 }
+                socket.emit('call-antrian-poli', {
+                    namapasien:$scope.dataPasienSelected.namapasien,
+                    namaruangan:$scope.dataPasienSelected.namaruangan,
+                    noantri:$scope.dataPasienSelected.noantrian,
+                    nocm:$scope.dataPasienSelected.nocm,
+                });
+                toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
                 medifirstService.postNonMessage('rawatjalan/save-panggil',data)
                 .then(function (res) {
 

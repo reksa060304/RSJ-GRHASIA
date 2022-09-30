@@ -154,15 +154,16 @@ export class ApiService {
 
 	}
 
-	getJSON(): Observable<any> {
-		return this.http.get<any>("assets/config.json")
-			.pipe(
-				tap((res: any) => {
-					return res
-				}),
 
-			);
-	}
+	public getJSON(jenis): Observable<any> {
+		return this.http.get<any>(jenis)
+		  .pipe(
+			tap((res: any) => {
+			  return res
+			}),
+	
+		  )
+	  };
 	get(url: string): Observable<any> {
 
 

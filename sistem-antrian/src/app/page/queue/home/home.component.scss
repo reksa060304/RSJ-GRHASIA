@@ -60,16 +60,60 @@ html {
     font-weight: bold;
 }
 .button-caller a {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #ffffff;
 }
+
 .button-caller a:hover {
     text-decoration: none;
 }
-.f-s-5{
+.f-s-5 {
     font-size: 2rem;
     font-weight: bold;
+}
+.p-btn-green {
+    color: #ffffff;
+    background: #7ec0b5;
+    border: 1px solid #7ec0b5;
+}
+.p-btn-green-ngora {
+    color: #ffffff;
+    background: #1abba0;
+}
+.p-btn-green-klot {
+    color: #ffffff;
+    background: #139098;
+    border: 1px solid #139098;
+}
+.p-btn-green-sedeng {
+    color: #ffffff;
+    background: #15a434;
+    border: 1px solid #15a434;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h7 {
+    color: white;
+}
+.button-viewer2 {
+    background: #139098;
+    padding: 8px 20px 8px 20px;
+    border-radius: 24px;
+    text-align: center;
+    cursor: pointer;
+}
+.button-viewer3 {
+    background: #47940c;
+    padding: 8px 20px 8px 20px;
+    border-radius: 24px;
+    text-align: center;
+    cursor: pointer;
 }
 .button-viewer {
     background: #2c761e;
@@ -79,6 +123,14 @@ html {
     cursor: pointer;
 }
 .button-viewer:hover {
+    background: #444444;
+    transition: all 0.5s ease-out;
+}
+.button-viewer2:hover {
+    background: #444444;
+    transition: all 0.5s ease-out;
+}
+.button-viewer3:hover {
     background: #444444;
     transition: all 0.5s ease-out;
 }
@@ -93,6 +145,21 @@ html {
 }
 .button-viewer a:hover {
     text-decoration: none;
+}
+.button-viewer a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+.button-viewer2 a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+.button-viewer3 a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
 }
 h3.heading-caller {
     font-family: "swiss";
@@ -197,7 +264,7 @@ h3.heading-list-antrian {
 img.img-illustration-index {
     max-width: 100%;
     margin-top: 10px;
-    padding-bottom: 70px;
+    // padding-bottom: 70px;
     margin: 0 auto;
 }
 .topbars img.img-logo-caller {
@@ -442,5 +509,10 @@ video {
     .no-antrian-bawah-3 h1,
     .no-antrian-bawah-4 h1 {
         font-size: 35px;
+    }
+}
+@media screen and (min-width: 768px) {
+    .p-md-offset-1 {
+        margin-left: 12.333333%;
     }
 }

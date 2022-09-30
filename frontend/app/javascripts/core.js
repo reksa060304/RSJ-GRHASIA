@@ -51,28 +51,36 @@ define(['Configuration', 'jQuery', 'kendo.angular',
         .factory('socket', function(socketFactory) {
 
              var myIoSocket = null;
-
-            // try{
-            //     myIoSocket = io.connect(configuration.urlSocket);
-            // }catch(err){
-
-            // }
-
-            // var mySocket = socketFactory({
-            //     ioSocket: myIoSocket
-            // });
-
-            // return mySocket;
-            var socketPalsu = {
-                on: function () {
-
-                },
-                emit: function(){
-
+            if(configuration.aktifkanSocket != undefined && configuration.aktifkanSocket == true ){
+                try{
+                    myIoSocket= io(configuration.urlSocket,
+                    {
+                            transports: ['websocket',  'polling'],
+                            allowEIO3: true // false by default
+                    });
+                    console.log(myIoSocket)
+                }catch(err){
+    
                 }
+    
+                var mySocket = socketFactory({
+                    ioSocket: myIoSocket
+                });
+    
+                return mySocket;
+            }else{
+                var socketPalsu = {
+                    on: function () {
+    
+                    },
+                    emit: function(){
+    
+                    }
+                }
+    
+                return socketPalsu;
             }
-
-            return socketPalsu;
+           
             
         }).service('fileUpload', ['$http', function($http) {
             this.uploadFileToUrl = function(file, uploadUrl) {
