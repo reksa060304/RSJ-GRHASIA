@@ -24,9 +24,13 @@ define(['initialize'], function (initialize) {
                 $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
                 $scope.item.ruangan = $scope.listRuangan[0];
 
-                medifirstService.get("logistik/get-combo-logistik", true).then(function (dat) {
-                    var dataCombo = dat.data;
-                    $scope.listNamaBarang = dataCombo.produk;
+                // medifirstService.get("logistik/get-combo-logistik", true).then(function (dat) {
+                //     var dataCombo = dat.data;
+                //     $scope.listNamaBarang = dataCombo.produk;
+                // });
+
+                medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
+                    $scope.listNamaBarang = data;
                 });
 
                 medifirstService.get('logistik/get-combo-logistik-mini').then(function (data) {
@@ -208,7 +212,7 @@ define(['initialize'], function (initialize) {
                     sheet.name = "Orders";
 
                     var myHeaders = [{
-                        value: "Kartu Stok Produk " + $scope.item.namaBarang.namaexternal,
+                        value: "Kartu Stok Produk " + $scope.item.namaBarang.reportdisplay,
                         fontSize: 20,
                         textAlign: "center",
                         background: "#ffffff",
