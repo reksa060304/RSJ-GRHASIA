@@ -171,7 +171,10 @@ class RawatJalanController extends ApiController
 //            ->where('dm.statusenabled', true)
 //            ->orderBy('dm.id')
 //            ->get();
-
+$ruangdokter = \DB::table('ruangan_m as ru')
+        ->where('ru.objectdepartemenfk', 65)
+        ->orderBy('ru.id')
+        ->get();
         $result = array(
 //            'departemen' => $dataDepartemen,
 //            'kelompokpasien' => $dataKelompok,
@@ -183,6 +186,7 @@ class RawatJalanController extends ApiController
             'ruanganRanap' => $ruanganRanap,
             'deptrirj' => $deptRajalInap,
             'ruanganall' => $dataRuangan,
+            'ruangdokter'=> $ruangdokter,
 //            'pembatalan' => $pembatalan,
 //            'jenisdiagnosa'=> $jenisDiagnosa,
 //            'diagnosa'=> $Diagnosa,
