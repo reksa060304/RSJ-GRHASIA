@@ -2,8 +2,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     var baseTransaksi = configuration.baseApiBackend;
 
-    initialize.controller('MasterDataKampusCtrl', ['$scope', '$state', 'DateHelper', 'CacheHelper', 'MedifirstService', 'ModelItem',
-        function ($scope, $state, dateHelper, cacheHelper, medifirstService, ModelItem) {
+    initialize.controller('MasterDataKampusCtrl', ['$scope', '$state', 'DateHelper', 'CacheHelper', 'MedifirstService', 'ModelItem', '$timeout',
+        function ($scope, $state, dateHelper, cacheHelper, medifirstService, ModelItem, $timeout) {
             $scope.dataVOloaded = true;
             $scope.isRouteLoading = false;
             $scope.now = new Date();
@@ -411,6 +411,45 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     window.open(configuration.baseApiBackend + "report/cetak-sertifikat?norec=" + norec + '&kdprofile=' + profile +
                         '&nama=' + nama, '_blank');
                 }
+            }
+            var timeoutPromise;
+            $scope.$watch('item.institusi', function (newVal, oldVal) {
+                if (!newVal) return;
+                $timeout.cancel(timeoutPromise);
+                timeoutPromise = $timeout(function () {
+                    if (newVal && newVal !== oldVal) {
+                        applyFilter("namalengkap", newVal);
+                    }
+                }, 500)
+            });
+            function applyFilter(filterField, filterValue) {
+                var dataGrid = $("#kGrid").data("kendoGrid");
+                var currFilterObject = dataGrid.dataSource.filter();
+                var currentFilters = currFilterObject ? currFilterObject.filters : [];
+                console.log(filterField, filterValue);
+                if (currentFilters && currentFilters.length > 0) {
+                    for (var i = 0; i < currentFilters.length; i++) {
+                        if (currentFilters[i].field == filterField) {
+                            currentFilters.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
+                if (filterField === "namalengkap") {
+                    currentFilters.push({
+                        field: filterField,
+                        operator: "contains",
+                        value: filterValue
+                    });
+                }
+                dataGrid.dataSource.filter({
+                    logic: "and",
+                    filters: currentFilters
+                });
+                var allData = dataGrid.dataSource.data();
+                var params = dataGrid.dataSource.filter();
+                var query = new kendo.data.Query(allData);
+                $scope.filteredData = query.filter(params).data;
             }
         }
     ]);
