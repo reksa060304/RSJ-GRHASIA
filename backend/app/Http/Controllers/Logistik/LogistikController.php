@@ -14696,15 +14696,15 @@ class LogistikController extends ApiController{
                 select ru.id idruangan, ru.namaruangan, pr.id as kdproduk,pr.namaproduk,sum(CAST(spd.qtyproduk AS FLOAT)) as qtyproduk,
                 ss.satuanstandar,CAST(ppr.harganetto AS FLOAT) hargabeli, CAST(ppr.hargajual AS FLOAT) hargajual
                 from stokprodukdetail_t as spd
-                inner join strukpelayanan_t as sp on sp.norec = spd.nostrukterimafk
+                left join strukpelayanan_t as sp on sp.norec = spd.nostrukterimafk
                 inner join produk_m as pr on pr.id = spd.objectprodukfk
                 inner join detailjenisproduk_m as djp on djp.id = pr.objectdetailjenisprodukfk
                 inner join jenisproduk_m as jp on jp.id = djp.objectjenisprodukfk
                 inner join asalproduk_m as ap on ap.id = spd.objectasalprodukfk
                 inner join satuanstandar_m as ss on ss.id = pr.objectsatuanstandarfk
                 inner join ruangan_m ru on ru.id = spd.objectruanganfk
-                inner join pelayananpasien_t ppr on ppr.produkfk = pr.id
-                inner join (
+                left join pelayananpasien_t ppr on ppr.produkfk = pr.id
+                left join (
                     select pr.id, max(pp.tglpelayanan) maxtgl from pelayananpasien_t pp
                     inner join produk_m pr on pr.id = pp.produkfk
                     where pp.statusenabled = true and pp.kdprofile = 30
