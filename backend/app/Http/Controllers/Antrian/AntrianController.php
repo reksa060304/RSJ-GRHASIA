@@ -135,7 +135,7 @@ class AntrianController extends ApiController
         $ruangan = DB::table('ruangan_m')
             ->select('id', 'namaruangan','nocounter')
             ->where('statusenabled', true)
-            ->wherein('objectdepartemenfk', [18])
+            ->wherein('objectdepartemenfk', [18, 64, 65])
             ->orderBy('namaruangan')
             ->get();
         $farmasi = DB::table('ruangan_m')

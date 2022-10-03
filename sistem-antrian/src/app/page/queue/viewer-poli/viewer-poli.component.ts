@@ -34,7 +34,7 @@ export class ViewerPoliComponent implements OnInit {
     },
     // {
     //   name: 'TRANS 7', url: "assets/tv/playlist.m3u8",
-    //   // 'https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u', 
+    //   // 'https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u',
     //   type: 'dpHls'
     // },
     { name: 'CNN', url: 'https://live.cnnindonesia.com/livecnn/smil:cnntv.smil/playlist.m3u', type: 'dpHls' },
@@ -51,7 +51,7 @@ export class ViewerPoliComponent implements OnInit {
     channel: this.videoSource[0]
   }
   pilihVideo: any
-  // videoSource: any 
+  // videoSource: any
   videoItems = [
     {
       name: 'Video one',
@@ -208,8 +208,7 @@ export class ViewerPoliComponent implements OnInit {
             + '. Ke Ruang. ' + this.item.poliPanggil);
         } else {
           this.playAudio('Nomor Antrian ' + Terbilang(this.item.antriTerakhir)
-            + '. ' + this.item.namapasien
-            + '. Ke Ruang. ' + this.item.poliPanggil);
+            + '. ' + '. Ke Ruang. ' + this.item.poliPanggil);
         }
 
       }
@@ -297,7 +296,7 @@ export class ViewerPoliComponent implements OnInit {
     replace(/ PROF\. /ig,' Professor. ').
     replace(/ DR\. /ig,' Doktor. ').
     replace(/ S\.T\. /ig,' Sarjana Tehnik. ').
-    replace(/ ST\./g, ' Sarjana Tehnik. ').    
+    replace(/ ST\./g, ' Sarjana Tehnik. ').
     replace(/ M\.T\. /ig,' Magister Tehnik. ').
     replace(/ S\.H\. /ig,' Sarjana Hukum. ').
     replace(/ SH\. /ig,' Sarjana Hukum. ').
@@ -324,15 +323,15 @@ export class ViewerPoliComponent implements OnInit {
 
     var synthesis = window.speechSynthesis;
     // Get the first `en` language voice in the list
-    
+
     var voice = synthesis.getVoices().filter(function (voice) {
       return voice.lang === 'id-ID';
     })[0];
 
     // Create an utterance object
-    var utterance = new SpeechSynthesisUtterance(this.replaceGelar(nomor).   
+    var utterance = new SpeechSynthesisUtterance(this.replaceGelar(nomor).
           toLocaleLowerCase());
-    // Set utterance properties 
+    // Set utterance properties
     utterance.voice = voice;
     utterance.lang = 'id-ID';
 
@@ -349,7 +348,7 @@ export class ViewerPoliComponent implements OnInit {
     }, (5000));
 
   }
- 
+
   getdate() {
     var today = new Date();
     var h: any = today.getHours();
@@ -396,14 +395,14 @@ export class ViewerPoliComponent implements OnInit {
         this.handleDoubleClick()
       });
     } else {
-      // if timeout doesn't exist, we know it's first click 
+      // if timeout doesn't exist, we know it's first click
       // treat as single click until further notice
       this.setClickTimeout(() =>
         this.handleSingleClick()
       );
     }
   }
-  // sets the click timeout and takes a callback 
+  // sets the click timeout and takes a callback
   // for what operations you want to complete when
   // the click timeout completes
   public setClickTimeout(callback) {
@@ -426,7 +425,7 @@ export class ViewerPoliComponent implements OnInit {
     // } else {
     //   this.pilihVideo = this.item.channel.url
     // }
-    // this.videoURL = 
+    // this.videoURL =
     this.popUp = false
     localStorage.setItem('urlVideo', this.videoURL)
     // var isss = ''

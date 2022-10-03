@@ -112,6 +112,7 @@ define(['initialize'], function (initialize) {
                     $scope.listDokter = data.data.dokter;
                     $scope.username = data.data.pegawaiLogin;
                     $scope.userID = data.data.datalogin.userData.id;
+                    $scope.listPilihRuang = data.data.ruangperawat;
                 });
             }
 
@@ -1754,20 +1755,36 @@ define(['initialize'], function (initialize) {
 
             //     })
             // }
-            $scope.panggil = function () {
-                if ($scope.dataPasienSelected == undefined) {
-                    toastr.error('Pilih Data dulu')
-                    return
-                }
-                let param = $scope.dataPasienSelected.isonline =='Online'? $scope.dataPasienSelected.noreservasi : $scope.dataPasienSelected.noregistrasi
+            $scope.simpanPanggil = function(){
+                let param = $scope.dataPasienSelected.isonline == 'Online' ? $scope.dataPasienSelected.noreservasi : $scope.dataPasienSelected.noregistrasi
                 saveAntrol(param)
                 socket.emit('call-antrian-poli', {
                     namapasien:$scope.dataPasienSelected.namapasien,
-                    namaruangan:$scope.dataPasienSelected.namaruangan,
+                    namaruangan: $scope.item.pilihRuangan.namaruangan,
                     noantri:$scope.dataPasienSelected.noantrian,
                     nocm:$scope.dataPasienSelected.nocm,
                 });
                 toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
+                $scope.popUpPanggil.close()
+
+            }
+            $scope.panggil = function () {
+                console.log($scope.dataPasienSelected);
+                if ($scope.dataPasienSelected.noregistrasi == undefined) {
+                    toastr.error('Pilih Data dulu')
+                    return
+                }
+                $scope.popUpPanggil.center().open()
+                // let param = $scope.dataPasienSelected.isonline =='Online'? $scope.dataPasienSelected.noreservasi : $scope.dataPasienSelected.noregistrasi
+                // saveAntrol(param)
+                // socket.emit('call-antrian-poli', {
+                //     namapasien:$scope.dataPasienSelected.namapasien,
+                //     namaruangan:$scope.dataPasienSelected.namaruangan,
+                //     noantri:$scope.dataPasienSelected.noantrian,
+                //     nocm:$scope.dataPasienSelected.nocm,
+                // });
+                // toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
+
                 // var cookie = document.cookie.split(';');
                 // cookie = cookie[0].split('=');
                 // var data ={
