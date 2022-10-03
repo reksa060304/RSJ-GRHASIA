@@ -3418,6 +3418,10 @@
         {
             "nameDep": "SuratKeteranganPasienMelarikanDiriCtrl",
             "urlDep": "module/EMR/SuratKeteranganPasienMelarikanDiriCtrl"
+        },
+        {
+            "nameDep": "LaporanGiziCtrl",
+            "urlDep": "module/Gizi/Laporan/LaporanGiziCtrl"
         }
         
     ]

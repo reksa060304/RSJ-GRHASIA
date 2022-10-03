@@ -941,6 +941,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('gizi/hapus-order-gizi', 'Gizi\GiziController@hapusOrderGzi');
           Route::post('gizi/hapus-peritem-order', 'Gizi\GiziController@hapusOrderGziPeritem');
           Route::post('gizi/update-peritem-order', 'Gizi\GiziController@updateOrderGizi');
+          Route::get('gizi/get-laporan-gizi','Gizi\GiziController@getLaporanGizi');
         // });
         //E-OFFICE//
         Route::post('eoffice/save-surat', 'EOffice\EOfficeController@simpanSurat');

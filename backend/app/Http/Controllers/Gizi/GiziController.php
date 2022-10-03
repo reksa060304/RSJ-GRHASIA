@@ -965,5 +965,41 @@ class GiziController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function getLaporanGizi(Request $request)
+    {
+        $jenisDietId = '';
+        if($request['jenisDietId'] != null){
+            $jenisDietId = "and op.arrjenisdiet ilike '$request[jenisDietId]'";
+        }
+        $deptId = '';
+        if($request['deptId'] != null){
+            $deptId = "and ru.objectdepartemenfk = '$request[deptId]'";
+        }
+        $ruangId = '';
+        if($request['ruangId'] != null){
+            $ruangId = "and ru.id = '$request[ruangId]'";
+        }
+        $data = \DB::select(DB::raw("SELECT distinct emrpd.tgl,ps.nocm,ps.namapasien, ru.namaruangan, ps.tgllahir, pg.namalengkap, op.arrjenisdiet FROM orderpelayanan_t op 
+        inner join pasiendaftar_t pd on pd.norec = op.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+        inner join emrpasien_t emrp on emrp.noregistrasifk = pd.noregistrasi
+        inner join emrpasiend_t emrpd on emrpd.emrpasienfk = emrp.noemr
+        inner join strukorder_t so on so.norec = op.strukorderfk
+        inner join pegawai_m pg on pg.id = so.objectpegawaiorderfk
+        where emrpd.emrfk = 443 and emrpd.emrdfk in(111358,111348)
+        and so.kdprofile = 30 and so.statusenabled=true
+        and emrpd.tgl between '$request[tglAwal]' and '$request[tglAkhir]'
+        $jenisDietId
+        $deptId
+        $ruangId
+        GROUP BY emrpd.tgl,ps.nocm,ps.namapasien, ru.namaruangan,ps.tgllahir,pg.namalengkap,op.arrjenisdiet
+        order by emrpd.tgl asc
+        "));
+        $result = array(
+            'data'=> $data
+        );
+        return $this->respond($result);
+    }
 
 }
