@@ -14687,14 +14687,14 @@ class LogistikController extends ApiController{
             $namaproduk = "and pr.namaproduk  ILIKE '%". $request['namaproduk']."%'";
         }
 
-        $data = DB::select(DB::raw("select kdproduk, namaproduk, satuanstandar, hargabeli, hargajual, sum(qtyfarmasi) qtyfarmasi,
+        $data = DB::select(DB::raw("select kdproduk, namaproduk, satuanstandar, round(hargabeli) hargabeli, round(hargajual) hargajual, sum(qtyfarmasi) qtyfarmasi,
         sum(qtygudang) qtygudang from(
             select kdproduk, namaproduk, satuanstandar, hargabeli, hargajual,
             case when idruangan = 94 then qtyproduk else 0 end as qtyfarmasi,
             case when idruangan = 59 then qtyproduk else 0 end as qtygudang
             from(
-                select ru.id idruangan, ru.namaruangan, pr.id as kdproduk,pr.namaproduk,sum(CAST(spd.qtyproduk AS FLOAT)) as qtyproduk,
-                ss.satuanstandar,CAST(ppr.harganetto AS FLOAT) hargabeli, CAST(ppr.hargajual AS FLOAT) hargajual
+                select ru.id idruangan, ru.namaruangan, pr.id as kdproduk,pr.namaproduk,CAST(spd.qtyproduk AS FLOAT) as qtyproduk,
+                ss.satuanstandar,CAST(spdh.harganetto2 AS FLOAT) hargabeli, CAST(spdh.harganetto1 AS FLOAT) hargajual
                 from stokprodukdetail_t as spd
                 left join strukpelayanan_t as sp on sp.norec = spd.nostrukterimafk
                 inner join produk_m as pr on pr.id = spd.objectprodukfk
@@ -14703,13 +14703,13 @@ class LogistikController extends ApiController{
                 inner join asalproduk_m as ap on ap.id = spd.objectasalprodukfk
                 inner join satuanstandar_m as ss on ss.id = pr.objectsatuanstandarfk
                 inner join ruangan_m ru on ru.id = spd.objectruanganfk
-                left join pelayananpasien_t ppr on ppr.produkfk = pr.id
-                left join (
-                    select pr.id, max(pp.tglpelayanan) maxtgl from pelayananpasien_t pp
-                    inner join produk_m pr on pr.id = pp.produkfk
-                    where pp.statusenabled = true and pp.kdprofile = 30
+                inner join stokprodukdetail_t as spdh on spdh.objectprodukfk = pr.id
+                inner join (
+                    select pr.id, max(spd.tglpelayanan) maxtgl from stokprodukdetail_t as spd
+                    inner join produk_m pr on pr.id = spd.objectprodukfk
+                    where spd.statusenabled = true and spd.kdprofile = 30
                     group by pr.id
-                ) as x on x.id = ppr.produkfk and x.maxtgl = ppr.tglpelayanan
+                ) as x on x.id = spdh.objectprodukfk and x.maxtgl = spdh.tglpelayanan
                 where pr.statusenabled = true
                 and spd.statusenabled = true
                 and pr.kdprofile = 30 
@@ -14718,9 +14718,10 @@ class LogistikController extends ApiController{
                 $namaproduk
                 $produkid
                 group by ru.id, ru.namaruangan, pr.id,pr.namaproduk,
-                ss.satuanstandar,CAST(ppr.harganetto AS FLOAT), CAST(ppr.hargajual AS FLOAT)
+                ss.satuanstandar,CAST(spdh.harganetto2 AS FLOAT), CAST(spdh.harganetto1 AS FLOAT), CAST(spd.qtyproduk AS FLOAT)
             ) as x group by kdproduk, namaproduk, satuanstandar, hargabeli, hargajual, idruangan, qtyproduk
-        ) as y group by kdproduk, namaproduk, satuanstandar, hargabeli, hargajual
+        ) as y 
+        group by kdproduk, namaproduk, satuanstandar, round(hargabeli), round(hargajual)
         order by qtyfarmasi desc, qtygudang desc
         limit $jumlah    
         "));

@@ -29,8 +29,12 @@ define(['initialize'], function (initialize) {
                 //     $scope.listNamaBarang = dataCombo.produk;
                 // });
 
-                medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
-                    $scope.listNamaBarang = data;
+                // medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
+                //     $scope.listNamaBarang = data;
+                // });
+
+                medifirstService.get("farmasi/get-datacombo", true).then(function (dat) {
+                    $scope.listNamaBarang = dat.data.produk;
                 });
 
                 medifirstService.get('logistik/get-combo-logistik-mini').then(function (data) {
@@ -212,7 +216,7 @@ define(['initialize'], function (initialize) {
                     sheet.name = "Orders";
 
                     var myHeaders = [{
-                        value: "Kartu Stok Produk " + $scope.item.namaBarang.reportdisplay,
+                        value: "Kartu Stok Produk " + $scope.item.namaBarang.namaproduk,
                         fontSize: 20,
                         textAlign: "center",
                         background: "#ffffff",
