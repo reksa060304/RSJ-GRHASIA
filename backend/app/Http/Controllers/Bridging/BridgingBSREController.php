@@ -41,7 +41,10 @@ use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
-
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
+use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
+use Endroid\QrCode\Label\Font\NotoSans;
 class BridgingBSREController  extends ApiController
 {
     
@@ -747,7 +750,7 @@ class BridgingBSREController  extends ApiController
             $prof =  DB::table('profile_m')->where('statusenabled', true)->first();
             $file = curl_file_create(storage_path($filena), 'application/pdf', 'file.pdf');
     
-            // $image = QrCode::format('png')
+            // $result = QrCode::format('png')
             //     ->merge('img/diy.png',.3, true)
             //     ->size(400)->errorCorrection('H')
             //     ->generate($emrbsre->linkQR);
@@ -756,7 +759,23 @@ class BridgingBSREController  extends ApiController
      
             $writer = new PngWriter();
 
-            // Create QR code
+       
+            // $result = Builder::create()
+            // ->writer(new PngWriter())
+            // ->writerOptions([])
+            // ->data('Custom QR code contents')
+            // ->encoding(new Encoding('UTF-8'))
+            // ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            // ->size(500)
+            // ->margin(10)
+            // ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+            // ->logoPath(public_path().'/img/diy.png')
+            //   ->setLogoSize(98)
+            // ->labelText('This is the label')
+            // ->labelFont(new NotoSans(20))
+            // ->labelAlignment(new LabelAlignmentCenter())
+            //  ->build();
+            // // Create QR code
             $qrCode = QrCodeEn::create($emrbsre->linkQR)
                 ->setEncoding(new Encoding('UTF-8'))
                 ->setErrorCorrectionLevel(new ErrorCorrectionLevelLow())
@@ -768,9 +787,9 @@ class BridgingBSREController  extends ApiController
 
             // Create generic logo
             $logo = Logo::create(public_path().'/img/diy.png')
-                ->setResizeToWidth(150);
+                ->setResizeToWidth(100);
 
-            $result = $writer->write($qrCode, $logo);
+            $result = $writer->write($qrCode,$logo);
 // Send output of the QRCode directly
             // header('Content-Type: '.$result->getMimeType());
             $image = $result->getString();

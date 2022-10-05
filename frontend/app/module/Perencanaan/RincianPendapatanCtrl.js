@@ -1,8 +1,8 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     var baseTransaksi = configuration.baseApiBackend;
-    initialize.controller('RincianPendapatanCtrl', ['$scope', '$mdDialog', 'MedifirstService','$timeout',
-        function ($scope, $mdDialog, medifirstService, $timeout) {
+    initialize.controller('RincianPendapatanCtrl', ['$scope', '$mdDialog', 'MedifirstService','$timeout','ModelItem',
+        function ($scope, $mdDialog, medifirstService, $timeout, ModelItem) {
             $scope.item = {}
             $scope.itemRincian = {}
             $scope.now = new Date();
@@ -45,12 +45,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         text: "Tambah",
                         template: '<div class="grid_1"><button ng-click="TambahRincian()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'
                     },
-                    {
-                        name: "edit",
-                        text: "Edit",
-                        template: '<div class="grid_1"><button ng-click="Edit()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-edit"></span>Edit</button></div>'
-                    },
+                    // {
+                    //     name: "edit",
+                    //     text: "Edit",
+                    //     template: '<div class="grid_1"><button ng-click="Edit()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-edit"></span>Edit</button></div>'
+                    // },
                 ],
+                
                 selectable: 'row',
                 scrollable: true,
 
@@ -110,7 +111,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     },
                     {
 						"command": [
-							
+							{ text: "Edit", click: EditRincian, imageClass: "k-icon k-i-pencil" },
 							{ text: "Hapus", click: Hapus, imageClass: "k-icon k-i-delete" },
 						],
 						title: "",
@@ -121,9 +122,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             };
             $scope.TambahRincian = function (){
                 var tahun = moment($scope.now).format('YYYY');
+                $scope.itemRincian ={}
                 $scope.itemRincian.tglinput = moment($scope.now).format('YYYY-MM-DD')
                 $scope.dataSelected = undefined
                 console.log($scope.dataSelected)
+                $scope.itemRincian.norec = undefined
                 $scope.popupTambahRincianPendapatan.center().open()
             }
             $scope.perubahan = function(data){
@@ -159,8 +162,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     perubahan = false
                 }
                 norec = ''
-                if($scope.dataSelected != undefined){
-                    norec = $scope.dataSelected.norec
+                if($scope.itemRincian.norec != undefined){
+                    norec = $scope.itemRincian.norec
                 }
                 var objSave = {
                     'norec': norec,
@@ -303,27 +306,58 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.filteredData = [];
             };
 
-            $scope.Edit=function(){
-                if ($scope.dataSelected == undefined) {
-                    alert("Data Belum Dipilih!")
-                    return;
-                };
-                console.log($scope.dataSelected)
-                $scope.itemRincian.tglinput = moment($scope.dataSelected.tglinput).format('YYYY-MM-DD')
-                $scope.itemRincian.tahun = $scope.dataSelected.tahun
-                $scope.itemRincian.sumberPendapatan = {id:$scope.dataSelected.objectasalprodukfk,namaexternal:$scope.dataSelected.namaexternal}
-                $scope.itemRincian.uraianpendapatans = {id:$scope.dataSelected.objecturaianpendapatanfk,uraianpendapatan:$scope.dataSelected.uraianpendapatan}
-                $scope.itemRincian.uraianPendapatan = $scope.dataSelected.uraian
-                $scope.itemRincian.jumlahPendapatan = $scope.dataSelected.jumlahpendapatan
-                $scope.itemRincian.keterangan = $scope.dataSelected.keterangan
-                if($scope.dataSelected.isperubahan == true){
+            // $scope.Edit=function(){
+            //     if ($scope.dataSelected == undefined) {
+            //         alert("Data Belum Dipilih!")
+            //         return;
+            //     };
+            //     console.log($scope.dataSelected)
+            //     $scope.itemRincian.tglinput = moment($scope.dataSelected.tglinput).format('YYYY-MM-DD')
+            //     $scope.itemRincian.tahun = $scope.dataSelected.tahun
+            //     $scope.itemRincian.sumberPendapatan = {id:$scope.dataSelected.objectasalprodukfk,namaexternal:$scope.dataSelected.namaexternal}
+            //     $scope.itemRincian.uraianpendapatans = {id:$scope.dataSelected.objecturaianpendapatanfk,uraianpendapatan:$scope.dataSelected.uraianpendapatan}
+            //     $scope.itemRincian.uraianPendapatan = $scope.dataSelected.uraian
+            //     $scope.itemRincian.jumlahPendapatan = $scope.dataSelected.jumlahpendapatan
+            //     $scope.itemRincian.keterangan = $scope.dataSelected.keterangan
+            //     if($scope.dataSelected.isperubahan == true){
+            //         $scope.itemRincian.perubahan = true
+            //         $scope.itemRincian.nonPerubahan = false
+            //     }else{
+            //         $scope.itemRincian.perubahan = false
+            //         $scope.itemRincian.nonPerubahan = true
+            //     }
+            //     $scope.popupTambahRincianPendapatan.center().open()
+                
+            // }
+            function EditRincian(e){
+                e.preventDefault();
+                console.log(e.preventDefault())
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+                console.log(dataItem)
+
+                $scope.itemRincian.tglinput = moment(dataItem.tglinput).format('YYYY-MM-DD')
+                $scope.itemRincian.tahun = dataItem.tahun
+                $scope.itemRincian.sumberPendapatan = {id:dataItem.objectasalprodukfk,namaexternal:dataItem.namaexternal}
+                $scope.itemRincian.uraianpendapatans = {id:dataItem.objecturaianpendapatanfk,uraianpendapatan:dataItem.uraianpendapatan}
+                $scope.itemRincian.uraianPendapatan = dataItem.uraian
+                $scope.itemRincian.jumlahPendapatan = parseInt(dataItem.jumlahpendapatan)
+                $scope.itemRincian.keterangan = dataItem.keterangan
+                $scope.itemRincian.norec = dataItem.norec
+                if(dataItem.isperubahan == true){
                     $scope.itemRincian.perubahan = true
                     $scope.itemRincian.nonPerubahan = false
                 }else{
                     $scope.itemRincian.perubahan = false
                     $scope.itemRincian.nonPerubahan = true
                 }
+
+
                 $scope.popupTambahRincianPendapatan.center().open()
+                
             }
             function Hapus(e){
                 e.preventDefault();

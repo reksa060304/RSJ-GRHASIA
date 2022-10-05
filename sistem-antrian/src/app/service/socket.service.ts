@@ -24,7 +24,10 @@ export class SocketService {
 	private callBack : (data : string) => any = null
 
 	constructor(){
-		this.socket = io(Config.get().socketIO);
+		this.socket = io(Config.get().socketIO,
+		{
+			transports: ['websocket',  'polling'],
+		});
 		console.log('socket connect');
 	}
 

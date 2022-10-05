@@ -35,7 +35,7 @@ app.use(function (req, res, next) {
 }); 
 
 const cors = require('cors');
-const whitelist = ["https://apps.transmedic.co.id:5555"];
+const whitelist = ["*"];
 const corsOptions = {
     credentials: true, // This is important.
     origin: (origin, callback) => {
@@ -78,7 +78,7 @@ server.listen(app.get('port'), function () {
 var io = require('socket.io')(server, {
     credentials: true, // This is important.
     cors: {
-        origin: "https://apps.transmedic.co.id:5555",
+        origin: "*",
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     },
@@ -623,6 +623,39 @@ io.on('connection', function (socket) {
         console.log(" [*] load list no antrian ");
 
         io.emit('get-list-antrian', JSON.stringify(dataCaller));
+
+    });
+    socket.on('call-antrian-poli', function (data) {
+
+        var dataCaller = data;
+
+        console.log(" [*] ada panggilan poli dengan data : %s ...", dataCaller);
+
+        io.emit('tampilkan-antrian-poli', JSON.stringify(dataCaller));
+
+    });
+    socket.on('refresh-form-dokter-perawat', function () {
+        console.log(" [*] ada pasien yang daftar poli dengan data ");
+        io.emit('gas-refresh-form-dokter-perawat');
+    });
+
+    socket.on('call-perawat', function (data) {
+        var dataCaller = data;
+        console.log(" [*] ada panggilan ke perawat dengan data : %s ...", dataCaller);
+        io.emit('suara-perawat', JSON.stringify(dataCaller));
+    });
+    socket.on('get-server-socket', function (data) {
+        var dataSocket = data;
+        console.log(" [*] ada socket server euy : %s ...", dataSocket);
+        io.emit('set-server-socket', JSON.stringify(dataSocket));
+    });
+    socket.on('call-antrian-farmasi', function (data) {
+
+        var dataCaller = data;
+
+        console.log(" [*] ada panggilan farmasi dengan data : %s ...", dataCaller);
+
+        io.emit('tampilkan-antrian-farmasi', JSON.stringify(dataCaller));
 
     });
 });

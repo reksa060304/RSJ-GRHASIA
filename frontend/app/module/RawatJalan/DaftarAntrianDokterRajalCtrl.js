@@ -62,6 +62,7 @@ define(['initialize'], function (initialize) {
                 }
                 medifirstService.get("rawatjalan/get-data-combo-dokter", false).then(function (data) {
                     $scope.listRuangan = data.data.ruanganRajal;
+                    $scope.listPilihRuang = data.data.ruangdokter;
                 });
 
                 medifirstService.getPart("sysadmin/general/get-dokter-general", true, 10).then(function (e) {
@@ -1493,8 +1494,80 @@ define(['initialize'], function (initialize) {
             //             loadData()
             //         })
             // }
+            $scope.simpanPanggil = function () {
+                var cookie = document.cookie.split(';');
+                cookie = cookie[0].split('=');
+                var data = {
+                    "norec_apd": $scope.dataPasienSelected.norec_apd,
+                    "kelompokUser": cookie[1]
+                }
+                socket.emit('call-antrian-poli', {
+                    namapasien: $scope.dataPasienSelected.namapasien,
+                    namaruangan: $scope.item.pilihRuangan.namaruangan,
+                    noantri: $scope.dataPasienSelected.noantrian,
+                    nocm: $scope.dataPasienSelected.nocm,
+                });
+                toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
+                $scope.popUpPanggil.close()
+                // medifirstService.postNonMessage('rawatjalan/save-panggil', data)
+                //     .then(function (res) {
+
+                //         var propertyName = 'stts'
+
+                //         var grid = $("#grid").data("kendoGrid");
+                //         var selectedItem = grid.dataItem(grid.select());
+                //         var array = grid.dataSource._data
+                //         var rowIndex = 0
+                //         for (let i = 0; i < array.length; i++) {
+                //             if (array[i].norec_apd == selectedItem.norec_apd) {
+                //                 rowIndex = i
+                //                 break
+                //             }
+                //         }
+                //         var dataItem = grid.dataSource.at(rowIndex);
+                //         var rowCells = grid.element.find("tr[data-uid=" + dataItem.uid + "] td");
+
+                //         var headerCells = grid.element.find("th");
+                //         var cellIndex = headerCells.index(grid.element.find("th[data-field = '" + propertyName + "']"));
+
+                //         var cell = $(rowCells[cellIndex]);
+
+                //         //set CSS
+                //         cell.css("background-color", "#1E90FF");
+                //         cell.css("color", "#ffffff");
+
+                //         $scope.dataPasienSelected.stts = 'Di Panggil Dokter'
+
+                //         // update dokter
+                //         if (medifirstService.getKelompokUser() == 'dokter') {
+                //             var ipAddress = '127.0.0.1'
+                //             // if($scope.dataPasienSelected.ipaddress != undefined &&$scope.dataPasienSelected.ipaddress!=null )
+                //             //     ipAddress = $scope.dataPasienSelected.ipaddress 
+                //             var client = new HttpClient();
+                //             client.get('http://' + ipAddress + ':2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.dataPasienSelected.noantrian +
+                //                 '&namapasien=' + $scope.dataPasienSelected.nocm + ', ' + $scope.dataPasienSelected.namapasien +
+                //                 '&ruangan=' + $scope.dataPasienSelected.namaruangan + '&view=true',
+                //                 function (response) {
+                //                     // do something with response
+                //                 });
+
+                //             toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
+                //             var json = {
+                //                 norec_apd: $scope.dataPasienSelected.norec_apd,
+                //                 iddokter: medifirstService.getPegawaiLogin().id
+                //             }
+                //             medifirstService.postNonMessage('rawatjalan/save-update-dokter-antrian', json).then(function (e) {
+                //                 $scope.dataPasienSelected.namadokter = medifirstService.getPegawaiLogin().namaLengkap
+                //             });
+                //         } else {
+                //             $scope.winDialogss.center().open()
+                //         }
+
+                //     })
+
+            }
             $scope.panggil = function () {
-                if ($scope.dataPasienSelected == undefined) {
+                if ($scope.dataPasienSelected.noregistrasi == undefined) {
                     toastr.error('Pilih Data dulu')
                     return
                 }
@@ -1502,6 +1575,12 @@ define(['initialize'], function (initialize) {
                     toastr.info('Pasien belum Di Panggil Perawat')
                     return
                 }
+                console.log($scope.dataPasienSelected);
+                if ($scope.dataPasienSelected.noregistrasi == undefined) {
+                    toastr.error('Pilih Data dulu')
+                    return
+                }
+                $scope.popUpPanggil.center().open()
                 // var cookie = document.cookie.split(';');
                 // cookie = cookie[0].split('=');
                 // var data = {
@@ -1512,66 +1591,7 @@ define(['initialize'], function (initialize) {
                 //     .then(function (res) {
                 //         loadData()
                 //     })
-                var cookie = document.cookie.split(';');
-                cookie = cookie[0].split('=');
-                var data ={
-                    "norec_apd" : $scope.dataPasienSelected.norec_apd,
-                    "kelompokUser" : cookie[1]
-                }
-                medifirstService.postNonMessage('rawatjalan/save-panggil',data)
-                .then(function (res) {
-
-                var propertyName = 'stts'
-
-                var grid = $("#grid").data("kendoGrid");
-                var selectedItem = grid.dataItem(grid.select());
-                var array = grid.dataSource._data
-                var rowIndex = 0
-                for (let i = 0; i <  array.length; i++) {
-                    if(array[i].norec_apd == selectedItem.norec_apd ){
-                         rowIndex = i
-                         break
-                    }
-                }
-                var dataItem = grid.dataSource.at(rowIndex);
-                var rowCells = grid.element.find("tr[data-uid=" + dataItem.uid + "] td");
-
-                var headerCells = grid.element.find("th");
-                var cellIndex = headerCells.index(grid.element.find("th[data-field = '" + propertyName + "']"));
-
-                var cell = $(rowCells[cellIndex]);
-
-                //set CSS
-                cell.css("background-color", "#1E90FF");
-                cell.css("color", "#ffffff");
-
-                $scope.dataPasienSelected.stts = 'Di Panggil Dokter'
-
-                // update dokter
-                if (medifirstService.getKelompokUser() == 'dokter') {
-                    var ipAddress = '127.0.0.1'
-                    // if($scope.dataPasienSelected.ipaddress != undefined &&$scope.dataPasienSelected.ipaddress!=null )
-                    //     ipAddress = $scope.dataPasienSelected.ipaddress 
-                    var client = new HttpClient();
-                    client.get('http://' + ipAddress + ':2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.dataPasienSelected.noantrian
-                        + '&namapasien=' + $scope.dataPasienSelected.nocm + ', ' + $scope.dataPasienSelected.namapasien +
-                        '&ruangan=' + $scope.dataPasienSelected.namaruangan + '&view=true', function (response) {
-                            // do something with response
-                        });
-
-                    toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
-                    var json = {
-                        norec_apd: $scope.dataPasienSelected.norec_apd,
-                        iddokter: medifirstService.getPegawaiLogin().id
-                    }
-                    medifirstService.postNonMessage('rawatjalan/save-update-dokter-antrian', json).then(function (e) {
-                        $scope.dataPasienSelected.namadokter = medifirstService.getPegawaiLogin().namaLengkap
-                    });
-                } else {
-                    $scope.winDialogss.center().open()
-                }
-
-                })
+                
             }
             $scope.simpanDokter = function () {
 

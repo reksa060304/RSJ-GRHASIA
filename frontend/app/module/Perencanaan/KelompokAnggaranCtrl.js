@@ -11,7 +11,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.dataSourceSPP = [];
             $scope.jeniskode = true;
             $scope.inputtahap = true
+            $scope.norecpermenkelima = ''
             $scope.norecpanjar = ''
+            $scope.norecspd = ''
+            $scope.norecspm = ''
+            $scope.norecspp = ''
+            $scope.norecpanjar = ''
+            $scope.norecpengembalian = ''
+            $scope.pengembalianawal = 0
             $scope.konsolidasi = false;
             $scope.diskonsolidasi5 = true
             var DataKegiatan= [];
@@ -40,6 +47,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.semuaanggaran = false
             $scope.disidpegawai = false
             $scope.dispptkspj = false
+            $scope.hidemap=true
 
             $scope.rcn = {};
             $scope.rcn.mataAnggaranlv1 = ""
@@ -50,6 +58,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.rcn.totallv3 = ""
             $scope.norecverif = ""
             $scope.idtahap;
+            $scope.hidetabspm = false
             $scope.item.tahun = moment($scope.now).format('YYYY')
             $scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD HH:mm');
             $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD HH:mm');
@@ -80,6 +89,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 4, div: "Sub Sub Kegiatan" },
             ];
 
+            $scope.listDivKonsolidasi = [
+                { id: 1, div: "Div: 1" },
+                { id: 2, div: "Div: 2" },
+                { id: 3, div: "Div: 3" },
+                { id: 4, div: "Div: 4" },
+            ];
+
             $scope.listTahapKegiatan = [
                 { id: 100, tahap: "Semua Kegiatan" },
                 { id: 1, tahap: "Indikatif Murni ~ 4" },
@@ -104,6 +120,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.dataSourceCariSPM = e.data.carispm
                 $scope.dataSourceSPD = e.data.spd
                 $scope.listKonsolidasi5 = e.data.konsolidasi5
+                $scope.listKonsolidasi4 = e.data.konsolidasi4
+                $scope.dataSourcePermenKelima = e.data.konsolidasikelima
             });
 
             
@@ -173,6 +191,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     DataMataAnggaran = e.data.mataanggaran
                     DataMataAnggaranCombo = e.data.mataanggarancombo
                     $scope.dataSourceMataAnggaran = e.data.mataanggaran
+                    $scope.dataSourceMataAnggaranPermen = new kendo.data.DataSource({
+                        data: e.data.mataanggaranpermen,
+                        pageSize: 15,
+                        total: e.data.mataanggaranpermen.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {}
+                            }
+                        },
+                    });
                     $scope.item.namapemda = e.data.setting[0].namapemda
                     $scope.item.kepaladaerah = e.data.setting[0].kepaladaerah
                     $scope.item.namakepaladaerah = e.data.setting[0].namakepaladaerah
@@ -292,6 +321,60 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             };
             
             // $scope.popupEntry.center().open();
+            $scope.MappingRek = function(){
+                medifirstService.get("perencanaan/get-data-rba-belum").then(function (e) {
+                    $scope.dataSourceRBABelum = e.data.data
+                })
+                $scope.popupMappingPermen.center().open()
+            }
+            $scope.$watch('item.mappingrek', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    medifirstService.get("perencanaan/get-data-rba-belum?permen="+$scope.item.mappingrek.id).then(function (e) {
+                        $scope.dataSourceRBASudah = e.data.detail
+                    })
+                }
+            });
+            $scope.$watch('item.digit4', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    let kodeArr = $scope.item.digit4.text.split(" - ");
+                    console.log(kodeArr)
+                    $scope.item.kodedigit4 = kodeArr[0]+"."
+                }
+            });
+            $scope.$watch('item.divkonsolidasi', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    var idpegawai = ''
+                    $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                    idpegawai = $scope.pegawaiLogin.id
+                    medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')+"&idpegawai=" + idpegawai + "&div=" + $scope.item.divkonsolidasi.id).then(function (e) {
+                        console.log(e.data.mataanggaran)
+                        $scope.dataSourceMataAnggaran = e.data.mataanggaran
+                    });
+                }
+            });
+
+            
+            function copy(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                var objSave =
+                    {
+                        idanggaran: dataItem.id,
+                        idpermen: $scope.item.mappingrek.id,
+                    }
+
+                    medifirstService.post('perencanaan/copy-permen', objSave).then(function (e) {
+                        medifirstService.get("perencanaan/get-data-rba-belum?permen="+$scope.item.mappingrek.id).then(function (e) {
+                            $scope.dataSourceRBABelum = e.data.data
+                            $scope.dataSourceRBASudah = e.data.detail
+                        })
+                        
+                    }, function (error) {
+                
+                    })
+
+            }
             $scope.addKegiatan = function(){
                 $scope.popupKegiatan.center().open();
             }
@@ -562,12 +645,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 } else{
                     $scope.jeniskode = true;
                 }
+
+                console.log(count)
                 
-                if(count == 4){
+
+                
+                if (dataItem.kodemataanggaran.match(/I.*/) && count == 4){
+                    $scope.konsolidasi = false;
+                } else if (dataItem.kodemataanggaran.match(/III.*/) && count == 3){
                     $scope.konsolidasi = false;
                 } else{
                     $scope.konsolidasi = true;
                 }
+
+                console.log($scope.konsolidasi)
 
                 $scope.item.id = dataItem.id
                 $scope.item.kodeAddMT = dataItem.kodemataanggaran
@@ -792,6 +883,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                  click: inputSPM,
                                  imageClass: "clinic fa"
                               },
+                              {
+                                text: "Detail",
+                                click: DetailSPP,
+                                imageClass: "clinic fa"
+                             },
                           ],
                              title: "",
                              width: "60px",
@@ -846,6 +942,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "title": "Nilai SPP",
                     "width": "80px"
                 },
+                {
+                    "command": [
+                          {
+                            text: "Delete",
+                            click: DeleteSPP,
+                            imageClass: "clinic fa",
+                         },
+                      ],
+                         title: "",
+                         
+                         width: "60px",
+                         
+                },
             ]}
 
             $scope.columnSPM = {
@@ -894,6 +1003,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "field": "noreg",
                     "title": "No Reg",
                     "width": "80px"
+                },
+                {
+                    "command": [
+                          {
+                            text: "Delete",
+                            click: DeleteSPM,
+                            imageClass: "clinic fa",
+                         },
+                      ],
+                         title: "",
+                         
+                         width: "60px",
+                         
                 },
             ]}
 
@@ -945,9 +1067,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "width": "80px"
                 },
                 {
-                    "field": "nospp",
-                    "title": "No SPP",
-                    "width": "80px"
+                    "command": [
+                        {
+                            text: "Detail",
+                            click: DetailSPM,
+                            imageClass: "clinic fa",
+                         },
+                        {
+                            text: "Delete",
+                            click: DeleteSPM,
+                            imageClass: "clinic fa",
+                        },
+                      ],
+                         title: "",
+                         
+                         width: "60px",
+                         
                 },
             ]}
 
@@ -982,6 +1117,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                              imageClass: "clinic fa",
                              visible: function(dataItem) { return dataItem.nospp }
                           },
+                          {
+                            text: "Delete",
+                            click: DeleteSPD,
+                            imageClass: "clinic fa",
+                         },
                       ],
                          title: "",
                          
@@ -1204,6 +1344,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "field": "sumberpanjar",
                     "title": "Sumber Panjar",
                 },
+                {
+                    "command": [
+                          {
+                            text: "Delete",
+                            click: DeletePanjar,
+                            imageClass: "clinic fa",
+                         },
+                      ],
+                         title: "",
+                         
+                         width: "60px",
+                         
+                },
             ]};
             $scope.columnPengembalian = {
                 columns:[
@@ -1230,7 +1383,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "jumlahpengembalian",
                     "title": "Jml Pengembalian",
-                }
+                },
+                {
+                    "command": [
+                          {
+                            text: "Delete",
+                            click: DeletePengembalian,
+                            imageClass: "clinic fa",
+                         },
+                      ],
+                         title: "",
+                         
+                         width: "60px",
+                         
+                },
             ]};
             $scope.columnPPTK = {
                 columns:[
@@ -1531,24 +1697,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
             });
 
-            $scope.$watch('item.konsolidasi3', function (newValue, oldValue) {
-                if (newValue != oldValue) {
-                    medifirstService.get("perencanaan/get-data-combo?konsolidasi3="+$scope.item.konsolidasi3.id).then(function (e) {
-                        $scope.listKonsolidasi4 = e.data.konsolidasi4
-                    });
-                    
-                }
-            });
+            
 
-            $scope.$watch('item.konsolidasi4', function (newValue, oldValue) {
-                if (newValue != oldValue) {
-                    medifirstService.get("perencanaan/get-data-combo?konsolidasi4="+$scope.item.konsolidasi4.id).then(function (e) {
-                        $scope.diskonsolidasi5 = false
-                        $scope.listKonsolidasi5 = e.data.konsolidasi5
-                    });
-                    
-                }
-            });
+            
 
             $scope.$watch('item.subsubkegiatanangkas', function (newValue, oldValue) {
                 if (newValue != oldValue) {
@@ -1644,7 +1795,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.jeniskode = true;
                     }
 
-                    if(count == 4){
+                    if (yangdicount.match(/I.*/) && count == 4){
+                        $scope.konsolidasi = false;
+                    } else if (yangdicount.match(/III.*/) && count == 3){
                         $scope.konsolidasi = false;
                     } else{
                         $scope.konsolidasi = true;
@@ -2064,6 +2217,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.SimpanSPP = function(){
                 var objSave =
                     {
+                        norec: $scope.norecspp,
                         nospp: $scope.item.nospp,
                         jenisbukti: $scope.item.itemJenisBukti.jenisbukti,
                         dasarpengeluaran: $scope.item.dasarPengeluaran,
@@ -2077,8 +2231,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
 
                     medifirstService.post('perencanaan/save-spp', objSave).then(function (e) {
+                       
+                        medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                            $scope.dataSourceSPP = e.data.spp
+                        });
                         $scope.popupSPP.center().close()
-                        loadDataGrid();
                     }, function (error) {
                 
                     })
@@ -2088,6 +2245,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.SimpanSPM = function(){
                 var objSave =
                     {
+                        norec: $scope.norecspm,
                         nospm: $scope.item.nospm,
                         jenisbukti: $scope.item.itemJenisBuktiSPM.jenisbukti,
                         untukpengeluaran: $scope.item.untuk,
@@ -2099,9 +2257,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         noreg: $scope.item.noreg,
                     }
 
+                    console.log(objSave)
+
                     medifirstService.post('perencanaan/save-spm', objSave).then(function (e) {
-                        $scope.popupSPM.center().close()
                         loadDataSPM();
+                        medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                            $scope.dataSourceCariSPM = e.data.carispm
+                        });
                     }, function (error) {
                 
                     })
@@ -2111,6 +2273,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.SimpanPengembalianPanjar = function(){
                 var objSave =
                     {
+                        norec: $scope.norecpengembalian,
                         tglpengembalian: $scope.item.tglPengembalian,
                         keterangan: $scope.item.keteranganpengembalian,
                         jumlahpengembalian: $scope.item.jumlahpengembalianpanjar,
@@ -2120,23 +2283,52 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         idmataanggaran: $scope.rekeningpengembalian,
                     }
 
-                    medifirstService.get("perencanaan/get-sisa-panjar?panjar=" + $scope.item.norecpengembalian ).then(function (e) {
-                        //console.log($scope.item.jumlahpengembalianpanjar)
-                        if((parseInt(e.data.jumlah[0].jumlah) - parseInt(e.data.totalbelanja[0].totalbelanja) - parseInt(e.data.pengembalian[0].jumlahpengembalian)) >= parseInt($scope.item.jumlahpengembalianpanjar)){
-                            medifirstService.post('perencanaan/save-pengembalian', objSave).then(function (e) {
-                                loadDataGrid();
-                                $scope.popupPengembalian.center().close()
-                            }, function (error) {
-                        
-                            })
-                        } else{
-                            toastr.error('Total Pengembalian melebihi sisa panjar', 'Informasi');
-                            return
-                        }
-                    })
 
-                    
-                
+                    if($scope.norecpengembalian == ''){
+                        medifirstService.get("perencanaan/get-sisa-panjar?panjar=" + $scope.item.norecpengembalian ).then(function (e) {
+                            console.log(e.data.jumlah[0].jumlah)
+                            console.log(e.data.totalbelanja[0].totalbelanja)
+                            console.log(e.data.pengembalian[0].jumlahpengembalian)
+                            if((parseInt(e.data.jumlah[0].jumlah) - parseInt(e.data.totalbelanja[0].totalbelanja) - parseInt(e.data.pengembalian[0].jumlahpengembalian)) >= parseInt($scope.item.jumlahpengembalianpanjar)){
+                                medifirstService.post('perencanaan/save-pengembalian', objSave).then(function (e) {
+                                    medifirstService.get("perencanaan/get-pengembalian-panjar?norec="+$scope.item.norecpengembalian).then(function (e) {
+                                        $scope.dataSourcePengembalian = e.data.data
+                                    })
+                                    medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                                        
+                                        $scope.dataSourcePanjarPengembalian = e.data.panjar
+                                    });
+                                }, function (error) {
+                            
+                                })
+                            } else{
+                                toastr.error('Total Pengembalian melebihi sisa panjar', 'Informasi');
+                                return
+                            }
+                        })
+                    } else{
+                        medifirstService.get("perencanaan/get-sisa-panjar?panjar=" + $scope.item.norecpengembalian ).then(function (e) {
+                            console.log(e.data.jumlah[0].jumlah)
+                            console.log(e.data.totalbelanja[0].totalbelanja)
+                            console.log(e.data.pengembalian[0].jumlahpengembalian)
+                            if((parseInt(e.data.jumlah[0].jumlah) - parseInt(e.data.totalbelanja[0].totalbelanja) - parseInt(e.data.pengembalian[0].jumlahpengembalian) + parseInt($scope.pengembalianawal)) >= parseInt($scope.item.jumlahpengembalianpanjar)){
+                                medifirstService.post('perencanaan/save-pengembalian', objSave).then(function (e) {
+                                    medifirstService.get("perencanaan/get-pengembalian-panjar?norec="+$scope.item.norecpengembalian).then(function (e) {
+                                        $scope.dataSourcePengembalian = e.data.data
+                                    })
+                                    medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                                        
+                                        $scope.dataSourcePanjarPengembalian = e.data.panjar
+                                    });
+                                }, function (error) {
+                            
+                                })
+                            } else{
+                                toastr.error('Total Pengembalian melebihi sisa panjar', 'Informasi');
+                                return
+                            }
+                        })
+                    }
             }
 
             $scope.SimpanSPD = function(){
@@ -2145,6 +2337,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         nospd: $scope.item.nospd,
                         tglspd: $scope.item.tglSPD,
                         nilaispd: $scope.item.nilaispd,
+                        norec: $scope.norecspd,
                     }
 
                     medifirstService.post('perencanaan/save-spd', objSave).then(function (e) {
@@ -2182,6 +2375,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.SimpanPanjar = function(){
                 var objSave =
                     {
+                        norec: $scope.norecpanjar,
                         tglPanjar: $scope.item.tglPanjar,
                         sumberPanjar: $scope.item.sumberPanjar,
                         uraianPanjar: $scope.item.uraianPanjar,
@@ -2191,7 +2385,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         mataanggaran: $scope.item.darirekeningpanjar.kodemataanggaran,
                     }
                     medifirstService.post('perencanaan/save-panjar', objSave).then(function (e) {
-                        loadDataGrid()
+                        medifirstService.get("perencanaan/get-daftar-panjar"
+                        , true).then(function (dat) {
+                            $scope.isRouteLoading = false;
+                            var datas = dat.data.data
+                            //console.log(datas)
+                            for(var i = 0; i < dat.data.data.length; i++){
+                                dat.data.data[i].no = i+1
+                            }
+                            $scope.dataSourcePanjar = new kendo.data.DataSource({
+                                data: datas,
+                                pageSize: 150,
+                                total: datas.length,
+                                serverPaging: false, 
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                },
+                            });
+                            
+                        });
                     }, function (error) {
             
                     })
@@ -2486,6 +2701,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.popupTambahTahap.center().open()
             }
 
+            $scope.DataPermenDigitKelima = function(){
+                $scope.popupPermenKelima.center().open()
+            }
+
             $scope.PemindahanKeterangan = function(){
                 
                 $scope.popupPerubahan.center().open()
@@ -2605,6 +2824,35 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 })
 
+            }
+
+            $scope.SavePermenKelima = function () {
+                var id = 0
+                if($scope.item.digit4 != undefined){
+                    id = $scope.item.digit4.id
+                }
+
+                var objSave = {
+                    "norec": $scope.norecpermenkelima,
+                    "kode": $scope.item.kodedigit5,
+                    "nama": $scope.item.namadigit5,
+                    "keempatfk": id,
+                }
+                // return
+                medifirstService.post('perencanaan/save-permen-kelima', objSave).then(function (e) {
+                    medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                        $scope.dataSourcePermenKelima = e.data.konsolidasikelima
+                    });
+                })
+
+            }
+
+            $scope.BaruPermenKelima = function () {
+
+                $scope.item.digit4 = undefined
+                $scope.item.kodedigit5= ''
+                $scope.item.namadigit5= ''
+                $scope.item.kodedigit4= ''
             }
 
 
@@ -3038,6 +3286,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "title": "Mata Anggaran",
                         "width": "200px"
                     },
+                    {
+                        "field": "mataanggaranpermen",
+                        "title": "Mata Anggaran Permen",
+                        "width": "200px"
+                    },
                     // {
                     //     "field": "kodeexternal",
                     //     "title": "Kode External",
@@ -3048,6 +3301,131 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     //     "title": "Nama External",
                     //     "width": "200px"
                     // }
+                ]
+            };
+
+            $scope.columnRBABelum = {
+                selectable: 'row',
+                scrollable: true,
+
+                pageable: true,
+                groupable: true, 
+                columns:[
+                    {
+                        "command": [
+                              {
+                                 text: "Copy",
+                                 click: copy,
+                                 imageClass: "clinic fa"
+                              },
+                          ],
+                             title: "",
+                             width: "30px",
+                      },
+                    {
+                        "field": "id",
+                        "title": "Id",
+                        "width": "50px"
+                    },
+                    {
+                        "field": "kodemataanggaran",
+                        "title": "Kode",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "namamataanggaran",
+                        "title": "Mata Anggaran",
+                        "width": "200px"
+                    },
+                ]
+            };
+
+            $scope.columnPermenKelima = {
+                selectable: 'row',
+                scrollable: true,
+
+                pageable: true,
+                groupable: true, 
+                columns:[
+                    {
+                        "field": "kode",
+                        "title": "Kode Rek",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "mataanggaranpermen",
+                        "title": "Nama Rekening",
+                        "width": "200px"
+                    },
+                    {
+                        "field": "kodeup",
+                        "title": "Kode Up",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "namaup",
+                        "title": "Nama Up",
+                        "width": "200px"
+                    },
+                    {
+                        "command": [{
+                            text: "Delete",
+                            click: DeletePermenKelima,
+                            
+                        }, ],
+                        title: "",
+                        width: "40px",
+                    },
+                ]
+            };
+
+            $scope.columnRBASudah = {
+                selectable: 'row',
+                scrollable: true,
+
+                pageable: true,
+                groupable: true, 
+                columns:[
+                    {
+                        "field": "id",
+                        "title": "Id",
+                        "width": "50px"
+                    },
+                    {
+                        "field": "kodemataanggaran",
+                        "title": "Kode",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "namamataanggaran",
+                        "title": "Mata Anggaran",
+                        "width": "200px"
+                    },
+                ]
+            };
+
+            $scope.columnMataAnggaranPermen = {
+                selectable: 'row',
+                scrollable: true,
+
+                pageable: true,
+                groupable: true, 
+                columns:[
+                    {
+                        "field": "id",
+                        "title": "Id",
+                        "width": "50px"
+                    },
+                    {
+                        "field": "kode",
+                        "title": "Kode",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "mataanggaranpermen",
+                        "title": "Mata Anggaran Permen",
+                        "width": "200px"
+                    },
                 ]
             };
             
@@ -4273,6 +4651,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.TambahPanjar = function(){
                 $scope.item.sisaAnggaranPanjar = $scope.item.sisaAnggaranSPJ
+
+                if($scope.item.subKegiatanSPJ.id == undefined){
+                    toastr.error('Lengkapi data sub kegiatan terlebih dahulu', 'Informasi');
+                    return
+                }
+
+                if($scope.item.subSubKegiatanSPJ.id == undefined){
+                    toastr.error('Lengkapi data sub sub kegiatan terlebih dahulu', 'Informasi');
+                    return
+                }
+
+                if($scope.item.mataAnggaranSPJ.id == undefined){
+                    toastr.error('Lengkapi data rekening terlebih dahulu', 'Informasi');
+                    return
+                }
+
                 medifirstService.get("perencanaan/get-daftar-panjar"
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
@@ -4367,6 +4761,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.CariPanjar = function(){
+                if($scope.item.subKegiatanSPJ.id == undefined){
+                    toastr.error('Lengkapi data sub kegiatan terlebih dahulu', 'Informasi');
+                    return
+                }
+
+                if($scope.item.subSubKegiatanSPJ.id == undefined){
+                    toastr.error('Lengkapi data sub sub kegiatan terlebih dahulu', 'Informasi');
+                    return
+                }
+
+                if($scope.item.mataAnggaranSPJ.id == undefined){
+                    toastr.error('Lengkapi data rekening terlebih dahulu', 'Informasi');
+                    return
+                }
+
                 medifirstService.get("perencanaan/get-daftar-panjar-aktif?kodemataanggaran="+$scope.item.mataAnggaranSPJ.kodemataanggaran
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
@@ -4993,6 +5402,210 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.popupCariSPD.center().close()
             }
 
+            function DeleteSPD(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                //console.log(dataItem)
+
+                var objSave =
+                    {
+                        norec: dataItem.norec,
+                    }
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-spd', objSave).then(function (e) {
+                        medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                            $scope.dataSourceSPD = e.data.spd
+                        });
+                    }, function (error) {
+                
+                    })
+                })
+            }
+
+            function DeleteSPM(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                //console.log(dataItem)
+
+                var objSave =
+                    {
+                        norec: dataItem.norec,
+                    }
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-spm', objSave).then(function (e) {
+                        loadDataSPM();
+                        medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                            $scope.dataSourceCariSPM = e.data.carispm
+                        });
+                    }, function (error) {
+                
+                    })
+                })
+            }
+
+            function DeleteSPP(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                //console.log(dataItem)
+
+                var objSave =
+                    {
+                        norec: dataItem.norec,
+                    }
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-spp', objSave).then(function (e) {
+                        medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                            $scope.dataSourceSPP = e.data.spp
+                        });
+                    }, function (error) {
+                
+                    })
+                })
+            }
+
+            function DeletePermenKelima(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                //console.log(dataItem)
+
+                var objSave =
+                    {
+                        norec: dataItem.id,
+                    }
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-permen-kelima', objSave).then(function (e) {
+                        medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                            $scope.dataSourcePermenKelima = e.data.konsolidasikelima
+                        });
+                    }, function (error) {
+                
+                    })
+                })
+            }
+
+            function DeletePanjar(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                //console.log(dataItem)
+
+                var objSave =
+                    {
+                        norec: dataItem.norec,
+                    }
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-panjar', objSave).then(function (e) {
+                        medifirstService.get("perencanaan/get-daftar-panjar"
+                        , true).then(function (dat) {
+                            $scope.isRouteLoading = false;
+                            var datas = dat.data.data
+                            //console.log(datas)
+                            for(var i = 0; i < dat.data.data.length; i++){
+                                dat.data.data[i].no = i+1
+                            }
+                            $scope.dataSourcePanjar = new kendo.data.DataSource({
+                                data: datas,
+                                pageSize: 150,
+                                total: datas.length,
+                                serverPaging: false, 
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                },
+                            });
+                            
+                        });
+                    }, function (error) {
+                
+                    })
+                })
+            }
+
+            function DeletePengembalian(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                //console.log(dataItem)
+
+                var objSave =
+                    {
+                        norec: dataItem.norec,
+                    }
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin ingin menghapus data ?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('OK')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('perencanaan/delete-pengembalian', objSave).then(function (e) {
+                        medifirstService.get("perencanaan/get-pengembalian-panjar?norec="+$scope.item.norecpengembalian ).then(function (e) {
+                            $scope.dataSourcePengembalian = e.data.data
+                        })
+                        medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                                        
+                            $scope.dataSourcePanjarPengembalian = e.data.panjar
+                        });
+                    }, function (error) {
+                
+                    })
+                })
+            }
+
             function deleteDetailSPJ(e) {
                 e.preventDefault();
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
@@ -5103,6 +5716,176 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.namaHead = dataHeadSelected.kelompokhead
                     $scope.item.kodeExternalHead = dataHeadSelected.kodeexternal
                     $scope.item.namaExternalHead = dataHeadSelected.namaexternal
+                }
+            }
+
+            $scope.klikSPD = function (dataSPDSelected) {
+                if (dataSPDSelected != undefined) {
+                    $scope.norecspd = dataSPDSelected.norec
+                    $scope.item.nospd = dataSPDSelected.nospd
+                    $scope.item.nilaispd = dataSPDSelected.nilaispd
+                    $scope.item.tglSPD = dataSPDSelected.tglspd
+                }
+            }
+
+            $scope.klikPermenKelima = function (dataPermenKelimaSelected) {
+                if (dataPermenKelimaSelected != undefined) {
+                    console.log(dataPermenKelimaSelected)
+                    $scope.norecpermenkelima = dataPermenKelimaSelected.id
+                    $scope.item.kodedigit4 = dataPermenKelimaSelected.kodeup+'.'
+                    $scope.item.kodedigit5 = dataPermenKelimaSelected.kode
+                    $scope.item.namadigit5 = dataPermenKelimaSelected.mataanggaranpermen
+                }
+            }
+
+            $scope.klikPanjar = function (dataPanjarSelected) {
+                if (dataPanjarSelected != undefined) {
+                    console.log(dataPanjarSelected)
+                    $scope.norecpanjar = dataPanjarSelected.norec
+                    $scope.item.tglPanjar = dataPanjarSelected.tglpanjar
+                    $scope.item.sumberPanjar = dataPanjarSelected.sumberpanjar
+                    $scope.item.uraianPanjar = dataPanjarSelected.uraian
+                    $scope.item.jumlahpanjar = dataPanjarSelected.jumlah
+                    console.log($scope.norecpanjar)
+                }
+            }
+
+            $scope.klikPengembalian = function (dataPengembalianSelected) {
+                if (dataPengembalianSelected != undefined) {
+                    console.log(dataPengembalianSelected)
+                    $scope.norecpengembalian = dataPengembalianSelected.norec
+                    $scope.item.tglPengembalian = dataPengembalianSelected.tglpengembalian
+                    $scope.item.jumlahpengembalianpanjar = dataPengembalianSelected.jumlahpengembalian
+                    $scope.pengembalianawal = dataPengembalianSelected.jumlahpengembalian
+                    $scope.item.keteranganpengembalian = dataPengembalianSelected.keterangan
+                }
+            }
+
+            $scope.klikSPM = function (dataSPMSelected) {
+                if (dataSPMSelected != undefined) {
+                    console.log(dataSPMSelected)
+                    $scope.norecspm = dataSPMSelected.norec
+                    $scope.item.nospm = dataSPMSelected.nospm
+                    if(dataSPMSelected.jenisbukti != null){
+                        $scope.item.itemJenisBuktiSPM = { id: 1, jenisbukti: "UP" }
+                    } else{
+                        $scope.item.itemJenisBuktiSPM = {}
+                    }
+                    $scope.item.untuk = dataSPMSelected.untukpengeluaran
+                    $scope.item.radioStatusSPM = dataSPMSelected.status
+                    $scope.item.noreg = dataSPMSelected.noreg
+                    $scope.item.tglSPM = dataSPMSelected.tglspm
+                    $scope.item.nosppspm = dataSPMSelected.nospp
+                    $scope.item.tglsppspm = dataSPMSelected.tglspp
+                    $scope.item.tglSahSPM = dataSPMSelected.tglsah
+                    $scope.item.nilaispm = dataSPMSelected.nilaispm
+                }
+            }
+
+            function DetailSPM(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem != undefined) {
+                    console.log(dataItem)
+                    $scope.norecspm = dataItem.norec
+                    $scope.item.nospm = dataItem.nospm
+                    if(dataItem.jenisbukti != null){
+                        $scope.item.itemJenisBuktiSPM = { id: 1, jenisbukti: "UP" }
+                    } else{
+                        $scope.item.itemJenisBuktiSPM = {}
+                    }
+                    $scope.item.untuk = dataItem.untukpengeluaran
+                    $scope.item.radioStatusSPM = dataItem.status
+                    $scope.item.noreg = dataItem.noreg
+                    $scope.item.tglSPM = dataItem.tglspm
+                    $scope.item.nosppspm = dataItem.nospp
+                    $scope.item.tglsppspm = dataItem.tglspp
+                    $scope.item.tglSahSPM = dataItem.tglsah
+                    $scope.item.nilaispm = dataItem.nilaispm
+
+                    $scope.hidetabspm = true
+
+                    $scope.popupSPM.center().open()
+                }
+            }
+
+            function DetailSPP(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem != undefined) {
+                    console.log(dataItem)
+
+                    $scope.listJenisBukti = [
+                        { id: 1, jenisbukti: "UP" },
+                    ];
+                    $scope.listBulan = [
+                        { id: 1, bulan: "Januari" },
+                        { id: 2, bulan: "Februari" },
+                        { id: 3, bulan: "Maret" },
+                        { id: 4, bulan: "April" },
+                        { id: 5, bulan: "Mei" },
+                        { id: 6, bulan: "Juni" },
+                        { id: 7, bulan: "Juli" },
+                        { id: 8, bulan: "Agustus" },
+                        { id: 9, bulan: "September" },
+                        { id: 10, bulan: "Oktober" },
+                        { id: 11, bulan: "November" },
+                        { id: 12, bulan: "Desember" },
+                    ];
+
+
+                    $scope.norecspp = dataItem.norec
+                    $scope.item.nospp = dataItem.nospp
+                    if(dataItem.jenisbukti != null){
+                        $scope.item.itemJenisBukti = { id: 1, jenisbukti: "UP" }
+                    } else{
+                        $scope.item.itemJenisBukti = {}
+                    }
+                    $scope.item.dasarPengeluaran = dataItem.dasarpengeluaran
+                    $scope.item.radioStatusSPP = dataItem.status
+                    $scope.item.nospd = dataItem.nospd
+                    $scope.item.tglSPP = dataItem.tglspp
+
+                    if(dataItem.bulan == "Januari"){
+                        $scope.item.itemBulan = { id: 1, bulan: "Januari" }    
+                    } else if(dataItem.bulan == "Februari"){
+                        $scope.item.itemBulan = { id: 2, bulan: "Februari" }    
+                    } else if(dataItem.bulan == "Maret"){
+                        $scope.item.itemBulan = { id: 3, bulan: "Maret" }   
+                    } else if(dataItem.bulan == "April"){
+                        $scope.item.itemBulan = { id: 4, bulan: "April" }   
+                    } else if(dataItem.bulan == "Mei"){
+                        $scope.item.itemBulan = { id: 5, bulan: "Mei" } 
+                    } else if(dataItem.bulan == "Juni"){
+                        $scope.item.itemBulan = { id: 6, bulan: "Juni" }
+                    } else if(dataItem.bulan == "Juli"){
+                        $scope.item.itemBulan = { id: 7, bulan: "Juli" }
+                    } else if(dataItem.bulan == "Agustus"){
+                        $scope.item.itemBulan = { id: 8, bulan: "Agustus" }
+                    } else if(dataItem.bulan == "September"){
+                        $scope.item.itemBulan = { id: 9, bulan: "September" }
+                    } else if(dataItem.bulan == "Oktober"){
+                        $scope.item.itemBulan = { id: 10, bulan: "Oktober" }
+                    } else if(dataItem.bulan == "November"){
+                        $scope.item.itemBulan = { id: 11, bulan: "November" }
+                    } else if(dataItem.bulan == "Desember"){
+                        $scope.item.itemBulan = { id: 12, bulan: "Desember" }
+                    }
+
+
+                    $scope.item.untukPengeluaran = dataItem.pengeluaran
+                    $scope.item.tglSah = dataItem.tglsah
+                    $scope.item.nilaispp = dataItem.nilaispp
+
+                    $scope.popupSPP.center().open()
                 }
             }
             

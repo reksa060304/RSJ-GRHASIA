@@ -171,7 +171,10 @@ class RawatJalanController extends ApiController
 //            ->where('dm.statusenabled', true)
 //            ->orderBy('dm.id')
 //            ->get();
-
+$ruangdokter = \DB::table('ruangan_m as ru')
+        ->where('ru.objectdepartemenfk', 65)
+        ->orderBy('ru.id')
+        ->get();
         $result = array(
 //            'departemen' => $dataDepartemen,
 //            'kelompokpasien' => $dataKelompok,
@@ -183,6 +186,7 @@ class RawatJalanController extends ApiController
             'ruanganRanap' => $ruanganRanap,
             'deptrirj' => $deptRajalInap,
             'ruanganall' => $dataRuangan,
+            'ruangdokter'=> $ruangdokter,
 //            'pembatalan' => $pembatalan,
 //            'jenisdiagnosa'=> $jenisDiagnosa,
 //            'diagnosa'=> $Diagnosa,
@@ -350,7 +354,10 @@ class RawatJalanController extends ApiController
             ->where('jk.statusenabled', true)
             ->orderBy('jk.jeniskelamin')
             ->get();
-
+        $ruangperawat = \DB::table('ruangan_m as ru')
+        ->where('ru.objectdepartemenfk', 64)
+        ->orderBy('ru.id')
+        ->get();
         $result = array(
             'departemen' => $dataDepartemen,
             'kelompokpasien' => $dataKelompok,
@@ -369,6 +376,7 @@ class RawatJalanController extends ApiController
             'kelompokkerja' => $KelompokKerja,
             'pegawaiLogin' => $dataPegawai->namalengkap,
             'jeniskelamin' => $dataJenisKelamin,
+            'ruangperawat'=> $ruangperawat,
             'message' => 'as@epic',
         );
 

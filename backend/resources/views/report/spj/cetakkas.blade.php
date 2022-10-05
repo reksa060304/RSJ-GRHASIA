@@ -71,7 +71,7 @@
             </td>
             <td align="center" width="85%">
                 <b style="font-size: 25px;">
-                ANGGARAN KAS MURNI DEFINITIF
+                ANGGARAN KAS {{ strtoupper(substr($tahap[0]->tahap, 0, -3)) }}
                 </b><br>
                 <b style="font-size: 23px;">
                 RS Jiwa GRHASIA DINKES DIY

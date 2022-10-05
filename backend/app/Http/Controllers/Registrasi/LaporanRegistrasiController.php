@@ -357,41 +357,95 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         //     br.norec,alm.namadesakelurahan, ru.namaruangan, ru.id, klp.id, apd.statuskunjungan,alm.alamatlengkap, alm.namakecamatan,sk.suku, dg.kddiagnosa, dg.namadiagnosa,dg1.kddiagnosa, dg1.namadiagnosa,pg1.namalengkap, pg2.namalengkap,pd.statuspasien,dt.iskasusbaru,dt.iskasuslama
         //                 order by pd.tglregistrasi asc "));
 
-        $data= \DB::select(DB::raw("SELECT distinct apd.norec, pm.nocm, pd.noregistrasi, pd.statuspasien,  to_char(pd.tglregistrasi,'DD-MM-YYYY') as tglregistrasi1,to_char(pd.tglpulang,'DD-MM-YYYY') as tglpulang1,to_char(pd.tglregistrasi,'HH24:MI') as jamregistrasi, pm.tgllahir::date,case when pd.tglpulang::date - pd.tglregistrasi::date >1 then 
-        pd.tglpulang::date - pd.tglregistrasi::date when pd.tglpulang::date - pd.tglregistrasi::date = 0 and ru.objectdepartemenfk = 16 then 
+        // $data= \DB::select(DB::raw("SELECT distinct apd.norec, pm.nocm, pd.noregistrasi, pd.statuspasien,  to_char(pd.tglregistrasi,'DD-MM-YYYY') as tglregistrasi1,to_char(pd.tglpulang,'DD-MM-YYYY') as tglpulang1,to_char(pd.tglregistrasi,'HH24:MI') as jamregistrasi, pm.tgllahir::date,case when pd.tglpulang::date - pd.tglregistrasi::date >1 then 
+        // pd.tglpulang::date - pd.tglregistrasi::date when pd.tglpulang::date - pd.tglregistrasi::date = 0 and ru.objectdepartemenfk = 16 then 
+        // 1 else 0 end as lamadirawat,pm.namapasien,alm.alamatlengkap, case when kab.objectpropinsifk = 14 then alm.namakotakabupaten else 'LUARDIY' end as datadiy, case when kab.objectpropinsifk != 14 then alm.namakotakabupaten ||',' || prop.namapropinsi else ' ' end as dataluardiy, sp.statusperkawinan,
+        // pd.tglregistrasi,jk.reportdisplay as jk,pm.alamatrmh, pm.penanggungjawab, ru.namaruangan as ruangandaftar,kl.namakelas,klp.kelompokpasien,rk.namarekanan,ag.agama,pend.pendidikan, peker.pekerjaan,
+        // string_agg(dg1.kddiagnosa, ', ')filter (where ddp1.objectjenisdiagnosafk = 2)as kodesekunder,
+        // string_agg(dg1.kddiagnosa, ', ')filter (where ddp1.objectjenisdiagnosafk = 1)as kodeprimer,
+        // -- string_agg(dg1.kddiagnosa, ', ')filter (where ddp1.objectjenisdiagnosafk = 2)as kodesekunder,
+        // string_agg(dg1.namadiagnosa, ', ') AS diagnosaprimer,
+        // string_agg(pg1.namalengkap, ', ')  as pegawaiprimer,
+        // case when dt.iskasusbaru = true then 'Baru'  when dt.iskasuslama = true then 'Lama' else '-' end as kasus
+        // -- string_agg(dg2.kddiagnosa, ', ')as kodesekunder,
+        // -- string_agg(dg1.kddiagnosa, ', ')as kodeprimer
+        // FROM pasiendaftar_t pd 
+        // inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
+        // inner join pasien_m pm on pm.id = pd.nocmfk
+        // inner join jeniskelamin_m as jk on jk.id=pm.objectjeniskelaminfk
+        // left join ruangan_m  as ru on ru.id=apd.objectruanganfk
+        // left join statusperkawinan_m as sp on sp.id = pm.objectstatusperkawinanfk
+        // left join alamat_m as alm on alm.nocmfk = pm.id
+        // left join kotakabupaten_m kab on kab.id = alm.objectkotakabupatenfk
+        // left join propinsi_m prop on prop.id = kab.objectpropinsifk
+        // left join kelas_m as kl on kl.id=pd.objectkelasfk
+        // left join kelompokpasien_m as klp on klp.id=pd.objectkelompokpasienlastfk
+        // left join rekanan_m  as rk on rk.id=pd.objectrekananfk
+        // left join agama_m as ag on ag.id = pm.objectagamafk
+        // left join pendidikan_m as pend on pend.id=pm.objectpendidikanfk
+        // left join pekerjaan_m as peker on peker.id=pm.objectpekerjaanfk
+        // -- LEFT JOIN detaildiagnosapasien_t AS ddp2 ON ddp2.noregistrasifk = apd.norec
+        // -- left join pegawai_m  as pg2 on pg2.id=ddp2.objectpegawaifk
+        // -- LEFT JOIN diagnosa_m AS dg2 ON dg2.id = ddp2.objectdiagnosafk and ddp2.objectjenisdiagnosafk = 2
+        // -- 
+        // LEFT JOIN detaildiagnosapasien_t AS ddp1 ON ddp1.noregistrasifk = apd.norec
+        // left join pegawai_m  as pg1 on pg1.id=ddp1.objectpegawaifk
+        // LEFT JOIN diagnosa_m AS dg1 ON dg1.id = ddp1.objectdiagnosafk 
+
+        // left join diagnosapasien_t dt on dt.norec = ddp1.objectdiagnosapasienfk
+        // left join batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
+
+        // WHERE pd.kdprofile = $idProfile and $paramsTgl between '$tglAwal' and '$tglAkhir' and apd.objectruanganfk=pd.objectruanganlastfk and br.norec is null 
+        // and pm.namapasien ilike '%$namaPasien%'
+        // $idDept
+        // $idRuangan
+        // $idKelompok
+        // $norm
+        // GROUP BY pm.nocm, pd.noregistrasi, pd.statuspasien,   pm.tgllahir, pm.namapasien,alm.alamatlengkap, kab.objectpropinsifk, 
+        // alm.namakotakabupaten, prop.namapropinsi, sp.statusperkawinan, pd.tglregistrasi,jk.reportdisplay,pm.alamatrmh, pm.penanggungjawab, 
+        // ru.namaruangan ,kl.namakelas,klp.kelompokpasien,rk.namarekanan,ag.agama,pend.pendidikan, peker.pekerjaan,pd.tglpulang,ru.objectdepartemenfk, 
+        // dt.iskasusbaru, dt.iskasuslama, apd.norec
+
+        // ORDER BY pd.tglregistrasi
+        
+        // "));
+        $data = \DB::select(DB::raw("SELECT 
+        x.statuskeluar, x.namadokter, x.norec, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, x.tgllahir, x.lamadirawat, x.namapasien, x.alamatlengkap, x.datadiy, x.dataluardiy, x.statusperkawinan,	 x. tglregistrasi, x.jk, x.alamatrmh, x.penanggungjawab, x.ruangandaftar, x.namakelas, x.kelompokpasien, x.namarekanan, x.agama, x.pendidikan, x.pekerjaan, string_agg(x.kodesekunder, ' ')as kodesekunder, string_agg(x.kodeprimer, ' ')as kodeprimer, string_agg(x.diagnosaprimer, ' ')as diagnosaprimer, string_agg(x.pegawaiprimer, ' ')as pegawaiprimer, string_agg(x.kasus, ' ')as kasus FROM (
+        SELECT distinct ru.objectdepartemenfk, 
+        case 
+        when pd.tglpulang is not null and ru.objectdepartemenfk = 16 and pd.objectstatuskeluarfk is not null then sk.statuskeluar
+        when pd.tglpulang is not null and ru.objectdepartemenfk = 16 and pd.objectstatuskeluarfk is null then 'Pindah'
+        else ''
+        end as statuskeluar
+        , pg.namalengkap as namadokter, apd.norec, pm.nocm, pd.noregistrasi, pd.statuspasien, to_char(pd.tglregistrasi,'DD-MM-YYYY') as tglregistrasi1,to_char(pd.tglpulang,'DD-MM-YYYY') as tglpulang1,to_char(pd.tglregistrasi,'HH24:MI') as jamregistrasi, pm.tgllahir::date,case when pd.tglpulang::date - pd.tglregistrasi::date >1 then
+        pd.tglpulang::date - pd.tglregistrasi::date when pd.tglpulang::date - pd.tglregistrasi::date = 0 and ru.objectdepartemenfk = 16 then
         1 else 0 end as lamadirawat,pm.namapasien,alm.alamatlengkap, case when kab.objectpropinsifk = 14 then alm.namakotakabupaten else 'LUARDIY' end as datadiy, case when kab.objectpropinsifk != 14 then alm.namakotakabupaten ||',' || prop.namapropinsi else ' ' end as dataluardiy, sp.statusperkawinan,
         pd.tglregistrasi,jk.reportdisplay as jk,pm.alamatrmh, pm.penanggungjawab, ru.namaruangan as ruangandaftar,kl.namakelas,klp.kelompokpasien,rk.namarekanan,ag.agama,pend.pendidikan, peker.pekerjaan,
         string_agg(dg1.kddiagnosa, ', ')filter (where ddp1.objectjenisdiagnosafk = 2)as kodesekunder,
         string_agg(dg1.kddiagnosa, ', ')filter (where ddp1.objectjenisdiagnosafk = 1)as kodeprimer,
-        -- string_agg(dg1.kddiagnosa, ', ')filter (where ddp1.objectjenisdiagnosafk = 2)as kodesekunder,
         string_agg(dg1.namadiagnosa, ', ') AS diagnosaprimer,
-        string_agg(pg1.namalengkap, ', ')  as pegawaiprimer,
-        case when dt.iskasusbaru = true then 'Baru'  when dt.iskasuslama = true then 'Lama' else '-' end as kasus
-        -- string_agg(dg2.kddiagnosa, ', ')as kodesekunder,
-        -- string_agg(dg1.kddiagnosa, ', ')as kodeprimer
-        FROM pasiendaftar_t pd 
+        string_agg(pg1.namalengkap, ', ') as pegawaiprimer,
+        case when dt.iskasusbaru = true then 'Baru' when dt.iskasuslama = true then 'Lama' else '' end as kasus
+        FROM pasiendaftar_t pd
         inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
         inner join pasien_m pm on pm.id = pd.nocmfk
         inner join jeniskelamin_m as jk on jk.id=pm.objectjeniskelaminfk
-        left join ruangan_m  as ru on ru.id=apd.objectruanganfk
+        left join ruangan_m as ru on ru.id=pd.objectruanganlastfk
         left join statusperkawinan_m as sp on sp.id = pm.objectstatusperkawinanfk
         left join alamat_m as alm on alm.nocmfk = pm.id
         left join kotakabupaten_m kab on kab.id = alm.objectkotakabupatenfk
         left join propinsi_m prop on prop.id = kab.objectpropinsifk
         left join kelas_m as kl on kl.id=pd.objectkelasfk
         left join kelompokpasien_m as klp on klp.id=pd.objectkelompokpasienlastfk
-        left join rekanan_m  as rk on rk.id=pd.objectrekananfk
+        left join rekanan_m as rk on rk.id=pd.objectrekananfk
         left join agama_m as ag on ag.id = pm.objectagamafk
         left join pendidikan_m as pend on pend.id=pm.objectpendidikanfk
         left join pekerjaan_m as peker on peker.id=pm.objectpekerjaanfk
-        -- LEFT JOIN detaildiagnosapasien_t AS ddp2 ON ddp2.noregistrasifk = apd.norec
-        -- left join pegawai_m  as pg2 on pg2.id=ddp2.objectpegawaifk
-        -- LEFT JOIN diagnosa_m AS dg2 ON dg2.id = ddp2.objectdiagnosafk and ddp2.objectjenisdiagnosafk = 2
-        -- 
         LEFT JOIN detaildiagnosapasien_t AS ddp1 ON ddp1.noregistrasifk = apd.norec
-        left join pegawai_m  as pg1 on pg1.id=ddp1.objectpegawaifk
-        LEFT JOIN diagnosa_m AS dg1 ON dg1.id = ddp1.objectdiagnosafk 
-
+        left join pegawai_m as pg1 on pg1.id=ddp1.objectpegawaifk
+        left join pegawai_m as pg on pg.id=pd.objectpegawaifk       
+        LEFT JOIN diagnosa_m AS dg1 ON dg1.id = ddp1.objectdiagnosafk
+        left join statuskeluar_m as sk on sk.id = pd.objectstatuskeluarfk
         left join diagnosapasien_t dt on dt.norec = ddp1.objectdiagnosapasienfk
         left join batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
 
@@ -401,13 +455,17 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         $idRuangan
         $idKelompok
         $norm
-        GROUP BY pm.nocm, pd.noregistrasi, pd.statuspasien,   pm.tgllahir, pm.namapasien,alm.alamatlengkap, kab.objectpropinsifk, 
-        alm.namakotakabupaten, prop.namapropinsi, sp.statusperkawinan, pd.tglregistrasi,jk.reportdisplay,pm.alamatrmh, pm.penanggungjawab, 
-        ru.namaruangan ,kl.namakelas,klp.kelompokpasien,rk.namarekanan,ag.agama,pend.pendidikan, peker.pekerjaan,pd.tglpulang,ru.objectdepartemenfk, 
-        dt.iskasusbaru, dt.iskasuslama, apd.norec
 
-        ORDER BY pd.tglregistrasi
+        GROUP BY sk.statuskeluar, pd.objectstatuskeluarfk, pg.namalengkap, pm.nocm, pd.noregistrasi, pd.statuspasien, pm.tgllahir, pm.namapasien,alm.alamatlengkap, kab.objectpropinsifk,
+        alm.namakotakabupaten, prop.namapropinsi, sp.statusperkawinan, pd.tglregistrasi,jk.reportdisplay,pm.alamatrmh, pm.penanggungjawab,
+        ru.namaruangan ,kl.namakelas,klp.kelompokpasien,rk.namarekanan,ag.agama,pend.pendidikan, peker.pekerjaan,pd.tglpulang,ru.objectdepartemenfk,
+        dt.iskasusbaru, dt.iskasuslama, apd.norec
         
+        ORDER BY pd.tglregistrasi
+        )as x
+        group by x.statuskeluar, x.norec, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, 
+        x.tgllahir, x.lamadirawat, x.namapasien, x.alamatlengkap, x.datadiy, x.dataluardiy, x.statusperkawinan,	 
+        x.tglregistrasi, x.jk, x.alamatrmh, x.penanggungjawab, x.ruangandaftar, x.namakelas, x.kelompokpasien, x.namarekanan, x.agama, x.pendidikan, x.pekerjaan,x.namadokter
         "));
         return $this->respond($data);
     }

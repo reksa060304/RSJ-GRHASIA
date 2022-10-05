@@ -8,7 +8,7 @@ define(['initialize'], function (initialize) {
             $scope.dataSelected = {};
             $scope.item = {};
             $scope.isRouteLoading = false;
-
+            var objectdepartemenfk = []
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {
                     var anHttpRequest = new XMLHttpRequest();
@@ -178,6 +178,7 @@ define(['initialize'], function (initialize) {
                         $scope.isLoadingData = false;
                         var datas = data.data;
                         for (let i = 0; i < datas.length; i++) {
+
                             var tglaja = moment(new Date(datas[i].tglregistrasi)).format('YYYY-MM-DD');
                             var umur = DateHelper.CountAge(new Date(datas[i].tgllahir), new Date(datas[i].tglregistrasi));
                             var bln = umur.month,
@@ -186,7 +187,7 @@ define(['initialize'], function (initialize) {
                             var usia = (umur.year * 12) + umur.month;
                             datas[i].umur = thn + ' thn ' + bln + ' bln ' + day + ' hr ' 
                             var akhir = usia * 30
-                            
+                             objectdepartemenfk.push(datas[i].objectdepartemenfk)
                             // var 
                             if (datas[i].jk == 'L') {
                                 if (umur.year > 0 && umur.year < 5) {
@@ -201,13 +202,17 @@ define(['initialize'], function (initialize) {
                                     datas[i].y5l = umur.year
                                 } else if (umur.year > 64) {
                                     datas[i].y6l = umur.year
-                                } else if(datas[i].umurhari >=0 && datas[i].umurhari < 7 ) {
-                                    datas[i].y7l = datas[i].umurhari
-                                } else if (datas[i].umurhari >= 8 && datas[i].umurhari < 29) {
-                                    datas[i].y8l = datas[i].umurhari
-                                } else if (datas[i].umurhari >= 29 && datas[i].umurhari < 365) {
-                                    datas[i].y9l = datas[i].umurhari
+                                } else if(umur.year == 0){
+                                    datas[i].umurhari = (umur.month * 30) + day
+                                    if (datas[i].umurhari > 0 && datas[i].umurhari < 28) {
+                                        datas[i].y7l = datas[i].umurhari
+                                    } else if (datas[i].umurhari > 6 && datas[i].umurhari < 29) {
+                                        datas[i].y8l = datas[i].umurhari
+                                    } else if (datas[i].umurhari >= 28 && datas[i].umurhari < 365) {
+                                        datas[i].y9l = datas[i].umurhari
+                                    }
                                 }
+                                
                             } else if (datas[i].jk == 'P') {
                                 if (umur.year > 0 && umur.year < 5) {
                                     datas[i].y1p = umur.year
@@ -221,16 +226,19 @@ define(['initialize'], function (initialize) {
                                     datas[i].y5p = umur.year
                                 } else if (umur.year > 64) {
                                     datas[i].y6p = umur.year
-                                } else if (datas[i].umurhari >= 0 && datas[i].umurhari < 7) {
-                                    datas[i].y7p = datas[i].umurhari
-                                } else if (datas[i].umurhari > 6 && datas[i].umurhari < 29) {
-                                    datas[i].y8p = datas[i].umurhari
-                                } else if (datas[i].umurhari >= 28 && datas[i].umurhari < 365) {
-                                    datas[i].y9p = datas[i].umurhari
-                                }
+                                } else if (umur.year == 0) {
+                                    datas[i].umurhari = (umur.month * 30) + day
+                                    if (datas[i].umurhari > 0 && datas[i].umurhari < 28) {
+                                        datas[i].y7p = datas[i].umurhari
+                                    } else if (datas[i].umurhari > 6 && datas[i].umurhari < 29) {
+                                        datas[i].y8p = datas[i].umurhari
+                                    } else if (datas[i].umurhari >= 28 && datas[i].umurhari < 365) {
+                                        datas[i].y9p = datas[i].umurhari
+                                    }
+                                } 
                             }
                         }
-                       
+                        
                         $scope.sourceLaporan = new kendo.data.DataSource({
                             data: datas,
                             pageSize: 10,
@@ -284,8 +292,8 @@ define(['initialize'], function (initialize) {
                     {
                         "field": "nocm",
                         "title": "No Rm",
-                        "width": "80px"
-
+                        "width": "80px",
+                        "template": "#: nocm #"
                     },
                     {
                         "field": "noregistrasi",
@@ -305,7 +313,8 @@ define(['initialize'], function (initialize) {
                             "field": "tglregistrasi1",
                             "title": "Masuk",
                             "width": "80px",
-                            // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                            "template": "#: tglregistrasi1 #"
+                            // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi1 #')}}</span>"
 
                         }, {
                             "field": "tglpulang1",
@@ -326,7 +335,11 @@ define(['initialize'], function (initialize) {
                         "width": "100px",
                         "template": "#: lamadirawat == 0 ? ' ': lamadirawat #"
                         // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
-
+                    },
+                    {
+                        "field": "namadokter",
+                        "title": "Dokter",
+                        "width": "150px",
                     },
                     {
                         "field": "namapasien",
@@ -613,13 +626,16 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         "field": "diagnosaprimer",
-                        "title": "Diagnosa Primer",
+                        "title": "Nama Diagnosa",
                         "width": "300px"
                     },
+                    
                     {
-                        "field": "pegawaiprimer",
-                        "title": "Pegawai input(Primer)",
-                        "width": "200px"
+                        "field": "statuskeluar",
+                        "title": "Cara Pulang",
+                        "width": "100px",
+                        // "template": "#: statuskeluar #"
+                        // "template": "#: tglpulang1 != null && statuskeluar != null ? 'Pulang' : tglpulang1 != null && statuskeluar == null && objectdepartemenfk == 16 ? 'Pindah' : ''#"
                     },
                     // {
                     //     "field": "kasus",

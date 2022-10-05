@@ -1,0 +1,157 @@
+<div class="layout-dashboard">
+    <div class="p-grid">
+        <div class="p-col-12">
+            <div class="notification"
+                style="display: flex;align-items: center;justify-content: space-between;background-color: #afdaf7;">
+                <div style="display: flex;align-items: center;">
+                    <img src="assets/img/logo_only.png" style="height: 55px;margin-left: 20px;">
+                    <h3 style="margin-left: 20px;margin-top:0;margin-bottom: 0;"> {{namaProfile}}</h3>
+                </div>
+                <p class="subtitle" style="float:right;margin-right: 20px;">
+                    <button pButton type="button" icon="fa fa-expand" class="p-button-rounded p-mr-2"
+                        (click)="openFullscreen()" pTooltip="Fullscreeen" label="" *ngIf="!isFullscreen"></button>
+                    <button pButton type="button" icon="fa fa-compress" class="p-button-rounded p-mr-2"
+                        (click)="closeFullscreen()" pTooltip="Fullscreeen" label="" *ngIf="isFullscreen"></button>
+                </p>
+            </div>
+        </div>
+        <div class="p-col-12 p-md-4">
+            <!-- <div class="cards timeline" style="margin-bottom: 1rem;">
+                <div class="card-header" style="padding:0">
+                    <div class="card-title">
+                        <h6> Bed Berdasarkan Kelas</h6>
+                    </div>
+                    <p class="subtitle"> <i class="pi pi-clock"></i> {{timerPanels}}</p>
+                </div>
+            </div> -->
+            <!-- <div class="p-grid" style="margin: -1rem;" *ngIf="listKelas.length == 0">
+                <div class="p-col-12 p-md-6" style="padding: 10px" *ngFor="let itemzz of numberss">
+                    <p-skeleton height="10rem" borderRadius="24px"></p-skeleton>
+                </div>
+            </div> -->
+
+            <div class="cards brder timeline">
+                <div class="card-header">
+                    <p class="subtitle" style="color: white;"> <i class="pi pi-fast-forward"></i></p>
+                    <div class="card-title" style="text-align: center;">
+                        <h3> ANTRIAN TERAKHIR</h3>
+                    </div>
+                    <p class="subtitle"> <i class="pi pi-fast-forward"></i></p>
+                </div>
+
+                <div class="card-body">
+                    <div class="p-grid">
+                        <div class="p-col-12">
+
+                            <p-scrollPanel [style]="{width: '100%', height: 'calc(100vh - 350px)'}">
+                                <div class="p-grid">
+
+                                    <div class="p-col-12">
+                                        <span class="subtitle">NON RACIKAN</span>
+                                        <div class="text-center border-1 surface-border border-round p-4"
+                                            [ngClass]="{'blink badge-light-danger2' : dipanggilN}">
+                                            <!-- style="line-height: calc(100vh - 750px)" -->
+                                            <div class="text-900 text-2xl font-700 my-3 font-bold">
+                                                {{antriTerakhirN != undefined ? antriTerakhirN : '0' }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="p-col-12">
+                                        <span class="subtitle"> RACIKAN</span>
+                                        <div class="text-center border-1 surface-border border-round p-4"
+                                            [ngClass]="{'blink badge-light-danger2' : dipanggilR}">
+                                            <div class="text-900 text-2xl font-700 my-3 font-bold">
+                                                {{antriTerakhirR != undefined ? antriTerakhirR : '0' }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="panel panel-default text-center"
+                                    style="border-style:none; box-shadow: 0 1px 1px rgba(0,0,0,0);">
+                                    <div class="font-bold ng-binding"
+                                        [ngClass]="{'blink badge-light-danger2' : dipanggil}" style="align-items: center;text-align: center ;font-size: 120px;    line-height: calc(50vh - 150px);
+                                        height: calc(50vh - 150px);color:#d6ce00">
+                                        {{item.antriTerakhir != undefined ? item.antriTerakhir : '0' }}
+
+                                    </div>
+                                    <hr style="border-color: #afdaf7;">
+
+                                    <div class="font-bold ng-binding"
+                                        [ngClass]="{'blink badge-light-danger2' : dipanggil}" style="align-items: center;text-align: center ;font-size: 120px;    line-height: calc(50vh - 150px);
+                                    height: calc(50vh - 150px);color:#d6ce00">
+                                        {{item.antriTerakhir != undefined ? item.antriTerakhir : '0' }}
+
+                                    </div>
+                                </div> -->
+                            </p-scrollPanel>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="p-col-12 p-md-8">
+            <div class="cards timeline">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h6> List Antrian Farmasi</h6>
+
+                    </div>
+                    <p class="subtitle"> <i class="pi pi-clock"></i></p>
+                </div>
+                <div class="card-body">
+                    <div class="p-grid">
+                        <div class="p-col-12">
+                            <p-scrollPanel [style]="{width: '100%', height: 'calc(100vh - 320px)'}">
+                                <p-table [value]="dataSource" styleClass="p-datatable-customers" [rowHover]="true"
+                                    scrollable="true">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th width="150px">No Registrasi </th>
+                                            <th width="250px">Pasien</th>
+                                            <th width="150px">Status</th>
+                                            <th width="150px">Jenis</th>
+                                            <th width="100px">No Resep</th>
+                                            <th width="100px">Tanggal</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-items>
+
+                                        <tr [ngClass]="{'row-kosong': items.tersedia == 0}">
+                                            <td width="150px">
+                                                <!-- <span class="p-column-title">No Antri</span> -->
+                                                {{items.noregistrasi}}
+                                            </td>
+                                            <td width="250px">
+                                                <!-- <span class="p-column-title">Pasien </span> -->
+                                                {{items.keterangan}}
+                                            </td>
+                                            <td width="150px">
+                                                <!-- <span class="p-column-title">Status </span> -->
+                                                <span class="p-tag p-tag-success">
+                                                    {{items.statusorder}}</span>
+                                            </td>
+                                            <td width="150px">
+                                                <!-- <span class="p-column-title"> Jenis </span> -->
+                                                {{items.aajenis == 'N'||items.jenis == 'Non Racikan'?'Non Racikan':'Racikan'}}
+                                            </td>
+                                            <td width="100px">
+                                                <!-- <span class="p-column-title"> No Resep </span> -->
+                                                {{items.noresep}}
+                                            </td>
+                                            <td width="100px">
+                                                <!-- <span class="p-column-title"> Tanggal</span> -->
+                                                {{items.tglresep}}
+                                            </td>
+
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </p-scrollPanel>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -3420,6 +3420,10 @@
             "urlDep": "module/EMR/SuratKeteranganPasienMelarikanDiriCtrl"
         },
         {
+            "nameDep": "LaporanGiziCtrl",
+            "urlDep": "module/Gizi/Laporan/LaporanGiziCtrl"
+        },
+        {
             "nameDep": "FormCatatanPemantauanTerapiObatCtrl",
             "urlDep": "module/EMR/FormCatatanPemantauanTerapiObatCtrl"
         },
@@ -3434,7 +3438,6 @@
         {
             "nameDep": "DaftarPasienTerverifikasiCtrl",
             "urlDep": "module/TataRekening/DaftarPasienTerverifikasiCtrl"
-        }
-        
+        }           
     ]
 }

@@ -5136,6 +5136,46 @@
     ]
   },
   {
+    "name": "SumberPendapatan",
+    "url": "/TWFzdGVyU3VtYmVyUGVuZGFwYXRhbg==",
+    "templateurl": "module/Perencanaan/SumberPendapatan.html",
+    "controller": "SumberPendapatanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "UraianPendapatan",
+    "url": "/TWFzdGVyVXJhaWFuUGVuZGFwYXRhbg==",
+    "templateurl": "module/Perencanaan/UraianPendapatan.html",
+    "controller": "UraianPendapatanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "BukuKasUmum",
     "url": "/QnVrdUthc1VtdW0=",
     "templateurl": "module/Perencanaan/BukuKasUmum.html",

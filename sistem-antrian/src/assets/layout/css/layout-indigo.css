@@ -2106,7 +2106,7 @@ body a:hover {
   flex-direction: column;
   justify-content: space-between;
   min-height: 100vh;
-  padding: 18px 18px 18px 18px;
+  padding:0;
   /* margin-left: 60px; */
   -moz-transition: margin-left 0.3s;
   -o-transition: margin-left 0.3s;

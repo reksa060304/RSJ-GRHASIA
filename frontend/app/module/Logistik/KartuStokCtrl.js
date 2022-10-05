@@ -23,8 +23,18 @@ define(['initialize'], function (initialize) {
                 $scope.item.until = moment($scope.now).format('YYYY-MM-DD 23:59:59');
                 $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
                 $scope.item.ruangan = $scope.listRuangan[0];
-                medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
-                    $scope.listNamaBarang = data;
+
+                // medifirstService.get("logistik/get-combo-logistik", true).then(function (dat) {
+                //     var dataCombo = dat.data;
+                //     $scope.listNamaBarang = dataCombo.produk;
+                // });
+
+                // medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
+                //     $scope.listNamaBarang = data;
+                // });
+
+                medifirstService.get("farmasi/get-datacombo", true).then(function (dat) {
+                    $scope.listNamaBarang = dat.data.produk;
                 });
 
                 medifirstService.get('logistik/get-combo-logistik-mini').then(function (data) {

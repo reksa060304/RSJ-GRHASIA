@@ -27,6 +27,7 @@ use App\Transaksi\StrukRealisasi;
 use App\Transaksi\StrukVerifikasi;
 use App\Transaksi\StrukVerifikasiAnggaran;
 use App\Transaksi\Panjar;
+use App\Transaksi\Permen;
 use App\Transaksi\Pengembalian;
 use App\Transaksi\BKU;
 use Illuminate\Http\Request;
@@ -50,6 +51,8 @@ use App\Transaksi\LPJ;
 use App\Transaksi\PemungutanPajak;
 use App\Transaksi\PenyetoranPajak;
 use App\Transaksi\JasaGiro;
+use App\Master\AsalProduk;
+use App\Transaksi\UraianPendapatan;
 use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Parent_;
 use Webpatser\Uuid\Uuid;
@@ -643,7 +646,29 @@ class PerencanaanController extends ApiController {
             $keteranganperubahan = [];
         }
 
-        
+        $kdiv = '';
+        if (isset($request['div']) && $request['div'] != "" && $request['div'] != "undefined" && $request['div'] == "1") {
+            $kdiv =  "and ma.kodemataanggaran in('I', 'III')";
+        } else if (isset($request['div']) && $request['div'] != "" && $request['div'] != "undefined" && $request['div'] == "4") {
+            $kdiv =  "and 
+            case 
+                when ma.kodemataanggaran ilike 'I.%' then length(ma.kodemataanggaran) in (9,10)
+                when ma.kodemataanggaran ilike 'III.%' then length(ma.kodemataanggaran) in (9,10)
+            end";
+        } else if (isset($request['div']) && $request['div'] != "" && $request['div'] != "undefined" && $request['div'] == "2") {
+            $kdiv =  "and 
+            case 
+                when ma.kodemataanggaran ilike 'I.%' then length(ma.kodemataanggaran) in (3)
+                when ma.kodemataanggaran ilike 'III.%' then length(ma.kodemataanggaran) in (5)
+            end";
+        } else if (isset($request['div']) && $request['div'] != "" && $request['div'] != "undefined" && $request['div'] == "3") {
+            $kdiv =  "and 
+            case 
+                when ma.kodemataanggaran ilike 'I.%' then length(ma.kodemataanggaran) in (5)
+                when ma.kodemataanggaran ilike 'III.%' then length(ma.kodemataanggaran) in (7)
+            end";
+        }
+
         $mata = DB::select(DB::raw("select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen, coalesce(sum(kt.subtotal),0) as total
         , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
         , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
@@ -654,6 +679,7 @@ class PerencanaanController extends ApiController {
         left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
 		left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
         where ma.statusenabled = true and ma.kdprofile = 30
+        $kdiv
         group by ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id, map.mataanggaranpermen
                 , split_part(ma.kodemataanggaran, '.', 1)
                 , split_part(ma.kodemataanggaran, '.', 2)
@@ -665,6 +691,61 @@ class PerencanaanController extends ApiController {
             ")
         );
 
+        $mataanggaranpermen = DB::select(DB::raw("select map.id, map2.kode || '.' || map3.kode || '.' || map4.kode || '.' || map.kode as kode,
+        map.mataanggaranpermen
+        from mataanggaranpermen_m map
+        inner join mataanggaranpermen_m map4 on map.mataanggaranpermenfk = map4.id and map4.div = 4
+        inner join mataanggaranpermen_m map3 on map4.mataanggaranpermenfk = map3.id and map3.div = 3
+        inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+        where map.kdprofile = 30
+        and map.statusenabled = true
+        and map2.kdprofile = 30
+        and map2.statusenabled = true
+        and map3.kdprofile = 30
+        and map3.statusenabled = true
+        and map4.kdprofile = 30
+        and map4.statusenabled = true
+        and map.div = 5
+        
+        union ALL
+        
+        select map4.id, map2.kode || '.' || map3.kode || '.' || map4.kode as kode,
+        map4.mataanggaranpermen
+        from mataanggaranpermen_m map4 
+        inner join mataanggaranpermen_m map3 on map4.mataanggaranpermenfk = map3.id and map3.div = 3
+        inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+        where map2.kdprofile = 30
+        and map2.statusenabled = true
+        and map3.kdprofile = 30
+        and map3.statusenabled = true
+        and map4.kdprofile = 30
+        and map4.statusenabled = true
+        and map4.div = 4
+        
+        union ALL
+        
+        select map3.id, map2.kode || '.' || map3.kode as kode,
+        map3.mataanggaranpermen
+        from mataanggaranpermen_m map3 
+        inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+        where map2.kdprofile = 30
+        and map2.statusenabled = true
+        and map3.kdprofile = 30
+        and map3.statusenabled = true
+        and map3.div = 3
+        
+        union all 
+        
+        select map2.id, map2.kode as kode,
+        map2.mataanggaranpermen
+        from mataanggaranpermen_m map2
+        where map2.kdprofile = 30
+        and map2.statusenabled = true
+        and map2.div = 2
+        
+        order by kode;
+            ")
+        );
         
         $kelompok='keteranganAnggaran';
         $keterangan = \DB::table('settingdatafixed_m')
@@ -706,38 +787,58 @@ class PerencanaanController extends ApiController {
         }else{
             $konsolidasi3 = [];
         }
-
-        if(!empty($request['konsolidasi3'])){
-            $konsolidasi4 = \DB::table('mataanggaranpermen_m')
-            ->select('id','mataanggaranpermen', 'kode', 'mataanggaranpermenfk')
-            ->where('kdprofile', $idProfile)
-            ->where('statusenabled', true)
-            ->where('div', 4)
-            ->where('mataanggaranpermenfk', $request['konsolidasi3'])
-            ->orderBy('id')
-            ->get();
-        }else{
-            $konsolidasi4 = [];
-        }
-
-        if(!empty($request['konsolidasi4'])){
-            $konsolidasi5 = \DB::table('mataanggaranpermen_m')
-            ->select('id','mataanggaranpermen', 'kode', 'mataanggaranpermenfk')
-            ->where('kdprofile', $idProfile)
-            ->where('statusenabled', true)
-            ->where('div', 5)
-            ->where('mataanggaranpermenfk', $request['konsolidasi4'])
-            ->orderBy('id')
-            ->get();
-        }else{
-            $konsolidasi5 = \DB::table('mataanggaranpermen_m')
-            ->select('id','mataanggaranpermen', 'kode', 'mataanggaranpermenfk')
-            ->where('kdprofile', $idProfile)
-            ->where('statusenabled', true)
-            ->where('div', 5)
-            ->orderBy('id')
-            ->get();
-        }
+        
+        $konsolidasi4 =  DB::select(DB::raw("select map4.id, map4.mataanggaranpermen, map4.kode, map4.mataanggaranpermenfk,
+            map2.kode || '.' || map3.kode || '.' || map4.kode || ' - ' || map4.mataanggaranpermen as text 
+            from mataanggaranpermen_m map4
+            inner join mataanggaranpermen_m map3 on map4.mataanggaranpermenfk = map3.id and map3.div = 3
+            inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+            where map2.kdprofile = 30
+            and map2.statusenabled = true
+            and map3.kdprofile = 30
+            and map3.statusenabled = true
+            and map4.kdprofile = 30
+            and map4.statusenabled = true
+            and map4.div = 4
+            order by replace(map2.kode, '.', '' )::int4, replace(map3.kode, '.', '' )::int4, replace(map4.kode, '.', '' )::int4
+        "));
+        
+        $konsolidasi5 =  DB::select(DB::raw("select map.id, map.mataanggaranpermen, map.kode, map.mataanggaranpermenfk,
+            map2.kode || '.' || map3.kode || '.' || map4.kode || '.' || map.kode || ' - ' || map.mataanggaranpermen as text 
+            from mataanggaranpermen_m map
+            inner join mataanggaranpermen_m map4 on map.mataanggaranpermenfk = map4.id and map4.div = 4
+            inner join mataanggaranpermen_m map3 on map4.mataanggaranpermenfk = map3.id and map3.div = 3
+            inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+            where map.kdprofile = 30
+            and map.statusenabled = true
+            and map2.kdprofile = 30
+            and map2.statusenabled = true
+            and map3.kdprofile = 30
+            and map3.statusenabled = true
+            and map4.kdprofile = 30
+            and map4.statusenabled = true
+            and map.div = 5
+            order by replace(map2.kode, '.', '' )::int4, replace(map3.kode, '.', '' )::int4, replace(map4.kode, '.', '' )::int4, replace(map.kode, '.', '' )::int4
+        "));
+        
+        $konsolidasikelima =  DB::select(DB::raw("select map.id, map.mataanggaranpermen, map.kode, map.mataanggaranpermenfk,
+            map2.kode || '.' || map3.kode || '.' || map4.kode kodeup, map4.mataanggaranpermen namaup,
+            map2.kode || '.' || map3.kode || '.' || map4.kode || '.' || map.kode || ' - ' || map.mataanggaranpermen as text 
+            from mataanggaranpermen_m map
+            inner join mataanggaranpermen_m map4 on map.mataanggaranpermenfk = map4.id and map4.div = 4
+            inner join mataanggaranpermen_m map3 on map4.mataanggaranpermenfk = map3.id and map3.div = 3
+            inner join mataanggaranpermen_m map2 on map3.mataanggaranpermenfk = map2.id and map2.div = 2
+            where map.kdprofile = 30
+            and map.statusenabled = true
+            and map2.kdprofile = 30
+            and map2.statusenabled = true
+            and map3.kdprofile = 30
+            and map3.statusenabled = true
+            and map4.kdprofile = 30
+            and map4.statusenabled = true
+            and map.div = 5
+            order by replace(map2.kode, '.', '' )::int4, replace(map3.kode, '.', '' )::int4, replace(map4.kode, '.', '' )::int4, replace(map.kode, '.', '' )::int4
+        "));
         
         $panjar = DB::select(DB::raw("
         select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, sr.norealisasi,
@@ -762,15 +863,16 @@ class PerencanaanController extends ApiController {
         "));
 
         $spp = DB::select(DB::raw("select spp.*, spd.nospd from spp_t spp inner join spd_t spd on spd.norec = spp.objectspdfk where spp.statusenabled = true and spd.statusenabled = true"));
-        $spd = DB::select(DB::raw("select spd.*, spp.nospp from spd_t spd left join spp_t spp on spp.objectspdfk = spd.norec where spp.statusenabled = true and spd.statusenabled = true"));
+        $spd = DB::select(DB::raw("select spd.*, spp.nospp from spd_t spd left join spp_t spp on spp.objectspdfk = spd.norec and spp.statusenabled = true where spd.statusenabled = true"));
         $carispd = DB::select(DB::raw("select spd.nospd, spd.tglspd, spd.nilaispd, spp.norec
         from spd_t spd
         left join spp_t spp on spd.norec = spp.objectspdfk 
         where spp.norec is null"));
 
-        $carispm = DB::select(DB::raw("select spm.*, spp.nospp
+        $carispm = DB::select(DB::raw("select spm.*, spp.nospp, spp.tglspp
         from spm_t spm
         left join spp_t spp on spp.norec = spm.objectsppfk
+        and spp.statusenabled = true
         where spm.statusenabled = true"));
 
         $dataAsalProduk = \DB::table('asalproduk_m as ap')
@@ -789,6 +891,7 @@ class PerencanaanController extends ApiController {
             'kegiatancombo' => $kegiatancombo,
             'mataanggarancombo' => $mataanggarancombo,
             'mataanggaran' => $mata,
+            'mataanggaranpermen' => $mataanggaranpermen,
             'keteranganperubahan' => $keteranganperubahan,
             'mataanggarancombo' => $mataanggarancombo,
             'jenisanggaran' => $jenisanggaran,
@@ -815,6 +918,7 @@ class PerencanaanController extends ApiController {
             'konsolidasi3' => $konsolidasi3,
             'konsolidasi4' => $konsolidasi4,
             'konsolidasi5' => $konsolidasi5,
+            'konsolidasikelima' => $konsolidasikelima,
             'message' => 'epic',
         );
 
@@ -2590,6 +2694,7 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
 
         try{
+                if($request['norec'] == ''){
                     $SP = SPD::where('nospd', '=', $request['nospd'])->first();        
             
                     $MA = new SPP();
@@ -2597,6 +2702,13 @@ class PerencanaanController extends ApiController {
                     $MA->norec = $norecKS;
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
+                    
+                } else{
+                    $SP = SPD::where('nospd', '=', $request['nospd'])->first(); 
+
+                    $MA = SPP::where('norec', '=', $request['norec'])->first();
+                }
+
                     $MA->nospp = $request['nospp'];
                     $MA->jenisbukti = $request['jenisbukti'];
                     $MA->dasarpengeluaran = $request['dasarpengeluaran'];
@@ -2609,6 +2721,77 @@ class PerencanaanController extends ApiController {
                     $MA->objectspdfk = $SP->norec;
 
                     $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function savePermenKelima(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                if($request['norec'] == ''){
+                    $newID = Permen::max('id');
+
+                    $MA = new Permen();
+                    $MA->id = $newID + 1;
+                    $MA->kdprofile = $idProfile;
+                    $MA->statusenabled = true;
+                    $MA->kodeexternal = 'permendagri';
+                    $MA->div = 5;
+
+
+                    $MA = \DB::table('mataanggaranpermen_m')->insert([
+                        'id'=>$newID + 1,
+                        'kdprofile'=>$idProfile,
+                        'statusenabled'=>true,
+                        'kodeexternal'=>'permendagri',
+                        'div'=>5,
+                        'namaexternal'=>$request['nama'],
+                        'reportdisplay'=>$request['nama'],
+                        'mataanggaranpermen'=>$request['nama'],
+                        'kode'=>$request['kode'],
+                        'mataanggaranpermenfk'=>$request['keempatfk'],
+                    ]);
+                    
+                } else{
+
+                    $MA = Permen::where('id', '=', $request['norec'])->first();
+
+                    $MA->namaexternal = $request['nama'];
+                    $MA->reportdisplay = $request['nama'];
+                    $MA->mataanggaranpermen = $request['nama'];
+                    $MA->kode = $request['kode'];
+
+                    $MA->save();
+                }
+
+                    
 
            $transStatus = 'true';
        } catch (\Exception $e) {
@@ -2884,6 +3067,119 @@ class PerencanaanController extends ApiController {
                     $MA->tglpengeluaran = $request['tglpengeluaran'];
                     $MA->jumlahpengeluaran = $request['jumlahpengeluaran'];
                     $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveSumberPendapatan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    if($request['id'] == ''){
+                        $newID = AsalProduk::max('id');
+
+                        $MA = new AsalProduk();
+                        $MA->id = $newID + 1;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                        $MA->kodeexternal = $newID + 1;
+                        $MA->norec = $newID + 1;
+                        
+
+                    } else{
+                        $MA = AsalProduk::where('id', '=', $request['id'])->first();
+                    }
+                    
+                    $MA->namaexternal = $request['asalproduk'];
+                    $MA->reportdisplay = $request['asalproduk'];
+                    $MA->objectdepartemenfk = null;
+                    $MA->objectkelompokprodukfk = null;
+                    $MA->asalproduk = $request['asalproduk'];
+                    $MA->kdasalproduk = null;
+                    $MA->qasalproduk = null;
+                    $MA->isanggaran = null;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveUraianPendapatan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    if($request['id'] == ''){
+                        $newID = UraianPendapatan::max('id');
+
+                        $MA = \DB::table('uraianpendapatan_m')->insert([
+                            'id'=>$newID + 1,
+                            'kdprofile'=>$idProfile,
+                            'statusenabled'=>true,
+                            'namaexternal'=>null,
+                            'reportdisplay'=>null,
+                            'uraianpendapatan'=>$request['uraianpendapatan'],
+                        ]);
+
+                    } else{
+                        $MA = UraianPendapatan::where('id', '=', $request['id'])->first();
+                        $MA->namaexternal = null;
+                        $MA->reportdisplay = null;
+                        $MA->uraianpendapatan = $request['uraianpendapatan'];
+                        $MA->save();
+                    }
+                    
+                    
 
            $transStatus = 'true';
        } catch (\Exception $e) {
@@ -3245,6 +3541,80 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function deleteSumberPendapatan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    $MA = AsalProduk::where('id', '=', $request['id'])->first();
+                    $MA->statusenabled = false;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteUraianPendapatan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    $MA = UraianPendapatan::where('id', '=', $request['id'])->first();
+                    $MA->statusenabled = false;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function deletePajak(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
@@ -3290,6 +3660,7 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
 
         try{
+                if($request['norec'] == ''){
                     $SP = SPP::where('nospp', '=', $request['nospp'])->first();        
             
                     $MA = new SPM();
@@ -3297,11 +3668,16 @@ class PerencanaanController extends ApiController {
                     $MA->norec = $norecKS;
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
+                    $MA->objectsppfk = $SP->norec;
+                    
+                } else{
+                    $MA = SPM::where('norec', '=', $request['norec'])->first();
+                }
+
                     $MA->nospm = $request['nospm'];
                     $MA->jenisbukti = $request['jenisbukti'];
                     $MA->untukpengeluaran = $request['untukpengeluaran'];
                     $MA->status = $request['status'];
-                    $MA->objectsppfk = $SP->norec;
                     $MA->tglspm = $request['tglspm'];
                     $MA->tglsah = $request['tglsah'];
                     $MA->nilaispm = $request['nilaispm'];
@@ -3342,14 +3718,56 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
 
         try{
+                if($request['norec'] == ''){
                     $MA = new SPD();
                     $norecKS = $MA->generateNewId();
                     $MA->norec = $norecKS;
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
+                } else{
+                    $MA = SPD::where('norec', '=', $request['norec'])->first();
+                }
                     $MA->nospd = $request['nospd'];
                     $MA->tglspd = $request['tglspd'];
                     $MA->nilaispd = $request['nilaispd'];
+
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function copyPermen(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                    $MA = MataAnggaran::where('id', '=', $request['idanggaran'])->first();
+                    $MA->mataanggaranpermenfk = $request['idpermen'];
 
                     $MA->save();
 
@@ -3468,10 +3886,16 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
 
         try{
+            if($request['norec'] == ''){
                 $MA = new Pengembalian();
                 $MA->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
+                
+            } else{
+                $MA = Pengembalian::where('norec', '=', $request['norec'])->first();
+            }
+
                 $MA->tglpengembalian = $request['tglpengembalian'];
                 $MA->objectpanjarfk = $request['norecpanjar'];
                 $MA->jumlahpengembalian = $request['jumlahpengembalian'];
@@ -3480,6 +3904,7 @@ class PerencanaanController extends ApiController {
                 $MA->objectsubsubkegiatanfk = $request['idsubsubkegiatan'];
                 $MA->objectmataanggaranfk = $request['idmataanggaran'];
                 $MA->save();
+                
            $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';
@@ -3652,6 +4077,228 @@ class PerencanaanController extends ApiController {
             );
         } else {
             $transMessage = "Data Yang Sudah Diverif Tidak Bisa Dihapus";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteSPD(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                $KB= SPD::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $transStatus = 'true';
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteSPM(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                $KB= SPM::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $transStatus = 'true';
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteSPP(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                $KB= SPP::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $transStatus = 'true';
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deletePermenKelima(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                $KB= Permen::where('id',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $transStatus = 'true';
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deletePanjar(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                $KB= Panjar::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $transStatus = 'true';
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'=> $transMessage,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deletePengembalian(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+                $KB= Pengembalian::where('norec',$request['norec'])
+                    ->first();
+                $KB->statusenabled = false;
+                $KB->save();
+
+                $transStatus = 'true';
+            
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
             DB::rollBack();
             $result = array(
                 'status' => 400,
@@ -4233,10 +4880,13 @@ order by kodemataanggaran"));
         $idProfile = (int) $kdProfile;
 
         $data = DB::select(DB::raw("
-                select nopanjar, uraian, tglpanjar, jumlah, jenispanjar, jumlahpengembalian, sumberpanjar
-                from panjar_t 
-                where kdprofile = 30
-                and statusenabled = true;
+                select pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.jumlahpengembalian, pj.sumberpanjar
+                from panjar_t pj
+                inner join kegiatananggaran_m kasub on kasub.id = pj.objectsubkegiatanfk
+                inner join kegiatananggaran_m kasubsub on kasubsub.id = pj.objectsubsubkegiatanfk
+                inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
+                where pj.kdprofile = 30
+                and pj.statusenabled = true;
             ")
         );
 
@@ -5207,11 +5857,74 @@ order by kodemataanggaran"));
             spp_t spp
             inner join spm_t spm on spm.objectsppfk = spp.norec
             where spp.nospp = '$nospp'
+            and spm.statusenabled = true
             ")
         );
 
         $result = array(
             'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getRBABelum(Request $request){
+
+        $permen = '';
+        if (isset($request['permen']) && $request['permen'] != "" && $request['permen'] != "undefined") {
+            $permen =  "and ma.mataanggaranpermenfk = '".$request['permen']."'";
+        }
+
+        $data = DB::select(DB::raw("
+        select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen, coalesce(sum(kt.subtotal),0) as total
+        , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+        , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+        , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+        from mataanggaran_m ma 
+        left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
+		left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+        where ma.statusenabled = true and ma.kdprofile = 30
+        and ma.mataanggaranpermenfk is null
+        and length(ma.kodemataanggaran) in(9, 10)
+        group by ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id, map.mataanggaranpermen
+                , split_part(ma.kodemataanggaran, '.', 1)
+                , split_part(ma.kodemataanggaran, '.', 2)
+                , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end
+                , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end 
+                , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end
+        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;
+            ")
+        );
+
+        $detail = DB::select(DB::raw("
+        select ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id idmap, map.mataanggaranpermen, coalesce(sum(kt.subtotal),0) as total
+        , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+        , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+        , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+        from mataanggaran_m ma 
+        left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
+		left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
+        where ma.statusenabled = true and ma.kdprofile = 30
+        and length(ma.kodemataanggaran) in(9, 10)
+        $permen
+        group by ma.id, ma.kodemataanggaran,ma.namamataanggaran,map.id, map.mataanggaranpermen
+                , split_part(ma.kodemataanggaran, '.', 1)
+                , split_part(ma.kodemataanggaran, '.', 2)
+                , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end
+                , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end 
+                , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end
+        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'detail' => $detail,
             'message' => '@epic',
         );
 
@@ -5414,23 +6127,30 @@ order by kodemataanggaran"));
         $kode = $request['mataanggaran'];
         $ma = DB::select(DB::raw("select id from mataanggaran_m where kodemataanggaran = '$kode'"));
         try{
+
+            if($request['norec'] == ''){
+                $MA = new Panjar();
+                $norecKS = $MA->generateNewId();
+                $MA->norec = $norecKS;
+                $MA->kdprofile = $idProfile;
+                $MA->statusenabled = true;
+                $noPanjar = $this->generateCodeBySeqTable(new Panjar, 'nopanjar', 12, 'P' . $this->getDateTime()->format('ym') . '/', $idProfile);
+                $MA->nopanjar = $noPanjar;
+                
+                $MA->objectsubkegiatanfk = $request['subkegiatan'];
+                $MA->objectsubsubkegiatanfk = $request['subsusbkegiatan'];
+                $MA->objectmataanggaranfk = $ma[0]->id;
+                
+            } else{
+                $MA = Panjar::where('norec', '=', $request['norec'])->first();
+            }
             
-            $MA = new Panjar();
-            $norecKS = $MA->generateNewId();
-            $MA->norec = $norecKS;
-            $MA->kdprofile = $idProfile;
-            $MA->statusenabled = true;
-            $noPanjar = $this->generateCodeBySeqTable(new Panjar, 'nopanjar', 12, 'P' . $this->getDateTime()->format('ym') . '/', $idProfile);
-            $MA->nopanjar = $noPanjar;
-            $MA->tglpanjar = $request['tglPanjar'];
-            $MA->uraian = $request['uraianPanjar'];
-            $MA->jumlah = $request['jumlahpanjar'];
-            $MA->jenispanjar = 'Pengeluaran';
-            $MA->sumberpanjar = $request['sumberPanjar'];
-            $MA->objectsubkegiatanfk = $request['subkegiatan'];
-            $MA->objectsubsubkegiatanfk = $request['subsusbkegiatan'];
-            $MA->objectmataanggaranfk = $ma[0]->id;
-            $MA->save();
+                $MA->tglpanjar = $request['tglPanjar'];
+                $MA->uraian = $request['uraianPanjar'];
+                $MA->jumlah = $request['jumlahpanjar'];
+                $MA->sumberpanjar = $request['sumberPanjar'];
+                $MA->save();
+
            $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';
@@ -5461,7 +6181,7 @@ order by kodemataanggaran"));
     
 public function loadComboRincian(Request $request)
     {
-        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
+        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->where('isanggaran', null)->get();
         $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
         $rincianpendapatan = \DB::table('rincianpendapatan_t as rp')
         ->join('asalproduk_m as ap','ap.id','=','rp.objectasalprodukfk')

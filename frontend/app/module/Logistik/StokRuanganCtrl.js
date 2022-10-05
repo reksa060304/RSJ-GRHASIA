@@ -28,12 +28,17 @@ define(['initialize'], function (initialize) {
                     var dataCombo = data.data;
                     $scope.passwordAd = dataCombo.passwordAdjusment
                 })
-                medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
-                    $scope.listNamaBarang = data;
-                });
+                // medifirstService.get("logistik/get-combo-logistik", true).then(function (dat) {
+                //     var dataCombo = dat.data;
+                //     $scope.listNamaBarang = dataCombo.produk;
+                // });
                 // medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
                 //     $scope.listNamaBarang = data;
                 // });
+
+                medifirstService.get("farmasi/get-datacombo", true).then(function (dat) {
+                    $scope.listNamaBarang = dat.data.produk;
+                });
             }
             init();
 

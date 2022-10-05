@@ -99,8 +99,8 @@
             <span class="title">Pengkajian Medis</span>
         </c-button> -->
         </div>
-        <div class="grid_2" ng-hide="validasiruangan == 14">
-            <button class="btnTemplate1" style="margin-left: 0;" ng-click="panggil()"><i
+        <div class="grid_2">
+            <button class="btnTemplate1 green" style="margin-left: 0;" ng-click="panggil()"><i
                     class="fa fa-phone-square"></i>Panggil</button>
             <!-- <button class="btnTemplate1" style="margin-left: 0;" ng-click="UbahDokter()"><i class="fa fa-user" ></i>Pilih Dokter</button> -->
             <!-- <c-button style="width: 100%; padding:0px;margin:0px;" item="item" position="'right'" is-validate click="UbahDokter">
@@ -301,6 +301,15 @@
                 <!--    <div class="clear">
         <button class="k-button" ng-click="simpanDokter(item, items.pilihDokter)" style="float:right;margin-top:4%">Simpan</button> -->
             </div>
+        </div>
+    </div>
+    <div kendo-window="popUpPanggil" k-title="'Panggil ke Ruangan'" k-width="400" k-height="120" k-visible="false"
+        k-on-open="win2visible = true" k-on-close="win2visible = false">
+        <label c-label item="item " c-label-text="pilihRuang"></label>
+        <input style="width: 100%; " kendo-combo-box k-ng-model="item.pilihRuangan" k-data-text-field="'namaruangan'"
+            k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listPilihRuang" />
+        <div class="clear">
+            <button class="k-button" ng-click="simpanPanggil()" style="float:right;margin-top:4%">Panggil</button>
         </div>
     </div>
     <style>
