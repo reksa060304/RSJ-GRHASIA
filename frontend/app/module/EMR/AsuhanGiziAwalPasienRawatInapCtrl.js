@@ -303,7 +303,7 @@ define(['initialize'], function (initialize) {
             ]
             $scope.listMonitoring = [
                 {
-                    "id" : 1, "nama": "Tujuan Pemberian Diet",
+                    "id" : 1, "nama": "",
                     "detail": [
                         { "id": 3005838, "": "","type": "textarea"},
                     ]
