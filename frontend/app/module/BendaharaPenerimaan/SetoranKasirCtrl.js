@@ -565,18 +565,20 @@ define(['initialize'], function (initialize) {
 				// }
 				var total =0
 				var objSbm = []
-				if(  $scope.dataSetoranKasir== undefined){
-					toastr.error('Belum ada data yang di setor')
+				var noclosing = ''
+				if(  $scope.selectedData2== undefined){
+					toastr.error('Belum ada data yang di pilih')
 					return
 				}
-				for (let i = 0; i <  $scope.dataSetoranKasir.data.length; i++) {
-					const element = $scope.dataSetoranKasir.data[i];
+				for (let i = 0; i <  $scope.selectedData2.length; i++) {
+					const element = $scope.selectedData2[i];
 					if(element.status =='Setor'){
 						total =total + parseFloat(element.totalPenerimaan)
 						objSbm.push({
 							'norec_sbm': element.noRec,
 							'noclosing' :element.noClosing
 						})
+						noclosing = element.noClosing
 					}
 				}
 				if(objSbm.length == 0){
@@ -593,28 +595,42 @@ define(['initialize'], function (initialize) {
                 } else {
                     return;
                 }
-				medifirstService.post('bendaharapenerimaan/batal-setoran-kasir',
-					objSaveNew
-				// objSave
-				).then(function () {
-					var data = $scope.dataSetoranKasir.data
-					var listNoClos = ""
-					if (data.length != 0) {
-						var a = ""
-						var b = ""
-						for (var i = data.length - 1; i >= 0; i--) {
-							var c = data[i].noClosing
-							b = "," + c
-							a = a + b
-						}
-						listNoClos = a.slice(1, a.length)
+				// console.log(objSaveNew)
+				// console.log($scope.dataSetoranKasir)
+				// console.log($scope.selectedData2)
+				
+				medifirstService.get('bendaharapenerimaan/get-penjagaan-batal-setor?noclosing='+noclosing).then(function (e) {
+					console.log(e.data.detail)
+					console.log(e.data.detail.length)
+					if(e.data.detail.length == 0){
+						medifirstService.post('bendaharapenerimaan/batal-setoran-kasir',
+							objSaveNew
+						// objSave
+						).then(function () {
+							var data = $scope.dataSetoranKasir.data
+							var listNoClos = ""
+							if (data.length != 0) {
+								var a = ""
+								var b = ""
+								for (var i = data.length - 1; i >= 0; i--) {
+									var c = data[i].noClosing
+									b = "," + c
+									a = a + b
+								}
+								listNoClos = a.slice(1, a.length)
+							}
+							var objBatal = {
+								'noclosing': listNoClos
+							}
+							medifirstService.get('sysadmin/general/hapus-jurnal-setorankasir', objBatal).then(function () {})
+							loadData();
+						})
+					} else{
+						toastr.error('Batal STS Terlebih Dahulu')
+						return
 					}
-					var objBatal = {
-						'noclosing': listNoClos
-					}
-					medifirstService.get('sysadmin/general/hapus-jurnal-setorankasir', objBatal).then(function () {})
-					loadData();
 				})
+				
 			}
 
 			$scope.CetakLaporanPenerimaanHarian = function () {		

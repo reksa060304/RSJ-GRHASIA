@@ -58,10 +58,12 @@ define(['initialize'], function (initialize) {
                             schema: {
                                 model: {
                                     fields: {
+                                        jumlahjiwa: { type: "number" },
                                     }
                                 }
                             },
                             aggregate: [
+                                { field: 'jumlahjiwa', aggregate: 'sum' },
                             ]
                         });
                     });
@@ -142,6 +144,10 @@ define(['initialize'], function (initialize) {
                         "title": "Periksa Dokter Jiwa",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahjiwa #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        template: "#: jumlahjiwa  #",
+                        groupFooterTemplate: "#: data.jumlahjiwa.sum  #",
+                        footerTemplate: "#: data.jumlahjiwa.sum  #"
                     },
                     {
                         
