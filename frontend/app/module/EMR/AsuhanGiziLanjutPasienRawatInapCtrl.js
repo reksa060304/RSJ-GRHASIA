@@ -248,7 +248,7 @@ define(['initialize'], function (initialize) {
                     "detail": [
                         {"id": 3005968, "nama": "1 ) Hb ","satuan": "gr / dl","type": "textbox"},
                         {"id": 3005969, "nama": "3 ) GDP ","satuan": "mg / dl","type": "textbox"},
-                        {"id": 3005970, "nama": "5 ) HbsAg ","satuan": "mg / dl","type": "textbox"},
+                        {"id": 3005970, "nama": "5 ) HbA1c ","satuan": "mg / dl","type": "textbox"},
                         {"id": 3005971, "nama": "2 ) GDS ","satuan": "mg / dl","type": "textbox"},
                         {"id": 3005972, "nama": "4 ) GD2JPP ","satuan": "mg / dl","type": "textbox"},
                         {"id": 3005973, "nama": "6 ) Lain-lain ","satuan": "mg / dl","type": "textbox"},

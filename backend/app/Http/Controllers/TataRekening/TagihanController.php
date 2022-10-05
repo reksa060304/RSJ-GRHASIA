@@ -14203,4 +14203,156 @@ $result = array(
         );
         return $this->respond($result);
     }
+    public function daftarPasienTerverifikasi(Request $request){
+        $data= \DB::table('pasiendaftar_t as pd')
+            ->join('pasien_m as p', 'p.id', '=', 'pd.nocmfk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
+            ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
+            ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
+            // ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
+            // ->join('pelayananpasien_t as pp', 'apd.norec', '=', 'pp.noregistrasifk')
+            // ->leftjoin('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
+            // ->leftjoin('strukpelayananpenjamin_t as spp', 'spp.nostrukfk', '=', 'sp.norec')
+            ->select('pd.norec AS norec_pd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
+                'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk','pd.tglmeninggal','p.nosuratkematian',
+                // 'spp.noverifikasi',
+                'dept.id as deptid',
+                'pd.tglclosing','pd.objectruanganlastfk','pd.objectkelasfk')
+//            ->whereNull('pd.nostruklastfk')
+//            ->whereNull('pd.nosbmlastfk')
+            ->where('pd.statusenabled',true)
+            ->whereNotNull('pd.tglpulang')
+            ->whereNotNull('pd.nostruklastfk')
+        ;
+
+        $filter = $request->all();
+        if(isset($filter['tglAwal']) && $filter['tglAwal']!="" && $filter['tglAwal']!="undefined"){
+            $data = $data->where('pd.tglpulang','>=', $filter['tglAwal']);
+        }
+
+        if(isset($filter['tglAkhir']) && $filter['tglAkhir']!="" && $filter['tglAkhir']!="undefined"){
+            $tgl= $filter['tglAkhir'];//." 23:59:59";
+            $data = $data->where('pd.tglpulang','<=', $tgl);
+        }
+
+        if(isset($filter['instalasiId']) && $filter['instalasiId']!="" && $filter['instalasiId']!="undefined"){
+            $data = $data->where('dept.id','=', $filter['instalasiId']);
+        }
+
+        if(isset($filter['ruanganId']) && $filter['ruanganId']!="" && $filter['ruanganId']!="undefined"){
+            $data = $data->where('ru.id','=', $filter['ruanganId']);
+        }
+
+        if(isset($filter['namaPasien']) && $filter['namaPasien']!="" && $filter['namaPasien']!="undefined"){
+            $data = $data->where('p.namapasien','ilike', '%'.$filter['namaPasien'].'%');
+        }
+
+        if(isset($filter['noReg']) && $filter['noReg']!="" && $filter['noReg']!="undefined"){
+            $data = $data->where('pd.noregistrasi','ilike', '%'.$filter['noReg'].'%');
+        }
+
+        if (isset($filter['bpjs']) && $filter['bpjs'] != "" && $filter['bpjs'] != "undefined" && $filter['bpjs'] == 1 ) {
+            $data = $data->whereIn('kp.id', [2, 21, 22, 24, 25]);
+        }
+
+        if (isset($filter['noRm']) && $filter['noRm']!="" && $filter['noRm']!="undefined") {
+            $data = $data->where('p.nocm','ilike','%'.$filter['noRm'].'%');
+        }
+        if (isset($filter['kelompokPasienId']) && $filter['kelompokPasienId']!="" && $filter['kelompokPasienId']!="undefined") {
+            $data = $data->where('kp.id','=',$filter['kelompokPasienId']);
+        }
+
+        if(isset($filter['status']) && $filter['status']!="" && $filter['status']!="undefined"){
+            if($filter['status']=='Belum Verifikasi'){
+                $data = $data ->whereNull('pd.nostruklastfk')->whereNull('pd.nosbmlastfk');
+            }elseif($filter['status']=='Verifikasi'){
+                $data = $data ->whereNotNull('pd.nostruklastfk')->whereNull('pd.nosbmlastfk');
+            }elseif($filter['status']=='Lunas'){
+                $data = $data ->whereNotNull('pd.nostruklastfk')->whereNotNull('pd.nosbmlastfk');;
+            }
+        }
+        if (isset($filter['jmlRows']) && $filter['jmlRows']!="" && $filter['jmlRows']!="undefined") {
+            $data = $data->take($filter['jmlRows']);
+        }
+
+        // $data=$data->groupBy('pd.norec','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
+        //     'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk',
+        //     // 'spp.noverifikasi',
+        //     'dept.id','pd.tglclosing');
+
+
+//         if(!empty($filter['tglAwal']) && !empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && empty($filter['status']) && empty($filter['ruanganId']) && empty($filter['namaPasien']) && empty($filter['instalasiId'])){
+//             $data = $data->limit(10)->get();
+// //            $data = $data->get();
+
+//         }else if (empty($filter['tglAwal']) && empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && empty($filter['status']) && empty($filter['ruanganId']) && empty($filter['namaPasien']) && empty($filter['instalasiId'])) {
+
+//             $data = $data->limit(10)->get();
+
+//         }else if(!empty($filter['tglAwal']) && !empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && $filter['status'] == "undefined" && $filter['ruanganId'] == "undefined" && empty($filter['namaPasien']) && $filter['instalasiId'] == "undefined"){
+
+//             $data = $data->limit(10)->get();
+
+//         } else {
+//             $data = $data->limit(10)->get();
+// //            $data =$data->get();
+//         }
+        $data =$data->get();
+
+
+        $result = array();
+        foreach ($data as $pasienD){
+//            $pd=PasienDaftar::find($pasienD->norec);
+//            $totalHrsDibayar = StrukPelayanan::where('noregistrasifk',$pasienD->norec)
+//                ->where('statusenabled',true)
+//                ->orderBy('norec','desc')
+//                ->first();
+//            $pd->DepositId = $this->getProdukIdDeposit();
+            $status="-";
+
+//            if (isset($totalHrsDibayar)) {
+//                if ($pasienD->nostruklastfk != null && $totalHrsDibayar->totalharusdibayar == 0) {
+//                    $status = '-';//"Lunas";
+//                } else {
+            if ($pasienD->nostruklastfk == null && $pasienD->nosbmlastfk == null) {
+                $status = "Belum Verifikasi";
+            } elseif ($pasienD->nostruklastfk != null && $pasienD->nosbmlastfk == null) {
+                $status = "Verifikasi";
+            } elseif ($pasienD->nostruklastfk != null && $pasienD->nosbmlastfk != null) {
+                $status = '-';//"Lunas";
+            }
+//                }
+//            }else{
+//                if ($pasienD->nostruklastfk == null && $pasienD->nosbmlastfk == null) {
+//                    $status = "Belum Verifikasi";
+//                } elseif ($pasienD->nostruklastfk != null && $pasienD->nosbmlastfk == null) {
+//                    $status = "Verifikasi";
+//                } elseif ($pasienD->nostruklastfk != null && $pasienD->nosbmlastfk != null) {
+//                    $status = '-';//"Lunas";
+//                }
+//            }
+            $result[] = array(
+                'tanggalMasuk'  =>$pasienD->tglregistrasi,
+                'noCm'  => $pasienD->nocm,
+                'noRegistrasi'  => $pasienD->noregistrasi,
+                'namaRuangan'  => $pasienD->namaruangan,
+                'namaPasien'  => $pasienD->namapasien,
+                'jenisAsuransi'  => $pasienD->kelompokpasien,
+                'tanggalPulang' => $pasienD->tglpulang,
+                'tglmeninggal' =>  $pasienD->tglmeninggal,
+                'norec_pd' => $pasienD->norec_pd,
+//                'isVerified' => $pd->IsVerified,
+                'status'    =>  $status,
+                // 'noverif'    =>  $pasienD->noverifikasi,
+                'deptid' => $pasienD->deptid,
+                'tglclosing' => $pasienD->tglclosing,
+                'nosuratkematian' => $pasienD->nosuratkematian,
+                'kelasid' => $pasienD->objectkelasfk,
+                'ruanganid' => $pasienD->objectruanganlastfk,
+//                'isPaid' => $pd->isBayar,
+//                'isLunas' => $pd->isBayar,
+            );
+        }
+        return $this->respond($result);
+    }
 }

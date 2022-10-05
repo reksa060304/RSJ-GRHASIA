@@ -18969,6 +18969,82 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.FormCatatanPemantauanTerapiObat",
+    "url": "/FormCatatanPemantauanTerapiObat/:index/:idEMR",
+    "templateurl": "module/EMR/FormCatatanPemantauanTerapiObat.html",
+    "controller": "FormCatatanPemantauanTerapiObatCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.CPRIDiagnosaPerilakuKekerasan",
+    "url": "/CPRIDiagnosaPerilakuKekerasan/:index/:idEMR",
+    "templateurl": "module/EMR/CPRIDiagnosaPerilakuKekerasan.html",
+    "controller": "CPRIDiagnosaPerilakuKekerasanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.CPRIDiagnosaGPS",
+    "url": "/CPRIDiagnosaGPS/:index/:idEMR",
+    "templateurl": "module/EMR/CPRIDiagnosaGPS.html",
+    "controller": "CPRIDiagnosaGPSCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarPasienTerverifikasi",
+    "url": "/DaftarPasienTerverifikasi",
+    "templateurl": "module/TataRekening/DaftarPasienTerverifikasi.html",
+    "controller": "DaftarPasienTerverifikasiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 
 ]

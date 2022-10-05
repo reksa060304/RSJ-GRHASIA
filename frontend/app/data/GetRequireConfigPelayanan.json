@@ -3418,6 +3418,22 @@
         {
             "nameDep": "SuratKeteranganPasienMelarikanDiriCtrl",
             "urlDep": "module/EMR/SuratKeteranganPasienMelarikanDiriCtrl"
+        },
+        {
+            "nameDep": "FormCatatanPemantauanTerapiObatCtrl",
+            "urlDep": "module/EMR/FormCatatanPemantauanTerapiObatCtrl"
+        },
+        {
+            "nameDep": "CPRIDiagnosaPerilakuKekerasanCtrl",
+            "urlDep": "module/EMR/CPRIDiagnosaPerilakuKekerasanCtrl"
+        },
+        {
+            "nameDep": "CPRIDiagnosaGPSCtrl",
+            "urlDep": "module/EMR/CPRIDiagnosaGPSCtrl"
+        },
+        {
+            "nameDep": "DaftarPasienTerverifikasiCtrl",
+            "urlDep": "module/TataRekening/DaftarPasienTerverifikasiCtrl"
         }
         
     ]

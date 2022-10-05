@@ -2853,6 +2853,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('tatarekening/get-status-verif-piutang', 'TataRekening\TagihanController@getStatusVerifPiutang'); //done
           Route::post('tatarekening/save-log-unverifikasi-tarek','TataRekening\TagihanController@saveLoggingUnverifTarek');
           Route::get('tatarekening/daftar-pasien-pulang', 'TataRekening\TagihanController@daftarPasienPulang'); //done
+          Route::get('tatarekening/daftar-pasien-terverifikasi', 'TataRekening\TagihanController@daftarPasienTerverifikasi');
           Route::post('tatarekening/save-selesai-transaksi', 'TataRekening\TagihanController@closePemeriksaanPD'); //done
           Route::get('tatarekening/get-struk-pelayanan/{noRegister}', 'TataRekening\TagihanController@getStrukPelayanan');
           Route::get('tatarekening/get-status-verif-piutang', 'TataRekening\TagihanController@getStatusVerifPiutang');
