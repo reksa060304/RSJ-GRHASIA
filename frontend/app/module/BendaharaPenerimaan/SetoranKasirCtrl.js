@@ -172,6 +172,15 @@ define(['initialize'], function (initialize) {
 								selectable: true,
 								refresh: true,
 								pageSize: 10,
+								schema: {
+									model: {
+										fields: {
+											totalPenerimaan: {
+												type: "number"
+											},
+										}
+									}
+								},
 								aggregate: [
 									{ field: 'totalPenerimaan', aggregate: 'sum' },
 								]
@@ -408,9 +417,8 @@ define(['initialize'], function (initialize) {
 						"title": "Total Penerimaan",
 						"template": "<span class='style-right'>{{formatRupiah('#: totalPenerimaan #', 'Rp.')}}</span>",
 						"width": "100px",
-
-						// footerTemplate:"<span>Rp. {{formatRupiah('#:totalPenerimaan.sum  #', '')}}</span>",
-						// aggregates:["sum"]
+						aggregates: ["sum"],
+						footerTemplate:"<span>Rp. {{formatRupiah('#:totalPenerimaan.sum  #', '')}}</span>",
 
 					},
 					{
