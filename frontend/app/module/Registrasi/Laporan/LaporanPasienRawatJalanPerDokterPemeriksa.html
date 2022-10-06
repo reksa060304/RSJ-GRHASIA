@@ -81,24 +81,11 @@
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listKotaKabupaten" />
     </div> -->
     <div class="grid_4" style="margin-top:5px">
-        <div class="grid_12">
-            <label c-label item="item" c-label-text="Periode Registrasi"></label>
-        </div>
-        <div class="clear"></div>
 
         <div class="grid_12">
-            <!-- AwalPeriode -->
-            <div class="grid_6 padDatePicker">
-                <input style="width: 100%" k-ng-model="item.periodeAwal" kendo-datetimepicker k-max="now"
-                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
-            </div>
-
-            <!-- AkhirPeriode -->
-            <div class="grid_6 padDatePicker">
-                <input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-datetimepicker
-                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
-            </div>
-            <div class="clear"></div>
+            <label c-label item="item" c-label-text="Tahun"></label>
+            <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
+                placeholer="YYYY" k-format="'yyyy'" />
         </div>
     </div>
     <div class="grid_1" style="margin-top:5px">
