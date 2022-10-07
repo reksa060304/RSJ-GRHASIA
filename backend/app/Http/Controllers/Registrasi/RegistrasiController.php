@@ -1261,6 +1261,47 @@ class RegistrasiController extends ApiController
         return $this->respond($result);
     }
 
+    public function getPasienBatalRegistrasi(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $data = DB::select(DB::raw("select j.jumlahpelayanan, pd.tglregistrasi, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk
+        from pasiendaftar_t as pd
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+        inner join produk_m pr on pr.id = pp.produkfk
+        inner join(
+            select count(nourut) jumlahpelayanan, tglregistrasi, noregistrasi, norec
+            from(
+                select DENSE_RANK ( ) OVER ( order by pd.noregistrasi ) nourut, pd.tglregistrasi, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk
+                from pasiendaftar_t as pd
+                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                inner join produk_m pr on pr.id = pp.produkfk
+                where pd.kdprofile = 30
+                and pd.statusenabled = true
+                and ru.objectdepartemenfk = 18
+                and pd.tglregistrasi::date between '2021-12-17' and to_date(TO_CHAR(now(), 'YYYY-MM-DD'), 'YYYY-MM-DD') - INTERVAL '1 DAY'
+                group by pd.tglregistrasi, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk
+            ) as i group by tglregistrasi, noregistrasi, norec
+        ) as j on j.norec = pd.norec
+        left join batalregistrasi_t br on br.pasiendaftarfk = pd.norec
+        where pd.kdprofile = 30
+        and pd.statusenabled = true
+        and br.norec is null
+        and ru.objectdepartemenfk = 18
+        and j.jumlahpelayanan = 1
+        and pr.id in(5008644, 5008635, 5008645, 5008636)
+        and pd.tglregistrasi::date between '2021-12-17' and to_date(TO_CHAR(now(), 'YYYY-MM-DD'), 'YYYY-MM-DD') - INTERVAL '1 DAY'
+        group by j.jumlahpelayanan, pd.tglregistrasi, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk")); 
+
+        $result = array(
+            'data'=> $data,
+            'message' => 'larasatizka',
+        );
+        return $this->respond($result);
+    }
+
     public function getAntrianPasien(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile =(int) $kdProfile;
@@ -2792,6 +2833,55 @@ class RegistrasiController extends ApiController
             $result = array(
                 'status' => 400,
                 'message'  => $transStatus,
+                'as' => 'ramdanegie',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function postingBatalRegistrasi(Request $request) {
+        $kdProfile = (int)$this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $tglAyeuna = date('Y-m-d H:i:s');
+
+        try{
+                /*Logging User*/
+                $logUser = new BatalRegistrasi();
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= $kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->alasanpembatalan = '24 jam tanpa pelayanan';
+                $logUser->pasiendaftarfk =$request['pasiendaftarfk'];
+                $logUser->pegawaifk=320263;
+                $logUser->pembatalanfk =  2;
+                $logUser->tanggalpembatalan = $tglAyeuna;
+                $logUser->save();
+
+                $pasienDaftar = PasienDaftar::where('norec',$request['pasiendaftarfk'])->first();
+                $pasienDaftar->statusenabled = false;
+                $pasienDaftar->save();
+
+                $transStatus = 'true';
+                /*End Logging User*/
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Posting Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ramdanegie',
+            );
+        } else {
+            $transMessage = "Posting Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transStatus,
+                "e"=>$e->getMessage(). ' '.$e->getLine(),
                 'as' => 'ramdanegie',
             );
         }

@@ -1463,6 +1463,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-child','Perencanaan\PerencanaanController@saveChild');
             Route::post('perencanaan/save-setting-tahap','Perencanaan\PerencanaanController@saveSettingTahap');
             Route::post('perencanaan/save-permen-kelima','Perencanaan\PerencanaanController@savePermenKelima');
+            Route::post('perencanaan/save-permen-keempat','Perencanaan\PerencanaanController@savePermenKeempat');
             Route::post('perencanaan/save-spp','Perencanaan\PerencanaanController@saveSPP');
             Route::post('perencanaan/save-spm','Perencanaan\PerencanaanController@saveSPM');
             Route::post('perencanaan/save-spd','Perencanaan\PerencanaanController@saveSPD');
@@ -1488,6 +1489,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/delete-spm','Perencanaan\PerencanaanController@deleteSPM');
             Route::post('perencanaan/delete-spp','Perencanaan\PerencanaanController@deleteSPP');
             Route::post('perencanaan/delete-permen-kelima','Perencanaan\PerencanaanController@deletePermenKelima');
+            Route::post('perencanaan/delete-permen-keempat','Perencanaan\PerencanaanController@deletePermenKeempat');
             Route::post('perencanaan/delete-panjar','Perencanaan\PerencanaanController@deletePanjar');
             Route::post('perencanaan/delete-pengembalian','Perencanaan\PerencanaanController@deletePengembalian');
             Route::post('perencanaan/delete-child','Perencanaan\PerencanaanController@deleteChildAnggaran');
@@ -1757,6 +1759,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('registrasi/get-history-pemakaianasuransi', 'Registrasi\RegistrasiController@getHistoryPemakaianAsuransi');
             Route::get('registrasi/get-pasien', 'Registrasi\RegistrasiController@getDaftarPasien');
             Route::get('registrasi/get-tglpulang-pasien', 'Registrasi\RegistrasiController@cekTglPulangPasien');
+            Route::get('registrasi/get-pasien-batal-registrasi', 'Registrasi\RegistrasiController@getPasienBatalRegistrasi');
             Route::get('registrasi/get-apd', 'Registrasi\RegistrasiController@getAntrianPasien');
             Route::get('registrasi/get-history-pemakaianasuransi2', 'Registrasi\RegistrasiController@getHistoryPemakaianAsuransi2');
             Route::get('registrasi/cek-pasien-daftar-duakali', 'Registrasi\RegistrasiController@cekPasienDaftarDuaKali');
@@ -1805,6 +1808,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('registrasi/save-pasien', 'Registrasi\RegistrasiController@savePasien');
             Route::post('registrasi/update-pasien', 'Registrasi\RegistrasiController@updatePasien');
             Route::post('registrasi/update-false-pasien', 'Registrasi\RegistrasiController@updateStatusEnabledPasien');
+            Route::post('registrasi/posting-batal-registrasi', 'Registrasi\RegistrasiController@postingBatalRegistrasi');
             Route::get('registrasi/cek-pasien-bpjs-daftar', 'Registrasi\RegistrasiController@cekPasienBPJSDaftar');
             Route::get('registrasi/get-apd-detail','Registrasi\RegistrasiController@getApdDetail');
             Route::get('registrasi/get-kecamatanbydesa/{idDesa}','Registrasi\RegistrasiController@getKecamatanByDesaKelurahan');

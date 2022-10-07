@@ -314,7 +314,7 @@
 							
 							<!-- <br /> -->
 							<div class="grid_12">
-								<div class="grid_6">
+								<div class="grid_4">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="Organisasi"></label>
 									</div>
@@ -322,7 +322,17 @@
 										<input c-text-box type="input" class="k-textbox" ng-model="item.organisasi" disabled="true" />
 									</div>
 								</div>
-								<div class="grid_2"></div>
+								<div class="grid_1"></div>
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="Div"></label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchdivkeg"
+											k-data-text-field="'div'" k-data-value-field="'id'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" ng-disabled="disidpegawai"/>
+									</div>
+								</div>
 								<div class="grid_3">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="Tahap"></label>
@@ -330,7 +340,7 @@
 									<div class="grid_12">
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchtahapkeg"
 											k-data-text-field="'tahap'" k-data-value-field="'id'"
-											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahapKegiatan" k-on-change='changeTahap()' ng-disabled="disidpegawai"/>
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahapKegiatan" ng-disabled="disidpegawai"/>
 									</div>
 								</div>
 								<div class="grid_1">
@@ -342,9 +352,12 @@
 									<!-- <div class="grid_8" style="margin-top: -12px;"> -->
 										<div class="grid_12">
 											<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
-												placeholer="YYYY" k-format="'yyyy'" k-on-change='changeTahap()' ng-disabled="disidpegawai"/>
+												placeholer="YYYY" k-format="'yyyy'" ng-disabled="disidpegawai"/>
 										<!-- </div> -->
 									</div>
+								</div>
+								<div class="grid_1" style="margin-top: 10px;">
+									<button class="btnTemplate1" ng-click="findKegiatan()">Search</button>
 								</div>
 								<!-- <div class="grid_12 headerBox">
 									<p>Daftar Kegiatan</p>
@@ -411,7 +424,10 @@
 							<div class="clear"></div>
 							<div class="grid_12">
 								<div class="grid_3">
-									<button class="btnTemplate1" ng-click="DataPermenDigitKelima()">Data Master Rek Permendagri</button>
+									<button class="btnTemplate1" ng-click="DataPermenDigitKeempat()">Data Master Rek Permendagri Digit Ke 4</button>
+								</div>
+								<div class="grid_3">
+									<button class="btnTemplate1" ng-click="DataPermenDigitKelima()">Data Master Rek Permendagri Digit Ke 5</button>
 								</div>
 								<div class="grid_3">
 									<button class="btnTemplate1" ng-click="MappingRek()">Mapping Rek RBA ke Rek Permendagri</button>
@@ -449,7 +465,7 @@
 										<label c-label item="item" c-label-text="Tahun"></label>
 									</div>
 										<div class="grid_12">
-											<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
+											<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunkas" kendo-date-picker
 												placeholer="YYYY" k-format="'yyyy'" ng-disabled="disidpegawai"/>
 									</div>
 								</div>
@@ -643,6 +659,56 @@
 			<div class="grid_12" >
 				<kendo-grid id="kGrids" k-data-source="dataSourcePermenKelima" k-selectable="'row'" 
 					k-options="columnPermenKelima" k-ng-model="dataPermenKelimaSelected" ng-click="klikPermenKelima(dataPermenKelimaSelected)">
+				</kendo-grid>
+			</div>
+		</div>
+	</div>
+</div>
+<div kendo-window="popupPermenKeempat" k-title="'Data Kode dan Nama Rekening APBD Digit Ke 4'" k-visible="false" k-width="1000" k-height="600" style="overflow-y: hidden; overflow-x: hidden;">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_10" >
+				<div class="grid_12" >
+					<div class="grid_4" style="text-align: center;">
+						Nama Rekening APBD Digit 3
+					</div>
+					<div class="grid_8" style="margin-top: -10px;">
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.digit3"
+							k-data-text-field="'text'" k-data-value-field="'id'"
+							k-filter="'contains'" k-auto-bind="false" k-data-source="listKonsolidasi3"/>
+					</div>
+				</div>
+				<div class="grid_12" >
+					<div class="grid_4" style="text-align: center;">
+						Kode Rekening APBD Digit 4
+					</div>
+					<div class="grid_4" style="margin-top: -10px;">
+						<input c-text-box type="input" class="k-textbox" ng-model="item.kodedigit3" disabled />
+					</div>
+					<div class="grid_4" style="margin-top: -10px;">
+						<input c-text-box type="input" class="k-textbox" ng-model="item.kodedigit41"  />
+					</div>
+				</div>
+				<div class="grid_12" >
+					<div class="grid_4" style="text-align: center;">
+						Nama Rekening APBD Digit 4
+					</div>
+					<div class="grid_8" style="margin-top: -10px;">
+						<input c-text-box type="input" class="k-textbox" ng-model="item.namadigit41"  />
+					</div>
+				</div>
+			</div>
+			<div class="grid_2" >
+				<div class="grid_8">
+					<button class="btnTemplate1" ng-click="SavePermenKeempat()">Simpan</button>
+				</div>
+				<div class="grid_8">
+					<button class="btnTemplate1" ng-click="BaruPermenKeempat()">Clear</button>
+				</div>
+			</div>
+			<div class="grid_12" >
+				<kendo-grid id="kGrids" k-data-source="dataSourcePermenKeempat" k-selectable="'row'" 
+					k-options="columnPermenKeempat" k-ng-model="dataPermenKeempatSelected" ng-click="klikPermenKeempat(dataPermenKeempatSelected)">
 				</kendo-grid>
 			</div>
 		</div>
@@ -1111,7 +1177,7 @@
 						TAHAP
 					</div>
 					<div class="grid_5" style="margin-top: -10px;">
-						<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahap"
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapdetail"
 							k-data-text-field="'tahap'" k-data-value-field="'id'"
 							k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" ng-disabled="disidpegawai"/>
 					</div>

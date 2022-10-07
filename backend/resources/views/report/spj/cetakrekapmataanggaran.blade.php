@@ -280,9 +280,9 @@
                     <td width="300">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
+                        <p align="center" style="margin-right: 30px; margin-top: 130px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    Yogyakarta, {{ date('d M Y') }}
+                                    Yogyakarta, {{ $tanggalcetak }}
                             </font>
                         </p>
                     </td>

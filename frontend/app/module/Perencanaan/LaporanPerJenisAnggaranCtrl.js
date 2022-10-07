@@ -12,6 +12,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.tglawal = $scope.now;
             $scope.item.tglakhir = $scope.now;
             $scope.disterhadapdetail = FontFaceSetLoadEvent
+            $scope.item.tglCetak1 = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglCetak2 = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglCetak3 = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglCetak4 = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglCetak5 = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglCetak6 = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglCetak7 = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglCetak8 = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglCetak9 = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglCetak10 = moment($scope.now).format('YYYY-MM-DD HH:mm');
 
             $scope.yearUngkul = {
                 start: "decade",
@@ -167,10 +177,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     terhadap = $scope.item.terhadap.id
                 }
 
+                
+
                 if($scope.item.terhadap == undefined || tahap == terhadap){
-                    window.open(baseTransaksi + "report/get-cetak-per-jenis-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahun).format('YYYY'), '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-per-jenis-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahun).format('YYYY')+"&tglcetak="+moment($scope.item.tglCetak1).format('YYYY-MM-DD HH:mm'), '_blank');
                 } else if($scope.item.terhadap != undefined){
-                    window.open(baseTransaksi + "report/get-cetak-per-jenis-anggaran-sebelum-sesudah?tahap="+tahap+"&tahun="+moment($scope.item.tahun).format('YYYY') +"&terhadap="+terhadap, '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-per-jenis-anggaran-sebelum-sesudah?tahap="+tahap+"&tahun="+moment($scope.item.tahun).format('YYYY') +"&terhadap="+terhadap+"&tglcetak="+moment($scope.item.tglCetak1).format('YYYY-MM-DD HH:mm'), '_blank');
                 }
             }
 
@@ -188,9 +200,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
 
                 if($scope.item.terhadapmata == undefined || tahap == terhadap){
-                    window.open(baseTransaksi + "report/get-cetak-rekap-mata-anggaran-sebelum?tahap="+tahap+"&tahun="+moment($scope.item.tahunmata).format('YYYY'), '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-rekap-mata-anggaran-sebelum?tahap="+tahap+"&tahun="+moment($scope.item.tahunmata).format('YYYY')+"&tglcetak="+moment($scope.item.tglCetak2).format('YYYY-MM-DD HH:mm'), '_blank');
                 } else if($scope.item.terhadapmata != undefined || tahap != terhadap){
-                    window.open(baseTransaksi + "report/get-cetak-rekap-mata-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahunmata).format('YYYY') +"&terhadap="+terhadap, '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-rekap-mata-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahunmata).format('YYYY') +"&terhadap="+terhadap+"&tglcetak="+moment($scope.item.tglCetak2).format('YYYY-MM-DD HH:mm'), '_blank');
                 }
             }
 
@@ -208,9 +220,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
 
                 if($scope.item.terhadaprekap == undefined || tahap == terhadap){
-                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY'), '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY')+"&tglcetak="+moment($scope.item.tglCetak6).format('YYYY-MM-DD HH:mm'), '_blank');
                 } else if($scope.item.terhadaprekap != undefined || tahap != terhadap){
-                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaran-sebelum-sesudah?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY') +"&terhadap="+terhadap, '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaran-sebelum-sesudah?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY') +"&terhadap="+terhadap+"&tglcetak="+moment($scope.item.tglCetak6).format('YYYY-MM-DD HH:mm'), '_blank');
                 }
             }
 
@@ -227,9 +239,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 
                 if ($scope.item.terhadapSumberDana == undefined || tahap == terhadap) {
-                    window.open(baseTransaksi + "report/get-cetak-rekap-SumberDana-anggaran-sebelum?tahap=" + tahap + "&tahun=" + moment($scope.item.tahunSumberDana).format('YYYY'), '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-rekap-SumberDana-anggaran-sebelum?tahap=" + tahap + "&tahun=" + moment($scope.item.tahunSumberDana).format('YYYY')+"&tglcetak="+moment($scope.item.tglCetak3).format('YYYY-MM-DD HH:mm'), '_blank');
                 } else if ($scope.item.terhadapSumberDana != undefined || tahap != terhadap) {
-                    window.open(baseTransaksi + "report/get-cetak-rekap-SumberDana-anggaran?tahap=" + tahap + "&tahun=" + moment($scope.item.tahunSumberDana).format('YYYY') + "&terhadap=" + terhadap, '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-rekap-SumberDana-anggaran?tahap=" + tahap + "&tahun=" + moment($scope.item.tahunSumberDana).format('YYYY') + "&terhadap=" + terhadap+"&tglcetak="+moment($scope.item.tglCetak3).format('YYYY-MM-DD HH:mm'), '_blank');
                 }
             }
             $scope.CetakRBADetail = function(){
@@ -254,9 +266,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
 
                 if ($scope.item.terhadapdetail != undefined) {
-                    window.open(baseTransaksi + "report/get-cetak-rba-detail-sebelum-sesudah?tahun=" +moment(tahun).format('YYYY')+ "&subsubkegiatan=" + subsubkegiatan + "&tahap="+tahap + "&terhadap="+terhadap, '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-rba-detail-sebelum-sesudah?tahun=" +moment(tahun).format('YYYY')+ "&subsubkegiatan=" + subsubkegiatan + "&tahap="+tahap + "&terhadap="+terhadap+"&tglcetak="+moment($scope.item.tglCetak4).format('YYYY-MM-DD HH:mm'), '_blank');
                 } else if($scope.item.terhadapdetail == undefined){
-                    window.open(baseTransaksi + "report/get-cetak-rba-detail?tahun=" +moment(tahun).format('YYYY')+ "&subsubkegiatan=" + subsubkegiatan + "&tahap="+tahap, '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-rba-detail?tahun=" +moment(tahun).format('YYYY')+ "&subsubkegiatan=" + subsubkegiatan + "&tahap="+tahap+"&tglcetak="+moment($scope.item.tglCetak4).format('YYYY-MM-DD HH:mm'), '_blank');
                 }
 
 
@@ -289,7 +301,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     perubahan = $scope.item.jenisperubahan.id
                 }
 
-                window.open(baseTransaksi + "report/get-cetak-pendapatan-perubahan?tahun="+moment(tahun).format('YYYY')+"&perubahan="+perubahan, '_blank');
+                window.open(baseTransaksi + "report/get-cetak-pendapatan-perubahan?tahun="+moment(tahun).format('YYYY')+"&perubahan="+perubahan+"&tglcetak="+moment($scope.item.tglCetak5).format('YYYY-MM-DD HH:mm'), '_blank');
             }
             $scope.Perbaharui = function () {
                 $scope.ClearSearch();

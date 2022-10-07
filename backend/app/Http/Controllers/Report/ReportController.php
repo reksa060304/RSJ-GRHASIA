@@ -2416,6 +2416,7 @@ class ReportController extends ApiController{
     public function CetakPerJenisAnggaran(Request $request){
         $tahun = $request['tahun'];
         $tahap =  $request['tahap'];
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
 
         $qtahap  = '';
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
@@ -2509,7 +2510,7 @@ class ReportController extends ApiController{
 
         $pageWidth = 950;
         //return $this->respond($result);
-        return view('report.spj.cetakjenisanggaran',compact('data', 'pageWidth', 'jumlah', 'tahap'));
+        return view('report.spj.cetakjenisanggaran',compact('data', 'pageWidth', 'jumlah', 'tahap', 'tanggalcetak'));
     }
 
     public function CetakKeuanganPerRekening(Request $request){
@@ -2664,46 +2665,52 @@ class ReportController extends ApiController{
 
         $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subk));
 
-        $data = DB::select(DB::raw("select kodemataanggaran, namamataanggaran, jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        $data = DB::select(DB::raw("select kodemataanggaran, namamataanggaran, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
         sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes
         from(
-            select map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode kodemataanggaran,
-            map.mataanggaranpermen namamataanggaran, sum(kb.subtotal) jumlahanggaran,
-            case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
-            case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
-            case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
-            case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
-            case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
-            case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
-            case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
-            case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
-            case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
-            case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
-            case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
-            case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes
-            from mataanggaran_m ma
-            inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
-            INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-            inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
-            inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
-            inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
-            inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
-            inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
-            left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
-            and akb.kdprofile = 30 and akb.statusenabled = true
-            where ma.kdprofile = 30 and ma.statusenabled = true
-            and kb.kdprofile = 30 and kb.statusenabled = true
-            and ka.kdprofile = 30 and ka.statusenabled = true
-            and map.kdprofile = 30 and map.statusenabled = true
-            and dp0.kdprofile = 30 and dp0.statusenabled = true 
-            $qtahunka
-            $qsubkegiatan
-            $qtahap
-            group by map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode, map.mataanggaranpermen,
-            akb.bulanint
-        ) as x group by kodemataanggaran, namamataanggaran, jumlahanggaran        
+            select kodemataanggaran, namamataanggaran, jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+            sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
+            sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
+            sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes
+            from(
+                select map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode kodemataanggaran,
+                map.mataanggaranpermen namamataanggaran, sum(kb.subtotal) jumlahanggaran,
+                case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
+                case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
+                case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
+                case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
+                case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
+                case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
+                case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
+                case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
+                case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
+                case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
+                case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
+                case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+                and akb.kdprofile = 30 and akb.statusenabled = true
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                and map.kdprofile = 30 and map.statusenabled = true
+                and dp0.kdprofile = 30 and dp0.statusenabled = true 
+                $qtahunka
+                $qsubkegiatan
+                $qtahap
+                group by map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode, map.mataanggaranpermen,
+                akb.bulanint
+            ) as x group by kodemataanggaran, namamataanggaran, jumlahanggaran        
+        ) as y group by kodemataanggaran, namamataanggaran
         "));
 
         $pageWidth = 1200;
@@ -3552,7 +3559,7 @@ class ReportController extends ApiController{
 
     public function CetakPerJenisAnggaranSebelumSesudah(Request $request){
         $tahun = $request['tahun'];
-        
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
 
         $qtahap  = '';
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
@@ -3741,7 +3748,7 @@ class ReportController extends ApiController{
 
         $pageWidth = 1200;
         //return $this->respond($result);
-        return view('report.spj.cetakjenisanggaransebelumsesudah',compact('sebelum', 'pageWidth', 'tahap'));
+        return view('report.spj.cetakjenisanggaransebelumsesudah',compact('sebelum', 'pageWidth', 'tahap', 'tanggalcetak'));
     }
 
     
@@ -3751,7 +3758,7 @@ class ReportController extends ApiController{
         $tahap = $request['tahap'];
 
         $itahap = DB::select(DB::raw("select id, tahap from tahapanggaran_m where id = $tahap"));
-        
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
 
         $qtahap  = '';
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
@@ -4631,14 +4638,14 @@ class ReportController extends ApiController{
         // );
 
         $pageWidth = 1200;
-        return view('report.spj.cetakrekapmataanggaran',compact('sebelum','pageWidth', 'jumlah', 'itahap'));
+        return view('report.spj.cetakrekapmataanggaran',compact('sebelum','pageWidth', 'jumlah', 'itahap', 'tanggalcetak'));
     }
 
     public function CetakRekapMataAnggaranSebelum(Request $request){
         $tahun = $request['tahun'];
         $tahap = $request['tahap'];
         
-
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
         $qtahap  = '';
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
             $qtahap =  ' and kb.objecttahapfk =  ' . $request['tahap'];
@@ -4849,13 +4856,13 @@ class ReportController extends ApiController{
         );
 
         $pageWidth = 1200;
-        return view('report.spj.cetakrekapmataanggaransebelum',compact('sebelum','pageWidth', 'jumlah', 'itahap'));
+        return view('report.spj.cetakrekapmataanggaransebelum',compact('sebelum','pageWidth', 'jumlah', 'itahap', 'tanggalcetak'));
     }
 
     public function CetakRekapTotalAnggaran(Request $request){
         $tahun = $request['tahun'];
         $tahap = $request['tahap'];
-        
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak']))); 
 
         $qtahap  = '';
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
@@ -5034,13 +5041,13 @@ class ReportController extends ApiController{
         );
 
         $pageWidth = 1200;
-        return view('report.spj.cetakrekaptotalanggaran',compact('sebelum','pageWidth', 'jumlah', 'itahap'));
+        return view('report.spj.cetakrekaptotalanggaran',compact('sebelum','pageWidth', 'jumlah', 'itahap', 'tanggalcetak'));
     }
 
     public function CetakRekapTotalAnggaranSebelumSesudah(Request $request){
         $tahun = $request['tahun'];
         $tahap = $request['tahap'];
-        
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak']))); 
 
         $qtahap  = '';
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
@@ -5525,12 +5532,14 @@ class ReportController extends ApiController{
         );
 
         $pageWidth = 1200;
-        return view('report.spj.cetakrekaptotalanggaransebelumsesudah',compact('sebelum','pageWidth', 'jumlah', 'itahap'));
+        return view('report.spj.cetakrekaptotalanggaransebelumsesudah',compact('sebelum','pageWidth', 'jumlah', 'itahap', 'tanggalcetak'));
     }
 
     public function CetakRBADetail(Request $request){
         $tahun = $request['tahun'];
         $tahap = $request['tahap'];
+
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
 
         $qtahap  = '';
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
@@ -5770,12 +5779,12 @@ class ReportController extends ApiController{
         "));
 
         $pageWidth = 1200;
-        return view('report.spj.cetakrbadetail',compact('sebelum','pageWidth', 'data', 'itahap'));
+        return view('report.spj.cetakrbadetail',compact('sebelum','pageWidth', 'data', 'itahap', 'tanggalcetak'));
     }
 
     public function CetakPendapatanPerubahan(Request $request){
         $tahun = $request['tahun'];
-        
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));    
 
         $qperubahan  = '';
         if (isset($request['perubahan']) && $request['perubahan'] != "" && $request['perubahan'] != "undefined" && $request['perubahan'] == 1) {
@@ -5830,12 +5839,12 @@ class ReportController extends ApiController{
         order by nourut, bold"));     
     
         $pageWidth = 1200;
-        return view('report.spj.cetakpendapatanperubahan',compact('pageWidth', 'data'));
+        return view('report.spj.cetakpendapatanperubahan',compact('pageWidth', 'data', 'tanggalcetak'));
     }
 
     public function CetakRBADetailSebelumSesudah(Request $request){
         $tahun = $request['tahun'];
-        
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));        
 
         $qtahap  = '';
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
@@ -6296,7 +6305,7 @@ inner join(
         "));
 
         $pageWidth = 1500;
-        return view('report.spj.cetakrbadetailsebelumsesudah',compact('sebelum','pageWidth', 'data'));
+        return view('report.spj.cetakrbadetailsebelumsesudah',compact('sebelum','pageWidth', 'data', 'tanggalcetak'));
     }
     
 
@@ -6942,6 +6951,8 @@ public function suratBuktiPengembalian(Request $request)
         $tahun = $request['tahun'];
         $tahap =  $request['tahap'];
 
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+
         $qtahap  = '';
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
             $qtahap =  ' and kb.objecttahapfk =  ' . $request['tahap'];
@@ -7003,12 +7014,12 @@ public function suratBuktiPengembalian(Request $request)
                     ) as y group by subkegiatan, kode, div
                 ) as a order by kode"));
         $pageWidth = 1110;
-        return view('report.spj.cetakrekapanggaransumberdana', compact('data', 'pageWidth','tahap'));
+        return view('report.spj.cetakrekapanggaransumberdana', compact('data', 'pageWidth','tahap', 'tanggalcetak'));
     }
     public function CetakRekapSumberDanaAnggaran(Request $request)
     {   
         $tahun = $request['tahun'];
-        
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
 
         $qtahap  = '';
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
@@ -7259,7 +7270,7 @@ public function suratBuktiPengembalian(Request $request)
         "));
         $pageWidth = 1300;
         //return $this->respond($result);
-        return view('report.spj.cetakrekapanggaransumberdanasebelumsesudah',compact('sebelum', 'pageWidth'));
+        return view('report.spj.cetakrekapanggaransumberdanasebelumsesudah',compact('sebelum', 'pageWidth', 'tanggalcetak'));
     }   
 
     public function cetakKGB(Request $request)

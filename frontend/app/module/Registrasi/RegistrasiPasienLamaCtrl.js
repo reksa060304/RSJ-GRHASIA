@@ -47,6 +47,20 @@ define(['initialize'], function (initialize) {
                     $scope.item.periodeAwal = $scope.now;
                     $scope.item.periodeAkhir = $scope.now;
                 }
+
+                //batal registrasi otomatis jika dalam 24 jam tidak ada pelayanan
+
+                // medifirstService.get("registrasi/get-pasien-batal-registrasi").then(function (data) {
+                //     for(var i =0; i < data.data.data.length; i++){
+                //         var item = {
+                //             pasiendaftarfk: data.data.data[i].norec,
+                //         }
+                //         console.log(item)
+                //         medifirstService.post('registrasi/posting-batal-registrasi', item).then(function (e) {
+                //             loadData();
+                //         })
+                //     }
+                // });
             }
             loadData()
             $scope.SearchData = function () {
