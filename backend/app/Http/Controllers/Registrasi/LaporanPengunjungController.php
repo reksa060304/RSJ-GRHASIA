@@ -169,10 +169,12 @@ class LaporanPengunjungController extends ApiController
         $ruangan= \DB::table('ruangan_m')
             ->select('id','namaruangan')
             ->where('statusenabled',true)
+            ->where('kdprofile', 30)
             ->get();
         $dokter= \DB::table('pegawai_m')
             ->select('id','namalengkap')
             ->where('statusenabled',true)
+            ->where('kdprofile', 30)
             ->where('objectjenispegawaifk',true)
             ->get();
 
@@ -7317,7 +7319,7 @@ class LaporanPengunjungController extends ApiController
         from pasiendaftar_t pt
         inner join pegawai_m pm on pm.id = pt.objectdokterpemeriksafk 
         inner join ruangan_m rm on rm.id = pt.objectruanganlastfk 
-        where pt.statusenabled = true and pt.kdprofile = 21 and rm.objectdepartemenfk = 18 and pt.tglregistrasi between '$tglAwal' and '$tglAkhir' $paramRuangan $paramDokter) as x
+        where pt.statusenabled = true and pt.kdprofile = 30 and rm.objectdepartemenfk = 18 and  date_part('year', pt.tglregistrasi)= $request[tahun] $paramRuangan $paramDokter) as x
         group by x.namaruangan,x.namalengkap
         order by x.namaruangan asc, x.namalengkap asc"));
         return $this->respond($data);

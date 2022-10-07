@@ -14223,6 +14223,8 @@ $result = array(
             ->where('pd.statusenabled',true)
             ->whereNotNull('pd.tglpulang')
             ->whereNotNull('pd.nostruklastfk')
+            ->whereNotNull('pd.nosbmlastfk')
+            ->where('kp.id',1)
         ;
 
         $filter = $request->all();

@@ -9,7 +9,11 @@ define(['initialize'], function (initialize) {
             $scope.item = {};
             $scope.itemD = {};
             $scope.isRouteLoading = false;
-
+            $scope.item.tahun = moment($scope.now).format('YYYY')
+            $scope.yearUngkul = {
+                start: "decade",
+                depth: "decade"
+            }
             $scope.tglMeninggal = '';
             $scope.Page = {
                 refresh: true,
@@ -90,11 +94,14 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.kabupaten != undefined) {
                     kotaKab = "&kotaKab=" + $scope.item.kabupaten.id
                 }
-
+                var tahun = ""
+                console.log($scope.item.tahun);
+                if ($scope.item.tahun != undefined) {
+                    tahun = "tahun=" + moment($scope.item.tahun).format('YYYY')
+                }
 
                 medifirstService.get("registrasi/laporan/get-lap-paseinrj-per-dokpemeriksa?" +
-                    "tglAwal=" + tglAwal +
-                    "&tglAkhir=" + tglAkhir +
+                    tahun+
                     rm +
                     pasien +
                     namaruangan +

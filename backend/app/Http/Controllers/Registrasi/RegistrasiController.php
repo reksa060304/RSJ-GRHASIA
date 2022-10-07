@@ -12106,9 +12106,14 @@ GROUP BY y.KET
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
         $dokter = $request['dokter'];
+        $ruangan = $request['ruanganId'];
         $paramDokter = '';
         if (isset($dokter) && $dokter != "" && $dokter != "undefined") {
             $paramDokter = ' and pm2.id = ' . $dokter;
+        }
+        $paramRuangan = '';
+        if (isset($ruangan) && $ruangan != "" && $ruangan != "undefined") {
+            $paramRuangan = ' and at2.objectruanganfk =  ' . $ruangan;
         }
         $data = \DB::select(DB::raw(
             "select pt.noregistrasi ,at2.tgldipanggilsuster ,at2.tglregistrasi,age(at2.tgldipanggilsuster,at2.tglregistrasi) as selisih, at2.tglselesaiperiksa ,
@@ -12122,8 +12127,9 @@ GROUP BY y.KET
             inner join departemen_m dm on dm.id = r.objectdepartemenfk 
             inner join pegawai_m pm2 on pm2.id = pt.objectdokterpemeriksafk 
             left join strukresep_t st on st.pasienfk = at2.norec 
-            where at2.kdprofile = $kdProfile and at2.statusenabled = true and dm.id = 18
+            where at2.kdprofile = $kdProfile and at2.statusenabled = true and dm.id = 18 
             $paramDokter
+            $paramRuangan
             and at2.tglregistrasi between '$tglAwal' and '$tglAkhir' 
             group by pt.noregistrasi ,at2.tgldipanggilsuster ,at2.tglregistrasi,selisih,
             ps.nocm ,ps.namapasien , r.namaruangan , km.kelompokpasien,pm2.namalengkap,at2.tglselesaiperiksa ,st.tglresep
