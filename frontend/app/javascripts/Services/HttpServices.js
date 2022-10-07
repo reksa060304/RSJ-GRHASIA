@@ -204,6 +204,171 @@
                      deffer.reject(response);
                  });
                  return deffer.promise;
+             },
+             postNonMessage: function (obj, data) {
+                 // console.log(JSON.stringify(data));
+                 var deffer = $q.defer();
+                 if (obj.method === undefined)
+                     obj.method = "GET";
+                 var authorization = "";
+                 var arr = document.cookie.split(';')
+                 for (var i = 0; i < arr.length; i++) {
+                     var element = arr[i].split('=');
+                     if (element[0].indexOf('authorization') > -1) {
+                         authorization = element[1];
+                     }
+                 }
+
+                 if (({}).hasOwnProperty.call(data, 'supervisorToken')) { // Syamsu
+                     if (data.supervisorToken !== undefined) {
+                         authorization = data.supervisorToken;
+                     }
+                 }
+                 var urlPath = "#" + $location.path();
+                 var lDataRuangan = window.localStorage.getItem('dataRuangan');
+                 var dataRuangan = {};
+                 if (lDataRuangan === undefined || lDataRuangan === null) {
+                     dataRuangan = {
+                         ruanganId: 0
+                     };
+                 } else {
+                     dataRuangan = JSON.parse(lDataRuangan);
+                 }
+                 var dataUserLogin = JSON.parse(window.localStorage.getItem('datauserlogin'));
+
+                 var Supervising = window.localStorage.getItem('Supervising');
+
+                 if (Supervising === undefined || Supervising === null) {
+                     Supervising = false;
+                 }
+
+                 if (dataRuangan === undefined || dataRuangan === null) {
+                     dataRuangan = {
+                         ruanganId: 0
+                     };
+                 }
+
+                 if (dataUserLogin == undefined || dataUserLogin == null) {
+                     dataUserLogin = {
+                         kdUser: ""
+                     };
+                 }
+
+                 var url = "";
+                 var req = {};
+                 if (obj.url === undefined) {
+
+                     if (obj.indexOf("?") >= 0) {
+                         url = obj + "&X-AUTH-TOKEN=" + authorization;
+                     } else
+                         url = obj + "?X-AUTH-TOKEN=" + authorization;
+                     req = {
+                         method: 'POST',
+                         url: url,
+                         headers: {
+                             'Content-Type': 'application/json',
+                             'X-AUTH-TOKEN': authorization,
+                             'Module': "",
+                             'Form': "",
+                             'Action': "",
+                             "AlamatUrlForm": urlPath,
+                             "KdUser": dataUserLogin.kdUser,
+                             'Supervising': Supervising,
+                             "kdRuangan": dataRuangan.ruanganId
+                         },
+                         data: data
+                     }
+                 } else {
+
+                     if (Supervising === undefined || Supervising === null) {
+                         Supervising = false;
+                     }
+
+                     if (dataRuangan === undefined || dataRuangan === null) {
+                         dataRuangan = {
+                             ruanganId: 0
+                         };
+                     }
+
+                     if (dataUserLogin == undefined || dataUserLogin == null) {
+                         dataUserLogin = {
+                             kdUser: ""
+                         };
+                     }
+
+                     var url = "";
+                     if (obj.url.indexOf("?") >= 0) {
+                         url = obj.url + "&X-AUTH-TOKEN=" + authorization;
+                     } else {
+                         url = obj.url + "?X-AUTH-TOKEN=" + authorization;
+                     }
+                     req = {
+                         method: 'POST',
+                         url: url,
+                         headers: {
+                             'Content-Type': 'application/json',
+                             'X-AUTH-TOKEN': authorization,
+                             'Module': "",
+                             'Form': "",
+                             'Action': "",
+                             "AlamatUrlForm": urlPath,
+                             "KdUser": dataUserLogin.kdUser,
+                             'Supervising': Supervising,
+                             "kdRuangan": dataRuangan.ruanganId
+                         },
+                         data: data
+                     }
+                 }
+                 $http(req).then(function successCallback(response) {
+                     if (response.data.data !== null) {
+                         // if (response.data.data.message != undefined) {
+                         //     var msg = response.data.data.message;
+                         //     // window.messageContainer.log(msg);
+                         // } else if (response.data.messages) {
+                         //    var msg = response.data.messages;
+                         //    if (msg['label-success'] === "SUKSES") {
+                         //     //    window.messageContainer.log(msg['label-success']);
+                         //    }
+                         //    else {
+                         //     //    window.messageContainer.error(msg['label-success']);
+                         //    }
+                         // } else if (response.data.messages != undefined) {
+                         //     var msg = response.data.messages;
+                         //     // window.messageContainer.log(msg['label-success']);
+                         // }
+                     }
+                     deffer.resolve(response);
+                 }, function errorCallback(response, a, b, c, d) {
+                     var msgError = "";
+                     // if(response.status === 401)
+                     // {
+                     //    if(response.headers('requiresupervisor') == "true"){
+                     //       $rootScope.dataObjectForSupervisor = data;
+                     //       $rootScope.dataUrlForSupervisor = obj.url;
+                     //       $rootScope.showRootFormlogin = true;
+                     //    }                        
+                     // //    window.messageContainer.error(response.headers('error_message'));
+                     // }
+                     // else if(response.status === 403)
+                     // {
+                     //    window.location = "/app/Login";
+                     // }
+                     // else {
+                     //     if (response.data.fieldErrors != undefined) {
+
+                     //        for (var i = 0; i < response.data.fieldErrors.length; i++) {
+                     //            msgError = response.data.fieldErrors[i].message;
+                     //         //    window.messageContainer.error(msgError);
+                     //        }
+                     //    } 
+                     //    else {
+                     //        msgError = response.statusText;
+                     //     //    window.messageContainer.error(msgError);
+                     //    }
+                     // }
+                     deffer.reject(response);
+                 });
+                 return deffer.promise;
              }
          }
      }]);

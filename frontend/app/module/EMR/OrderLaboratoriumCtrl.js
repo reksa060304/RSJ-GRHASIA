@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('OrderLaboratoriumCtrl', ['$q', '$rootScope', '$scope', 'MedifirstService', '$state', 'CacheHelper', '$window',
-        function ($q, $rootScope, $scope, medifirstService, $state, cacheHelper, $window) {
+    initialize.controller('OrderLaboratoriumCtrl', ['$q', '$rootScope', '$scope', 'MedifirstService', '$state', 'CacheHelper', '$window', 'DateHelper',
+        function ($q, $rootScope, $scope, medifirstService, $state, cacheHelper, $window, dateHelper) {
             $scope.item = {};
             $scope.dataVOloaded = true;
             $scope.now = new Date();
@@ -644,6 +644,8 @@ define(['initialize'], function (initialize) {
                         $scope.savebtn = true
                         $scope.isRouteLoading = true
                         medifirstService.post('emr/save-order-pelayanan', objSave).then(function (e) {
+                            console.log(e.data);
+                            // sendNotification(e.data)
                             $scope.item.layanan = []
                             // $scope.isSimpan = false
                             $scope.savebtn = false
@@ -686,6 +688,30 @@ define(['initialize'], function (initialize) {
                         })
                     }
                 });
+            }
+            function sendNotification(e) {
+                var body = {
+                    norec: e.strukorder.norec,
+                    judul: 'Ada order baru #' + e.strukorder.noorder,
+                    jenis: 'Laboratorium',
+                    pesanNotifikasi: '',
+                    idRuanganAsal: $scope.item.idRuangan,
+                    idRuanganTujuan: $scope.item.ruangantujuan.id,
+                    ruanganAsal: $scope.item.namaRuangan,
+                    ruanganTujuan: $scope.item.ruangantujuan.namaruangan,
+                    kelompokUser: null, //medifirstService.getKelompokUser()
+                    idKelompokUser: null,
+                    idPegawai: medifirstService.getPegawai().id,
+                    dataArray: [],
+                    urlForm: 'DaftarOrderPenunjang',
+                    params: {
+                        noOrder: e.strukorder.noorder
+                    },
+                    namaFungsiFrontEnd: null,
+                    tgl: e.strukorder.tglorder,
+                    tgl_string: dateHelper.getTanggalJamFormatted(e.strukorder.tglorder),
+                }
+                medifirstService.sendSocket("sendNotification", body);
             }
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {

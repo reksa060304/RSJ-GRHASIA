@@ -9,6 +9,7 @@ namespace App\Http\Controllers\SysAdmin;
 
 use App\Http\Controllers\ApiController;
 use App\Master\Agama;
+use App\Transaksi\ListNotif;
 use App\Master\Evaluasi;
 use App\Master\Implementasi;
 use App\Master\Intervensi;
@@ -28,6 +29,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Traits\Valet;
 use DB;
+use Webpatser\Uuid\Uuid;
 
 
 use App\Transaksi\IdentifikasiPasien;
@@ -5438,6 +5440,68 @@ class GeneralController extends ApiController
     {
         $data = \DB::select(DB::raw("SELECT id, reportdisplay from ruangan_m where statusenabled = true and kdprofile = 30 and isperbaikan = true"));
         return $this->respond($data);
+    }
+    public function storeNotif(Request $request){
+        try {
+            if( $request['method'] =='save'){
+                $cek = ListNotif::where('norec_trans',$request['norec'])->first();
+                if(empty($cek)){
+                    $gl = $request['tgl'];
+                    // $hari = $this->hari_ini($gl);
+                    $da =  new ListNotif();
+                    $da->norec = substr(Uuid::generate(), 0, 32);
+                    $da->norec_trans = $request['norec'];
+                    $da->judul = $request['judul'];
+                    $da->jenis = $request['jenis'];
+                    $da->kelompokuser = $request['kelompokUser'];
+                    $da->kelompokuserfk = $request['idKelompokUser'];
+                    $da->ruangantujuanfk = $request['idRuanganTujuan'];
+                    $da->ruangantujuan = $request['ruanganTujuan'];
+                    $da->ruanganasalfk = $request['idRuanganAsal'];
+                    $da->ruanganasal = $request['ruanganAsal'];
+                    $da->pegawaifk = $request['idPegawai'];
+                    $da->keterangan = $request['pesanNotifikasi'];
+                    $da->tgl = $gl;
+                    $da->tgl_string =  $request['tgl_string'];//$hari.', '.$this->getDateIndo($gl);
+                    $da->statusenabled = true;
+                    $da->urlform = $request['urlForm'];
+                    $da->save();
+    
+                  
+                }
+          
+            }
+            if( $request['method'] =='delete'){
+                $cek = ListNotif::where('norec_trans',$request['norec'])->update(['statusenabled' =>false]);
+              
+            }
+            if( $request['method'] =='get'){
+                $cek =  ListNotif::where('statusenabled',true)->orderBy('tgl','desc')->get();
+         
+            }
+           
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = "Sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => '@',
+                "data" => $cek,
+            );
+        } else {
+            $transMessage = $e->getMessage().' '.$e->getLine();
+            DB::rollBack();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage
+            );
+        }
+        return $this->respond($result);
     }
 
 }

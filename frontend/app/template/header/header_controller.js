@@ -5,7 +5,137 @@ define(['kendo.menu'], function (kendoMenu) {
         $scope.isOpen = true;
         $scope.listMenuHeader = {};
         $scope.messages = [];
+        $scope.listNotification = []
+        $scope.mapLogin = []
+        console.clear()
+     
+        var kelomokUser = getKelUser()
+        function getKelUser() {
+            var arr = document.cookie.split(';')
+            for (var i = 0; i < arr.length; i++) {
+                var element = arr[i].split('=');
+                if (element[0].indexOf('statusCode') >= 0) {
+                    return element[1];
+                }
+            }
+            return null;
+        }
+        
+        var mapLogin = window.localStorage.getItem('mapLoginUserToRuangan')
+        $scope.mapLogin = mapLogin ? JSON.parse(mapLogin) : [];
+        function savDB(data) {
+            data.method = 'save'
+            console.log(data);
+            MenuService.postNonMessage('sysadmin/store-notif', data).then(function (e) { })
+        }
 
+        socket.on('set-server-socket', function (e) {
+            var json = JSON.parse(e);
+            console.log(json);
+            if (json.name == "sendNotification") {
+                var objectData = json.body
+                if ($scope.mapLogin.length > 0) {
+                    for (let x = 0; x < $scope.mapLogin.length; x++) {
+                        const element = $scope.mapLogin[x];
+                        if (element.id == objectData.idRuanganTujuan) {
+                            if ($scope.listNotif.length == 0) {
+                                $scope.listNotif.push(objectData)
+                            } else {
+                                if (!$scope.listNotif.some(x => x.norec === objectData.norec)) {
+                                    $scope.listNotif.push(objectData);
+                                }
+                            }
+                            toastr.warning(objectData.judul, 'Notif ' + objectData.jenis, {
+                                "closeButton": true,
+                                "positionClass": "toast-bottom-right",
+                                "hideDuration": "10000",
+                            });
+                            $scope.listNotif.sort(function (a, b) {
+                                if (a.tgl < b.tgl) {
+                                    return -1;
+                                }
+                                if (a.tgl > b.tgl) {
+                                    return 1;
+                                }
+                                return 0;
+                            })
+                            $scope.jmlNotif = $scope.listNotif.length
+                            var audio = new Audio("../app/stylesheets/sound/discord-notification.mp3");//toastToneError//toastToneSuccess
+                            audio.play();
+                            savDB(objectData)
+                        }
+                    }
+                } 
+                if (kelomokUser == objectData.kelompokUser) {
+                    if ($scope.listNotif.length == 0) {
+                        $scope.listNotif.push(objectData)
+                    } else {
+                        if (!$scope.listNotif.some(x => x.norec === objectData.norec)) {
+                            $scope.listNotif.push(objectData);
+                        }
+                    }
+                    toastr.warning(objectData.judul, 'Notif ' + objectData.jenis, {
+                        "closeButton": true,
+                        "positionClass": "toast-bottom-right",
+                        "hideDuration": "3000",
+                    });
+
+                    $scope.listNotif.sort(function (a, b) {
+                        if (a.tgl < b.tgl) {
+                            return -1;
+                        }
+                        if (a.tgl > b.tgl) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                    $scope.jmlNotif = $scope.listNotif.length
+                    var audio = new Audio("../app/stylesheets/sound/discord-notification.mp3");//toastToneError//toastToneSuccess
+                    audio.play();
+                    savDB(objectData)
+                }
+
+
+            }
+        })
+        loadNotif()
+        function loadNotif() {
+            $scope.listNotif = []
+            $scope.jmlNotif = 0
+            MenuService.postNonMessage('sysadmin/store-notif', { method: 'get' }).then(function (e) {
+                if (e.data.data.length > 0) {
+                    for (let x = 0; x < e.data.data.length; x++) {
+                        const element = e.data.data[x];
+                        if ($scope.mapLogin.length > 0) {
+                            for (let z = 0; z < $scope.mapLogin.length; z++) {
+                                const element2 = $scope.mapLogin[z];
+                                if (element2.id == element.ruangantujuanfk) {
+                                    $scope.listNotif.push({
+                                        norec: element.norec,
+                                        judul: element.judul,
+                                        jenis: element.jenis,
+                                        pesanNotifikasi: element.keterangan,
+                                        idRuanganAsal: element.ruanganasalfk,
+                                        idRuanganTujuan: element.ruangantujuanfk,
+                                        ruanganAsal: element.ruanganasal,
+                                        ruanganTujuan: element.ruangantujuan,
+                                        kelompokUser: element.kelompokuser,
+                                        idKelompokUser: element.kelompokuserfk,
+                                        dataArray: null,
+                                        urlForm: null,
+                                        idPegawai: element.pegawaifk,
+                                        namaFungsiFrontEnd: null,
+                                        tgl: element.tgl,
+                                        tgl_string: element.tgl_string,
+                                    })
+                                }
+                            }
+                        }
+                    }
+                    $scope.jmlNotif = $scope.listNotif.length
+                }
+            })
+        }
         $rootScope.$watch('addData', function (e) {
             $scope.messages.push(e);
         });
@@ -15,7 +145,7 @@ define(['kendo.menu'], function (kendoMenu) {
         };
 
         $scope.$watch('isOpen', function (e) { });
-     
+
 
         $scope.getListMenuHeader = function () {
             MenuService.get("GetHeaderMenu" + "/" + LoginHelper.get())
@@ -42,10 +172,10 @@ define(['kendo.menu'], function (kendoMenu) {
                             link: "/app/Logout",
                         });
                     $scope.listMenuHeader = temp;
-                   
+
                 });
-        };        
-        var profile =  JSON.parse(window.localStorage.getItem('profile'));
+        };
+        var profile = JSON.parse(window.localStorage.getItem('profile'));
         $scope.NamaRs = profile.namaexternal
         $scope.showMenu = function () {
             $rootScope.isOpenMenu = !$rootScope.isOpenMenu;
@@ -307,7 +437,26 @@ define(['kendo.menu'], function (kendoMenu) {
         $scope.now = new Date;
         $scope.tglSkrg = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
 
+        $scope.goToNotif = function (data) {
+            if (data.urlForm != null && data.urlForm != '') {
+                if (data.params != null) {
+                    $state.go(data.urlForm, data.params);
+                    console.log(data.urlForm, data.params);
+                } else {
+                    $state.go(data.urlForm);
+                }
 
+            }
+            MenuService.postNonMessage('sysadmin/store-notif', { method: 'delete', norec: data.norec }).then(function (e) {
+                for (var i = $scope.listNotif.length - 1; i >= 0; i--) {
+                    if ($scope.listNotif[i].norec === data.norec) {
+                        $scope.listNotif.splice(i, 1);
+                    }
+                }
+                $scope.jmlNotif = $scope.listNotif.length
+            })
+
+        };
     }
 
     HeaderCtrl.$inject = ['$window', '$scope', 'MenuService', 'GlobalToState', '$rootScope', '$state', 'LoginHelper', '$location', 'socket'];

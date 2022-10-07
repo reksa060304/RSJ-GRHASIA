@@ -1758,21 +1758,44 @@ define(['initialize'], function (initialize) {
             $scope.simpanPanggil = function(){
                 let param = $scope.dataPasienSelected.isonline == 'Online' ? $scope.dataPasienSelected.noreservasi : $scope.dataPasienSelected.noregistrasi
                 saveAntrol(param)
+                var data = {
+                    0: $scope.item.pilihRuangan.id,
+                    1: $scope.item.pilihRuangan.namaruangan
+                }
+                cacheHelper.set("PanggilPerawat", data)
                 socket.emit('call-antrian-poli', {
                     namapasien:$scope.dataPasienSelected.namapasien,
                     namaruangan: $scope.item.pilihRuangan.namaruangan,
                     noantri:$scope.dataPasienSelected.noantrian,
                     nocm:$scope.dataPasienSelected.nocm,
                 });
+                var cookie = document.cookie.split(';');
+                cookie = cookie[0].split('=');
+                // return
+                var data ={
+                    "norec_apd" : $scope.dataPasienSelected.norec_apd,
+                    "kelompokUser" : cookie[1]
+                }
+                medifirstService.post('rawatjalan/save-panggil',data)
+                .then(function (res) {
+                    loadData();
+                    console.log(res);
+                    // $('td').css("background-color", "");
+                })
                 toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
                 $scope.popUpPanggil.close()
-
             }
             $scope.panggil = function () {
                 console.log($scope.dataPasienSelected);
                 if ($scope.dataPasienSelected.noregistrasi == undefined) {
                     toastr.error('Pilih Data dulu')
                     return
+                }
+                var cacheperawat = cacheHelper.get('PanggilPerawat')
+                if (cacheperawat != undefined) {
+                    $scope.item.pilihRuangan = {
+                        id: cacheperawat[0], namaruangan: cacheperawat[1]
+                    }
                 }
                 $scope.popUpPanggil.center().open()
                 // let param = $scope.dataPasienSelected.isonline =='Online'? $scope.dataPasienSelected.noreservasi : $scope.dataPasienSelected.noregistrasi
@@ -1785,57 +1808,6 @@ define(['initialize'], function (initialize) {
                 // });
                 // toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
 
-                // var cookie = document.cookie.split(';');
-                // cookie = cookie[0].split('=');
-                // var data ={
-                //     "norec_apd" : $scope.dataPasienSelected.norec_apd,
-                //     "kelompokUser" : cookie[1]
-                // }
-                // medifirstService.post('rawatjalan/save-panggil',data)
-                // .then(function (res) {
-                //     // loadData();
-                //     // $('td').css("background-color", "");
-
-                //     // var rowIndex = 
-                //     var propertyName = 'stts'
-
-                //     var grid = $("#grid").data("kendoGrid");
-                //     var selectedItem = grid.dataItem(grid.select());
-                //     var array = grid.dataSource._data
-                //     var rowIndex = 0
-                //     for (let i = 0; i <  array.length; i++) {
-                //         if(array[i].norec_apd == selectedItem.norec_apd ){
-                //              rowIndex = i
-                //              break
-                //         }
-                //     }
-                //     var dataItem = grid.dataSource.at(rowIndex);
-                //     var rowCells = grid.element.find("tr[data-uid=" + dataItem.uid + "] td");
-
-                //     var headerCells = grid.element.find("th");
-                //     var cellIndex = headerCells.index(grid.element.find("th[data-field = '" + propertyName + "']"));
-
-                //     var cell = $(rowCells[cellIndex]);
-
-                //     //set CSS
-                //     cell.css("background-color", "#98FB98");
-                //     cell.css("color", "#000000");
-
-
-                //     $scope.dataPasienSelected.stts = 'Di Panggil Perawat'
-                // var ipAddress = '127.0.0.1'
-                // // if($scope.dataPasienSelected.ipaddress != undefined &&$scope.dataPasienSelected.ipaddress!=null )
-                // //     ipAddress = $scope.dataPasienSelected.ipaddress 
-                // var ruangan = 'RUANG PERAWAT'
-                // var client = new HttpClient();
-                // client.get('http://' + ipAddress + ':2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.dataPasienSelected.noantrian
-                //     + '&namapasien=' + $scope.dataPasienSelected.nocm + ', ' + $scope.dataPasienSelected.namapasien +
-                //     '&ruangan=' + ruangan + '&view=true', function (response) {
-                //         // $scope.dataPasienSelected.namaruangan 
-                //         // do something with response
-                //     });
-                // toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
-                // })
             }
 
             $scope.TambahSurat = function () {

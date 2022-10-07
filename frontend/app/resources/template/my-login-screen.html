@@ -1,5 +1,10 @@
 <div ng-show="showPageLogin">
-    <img class="login-new" src="images/asset2019/bg-login.jpg" style="z-index:-1">
+    <img class="login-new" src="images/asset2019/bg-simrs.png" style="z-index:-1">
+    <!-- <img class="login-new" src="images/asset2019/bg-login.jpg" style="z-index:-1"> -->
+<!-- <div class="grid_12">
+    <img class="logo" src="images/asset2019/logoSIMRS.png" width="80" height="80">
+    
+</div> -->
 
     <!-- <core-busy busy="isLoading"></core-busy> -->
     <div class="loading-container" ng-show="isLoading">
@@ -8,31 +13,35 @@
     <div class="ui-g-4">
         <!-- <div class="animated zoomIn"></div> -->
         <div class="panelss panelss-default">
-            <div class="panelss-leftheading">
+            <!-- <div class="panelss-leftheading"> -->
 
                 <!-- <img class="logo-medi" src="images/splash_.gif"> -->
-                <img class="logo-medi" src="images/logoTrm.png">
+                <!-- <img class="logo-medi" src="images/logoTrm.png"> -->
                 <!-- <img class="logo-medi" src="images/logo_update.jpg"> -->
 
                 <!-- <p class="text-smart">We Care Your Performance & Quality</p> -->
                 <!--   <span style="margin-top: 20px" kendo-qrcode k-error-correction="'M'" ng-model="qrcode" c></span> -->
-            </div>
+            <!-- </div> -->
             <div class="panelss-rightbody">
 
                 <div class="row" style="padding:30px">
-                    <div class="col-lg-12 col-xs-3" style="margin-top:20px">
-                        <label for="simple-input" class="label-login">Nama Pengguna</label>
+                    <div class="col-lg-12 col-xs-3 md-block" style="margin-top:20px" >
+                        <label for="simple-input" class="label-login" style="color: black;font-weight: bold;">Nama Pengguna</label>
                         <input id="userName" focus-me="userName" ng-model="userName" type="text" class="k-textbox"
                             style="width: 100%" />
                     </div>
                     <div class="col-lg-12 col-xs-12" style="margin-top:15px">
-                        <label for="simple-input" class="label-login">Kata Sandi</label>
+                        <label for="simple-input" class="label-login" style="color: black;font-weight: bold;">Kata
+                            Sandi</label>
                         <input id="password" focus-me="password" ng-model="password" type="password"
                             ng-keyup="$event.keyCode == 13 ? validate() : null" ng-keydown='keyDown($event)'
                             class="k-textbox" style="display: block; width: 100%;" />
                     </div>
                     <div class="col-lg-6 col-xs-12" style="margin-top:15px">
-                        <button kendo-button style="width: 100%; " class="success" ng-click="validate()">
+                        <button kendo-button class="success"
+                            style="width: 100%; background-image: linear-gradient(to right, #80ff0a 2%,#0a7118 100%)"
+                            ng-click="validate()"
+                            >
                             <span class="fa fa-arrow-circle-right " style="position: absolute;
                                     top: 40%;
                                     margin-top: -.5em;
@@ -54,7 +63,7 @@
         </div>
       
     </div>
-    <div class="bssn">
+    <div class="bssn" ng-show="false">
         <div class="css-mikfal " style="opacity: 1; transition: opacity 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;">
             <!-- <hr class="MuiDivider-root MuiDivider-fullWidth css-ss6lby" style="margin-bottom: 10px;"> -->
             <div class="css-1abzdwk"><img class="MuiBox-root css-1nbic85" src="images/bsre-logo-full.00999321.png">
@@ -179,7 +188,7 @@
         .panelss {
             position: absolute;
             top: 50%;
-            left: 50%;
+            left: 70%;
             transform: translateX(-50%) translateY(-50%);
             /* background: wheat */
         }
@@ -213,7 +222,6 @@
             background: no-repeat;
             background-position: 0 -100px;
             /* background: rgba(16, 196, 178, 0.6); */
-            background: rgba(16, 130, 196, 0.6);
             float: center;
             margin-left: 300px;
             padding: 15px;
@@ -243,7 +251,10 @@
             text-indent: .33em;
             line-height: 1.6em;
             margin-top: 6px;
-            background: rgba(208, 240, 236, 0.6);
+            border-color: rgb(21, 195, 2);
+            border-width:2px;
+            border-color: linear-gradient(red, yellow);
+            background: rgb(255, 255, 255);
         }
 
         .login-body .login-panel {

@@ -550,7 +550,9 @@ define(['Configuration'], function (config) {
                         "November", "Desember"
                     ];
 
-                    var date = inputTanggal;
+                    let seminggu = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
+                    let hari = new Date(inputTanggal).getDay();
+                    var date = new Date(inputTanggal);;
                     var day = date.getDate();
                     var monthIndex = date.getMonth();
                     var year = date.getFullYear();
@@ -558,7 +560,7 @@ define(['Configuration'], function (config) {
                     var mm = date.getMinutes();
                     if (HH < 10) HH = "0" + HH;
                     if (mm < 10) mm = "0" + mm;
-                    var tanggalFormatted = day + ' ' + monthNames[monthIndex] + ' ' + year + ' ' + HH + ':' + mm;
+                    var tanggalFormatted = seminggu[hari] + ', ' + day + ' ' + monthNames[monthIndex] + ' ' + year + ' ' + HH + ':' + mm;
 
                     return tanggalFormatted;
 
