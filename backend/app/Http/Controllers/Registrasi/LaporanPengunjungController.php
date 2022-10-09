@@ -62,11 +62,11 @@ class LaporanPengunjungController extends ApiController
     }
 
     public function getLaporanPengunjung(Request $request) {
-        $data = \DB::table('pasiendaftar_t as pd')
-            ->JOIN ('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
-            ->JOIN ('pasien_m as ps','ps.id','=','pd.nocmfk')
-            ->JOIN ('jeniskelamin_m as jk','jk.id', '=','ps.objectjeniskelaminfk')
-            ->JOIN ('agama_m as ag','ag.id','=','ps.objectagamafk')
+        $data = \DB::table('antrianpasiendiperiksa_t as apd')
+            ->join ('pasiendaftar_t as pd','apd.noregistrasifk','=','pd.norec')
+            ->join ('pasien_m as ps','ps.id','=','pd.nocmfk')
+            ->leftjoin ('jeniskelamin_m as jk','jk.id', '=','ps.objectjeniskelaminfk')
+            ->leftjoin ('agama_m as ag','ag.id','=','ps.objectagamafk')
             ->leftjoin ('pendidikan_m as pdd','pdd.id','=','ps.objectpendidikanfk')
             ->leftjoin ('pekerjaan_m as pkr','pkr.id','=','ps.objectpekerjaanfk')
             ->leftjoin ('alamat_m as alm','alm.nocmfk','=','ps.id')
@@ -74,7 +74,7 @@ class LaporanPengunjungController extends ApiController
             ->leftjoin ('kotakabupaten_m as kkb','kkb.id','=','alm.objectkotakabupatenfk')
             ->leftjoin ('statusperkawinan_m as sp','sp.id','=','objectstatusperkawinanfk')
             ->leftjoin ('pegawai_m as pg','pg.id','=','pd.objectdokterpemeriksafk')
-            ->join ('ruangan_m as rg','rg.id','=','apd.objectruanganfk')
+            ->leftjoin ('ruangan_m as rg','rg.id','=','apd.objectruanganfk')
             // ->leftjoin ('diagnosapasien_t as dp','dp.noregistrasifk','=','apd.norec')
             ->leftJoin('kelompokpasien_m as klp','klp.id','=','pd.objectkelompokpasienlastfk')
             // ->leftJoin('detaildiagnosapasien_t as ddp','ddp.objectdiagnosapasienfk', '=','dp.norec')
@@ -82,15 +82,15 @@ class LaporanPengunjungController extends ApiController
             ->select('pd.norec','pd.noregistrasi','pd.tglregistrasi','ps.nocm','ps.namapasien','ps.nohp','ps.tgllahir','jk.jeniskelamin','ag.agama','pdd.pendidikan','pkr.pekerjaan','alm.alamatlengkap',
                 'dsk.namadesakelurahan','alm.kecamatan','kkb.namakotakabupaten','sp.statusperkawinan','pd.statuspasien','rg.namaruangan','pg.namalengkap','ps.tgldaftar','klp.kelompokpasien','apd.norec as norec_apd',
                 DB::raw("to_char(pd.tglregistrasi,'DD-MM-YYYY') as tglregistrasi1,to_char(pd.tglregistrasi,'HH:mm') as jamregistrasi,'' AS kddiagnosa"))
-            ->where('pd.statusenabled',1);
+            ->where('pd.statusenabled',true);
             //->where('ddp.objectjenisdiagnosafk',1);
             DB::raw('ddp.objectjenisdiagnosafk = 1 or ddp.objectjenisdiagnosafk IS NULL' );
 //            ->where('ddp.objectjenisdiagnosafk',NULL);
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
+            $data = $data->where('apd.tglmasuk', '>=', $request['tglAwal']);
         }
         if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $data = $data->where('pd.tglregistrasi', '<=', $request['tglAkhir']);
+            $data = $data->where('apd.tglmasuk', '<=', $request['tglAkhir']);
         }
         if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
             $data = $data->where('rg.id', '=', $request['ruanganId']);
@@ -109,15 +109,13 @@ class LaporanPengunjungController extends ApiController
             $data = $data->Where('kkb.id', '=', $request['kotaKab'])	;
         }
 
-        $data =  $data ->get();
+        $data =  $data->get();
         $diagnosa = \DB::table('antrianpasiendiperiksa_t AS apd')
-                    ->join('detaildiagnosapasien_t AS ddp','ddp.noregistrasifk','=','apd.norec')
-                    ->join('diagnosapasien_t AS dp','dp.norec','=','ddp.objectdiagnosapasienfk')
-                    ->join ('diagnosa_m as dg','ddp.objectdiagnosafk','=','dg.id')
-                    ->select(DB::raw("apd.noregistrasifk,ddp.objectjenisdiagnosafk,dg.kddiagnosa AS diagnosa,
-                                     CASE WHEN dp.iskasusbaru = true AND dp.iskasuslama = false THEN 'BARU'
-                                     WHEN dp.iskasuslama = true AND dp.iskasusbaru = false THEN 'LAMA' ELSE '' END kasus"))
-                    ->where('apd.kdprofile', 21)
+                    ->leftjoin('detaildiagnosapasien_t AS ddp','ddp.noregistrasifk','=','apd.norec')
+                    ->leftjoin('diagnosapasien_t AS dp','dp.norec','=','ddp.objectdiagnosapasienfk')
+                    ->leftjoin ('diagnosa_m as dg','ddp.objectdiagnosafk','=','dg.id')
+                    ->select(DB::raw("apd.noregistrasifk,ddp.objectjenisdiagnosafk,dg.kddiagnosa AS diagnosa"))
+                    ->where('apd.kdprofile', 30)
                     ->where('apd.statusenabled', true)
                     ->get();
                     $norecaPd = '';
@@ -141,6 +139,8 @@ class LaporanPengunjungController extends ApiController
                                if($data[$i]->norec_apd == $d->norec_apd){
                                    if ($d->kddiagnosa != null){
                                        $data[$i]->kddiagnosa = $data[$i]->kddiagnosa . ', ' . $d->kddiagnosa;
+                                   } else{
+                                        $data[$i]->kddiagnosa = '';
                                    }
                                }
                            }
@@ -154,14 +154,17 @@ class LaporanPengunjungController extends ApiController
 //                        return $this->respond()
                         $data[$d]->kddiagnosa = substr($data[$d]->kddiagnosa,1);
                         $result [] = $data[$d];
+                    }else{
+                        $data[$d]->kddiagnosa = '-';
+                        $result [] = $data[$d];
                     }
                     $d = $d + 1;
                 }
 
-//        $result = array(
-//            'data'=> $data,
-//            'message' => 'ramdanegie',
-//        );
+    //    $result = array(
+    //        'data'=> $data,
+    //        'message' => 'ramdanegie',
+    //    );
         return $this->respond($result);
     }
     public function getDataCombo(Request $request)

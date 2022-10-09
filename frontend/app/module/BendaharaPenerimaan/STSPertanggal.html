@@ -77,13 +77,13 @@
                 </a>
             </legend>
             <div class="grid_12" id="contentPencarian">
-                <div class="grid_4" style="margin-top: 15px;">
+                <div class="grid_6" style="margin-top: 15px;">
                     <div class="grid_12">
                         <label c-label item="item" c-label-text="Periode"></label>
                     </div>
                     <div class="grid_12">
                         <!-- AwalPeriode -->
-                        <div class="grid_3">
+                        <div class="grid_2">
                             <div class="grid_12">
                                 <div class="grid_12">
                                     <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulan"
@@ -91,7 +91,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="grid_3">
+                        <div class="grid_2">
                             <div class="grid_12">
                                 <div class="grid_12">
                                     <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
@@ -99,11 +99,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="grid_4" style="margin-top: -15px;">
+                        <div class="grid_3" style="margin-top: -15px;">
                             <label c-label item="item" c-label-text="Cara Bayar"></label>
                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusBayar"
                                 k-data-text-field="'names'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listStatusBayar" />
+                        </div>
+                        <div class="grid_3" style="margin-top: -15px;">
+                            <label c-label item="item">No STS</label>
+                            <input style="width: 100%;" c-text-box type="input" class="k-textbox"
+                                ng-model="item.nosts" />
                         </div>
                         <div class="grid_2" style="margin-top: 5px;">
                             <button class="c-button" ng-click="cariFilter()">Cari</button>

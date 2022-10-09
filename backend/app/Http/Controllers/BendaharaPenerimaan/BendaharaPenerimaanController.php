@@ -4825,7 +4825,7 @@ class BendaharaPenerimaanController extends ApiController {
         $bulanx = $request['bulan'];
         $tahunx = $request['tahun'];
         $bayar = '';
-
+        $nosts = '';
         if (isset($request['bayar']) && $request['bayar'] != "" && $request['bayar'] != "undefined" && $request['bayar']==2) {
             $bayar = ' and sbmcr.objectcarabayarfk = 3';
         } else if (isset($request['bayar']) && $request['bayar'] != "" && $request['bayar'] != "undefined" && $request['bayar']==1) {
@@ -4836,6 +4836,9 @@ class BendaharaPenerimaanController extends ApiController {
             $bayar = ' and sbmcr.objectcarabayarfk in (1,3)';
         } 
 
+        if(isset($request['nosts']) && $request['nosts'] != ''){
+            $nosts = "and sts.nosts ilike '%". $request['nosts']. "%'";
+        }
         $data = DB::select(DB::raw("select extract(day from tanggal) as tanggal, sum(jumlahjiwa) jumlahjiwa, sum(jumlahnapza) jumlahnapza, sum(jumlahperiksadokterumum) jumlahperiksadokterumum,
         sum(jumlahperiksadoktergigi) jumlahperiksadoktergigi, sum(jumlahperiksadokterpenydalam) jumlahperiksadokterpenydalam,
         sum(jumlahperiksadokteranak) jumlahperiksadokteranak, sum(jumlahperiksadoktersyaraf) jumlahperiksadoktersyaraf,
@@ -4931,6 +4934,7 @@ class BendaharaPenerimaanController extends ApiController {
                     and sts.statusenabled = true and sts.kdprofile = 30
                     and stsd.statusenabled = true and stsd.kdprofile = 30
                     $bayar
+                    $nosts
                     group by sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
                     stsd.kolom1, stsd.kolom2
                     order by min(stsd.nourut)
