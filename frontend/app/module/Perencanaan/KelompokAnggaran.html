@@ -1981,7 +1981,7 @@
 					<input kendo-combo-box k-ng-model="item.subKegiatanSPJ"
 						k-data-text-field="'keterangan'" k-data-value-field="'id'"
 						k-filter="'contains'" k-auto-bind="false"
-						k-data-source="listSubKegiatanSPJ"  k-on-change='changeCboPilihSubKegiatanSPJ()' />
+						k-data-source="listSubKegiatanSPJ"  />
 				</div>
 			</div>
 			<div class="grid_12">
@@ -1992,7 +1992,7 @@
 					<input kendo-combo-box k-ng-model="item.subSubKegiatanSPJ"
 						k-data-text-field="'keterangan'" k-data-value-field="'id'"
 						k-filter="'contains'" k-auto-bind="false"
-						k-data-source="listSubSubKegiatanSPJ"  k-on-change='changeCboPilihSubSubKegiatanSPJ()' />
+						k-data-source="listSubSubKegiatanSPJ"  />
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2037,7 +2037,7 @@
 				<div class="grid_3" style="margin-top: -10px;" >
 					<input c-text-box type="input" class="k-textbox" ng-model="item.panjar" ng-hide="dispanjar" />
 				</div>
-				<div class="grid_1" style="margin-top: -10px;">
+				<div ng-if="disidpegawai === false" class="grid_1" style="margin-top: -10px;">
 					<button class="btnTemplate1" ng-click="TambahPanjar()" ng-hide="dispanjar">Add</button>
 				</div>
 				<div class="grid_1" style="margin-top: -10px; margin-left: 10px;">
@@ -2071,7 +2071,7 @@
 					JUMLAH TOTAL SPJ
 				</div>
 				<div class="grid_4" style="margin-top: -10px;">
-					<input c-text-box type="input" class="k-textbox" ng-model="item.jumlahSPJ"  disabled="true"/>
+					<input c-text-box type="input" class="k-textbox" ng-model="item.jumlahSPJ"/>
 				</div>
 				<div class="grid_4" style="margin-top: -10px;">{{item.jumlahtotalspjRP}}</div>
 			</div>
@@ -2155,8 +2155,9 @@
 				<div class="grid_6" >
 					<input kendo-combo-box k-ng-model="item.subkegiatanpanjar"
 						k-data-text-field="'keterangan'" k-data-value-field="'id'"
-						k-filter="'contains'" k-auto-bind="false"
-						disabled />
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listSubKegiatanPanjarSPJ"
+						ng-disabled="tambahpanjarspj"
+						/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2166,8 +2167,9 @@
 				<div class="grid_6" >
 					<input kendo-combo-box k-ng-model="item.subsubkegiatanpanjar"
 						k-data-text-field="'keterangan'" k-data-value-field="'id'"
-						k-filter="'contains'" k-auto-bind="false"
-						disabled />
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listSubSubKegiatanPanjarSPJ"
+						ng-disabled="tambahpanjarspj" 
+						/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2177,7 +2179,8 @@
 				<div class="grid_6" >
 					<input kendo-combo-box k-ng-model="item.darirekeningpanjar"
 						k-data-text-field="'namamataanggaran'" k-data-value-field="'kodemataanggaran'"
-						k-filter="'contains'" k-auto-bind="false" disabled/>
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listMataAnggaranPanjarSPJ"
+						ng-disabled="tambahpanjarspj" k-on-change="changeCboPilihNoRekeningPanjar"/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2196,7 +2199,7 @@
 				<div class="grid_3" >
 					<md-radio-group ng-model="item.sumberPanjar">
 						<div class="grid_6"><md-radio-button value="Bank" class="md-primary">Bank</md-radio-button></div>
-						<div class="grid_6"><md-radio-button value="Tunai" class="md-primary">Tunai</md-radio-button></div>
+						<div class="grid_6"><md-radio-button value="Tunai" class="md-primary" ng-hide="true">Tunai</md-radio-button></div>
 					</md-radio-group>
 				</div>
 			</div>
@@ -2341,6 +2344,17 @@
 				</div>
 			</div>
 			<div class="grid_12">
+				<div class="grid_3">
+					Sumber Dana
+				</div>
+				<div class="grid_9">
+					<input kendo-combo-box k-ng-model="item.sumberDanaSPP"
+						k-data-text-field="'asalproduk'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false"
+						k-data-source="listAsalProduk"  />
+				</div>
+			</div>
+			<div class="grid_12">
 				<div class="grid_3" style="text-align: left;">
 					Jenis Bukti
 				</div>
@@ -2392,8 +2406,8 @@
 					Tanggal SPP
 				</div>
 				<div class="grid_9" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglSPP" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+					<input style="width: 100%" k-ng-model="item.tglSPP" kendo-datepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2423,8 +2437,8 @@
 					Tanggal Sah
 				</div>
 				<div class="grid_9" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglSah" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+					<input style="width: 100%" k-ng-model="item.tglSah" kendo-datepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2454,6 +2468,17 @@
 				</div>
 				<div class="grid_9" >
 					<input c-text-box type="input" class="k-textbox" ng-model="item.nospm"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3">
+					Sumber Dana
+				</div>
+				<div class="grid_9">
+					<input kendo-combo-box k-ng-model="item.sumberDanaSPM"
+						k-data-text-field="'asalproduk'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false"
+						k-data-source="listAsalProduk"  />
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2502,8 +2527,8 @@
 					Tanggal SPM
 				</div>
 				<div class="grid_9" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglSPM" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+					<input style="width: 100%" k-ng-model="item.tglSPM" kendo-datepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2519,8 +2544,8 @@
 					Tanggal SPP
 				</div>
 				<div class="grid_9" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglsppspm" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'" disabled="true"/>
+					<input style="width: 100%" k-ng-model="item.tglsppspm" kendo-datepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" disabled="true"/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2528,8 +2553,8 @@
 					Tanggal Sah
 				</div>
 				<div class="grid_9" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglSahSPM" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+					<input style="width: 100%" k-ng-model="item.tglSahSPM" kendo-datepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" disabled/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2666,8 +2691,19 @@
 					Tanggal SPD
 				</div>
 				<div class="grid_9" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglSPD" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+					<input style="width: 100%" k-ng-model="item.tglSPD" kendo-datepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3">
+					Sumber Dana
+				</div>
+				<div class="grid_9">
+					<input kendo-combo-box k-ng-model="item.sumberDanaSPD"
+						k-data-text-field="'asalproduk'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false"
+						k-data-source="listAsalProduk"  />
 				</div>
 			</div>
 		</div>
@@ -2755,15 +2791,15 @@
 					<input c-text-box type="input" class="k-textbox" ng-model="item.jumlahdibayarSPJ"  />
 				</div>
 			</div>
-			<div class="grid_12" style="margin-top: 25px;">
+			<div class="grid_12" style="margin-top: 25px;" ng-hide="true">
 				<div class="grid_3">
 					Pilih Data Panjar 
 				</div>
-				<div class="grid_6">
-					<input kendo-combo-box
-						k-data-text-field="'text'" k-data-value-field="'value'"
-						k-filter="'contains'" k-auto-bind="false" disabled="true"
-						  />
+				<div class="grid_3" style="margin-top: -10px;" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.panjar" />
+				</div>
+				<div class="grid_1" style="margin-top: -10px; margin-left: 10px;">
+					<button class="btnTemplate1" ng-click="CariPanjarVerif()" >Cari</button>
 				</div>
 			</div>
 		</div>

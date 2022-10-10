@@ -1009,6 +1009,10 @@
             "urlDep": "module/Perencanaan/JasaGiroCtrl"
         },
         {
+            "nameDep": "MasterPihakKetigaCtrl",
+            "urlDep": "module/Perencanaan/MasterPihakKetigaCtrl"
+        },
+        {
             "nameDep": "SumberPendapatanCtrl",
             "urlDep": "module/Perencanaan/SumberPendapatanCtrl"
         },
