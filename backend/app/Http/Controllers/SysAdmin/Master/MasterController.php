@@ -4984,4 +4984,19 @@ class MasterController extends ApiController{
         ->get();
         return $data;
     }
+    public function getProdukNonObat(Request $request)
+    {
+        $data = \DB::table('mapruangantoproduk_m as mpr')
+        ->join('produk_m as pr', 'pr.id','=','mpr.objectprodukfk')
+        ->join('detailjenisproduk_m as djp', 'djp.id','=','pr.objectdetailjenisprodukfk')
+        ->join('jenisproduk_m as jp', 'jp.id','=','djp.objectjenisprodukfk')
+        ->where('mpr.kdprofile', 30)
+        ->where('mpr.statusenabled', true)
+        ->whereNotIn('jp.id',[97,27702])
+        ->select('pr.id','pr.namaproduk')
+        ->groupBy('pr.id', 'pr.namaproduk')
+        ->orderBy('pr.id', 'asc')
+        ->get();
+        return $this->respond($data);
+    }
 }

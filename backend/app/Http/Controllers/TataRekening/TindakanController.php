@@ -1514,4 +1514,61 @@ class TindakanController extends ApiController
         return $this->respond($result);
     }
 
+    public function getLaporanTindakan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $Kronis = "";
+        $noreg = '';
+        if (isset($request['noReg']) && $request['noReg'] != "" && $request['noReg'] != "undefined") {
+            $noreg = " AND pd.noregistrasi ILIKE '%" .  $request['noReg']."%'";
+        }
+        $norm = '';
+        if (isset($request['noRm']) && $request['noRm'] != "" && $request['noRm'] != "undefined") {
+            $norm = " AND pm.nocm ILIKE '%" .  $request['noRm']."%'";
+        }
+        $nosbm = '';
+        if (isset($request['nosbm']) && $request['nosbm'] != "" && $request['nosbm'] != "undefined") {
+            $nosbm = " AND sbm.nosbm ILIKE '%" .  $request['nosbm']."%'";
+        }
+        $namaPasien = '';
+        if (isset($request['namaPasien']) && $request['namaPasien'] != "" && $request['namaPasien'] != "undefined") {
+            $request['namaPasien'] =  str_replace("'", "",   $request['namaPasien']);
+            $namaPasien = "  AND replace(pm.namapasien,'''','') ILIKE '%".$request['namaPasien']."%'";
+        }
+        $ruId='';
+        if(isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
+            $ruId = ' AND ru.id = ' . $request['ruanganId'];
+        }
+        $deptId='';
+        if(isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
+            $deptId = ' AND ru.objectdepartemenfk = ' . $request['idDept'];
+        }
+        $idKelPasien='';
+        if(isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
+            $idKelPasien = ' AND pd.objectkelompokpasienlastfk = ' . $request['kelompokPasien'];
+        }
+        $namaproduk = '';
+        if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
+            $nosbm = " AND pr.namaproduk ILIKE '%" .  $request['namaproduk']."%'";
+        }
+        
+        $data = \DB::select(DB::raw("SELECT distinct pd.tglregistrasi, ps.nocm, pd.noregistrasi, ps.namapasien, ru.namaruangan,pr.namaproduk, pp.tglpelayanan,pg.namalengkap, jp.jenispegawai,jpp.jenispetugaspe, pp.hargasatuan*pp.jumlah as harga FROM pelayananpasien_t pp 
+            inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join pasien_m ps on ps.id = pd.nocmfk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            inner join produk_m pr on pr.id = pp.produkfk
+            inner join pelayananpasienpetugas_t ppp on ppp.pelayananpasien = pp.norec
+            inner join pegawai_m pg on pg.id = ppp.objectpegawaifk
+            inner join jenispegawai_m jp on jp.id = pg.objectjenispegawaifk
+            inner join jenispetugaspelaksana_m jpp on jpp.id = ppp.objectjenispetugaspefk
+            where pp.kdprofile = 30 and pp.statusenabled = true and apd.kdprofile = 30 and apd.statusenabled = true and pd.kdprofile = 30 and pd.statusenabled = true and 
+            pp.tglpelayanan::date BETWEEN '$request[tglAwal]' and '$request[tglAkhir]' and pp.isobat is null
+            ORDER BY pd.tglregistrasi asc, ps.nocm asc
+        "));
+
+
+        return $this->respond($data);
+    }
 }

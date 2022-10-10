@@ -220,29 +220,29 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 			]
 
 			$scope.columnDaftarPenerimaan = {
-			// 	toolbar: [
-			// 		"excel",
-			// ],
-			// excel: {
-			// 		fileName: "DaftarPasienRawatInap.xlsx",
-			// 		allPages: true,
-			// },
-			// excelExport: function (e) {
-			// 		var sheet = e.workbook.sheets[0];
-			// 		sheet.frozenRows = 2;
-			// 		sheet.mergedCells = ["A1:M1"];
-			// 		sheet.name = "Sheet";
+				toolbar: [
+					"excel",
+			],
+			excel: {
+					fileName: "Daftar Penerimaan.xlsx",
+					allPages: true,
+			},
+			excelExport: function (e) {
+					var sheet = e.workbook.sheets[0];
+					sheet.frozenRows = 2;
+					sheet.mergedCells = ["A1:M1"];
+					sheet.name = "Sheet";
 
-			// 		var myHeaders = [{
-			// 				value: "Daftar Pasien Rawat Inap",
-			// 				fontSize: 20,
-			// 				textAlign: "center",
-			// 				background: "#ffffff",
-			// 				// color:"#ffffff"
-			// 		}];
+					var myHeaders = [{
+							value: "Daftar Penerimaan",
+							fontSize: 20,
+							textAlign: "center",
+							background: "#ffffff",
+							// color:"#ffffff"
+					}];
 
-			// 		sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
-			// 	},
+					sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+				},
 				sortable: true,
 				pageable: true,
 				selectable: "row",
@@ -304,7 +304,7 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 						"width": "85px",
 						aggregates: ["sum"],
 						footerTemplate: "#: data.totalPenerimaan.sum #",
-						footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.totalPenerimaan.sum #', 'Rp.')}}</span>",
+						footerTemplate: "#: data.totalPenerimaan.sum #",
 						footerAttributes: { style: "text-align: right;" }
 					},
 					{
