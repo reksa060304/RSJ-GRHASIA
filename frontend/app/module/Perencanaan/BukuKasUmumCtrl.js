@@ -24,13 +24,22 @@ define(['initialize'], function (initialize) {
                 $('#contentPencarian').fadeToggle("fast", "linear");
             }
 
+            medifirstService.getPart('perencanaan/get-datacombo-part-rekanan', true, true, 20).then(function (data) {
+                $scope.listPihakKetiga = data
+            })
+
             function init() {
                 $scope.isRouteLoading = true;
 
                 var awal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
 				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+
+                var rekanan = ''
+                if($scope.item.namarekanan != undefined){
+                    rekanan = $scope.item.namarekanan.id
+                }
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
-                medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir).then(function (e) {
+                medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir+"&rekanan="+rekanan).then(function (e) {
                         $scope.isRouteLoading = false;
                         
                         $scope.dataGrid = new kendo.data.DataSource({
@@ -210,6 +219,7 @@ define(['initialize'], function (initialize) {
                     "tglbku": moment($scope.item.tglbku).format('YYYY-MM-DD HH:mm'),
                     "jenisbukti": $scope.item.itemJenisBukti.id,
                     "uraian": $scope.item.uraianBKU,
+                    "rekananfk": $scope.item.pihakKetiga.id,
                 }
                 console.log(objSave);
                 // return
@@ -338,9 +348,13 @@ define(['initialize'], function (initialize) {
 
                 for (var i = 0; i < $scope.selectedData2.length; i++){
                     if(i != $scope.selectedData2.length-1){
-                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian + ', '
+                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian + " <br /> " +
+                        $scope.selectedData2[i].kodemataanggaran + " <br /> " +
+                        $scope.item.pihakKetiga.namarekanan + ', '
                     } else{
-                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian
+                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian + " <br /> " +
+                        $scope.selectedData2[i].kodemataanggaran + " <br /> " +
+                        $scope.item.pihakKetiga.namarekanan
                     }
                 }
                 console.log($scope.selectedData2)
@@ -695,6 +709,12 @@ define(['initialize'], function (initialize) {
                         
                         "field": "uraianbku",
                         "title": "Uraian",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "namarekanan",
+                        "title": "Rekanan",
                         "width": "100px",
                     },
                     {

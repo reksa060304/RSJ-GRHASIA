@@ -21,8 +21,8 @@ define(['initialize'], function (initialize) {
             function init() {
                 $scope.isRouteLoading = true;
 
-                var awal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+                var awal = moment($scope.item.tglawal).format('YYYY-MM-DD');
+				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
                 medifirstService.get("perencanaan/get-jasgir?awal="+awal+"&akhir="+akhir).then(function (e) {
                         $scope.isRouteLoading = false;
@@ -52,8 +52,8 @@ define(['initialize'], function (initialize) {
                 $scope.item.uraianjasagiro = ''
                 $scope.item.jumlahpemasukan = 0
                 $scope.item.jumlahpengeluaran = 0
-                $scope.item.tglpemasukan = moment($scope.now).format('YYYY-MM-DD HH:mm');
-                $scope.item.tglpengeluaran = moment($scope.now).format('YYYY-MM-DD HH:mm');
+                $scope.item.tglpemasukan = moment($scope.now).format('YYYY-MM-DD');
+                $scope.item.tglpengeluaran = moment($scope.now).format('YYYY-MM-DD');
                 $scope.popupTambahJasgir.center().open()
             }
 
@@ -99,13 +99,20 @@ define(['initialize'], function (initialize) {
                 }
             });
 
+
+            $scope.$watch('item.jumlahpemasukan', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.jumlahpengeluaran = $scope.item.jumlahpemasukan
+                }
+            });
+
             $scope.SaveJasgir = function () {
                 var objSave = {
                     "norec": $scope.norecjasgir,
                     "uraianjasgir": $scope.item.uraianjasagiro,
-                    "tglpemasukan": moment($scope.item.tglpemasukan).format('YYYY-MM-DD HH:mm'),
+                    "tglpemasukan": moment($scope.item.tglpemasukan).format('YYYY-MM-DD'),
                     "jumlahpemasukan": $scope.item.jumlahpemasukan,
-                    "tglpengeluaran": moment($scope.item.tglpengeluaran).format('YYYY-MM-DD HH:mm'),
+                    "tglpengeluaran": moment($scope.item.tglpengeluaran).format('YYYY-MM-DD'),
                     "jumlahpengeluaran": $scope.item.jumlahpengeluaran,
                 }
                 console.log(objSave);
@@ -130,8 +137,8 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.ClearData = function () {
-                $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
-                $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
+                $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD');
+                $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD');
             }
 
             $scope.cariFilter = function () {
