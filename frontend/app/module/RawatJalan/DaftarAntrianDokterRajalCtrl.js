@@ -1495,12 +1495,18 @@ define(['initialize'], function (initialize) {
             //         })
             // }
             $scope.simpanPanggil = function () {
+                var data = {
+                    0: $scope.item.pilihRuangan.id,
+                    1: $scope.item.pilihRuangan.namaruangan
+                }
+                cacheHelper.set("PanggilDokter", data)
                 var cookie = document.cookie.split(';');
                 cookie = cookie[0].split('=');
                 var data = {
                     "norec_apd": $scope.dataPasienSelected.norec_apd,
                     "kelompokUser": cookie[1]
                 }
+                console.log(data);
                 socket.emit('call-antrian-poli', {
                     namapasien: $scope.dataPasienSelected.namapasien,
                     namaruangan: $scope.item.pilihRuangan.namaruangan,
@@ -1509,61 +1515,34 @@ define(['initialize'], function (initialize) {
                 });
                 toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
                 $scope.popUpPanggil.close()
-                // medifirstService.postNonMessage('rawatjalan/save-panggil', data)
-                //     .then(function (res) {
+                medifirstService.postNonMessage('rawatjalan/save-panggil', data)
+                    .then(function (res) {
 
-                //         var propertyName = 'stts'
+                        var propertyName = 'stts'
 
-                //         var grid = $("#grid").data("kendoGrid");
-                //         var selectedItem = grid.dataItem(grid.select());
-                //         var array = grid.dataSource._data
-                //         var rowIndex = 0
-                //         for (let i = 0; i < array.length; i++) {
-                //             if (array[i].norec_apd == selectedItem.norec_apd) {
-                //                 rowIndex = i
-                //                 break
-                //             }
-                //         }
-                //         var dataItem = grid.dataSource.at(rowIndex);
-                //         var rowCells = grid.element.find("tr[data-uid=" + dataItem.uid + "] td");
+                        var grid = $("#grid").data("kendoGrid");
+                        var selectedItem = grid.dataItem(grid.select());
+                        var array = grid.dataSource._data
+                        var rowIndex = 0
+                        for (let i = 0; i < array.length; i++) {
+                            if (array[i].norec_apd == selectedItem.norec_apd) {
+                                rowIndex = i
+                                break
+                            }
+                        }
+                        var dataItem = grid.dataSource.at(rowIndex);
+                        var rowCells = grid.element.find("tr[data-uid=" + dataItem.uid + "] td");
 
-                //         var headerCells = grid.element.find("th");
-                //         var cellIndex = headerCells.index(grid.element.find("th[data-field = '" + propertyName + "']"));
+                        var headerCells = grid.element.find("th");
+                        var cellIndex = headerCells.index(grid.element.find("th[data-field = '" + propertyName + "']"));
 
-                //         var cell = $(rowCells[cellIndex]);
+                        var cell = $(rowCells[cellIndex]);
 
-                //         //set CSS
-                //         cell.css("background-color", "#1E90FF");
-                //         cell.css("color", "#ffffff");
+                        //set CSS
+                        cell.css("background-color", "#1E90FF");
+                        cell.css("color", "#ffffff");
 
-                //         $scope.dataPasienSelected.stts = 'Di Panggil Dokter'
-
-                //         // update dokter
-                //         if (medifirstService.getKelompokUser() == 'dokter') {
-                //             var ipAddress = '127.0.0.1'
-                //             // if($scope.dataPasienSelected.ipaddress != undefined &&$scope.dataPasienSelected.ipaddress!=null )
-                //             //     ipAddress = $scope.dataPasienSelected.ipaddress 
-                //             var client = new HttpClient();
-                //             client.get('http://' + ipAddress + ':2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.dataPasienSelected.noantrian +
-                //                 '&namapasien=' + $scope.dataPasienSelected.nocm + ', ' + $scope.dataPasienSelected.namapasien +
-                //                 '&ruangan=' + $scope.dataPasienSelected.namaruangan + '&view=true',
-                //                 function (response) {
-                //                     // do something with response
-                //                 });
-
-                //             toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
-                //             var json = {
-                //                 norec_apd: $scope.dataPasienSelected.norec_apd,
-                //                 iddokter: medifirstService.getPegawaiLogin().id
-                //             }
-                //             medifirstService.postNonMessage('rawatjalan/save-update-dokter-antrian', json).then(function (e) {
-                //                 $scope.dataPasienSelected.namadokter = medifirstService.getPegawaiLogin().namaLengkap
-                //             });
-                //         } else {
-                //             $scope.winDialogss.center().open()
-                //         }
-
-                //     })
+                    })
 
             }
             $scope.panggil = function () {
@@ -1579,6 +1558,13 @@ define(['initialize'], function (initialize) {
                 if ($scope.dataPasienSelected.noregistrasi == undefined) {
                     toastr.error('Pilih Data dulu')
                     return
+                }
+                var cacheperawat = cacheHelper.get('PanggilDokter')
+                if (cacheperawat != undefined) {
+                    $scope.item.pilihRuangan = {
+                        id: cacheperawat[0],
+                        namaruangan: cacheperawat[1]
+                    }
                 }
                 $scope.popUpPanggil.center().open()
                 // var cookie = document.cookie.split(';');

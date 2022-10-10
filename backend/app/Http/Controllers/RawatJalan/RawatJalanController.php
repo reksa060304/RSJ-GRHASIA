@@ -672,7 +672,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
                 }
 
             }else{
-                if($apd->tgldipanggilsuster == null && isset($request['vitalsign'])) {
+                if($apd->tgldipanggilsuster == null) {
                     AntrianPasienDiperiksa::where('norec', $request['norec_apd'])
                         ->where('kdprofile', $idProfile)
                         ->update([

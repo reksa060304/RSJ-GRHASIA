@@ -19064,7 +19064,74 @@
         "define": "MedifirstService"
       }
     ]
-  }
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsuhanGiziPasienRawatJalan",
+    "url": "/AsuhanGiziPasienRawatJalan",
+    "templateurl": "module/EMR/AsuhanGiziPasienRawatJalan.html",
+    "controller": "AsuhanGiziPasienRawatJalanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.DirectiveGroupReferral2",
+    "url": "/DirectiveGroupReferral2/:index/:idEMR",
+    "templateurl": "module/EMR/DirectiveGroupReferral2.html",
+    "controller": "DirectiveGroupReferral2Ctrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+{
+  "name": "RekamMedis.AsesmenMedis.SeleksiRehabilitasiSosial",
+  "url": "/SeleksiRehabilitasiSosial",
+  "templateurl": "module/EMR/SeleksiRehabilitasiSosial.html",
+  "controller": "SeleksiRehabilitasiSosialCtrl",
+  "deps": [{
+      "module": "Services",
+      "define": "Service"
+    },
+    {
+      "module": "LoginServices",
+      "define": "LoginService"
+    },
+    {
+      "module": "MedifirstService",
+      "define": "MedifirstService"
+    },
+    {
+      "define": "RekamMedisCtrl"
+    }
+  ]
+}
+
 ]
 
 

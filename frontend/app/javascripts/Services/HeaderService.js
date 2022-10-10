@@ -73,8 +73,12 @@ define(['Configuration'], function(config) {
           return r.post({
             url: basePostData + "user/save-login-user/"
           }, data);
-        }
-
+        },
+        postNonMessage: function (url, data) {
+          return r.postNonMessage({
+            url: baseApiBackend + url
+          }, data)
+        },
       };
     }
   ]);

@@ -43,9 +43,13 @@ define(['initialize'], function (initialize) {
 				var tahun = moment($scope.item.tahun).format('YYYY');
                 let thun = tahun.toString();
                 let bul=bulan.toString();
+                var nosts = '';
+                if($scope.item.nosts != undefined){
+                    nosts = '&nosts=' + $scope.item.nosts
+                }
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
                 medifirstService.get('bendaharapenerimaan/get-sts-pertanggal?bulan='+ bul + "&tahun="+ thun
-                + "&bayar="+ bayar
+                + "&bayar="+ bayar + nosts
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         

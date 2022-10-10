@@ -139,7 +139,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-sts-pertanggal', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPertanggal');
           Route::get('bendaharapenerimaan/get-sts-popup', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPopup');
           Route::get('bendaharapenerimaan/detail-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@detailSTS');
-         
+          
           //**GET**//
 
           //**POST**//
@@ -1996,7 +1996,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-data-lap-pasien-keluar','Registrasi\LaporanRekamMedisController@getDataLaporanPasienKeluar');
               Route::get('registrasi/laporan/get-data-lap-pasien-pindahan','Registrasi\LaporanRekamMedisController@getLaporanPasienPindahan');
               Route::get('registrasi/laporan/get-data-lap-rincian-pelayanan','Registrasi\LaporanRegistrasiController@getDataLaporanRincianPelayanan');
-              Route::get('registrasi/laporan/get-data-lap-pengunjung','Registrasi\LaporanPengunjungController@getLaporanPengunjung');
+              Route::get('registrasi/laporan/get-data-lap-pengunjung','Registrasi\LaporanPengunjungController@getLaporarounPengunjung');
               Route::get('registrasi/laporan/get-combo-box-laporan-pengunjung','Registrasi\LaporanPengunjungController@getDataCombo');
               Route::get('registrasi/laporan/get-data-lap-darah','Registrasi\LaporanPengunjungController@getLapDarah');
               //sensusharianrawatjalan
@@ -2943,6 +2943,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
             // Route::group(['prefix' => 'tindakan'], function () {
 //                Route::get('get-tindakan', 'TataRekening\TindakanController@getTindakan');
+          Route::get('tindakan/cek-produk-duplicated','TataRekening\TindakanController@getProdukDuplicated');
           Route::get('tatarekening/tindakan/get-combo', 'TataRekening\TindakanController@getCombo');
           Route::get('tatarekening/tindakan/get-pegawaibyjenispetugas', 'TataRekening\TindakanController@getPegawaiByJenisPetugasPe');
           Route::get('tatarekening/tindakan/get-jenispetugasbypegawai', 'TataRekening\TindakanController@getJenisPetugasPeByPegawai');

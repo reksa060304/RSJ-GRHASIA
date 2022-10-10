@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('InputResepApotikOrderRevCtrl', ['$q', '$rootScope', '$scope', 'MedifirstService', '$state', 'CacheHelper', '$mdDialog',
-        function ($q, $rootScope, $scope, medifirstService, $state, cacheHelper, $mdDialog) {
+    initialize.controller('InputResepApotikOrderRevCtrl', ['$q', '$rootScope', '$scope', 'MedifirstService', '$state', 'CacheHelper', '$mdDialog','DateHelper',
+        function ($q, $rootScope, $scope, medifirstService, $state, cacheHelper, $mdDialog, dateHelper) {
             var norecAPD = $state.params.noRec;
             $scope.item = {};
             $scope.dataVOloaded = true;
@@ -55,7 +55,6 @@ define(['initialize'], function (initialize) {
                 { "jml": 90 },
                 { "jml": 120 },
             ]
-
             LoadCacheHelper();
             function LoadCacheHelper() {
                 
@@ -1379,6 +1378,31 @@ define(['initialize'], function (initialize) {
                 }
 
             }
+            function sendNotification(e) {
+                var body = {
+                    norec: e.noresep.norec,
+                    judul: 'Ada order baru #' + e.noresep.noorder,
+                    jenis: e.noresep.keteranganorder,
+                    pesanNotifikasi: '',
+                    idRuanganAsal: e.noresep.objectruanganfk,
+                    idRuanganTujuan: e.noresep.objectruangantujuanfk,
+                    ruanganAsal: $scope.header.namaruangan,
+                    ruanganTujuan: $scope.item.ruangan.namaruangan,
+                    kelompokUser: null, //medifirstService.getKelompokUser()
+                    idKelompokUser: null,
+                    idPegawai: medifirstService.getPegawai().id,
+                    dataArray: [],
+                    urlForm: 'ResepElektronik',
+                    params: {
+                        noOrder: e.noresep.noorder
+                    },
+                    namaFungsiFrontEnd: null,
+                    tgl: e.noresep.tglorder,
+                    tgl_string: dateHelper.getTanggalJamFormatted(e.noresep.tglorder),
+                }
+                console.log(body);
+                medifirstService.sendSocket("sendNotification", body);
+            }
             $scope.simpan = function () {
                 if (data2.length == 0) {
                     alert("Pilih Produk terlebih dahulu!!")
@@ -1433,8 +1457,9 @@ define(['initialize'], function (initialize) {
 
                 
                 // $scope.hideSimpan =true
-
+                
                 medifirstService.post('emr/simpan-order-pelayananobatfarmasi',{data: objSaves}).then(function (e) {
+                    sendNotification(e.data)
                     $scope.item.resep == undefined
                     $scope.norecOrder = ''
                     console.log($scope.copynoresep)
