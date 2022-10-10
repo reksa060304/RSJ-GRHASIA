@@ -1507,6 +1507,7 @@ class TindakanController extends ApiController
         inner join produk_m pr on pr.id = pp.produkfk
         where pp.kdprofile=30 and pp.statusenabled=true and pp.noregistrasifk ilike '$request[norec_apd]' 
         and pp.tglpelayanan::date = '$request[tglpelayanan]'::date AND pp.produkfk = $request[produkfk]"));
+        
         $result = array(
             'data'=> $data,
             'as'=> 'Fizi'
@@ -1552,8 +1553,13 @@ class TindakanController extends ApiController
         if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
             $nosbm = " AND pr.namaproduk ILIKE '%" .  $request['namaproduk']."%'";
         }
+        $ArrTindakan = '';
+        if(isset($request['ArrTindakan']) && $request['ArrTindakan'] != ""){
+            $ArrTindakan = " and pp.produkfk in($request[ArrTindakan])";
+        }
         
-        $data = \DB::select(DB::raw("SELECT distinct pd.tglregistrasi, ps.nocm, pd.noregistrasi, ps.namapasien, ru.namaruangan,pr.namaproduk, pp.tglpelayanan,pg.namalengkap, jp.jenispegawai,jpp.jenispetugaspe, pp.hargasatuan*pp.jumlah as harga FROM pelayananpasien_t pp 
+        $data = \DB::select(DB::raw("SELECT distinct pd.tglregistrasi, ps.nocm, pd.noregistrasi, ps.namapasien, ru.namaruangan,pr.namaproduk, 
+        pp.tglpelayanan,pg.namalengkap, jp.jenispegawai,jpp.jenispetugaspe, pp.hargasatuan*pp.jumlah as harga FROM pelayananpasien_t pp 
             inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
             inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
             inner join pasien_m ps on ps.id = pd.nocmfk
@@ -1565,6 +1571,9 @@ class TindakanController extends ApiController
             inner join jenispetugaspelaksana_m jpp on jpp.id = ppp.objectjenispetugaspefk
             where pp.kdprofile = 30 and pp.statusenabled = true and apd.kdprofile = 30 and apd.statusenabled = true and pd.kdprofile = 30 and pd.statusenabled = true and 
             pp.tglpelayanan::date BETWEEN '$request[tglAwal]' and '$request[tglAkhir]' and pp.isobat is null
+            $ArrTindakan
+            $deptId
+            $ruId
             ORDER BY pd.tglregistrasi asc, ps.nocm asc
         "));
 

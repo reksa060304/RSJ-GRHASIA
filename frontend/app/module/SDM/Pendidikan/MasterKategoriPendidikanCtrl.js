@@ -28,7 +28,7 @@ define(['initialize'], function (initialize) {
 				pageable: true,
 				columns: [
 					{ field: "id", title: "Id", "width": "20px" },
-					{ field: "diklatkategori", title: "Kategori Pendidikan", "width": "60px" },
+					{ field: "diklatkategori", title: "Jenis Kegiatan", "width": "60px" },
 					{ field: "statusenabled", title: "Status Aktif", "width": "20px", template: '<input ng-model = "dataItem.statusenabled" type="checkbox" ng-change="getClick(dataItem)" disabled></input>' }],
 				editable: false,
 				selectable: true

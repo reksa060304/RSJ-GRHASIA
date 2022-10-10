@@ -3450,6 +3450,10 @@
         {
             "nameDep": "SeleksiRehabilitasiSosialCtrl",
             "urlDep": "module/EMR/SeleksiRehabilitasiSosialCtrl"
-        }                     
+        },
+        {
+            "nameDep": "LaporanTindakanCtrl",
+            "urlDep": "module/RawatJalan/LaporanTindakanCtrl"
+        }
     ]
 }
