@@ -227,7 +227,19 @@
 
 
         <div class="grid_12" kendo-window="popupDetailBKU" k-title="'BKU'" k-visible="false" width="1000" style="overflow-x: hidden;">
-	
+            <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                Nomor BKU
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <input c-text-box type="input" class="k-textbox" ng-model="item.nobkudetail"/>
+            </div>
+            <div class="grid_12" style="text-align: left; margin-top: 10px;" >
+                Tanggal BKU
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <input style="width: 100%" k-ng-model="item.tglbkudetail" kendo-datetimepicker placeholer="yyyy-mm-dd"
+                            k-format="'yyyy-MM-dd HH:mm'" />
+            </div>
             <legend id="filterData">
                 <a ng-click="showAndHide()">List Jenis Bukti</a>
             </legend>
@@ -266,6 +278,12 @@
                     k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
                     k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
                 </kendo-grid>
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <div class="grid_8" ></div>
+                <div class="grid_4" >
+                        <button class="btnTemplate1" ng-click="SaveBKUDetail()">Simpan</button>
+                </div>
             </div>
         </div>
     </div>

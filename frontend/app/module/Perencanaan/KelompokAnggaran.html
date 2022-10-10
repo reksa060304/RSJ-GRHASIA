@@ -522,10 +522,6 @@
 							</div>
 
 							<div class="clear"></div>
-							
-							<!-- <div class="grid_2">
-								<button class="btnTemplate1" ng-click="VerifikasiSPJ()">Verifikasi</button>
-							</div> -->
 						</md-content>
 					</md-tab>
 					<md-tab label="Panjar" ng-if="spjaja === false && panjaraja === true && sppaja === false && spmaja === false && semuaanggaran === false">
@@ -2188,8 +2184,8 @@
 					Tanggal Panjar
 				</div>
 				<div class="grid_6" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglPanjar" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+					<input style="width: 100%" k-ng-model="item.tglPanjar" kendo-datepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2340,7 +2336,7 @@
 					Nomor SPP
 				</div>
 				<div class="grid_9" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.nospp"/>
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nospp" disabled/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2467,7 +2463,7 @@
 					Nomor SPM
 				</div>
 				<div class="grid_9" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.nospm"/>
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nospm" disabled/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2519,7 +2515,7 @@
 					Nomor Reg
 				</div>
 				<div class="grid_9" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.noreg"/>
+					<input c-text-box type="input" class="k-textbox" ng-model="item.noreg" disabled/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2587,8 +2583,8 @@
 					Tanggal Panjar
 				</div>
 				<div class="grid_9" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglPengembalian" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'" disabled="true"/>
+					<input style="width: 100%" k-ng-model="item.tglPengembalian" kendo-datepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" disabled="true"/>
 				</div>
 			</div>
 			<input c-text-box type="input" class="k-textbox" ng-model="item.norecpengembalian" ng-hide="true"/>
@@ -2629,8 +2625,8 @@
 					Tanggal Pengembalian
 				</div>
 				<div class="grid_9" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglPengembalian" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+					<input style="width: 100%" k-ng-model="item.tglPengembalian" kendo-datepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2739,7 +2735,7 @@
 		</div><br>
 	</div>
 </div>
-<div kendo-window="popupVerifSPJ" k-title="'Vrifikasi SPJ'" k-visible="false" k-width="900" k-height="500">
+<div kendo-window="popupVerifSPJ" k-title="'Verifikasi SPJ'" k-visible="false" k-width="900" k-height="500">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
 			<div class="grid_12">
@@ -2759,8 +2755,8 @@
 					Tanggal Verifikasi
 				</div>
 				<div class="grid_6" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglVerifSPJ" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+					<input style="width: 100%" k-ng-model="item.tglVerifSPJ" kendo-datepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
 				</div>
 			</div>
 			<div class="grid_12">

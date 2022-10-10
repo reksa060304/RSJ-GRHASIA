@@ -64,8 +64,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.tahunkas = null
             $scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD HH:mm');
             $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD HH:mm');
-            $scope.item.tglVerifSPJ = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
-            $scope.item.tglPanjar = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+            $scope.item.tglVerifSPJ = moment($scope.now).format('YYYY-MM-DD');
+            $scope.item.tglPanjar = moment($scope.now).format('YYYY-MM-DD');
             $scope.totalketerangan = 0;
             $scope.totalrealisasidetail = 0;
             $scope.totalpanjar = 0;
@@ -1493,6 +1493,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "tglpengembalian",
                     "title": "Tgl Pengembalian",
+                },
+                {
+                    "field": "nopengembalian",
+                    "title": "No Pengembalian",
                 },
                 {
                     "field": "keterangan",

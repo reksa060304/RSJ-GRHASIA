@@ -2776,6 +2776,8 @@ class PerencanaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
+        $thn = date("Y", strtotime($request['tglspp']) );
+
         try{
                 if($request['norec'] == ''){
                     $SP = SPD::where('nospd', '=', $request['nospd'])->first();        
@@ -2785,14 +2787,16 @@ class PerencanaanController extends ApiController {
                     $MA->norec = $norecKS;
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
+                    $nos = $this->generateCodeBySeqTable(new SPP, 'nospp', 6, '/',$kdProfile);
+                    $noSPP = '04.00/02.0'.$nos.'/LS/1.02.2.22.0.00.01.0004/M/1/'.$thn;
+                    $MA->nospp = $noSPP;
                     
                 } else{
                     $SP = SPD::where('nospd', '=', $request['nospd'])->first(); 
 
                     $MA = SPP::where('norec', '=', $request['norec'])->first();
                 }
-
-                    $MA->nospp = $request['nospp'];
+                   
                     $MA->jenisbukti = $request['jenisbukti'];
                     $MA->dasarpengeluaran = $request['dasarpengeluaran'];
                     $MA->status = $request['statusspp'];
@@ -2987,6 +2991,9 @@ class PerencanaanController extends ApiController {
         $bulan = (int)$request['bulan'];
         $tahun = (int)$request['tahun'];
 
+        $thn = date("Y", strtotime($request['tgllpj']) );
+        $tgl = date("n", strtotime($request['tgllpj']) );
+
         $data = DB::select(DB::raw("select sum(jumlahdibayarverif) total from(
         select sr.norec, sr.norealisasi, string_agg(DISTINCT rd.uraian, ',') uraian, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
         sr.keterangan, sr.tglverif, sr.jumlahdibayarverif  FROM
@@ -3031,7 +3038,9 @@ class PerencanaanController extends ApiController {
                 $MA->norec = $norecKS;
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
-                $MA->nolpj = $request['nomor'];
+                $nos = $this->generateCodeBySeqTable(new LPJ, 'nolpj', 4, ' ',$kdProfile);
+                $noLPJ = $nos.'/LPJ/1.02.2.22.0.00.01.0004/'.$tgl.'/'.$thn;
+                $MA->nolpj = $noLPJ;
                 $MA->tgllpj = $request['tgllpj'];
                 $MA->keterangan = $request['keterangan'];
                 $MA->periode = $request['periode'];
@@ -3207,6 +3216,9 @@ class PerencanaanController extends ApiController {
         $month = (int)date("m",strtotime($request['tglpemasukan']));
         $year = (int)date("Y",strtotime($request['tglpemasukan']));
 
+        $thn = date("Y", strtotime($request['tglpemasukan']) );
+        $tgl = date("n", strtotime($request['tglpemasukan']) );
+
         try{ 
                     if($request['norec'] == ''){
                         $MA = new JasaGiro();
@@ -3214,8 +3226,10 @@ class PerencanaanController extends ApiController {
                         $MA->norec = $norecKS;
                         $MA->kdprofile = $idProfile;
                         $MA->statusenabled = true;
-                        $noa = $this->generateCode(new JasaGiro, 'nojasagiro', 29, '003/JG/1.02.2.22.0.00.01.', $idProfile);
-                        $MA->nojasagiro = $noa.'/'.$month.'/'.$year;
+
+                        $nos = $this->generateCodeBySeqTable(new JasaGiro, 'nojasagiro', 4, ' ',$kdProfile);
+                        $noJasgir = $nos.'/JG/1.02.2.22.0.00.01.0004/'.$tgl.'/'.$thn;
+                        $MA->nojasagiro = $noJasgir;
                     } else{
                         $MA = JasaGiro::where('norec', '=', $request['norec'])->first();
                     }
@@ -3249,6 +3263,48 @@ class PerencanaanController extends ApiController {
                 'status' => 400,
                 'line'=> $e->getLine(),
                 'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveBKUDetail(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $cek = BKU::where('nobku', '=', $request['nobku'])->first();
+
+        try{ 
+                if(empty($cek)){
+                    $MA = BKU::where('norec', '=', $request['norec'])->first();
+                    $MA->tglbku = $request['tglbku'];
+                    $MA->nobku = $request['nobku'];
+                    $MA->save();
+
+                    $transStatus = 'true';
+                } else{
+                    $transStatus = 'false';
+                }
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal, No BKU Sudah Terpakai";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
                 'as' => '@epic',
             );
         }
@@ -3826,6 +3882,7 @@ class PerencanaanController extends ApiController {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $thn = date("Y", strtotime($request['tglspm']) );
 
         try{
                 if($request['norec'] == ''){
@@ -3842,14 +3899,17 @@ class PerencanaanController extends ApiController {
                     $MA = SPM::where('norec', '=', $request['norec'])->first();
                 }
 
-                    $MA->nospm = $request['nospm'];
+                    $noa = $this->generateCode(new SPM, 'noreg', 5, '', $kdProfile);
+                    $nos = $this->generateCodeBySeqTable(new SPM, 'nospm', 5, '',$kdProfile);
+                    $noSPM = '04.00/03.0/'.$nos.'/LS/1.02.2.22.0.00.01.0004/M/1/'.$thn;
+                    $MA->nospm = $noSPM;
                     $MA->jenisbukti = $request['jenisbukti'];
                     $MA->untukpengeluaran = $request['untukpengeluaran'];
                     $MA->status = $request['status'];
                     $MA->tglspm = $request['tglspm'];
                     $MA->tglsah = $request['tglsah'];
                     $MA->nilaispm = $request['nilaispm'];
-                    $MA->noreg = $request['noreg'];
+                    $MA->noreg = $nos;
                     $MA->objectasalprodukfk = $request['objectasalprodukfk'];
 
                     $MA->save();
@@ -4107,6 +4167,8 @@ class PerencanaanController extends ApiController {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $thn = date("Y", strtotime($request['tglpengembalian']) );
+        $tgl = date("n", strtotime($request['tglpengembalian']) );
 
         try{
             if($request['norec'] == ''){
@@ -4114,6 +4176,9 @@ class PerencanaanController extends ApiController {
                 $MA->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
+                $nos = $this->generateCodeBySeqTable(new Pengembalian, 'nopengembalian', 6, ' ',$kdProfile);
+                $noPengembalian = $nos.'/PJR/1.02.2.22.0.00.01.0004/'.$tgl.'/'.$thn;
+                $MA->nopengembalian = $noPengembalian;
                 
             } else{
                 $MA = Pengembalian::where('norec', '=', $request['norec'])->first();
@@ -5266,7 +5331,7 @@ order by kodemataanggaran"));
         $norec = $request['norec'];
 
         $data = DB::select(DB::raw("
-        select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.tglpengembalian, pj.jumlahpengembalian, pj.keterangan
+        select pj.nopengembalian, ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.tglpengembalian, pj.jumlahpengembalian, pj.keterangan
         from pengembalianpanjar_t pj
         inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
         inner join kegiatananggaran_m subkeg on subkeg.id = pj.objectsubkegiatanfk
@@ -6333,6 +6398,8 @@ order by kodemataanggaran"));
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataRealisasiDetail = [];
+        $thn = date("Y", strtotime($request['tglrealisasi']) );
+
        try{
 
         $KM= MataAnggaran::where('kodemataanggaran',$request['objectmataanggaranfk'])
@@ -6344,7 +6411,9 @@ order by kodemataanggaran"));
                 $MA->norec = $norecKS;
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
-                $noRealiasi = $this->generateCodeBySeqTable(new StrukRealisasi, 'norealisasi', 12, 'SPJ' . $this->getDateTime()->format('ym') . '/', $idProfile);
+
+                $nos = $this->generateCodeBySeqTable(new StrukRealisasi, 'norealisasi', 6, ' ',$kdProfile);
+                $noRealiasi = $nos.'/BPK/UP/1.02.2.22.0.00.01.0004/B02/'.$thn;
                 $MA->norealisasi = $noRealiasi;
 
             }else{
@@ -6430,17 +6499,22 @@ order by kodemataanggaran"));
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $tgl = date("n", strtotime($request['tglPanjar']) );
+        $thn = date("Y", strtotime($request['tglPanjar']) );
         $kode = $request['mataanggaran'];
         $ma = DB::select(DB::raw("select id from mataanggaran_m where kodemataanggaran = '$kode'"));
         try{
 
             if($request['norec'] == ''){
+
                 $MA = new Panjar();
                 $norecKS = $MA->generateNewId();
                 $MA->norec = $norecKS;
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
-                $noPanjar = $this->generateCodeBySeqTable(new Panjar, 'nopanjar', 12, 'P' . $this->getDateTime()->format('ym') . '/', $idProfile);
+                $nos = $this->generateCodeBySeqTable(new Panjar, 'nopanjar', 6, ' ',$kdProfile);
+
+                $noPanjar = $nos.'/PANJAR/1.02.2.22.0.00.01.0004/'.$tgl.'/'.$thn;
                 $MA->nopanjar = $noPanjar;
                 
                 $MA->objectsubkegiatanfk = $request['subkegiatan'];
