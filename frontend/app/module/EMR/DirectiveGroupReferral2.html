@@ -1,0 +1,227 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Directive Group Referral Hal2 </div>
+        </div>
+        <div style="margin-top:10px">
+
+
+            <div class="grid_12" style="margin-top: 10px;">
+        
+                <fieldset>     
+                    <div class="grid_12">
+                        <table style="border: 0px">
+    
+                            <tr >
+                                <!-- <th style="width: 3%">No</th> -->
+                                <th style="width: 20%;text-align: center;">Tanggal</th>
+                                <th colspan= "" style="width: 10%; text-align: center;">P</th>
+                                <th colspan= "" style="width: 10%; text-align: center;">I</th>
+                                <th colspan= "" style="width: 10%; text-align: center;">A</th>
+                                <th colspan= "" style="width: 10%; text-align: center;">P</th>
+                                <th colspan= "" style="width: 30%; text-align: center;">Keterangan</th>
+                            </tr>
+                           
+                            
+                            <tr>
+                                <td style="width:">
+                                    <div class="grid_12">
+                                        <div class="grid_12">
+                                            <label c-label item="item">TANGGAL</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input style="width: 100%" k-ng-model="item.obj[3012850]" kendo-datetimepicker
+                                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                                parsedate="yyyy-MM-dd HH:mm" />
+        
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                     <div>
+                                            <textarea style="width: 95%;height: 150px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}" ng-model="item.obj[3012851]" />
+                                     </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <textarea style="width: 95%;height: 150px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}" ng-model="item.obj[3012852]" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <textarea style="width: 95%;height: 150px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}" ng-model="item.obj[3012853]" />
+                                    </div>
+                                </td>
+                                 <td>
+                                    <div>
+                                         <textarea style="width: 95%;height: 150px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}" ng-model="item.obj[3012854]" />
+                                     </div>
+                                 </td>
+                                 <td>
+                                    <div>
+                                        <textarea style="width: 95%;height: 150px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}" ng-model="item.obj[3012855]" />
+                                     </div>
+                                </td>
+
+                            </tr>
+                            </table>
+                            
+                    </div>
+                </fieldset>
+                    </div>
+
+            <div class="grid_12">
+                <fieldset style="margin-top: 10px;">
+                    <div class="grid_12 margin-top-30 text-center margin-bottom">
+                        <label c-label item="item">KETERANGAN PENILAIAN</label>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>
+                                <label c-label item="item">
+                                    Partisipasi : <br>
+                                    5 : Partisipasi aktif dan
+                                    spontan<br>
+                                    4 : Perlu rangsangan minimal <br>
+                                    3 : Perlu rangsangan konstan <br>
+                                    2 : Partisipasi sangat minimal <br>
+                                    1 : Menolak aktifitas</label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Interaksi ( Ketrampilan Verbal ) : <br>
+                                5 : Berkomentar aktif dan spontan <br>
+                                4 : Menjawab pertanyaan dengan logis <br>
+                                3 : Menjawab pertanyaan kadang memonopoli <br>
+                                2 : Menjawab pertanyaan dengan tidak logis<br>
+                                1 : Tidak memberi respon verbal      </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Atensi ( Habit / Perilaku ): <br>
+                                5 : Atensi penuh ( 45* ) <br>
+                                4 : Atensi 15-30 <br>
+                                3 : Atensi 15-15* <br>
+                                2 : Atensi 5* atau kurang <br>
+                                1 : Tidak ada atensi
+                                </label>
+                            </td>
+                            <td> <label c-label item="item">
+                                Inisiasi ( Peran ): <br>
+                                5 : Inisiasi spontan <br>
+                                4 : Mampu mengemukakan ide <br>
+                                3 : Mampu mengemukakan ide dengan
+                                stimulus
+                            </label>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+        </div>
+    </div>
+    <div class="grid_8"></div>
+                <div class="grid_4">
+                    <fieldset style="margin-top:10px;border-radius: 10px;height: 100px;">
+                        <div style="padding: 20px;">
+                            <div class="grid_12" style="margin-top:10px">
+                                <div class="grid_12">
+                                    <label c-label item="item">Petugas</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3012856]"
+                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                        k-auto-bind="false" k-data-source="listPegawai" />
+
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+</div>
+
+
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+</div>

@@ -2238,6 +2238,11 @@ class ReportController extends ApiController{
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
 
+        $tampilsumberdana = true;
+        if($request['sumberdana'] == 15){
+            $tampilsumberdana = false;
+        }
+
         $kegiatan = DB::select(DB::raw("
             select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, pg.namalengkap, pg.nip_pns, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub
             from strukrealisasi_t sr
@@ -2323,12 +2328,17 @@ class ReportController extends ApiController{
         );
 
         $pageWidth = 950;
-        return view('report.spj.cetakspjsatulampiran',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang'));
+        return view('report.spj.cetakspjsatulampiran',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang', 'tampilsumberdana'));
     }
 
     public function getCetakSPJ(Request $request){
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
+
+        $tampilsumberdana = true;
+        if($request['sumberdana'] == 15){
+            $tampilsumberdana = false;
+        }
 
         $kegiatan = DB::select(DB::raw("
             select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub, pg.namalengkap, pg.nip_pns
@@ -2410,7 +2420,7 @@ class ReportController extends ApiController{
         );
 
         $pageWidth = 950;
-        return view('report.spj.cetakspj',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang'));
+        return view('report.spj.cetakspj',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang', 'tampilsumberdana'));
     }
 
     public function CetakPerJenisAnggaran(Request $request){

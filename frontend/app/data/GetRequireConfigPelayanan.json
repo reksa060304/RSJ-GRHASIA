@@ -3438,6 +3438,18 @@
         {
             "nameDep": "DaftarPasienTerverifikasiCtrl",
             "urlDep": "module/TataRekening/DaftarPasienTerverifikasiCtrl"
-        }           
+        },
+        {
+            "nameDep": "AsuhanGiziPasienRawatJalanCtrl",
+            "urlDep": "module/EMR/AsuhanGiziPasienRawatJalanCtrl"
+        },
+        {
+            "nameDep": "DirectiveGroupReferral2Ctrl",
+            "urlDep": "module/EMR/DirectiveGroupReferral2Ctrl"
+        },
+        {
+            "nameDep": "SeleksiRehabilitasiSosialCtrl",
+            "urlDep": "module/EMR/SeleksiRehabilitasiSosialCtrl"
+        }                     
     ]
 }
