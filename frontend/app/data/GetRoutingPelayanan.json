@@ -19109,11 +19109,33 @@
       }
     ]
   },
+  {
+    "name": "RekamMedis.AsesmenMedis.SeleksiRehabilitasiSosial",
+    "url": "/SeleksiRehabilitasiSosial",
+    "templateurl": "module/EMR/SeleksiRehabilitasiSosial.html",
+    "controller": "SeleksiRehabilitasiSosialCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
 {
-  "name": "RekamMedis.AsesmenMedis.SeleksiRehabilitasiSosial",
-  "url": "/SeleksiRehabilitasiSosial",
-  "templateurl": "module/EMR/SeleksiRehabilitasiSosial.html",
-  "controller": "SeleksiRehabilitasiSosialCtrl",
+  "name": "LaporanTindakan",
+  "url": "/TGFwb3JhblRpbmRha2Fu",
+  "templateurl": "module/RawatJalan/LaporanTindakan.html",
+  "controller": "LaporanTindakanCtrl",
   "deps": [{
       "module": "Services",
       "define": "Service"
@@ -19125,9 +19147,6 @@
     {
       "module": "MedifirstService",
       "define": "MedifirstService"
-    },
-    {
-      "define": "RekamMedisCtrl"
     }
   ]
 }

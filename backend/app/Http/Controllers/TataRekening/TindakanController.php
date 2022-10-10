@@ -1507,6 +1507,7 @@ class TindakanController extends ApiController
         inner join produk_m pr on pr.id = pp.produkfk
         where pp.kdprofile=30 and pp.statusenabled=true and pp.noregistrasifk ilike '$request[norec_apd]' 
         and pp.tglpelayanan::date = '$request[tglpelayanan]'::date AND pp.produkfk = $request[produkfk]"));
+        
         $result = array(
             'data'=> $data,
             'as'=> 'Fizi'
