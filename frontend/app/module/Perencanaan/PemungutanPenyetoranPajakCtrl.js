@@ -11,6 +11,7 @@ define(['initialize'], function (initialize) {
             $scope.item.jmlRows = 15;
             $scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD HH:mm');
             $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.tglveriftopajak = undefined
             $scope.norecspj = ''
             FormLoad();
 
@@ -84,8 +85,8 @@ define(['initialize'], function (initialize) {
                 //$scope.item.itemJenisBukti = { id: 1, jenisbukti: "UP" }
                 medifirstService.get("perencanaan/get-pajak-udah-save?norec="+$scope.norecspj).then(function (e) {
                     if(e.data.data.length != 0){
-                        $scope.item.tglPPh = moment(e.data.data[0].tglpph).format('YYYY-MM-DD HH:mm');
-                        $scope.item.tglPPn = moment(e.data.data[0].tglppn).format('YYYY-MM-DD HH:mm');
+                        $scope.item.tglPPh = moment(e.data.data[0].tglpph).format('YYYY-MM-DD');
+                        $scope.item.tglPPn = moment(e.data.data[0].tglppn).format('YYYY-MM-DD');
                         $scope.item.jenispajak = {id: e.data.data[0].idpajak, jenispajak: e.data.data[0].jenispajak}
                         $scope.item.jumlahPPh = e.data.data[0].pph
                         $scope.item.jumlahPPn = e.data.data[0].ppn
@@ -94,8 +95,8 @@ define(['initialize'], function (initialize) {
                         $scope.item.nopajak = e.data.data[0].nopajakpp
                         $scope.item.uraianpajak = e.data.data[0].uraianpajak
                     } else{
-                        $scope.item.tglPPh = moment($scope.now).format('YYYY-MM-DD HH:mm');
-                        $scope.item.tglPPn = moment($scope.now).format('YYYY-MM-DD HH:mm');
+                        $scope.item.tglPPh = $scope.tglveriftopajak;
+                        $scope.item.tglPPn = $scope.tglveriftopajak;
                         $scope.item.jenispajak = {id: 20, jenispajak: 'PPh : Pajak Penghasilan'}
                         $scope.item.nopajak = ''
                         $scope.norecspj = ''
@@ -111,9 +112,10 @@ define(['initialize'], function (initialize) {
             $scope.EntryPemungutan = function(){
                 //$scope.item.itemJenisBukti = { id: 1, jenisbukti: "UP" }
                 medifirstService.get("perencanaan/get-pajak-udah-save?norec="+$scope.norecspj).then(function (e) {
+                    //console.log(e.data.data.length)
                     if(e.data.data.length != 0){
-                        $scope.item.tglPPh = moment(e.data.data[0].tglpph).format('YYYY-MM-DD HH:mm');
-                        $scope.item.tglPPn = moment(e.data.data[0].tglppn).format('YYYY-MM-DD HH:mm');
+                        $scope.item.tglPPh = moment(e.data.data[0].tglpph).format('YYYY-MM-DD');
+                        $scope.item.tglPPn = moment(e.data.data[0].tglppn).format('YYYY-MM-DD');
                         $scope.item.jenispajak = {id: e.data.data[0].idpajak, jenispajak: e.data.data[0].jenispajak}
                         $scope.item.jumlahPPh = e.data.data[0].pph
                         $scope.item.jumlahPPn = e.data.data[0].ppn
@@ -122,8 +124,8 @@ define(['initialize'], function (initialize) {
                         $scope.item.nopajak = e.data.data[0].nopajakpep
                         $scope.item.uraianpajak = e.data.data[0].uraianpajak
                     } else{
-                        $scope.item.tglPPh = moment($scope.now).format('YYYY-MM-DD HH:mm');
-                        $scope.item.tglPPn = moment($scope.now).format('YYYY-MM-DD HH:mm');
+                        $scope.item.tglPPh = $scope.tglveriftopajak;
+                        $scope.item.tglPPn = $scope.tglveriftopajak;
                         $scope.item.jenispajak = {id: 20, jenispajak: 'PPh : Pajak Penghasilan'}
                         $scope.item.nopajak = ''
                     }
@@ -183,8 +185,8 @@ define(['initialize'], function (initialize) {
                     "jenispph": $scope.item.jenispajak.id,
                     "pph": $scope.item.jumlahPPh,
                     "ppn": $scope.item.jumlahPPn,
-                    "tglpph": moment($scope.item.tglPPh).format('YYYY-MM-DD HH:mm'),
-                    "tglppn": moment($scope.item.tglPPn).format('YYYY-MM-DD HH:mm'),
+                    "tglpph": moment($scope.item.tglPPh).format('YYYY-MM-DD'),
+                    "tglppn": moment($scope.item.tglPPn).format('YYYY-MM-DD'),
                 }
                 console.log(objSave);
                 // return
@@ -193,8 +195,8 @@ define(['initialize'], function (initialize) {
                     $scope.item.nospjpemungutan = e.data.result.nopajak
                     $scope.item.nospjpenyetoran = e.data.results.nopajak
                     $scope.item.uraianspjp = e.data.result.uraianpajak
-                    $scope.item.tglPPh = moment($scope.now).format('YYYY-MM-DD HH:mm');
-                    $scope.item.tglPPn = moment($scope.now).format('YYYY-MM-DD HH:mm');
+                    $scope.item.tglPPh = moment($scope.now).format('YYYY-MM-DD');
+                    $scope.item.tglPPn = moment($scope.now).format('YYYY-MM-DD');
                     $scope.item.jenispajak = {id: 20, jenispajak: 'PPh : Pajak Penghasilan'}
                     $scope.item.jumlahPPh = 0
                     $scope.item.jumlahPPn = 0
@@ -374,7 +376,10 @@ define(['initialize'], function (initialize) {
                 e.preventDefault();
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                console.log(dataItem)
                 $scope.norecspj = dataItem.norec
+                $scope.tglveriftopajak = moment(dataItem.tglrealisasi).format('YYYY-MM-DD HH:mm') 
+                console.log($scope.tglveriftopajak)
                 medifirstService.get("perencanaan/get-pajak-pph-ppn?norec="+dataItem.norec).then(function (e) {
                     $scope.dataGridPemungutan = e.data.data
                     $scope.dataGridPenyetoran = e.data.data

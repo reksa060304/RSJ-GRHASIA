@@ -3822,6 +3822,8 @@ class GeneralController extends ApiController
             ->select('id','namalengkap')
             ->where('kdprofile', $kdProfile)
             ->where('statusenabled', true)
+            ->whereNull('usereksternal')
+            // ->whereNotIn('namalengkap', ['-'])
 //            ->where('objectjenispegawaifk',$kdJenisPegawaiDokter)
             ->orderBy('namalengkap');
 

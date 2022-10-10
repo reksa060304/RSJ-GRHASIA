@@ -77,13 +77,13 @@
                 </a>
             </legend>
             <div class="grid_12" id="contentPencarian">
-                <div class="grid_4" style="margin-top: 15px;">
-                    <div class="grid_12">
-                        <label c-label item="item" c-label-text="Periode"></label>
-                    </div>
+                <div class="grid_6" style="margin-top: 15px;">
                     <div class="grid_12">
                         <!-- AwalPeriode -->
-                        <div class="grid_5">
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Periode"></label>
+                            </div>
                             <div class="grid_12">
                                 <div class="grid_12">
                                     <input style="width: 100%" k-ng-model="item.tglawal" kendo-datetimepicker placeholer="yyyy-mm-dd"
@@ -91,7 +91,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="grid_5">
+                        <div class="grid_3">
+                            <br>
                             <div class="grid_12">
                                 <div class="grid_12">
                                     <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datetimepicker placeholer="yyyy-mm-dd"
@@ -99,11 +100,24 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="grid_4">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Nama Rekanan"></label>
+                            </div>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input kendo-combo-box k-ng-model="item.namarekanan"
+                                    k-data-text-field="'namarekanan'" k-data-value-field="'id'"
+                                    k-filter="'contains'" k-auto-bind="false"
+                                    k-data-source="listPihakKetiga"  />
+                                </div>
+                            </div>
+                        </div>
                         <div class="grid_2" style="margin-top: 5px;">
+                            <br>
                             <button class="c-button" ng-click="cariFilter()">Cari</button>
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </fieldset>
@@ -159,7 +173,7 @@
             </div>
             <div class="grid_12">
                     <div class="grid_12" style="text-align: left; margin-top: 10px;">
-                        <label c-label item="item" c-label-text="Nomor BKU"></label>
+                        Nomor BKU
                     </div>
                     <div class="grid_12" style="margin-top: 10px;">
                         <input c-text-box type="input" class="k-textbox" ng-model="item.nobku" disabled/>
@@ -179,6 +193,15 @@
                             k-data-text-field="'jenisbukti'" k-data-value-field="'id'"
                             k-filter="'contains'" k-auto-bind="false"
                             k-data-source="listJenisBukti"  />
+                    </div>
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        Nama Pihak Ketiga 
+                    </div>
+                    <div class="grid_12">
+                        <input kendo-combo-box k-ng-model="item.pihakKetiga"
+                            k-data-text-field="'namarekanan'" k-data-value-field="'id'"
+                            k-filter="'contains'" k-auto-bind="false"
+                            k-data-source="listPihakKetiga"  />
                     </div>
                     <div class="grid_12" style="text-align: left; margin-top: 10px;">
                         Uraian BKU

@@ -149,6 +149,15 @@
                             k-filter="'contains'" k-auto-bind="false"
                             k-data-source="listBulan"  />
                     </div>
+                    <div class="grid_12">
+                        Sumber Dana
+                    </div>
+                    <div class="grid_12">
+                        <input kendo-combo-box k-ng-model="item.sumberDanaLPJ"
+                            k-data-text-field="'asalproduk'" k-data-value-field="'id'"
+                            k-filter="'contains'" k-auto-bind="false"
+                            k-data-source="listAsalProduk"  />
+                    </div>
                     <div class="grid_12" style="text-align: left; margin-top: 10px;" ng-hide="hidelpj">
                         Jenis Bukti
                     </div>
@@ -162,8 +171,8 @@
                         Tanggal LPJ
                     </div>
                     <div class="grid_12" style="margin-top: 10px;" ng-hide="hidelpj">
-                        <input style="width: 100%" k-ng-model="item.tglLPJ" kendo-datetimepicker 
-                        placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd HH:mm:ss'"/>
+                        <input style="width: 100%" k-ng-model="item.tglLPJ" kendo-datepicker 
+                        placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
                     </div>
                     <div class="grid_12" style="text-align: left; margin-top: 10px;">
                         Keterangan
@@ -176,7 +185,7 @@
                                             resize: none;" ng-model="item.keteranganLPJ"></textarea>
                     </div>
                     <div class="grid_12" style="text-align: left; margin-top: 10px;" ng-hide="hidelpj">
-                        <label c-label item="item" c-label-text="Nomor LPJ"></label>
+                        Nomor LPJ
                     </div>
                     <div class="grid_12" style="margin-top: 10px;" ng-hide="hidelpj">
                         <input c-text-box type="input" class="k-textbox" ng-model="item.nolpj" />

@@ -1448,6 +1448,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('report/get-cetak-spj', 'Report\ReportController@getCetakSPJ');
             Route::get('report/get-cetak-spj-satu-lampiran', 'Report\ReportController@getCetakSPJSatuLampiran');
             Route::get('perencanaan/get-datacombo-part-rekanan', 'Perencanaan\PerencanaanController@getDataComboRekananPart');
+            Route::get('perencanaan/get-datacombo-part-rekanan-semua', 'Perencanaan\PerencanaanController@getDataComboRekananPartSemua');
             Route::get('perencanaan/get-kel-keempat-part','Perencanaan\PerencanaanController@getKelAnggaranKeempat');
             Route::get('perencanaan/get-kel-ketiga-part','Perencanaan\PerencanaanController@getKelAnggaranKeTiga');
             Route::get('perencanaan/get-kel-kedua-part','Perencanaan\PerencanaanController@getKelAnggaranKedua');
@@ -1460,6 +1461,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-kel-kelima-part','Perencanaan\PerencanaanController@getKelAnggaranKelima');
             Route::get('perencanaan/get-kel-keenam-part','Perencanaan\PerencanaanController@getKelAnggaranKeenam');
 
+            Route::post('perencanaan/save-pihak-ketiga','Perencanaan\PerencanaanController@savePihakKetiga');
             Route::post('perencanaan/save-child','Perencanaan\PerencanaanController@saveChild');
             Route::post('perencanaan/save-setting-tahap','Perencanaan\PerencanaanController@saveSettingTahap');
             Route::post('perencanaan/save-permen-kelima','Perencanaan\PerencanaanController@savePermenKelima');
@@ -1470,6 +1472,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/copy-permen','Perencanaan\PerencanaanController@copyPermen');
             Route::post('perencanaan/save-lpj','Perencanaan\PerencanaanController@saveLPJ');
             Route::post('perencanaan/delete-lpj','Perencanaan\PerencanaanController@saveLPJ');
+            Route::post('perencanaan/delete-jasgir','Perencanaan\PerencanaanController@deleteJasgir');
             Route::post('perencanaan/save-pajak','Perencanaan\PerencanaanController@savePajak');
             Route::post('perencanaan/save-jasgir','Perencanaan\PerencanaanController@saveJasgir');
             Route::post('perencanaan/save-sumber-pendapatan','Perencanaan\PerencanaanController@saveSumberPendapatan');
@@ -1484,6 +1487,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-verif-spj','Perencanaan\PerencanaanController@saveVerifSPJ');
             Route::get('perencanaan/save-panjar-spj','Perencanaan\PerencanaanController@savePanjarSPJ');
             Route::post('perencanaan/batal-verif-spj','Perencanaan\PerencanaanController@batalVerifSPJ');
+            Route::post('perencanaan/delete-pihak-ketiga','Perencanaan\PerencanaanController@deletePihakKetiga');
             Route::post('perencanaan/delete-spj','Perencanaan\PerencanaanController@deleteSPJ');
             Route::post('perencanaan/delete-spd','Perencanaan\PerencanaanController@deleteSPD');
             Route::post('perencanaan/delete-spm','Perencanaan\PerencanaanController@deleteSPM');
@@ -2941,6 +2945,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // Route::group(['prefix' => 'tindakan'], function () {
 //                Route::get('get-tindakan', 'TataRekening\TindakanController@getTindakan');
           Route::get('tindakan/cek-produk-duplicated','TataRekening\TindakanController@getProdukDuplicated');
+          Route::get('tindakan/get-laporan-tindakan','TataRekening\TindakanController@getLaporanTindakan');
+          Route::get('sysadmin/general/get-produk-nonobat','SysAdmin\Master\MasterController@getProdukNonObat');
           Route::get('tatarekening/tindakan/get-combo', 'TataRekening\TindakanController@getCombo');
           Route::get('tatarekening/tindakan/get-pegawaibyjenispetugas', 'TataRekening\TindakanController@getPegawaiByJenisPetugasPe');
           Route::get('tatarekening/tindakan/get-jenispetugasbypegawai', 'TataRekening\TindakanController@getJenisPetugasPeByPegawai');

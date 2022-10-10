@@ -1,0 +1,131 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .k-window-content .k-content {
+        overflow: none
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .warnaa {
+        color: black
+    }
+
+    .align-right{
+        text-align: right;
+    }
+
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+</style>
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading" c-translate>Pihak Ketiga</div>
+    </div>
+    <div class="panel panel-default panel-white" ng-hide="isMasuk">
+        <!-- Tabel Hasil Pencarian -->
+        
+        <div class="grid_12" style="margin-top:50px;">
+            <div class="grid_3">
+                <div class="grid_12">
+                    Nama Pihak Ketiga 
+                </div>
+                <div class="grid_12">
+                    <input kendo-combo-box k-ng-model="item.pihakKetigaSPJ"
+                        k-data-text-field="'namarekanan'" k-data-value-field="'id'"
+                        k-filter="'contains'" k-auto-bind="false"
+                        k-data-source="listPihakKetiga"  />
+                </div>
+            </div>
+            <div class="grid_1" style="margin-top: 20px;">
+                <button class="c-button" ng-click="cariFilter()">Cari</button>
+            </div>
+            <div class="grid_8"></div>
+            <div class="grid_12 borderBox">
+                <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 1500px;">
+                </kendo-grid>
+            </div>
+            <div class="grid_2">
+                <button class="btnTemplate1" ng-click="TambahPihakKetiga()">Tambah</button>
+            </div>
+            <div class="grid_2">
+                <button class="btnTemplate1" ng-click="EditPihakKetiga()">Edit</button>
+            </div>
+            <div class="grid_2">
+                <button class="btnTemplate1" ng-click="HapusPihakKetiga()">Hapus</button>
+            </div>
+        </div>
+
+
+        <div kendo-window="PihakKetiga" k-title="'Pihak Ketiga'" k-visible="false" k-width="500" style="overflow-y: hidden; overflow-x: hidden;">
+            <div class="panel panel-default container_12">
+                <div class="grid_12">
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        Nama Pihak Ketiga
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <input c-text-box type="input" class="k-textbox" ng-model="item.namapihakketiga"/>
+                    </div>
+                </div>
+                
+                <div class="grid_12" style="margin-top: 10px;">
+                    <div class="grid_9" ></div>
+                    <div class="grid_2" >
+                            <button class="btnTemplate1" ng-click="SavePihakKetiga()">Simpan</button>
+                    </div>
+                    <div class="grid_1" ></div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

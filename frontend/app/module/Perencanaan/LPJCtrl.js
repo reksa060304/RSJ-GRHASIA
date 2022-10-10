@@ -47,6 +47,10 @@ define(['initialize'], function (initialize) {
                 { id: 12, bulan: "Desember" },
             ];
 
+            medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                $scope.listAsalProduk = e.data.asalproduk
+            });
+
             function init() {
                 $scope.isRouteLoading = true;
 
@@ -81,11 +85,12 @@ define(['initialize'], function (initialize) {
                 $scope.hidelpj = false
                 $scope.noreclpj = ''
                 $scope.item.itemJenisBukti = { id: 1, jenisbukti: "UP" }
-                $scope.item.tglLPJ = moment($scope.now).format('YYYY-MM-DD HH:mm');
+                $scope.item.tglLPJ = moment($scope.now).format('YYYY-MM-DD');
                 $scope.dataGridLPJ = []
                 $scope.item.itembulan = undefined
                 $scope.item.keteranganLPJ = ''
                 $scope.item.nolpj = ''
+                $scope.dataGridLPJ = {}
                 $scope.popupTambahLPJ.center().open()
             }
 
@@ -131,6 +136,7 @@ define(['initialize'], function (initialize) {
                         "keterangan": $scope.item.keteranganLPJ,
                         "nomor": $scope.item.nolpj,
                         "bulan": $scope.item.itembulan.id,
+                        "objectasalprodukfk": $scope.item.sumberDanaLPJ.id,
                         "tahun": moment($scope.now).format('YYYY'),
                     }
                 } else if($scope.noreclpj != ''){
@@ -143,6 +149,7 @@ define(['initialize'], function (initialize) {
                 console.log(objSave);
                 // return
                 medifirstService.post('perencanaan/save-lpj', objSave).then(function (e) {
+                    $scope.dataGridLPJ = {}
                     $scope.popupTambahLPJ.center().close()
                     init();
                 })
@@ -213,6 +220,12 @@ define(['initialize'], function (initialize) {
                         
                         "field": "nolpj",
                         "title": "Nomor LPJ",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "asalproduk",
+                        "title": "Sumber Dana",
                         "width": "100px",
                     },
                     {
