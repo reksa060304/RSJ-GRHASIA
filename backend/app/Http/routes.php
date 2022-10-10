@@ -1996,7 +1996,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-data-lap-pasien-keluar','Registrasi\LaporanRekamMedisController@getDataLaporanPasienKeluar');
               Route::get('registrasi/laporan/get-data-lap-pasien-pindahan','Registrasi\LaporanRekamMedisController@getLaporanPasienPindahan');
               Route::get('registrasi/laporan/get-data-lap-rincian-pelayanan','Registrasi\LaporanRegistrasiController@getDataLaporanRincianPelayanan');
-              Route::get('registrasi/laporan/get-data-lap-pengunjung','Registrasi\LaporanPengunjungController@getLaporarounPengunjung');
+              Route::get('registrasi/laporan/get-data-lap-pengunjung','Registrasi\LaporanPengunjungController@getLaporanPengunjung');
               Route::get('registrasi/laporan/get-combo-box-laporan-pengunjung','Registrasi\LaporanPengunjungController@getDataCombo');
               Route::get('registrasi/laporan/get-data-lap-darah','Registrasi\LaporanPengunjungController@getLapDarah');
               //sensusharianrawatjalan
