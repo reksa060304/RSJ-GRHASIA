@@ -3397,6 +3397,7 @@ class PerencanaanController extends ApiController {
                         $MA->nobku = $noa.'-B02';$MA->objectjenisbuktifk = $request['jenisbukti'];
                         $MA->tglbku = $request['tglbku'];
                         $MA->uraianbku = $request['uraian'];
+                        $MA->rekananfk = $request['rekananfk'];
 
                         $MA->objectmataanggaranfk = null;
 
@@ -3425,6 +3426,7 @@ class PerencanaanController extends ApiController {
                         $MA->nobku = $noa.'-B02';$MA->objectjenisbuktifk = $request['jenisbukti'];
                         $MA->tglbku = $request['tglbku'];
                         $MA->uraianbku = $request['uraian'];
+                        $MA->rekananfk = $request['rekananfk'];
 
                         $MA->objectmataanggaranfk = null;
 
@@ -3467,6 +3469,7 @@ class PerencanaanController extends ApiController {
                                 $MA->nobku = $noa.'-B02';$MA->objectjenisbuktifk = $request['jenisbukti'];
                                 $MA->tglbku = $request['tglbku'];
                                 $MA->uraianbku = $request['uraian'];
+                                $MA->rekananfk = $request['rekananfk'];
                                 $MA->objectmataanggaranfk = $request['bku'][$i]['koderek'];
                                 $MA->penerimaan = (int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn'];
                                 $MA->pengeluaran = (int)$request['bku'][$i]['jumlahpengeluaran'];
@@ -3482,6 +3485,7 @@ class PerencanaanController extends ApiController {
                                 $MA->nobku = $noa.'-B02';$MA->objectjenisbuktifk = $request['jenisbukti'];
                                 $MA->tglbku = $request['tglbku'];
                                 $MA->uraianbku = $request['uraian'];
+                                $MA->rekananfk = $request['rekananfk'];
                                 $MA->objectmataanggaranfk = $request['bku'][$i]['koderek'];
                                 $MA->penerimaan = (int)$request['bku'][$i]['jumlahpenerimaan'];
                                 $MA->pengeluaran = (int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn'];
@@ -3519,6 +3523,7 @@ class PerencanaanController extends ApiController {
                             $MA->nobku = $noa.'-B02';$MA->objectjenisbuktifk = $request['jenisbukti'];
                             $MA->tglbku = $request['tglbku'];
                             $MA->uraianbku = $request['uraian'];
+                            $MA->rekananfk = $request['rekananfk'];
 
                             $MA->objectmataanggaranfk = $request['bku'][0]['kodemataanggaran'];
 
@@ -3550,6 +3555,7 @@ class PerencanaanController extends ApiController {
                             $MB->nobku = $noa.'-B02';$MB->objectjenisbuktifk = $request['jenisbukti'];
                             $MB->tglbku = $request['tglbku'];
                             $MB->uraianbku = $request['uraian'];
+                            $MA->rekananfk = $request['rekananfk'];
 
                             $MB->objectmataanggaranfk = $request['bku'][0]['kodemataanggaran'];
 
@@ -3583,6 +3589,7 @@ class PerencanaanController extends ApiController {
                             $MA->nobku = $noa.'-B02';$MA->objectjenisbuktifk = $request['jenisbukti'];
                             $MA->tglbku = $request['tglbku'];
                             $MA->uraianbku = $request['uraian'];
+                            $MA->rekananfk = $request['rekananfk'];
 
                             $MA->objectmataanggaranfk = $request['bku'][0]['kodemataanggaran'];
 
@@ -3613,6 +3620,7 @@ class PerencanaanController extends ApiController {
                         $MA->nobku = $noa.'-B02';$MA->objectjenisbuktifk = $request['jenisbukti'];
                         $MA->tglbku = $request['tglbku'];
                         $MA->uraianbku = $request['uraian'];
+                        $MA->rekananfk = $request['rekananfk'];
 
                         $MA->objectmataanggaranfk = $request['bku'][0]['kodemataanggaran'];
 
@@ -5621,12 +5629,19 @@ order by kodemataanggaran"));
         $idProfile = (int) $kdProfile;
         $tglAwal = $request['awal'];
         $tglAkhir = $request['akhir'];
+
+        $rekanan = '';
+        if(isset($request['rekanan']) && $request['rekanan'] != '' && $request['rekanan'] != "undefined"){
+            $rekanan = " and bku.rekananfk = '".$request['rekanan']."'";
+        }
         
         $data = DB::select(DB::raw("
-        select bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
+        select rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
         from bukukasumum_t bku
         left join jenisbukti_m jb on jb.id = bku.objectjenisbuktifk
+        left join rekanan_m rm on rm.id = bku.rekananfk
         where bku.statusenabled = true and bku.kdprofile = 30
+        $rekanan
         and tglbku between '$tglAwal' and '$tglAkhir'
         order by bku.nobku
         ")
@@ -6084,25 +6099,25 @@ order by kodemataanggaran"));
 
         $data = DB::select(DB::raw("
         select 
-        pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglrealisasi, coalesce(jp.jenispajak,'PPh') as kode, sr.pph as jumlah 
+        pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, coalesce(jp.jenispajak,'PPh') as kode, sr.pph as jumlah 
         from strukrealisasi_t sr 
         left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
 		left join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
         left join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
         left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
         where sr.norec = '$norec'
-        group by jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglrealisasi, sr.pph
+        group by jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, sr.pph
 
         union all
 
         select 
-        pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglrealisasi, 'PPn' as kode, sr.ppn as jumlah 
+        pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, 'PPn' as kode, sr.ppn as jumlah 
         from strukrealisasi_t sr 
         left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
 		left join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
         left join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
         where sr.norec = '$norec'
-        group by pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglrealisasi, sr.ppn
+        group by pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, sr.ppn
             ")
         );
 
