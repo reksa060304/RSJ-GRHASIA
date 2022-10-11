@@ -39,7 +39,6 @@ define(['initialize'], function (initialize) {
                 if($scope.item.namarekanan != undefined){
                     rekanan = $scope.item.namarekanan.id
                 }
-                // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
                 medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir+"&rekanan="+rekanan).then(function (e) {
                         $scope.isRouteLoading = false;
                         
@@ -84,6 +83,38 @@ define(['initialize'], function (initialize) {
                 init()
             }
             
+            $scope.$watch('item.caridatabku', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    var awal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
+				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+
+                var rekanan = ''
+                if($scope.item.namarekanan != undefined){
+                    rekanan = $scope.item.namarekanan.id
+                }
+                medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir+"&rekanan="+rekanan+"&key="+$scope.item.caridatabku).then(function (e) {
+                    $scope.isRouteLoading = false;
+
+                    console.log(e.data.data)
+                        
+                    $scope.dataGrid = new kendo.data.DataSource({
+                        data: e.data.data,
+                        group: $scope.group,
+                        pageSize: 100,
+                        total: e.data.data.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                });
+                }
+            });
 
             $scope.$watch('item.itemJenisBukti', function (newValue, oldValue) {
                 if (newValue != oldValue) {

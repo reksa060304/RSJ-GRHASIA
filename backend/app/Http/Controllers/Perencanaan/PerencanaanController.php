@@ -5699,6 +5699,11 @@ order by kodemataanggaran"));
         if(isset($request['rekanan']) && $request['rekanan'] != '' && $request['rekanan'] != "undefined"){
             $rekanan = " and bku.rekananfk = '".$request['rekanan']."'";
         }
+
+        $qkey = '';
+        if(isset($request['key']) && $request['key'] != '' && $request['key'] != "undefined"){
+            $qkey = " and (bku.uraianbku ilike '%".$request['key']."%' or jb.jenisbukti ilike '%".$request['key']."%')";
+        }
         
         $data = DB::select(DB::raw("
         select rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
@@ -5707,6 +5712,7 @@ order by kodemataanggaran"));
         left join rekanan_m rm on rm.id = bku.rekananfk
         where bku.statusenabled = true and bku.kdprofile = 30
         $rekanan
+        $qkey
         and tglbku between '$tglAwal' and '$tglAkhir'
         order by bku.nobku
         ")
