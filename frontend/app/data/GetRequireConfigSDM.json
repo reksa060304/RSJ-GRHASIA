@@ -252,6 +252,10 @@
     {
       "nameDep": "MasterDataPendidikanCtrl",
       "urlDep": "module/SDM/MasterDataPendidikanCtrl"
+    },
+    {
+      "nameDep": "LaporanPermintaanMakanPasienCtrl",
+      "urlDep": "module/Gizi/Laporan/LaporanPermintaanMakanPasienctrl"
     }
   ]
 }
