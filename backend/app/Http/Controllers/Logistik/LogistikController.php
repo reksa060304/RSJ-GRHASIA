@@ -2516,7 +2516,8 @@ class LogistikController extends ApiController{
                 INNER JOIN satuanstandar_m as ss on ss.id=pr.objectsatuanstandarfk
                 left join detailjenisproduk_m as djp on djp.id = pr.objectdetailjenisprodukfk
                 inner join strukpelayanandetail_t as spdl on spdl.nostrukfk = spd.nostrukterimafk
-                where spd.kdprofile = $idProfile and spd.objectprodukfk='$produkfk' 
+                where spd.kdprofile = $idProfile 
+                --and spd.objectprodukfk='$produkfk' 
                 -- and spd.objectruanganfk='$ruanganfk' 
                 and djp.objectjenisprodukfk = 97 order by spd.tglpelayanan desc;")
         );

@@ -93,7 +93,7 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 							if (element.namapasien_klien == null) {
 								element.namapasien_klien = '-'
 							}
-							element.namapasien = element.nocm + ' ' + element.namapasien
+							element.namapasien = element.namapasien
 							if (element.namaruangan == null) {
 								element.namaruangan = "-"
 							}
@@ -270,6 +270,12 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 						"title": "Tanggal",
 						"template": "<span class='style-center'>#: tglSbm #</span>",
 						"width": "75px"
+					},
+					{
+						"field": "nocm",
+						"title": "No. RM",
+						"template": "<span class='style-left'>#: nocm #</span>",
+						"width": "80px"
 					},
 					{
 						"field": "namapasien",

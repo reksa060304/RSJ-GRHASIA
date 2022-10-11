@@ -18,6 +18,7 @@ define(['initialize'], function (initialize) {
             $scope.hidespj =true
             $scope.hidepengembalian =true
             $scope.selectedData2 = []; 
+            $scope.norecbku = ''
             FormLoad();
 
             $scope.showAndHide = function () {
@@ -38,7 +39,6 @@ define(['initialize'], function (initialize) {
                 if($scope.item.namarekanan != undefined){
                     rekanan = $scope.item.namarekanan.id
                 }
-                // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
                 medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir+"&rekanan="+rekanan).then(function (e) {
                         $scope.isRouteLoading = false;
                         
@@ -83,6 +83,38 @@ define(['initialize'], function (initialize) {
                 init()
             }
             
+            $scope.$watch('item.caridatabku', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    var awal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
+				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+
+                var rekanan = ''
+                if($scope.item.namarekanan != undefined){
+                    rekanan = $scope.item.namarekanan.id
+                }
+                medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir+"&rekanan="+rekanan+"&key="+$scope.item.caridatabku).then(function (e) {
+                    $scope.isRouteLoading = false;
+
+                    console.log(e.data.data)
+                        
+                    $scope.dataGrid = new kendo.data.DataSource({
+                        data: e.data.data,
+                        group: $scope.group,
+                        pageSize: 100,
+                        total: e.data.data.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                });
+                }
+            });
 
             $scope.$watch('item.itemJenisBukti', function (newValue, oldValue) {
                 if (newValue != oldValue) {
@@ -249,6 +281,21 @@ define(['initialize'], function (initialize) {
 
             }
 
+            $scope.SaveBKUDetail = function () {
+                var objSave = {
+                    "norec": $scope.norecbku,
+                    "tglbku": moment($scope.item.tglbkudetail).format('YYYY-MM-DD HH:mm'),
+                    "nobku": $scope.item.nobkudetail,
+                }
+                console.log(objSave);
+                
+                medifirstService.post('perencanaan/save-bku-detail', objSave).then(function (e) {
+                    $scope.popupDetailBKU.center().close()
+                    init();
+                })
+
+            }
+
             $scope.ClearData = function () {
                 $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
                 $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
@@ -348,12 +395,12 @@ define(['initialize'], function (initialize) {
 
                 for (var i = 0; i < $scope.selectedData2.length; i++){
                     if(i != $scope.selectedData2.length-1){
-                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian + " <br /> " +
-                        $scope.selectedData2[i].kodemataanggaran + " <br /> " +
+                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian + " \n " +
+                        $scope.selectedData2[i].kodemataanggaran + " \n " +
                         $scope.item.pihakKetiga.namarekanan + ', '
                     } else{
-                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian + " <br /> " +
-                        $scope.selectedData2[i].kodemataanggaran + " <br /> " +
+                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian + " \n " +
+                        $scope.selectedData2[i].kodemataanggaran + " \n " +
                         $scope.item.pihakKetiga.namarekanan
                     }
                 }
@@ -517,6 +564,9 @@ define(['initialize'], function (initialize) {
                         $scope.hidepajak =true
                         $scope.hidespj =true
                         $scope.hidepengembalian =true
+                        $scope.item.nobkudetail = dataItem.nobku
+                        $scope.item.tglbkudetail = dataItem.tglbku
+                        $scope.norecbku = dataItem.norecbku
                         medifirstService.get("perencanaan/get-panjar-bku?norec="+dataItem.norecbku).then(function (e) {
                     
                             $scope.dataGridPanjar = new kendo.data.DataSource({
@@ -542,6 +592,9 @@ define(['initialize'], function (initialize) {
                         $scope.hidepajak =true
                         $scope.hidespj =true
                         $scope.hidepengembalian =false
+                        $scope.item.nobkudetail = dataItem.nobku
+                        $scope.item.tglbkudetail = dataItem.tglbku
+                        $scope.norecbku = dataItem.norecbku
                         medifirstService.get("perencanaan/get-pengembalian-bku?norec="+dataItem.norecbku).then(function (e) {
                     
                             $scope.dataGridPengembalian = new kendo.data.DataSource({
@@ -569,6 +622,9 @@ define(['initialize'], function (initialize) {
                     $scope.hidepajak =true
                     $scope.hidespj =true
                     $scope.hidepengembalian =true
+                    $scope.item.nobkudetail = dataItem.nobku
+                    $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.norecbku = dataItem.norecbku
                     medifirstService.get("perencanaan/get-spm-bku?norec="+dataItem.norecbku).then(function (e) {
                     
                         $scope.dataGridSPM = new kendo.data.DataSource({
@@ -594,6 +650,9 @@ define(['initialize'], function (initialize) {
                     $scope.hidepajak =true
                     $scope.hidespj =true
                     $scope.hidepengembalian =true
+                    $scope.item.nobkudetail = dataItem.nobku
+                    $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.norecbku = dataItem.norecbku
                     medifirstService.get("perencanaan/get-jasgir-bku?norec="+dataItem.norecbku).then(function (e) {
                     
                         $scope.dataGridJasaGiro = new kendo.data.DataSource({
@@ -619,6 +678,9 @@ define(['initialize'], function (initialize) {
                     $scope.hidejasgir =true
                     $scope.hidespj =true
                     $scope.hidepengembalian =true
+                    $scope.item.nobkudetail = dataItem.nobku
+                    $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.norecbku = dataItem.norecbku
                     medifirstService.get("perencanaan/get-pajak-bku?norec="+dataItem.norecbku).then(function (e) {
                     
                         $scope.dataGridPajak = new kendo.data.DataSource({
@@ -638,12 +700,16 @@ define(['initialize'], function (initialize) {
                         });
                     });
                 } else if(dataItem.id == 2){
+                    console.log(dataItem)
                     $scope.hidespm = true
                     $scope.hidepanjar =true
                     $scope.hidejasgir =true
                     $scope.hidepajak =true
                     $scope.hidespj =false
                     $scope.hidepengembalian =true
+                    $scope.item.nobkudetail = dataItem.nobku
+                    $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.norecbku = dataItem.norecbku
                     medifirstService.get("perencanaan/get-spj-bku?norec="+dataItem.norecbku).then(function (e) {
                     
                         $scope.dataGridSPJ = new kendo.data.DataSource({
@@ -683,7 +749,6 @@ define(['initialize'], function (initialize) {
                               },
                           ],
                              title: "",
-                             
                              width: "60px",
                              
                     },
