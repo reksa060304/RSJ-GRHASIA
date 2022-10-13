@@ -1257,5 +1257,43 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LaporanPermintaanMakanPasienBangsal",
+    "url": "/UGVybWludGFhbiBNYWthbiBQYXNpZW4gcGVyIGtlbGFz",
+    "templateurl": "module/Gizi/Laporan/LaporanPermintaanMakanPasienBangsal.html",
+    "controller": "LaporanPermintaanMakanPasienBangsalCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanPermintaanMakanPasienWaktu",
+    "url": "/UGVybWludGFhbiBNYWthbiBQYXNpZW4gcGVyIHdha3R1",
+    "templateurl": "module/Gizi/Laporan/LaporanPermintaanMakanPasienWaktu.html",
+    "controller": "LaporanPermintaanMakanPasienWaktuCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
