@@ -472,6 +472,7 @@ class PerencanaanController extends ApiController {
                             from kegiatananggaran_m as dp 
                             left join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
                             and kb.kdprofile = 30 and kb.statusenabled = true 
+                            $thdv
                             left join kegiatananggaran_m as dp3 on dp.kode ilike dp3.kode || '%' and dp3.div = 2
                             and dp3.kdprofile = 30 and dp3.statusenabled = true 
                             left join kegiatananggaran_m as dp2 on dp3.kode ilike dp2.kode || '%' and dp2.div = 1
@@ -486,7 +487,6 @@ class PerencanaanController extends ApiController {
                             where dp.kdprofile = 30 and dp.statusenabled = true 
                             $pegawai
                             $dv
-                            $thdv
                             $tn
                             group by ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
                             dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
@@ -4893,6 +4893,11 @@ class PerencanaanController extends ApiController {
             $smataanggaran = "and ma.kodemataanggaran = '".$request['mataanggaran']."'";
         }
 
+        $snorec = '';
+        if(isset($request['noreckegiatan']) && $request['noreckegiatan'] != '' && $request['noreckegiatan'] != 'undefined'){
+            $snorec = "and kt.objectkegiatanfk = ".$request['noreckegiatan'];
+        }
+
         $scek = '';
         if(isset($request['cek']) && $request['cek'] != '' && $request['cek'] != 'undefined'){
             if($request['cek'] == "false"){
@@ -4915,7 +4920,7 @@ class PerencanaanController extends ApiController {
                 , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima 
                 from mataanggaran_m ma
                 left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id and kt.statusenabled = true
-                $qtahap
+                $snorec
                 where 
                 length(ma.kodemataanggaran) in(9,10) 
                 and ma.kdprofile=$idProfile
@@ -5486,7 +5491,11 @@ order by kodemataanggaran"));
         select jb.id, jb.jenisbelanja from
         jenisbelanja_m jb 
         inner join kegiatananggaran_m ka on ka.objectjenisbelanjafk = jb.id
-        where ka.keterangan = '$keterangan'
+        where ka.id = $keterangan
+        and jb.kdprofile = 30
+        and jb.statusenabled = true
+        and ka.kdprofile = 30
+        and ka.statusenabled = true
         ")
         );
 

@@ -919,6 +919,15 @@
 					k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" />
 				</div>
 			</div>
+			<div class="grid_3" ng-hide="disdiv">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Tahun"></label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahuntambahkegiatan" kendo-date-picker
+					placeholer="YYYY" k-format="'yyyy'"/>
+				</div>
+			</div>
 		</div>
 		
 		<div class="grid_12">
