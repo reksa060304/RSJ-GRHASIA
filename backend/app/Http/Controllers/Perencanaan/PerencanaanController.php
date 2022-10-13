@@ -5706,7 +5706,7 @@ order by kodemataanggaran"));
         }
         
         $data = DB::select(DB::raw("
-        select rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
+        select (right(left(bku.nobku, -4), 2))::int4 nourut, rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
         from bukukasumum_t bku
         left join jenisbukti_m jb on jb.id = bku.objectjenisbuktifk
         left join rekanan_m rm on rm.id = bku.rekananfk
@@ -5714,7 +5714,7 @@ order by kodemataanggaran"));
         $rekanan
         $qkey
         and tglbku between '$tglAwal' and '$tglAkhir'
-        order by bku.nobku
+        order by nourut
         ")
         );
 

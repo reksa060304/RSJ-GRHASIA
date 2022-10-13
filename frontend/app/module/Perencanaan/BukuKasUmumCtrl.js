@@ -39,8 +39,16 @@ define(['initialize'], function (initialize) {
                 if($scope.item.namarekanan != undefined){
                     rekanan = $scope.item.namarekanan.id
                 }
+
+                var saldo = 0
                 medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir+"&rekanan="+rekanan).then(function (e) {
                         $scope.isRouteLoading = false;
+
+                        for(var i = 0; i < e.data.data.length; i++){
+                            saldo += parseInt(e.data.data[i].penerimaan)
+                            saldo -= parseInt(e.data.data[i].pengeluaran)
+                            e.data.data[i].saldo = saldo 
+                        }
                         
                         $scope.dataGrid = new kendo.data.DataSource({
                             data: e.data.data,
@@ -92,10 +100,16 @@ define(['initialize'], function (initialize) {
                 if($scope.item.namarekanan != undefined){
                     rekanan = $scope.item.namarekanan.id
                 }
+
+                var saldo = 0
                 medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir+"&rekanan="+rekanan+"&key="+$scope.item.caridatabku).then(function (e) {
                     $scope.isRouteLoading = false;
 
-                    console.log(e.data.data)
+                    for(var i = 0; i < e.data.data.length; i++){
+                        saldo += parseInt(e.data.data[i].penerimaan)
+                        saldo -= parseInt(e.data.data[i].pengeluaran)
+                        e.data.data[i].saldo = saldo 
+                    }
                         
                     $scope.dataGrid = new kendo.data.DataSource({
                         data: e.data.data,
