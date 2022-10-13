@@ -19131,26 +19131,48 @@
       }
     ]
   },
-{
-  "name": "LaporanTindakan",
-  "url": "/TGFwb3JhblRpbmRha2Fu",
-  "templateurl": "module/RawatJalan/LaporanTindakan.html",
-  "controller": "LaporanTindakanCtrl",
-  "deps": [{
-      "module": "Services",
-      "define": "Service"
-    },
-    {
-      "module": "LoginServices",
-      "define": "LoginService"
-    },
-    {
-      "module": "MedifirstService",
-      "define": "MedifirstService"
-    }
-  ]
-}
-
+  {
+    "name": "LaporanTindakan",
+    "url": "/TGFwb3JhblRpbmRha2Fu",
+    "templateurl": "module/RawatJalan/LaporanTindakan.html",
+    "controller": "LaporanTindakanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.DaftarKeluargaIjinKunjungan",
+    "url": "/DaftarKeluargaIjinKunjungan/:index/:idEMR",
+    "templateurl": "module/EMR/DaftarKeluargaIjinKunjungan.html",
+    "controller": "DaftarKeluargaIjinKunjunganCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  }
+ 
 ]
 
 

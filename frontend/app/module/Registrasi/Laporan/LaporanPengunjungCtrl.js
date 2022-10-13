@@ -166,7 +166,7 @@ define(['initialize'], function (initialize) {
                         "width": "40px",
                     },
                     {
-                        "field": "nocmfk",
+                        "field": "nocm",
                         "title": "No Rekam Medis",
                         "width": "80px",
                         "template": "<span class='style-center'>#: nocm #</span>"

@@ -3454,6 +3454,10 @@
         {
             "nameDep": "LaporanTindakanCtrl",
             "urlDep": "module/RawatJalan/LaporanTindakanCtrl"
-        }
+        },
+        {
+            "nameDep": "DaftarKeluargaIjinKunjunganCtrl",
+            "urlDep": "module/EMR/DaftarKeluargaIjinKunjunganCtrl"
+        }      
     ]
 }
