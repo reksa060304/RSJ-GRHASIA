@@ -256,6 +256,14 @@
     {
       "nameDep": "LaporanPermintaanMakanPasienCtrl",
       "urlDep": "module/Gizi/Laporan/LaporanPermintaanMakanPasienctrl"
+    }, 
+    {
+      "nameDep": "LaporanPermintaanMakanPasienBangsalCtrl",
+      "urlDep": "module/Gizi/Laporan/LaporanPermintaanMakanPasienBangsalctrl"
+    },
+    {
+      "nameDep": "LaporanPermintaanMakanPasienWaktuCtrl",
+      "urlDep": "module/Gizi/Laporan/LaporanPermintaanMakanPasienWaktuCtrl"
     }
   ]
 }
