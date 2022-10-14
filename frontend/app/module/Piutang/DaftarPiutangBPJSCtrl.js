@@ -1,21 +1,21 @@
 define(['initialize'], function (initialize) {
 	'use strict';
-	initialize.controller('DaftarPiutangBPJSCtrl', ['$state', '$q', '$scope', 'CacheHelper', 'MedifirstService',
-		function ($state, $q, $scope, cacheHelper, medifirstService) {
+	initialize.controller('DaftarPiutangBPJSCtrl', ['$state', '$q', '$scope', 'CacheHelper', '$mdDialog', 'MedifirstService',
+		function ($state, $q, $scope, cacheHelper, $mdDialog, medifirstService) {
 			$scope.now = new Date();
 			$scope.item = {};
 			$scope.isRouteLoading = false;
 			$scope.dataPasienSelected = {};
 			$scope.listStatus = [
-				{ id: 3, namaExternal: "Semua" },
-				{ id: 1, namaExternal: "Verifikasi" },
-				{ id: 2, namaExternal: "Belum Verifikasi" }
+				{ id: 1, namaExternal: "Klaim" },
+				{ id: 2, namaExternal: "Tidak Klaim" }
 			];
 			$scope.item.status = $scope.listStatus[0];
 			$scope.item.awalPeriode = $scope.now;
 			$scope.item.akhirPeriode = $scope.now;
 			$scope.cboDefault = true;
 			$scope.cboRekanan = false;
+			var DataTotalMataAnggaran = [];
 			loadCombo();
 			loadData();
 
@@ -93,13 +93,28 @@ define(['initialize'], function (initialize) {
 
 			$scope.columnDataPasienPiutang = [
 				{
+					"field": "iscek",
+					"template": "# if( iscek==true) {# <input type='checkbox' class='checkbox style-center' ng-checked='true' ng-click='onClickSatu($event,2)'/> # } else {# <input type='checkbox' class='checkbox style-center' ng-checked='false' ng-click='onClickSatu($event,2)'/> #} #",
+					"width": "30px"
+				},
+				{
 					"field": "nosep",
 					"title": "No. SEP",
 					"width": "150px",
 				},
 				{
+					"field": "tglsep",
+					"title": "Tanggal SEP",
+					"width": "100px",
+				},
+				{
 					"field": "tglpulang",
-					"title": "Tanggal",
+					"title": "Tanggal Pulang",
+					"width": "100px",
+				},
+				{
+					"field": "tglbayar",
+					"title": "Tanggal Bayar",
 					"width": "100px",
 				},
 				{
@@ -153,6 +168,14 @@ define(['initialize'], function (initialize) {
 
 				}
 			];
+
+			function generateFlagTemplate(field){
+				if (field== true)
+					return "<input type='checkbox' class='checkbox style-center' ng-checked='true' />";
+				else
+					return "<input type='checkbox' class='checkbox style-center' ng-checked='false' />";
+			}
+
 			$scope.data2 = function (dataItem) {
 				for (var i = 0; i < dataItem.details.length; i++) {
 					dataItem.details[i].no = i + 1
@@ -250,13 +273,15 @@ define(['initialize'], function (initialize) {
 			}
 
 			$scope.loadNewData = function () {
-				medifirstService.get("tatarekening/daftar-piutang-bpjs?nameOrNoReg=" + $scope.item.namaOrReg + "&status=" + $scope.item.status.namaExternal + "&tglAwal=" 
+				medifirstService.get("tatarekening/daftar-piutang-bpjs?nameOrNoReg=" + $scope.item.namaOrReg + "&status=" + $scope.item.status.id + "&tglAwal=" 
 				+ $scope.item.awalPeriode + "&tglAkhir=" + $scope.item.akhirPeriode)
 					.then(function (dat) {
 						var dataPasien = dat.data.data;
 						for (var i = 0; i < dataPasien.length; i++) {
 							dataPasien[i].no = i+1;
 						}
+
+						DataTotalMataAnggaran = dataPasien
 
 						$scope.dataPasienPiutang = new kendo.data.DataSource({
 							data: dataPasien,
@@ -362,7 +387,11 @@ define(['initialize'], function (initialize) {
 				var kelompokPasienId = undefinedCheckerObject($scope.item.kelompokPasien);
 				var $status = "";
 				if ($scope.item.status != undefined) {
-					$status = "=" + $scope.item.status.namaExternal
+					$status = "=" + $scope.item.status.id
+				}
+				var skey = "";
+				if ($scope.item.caridata != undefined) {
+					skey = $scope.item.item.caridata
 				}
 				$q.all([
 					medifirstService.get("tatarekening/daftar-piutang-bpjs?"
@@ -373,7 +402,8 @@ define(['initialize'], function (initialize) {
 						+ "&tglAkhir=" + tglAkhir
 						+ "&ruanganId=" + ruanganId
 						+ "&instalasiId=" + instalasiId
-						+ "&kelompokpasienlastfk=" + kelompokPasienId),
+						+ "&kelompokpasienlastfk=" + kelompokPasienId
+						+ "&key=" + skey),
 					//modelItemAkuntansi.getDataGeneric("ruangan"), //Ambil data ruangan
 					//modelItemAkuntansi.getDataGeneric("departemen"), //Ambil data departemen
 				]).then(function (e) {
@@ -383,6 +413,7 @@ define(['initialize'], function (initialize) {
 						for (var i = 0; i < dataPasien.length; i++) {
 							dataPasien[i].no = i+1;
 						}
+						DataTotalMataAnggaran = dataPasien
 						// $scope.dataPasienPiutang = dataPasien
 						$scope.dataPasienPiutang = new kendo.data.DataSource({
 							data: dataPasien,
@@ -404,6 +435,236 @@ define(['initialize'], function (initialize) {
 						}
 				});
 			}
+
+			$scope.$watch('item.caridata', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+					var data = []
+                    for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
+                        let element = DataTotalMataAnggaran[index];
+						console.log(element)
+                        let namasearch = element.noregistrasi.toLowerCase()
+                        if (namasearch.match(newValue.toLowerCase())) {
+                            data.push(element)
+                        }
+                    }
+                    $scope.dataPasienPiutang = new kendo.data.DataSource({
+                        data: data,
+						pageSize: 10,
+							total: data.length,
+							serverPaging: false,
+							schema: {
+								model: {
+									fields: {
+										tglTransaksi: { type: "date" }
+									}
+								}
+							}
+                    });
+					console.log(data)
+					
+				}
+			});
+
+			$scope.selectedData2 = [];
+			$scope.onClickSatu = function (e, param) {
+
+				var element = $(e.currentTarget);
+				var checked = element.is(':checked')
+				var row = element.closest('tr')
+				var grid = $("#grid").data("kendoGrid")
+				var dataItem = grid.dataItem(row);
+
+				if(dataItem.tglbayar != null){
+					var confirm = $mdDialog.confirm()
+					.title('Peringatan')
+					.textContent('Data dengan nosep '+dataItem.nosep+' sudah memiliki tanggal bayar pada tanggal '+ dataItem.tglbayar+' klik ok untuk melanjutkan, atau klik tidak kemudian unchecked data untuk membatalkan')
+					.ariaLabel('Lucky day')
+					.cancel('Tidak')
+					.ok('OK')
+					$mdDialog.show(confirm).then(function () {
+						console.log(checked)
+						if (checked) {
+							var result = $.grep($scope.selectedData2, function (e) {
+								return e.noregistrasi == dataItem.noregistrasi;
+							});
+		
+							if (result.length == 0) {
+								for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
+									let element = DataTotalMataAnggaran[index];
+									if(element.noregistrasi == dataItem.noregistrasi){
+										element.iscek = true
+									}
+								}
+								for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
+								
+									let el = $scope.dataPasienPiutang.options.data[index]
+									if(el.noregistrasi == dataItem.noregistrasi){
+										el.iscek = true
+									}
+								}
+		
+								dataItem.iscek = true
+								$scope.selectedData2.push(dataItem);
+							} else {
+								for (var i = 0; i < $scope.selectedData2.length; i++)
+									if ($scope.selectedData2[i].noregistrasi === dataItem.noregistrasi) {
+										$scope.selectedData2.splice(i, 1);
+										break;
+									}
+		
+								for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
+									let element = DataTotalMataAnggaran[index];
+									if(element.noregistrasi == dataItem.noregistrasi){
+										element.iscek = false
+									}
+								}
+		
+								for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
+								
+									let el = $scope.dataPasienPiutang.options.data[index]
+									if(el.noregistrasi == dataItem.noregistrasi){
+										el.iscek = false
+									}
+								}
+								
+								dataItem.iscek = false
+								$scope.selectedData2.push(dataItem);
+							}
+							row.addClass("k-state-selected");
+						} else {
+							for (var i = 0; i < $scope.selectedData2.length; i++)
+								if ($scope.selectedData2[i].noregistrasi === dataItem.noregistrasi) {
+									$scope.selectedData2.splice(i, 1);
+									break;
+								}
+		
+							for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
+								let element = DataTotalMataAnggaran[index];
+								if(element.noregistrasi == dataItem.noregistrasi){
+									element.iscek = false
+								}
+							}
+		
+							for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
+								
+								let el = $scope.dataPasienPiutang.options.data[index]
+								if(el.noregistrasi == dataItem.noregistrasi){
+									el.iscek = false
+								}
+							}
+							
+							dataItem.iscek = false
+							row.removeClass("k-state-selected");
+						}
+					});
+				} else{
+					if (checked) {
+						var result = $.grep($scope.selectedData2, function (e) {
+							return e.noregistrasi == dataItem.noregistrasi;
+						});
+	
+						if (result.length == 0) {
+							for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
+								let element = DataTotalMataAnggaran[index];
+								if(element.noregistrasi == dataItem.noregistrasi){
+									element.iscek = true
+								}
+							}
+							for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
+							
+								let el = $scope.dataPasienPiutang.options.data[index]
+								if(el.noregistrasi == dataItem.noregistrasi){
+									el.iscek = true
+								}
+							}
+	
+							dataItem.iscek = true
+							$scope.selectedData2.push(dataItem);
+						} else {
+							for (var i = 0; i < $scope.selectedData2.length; i++)
+								if ($scope.selectedData2[i].noregistrasi === dataItem.noregistrasi) {
+									$scope.selectedData2.splice(i, 1);
+									break;
+								}
+	
+							for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
+								let element = DataTotalMataAnggaran[index];
+								if(element.noregistrasi == dataItem.noregistrasi){
+									element.iscek = false
+								}
+							}
+	
+							for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
+							
+								let el = $scope.dataPasienPiutang.options.data[index]
+								if(el.noregistrasi == dataItem.noregistrasi){
+									el.iscek = false
+								}
+							}
+							
+							dataItem.iscek = false
+							$scope.selectedData2.push(dataItem);
+						}
+						row.addClass("k-state-selected");
+					} else {
+						for (var i = 0; i < $scope.selectedData2.length; i++)
+							if ($scope.selectedData2[i].noregistrasi === dataItem.noregistrasi) {
+								$scope.selectedData2.splice(i, 1);
+								break;
+							}
+	
+						for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
+							let element = DataTotalMataAnggaran[index];
+							if(element.noregistrasi == dataItem.noregistrasi){
+								element.iscek = false
+							}
+						}
+	
+						for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
+							
+							let el = $scope.dataPasienPiutang.options.data[index]
+							if(el.noregistrasi == dataItem.noregistrasi){
+								el.iscek = false
+							}
+						}
+						
+						dataItem.iscek = false
+						row.removeClass("k-state-selected");
+					}
+				}
+				
+				console.log($scope.selectedData2)
+                $scope.item.dipilih = $scope.selectedData2.length;
+				
+			}
+
+			$scope.TambahTanggalBayar = function(){
+				$scope.popupTanggalBayar.center().open()
+			};
+
+			$scope.SimpanPopUpTanggal = function(){
+
+				for (var i = 0; i < $scope.selectedData2.length; i++){
+					if ($scope.selectedData2[i].nosep == "-" || $scope.selectedData2[i].nosep == " " || $scope.selectedData2[i].nosep == null || $scope.selectedData2[i].nosep == undefined) {
+						toastr.error('Data yang belum terklaim tidak bisa disimpan')
+                    	return
+					}
+				}
+							
+					
+
+                var objSave =
+                    {
+                        klaim: $scope.selectedData2,
+                        tglbayar: moment($scope.item.tglBayar).format('YYYY-MM-DD HH:mm:ss'),
+                    }
+                    medifirstService.post('tatarekening/save-rekap-klaim', objSave).then(function (e) {
+                        loadData();
+                    }, function (error) {
+            
+                    })
+                
+            }
 
 			$scope.selectRow = function (dataItem) {
 				var dataSelect = _.find($scope.dataPasienPiutang._data, function (data) {

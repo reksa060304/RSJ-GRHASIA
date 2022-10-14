@@ -137,6 +137,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-penjagaan-batal-setor', 'BendaharaPenerimaan\BendaharaPenerimaanController@getPenjagaanBatalSetor');
           Route::get('bendaharapenerimaan/get-sts-bulanan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSBulanan');
           Route::get('bendaharapenerimaan/get-sts-pertanggal', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPertanggal');
+          Route::get('bendaharapenerimaan/get-deatil-sts-pertanggal', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDetailSTSPertanggal');
           Route::get('bendaharapenerimaan/get-sts-popup', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPopup');
           Route::get('bendaharapenerimaan/detail-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@detailSTS');
           
@@ -151,6 +152,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('bendaharapenerimaan/save-lampiran-beritaacara', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveTempLampiranBA');
           Route::post('bendaharapenerimaan/hapus-bku', 'BendaharaPenerimaan\BendaharaPenerimaanController@hapusBKU');
           Route::post('bendaharapenerimaan/save-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveSTS');
+          Route::post('tatarekening/save-rekap-klaim', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveKlaim');
           //**POST**//
         // });
         // Route::group(['prefix' => 'bendaharapengeluaran'], function () {

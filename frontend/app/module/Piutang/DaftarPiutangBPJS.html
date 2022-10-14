@@ -81,7 +81,7 @@
 			</div>
 
 			<!-- Status -->
-			<div class="grid_1" ng-hide="true">
+			<div class="grid_1">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Status"></label>
 				</div>
@@ -140,7 +140,7 @@
 
 		<!-- grid table -->
 		<div class="grid_12 borderBox">
-			<div id="kGrid" kendo-grid 
+			<div id="grid" kendo-grid 
 			k-data-source="dataPasienPiutang" 
 			k-selectable="'row'" 
 			k-columns="columnDataPasienPiutang"
@@ -148,10 +148,51 @@
 			k-sortable="'true'"
 			k-ng-model="dataPasienSelected">
 		</div>
+		<div class="grid_2" ng-hide="true">
+			<div class="grid_4">
+				<p style="font-weight: bold; margin-top: 10px;">Data Dipilih</p>
+			</div>
+			<div class="grid_8">
+				<input c-text-box type="input" class="k-textbox" ng-model="item.dipilih"/>
+			</div>
+		</div>
+		<div class="grid_4">
+			<div class="grid_3">
+				<p style="font-weight: bold; margin-top: 10px;">Cari Data</p>
+			</div>
+			<div class="grid_9">
+				<input c-text-box type="input" class="k-textbox" ng-model="item.caridata"/>
+			</div>
+		</div>
+		<div class="grid_6"></div>
+		<div class="grid_2">
+			<button class="btnTemplate1" ng-click="TambahTanggalBayar()">Tambah Tanggal Bayar</button>
+		</div>
 	</div>
 	<div class="clear"></div>
 </div>
 
+<div kendo-window="popupTanggalBayar" k-title="'Tanggal Bayar'" k-visible="false" k-width="600" k-height="150" style="overflow-y: hidden; overflow-x: hidden;">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left; margin-top: 30px;">
+					Tanggal Bayar
+				</div>
+				<div class="grid_9" style="margin-top: 20px;">
+					<input style="width: 100%" k-ng-model="item.tglBayar" kendo-datetimepicker 
+                     placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                    parsedate="yyyy-MM-dd HH:mm"   />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_2" style="margin-left: 10px; margin-top: 20px;">
+					<button class="btnTemplate1" ng-click="SimpanPopUpTanggal()">Simpan</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 		
 <div class="clear"></div>
 
