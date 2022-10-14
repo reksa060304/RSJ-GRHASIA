@@ -5448,11 +5448,23 @@ class TagihanController  extends ApiController
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
 
-        $piutang = DB::select(DB::raw("select nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        $qstatus = '';
+        if(isset($filter['status']) && $filter['status']!="" && $filter['status']==1){
+            $qstatus = "and mk.norec is not null";
+        } else if(isset($filter['status']) && $filter['status']!="" && $filter['status']==2){
+            $qstatus = "and mk.norec is null";
+        }
+
+        $qkey = '';
+        if(isset($filter['key']) && $filter['key']!=""){
+            $qkey = "and pd.noregistrasi ilike '%".$filter['key']."%'";
+        }
+
+        $piutang = DB::select(DB::raw("select norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
         sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, sum(totalklaim) totalklaim,
         sum(selisih) selisih
         from(
-                select pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
+                select pd.norec norecpd, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
                 coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar, coalesce(mk.totalsetujui,0) totalklaim, 
                 coalesce(sp.totalprekanan,0) - coalesce(mk.totalsetujui,0) as selisih
                 FROM pasien_m ps 
@@ -5465,15 +5477,18 @@ class TagihanController  extends ApiController
                 left join rekanan_m as rek on rek.id = pd.objectrekananfk
                 left join pemakaianasuransi_t as pa on pa.noregistrasifk = pd.norec
                 left join monitoringklaim_t mk on mk.nosep = pa.nosep and mk.statusklaimfk = 3
+                left join rekapklaimbpjs_t rkbpjs on rkbpjs.nosep = mk.nosep
                 where pd.kdprofile = 30 and pd.statusenabled = true
                 and pd.tglpulang between '$tglAwal 00:00' and '$tglAkhir 23:59'
                 and kp.id in(2, 21, 22, 24, 25)
                 and pd.nostruklastfk is not null
                 and pd.nosbmlastfk is null
-                group by pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
+                $qstatus
+                $qkey
+                group by pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
                 sp.totalprekanan, coalesce(mk.totalsetujui,0)
                 order by pd.noregistrasi
-        ) as x group by nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan
+        ) as x group by norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan
         order by noregistrasi;"));
 
         $datadata =array(

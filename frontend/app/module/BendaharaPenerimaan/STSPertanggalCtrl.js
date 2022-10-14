@@ -137,6 +137,18 @@ define(['initialize'], function (initialize) {
                 pageable: true,
                 columns: [
                     {
+                        "command": [
+                            {
+                                text: "Detail STS",
+                                click: DetailSTS,
+                                imageClass: "clinic fa",
+                             },
+                          ],
+                             title: "",
+                             width: "120px",
+                             
+                    },
+                    {
                         
                         "field": "tanggal",
                         "title": "Tanggal",
@@ -148,10 +160,384 @@ define(['initialize'], function (initialize) {
                         "title": "Periksa Dokter Jiwa",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahjiwa #', 'Rp.')}}</span>",
-                        aggregates: ["sum"],
-                        template: "#: jumlahjiwa  #",
-                        groupFooterTemplate: "#: data.jumlahjiwa.sum  #",
-                        footerTemplate: "#: data.jumlahjiwa.sum  #"
+                    },
+                    {
+                        
+                        "field": "jumlahnapza",
+                        "title": "Periksa Dokter NAPZA",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahnapza #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahperiksadokterumum",
+                        "title": "Periksa Dokter Umum",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadokterumum #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahperiksadoktergigi",
+                        "title": "Periksa Dokter Gigi",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadoktergigi #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahperiksadokterpenydalam",
+                        "title": "Periksa Dokter Penyakit Dalam",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadokterpenydalam #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahperiksadokteranak",
+                        "title": "Periksa Dokter Anak",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadokteranak #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahperiksadoktersyaraf",
+                        "title": "Periksa Dokter Syaraf",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadoktersyaraf #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahperiksadokterelektromedik",
+                        "title": "Periksa Dokter Elektromedik",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadokterelektromedik #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahperiksadokterigd",
+                        "title": "Periksa Dokter IGD",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadokterigd #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahdipam",
+                        "title": "DIPAM",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahdipam #', 'Rp.')}}</span>",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "jumlahtmpoli",
+                        "title": "TM Poli",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahtmpoli #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahtmigd",
+                        "title": "TM IGD",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahtmigd #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahtmgigi",
+                        "title": "TM Gigi",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahtmgigi #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahobatrajal",
+                        "title": "Obat Rajal",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahobatrajal #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahkir",
+                        "title": "KIR",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahkir #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahpsikolog",
+                        "title": "Psikologi",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahpsikolog #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahlab",
+                        "title": "Laboratorium",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahlab #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahtmelektromedik",
+                        "title": "Elektromedik",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahtmelektromedik #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahfisio",
+                        "title": "Fisiotherapy",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahfisio #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahradio",
+                        "title": "Radiologi",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahradio #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahdiklat",
+                        "title": "Diklat",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahdiklat #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahvip",
+                        "title": "VIP",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahvip #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahkelas1",
+                        "title": "Kelas I",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahkelas1 #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahkelasuppi",
+                        "title": "UPPI",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahkelasuppi #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahkelas2",
+                        "title": "Kelas II",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahkelas2 #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahkelas3",
+                        "title": "Kelas III",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahkelas3 #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahobatranap",
+                        "title": "Obat Ranap",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahobatranap #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahtmranap",
+                        "title": "TM Ranap",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahtmranap #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahvisite",
+                        "title": "Visite",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahvisite #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahrehabmental",
+                        "title": "Rehab Mental",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahrehabmental #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahjenazah",
+                        "title": "Perawatan Jenazah",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahjenazah #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahlegalisir",
+                        "title": "Legalisir",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahlegalisir #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahgedungterapi",
+                        "title": "Sewa Gedung Terapi",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahgedungterapi #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahsewalapangan",
+                        "title": "Sewa Sewa Lapangan",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahsewalapangan #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahgedungdiklat",
+                        "title": "Sewa Gedung Diklat",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahgedungdiklat #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahgrhasiainn",
+                        "title": "Sewa Grhasia Inn",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahgrhasiainn #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahpertanian",
+                        "title": "Sewa Lahan Pertanian",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahpertanian #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahkalandra",
+                        "title": "Sewa Kalandra",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahkalandra #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahsewatempatfc",
+                        "title": "Sewa Tempat Fotokopi",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahsewatempatfc #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahmanekin",
+                        "title": "Sewa Manekin",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahmanekin #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahsewaambulan",
+                        "title": "Sewa Ambulan",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahsewaambulan #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahketerampilan",
+                        "title": "Work Therapy",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahketerampilan #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahparkir",
+                        "title": "Parkir",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahparkir #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahlainlain",
+                        "title": "Lain-Lain",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahlainlain #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "jumlahtotal",
+                        "title": "Jumlah",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahtotal #', 'Rp.')}}</span>",
+                    },
+                ]
+            };
+
+
+            function DetailSTS(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                var bulan = moment($scope.item.bulan).format('MM');
+				var tahun = moment($scope.item.tahun).format('YYYY');
+                let thun = tahun.toString();
+                let bul=bulan.toString();
+                let hari = dataItem.tanggal
+                medifirstService.get('bendaharapenerimaan/get-deatil-sts-pertanggal?bulan='+ bul + "&tahun="+ thun + "&tgl="+ hari, true).then(function (dat) {
+                    $scope.isRouteLoading = false;
+                        
+                        $scope.dataGridSTS = new kendo.data.DataSource({
+                            data: dat.data.detail,
+                            group: $scope.group,
+                            pageSize: 100,
+                            total: dat.data.detail.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+                });
+
+                $scope.popupDetailSTS.center().open()
+            }
+
+            $scope.columnGridSTS = {
+                toolbar: [
+                    "excel",                    
+                ],
+                excel: { fileName: "DetailSTSPertanggal.xlsx", allPages: true, },                
+                excelExport: function (e) {
+                    sheet.frozenRows = 0;
+                    sheet.mergedCells = ["A1:AT1"];
+                    sheet.name = "DetailSTSPertanggal";
+                    var myHeaders = [{
+                        value: "Detail STS Pertanggal",
+                        fontSize: 14,
+                        textAlign: "center",
+                        background: "#ffffff",
+                    }];
+                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 40 });
+
+                },
+                sortable: true,
+                selectable: true,
+                pageable: true,
+                columns: [
+                    {
+                        
+                        "field": "nosts",
+                        "title": "No STS",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "jumlahjiwa",
+                        "title": "Periksa Dokter Jiwa",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahjiwa #', 'Rp.')}}</span>",
                     },
                     {
                         
