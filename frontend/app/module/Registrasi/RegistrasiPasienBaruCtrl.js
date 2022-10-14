@@ -1239,167 +1239,167 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             // });
             // });
 
-            $scope.getNik = function (bool) {
-                if (bool) {                    
-                    if ($scope.item.noIdentitas === '' || $scope.item.noIdentitas === undefined) return;
-                    $scope.isLoadingNik = true;
-                    // var json = {
-                    //     'nik': $scope.item.noIdentitas,
-                    // }
+            // $scope.getNik = function (bool) {
+            //     if (bool) {                    
+            //         if ($scope.item.noIdentitas === '' || $scope.item.noIdentitas === undefined) return;
+            //         $scope.isLoadingNik = true;
+            //         // var json = {
+            //         //     'nik': $scope.item.noIdentitas,
+            //         // }
 
-                    // medifirstService.get('bridging/dukcapil/get-identitas-by-nik/' + $scope.item.noIdentitas).then(function (e) {
-                    medifirstService.get('bridging/dukcapil/get-nik/' + $scope.item.noIdentitas).then(function (e) {
-                        if (e.data.content == undefined) {
-                            $scope.isLoadingNik = false;
-                            if (e.data.messages != undefined) {
-                                toastr.error(e.data.messages, 'Error')
-                            }
-                            return
-                        }
-                        // if (e.data.messages) {
-                        //     toastr.error(e.data.messages, 'Error')
-                        //     $scope.isLoadingNik = false;
-                        //     return
-                        // }
-                        // e.data.content
-                        if (e.status == '200' && e.data.content) {
-                            if (e.data.content[0] != "" && e.data.content[0] != undefined) {
-                                var result = e.data.content[0]
-                                toastr.success('Nama Lengkap : ' + result.NAMA_LGKP, 'Sukses')
-                                $scope.item.namaPasien = result.NAMA_LGKP
-                                $scope.item.alamatLengkap = result.ALAMAT.trim() + ' KEL. ' + result.NAMA_KEL
-                                    + ' RT' + result.NO_RT + '/RW' + result.NO_RW + ' KEC. ' + result.NAMA_KEC
+            //         // medifirstService.get('bridging/dukcapil/get-identitas-by-nik/' + $scope.item.noIdentitas).then(function (e) {
+            //         medifirstService.get('bridging/dukcapil/get-nik/' + $scope.item.noIdentitas).then(function (e) {
+            //             if (e.data.content == undefined) {
+            //                 $scope.isLoadingNik = false;
+            //                 if (e.data.messages != undefined) {
+            //                     toastr.error(e.data.messages, 'Error')
+            //                 }
+            //                 return
+            //             }
+            //             // if (e.data.messages) {
+            //             //     toastr.error(e.data.messages, 'Error')
+            //             //     $scope.isLoadingNik = false;
+            //             //     return
+            //             // }
+            //             // e.data.content
+            //             if (e.status == '200' && e.data.content) {
+            //                 if (e.data.content[0] != "" && e.data.content[0] != undefined) {
+            //                     var result = e.data.content[0]
+            //                     toastr.success('Nama Lengkap : ' + result.NAMA_LGKP, 'Sukses')
+            //                     $scope.item.namaPasien = result.NAMA_LGKP
+            //                     $scope.item.alamatLengkap = result.ALAMAT.trim() + ' KEL. ' + result.NAMA_KEL
+            //                         + ' RT' + result.NO_RT + '/RW' + result.NO_RW + ' KEC. ' + result.NAMA_KEC
 
-                                if (result.NAMA_KAB != undefined)
-                                    $scope.item.alamatLengkap = $scope.item.alamatLengkap + ' KAB/KOTA ' + result.NAMA_KAB + ' PROP. ' + result.NAMA_PROP
-                                if (result.NAMA_PROP != undefined)
-                                    $scope.item.alamatLengkap = $scope.item.alamatLengkap + ' PROP. ' + result.NAMA_PROP
-                                $scope.item.tempatLahir = result.TMPT_LHR
-                                $scope.item.namaIbu = result.NAMA_LGKP_IBU.trim()
-                                $scope.item.namaAyah = result.NAMA_LGKP_AYAH.trim()
-                                $scope.item.tglLahir = new Date(result.TGL_LHR)
-                                for (let i = 0; i < $scope.listDataAgama.length; i++) {
-                                    const element = $scope.listDataAgama[i];
-                                    if (element.agama.toLowerCase().indexOf(result.AGAMA.toLowerCase()) > -1) {
-                                        $scope.item.agama = element
-                                        break
-                                    }
-                                }
+            //                     if (result.NAMA_KAB != undefined)
+            //                         $scope.item.alamatLengkap = $scope.item.alamatLengkap + ' KAB/KOTA ' + result.NAMA_KAB + ' PROP. ' + result.NAMA_PROP
+            //                     if (result.NAMA_PROP != undefined)
+            //                         $scope.item.alamatLengkap = $scope.item.alamatLengkap + ' PROP. ' + result.NAMA_PROP
+            //                     $scope.item.tempatLahir = result.TMPT_LHR
+            //                     $scope.item.namaIbu = result.NAMA_LGKP_IBU.trim()
+            //                     $scope.item.namaAyah = result.NAMA_LGKP_AYAH.trim()
+            //                     $scope.item.tglLahir = new Date(result.TGL_LHR)
+            //                     for (let i = 0; i < $scope.listDataAgama.length; i++) {
+            //                         const element = $scope.listDataAgama[i];
+            //                         if (element.agama.toLowerCase().indexOf(result.AGAMA.toLowerCase()) > -1) {
+            //                             $scope.item.agama = element
+            //                             break
+            //                         }
+            //                     }
 
-                                for (let i = 0; i < $scope.listDataJenisKelamin.length; i++) {
-                                    const element = $scope.listDataJenisKelamin[i];
-                                    if (element.jeniskelamin.toLowerCase().indexOf(result.JENIS_KLMIN.toLowerCase()) > -1) {
-                                        $scope.item.jenisKelamin = element
-                                        break
-                                    }
-                                }
+            //                     for (let i = 0; i < $scope.listDataJenisKelamin.length; i++) {
+            //                         const element = $scope.listDataJenisKelamin[i];
+            //                         if (element.jeniskelamin.toLowerCase().indexOf(result.JENIS_KLMIN.toLowerCase()) > -1) {
+            //                             $scope.item.jenisKelamin = element
+            //                             break
+            //                         }
+            //                     }
 
-                                for (let i = 0; i < $scope.listDataPekerjaan.length; i++) {
-                                    const element = $scope.listDataPekerjaan[i];
-                                    if (element.namadukcapil.toLowerCase().indexOf(result.JENIS_PKRJN.toLowerCase()) > -1) {
-                                        $scope.item.pekerjaan = element
-                                        break
-                                    }
-                                }
-                                for (let i = 0; i < $scope.listDataStatusPerkawinan.length; i++) {
-                                    const element = $scope.listDataStatusPerkawinan[i];
-                                    if (element.namadukcapil == result.STAT_KWN) {
-                                        $scope.item.statusPerkawinan = element
-                                        break
-                                    }
-                                }
-                                for (let i = 0; i < $scope.listDataPendidikan.length; i++) {
-                                    const element = $scope.listDataPendidikan[i];
-                                    if (element.namadukcapil.toLowerCase().indexOf(result.PDDK_AKH.toLowerCase()) > -1) {
-                                        $scope.item.pendidikan = element
-                                        break
-                                    }
-                                }
-                                for (let i = 0; i < $scope.listGolonganDarah.length; i++) {
-                                    const element = $scope.listGolonganDarah[i];
-                                    if (element.namadukcapil.toLowerCase().indexOf(result.GOL_DRH.toLowerCase()) > -1) {
-                                        $scope.item.golonganDarah = element
-                                        break
-                                    }
-                                }
+            //                     for (let i = 0; i < $scope.listDataPekerjaan.length; i++) {
+            //                         const element = $scope.listDataPekerjaan[i];
+            //                         if (element.namadukcapil.toLowerCase().indexOf(result.JENIS_PKRJN.toLowerCase()) > -1) {
+            //                             $scope.item.pekerjaan = element
+            //                             break
+            //                         }
+            //                     }
+            //                     for (let i = 0; i < $scope.listDataStatusPerkawinan.length; i++) {
+            //                         const element = $scope.listDataStatusPerkawinan[i];
+            //                         if (element.namadukcapil == result.STAT_KWN) {
+            //                             $scope.item.statusPerkawinan = element
+            //                             break
+            //                         }
+            //                     }
+            //                     for (let i = 0; i < $scope.listDataPendidikan.length; i++) {
+            //                         const element = $scope.listDataPendidikan[i];
+            //                         if (element.namadukcapil.toLowerCase().indexOf(result.PDDK_AKH.toLowerCase()) > -1) {
+            //                             $scope.item.pendidikan = element
+            //                             break
+            //                         }
+            //                     }
+            //                     for (let i = 0; i < $scope.listGolonganDarah.length; i++) {
+            //                         const element = $scope.listGolonganDarah[i];
+            //                         if (element.namadukcapil.toLowerCase().indexOf(result.GOL_DRH.toLowerCase()) > -1) {
+            //                             $scope.item.golonganDarah = element
+            //                             break
+            //                         }
+            //                     }
 
-                                if (result.NAMA_KEL) {
-                                    medifirstService.get("registrasi/get-desa-kelurahan-paging?namadesakelurahan=" + result.NAMA_KEL
-                                        + "&namakecamatan=" + result.NAMA_KEC).then(function (re) {
-                                            for (let i = 0; i < re.data.length; i++) {
-                                                const element = re.data[i];
-                                                if (element.namadesakelurahan.toLowerCase() == result.NAMA_KEL.toLowerCase()
-                                                    && element.namakecamatan.toLowerCase() == result.NAMA_KEC.toLowerCase()) {
-                                                    var data = {
-                                                        id: element.id,
-                                                        namadesakelurahan: element.namadesakelurahan,
-                                                        kodepos: element.kodepos,
-                                                        namakecamatan: element.namakecamatan,
-                                                        namakotakabupaten: element.namakotakabupaten,
-                                                        namapropinsi: element.namapropinsi,
-                                                        objectkecamatanfk: element.objectkecamatanfk,
-                                                        objectkotakabupatenfk: element.objectkotakabupatenfk,
-                                                        objectpropinsifk: element.objectpropinsifk,
-                                                        desa: element.namadesakelurahan,
-                                                    }
-                                                    $scope.listDataKelurahan.add(data)
-                                                    $scope.item.desaKelurahan = data
-                                                    break
-                                                }
-                                            }
+            //                     if (result.NAMA_KEL) {
+            //                         medifirstService.get("registrasi/get-desa-kelurahan-paging?namadesakelurahan=" + result.NAMA_KEL
+            //                             + "&namakecamatan=" + result.NAMA_KEC).then(function (re) {
+            //                                 for (let i = 0; i < re.data.length; i++) {
+            //                                     const element = re.data[i];
+            //                                     if (element.namadesakelurahan.toLowerCase() == result.NAMA_KEL.toLowerCase()
+            //                                         && element.namakecamatan.toLowerCase() == result.NAMA_KEC.toLowerCase()) {
+            //                                         var data = {
+            //                                             id: element.id,
+            //                                             namadesakelurahan: element.namadesakelurahan,
+            //                                             kodepos: element.kodepos,
+            //                                             namakecamatan: element.namakecamatan,
+            //                                             namakotakabupaten: element.namakotakabupaten,
+            //                                             namapropinsi: element.namapropinsi,
+            //                                             objectkecamatanfk: element.objectkecamatanfk,
+            //                                             objectkotakabupatenfk: element.objectkotakabupatenfk,
+            //                                             objectpropinsifk: element.objectpropinsifk,
+            //                                             desa: element.namadesakelurahan,
+            //                                         }
+            //                                         $scope.listDataKelurahan.add(data)
+            //                                         $scope.item.desaKelurahan = data
+            //                                         break
+            //                                     }
+            //                                 }
 
-                                        });
-                                }
-                            } else {
-                                toastr.error(e.data.content.RESPON, 'Info')
-                            }
+            //                             });
+            //                     }
+            //                 } else {
+            //                     toastr.error(e.data.content.RESPON, 'Info')
+            //                 }
 
-                        } else {
-                            toastr.error(e.data.content[1].RESPON, 'Error')
-                        }
-                        $scope.isLoadingNik = false;
-                    }, function (err) {
-                        $scope.isLoadingNik = false;
-                    });
-                }
+            //             } else {
+            //                 toastr.error(e.data.content[1].RESPON, 'Error')
+            //             }
+            //             $scope.isLoadingNik = false;
+            //         }, function (err) {
+            //             $scope.isLoadingNik = false;
+            //         });
+            //     }
 
 
-                // {
-                //     "content": [
-                //         {
-                //             "NO_KK": 6103111003055361,
-                //             "NIK": 6103111003690002,
-                //             "NAMA_LGKP": "ASAU",
-                //             "KAB_NAME": "SANGGAU",
-                //             "AGAMA": "KATHOLIK",
-                //             "NAMA_LGKP_AYAH": "MEH",
-                //             "NO_RW": 6,
-                //             "KEC_NAME": "TAYAN HILIR",
-                //             "JENIS_PKRJN": "PETANI/PEKEBUN",
-                //             "NO_RT": 6,
-                //             "ALAMAT": "DUSUN RIYAM",
-                //             "TMPT_LHR": "KATOK",
-                //             "PDDK_AKH": "TAMAT SD/SEDERAJAT",
-                //             "STATUS_KAWIN": "KAWIN",
-                //             "NAMA_LGKP_IBU": "CEMBET",
-                //             "PROP_NAME": "KALIMANTAN BARAT",
-                //             "GOL_DARAH": "TIDAK TAHU",
-                //             "KEL_NAME": "TANJUNG BUNUT",
-                //             "JENIS_KLMIN": "LAKI-LAKI",
-                //             "TGL_LHR": "1969-03-10"
-                //         }
-                //     ],
-                //     "lastPage": true,
-                //     "numberOfElements": 1,
-                //     "sort": null,
-                //     "totalElements": 1,
-                //     "firstPage": true,
-                //     "number": 0,
-                //     "size": 1
-                // }
-                checkKepesertanBynik();
+            //     // {
+            //     //     "content": [
+            //     //         {
+            //     //             "NO_KK": 6103111003055361,
+            //     //             "NIK": 6103111003690002,
+            //     //             "NAMA_LGKP": "ASAU",
+            //     //             "KAB_NAME": "SANGGAU",
+            //     //             "AGAMA": "KATHOLIK",
+            //     //             "NAMA_LGKP_AYAH": "MEH",
+            //     //             "NO_RW": 6,
+            //     //             "KEC_NAME": "TAYAN HILIR",
+            //     //             "JENIS_PKRJN": "PETANI/PEKEBUN",
+            //     //             "NO_RT": 6,
+            //     //             "ALAMAT": "DUSUN RIYAM",
+            //     //             "TMPT_LHR": "KATOK",
+            //     //             "PDDK_AKH": "TAMAT SD/SEDERAJAT",
+            //     //             "STATUS_KAWIN": "KAWIN",
+            //     //             "NAMA_LGKP_IBU": "CEMBET",
+            //     //             "PROP_NAME": "KALIMANTAN BARAT",
+            //     //             "GOL_DARAH": "TIDAK TAHU",
+            //     //             "KEL_NAME": "TANJUNG BUNUT",
+            //     //             "JENIS_KLMIN": "LAKI-LAKI",
+            //     //             "TGL_LHR": "1969-03-10"
+            //     //         }
+            //     //     ],
+            //     //     "lastPage": true,
+            //     //     "numberOfElements": 1,
+            //     //     "sort": null,
+            //     //     "totalElements": 1,
+            //     //     "firstPage": true,
+            //     //     "number": 0,
+            //     //     "size": 1
+            //     // }
+            //     checkKepesertanBynik();
 
-            }
+            // }
 
             /*Capitalize*/
             $scope.$watch('item.namaPasien', function (newValue, oldValue) {
