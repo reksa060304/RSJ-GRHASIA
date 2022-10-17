@@ -148,6 +148,21 @@ Trait PelayananPasienTrait
         }
         return $set->nilaifield;
     }
+
+    protected function getUrlBrigdingApotikOnline(){
+        $statusBridgingProduction = SettingDataFixed::where('namafield', 'isBridgingProduction')->first();
+        if(!empty($statusBridgingProduction)){
+            if($statusBridgingProduction->nilaifield == 'false') {
+                $set = SettingDataFixed::where('namafield', 'linkApotikOnline')->first();
+            } else{
+                $set = SettingDataFixed::where('namafield', 'linkApotikOnline')->first();
+            }
+        }else{
+            $set = SettingDataFixed::where('namafield', 'linkApotikOnline')->first();
+        }
+        return $set->nilaifield;
+    }
+
     protected function getUrlAntreanBPJSv2(){
         $statusBridgingProduction = SettingDataFixed::where('namafield', 'isBridgingProduction')->first();
         if($statusBridgingProduction->nilaifield == 'false')

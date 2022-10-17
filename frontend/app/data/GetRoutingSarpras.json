@@ -400,6 +400,49 @@
     ]
   },
   {
+    "name": "ApotikOnlineTools",
+    "url": "/TW9uaXRvcmluZ0Fwb3Rpa09ubGluZQ==",
+    "templateurl": "module/Farmasi/ApotikOnlineTools.html",
+    "controller": "ApotikOnlineToolsCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "ApotikOnlineTools.MonitoringApotikOnline",
+    "url": "/MonitoringApotikOnline",
+    "templateurl": "module/Farmasi/MonitoringApotikOnline.html",
+    "controller": "MonitoringApotikOnlineCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "BPJSToolsCtrl"
+      }
+    ]
+  },
+  {
     "name": "DaftarPenangananKeluhanPelanggan",
     "url": "/RGFmdGFyUGVuYW5nYW5hbktlbHVoYW5QZWxhbmdnYW4=",
     "templateurl": "module/Humas/DaftarPenangananKeluhanPelanggan.html",

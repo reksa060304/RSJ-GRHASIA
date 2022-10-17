@@ -254,6 +254,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               //##Monitoring
               Route::get('bridging/bpjs/get-monitoring-kunjungan', 'Bridging\BridgingBPJSV2Controller@getMonitoringKunjungan');
               Route::get('bridging/bpjs/get-monitoring-klaim', 'Bridging\BridgingBPJSV2Controller@getMonitoringKlaim');
+              Route::get('bridging/bpjs/get-monitoring-klaim-apotik-online', 'Bridging\BridgingBPJSV2Controller@getMonitoringKlaimApotikOnline');
               Route::get('bridging/bpjs/monitoring/HistoriPelayanan/NoKartu/{noKartu}', 'Bridging\BridgingBPJSV2Controller@getMonitoringHistori');
               Route::get('bridging/bpjs/get-monitoring-klaim-jasaraharja', 'Bridging\BridgingBPJSV2Controller@getMonitoringJasaRaharja');
               Route::get('bridging/bpjs/get-monitoring-historipelayanan-peserta', 'Bridging\BridgingBPJSV2Controller@getHistoryPelayananPeserta');
@@ -899,6 +900,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get-nostruk-kasir', 'Farmasi\PelayananResepController@getNoStrukKasir');
           Route::post('farmasi/batal-verifikasi-order-resep', 'Farmasi\PelayananResepController@saveBatalVerifikasiResep');
           Route::get('farmasi/get-laporan-penjualan-obat-detail', 'Farmasi\PelayananResepController@getLaporanPenjualanObatDetail');
+          Route::get('farmasi/get-laporan-rekap-resep-perhari', 'Farmasi\PelayananResepController@getLaporanRekapResep');
           Route::get('farmasi/get-laporan-penjualan-obat-new', 'Farmasi\PelayananResepController@getLaporanPenjualanObatNew');
           Route::get('farmasi/get-laporan-kegiatan-pelayanan-resep', 'Farmasi\PelayananResepController@getLaporanKegiatanPelayananResep');
           Route::get('farmasi/get-laporan-obat-antibiotik', 'Farmasi\PelayananResepController@getLaporanObatAntibiotik');

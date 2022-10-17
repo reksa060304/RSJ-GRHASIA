@@ -78,27 +78,27 @@
                     @endphp
                     <td align="left" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ $dt->kode }}</b></td>
                     <td align="left" width="50" style="padding: 10px; font-size: 15px; "><b>{{ $dt->keterangan }}</b></td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ $dt->jumlahanggaran }}</b></td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ $dt->jumlahspj }}</b></td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ $dt->persentase }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($dt->jumlahanggaran,0,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($dt->jumlahspj,0,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($dt->persentase,0,',','.') }}</b></td>
                     @elseif($dt->bold == 'tidak')
                     <td align="left" width="50" style="padding: 10px;  font-size: 15px;">{{ $dt->kode }}</td>
                     <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->keterangan }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ $dt->jumlahanggaran }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ $dt->jumlahspj }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ $dt->persentase }}</td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->jumlahanggaran,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($dt->jumlahspj,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->persentase,0,',','.') }}</td>
                     @endif
                     
                 </tr>
                 @endforeach
                 <tr style="border: 1px solid black;">
                     <td align="center" width="50" colspan="2" style="padding: 10px; font-weight: bold;  font-size: 15px;">JUMLAH TOTAL</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "><b>{{ $jumlahanggaran }}</b></td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px;"><b>{{ $jumlahspj }}</b></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "><b>{{ number_format($jumlahanggaran,0,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px;"><b>{{ number_format($jumlahspj,0,',','.') }}</b></td>
                     @if($jumlahanggaran != 0)
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "><b>{{ round($jumlahspj/$jumlahanggaran*100, 2) }}</b></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "><b>{{ number_format(round($jumlahspj/$jumlahanggaran*100, 2),0,',','.') }}</b></td>
                     @else
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "><b>{{ number_format(0,0,',','.') }}</b></td>
                     @endif
                 </tr>
         </table>

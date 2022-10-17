@@ -88,26 +88,26 @@
                 <tr style="border: 1px solid black;">
                     <td align="left" width="50" style="padding: 10px;  font-size: 15px;">{{ $dt->kodemataanggaran }}</td>
                     <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->namamataanggaran }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ $dt->jumlahanggaran }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->jumlahpanjar }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ $dt->jumlahspj }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ $dt->subtotal }}</td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->jumlahanggaran,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->jumlahpanjar,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($dt->jumlahspj,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($dt->subtotal,0,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ $dt->persentase }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ $dt->sisaanggaran }}</td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->sisaanggaran,0,',','.') }}</td>
                 </tr>
                 @endforeach
                 <tr style="border: 1px solid black;">
                     <td align="center" width="50" colspan="2" style="padding: 10px; font-weight: bold;  font-size: 15px;">JUMLAH TOTAL</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ $jumlahanggaran }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ $jumlahpanjar }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px;">{{ $jumlahspj }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px;">{{ $subtotal }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($jumlahanggaran,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($jumlahpanjar,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px;">{{ number_format($jumlahspj,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px;">{{ number_format($subtotal,0,',','.') }}</td>
                     @if($jumlahanggaran != 0)
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ round($subtotal/$jumlahanggaran*100, 2) }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format(round($subtotal/$jumlahanggaran*100, 2),0,',','.') }}</td>
                     @else
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">0</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format(0,0,',','.') }}</td>
                     @endif
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ $sisaanggaran }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($sisaanggaran,0,',','.') }}</td>
                 </tr>
         </table>
 </div>

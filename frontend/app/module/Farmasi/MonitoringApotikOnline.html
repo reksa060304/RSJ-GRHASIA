@@ -1,0 +1,92 @@
+<style type="text/css">
+    .json-viewer {
+        margin-top: 26px;
+        padding: 2em 0 2em 5em;
+        background: lightgrey;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="panel panel-default panel-white">
+        <div class="panel-body">
+            <div class="grid_12">
+                <div class="grid_12">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading " style="font-size: 18px; "><span c-translate>Monitoring</span>
+                            <span class="icon fa fa-chevron-circle-down " ng-show="!isShowPotensi " style="right:10px
+                                                                                " ng-click="showPotensi() "></span>
+                            <span class="icon fa fa-chevron-circle-up " ng-show="isShowPotensi " style="right:10px
+                                                                                " ng-click="showPotensi() "></span>
+                        </div>
+                        <div class="panel-body " ng-show="isShowPotensi ">
+                            <div class="grid_12 animated no-padding ">
+                                <div ng-cloak>
+                                    <md-content>
+                                        <md-tabs md-dynamic-height md-border-bottom>
+                                            <md-tab label="Data Klaim">
+                                                <md-content class="md-padding">
+                                                    <div class="panel panel-default container_12">
+                                                        <div class="panel-body">
+                                                            <div class="grid_12">
+                                                                <div class="grid_6">
+                                                                    <div class="grid_12">
+                                                                        <div class="grid_4">
+                                                                            <label c-label>Bulan :</label>
+                                                                            <input style="width: 100%" k-options="monthUngkul" k-ng-model="klaim.bulan"
+                                                                                kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
+                                                                        </div>
+                                                                        <div class="grid_4">
+                                                                            <label c-label>Tahun :</label>
+                                                                            <input style="width: 100%" k-options="yearUngkul" k-ng-model="klaim.tahun" kendo-date-picker
+                                                                                placeholer="YYYY" k-format="'yyyy'" />
+                                                                        </div>
+                                                                        <div class="grid_4">
+                                                                            <label c-label item="item" c-label-text="Status"></label>
+                                                                            <input style="width: 100%;" kendo-combo-box k-ng-model="klaim.statusKlaim"
+                                                                                k-data-text-field="'nama'" k-data-value-field="'id'" k-filter="'contains'"
+                                                                                k-auto-bind="false" k-data-source="listStatusKlaim" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="grid_12">
+                                                                        <div class="grid_6">
+                                                                            <label c-label>Jenis Obat :</label>
+                                                                            <input style="width: 100%;" kendo-combo-box k-ng-model="klaim.jenisobat"
+                                                                                k-data-text-field="'nama'" k-data-value-field="'id'" k-filter="'contains'"
+                                                                                k-auto-bind="false" k-data-source="listJenisObat" />
+                                                                        </div>
+                                                                        <div class="grid_1 pull-right">
+                                                                            <em style="margin-top:10px;" ng-click='clear()' id="iconButton" data-role="button" class="k-button k-button-icon" role="button"
+                                                                                aria-disabled="false" tabindex="0"><span
+                                                                                    class="k-sprite k-icon k-i-cancel">Clear</span></em>
+                                                                        </div>
+                                                                        <div class="grid_1 pull-right">
+                                                                            <button style="margin-top:10px;" class="k-button k-primary k-button-icon" ng-click="findKlaim(klaim)"><span
+                                                                                    class="k-sprite k-icon k-i-search">Find</span></button>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="grid_6">
+                                                                    <div class="grid_12">
+                                                                        <label c-label>Results :</label>
+                                                                    </div>
+                                                                    <pre id="jsonKlaim" class="json-viewer"></pre>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </md-content>
+                                            </md-tab>
+                                        </md-tabs>
+                                    </md-content>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-include=' "../app/template/Shared/TemplateLoading" '></div>

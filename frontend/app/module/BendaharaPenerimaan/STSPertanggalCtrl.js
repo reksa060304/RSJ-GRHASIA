@@ -510,6 +510,7 @@ define(['initialize'], function (initialize) {
                 ],
                 excel: { fileName: "DetailSTSPertanggal.xlsx", allPages: true, },                
                 excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
                     sheet.frozenRows = 0;
                     sheet.mergedCells = ["A1:AT1"];
                     sheet.name = "DetailSTSPertanggal";

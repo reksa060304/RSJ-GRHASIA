@@ -81,6 +81,14 @@
             "urlDep": "module/Farmasi/PaketObatPasienCtrl"     
         },
         {
+            "nameDep": "ApotikOnlineToolsCtrl",
+            "urlDep": "module/Farmasi/ApotikOnlineToolsCtrl"     
+        },
+        {
+            "nameDep": "MonitoringApotikOnlineCtrl",
+            "urlDep": "module/Farmasi/MonitoringApotikOnlineCtrl"     
+        },
+        {
             "nameDep": "DaftarPenangananKeluhanPelangganCtrl",
             "urlDep": "module/Humas/DaftarPenangananKeluhanPelangganCtrl"
         },

@@ -3527,39 +3527,48 @@ class ReportController extends ApiController{
             $qbulan =  " and extract(month from tglbku) =  '" . $request['bulanbku']."'";
         }
 
-        // $qasalproduk  = '';
-        // if (isset($request['asalprodukangkas']) && $request['asalprodukangkas'] != "" && $request['asalprodukangkas'] != "undefined") {
-        //     $qasalproduk =  " and kb.objectasalprodukfk =  " . $request['asalprodukangkas'];
-        // }
-
-        // $bulanawal  = '';
-        // if (isset($request['bulanawal']) && $request['bulanawal'] != "" && $request['bulanawal'] != "undefined") {
-        //     $bulanawal =  " and extract(month from sr.tglrealisasi) >= '" . $request['bulanawal']."'";
-        // }
-
-        // $bulanakhir  = '';
-        // if (isset($request['bulanakhir']) && $request['bulanakhir'] != "" && $request['bulanakhir'] != "undefined") {
-        //     $bulanakhir =  " and extract(month from sr.tglrealisasi) <= '" . $request['bulanakhir']."'";
-        // }
-
         $data = DB::select(DB::raw("select * from(
-            select '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, 0 penerimaan, 0 pengeluaran, (saldo-penerimaan+pengeluaran) saldoawal
+            select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, 0 saldoawal, 0 penerimaan, 0 pengeluaran, (saldo-penerimaan+pengeluaran) saldoakhir
             from bukukasumum_t
             where kdprofile = 30
             and statusenabled = true
             $qbulan
             $qtahun
             order by tglbku asc limit 1
-        ) as x
+        ) as b
         
         union all
+
+        select a.nourut, a.nobku, a.tgl, a.uraianbku, x.saldoakhir saldoawal, a.penerimaan, a.pengeluaran, (x.saldoakhir + a.penerimaan - a.pengeluaran) saldoakhir
+        from(
         
-        select nobku, to_char(tglbku::date, 'DD-MM-YYYY') tgl, uraianbku, penerimaan, pengeluaran, saldo saldoawal
-        from bukukasumum_t
-        where kdprofile = 30
-        and statusenabled = true
-        $qbulan
-        $qtahun"));
+            select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, 0 saldoawal, bku.penerimaan, bku.pengeluaran, bku.saldo saldoakhir
+            from bukukasumum_t bku
+            where bku.kdprofile = 30
+            and bku.statusenabled = true
+            $qbulan
+            $qtahun
+        ) as a
+        inner join (
+            select * from(
+                select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, 0 saldoawal, 0 penerimaan, 0 pengeluaran, (saldo-penerimaan+pengeluaran) saldoakhir
+                from bukukasumum_t
+                where kdprofile = 30
+                and statusenabled = true
+                $qbulan
+                $qtahun
+                order by tglbku asc limit 1
+            ) as x
+        
+            union all
+        
+            select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, 0 saldoawal, bku.penerimaan, bku.pengeluaran, bku.saldo saldoakhir
+            from bukukasumum_t bku
+            where bku.kdprofile = 30
+            and bku.statusenabled = true
+            $qbulan
+            $qtahun
+        ) as x on x.nourut = a.nourut-1;"));
 
         $pageWidth = 950;
         //return $this->respond($result);

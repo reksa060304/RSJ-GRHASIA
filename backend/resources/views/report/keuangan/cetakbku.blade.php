@@ -75,9 +75,9 @@
                     <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->nobku }}</td>
                     <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->tgl }}</td>
                     <td align="left" width="200" style="padding: 10px;  font-size: 15px; ">{{ $dt->uraianbku }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px;  ">{{ $dt->penerimaan }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->pengeluaran }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->saldoawal }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px;  ">{{ number_format($dt->penerimaan,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->pengeluaran,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->saldoawal,0,',','.') }}</td>
                 </tr>
                 @endforeach
         </table>

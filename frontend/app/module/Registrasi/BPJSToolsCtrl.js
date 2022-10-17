@@ -4,10 +4,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
         function ( $scope, $state) {
             $scope.now = new Date();
             $scope.nav = function (state) {
-
+                console.log($scope.currentState);
                 $scope.currentState = state;
                 $state.go(state, $state.params);
-                console.log($scope.currentState);
+                
             }
 
         }

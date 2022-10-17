@@ -539,8 +539,24 @@ class BridgingBPJSV2Controller extends ApiController
         $headers = $this->getHeaderBPJSV2();
         $dataJsonSend = null;
         $methods = 'GET';
+        //var_dump($this->getUrlBrigdingBPJS());
         $url = $this->getUrlBrigdingBPJS() . "Monitoring/Klaim/Tanggal/"
             . $request['tglsep'] . "/JnsPelayanan/" . $request['jenispelayanan'] . "/Status/" . $request['status'];
+        //var_dump($url);
+            $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        return $this->respond($response);
+    }
+
+    public function getMonitoringKlaimApotikOnline(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $headers = $this->getHeaderBPJSV2();
+        $dataJsonSend = null;
+        $methods = 'GET';
+        //var_dump($this->getUrlBrigdingApotikOnline());
+        $url = $this->getUrlBrigdingApotikOnline() ."monitoring/klaim/"
+            . $request['bulan'] . "/" . $request['tahun'] . "/" . $request['jenisobat']. "/" . $request['status'];
+        //var_dump($url);
         $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
         return $this->respond($response);
     }
