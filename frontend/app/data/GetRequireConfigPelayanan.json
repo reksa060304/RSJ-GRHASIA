@@ -3462,6 +3462,14 @@
         {
             "nameDep": "DaftarKeluargaIjinKunjunganCtrl",
             "urlDep": "module/EMR/DaftarKeluargaIjinKunjunganCtrl"
-        }      
+        },
+        {
+            "nameDep": "AsesmenAwalMedisRINAPZACtrl",
+            "urlDep": "module/EMR/AsesmenAwalMedisRINAPZACtrl"
+        },
+        {
+            "nameDep": "FormulirTransferPasienGrhCtrl",
+            "urlDep": "module/EMR/FormulirTransferPasienGrhCtrl"
+        }   
     ]
 }
