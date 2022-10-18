@@ -14695,7 +14695,7 @@ class LogistikController extends ApiController{
             case when idruangan = 59 then qtyproduk else 0 end as qtygudang
             from(
                 select ru.id idruangan, ru.namaruangan, pr.id as kdproduk,pr.namaproduk,CAST(spd.qtyproduk AS FLOAT) as qtyproduk,
-                ss.satuanstandar,CAST(spdh.harganetto2 AS FLOAT) hargabeli, CAST(spdh.harganetto1 AS FLOAT) hargajual
+                ss.satuanstandar,CAST(spdh.harganetto1 AS FLOAT) hargabeli, CAST((spdh.harganetto1+(0.25*spdh.harganetto1)) AS FLOAT) hargajual
                 from stokprodukdetail_t as spd
                 left join strukpelayanan_t as sp on sp.norec = spd.nostrukterimafk
                 inner join produk_m as pr on pr.id = spd.objectprodukfk
@@ -14719,10 +14719,10 @@ class LogistikController extends ApiController{
                 $namaproduk
                 $produkid
                 group by ru.id, ru.namaruangan, pr.id,pr.namaproduk,
-                ss.satuanstandar,CAST(spdh.harganetto2 AS FLOAT), CAST(spdh.harganetto1 AS FLOAT), CAST(spd.qtyproduk AS FLOAT)
+                ss.satuanstandar,CAST((spdh.harganetto1+(0.25*spdh.harganetto1)) AS FLOAT), CAST(spdh.harganetto1 AS FLOAT), CAST(spd.qtyproduk AS FLOAT)
             ) as x group by kdproduk, namaproduk, satuanstandar, hargabeli, hargajual, idruangan, qtyproduk
         ) as y 
-        group by kdproduk, namaproduk, satuanstandar, round(hargabeli), round(hargajual)
+        group by kdproduk, namaproduk, satuanstandar, round(hargajual), round(hargabeli)
         order by qtyfarmasi desc, qtygudang desc
         limit $jumlah    
         "));

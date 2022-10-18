@@ -1013,34 +1013,34 @@ define(['initialize'], function (initialize) {
                 //     //alert("Pilih Ruangan terlebih dahulu!!")
                 //     return;
                 // }
-                medifirstService.get("logistik/get-data-harga?" +
-                    "produkfk=" + $scope.item.produk.id +
-                    "&ruanganfk=" + $scope.item.ruanganPenerima.id, true).then(function (dat) {
-                        dataProdukDetail = dat.data.detail;
-                        $scope.item.hargaSatuan = 0
-                        $scope.item.hargadiskon = 0
-                        $scope.item.hargaNetto = 0
-                        $scope.item.total = 0
-                        $scope.item.jumlah = 0
-                        $scope.item.hargaSatuan = dat.data.detail[0].harga
-                        $scope.item.stokReal = dat.data.detail[0].stokreal
-                    });
+                // medifirstService.get("logistik/get-data-harga?" +
+                //     "produkfk=" + $scope.item.produk.id +
+                //     "&ruanganfk=" + $scope.item.ruanganPenerima.id, true).then(function (dat) {
+                //         dataProdukDetail = dat.data.detail;
+                //         $scope.item.hargaSatuan = 0
+                //         $scope.item.hargadiskon = 0
+                //         $scope.item.hargaNetto = 0
+                //         $scope.item.total = 0
+                //         $scope.item.jumlah = 0
+                //         $scope.item.hargaSatuan = dat.data.detail[0].harga
+                //         $scope.item.stokReal = dat.data.detail[0].stokreal
+                //     });
             }
 
             $scope.getNilaiKonversi = function () {
                 $scope.item.nilaiKonversi = $scope.item.satuan.nilaikonversi
-                medifirstService.get("logistik/get-data-harga?" +
-                    "produkfk=" + $scope.item.produk.id +
-                    "&ruanganfk=" + $scope.item.ruanganPenerima.id, true).then(function (dat) {
-                        dataProdukDetail = dat.data.detail;
-                        $scope.item.hargaSatuan = 0
-                        $scope.item.hargadiskon = 0
-                        $scope.item.hargaNetto = 0
-                        $scope.item.total = 0
-                        $scope.item.jumlah = 0
-                        $scope.item.hargaSatuan = dat.data.detail[0].hargapenerimaan
-                        $scope.item.stokReal = dat.data.detail[0].stokreal
-                    });
+                // medifirstService.get("logistik/get-data-harga?" +
+                //     "produkfk=" + $scope.item.produk.id +
+                //     "&ruanganfk=" + $scope.item.ruanganPenerima.id, true).then(function (dat) {
+                //         dataProdukDetail = dat.data.detail;
+                //         $scope.item.hargaSatuan = 0
+                //         $scope.item.hargadiskon = 0
+                //         $scope.item.hargaNetto = 0
+                //         $scope.item.total = 0
+                //         $scope.item.jumlah = 0
+                //         $scope.item.hargaSatuan = dat.data.detail[0].hargapenerimaan
+                //         $scope.item.stokReal = dat.data.detail[0].stokreal
+                //     });
             }
 
             $scope.$watch('item.nilaiKonversi', function (newValue, oldValue) {
