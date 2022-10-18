@@ -2496,10 +2496,7 @@ class PerencanaanController extends ApiController {
             $MA->targethasil = $request['targethasil'];
             $MA->div = $request['div'];
             $MA->objectjenisbelanjafk = $request['jenisbelanja'];
-            if($request['pptk'] != "undefined" && $request['pptk'] != ''){
-                $MA->objectpptkfk = $request['pptk'];
-            }
-            
+            $MA->objectpptkfk = $request['pptk'];
             $MA->div = $request['div'];
             $MA->save();
 

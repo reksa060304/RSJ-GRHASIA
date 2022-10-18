@@ -2318,6 +2318,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         DataKegiatan = e.data.kegiatan
                         $scope.dataSourceKegiatan = e.data.kegiatan
                     })
+                    $scope.item.searchdivkeg = { id: 4, div: "Sub Sub Kegiatan" }
                     $scope.popupTambah.center().close()
                 }, function (error) {
 
@@ -3671,6 +3672,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         DataKegiatan = e.data.kegiatan
                         $scope.dataSourceKegiatan = e.data.kegiatan
                     })
+                    
                     $scope.popupSubSubKegiatan.center().close()
                 }, function (error) {
 
@@ -5115,6 +5117,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.pptktext = $scope.item.pptk.text
                 //console.log($scope.item.pptk.value)
                 $scope.popupPPTK.center().close()
+            }
+
+            $scope.DeletePPTK = function(){
+                $scope.item.pptktext = ''
+                $scope.item.savepptk = null
             }
 
             $scope.CetakSPJ = function(){

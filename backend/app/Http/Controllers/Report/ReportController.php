@@ -3527,31 +3527,9 @@ class ReportController extends ApiController{
             $qbulan =  " and extract(month from tglbku) =  '" . $request['bulanbku']."'";
         }
 
-        $data = DB::select(DB::raw("select * from(
-            select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, 0 saldoawal, 0 penerimaan, 0 pengeluaran, (saldo-penerimaan+pengeluaran) saldoakhir
-            from bukukasumum_t
-            where kdprofile = 30
-            and statusenabled = true
-            $qbulan
-            $qtahun
-            order by tglbku asc limit 1
-        ) as b
-        
-        union all
-
-        select a.nourut, a.nobku, a.tgl, a.uraianbku, x.saldoakhir saldoawal, a.penerimaan, a.pengeluaran, (x.saldoakhir + a.penerimaan - a.pengeluaran) saldoakhir
-        from(
-        
-            select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, 0 saldoawal, bku.penerimaan, bku.pengeluaran, bku.saldo saldoakhir
-            from bukukasumum_t bku
-            where bku.kdprofile = 30
-            and bku.statusenabled = true
-            $qbulan
-            $qtahun
-        ) as a
-        inner join (
+        $data = DB::select(DB::raw("
             select * from(
-                select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, 0 saldoawal, 0 penerimaan, 0 pengeluaran, (saldo-penerimaan+pengeluaran) saldoakhir
+                select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal
                 from bukukasumum_t
                 where kdprofile = 30
                 and statusenabled = true
@@ -3562,17 +3540,121 @@ class ReportController extends ApiController{
         
             union all
         
-            select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, 0 saldoawal, bku.penerimaan, bku.pengeluaran, bku.saldo saldoakhir
+            select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldoawal
             from bukukasumum_t bku
             where bku.kdprofile = 30
             and bku.statusenabled = true
             $qbulan
-            $qtahun
-        ) as x on x.nourut = a.nourut-1;"));
+            $qtahun"));
+
+        $saldoakhir = 0;
+
+        foreach($data as $row){
+            $saldoakhir = $saldoakhir + $row->penerimaan - $row->pengeluaran; 
+            $row->saldoawal = $saldoakhir;
+        }
 
         $pageWidth = 950;
         //return $this->respond($result);
         return view('report.keuangan.cetakbku',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode'));
+    }
+
+    public function CetakBukuPanjar(Request $request){
+        $tahunjudul = $request['tahunpanjar'];
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetakpanjar'])));
+        // $bawal = date('F', mktime(0, 0, 0, $request['bulanawal'], 10));
+        // $bakhir = date('F', mktime(0, 0, 0, $request['bulanakhir'], 10));
+
+        $bulan = $request['bulanpanjar'];
+
+
+        if($bulan == '01'){
+            $periode = 'JANUARI';
+        }
+        else if($bulan == '02'){
+            $periode = 'FEBRUARI';
+        }
+        else if($bulan == '03'){
+            $periode = 'MARET';
+        }
+        else if($bulan == '04'){
+            $periode = 'APRIL';
+        }
+        else if($bulan == '05'){
+            $periode = 'MEI';
+        }
+        else if($bulan == '06'){
+            $periode = 'JUNI';
+        }
+        else if($bulan == '07'){
+            $periode = 'JULI';
+        }
+        else if($bulan == '08'){
+            $periode = 'AGUSTUS';
+        }
+        else if($bulan == '09'){
+            $periode = 'SEPTEMBER';
+        }
+        else if($bulan == '10'){
+            $periode = 'OKTOBER';
+        }
+        else if($bulan == '11'){
+            $periode = 'NOVEMBER';
+        }
+        else if($bulan == '12'){
+            $periode = 'DDESEMBER';
+        }
+
+        $qtahun  = '';
+        if (isset($request['tahunpanjar']) && $request['tahunpanjar'] != "" && $request['tahunpanjar'] != "undefined") {
+            $qtahun =  " and extract(year from tglbku) between '01' and '" . $request['tahunpanjar']."'";
+        }
+
+        $qbulan  = '';
+        if (isset($request['bulanpanjar']) && $request['bulanpanjar'] != "" && $request['bulanpanjar'] != "undefined") {
+            $qbulan =  " and extract(month from tglbku) between '01' and  '" . $request['bulanpanjar']."'";
+        }
+
+        $data = DB::select(DB::raw("select * from(
+            select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldo
+            from bukukasumum_t
+            where kdprofile = 30
+            and statusenabled = true
+            $qbulan
+            $qtahun
+            and objectjenisbuktifk = 3
+            order by tglbku asc limit 1
+        ) as x
+    
+        union all
+    
+        select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldo
+        from bukukasumum_t bku
+        where bku.kdprofile = 30
+        and bku.statusenabled = true
+        $qbulan
+        $qtahun
+        and bku.objectjenisbuktifk = 3"));
+
+        $saldoakhir = 0;
+
+        foreach($data as $row){
+            $saldoakhir = $saldoakhir + $row->penerimaan - $row->pengeluaran; 
+            $row->saldo = $saldoakhir;
+        }
+
+        //var_dump($data);
+
+        // $result = array(
+        //     'daftar' => $data,
+        //     'message' => 'as@epic',
+        // );
+
+        // return $this->respond($result);
+
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.cetakbukupanjar',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode'));
     }
 
 

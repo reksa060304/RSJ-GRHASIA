@@ -5641,8 +5641,8 @@ class PelayananResepController extends ApiController
 		inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
 		LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
 		LEFT JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
-		where djp.id = 1444 
-		or pr.isantibiotik = true
+		where (djp.id = 1444 
+		or pr.isantibiotik = true)
 		and sr.tglresep between '$tglAwal' and '$tglAkhir'
         and pp.kdprofile = $kdProfile
         $namaItem
@@ -5659,8 +5659,8 @@ class PelayananResepController extends ApiController
 		LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
 		LEFT JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
 		where ru.objectdepartemenfk = 16
-		and djp.id = 1444 
-		or pr.isantibiotik = true
+		and (djp.id = 1444 
+		or pr.isantibiotik = true)
 		and sr.tglresep between '$tglAwal' and '$tglAkhir'
         and pp.kdprofile = $kdProfile
         $namaItem
@@ -5677,8 +5677,8 @@ class PelayananResepController extends ApiController
 		LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
 		LEFT JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
 		where ru.objectdepartemenfk <> 16
-		and djp.id = 1444 
-		or pr.isantibiotik = true
+		and (djp.id = 1444 
+		or pr.isantibiotik = true)
 		and sr.tglresep between '$tglAwal' and '$tglAkhir'
 		and pp.kdprofile = $kdProfile
         $namaItem

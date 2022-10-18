@@ -179,6 +179,40 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 window.open(baseTransaksi + "report/get-cetak-bku?tahunbku=" + tahunbku + "&bulanbku=" + bulanbku + "&tglcetak=" + tglcetak, '_blank');
             }
+            $scope.CetakBukuPanjar = function(){
+
+                if ($scope.item.tahunpanjar == undefined){
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.bulanpanjar == undefined){
+                    toastr.warning('Bulan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.tglcetakpanjar == undefined){
+                    toastr.warning('Tgl cetak harus diisi', 'Informasi');
+                    return
+                }
+
+                var tahunpanjar = ""
+                if ($scope.item.tahunpanjar != undefined){
+                    tahunpanjar = moment($scope.item.tahunpanjar).format('YYYY')
+                }
+
+                var bulanpanjar = ""
+                if ($scope.item.bulanpanjar != undefined){
+                    bulanpanjar = moment($scope.item.bulanpanjar).format('MM')
+                }
+
+                var tglcetakpanjar = ""
+                if ($scope.item.tglcetakpanjar != undefined){
+                    tglcetakpanjar = moment($scope.item.tglcetakpanjar).format('YYYY-MM-DD')
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-buku-panjar?tahunpanjar=" + tahunpanjar + "&bulanpanjar=" + bulanpanjar + "&tglcetakpanjar=" + tglcetakpanjar, '_blank');
+            }
             $scope.Perbaharui = function () {
                 $scope.ClearSearch();
             }
