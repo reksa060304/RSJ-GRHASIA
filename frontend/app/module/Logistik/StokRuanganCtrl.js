@@ -21,7 +21,7 @@ define(['initialize'], function (initialize) {
                     $scope.bukanLogistik = true;
                     $scope.iniFarmasi = false;
                 }
-                $scope.item.jmlRows = 10
+                $scope.item.jmlRows = 100
                 $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
                 $scope.item.ruangan = { id: $scope.listRuangan[0].id, namaruangan: $scope.listRuangan[0].namaruangan }
                 medifirstService.get('logistik/get-combo-logistik-mini').then(function (data) {
