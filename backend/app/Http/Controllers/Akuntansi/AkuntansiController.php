@@ -23,6 +23,7 @@ use App\Transaksi\PostingJurnal;
 use App\Transaksi\PostingJurnalD;
 
 use App\Transaksi\Sal;
+use App\Transaksi\Ekuitas;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -3085,6 +3086,113 @@ class AkuntansiController extends ApiController{
         try{
 
             $TG = Sal::where('norec',$request['norec'])
+                ->where('kdprofile', $idProfile)
+                ->update(
+                [ 'statusenabled' => 0]
+            );
+
+            $transStatus = 1;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $TG,
+                'as' => 'ea@epic',
+            );
+        } else {
+            $transMessage = 'Simpan Gagal';
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function SaveDataEkuitas(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        $dataLogin = $request->all();
+        $tglAyeuna = date('Y-m-d H:i:s');
+        try {
+            if ($request['norec'] == ''){
+                $new = new Ekuitas();
+                $norecHead = $new->generateNewId();
+                $new->kdprofile = $idProfile;
+                $new->norec = $norecHead;
+                $new->statusenabled = 1;
+            }else{
+                $new =  Ekuitas::where('norec',$request['norec'])->first();
+            }
+                $new->uraian = $request['uraian'];
+                $new->tahun = $request['tahun'];
+                $new->tgl = $tglAyeuna;
+                $new->nilaiuang = $request['nilaiuang'];
+                $new->save();
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil" ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'ea@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "as" => 'ea@epic',
+                'e'=> $e->getLine() . $e->getMessage()
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getDataEkuitas(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+        $data = \DB::table('ekuitas_t as sl')
+            ->where('sl.kdprofile',$idProfile)
+            ->select(DB::raw("sl.*"));
+
+        if(isset($request['Uraian']) && $request['Uraian']!="" && $request['Uraian']!="undefined"){
+            $data = $data->where('sl.uraian','ilike', '%'.$request['Uraian'].'%');
+        }
+        if(isset($request['Tahun']) && $request['Tahun']!="" && $request['Tahun']!="undefined"){
+            $data = $data->where('sl.tahun','=', $request['Tahun']);
+        }
+        $data = $data->where('sl.statusenabled',true);
+        $data = $data->orderBy('sl.tgl');
+        $data = $data->get();
+
+        $result = array(
+            'data' => $data,
+            'message' => 'ea@epic',
+        );
+        return $this->respond($result);
+    }
+    public function deleteDataEkuitas(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try{
+
+            $TG = Ekuitas::where('norec',$request['norec'])
                 ->where('kdprofile', $idProfile)
                 ->update(
                 [ 'statusenabled' => 0]
