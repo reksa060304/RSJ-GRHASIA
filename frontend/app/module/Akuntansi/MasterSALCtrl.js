@@ -52,6 +52,11 @@ define(['initialize'], function (initialize) {
 			}
 
             $scope.daftarMasterOpt = {
+                toolbar: ["excel"],
+                excel: {
+                    fileName: "Laporan Master SAL" + ".xlsx",
+                    allPages: true,
+                },
                 pageable: true,
                 scrollable: true,
                 columns: [
